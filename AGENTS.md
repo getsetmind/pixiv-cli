@@ -1,10 +1,10 @@
 # pixiv-cli エージェント契約
 
-このリポジトリは `pixiv` CLI、2 つの MCP stdio サーバー、公開 Go パッケージ `sdk`・`sdk/pixiv`・`sdk/fanbox` を提供する。
+このリポジトリは、`pixiv` CLI、二つの MCP stdio サーバー、公開 Go パッケージ `sdk`・`sdk/pixiv`・`sdk/fanbox` を提供する。
 
 ## まずここから
 
-タスクに着手する前に、下記の該当ローカルスキルを読むこと。これらはチェックイン済みの指示であり、個人の設定・CCS インストール・グローバルスキルへの依存ではない。クライアントが `.agents/skills` を発見できない場合は、リンクされた `SKILL.md` を直接開く。変更に必要なルートだけを読む。
+タスクに着手する前に、下表から該当するローカルスキルを読む。これらの指示はリポジトリに含まれており、個人の設定、CCS のインストール、グローバルスキルを必要としない。クライアントが `.agents/skills` を検出できない場合は、リンク先の `SKILL.md` を直接開く。変更に関係するスキルだけを読む。
 
 | タスク | ローカル指示 |
 | --- | --- |
@@ -20,18 +20,18 @@
 | リリースの準備や publisher の復旧 | [pixiv-cli-release-notes](.agents/skills/pixiv-cli-release-notes/SKILL.md) |
 | ステージ済み変更からのコミットメッセージ作成 | [pixiv-cli-commit-message](.agents/skills/pixiv-cli-commit-message/SKILL.md) |
 
-別配布の[プロダクトスキル](skills/pixiv-cli/SKILL.md)は、インストール済みバイナリの利用を教えるもので、リポジトリの開発ワークフローではない。メンテナンススキル名は `pixiv-cli-` 接頭辞を、プロダクト名は `pixiv-cli` を維持する。
+別配布の[プロダクトスキル](skills/pixiv-cli/SKILL.md)は、インストール済みバイナリの使い方を説明する。リポジトリの開発には、上表のメンテナンススキルを使う。メンテナンススキル名の接頭辞 `pixiv-cli-` と、プロダクト名 `pixiv-cli` を維持する。
 
 ## 交渉不可の境界
 
-- `cmd/pixiv` は薄く保つ。`internal/cli/root.go` がコマンドツリーと本番依存を組み立て、コマンドのオーナーは `internal/cli/commands` 配下に置く。グローバルなサービスロケータや削除済みの bootstrap/resource グラフを復活させない。
+- `cmd/pixiv` は薄く保つ。`internal/cli/root.go` でコマンドツリーと本番用の依存関係を組み立て、各コマンドは `internal/cli/commands` 配下に置く。グローバルなサービスロケータや、削除済みの bootstrap/resource グラフを復活させない。
 - CLI/MCP の Pixiv・FANBOX 操作は公開 SDK とオーナー固有の狭いポートを使い、プロトコルアダプターを使わない。MCP ツールは `internal/mcpserver/{pixiv,fanbox}/tools/<tool>` に属し、その stdio ランタイムは CLI コマンドが起動する。
-- リバースサーチは明示的な例外である。`internal/services/reversesearch/assembly` を import できるのは CLI のコンポジションルートだけ。コマンドと MCP のオーナーはトップレベルの `internal/services/reversesearch` 契約を使えるが、そのプロバイダーサブパッケージは決して使わない。
-- 共有機構は既存のオーナーに置く: record、pagination、traversal、lifecycle、configuration、file persistence、downloader。汎用ユーティリティにプロダクトのプロトコルやアカウント意味論を持たせない。所有権の詳細は [architecture](docs/en/maintainers/architecture.md) を参照。
-- App-only 境界を守る。コンテンツには認証済みのローカルアカウントか、適格なデータベース管理プールアカウントが必要であり、エラーが匿名 Web 経路を選ぶことはない。データコマンドは `--uid` も `--refresh-token` も受け付けない。公開 SDK と MCP はそれぞれ独自の明示的な資格情報契約を維持する。
-- secret をログ・エラー・fixture・PR・成果物に出さない。secret を stdout に出せるのは、明示的に要求された素の `auth export [UID]` または `auth export --all` だけ。それ以外は文書化された private-output/transfer 経路を使う。SQLite アカウントストアは secret を保持するため、デバッグの近道として実資格情報を覗かない。
-- CLI の機械可読出力と MCP の JSON-RPC stdout を汚さない。MCP のランタイム失敗は `isError=true` を伴う構造化出力を保つ。キャンセル・トランスポート・認証・上流・永続化の失敗を、成功形の空データではなく報告する。
-- limit・timeout・retry・truncation・fallback は、検証済みの要件・プラットフォーム制約・確立された契約・再現可能な失敗があるときにだけ導入する。有効なデータを黙って捨てず、トリガーを説明してテストする。
+- リバースサーチには例外を設ける。`internal/services/reversesearch/assembly` を import できるのは CLI のコンポジションルートだけとする。コマンドと MCP のオーナーはトップレベルの `internal/services/reversesearch` 契約を使えるが、プロバイダーのサブパッケージは使わない。
+- record、pagination、traversal、lifecycle、configuration、file persistence、downloader の共有機構は、それぞれ既存のオーナーに置く。汎用ユーティリティに、プロダクト固有のプロトコルやアカウントの意味づけを持たせない。所有権の詳細は [architecture](docs/en/maintainers/architecture.md) を参照する。
+- App-only 境界を守る。コンテンツの取得には、認証済みのローカルアカウントか、利用条件を満たすデータベース管理下のプールアカウントが必要となる。エラー時に匿名 Web 経路へ切り替えない。データコマンドは `--uid` と `--refresh-token` を受け付けない。公開 SDK と MCP は、それぞれの明示的な資格情報契約を維持する。
+- secret をログ、エラー、fixture、PR、成果物に含めない。secret を stdout に出せるのは、明示的に要求された、オプションを付けない `auth export [UID]` または `auth export --all` だけとする。それ以外は文書化された private-output/transfer 経路を使う。SQLite アカウントストアには secret が保存されるため、デバッグ目的でも実際の資格情報を覗かない。
+- CLI の機械可読出力と MCP の JSON-RPC stdout に余分な情報を出さない。MCP の実行時エラーは、`isError=true` を伴う構造化出力で報告する。キャンセル、トランスポート、認証、上流サービス、永続化の失敗を、成功を示す空データに置き換えない。
+- limit、timeout、retry、truncation、fallback は、検証済みの要件、プラットフォームの制約、確立された契約、再現可能な失敗のいずれかが根拠となる場合にだけ導入する。有効なデータを黙って捨てず、適用条件を説明してテストする。
 
 ## 作業合意
 
