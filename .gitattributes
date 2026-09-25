@@ -1,34 +1,48 @@
-# Rust staticlib source identity 按字节计算；保留 first-party crate 的 Cargo 配置、
-# build script 和生产源码原始字节，避免 Windows checkout 把 LF 转为 CRLF 后改变摘要。
+# Checkout and diff attributes for inputs whose bytes are audited.
+# Git text conversion can rewrite LF as CRLF on Windows and change a source digest,
+# a Cargo checksum, a license bundle or an archive member. Keep the rules below exact;
+# TestPinnedRustSourcesDisableGitTextConversion and TestReleaseLicenseOutputsUseLFCheckout
+# assert them through `git check-attr`.
+
+# Pinned Rust source identity. The staticlib source digest hashes Cargo.toml/Cargo.lock,
+# an optional build.rs, .cargo/** and src/**/*.rs, so all of them keep their committed
+# bytes. The build.rs rule covers the optional digest input even while the crate has no
+# such file.
 internal/media/ugoira/rust/Cargo.toml -text
 internal/media/ugoira/rust/Cargo.lock -text
 internal/media/ugoira/rust/build.rs -text
 internal/media/ugoira/rust/.cargo/** -text
 internal/media/ugoira/rust/src/**/*.rs -text
 
-# Cargo vendor 保留上游字节并由 .cargo-checksum.json 校验；以下 Markdown 标题使用
-# 7 个等号，Git 会把它们误判为 unresolved conflict marker。仅调整该两份上游文档的阈值。
-# 所有 Cargo vendor 文件都必须关闭 Git 文本转换；Windows CRLF checkout 会改变上游 checksum，
-# 使 `cargo --locked --offline` 在实际 native runner 上拒绝未修改的依赖树。
+# Cargo vendor closure and the pinned local quantette source. Every file is fixed by its
+# own .cargo-checksum.json; a CRLF checkout would make `cargo --locked --offline` reject
+# an otherwise untouched dependency tree.
 internal/media/ugoira/rust/vendor/** -text
 third_party/rust/quantette-0.6.0/** -text
 
-# Windows 的 cmd.exe 不能可靠解析 LF 脚本。Release 测试会关闭 autocrlf 以保留
-# 其他受审计输入的字节，因此仅对此公开安装入口强制 checkout 为 CRLF。
+# cmd.exe cannot reliably parse an LF script, and the release tests disable autocrlf to
+# preserve other audited inputs, so force CRLF only for this public installer.
 scripts/install.cmd text eol=crlf
 
-# release archive 与 licensebundle gate 会按字节比较这些许可证输入。保留 LF，避免 Windows checkout
-# 改成 CRLF 后让跨平台 archive evidence 分裂，或把未修改的许可证 bundle 误报为 stale。
+# Release license inputs are compared byte-for-byte by the archive and licensebundle
+# gates. Fix LF so a Windows checkout cannot split cross-platform archive evidence or
+# report an unmodified license bundle as stale.
 LICENSE text eol=lf
 THIRD_PARTY_LICENSES.md text eol=lf
 third_party/licenses/** text eol=lf
 
+# Upstream conflict-marker false positives. These README headings use seven equals signs,
+# which Git mistakes for an unresolved merge conflict; only the threshold is raised and
+# the file bytes stay untouched.
 internal/media/ugoira/rust/vendor/autocfg/README.md conflict-marker-size=32
 internal/media/ugoira/rust/vendor/ref-cast/README.md conflict-marker-size=32
 
-# 下列是 `cargo vendor --locked --offline` 原样复制且由各自 .cargo-checksum.json 固定的上游文件；
-# 它们已有空白告警，改写任一字节会使 Cargo 拒绝 vendor。每条规则只覆盖实际触发文件；仓库其余路径
-# 仍使用默认 whitespace 检查。
+# Upstream whitespace overrides. These `cargo vendor --locked --offline` copies are pinned
+# by their own .cargo-checksum.json and already carry whitespace warnings; rewriting a byte
+# would make Cargo reject the vendor tree. Each rule names the exact file that triggers the
+# check, so the rest of the repository keeps the default whitespace gate. Do not collapse
+# this list into directory globs: that would silently exempt files that do not currently
+# trigger a warning.
 internal/media/ugoira/rust/vendor/adler2/README.md -whitespace
 internal/media/ugoira/rust/vendor/adler2/RELEASE_PROCESS.md -whitespace
 internal/media/ugoira/rust/vendor/autocfg/Cargo.lock -whitespace

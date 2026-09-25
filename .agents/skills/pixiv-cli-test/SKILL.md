@@ -36,13 +36,13 @@ Start with the affected package and named test, for example `go test ./path/to/o
 | Local Go implementation | Focused test, affected integration packages, and scoped `go vet`; run `sh scripts/build.sh` when the change affects the build or executable |
 | Shared contract, public SDK, core behavior, or release candidate | `go test ./... -count=1`, `go vet ./...`, and `sh scripts/build.sh`, in addition to focused regression |
 | Concurrency, account lifecycle, persistence, shared runtime | Add `go test -race ./... -count=1`; use native platform checks where platform code is involved |
-| PR metadata and verification tooling | `go test ./tools/prmeta ./tools/verification -count=1`; inspect the changed workflow's existing tests |
+| Workflow, workflow-contract test, or CI documentation | `go test ./scripts/tests/... ./scripts/internal/... -count=1`; the workflow YAML is the source of truth for its own ordering and permissions |
 | Platform/release contracts | `go test ./tools/release ./tools/platformmatrix -count=1`, affected `scripts/...` tests, and the relevant build/package/Homebrew fixture scripts |
 | Rust/cgo/staticlib or ABI | Follow [pixiv-cli-native](../pixiv-cli-native/SKILL.md), not an unrelated Go-only substitute |
 
 Use `gofmt -l` on affected Go files and the existing `.pre-commit-config.yaml`. Run installed pre-commit when applicable; do not introduce a new linter or download hook environments silently. `sh -n` checks shell syntax, not shell behavior. Cross-compilation checks compilation, not execution on another operating system.
 
-CI scope is determined by `.github/ci-change-scope.gitignore` through `scripts/classify-change-scope.sh`, not the file extension or this table. `ci.yml` owns Quality; trusted `pr-metadata.yml` classifies PRs and dispatches base-ref Platform/Container workers. Required smoke gates are Check Runs on the exact PR head and use a real skipped conclusion when their scope is not required. Honor those gates without changing classification to save a run. Ordinary branch/main pushes do not run CI; matching tags retain the current Quality/release path.
+`ci.yml` runs the full `Quality gate` on every pull request with no per-path skip, so this table selects what *you* run locally rather than predicting which CI jobs will be skipped. This fork carries no change-scope classifier, no PR-smoke coordinator, and no `/test` command. `platform-smoke.yml`, `container-smoke.yml`, and `browser-evidence.yml` only run when a maintainer dispatches them; ordinary branch/main pushes run no CI, and matching tags retain the current Release path.
 
 ## Live and native boundaries
 

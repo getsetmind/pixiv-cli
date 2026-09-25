@@ -1,7 +1,9 @@
 name: Quality gate
 
-# R15: Release exclusively owns the tag-push gate; Quality serves pull requests
-# and manual dispatch only.
+# Release exclusively owns the tag-push gate; this workflow serves pull requests
+# and manual dispatch. The change-scope classifier and the trusted PR-smoke
+# coordinator are intentionally absent from this fork: every run performs the
+# full quality gate rather than deciding per-path whether to skip it.
 on:
   pull_request:
     branches:
@@ -15,126 +17,35 @@ concurrency:
 permissions: {}
 
 jobs:
-  # R6: the Quality skip decision must use the same trust model as the pr-metadata
-  # smoke classification. A PR can modify scripts/classify-change-scope.sh and
-  # .github/ci-change-scope.gitignore, so classification must never run from the
-  # PR's own checkout.
-  scope:
-    name: Classify change scope
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: read
-    outputs:
-      quality_required: ${{ steps.scope.outputs.quality_required }}
-    steps:
-      # The PR .base.sha is the baseline captured when the PR was created or
-      # synchronized and can lag far behind the current protected branch. Checking
-      # that out would run a stale (and PR-influenced) classification policy, so
-      # resolve the base branch's current tip instead, matching the trusted
-      # execution source used by pr-metadata.
-      - name: Resolve the protected base branch tip
-        id: base
-        if: ${{ github.event_name == 'pull_request' }}
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
-          PR: ${{ github.event.pull_request.number }}
-        run: |
-          set -euo pipefail
-          pr_json=$(gh api "repos/$REPO/pulls/$PR")
-          base_ref=$(printf '%s' "$pr_json" | jq -r '.base.ref')
-          if [ -z "$base_ref" ] || [ "$base_ref" = null ]; then
-            echo 'Pull request base branch is unavailable.' >&2
-            exit 1
-          fi
-          base_ref_encoded=$(printf '%s' "$base_ref" | jq -sRr @uri)
-          sha=$(gh api "repos/$REPO/branches/$base_ref_encoded" --jq '.commit.sha')
-          test -n "$sha"
-          printf 'sha=%s\n' "$sha" >> "$GITHUB_OUTPUT"
-
-      # Take the policy and scripts only from the trusted base tip; the PR HEAD
-      # supplies the diff range alone.
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-          ref: ${{ github.event_name == 'pull_request' && steps.base.outputs.sha || github.sha }}
-
-      - name: Fetch the exact pull request head
-        if: ${{ github.event_name == 'pull_request' }}
-        shell: bash
-        env:
-          PR: ${{ github.event.pull_request.number }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        run: |
-          set -euo pipefail
-          # The classified diff must be exactly the PR's current head, otherwise
-          # the classification and the actually tested content diverge.
-          git fetch --no-tags origin "+refs/pull/$PR/head:refs/remotes/pull/$PR/head"
-          test "$(git rev-parse "refs/remotes/pull/$PR/head")" = "$HEAD_SHA"
-
-      - name: Classify change scope with trusted policy
-        id: scope
-        shell: bash
-        env:
-          BASE_SHA: ${{ steps.base.outputs.sha }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        run: |
-          set -euo pipefail
-          if [ "$GITHUB_EVENT_NAME" != pull_request ]; then
-            printf '%s\n' 'quality_required=true' >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          # Both the classifier and the rule file come from the trusted base
-          # checkout above.
-          bash ./scripts/classify-change-scope.sh --base "$BASE_SHA" --head "$HEAD_SHA" --github-output "$GITHUB_OUTPUT"
-
   quality_gate:
     name: Quality gate
-    needs: scope
-    if: ${{ always() && (needs.scope.result != 'success' || needs.scope.outputs.quality_required == 'true') }}
     runs-on: ubuntu-24.04
     permissions:
       contents: read
     steps:
-      - name: Require successful scope classification
-        if: ${{ needs.scope.result != 'success' }}
-        shell: bash
-        run: |
-          echo '::error::Change-scope classification failed.'
-          exit 1
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        if: ${{ needs.scope.result == 'success' }}
         with:
           fetch-depth: 0
           persist-credentials: false
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
-        if: ${{ needs.scope.result == 'success' }}
         with:
           go-version-file: go.mod
       - name: Test Go sources
-        if: ${{ needs.scope.result == 'success' }}
         shell: bash
         run: go test ./... -count=1
       - name: Test Go sources with the race detector
-        if: ${{ needs.scope.result == 'success' }}
         shell: bash
         run: go test -race ./... -count=1
       - name: Vet Go sources
-        if: ${{ needs.scope.result == 'success' }}
         shell: bash
         run: go vet ./...
       - name: Build the local binary
-        if: ${{ needs.scope.result == 'success' }}
         shell: bash
         run: sh scripts/build.sh
       - name: Test release packaging
-        if: ${{ needs.scope.result == 'success' }}
         shell: bash
         run: sh scripts/test-package-release.sh
       - name: Check Go formatting
-        if: ${{ needs.scope.result == 'success' }}
         shell: bash
         run: |
           set -euo pipefail

@@ -1,13 +1,18 @@
-# Docker 构建上下文排除——只保留 Dockerfile 和 packaging contract 所需文件。
-# 不排除 Dockerfile 自身和 dist/ 下的预构建二进制。
+# Container build-context filter.
+# The Dockerfile is runtime-only: it copies dist/pixiv, LICENSE, THIRD_PARTY_LICENSES.md
+# and third_party/licenses/. VCS data, build and test artifacts, local state, tooling and
+# documentation stay out of the context. Source trees are kept so a future
+# `COPY --from=build` stage can still build the binary from this context.
 
 # VCS
 .git/
 .gitignore
 .github/
 
-# Go build/test artifacts（dist/ 保留，因为 Dockerfile COPY dist/pixiv）
+# Go build and test artifacts. dist/ must stay: the Dockerfile copies dist/pixiv.
 build/
+bin/
+*.exe
 *.test
 *.out
 coverage/
@@ -21,34 +26,45 @@ output/
 *.sqlite3
 *.log
 
+# Local tooling scratch and evidence
+.cache/
+tmp/
+temp/
+.repo/
+.worktrees/
+.playwright-mcp/
+.native-evidence-test.*/
+
 # Editor and OS files
 .DS_Store
+Thumbs.db
+Desktop.ini
 .idea/
 .vscode/
 *.swp
+*.swo
 *~
 
 # Python cache
 __pycache__/
 *.py[cod]
 
-# Rust compiler output (machine-specific; committed staticlib/manifest stays in context)
+# Rust compiler output (machine-specific; the committed staticlib/manifest stays in context)
 internal/media/ugoira/rust/target/
 
-# Worktrees
-.worktrees/
-
-# Templates (Homebrew-specific, not needed for container build)
+# Templates (Homebrew-specific, not needed for the container build)
 templates/
 
-# Documentation (not needed in runtime image)
+# Documentation (not needed in the runtime image)
 docs/
 changelog/
 *.md
 !README.md
+# The runtime image ships the third-party license summary, and
+# TestDockerignoreKeepsThirdPartyLicenseSummary asserts this negation.
 !THIRD_PARTY_LICENSES.md
 
-# Scripts not needed in runtime image (build scripts are used in CI, not in container)
+# Scripts are for CI and local builds, not the runtime image
 scripts/
 
 # Local environment

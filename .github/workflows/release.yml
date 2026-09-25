@@ -86,7 +86,6 @@ jobs:
     outputs:
       release: ${{ steps.release.outputs.matrix }}
       container: ${{ steps.container.outputs.matrix }}
-      homebrew: ${{ steps.homebrew.outputs.matrix }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -103,10 +102,6 @@ jobs:
         id: container
         shell: bash
         run: go run ./tools/platformmatrix --capability container --github-output "$GITHUB_OUTPUT"
-      - name: Resolve Homebrew platforms
-        id: homebrew
-        shell: bash
-        run: go run ./tools/platformmatrix --capability homebrew --github-output "$GITHUB_OUTPUT"
 
   build:
     name: Build ${{ matrix.goos }}/${{ matrix.goarch }}
