@@ -155,7 +155,7 @@ func (c *Client) mapUgoiraMetadataEntity(artworkID int64, value artwork.UgoiraMe
 		seenQuality[string(candidate.quality)] = true
 	}
 	if len(archives) == 0 {
-		return UgoiraMetadata{}, newError("UgoiraMetadata", sdk.MalformedUpstreamResponse, "ugoira metadata has no archive")
+		return UgoiraMetadata{}, newError("UgoiraMetadata", sdk.UgoiraArchiveMissing, "ugoira metadata has no archive")
 	}
 	frames := make([]UgoiraFrame, 0, len(value.Frames))
 	seenFile := map[string]bool{}

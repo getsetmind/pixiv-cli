@@ -27,6 +27,9 @@ const (
 	UpstreamUnavailable       Reason = "upstream_unavailable"
 	MalformedUpstreamResponse Reason = "malformed_upstream_response"
 	ResourceForbidden         Reason = "resource_forbidden"
+	NotUgoira                 Reason = "not_ugoira"
+	UgoiraArchiveMissing      Reason = "ugoira_archive_missing"
+	UgoiraFrameMismatch       Reason = "ugoira_frame_mismatch"
 	LocalStateError           Reason = "local_state_error"
 	RemovedSetting            Reason = "removed_setting"
 )

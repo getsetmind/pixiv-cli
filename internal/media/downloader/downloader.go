@@ -65,6 +65,9 @@ type UgoiraFormat string
 const (
 	UgoiraFormatGIF  UgoiraFormat = "gif"
 	UgoiraFormatAPNG UgoiraFormat = "apng"
+	// UgoiraFormatZip 保存上游 zip 原文，不做转换；UgoiraFormatRaw 是它的别名。
+	UgoiraFormatZip UgoiraFormat = "zip"
+	UgoiraFormatRaw UgoiraFormat = "raw"
 )
 
 // ParsePageSpec 解析逗号/连字符分隔的 1-based 页码选择，返回闭区间页号列表。
@@ -133,10 +136,10 @@ func ValidateDownloadQuality(quality DownloadQuality) error {
 // ValidateUgoiraFormat 校验 ugoira 容器格式。
 func ValidateUgoiraFormat(format UgoiraFormat) error {
 	switch format {
-	case "", UgoiraFormatGIF, UgoiraFormatAPNG:
+	case "", UgoiraFormatGIF, UgoiraFormatAPNG, UgoiraFormatZip, UgoiraFormatRaw:
 		return nil
 	default:
-		return errors.New("ugoira format must be one of gif, apng")
+		return errors.New("ugoira format must be one of gif, apng, zip, raw")
 	}
 }
 
@@ -149,11 +152,16 @@ type DownloadedArtwork struct {
 	Author   string
 	Type     string
 	Files    []DownloadedFile
+	// Quality / Frames / FrameReport 只对 ugoira 报告；Quality 是实际使用的上游档案质量。
+	Quality     string
+	Frames      []pixiv.UgoiraFrame
+	FrameReport *UgoiraFrameReport
 }
 
 type DownloadedFile struct {
-	Path string
-	Page int
+	Path  string
+	Page  int
+	Bytes int64
 }
 
 // DownloadFailure 是一次无状态批量下载中单个作品或作者列表读取的可展示失败。
@@ -165,6 +173,11 @@ type DownloadFailure struct {
 	Message  string
 	// Cause 只用于 CLI 判断账号池的安全重试边界，输出 adapter 只公开 Message。
 	Cause error
+	// Code 是稳定的机器可读分类；Path 是随失败发布的隔离产物（若有）；
+	// Missing 是 ugoira 缺失的声明帧。
+	Code    string
+	Path    string
+	Missing []string
 }
 
 // DownloadWarning 是成功下载结果中需要调用方关注、但不阻止产物发布的提示。
@@ -336,7 +349,8 @@ func (s DownloadService) DownloadSources(ctx context.Context, client DownloadTar
 			report.Failures = append(report.Failures, DownloadFailure{URL: ref.String(), Message: err.Error(), Cause: err})
 			continue
 		}
-		if _, err := client.SaveResource(ctx, ref, sdk.SaveOptions{Path: path}); err != nil {
+		saved, err := client.SaveResource(ctx, ref, sdk.SaveOptions{Path: path})
+		if err != nil {
 			if ctxErr := ctx.Err(); ctxErr != nil {
 				return report, ctxErr
 			}
@@ -345,7 +359,7 @@ func (s DownloadService) DownloadSources(ctx context.Context, client DownloadTar
 		}
 		report.Items = append(report.Items, DownloadedArtwork{
 			Type:  DownloadedResourceType,
-			Files: []DownloadedFile{{Path: path, Page: 1}},
+			Files: []DownloadedFile{{Path: path, Page: 1, Bytes: saved.Size}},
 		})
 		report.Committed = true
 	}
@@ -369,7 +383,8 @@ func (s DownloadService) DownloadSources(ctx context.Context, client DownloadTar
 				})
 				continue
 			}
-			if _, err := directClient.SaveResourceURL(ctx, rawURL, sdk.SaveOptions{Path: path}); err != nil {
+			saved, err := directClient.SaveResourceURL(ctx, rawURL, sdk.SaveOptions{Path: path})
+			if err != nil {
 				if ctxErr := ctx.Err(); ctxErr != nil {
 					return report, ctxErr
 				}
@@ -381,7 +396,7 @@ func (s DownloadService) DownloadSources(ctx context.Context, client DownloadTar
 			}
 			report.Items = append(report.Items, DownloadedArtwork{
 				Type:  DownloadedResourceType,
-				Files: []DownloadedFile{{Path: path, Page: 1}},
+				Files: []DownloadedFile{{Path: path, Page: 1, Bytes: saved.Size}},
 			})
 			report.Committed = true
 		}
@@ -731,11 +746,18 @@ func (m *Manager) Download(ctx context.Context, request DownloadRequest) (Downlo
 			}
 			continue
 		}
-		batch.Failures = append(batch.Failures, DownloadFailure{
+		failure := DownloadFailure{
 			IllustID: unique[index],
 			Message:  result.err.Error(),
 			Cause:    result.err,
-		})
+		}
+		var classified *ClassifiedDownloadError
+		if errors.As(result.err, &classified) {
+			failure.Code = classified.Code
+			failure.Path = classified.Path
+			failure.Missing = classified.Missing
+		}
+		batch.Failures = append(batch.Failures, failure)
 	}
 	if parallelErr != nil {
 		return batch, parallelErr
@@ -792,6 +814,9 @@ func (m *Manager) downloadArtwork(ctx context.Context, id int64, pages []int, qu
 		if len(pages) > 0 {
 			return DownloadedArtwork{}, nil, fmt.Errorf("ugoira page selection is unsupported")
 		}
+		if ugoiraFormat == UgoiraFormatZip || ugoiraFormat == UgoiraFormatRaw {
+			return m.downloadUgoiraArchive(ctx, artwork, base)
+		}
 		path, warning, err := m.downloadUgoira(ctx, artwork, base, ugoiraFormat)
 		if warning != nil {
 			warnings = append(warnings, *warning)
@@ -799,7 +824,7 @@ func (m *Manager) downloadArtwork(ctx context.Context, id int64, pages []int, qu
 		if err != nil {
 			return artworkOut, warnings, err
 		}
-		artworkOut.Files = append(artworkOut.Files, DownloadedFile{Path: path, Page: 1})
+		artworkOut.Files = append(artworkOut.Files, DownloadedFile{Path: path, Page: 1, Bytes: fileSize(path)})
 		return artworkOut, warnings, nil
 	}
 
@@ -843,7 +868,7 @@ func (m *Manager) downloadArtwork(ctx context.Context, id int64, pages []int, qu
 			}
 			return artworkOut, nil, err
 		}
-		artworkOut.Files = append(artworkOut.Files, DownloadedFile{Path: path, Page: item.page1})
+		artworkOut.Files = append(artworkOut.Files, DownloadedFile{Path: path, Page: item.page1, Bytes: saved.Size})
 	}
 	return artworkOut, nil, nil
 }
