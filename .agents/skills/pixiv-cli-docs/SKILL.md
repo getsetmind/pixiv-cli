@@ -20,7 +20,7 @@ Read the changed implementation or authoritative configuration first. Use the ex
 | Safe use of the installed product | `skills/pixiv-cli/` |
 | Versioned release notes | `changelog/vX.Y.Z/`, only during authorized release preparation |
 
-Keep agent contracts, both kinds of skill, their references, and metadata English. Public locale pages retain their language; update affected English and Simplified Chinese contracts together without requiring literal translation. Source comments are not a reason to translate the whole codebase.
+Keep `AGENTS.md` in Japanese. Maintenance and product skills, their references, and UI metadata may be English or Japanese, but a single document must not mix languages; keep names, frontmatter, and routes machine-stable. Public locale pages retain their language; update affected English and Simplified Chinese contracts together without requiring literal translation. Source comments are not a reason to translate the whole codebase.
 
 ## Write only supported claims
 
@@ -36,6 +36,6 @@ Do not bump product versions, edit published release notes, or publish a skill d
 
 ## Verify
 
-Check local links, referenced files/symbols/commands, English skill text, frontmatter names, and `agents/openai.yaml` routes. Remove stale references to deleted owners. Run `git diff --check` and relevant existing tool/workflow tests when their documented behavior changes; no separate documentation test framework is required. Use the actual change classifier to determine CI requirements, not an assumed Markdown exemption.
+Check local links, referenced files/symbols/commands, consistent document language, frontmatter names, and `agents/openai.yaml` routes. Remove stale references to deleted owners. Run `git diff --check` and relevant existing tool/workflow tests when their documented behavior changes; no separate documentation test framework is required. Use the actual change classifier to determine CI requirements, not an assumed Markdown exemption.
 
 Review as a contributor with no personal skills: every required workflow must be reachable from `AGENTS.md` or an explicit local link. Report document verification separately from application or native execution.
