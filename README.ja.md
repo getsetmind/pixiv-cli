@@ -8,7 +8,7 @@
 
 <p><a href="https://github.com/FlanChanXwO/pixiv-cli/actions/workflows/ci.yml"><img alt="Quality gate" src="https://github.com/FlanChanXwO/pixiv-cli/actions/workflows/ci.yml/badge.svg?event=push"></a> <a href="https://github.com/FlanChanXwO/pixiv-cli/releases/latest"><img alt="Release" src="https://img.shields.io/github/v/release/FlanChanXwO/pixiv-cli?style=flat-square"></a> <a href="go.mod"><img alt="Go" src="https://img.shields.io/github/go-mod/go-version/FlanChanXwO/pixiv-cli?style=flat-square"></a> <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/FlanChanXwO/pixiv-cli?style=flat-square"></a> <img alt="Views" src="https://hits.sh/github.com/FlanChanXwO/pixiv-cli.svg?style=flat-square&amp;label=views"></p>
 
-[インストール](#インストール) · [クイックスタート](#60秒クイックスタート) · [インターフェース](#インターフェースの選択) · [ドキュメント](#ドキュメント) · [コントリビュート](CONTRIBUTING.md)
+[インストール](#インストール) · [クイックスタート](#60秒クイックスタート) · [インターフェース](#インターフェースの選択) · [ドキュメント](#ドキュメント)
 
 </div>
 

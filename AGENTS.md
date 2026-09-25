@@ -48,4 +48,4 @@
 
 ## 正式参照
 
-[Development and test layout](docs/en/maintainers/development.md)、[CLI contract](docs/en/cli-reference.md)、[MCP contract](docs/en/mcp-tools.md)、[contributing](CONTRIBUTING.md) が、チェックイン済みの振る舞いを説明する。Workflow YAML、`ci/platforms.json`、ツールマニフェストが実行可能な設定を所有する。散文と実装が食い違うときは、争点の挙動を検証して影響する契約を更新する。推測したり無関係な履歴を書き換えたりしない。
+[Development and test layout](docs/en/maintainers/development.md)、[CLI contract](docs/en/cli-reference.md)、[MCP contract](docs/en/mcp-tools.md) が、チェックイン済みの振る舞いを説明する。Workflow YAML、`ci/platforms.json`、ツールマニフェストが実行可能な設定を所有する。散文と実装が食い違うときは、争点の挙動を検証して影響する契約を更新する。推測したり無関係な履歴を書き換えたりしない。
