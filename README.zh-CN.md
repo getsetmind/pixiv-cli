@@ -4,7 +4,7 @@
 
 **Pixiv CLI · MCP stdio server · Go SDK**
 
-[English](README.md) · [简体中文](README.zh-CN.md)
+[English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md)
 
 <p><a href="https://github.com/FlanChanXwO/pixiv-cli/actions/workflows/ci.yml"><img alt="Quality gate" src="https://github.com/FlanChanXwO/pixiv-cli/actions/workflows/ci.yml/badge.svg?event=push"></a> <a href="https://github.com/FlanChanXwO/pixiv-cli/releases/latest"><img alt="Release" src="https://img.shields.io/github/v/release/FlanChanXwO/pixiv-cli?style=flat-square"></a> <a href="go.mod"><img alt="Go" src="https://img.shields.io/github/go-mod/go-version/FlanChanXwO/pixiv-cli?style=flat-square"></a> <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/FlanChanXwO/pixiv-cli?style=flat-square"></a> <img alt="Views" src="https://hits.sh/github.com/FlanChanXwO/pixiv-cli.svg?style=flat-square&amp;label=views"></p>
 
@@ -314,10 +314,6 @@ pixiv auth check
 | [架构](docs/zh-CN/maintainers/architecture.md) | 包边界和运行流程 |
 | [开发流程](docs/zh-CN/maintainers/development.md) | 工具链、测试、构建和发布 |
 | [更新日志](changelog/README.zh-CN.md) | 用户可感知变化 |
-
-## 参与贡献
-
-欢迎提交 bug、文档修复、测试和聚焦功能。发起 pull request 前请阅读 [CONTRIBUTING.zh-CN.md](CONTRIBUTING.zh-CN.md)；较大或影响公开接口的变更请先讨论。
 
 ## 许可证
 

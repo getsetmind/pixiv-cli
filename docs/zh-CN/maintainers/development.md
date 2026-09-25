@@ -130,14 +130,18 @@ sh scripts/test-rust-vendor.sh
 
 ### Native runner evidence
 
-`.github/workflows/native-evidence.yml` 是独立的、非发布维护入口，只通过默认分支上的显式
-`workflow_dispatch` 运行。普通 `main` push 不会在 PR 验证之后再重复启动六平台 evidence 矩阵。
-全局 `permissions: {}`、job 仅 `contents: read`。它没有 `environment`、
+`.github/workflows/platform-smoke.yml` 同时持有 `native_evidence` stage：手动 `workflow_dispatch`
+传入 `evidence: true` 才运行它，PR gate 派发的 run 只运行 smoke stage。同一次 run 内两个 stage 互斥——
+`native_evidence` 要求 `inputs.evidence`，smoke 的 `worker` job 要求其取反——因此没有哪一侧为另一侧付费。
+evidence stage 是独立的、非发布维护入口，只在受审的默认分支上运行（`Require audited main ref`）；
+普通 `main` push 不会在 PR 验证之后再重复启动六平台 evidence 矩阵。
+workflow 保持全局 `permissions: {}`、job 仅 `contents: read`；evidence job 没有 `environment`、
 secret、tag/Release/tap/signing 命令。平台矩阵来自 `ci/platforms.json` 的 `native-evidence` capability；
-workflow 安装 registry 指定的 Rust toolchain、检查 vendored Rust 输入、通过 `scripts/build-platform.sh`
+job 安装 registry 指定的 Rust toolchain、检查 vendored Rust 输入、通过 `scripts/build-platform.sh`
 完成目标 staticlib/binary/archive 链路，再运行真实 cgo GIF/APNG smoke、记录并上传 evidence。full-SHA
 action、无凭据 checkout、无 secret/发布副作用以及 build ownership 由聚焦的 test-only workflow contract
 覆盖，不再由 runtime YAML self-policy 固定整份 workflow 结构。
+`.github/workflows/native-evidence.yml` 保留纯文档 change-scope 规则：PR 根本跑不到的入口，不应该有 PR gate。
 
 Windows 两个 target 的 Rust library 使用 `*-pc-windows-msvc`；相应 cgo selector 必须以
 `-L${SRCDIR}/… -lugoira_rs` 声明库，不能把带盘符的绝对 `.lib` 路径直接传给 cgo；还必须显式携带
@@ -657,8 +661,8 @@ ClawHub 另有 `verify_only`，只核验已经提交的版本，不重发。其 
 
 `.gitignore` 已排除：
 
-- `.DS_Store`
-- 构建产物 `build/`、`pixiv`、`pixiv-cli`
+- `.DS_Store` 等系统与编辑器文件
+- 构建产物 `build/`、`dist/`、`bin/`、`pixiv`、`pixiv-cli`、`pixiv-auth`、`*.exe`
 - 本地下载目录 `downloads/`
 - 本地数据库 `*.db`
 - 常见缓存和临时文件

@@ -1,6 +1,7 @@
 name: Quality gate
 
-# R15：tag push 由 Release 独占门禁，Quality 只服务 PR 与 manual dispatch。
+# R15: Release exclusively owns the tag-push gate; Quality serves pull requests
+# and manual dispatch only.
 on:
   pull_request:
     branches:
@@ -14,9 +15,10 @@ concurrency:
 permissions: {}
 
 jobs:
-  # R6：Quality 的 skip 判定必须与 pr-metadata 的 smoke classification 使用同一
-  # 信任模型。PR 能修改 scripts/classify-change-scope.sh 与
-  # .github/ci-change-scope.gitignore，因此分类绝不能从 PR 自己的 checkout 执行。
+  # R6: the Quality skip decision must use the same trust model as the pr-metadata
+  # smoke classification. A PR can modify scripts/classify-change-scope.sh and
+  # .github/ci-change-scope.gitignore, so classification must never run from the
+  # PR's own checkout.
   scope:
     name: Classify change scope
     runs-on: ubuntu-24.04
@@ -25,9 +27,11 @@ jobs:
     outputs:
       quality_required: ${{ steps.scope.outputs.quality_required }}
     steps:
-      # PR .base.sha 是 PR 创建/同步时捕获的基线，可能远落后于当前受保护分支。
-      # 按其 checkout 会运行到陈旧（甚至可被 PR 影响）的分类策略，因此统一解析
-      # base 分支当前 tip，与 pr-metadata 的受信执行源保持一致。
+      # The PR .base.sha is the baseline captured when the PR was created or
+      # synchronized and can lag far behind the current protected branch. Checking
+      # that out would run a stale (and PR-influenced) classification policy, so
+      # resolve the base branch's current tip instead, matching the trusted
+      # execution source used by pr-metadata.
       - name: Resolve the protected base branch tip
         id: base
         if: ${{ github.event_name == 'pull_request' }}
@@ -49,7 +53,8 @@ jobs:
           test -n "$sha"
           printf 'sha=%s\n' "$sha" >> "$GITHUB_OUTPUT"
 
-      # 只取受信 base tip 的策略与脚本；PR HEAD 只用于 diff 范围。
+      # Take the policy and scripts only from the trusted base tip; the PR HEAD
+      # supplies the diff range alone.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           fetch-depth: 0
@@ -64,7 +69,8 @@ jobs:
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           set -euo pipefail
-          # 被分类的 diff 必须就是 PR 当前 head，否则分类结果与实际测试内容错位。
+          # The classified diff must be exactly the PR's current head, otherwise
+          # the classification and the actually tested content diverge.
           git fetch --no-tags origin "+refs/pull/$PR/head:refs/remotes/pull/$PR/head"
           test "$(git rev-parse "refs/remotes/pull/$PR/head")" = "$HEAD_SHA"
 
@@ -80,7 +86,8 @@ jobs:
             printf '%s\n' 'quality_required=true' >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          # 分类器与规则文件均来自上面的 trusted base checkout。
+          # Both the classifier and the rule file come from the trusted base
+          # checkout above.
           bash ./scripts/classify-change-scope.sh --base "$BASE_SHA" --head "$HEAD_SHA" --github-output "$GITHUB_OUTPUT"
 
   quality_gate:

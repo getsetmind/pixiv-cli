@@ -279,6 +279,8 @@ pixiv user follow add 123456 --restrict private
 pixiv follow remove 123456
 pixiv ranking --mode day
 pixiv recommended --type all --limit 5
+pixiv dic search "初音ミク" --limit 5
+pixiv dic article 初音ミク --no-counters --json
 pixiv download 123456 789012 --output ./downloads
 ```
 
@@ -372,6 +374,21 @@ canonical 数据 action 是 `search`、`detail`、`ranking`、`series`、`commen
 只发布各命令实际接通的结构化实体 filter，不发布会被忽略的顶层表达式 filter。Ugoira 下载目前只接受
 `--ugoira-mode gif|apng`（默认 `gif`）；页码选择和非 original 质量会明确报不支持。
 
+### Pixiv 百科
+
+`pixiv dic` 读取 `dic.pixiv.net` 上的公开 Pixiv 百科。它不需要本地账号、不使用账号池、不调用 Pixiv App API，
+也不提供 `--proxy`/`--no-proxy` 覆盖；标准 HTTP 代理环境变量仍然生效。
+
+- `pixiv dic search QUERY [--page N] [--limit N] [--json|--ndjson]` 搜索百科条目。上游搜索页没有游标，因此
+  `--page` 选择一个结果页，`--limit` 截断该页。没有匹配结果是空结果：`--json` 输出 `[]`，`--ndjson`
+  不输出任何内容。
+- `pixiv dic article TITLE_OR_URL [--lang ja|en] [--no-counters] [--json]` 按标题或 `dic.pixiv.net` 文章
+  URL 读取一个条目。`--lang en` 读取英文条目，其 `translation` 字段给出日文标题。`--no-counters` 跳过单独的
+  计数请求，此时 JSON 文档省略 `views`、`works`、`comments`、`checklists`，而不是把它们写成 0。
+
+两种输出都只是百科记录的展示投影，因此 `categories` 与 `related` 是 JSON 数组。条目不存在时命令以 stderr 上的
+上游状态失败，stdout 不写任何内容。
+
 ### CLI 命令表
 
 | 命令 | 用法 | 说明 |
@@ -393,6 +410,8 @@ canonical 数据 action 是 `search`、`detail`、`ranking`、`series`、`commen
 | `search` | `pixiv search [WORD\|IMAGE_PATH_OR_URL] [-t artwork\|novel\|user] [options]` | canonical 实体搜索或自动反向搜图。常规文件或显式 HTTP(S) source 选择图片模式；`--trending-tags` 是无 WORD 的完整作品趋势标签模式，不接受搜索筛选或分页。 |
 | `detail` | `pixiv detail [ID_OR_URL] [-t artwork\|novel\|user] [--content] [--json\|--ndjson]` | 读取一件作品、一本小说或一个用户，也可消费规范 NDJSON Record；`--content` 是保留的小说兼容 flag，但 v1 App 正文 endpoint 不可用，会在打开账号池或请求 rejected endpoint 前返回 `content_unavailable`。 |
 | `ranking` | `pixiv ranking [-t artwork\|novel] [--mode MODE --date YYYY-MM-DD --page N --limit N]` | 读取作品或小说排行；默认是 `artwork`，`--date` 只适用于作品排行。 |
+| `dic search` | `pixiv dic search QUERY [--page N --limit N --json\|--ndjson]` | 搜索 `dic.pixiv.net` 上的公开百科。不需要本地账号；只抓取一个上游结果页，`--limit` 截断该页，没有匹配则是空结果。 |
+| `dic article` | `pixiv dic article TITLE_OR_URL [--lang ja\|en --no-counters --json]` | 按标题或 `dic.pixiv.net` URL 读取一个百科条目。`--lang en` 给出英文条目的 `translation`，`--no-counters` 省略计数而非写成 0。 |
 | `series` | `pixiv series SERIES_ID_OR_URL -t artwork\|novel [--page N --limit N --json\|--ndjson]` | 列出一个作品或小说系列；输入可以是正数 series ID 或受支持的作品/小说系列 URL，实体类型必填且必须与 URL 命名空间匹配。 |
 | `comment` | `pixiv comment ID -t artwork\|novel [--page N --limit N --json\|--ndjson]`；`pixiv comment create ID -t artwork\|novel --comment TEXT [--json]`；`pixiv comment reply ID -t artwork\|novel --parent-comment-id COMMENT_ID --comment TEXT [--json]`；`pixiv comment stamp ID -t artwork\|novel --stamp-id STAMP_ID [--comment TEXT] [--json]`；`pixiv comment delete COMMENT_ID -t artwork\|novel [--json]`；`pixiv comment stamps [--json\|--ndjson]` | 保留作品/小说评论读取路径，并新增显式 create、reply、stamp、delete 与 stamp 列表 action。评论 read 保留可选 `total`/`access_control`；opaque numeric `comment_access_control` 保留在 `access_control` 内，不推断布尔权限。评论 mutation 只接受正数 ID；create/reply 要求非空正文，stamp 的正文可选且 sticker-only wire 使用空值；create/reply/stamp 返回 `comment_id`，delete 返回状态，`stamps` 返回不含 runtime URL 的安全 stamp DTO 且不分页。 |
 | `bookmark` | `pixiv bookmark list\|tags\|detail\|add\|remove ...` | 读取作品/小说收藏、作品/小说收藏标签/详情，或修改作品收藏。`list` 和 `tags` 接受用户 ID 或用户 URL，并支持 `--type artwork\|novel\|all`；`all` 固定先作品后小说并保留 typed record/tag。`detail`/`add`/`remove` 支持 artwork/novel，不支持 `all`；add/remove 默认 `artwork`，用 `--type` 选择 namespace。 |
@@ -456,6 +475,9 @@ Content-Type 与 URL 后缀不一致（例如 URL 为 `.png`、实体为 JPEG）
 | 列表命令 | `--page` / `-p` | 空 | 从 1 开始的逻辑页；必须与正数 `--limit` 同用。 |
 | `ranking` | `--mode` | `day` | 可用 `day`、`day_male`、`day_female`、`week`、`week_original`、`week_rookie`、`month`、`day_manga`、`week_manga`、`month_manga`、`week_rookie_manga`、`day_r18`、`day_male_r18`、`day_female_r18`、`week_r18`、`week_r18g`；最后九种需要认证。 |
 | `ranking` | `--date` | 空 | 排行榜日期，格式通常为 `YYYY-MM-DD`。 |
+| `dic search` | `--page` / `--limit` | 空 | 百科搜索页没有游标，因此 `--page` 选择一个上游页，`--limit` 截断该页。 |
+| `dic article` | `--lang` | `ja` | 百科条目语言：`ja` 或 `en`。英文条目的 `translation` 给出日文标题。 |
+| `dic article` | `--no-counters` | `false` | 跳过单独的计数请求；此时 JSON 文档省略 `views`、`works`、`comments`、`checklists`。 |
 | `detail` | `--type` / `-t` | `artwork` | 实体类型：`artwork`（兼容 `illust`、`manga`、`ugoira`）、`novel` 或 `user`；record mode 省略 `--type` 时按 Record 的 `type` 推断。`--content` 是保留的小说兼容 flag，正文 endpoint 不可用时会在账号池执行前返回 `content_unavailable`。 |
 | `series`、`comment` | `--type` / `-t` | 必填 | 实体类型：`artwork` 或 `novel`；series 支持正数 ID 或受支持的系列 URL，URL 命名空间必须与所选类型匹配；comment 的 read/create/reply/stamp 使用正数作品/小说 ID，comment delete 使用该类型选择作品或小说 comment endpoint；先选择类型后解释输入。 |
 | `comment create`、`comment reply` | `--comment` | 必填 | 非空评论正文；空字符串会被拒绝，CLI 不截断输入文本。 |

@@ -5,11 +5,12 @@ on:
     tags:
       - 'v[0-9]*'
 
-# 版本、checkout、Release、Formula 与 Container 全部绑定触发 workflow 的 immutable tag。
+# Version, checkout, Release, Formula and Container all bind to the immutable tag
+# that triggered this workflow.
 env:
   RELEASE_TAG: ${{ github.ref_name }}
 
-# 令每个 job 显式声明自己所需的最小 token 权限。
+# Every job declares the minimal token permissions it needs.
 permissions: {}
 
 jobs:
@@ -119,8 +120,9 @@ jobs:
     env:
       CC: ${{ matrix.cc }}
       RUSTUP_TOOLCHAIN: ${{ matrix.rust_toolchain }}
-      # Git for Windows 会按 runner 默认值把 immutable tag 的 Go 源码转换为 CRLF；质量门必须
-      # 检查 Git blob 的 LF bytes，避免 gofmt 将 checkout 转换误报为源码格式错误。
+      # Git for Windows converts the immutable tag's Go sources to CRLF per the
+      # runner default; the quality gate must inspect the Git blob's LF bytes so
+      # gofmt does not report that checkout conversion as a formatting error.
       GIT_CONFIG_COUNT: '1'
       GIT_CONFIG_KEY_0: core.autocrlf
       GIT_CONFIG_VALUE_0: 'false'
@@ -136,7 +138,8 @@ jobs:
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
         with:
           go-version-file: go.mod
-      # 质量门从不可变 tag 读取 workflow、版本、CHANGELOG 与 Release notes。
+      # The quality gate reads the workflow, version, CHANGELOG and release notes
+      # from the immutable tag.
       - name: Validate the exact immutable release source
         shell: bash
         run: go run ./scripts/cmd/releaseassets validate-source --version "${RELEASE_TAG#v}" --product-skill skills/pixiv-cli/SKILL.md
@@ -158,8 +161,10 @@ jobs:
         shell: bash
         run: go test ./...
       - name: Test Go sources with the race detector
-        # 六个平台都实际执行 gate。go.mod 当前声明的工具链不支持 windows/arm64 的 -race，因此该目标
-        # 必须精确验证 Go 官方“不支持”诊断；其他五个平台实际运行 race tests。
+        # All six platforms actually execute the gate. The toolchain currently
+        # declared in go.mod does not support -race on windows/arm64, so that target
+        # must match Go's official "not supported" diagnostic exactly; the other
+        # five platforms run the real race tests.
         shell: bash
         run: sh scripts/test-race-gate.sh
       - name: Vet Go sources
@@ -181,7 +186,8 @@ jobs:
             exit 1
           }
 
-  # 生产资产在独立 runner 上从 immutable tag 重建，避免测试进程的副作用影响 Release。
+  # Production assets are rebuilt on a separate runner from the immutable tag so
+  # side effects of the test processes cannot affect the Release.
   build_production:
     name: Build production ${{ matrix.goos }}/${{ matrix.goarch }}
     needs:
@@ -256,8 +262,9 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-  # 容器与生产资产共享同一个质量门禁，并在其后的原生 runner 上并行构建。
-  # 镜像本身不获得 registry 写权限；只产出本地验证过的 OCI artifact。
+  # Containers share the same quality gate as production assets and build in
+  # parallel on native runners afterwards. The image itself gets no registry write
+  # permission; it only produces a locally verified OCI artifact.
   build_container:
     name: Build container ${{ matrix.goos }}/${{ matrix.goarch }}
     needs:
@@ -349,10 +356,13 @@ jobs:
           name: verified-container-${{ matrix.artifact }}
           path: ${{ runner.temp }}/pixiv-cli-${{ matrix.artifact }}.tar
           if-no-files-found: error
-          # publish_container 的恢复输入不能一天后消失；90 天覆盖 registry 修复窗口。
+          # The recovery input for publish_container must not vanish after one day;
+          # 90 days covers the registry repair window.
           retention-days: 90
 
-  # 在进入受保护的 publish job 前，以 tag 内不可变说明、GitHub PR 关联和实际提交范围交叉核对发布来源。
+  # Before entering the protected publish job, cross-check the release provenance
+  # against the immutable notes in the tag, the GitHub PR links, and the actual
+  # commit range.
   release_notes_audit:
     name: Audit release notes provenance
     needs: build_production
@@ -389,8 +399,9 @@ jobs:
             --previous "$previous_tag" \
             --audit "$audit_report"
 
-  # 在不声明 environment 的 job 中验证 tag 所指提交属于默认分支，避免 protected
-  # release Environment 的 secret 在 ancestry shell gate 之前进入同一 job 生命周期。
+  # Verify that the commit the tag points at belongs to the default branch in a job
+  # that declares no environment, so the protected release Environment's secrets do
+  # not enter the same job lifecycle before the ancestry shell gate.
   verify_release_source:
     name: Verify release source trust
     needs:
@@ -456,8 +467,9 @@ jobs:
           go run ./tools/release checksums --dir dist --version "$version" --output dist/checksums.txt
           test -s dist/checksums.txt
 
-      # §14/§15：一次性固化 build-once 产物的 identity 与 checksum。所有 downstream
-      # publisher 只消费这份 immutable handoff，不再自行构建或推断身份。
+      # §14/§15: freeze the identity and checksums of the build-once artifacts in a
+      # single step. Every downstream publisher consumes only this immutable
+      # handoff and no longer builds or infers identity on its own.
       - name: Write the immutable release handoff
         shell: bash
         env:
@@ -610,7 +622,8 @@ jobs:
             exit 1
           fi
           gh release edit "$RELEASE_TAG" --draft=false
-      # 该 artifact 与已发布 Release 使用同一个本地 checksums.txt；下游不得重新下载或重算。
+      # This artifact and the published Release use the same local checksums.txt;
+      # downstream must not re-download or recompute it.
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: verified-release-checksums

@@ -114,6 +114,26 @@ func TestPRMetadataPreservesSmokeDispatchSafety(t *testing.T) {
 		t.Fatalf("body-edit exclusion count = %d, want 1 only on worker dispatch", got)
 	}
 
+	// platform-smoke 同时承载手动 native evidence stage：evidence dispatch 不得
+	// 顺带执行六平台 PR smoke，PR smoke 也不得顺带执行 evidence stage。
+	smokeBody, err := os.ReadFile(filepath.Join(repositoryRoot(t), ".github", "workflows", "platform-smoke.yml"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	smoke := string(smokeBody)
+	for _, required := range []string{
+		"evidence:",
+		"native_evidence:",
+		"if: ${{ inputs.evidence }}",
+		"if: ${{ !inputs.evidence }}",
+		"steps.evidence_matrix.outputs.matrix",
+		"Require audited main ref",
+	} {
+		if !strings.Contains(smoke, required) {
+			t.Fatalf("platform-smoke.yml missing native evidence stage contract %q", required)
+		}
+	}
+
 	for _, path := range []string{"platform-smoke.yml", "container-smoke.yml"} {
 		worker, err := os.ReadFile(filepath.Join(repositoryRoot(t), ".github", "workflows", path))
 		if err != nil {

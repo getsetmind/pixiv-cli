@@ -354,6 +354,8 @@ pixiv user follow add 123456 --restrict private
 pixiv follow remove 123456
 pixiv ranking --mode day
 pixiv recommended --type all --limit 5
+pixiv dic search "初音ミク" --limit 5
+pixiv dic article 初音ミク --no-counters --json
 pixiv download 123456 789012 --output ./downloads
 ```
 
@@ -475,6 +477,23 @@ The canonical data actions are `search`, `detail`, `ranking`, `series`, `comment
 
 Only the structured entity filters documented by each command are accepted. The CLI does not publish an ignored top-level expression filter. Ugoira downloads currently accept `--ugoira-mode gif|apng` (`gif` by default); page selection and non-original quality remain unsupported for Ugoira.
 
+### Pixiv encyclopedia
+
+`pixiv dic` reads the public Pixiv encyclopedia at `dic.pixiv.net`. It needs no local account, no account pool, and no
+Pixiv App API call, and it exports no `--proxy`/`--no-proxy` override; the standard HTTP proxy environment variables
+still apply.
+
+- `pixiv dic search QUERY [--page N] [--limit N] [--json|--ndjson]` searches encyclopedia articles. The upstream
+  search page has no cursor, so `--page` selects one result page and `--limit` truncates it. A query with no match is
+  an empty result: `--json` prints `[]` and `--ndjson` prints nothing.
+- `pixiv dic article TITLE_OR_URL [--lang ja|en] [--no-counters] [--json]` reads one article by title or by a
+  `dic.pixiv.net` article URL. `--lang en` reads the English article, whose `translation` field names the Japanese
+  title. `--no-counters` skips the separate counter request; the JSON document then omits `views`, `works`,
+  `comments`, and `checklists` instead of reporting them as zero.
+
+Both outputs are presentation-only projections of the encyclopedia records, so `categories` and `related` are JSON
+arrays. An article that does not exist fails the command with the upstream status on stderr and writes nothing to stdout.
+
 ### CLI command table
 
 | Command | Usage | Description |
@@ -496,6 +515,8 @@ Only the structured entity filters documented by each command are accepted. The 
 | `search` | `pixiv search [WORD\|IMAGE_PATH_OR_URL] [-t artwork\|novel\|user] [options]` | Canonical entity search or automatic reverse-image search. A regular file or explicit HTTP(S) source selects image mode; `--trending-tags` is the no-word artwork tag-list mode and does not accept search filters or pagination. |
 | `detail` | `pixiv detail [ID_OR_URL] [-t artwork\|novel\|user] [--content] [--json\|--ndjson]` | Reads one artwork, novel, or user, or consumes canonical NDJSON records. `--content` is a retained novel-only compatibility flag; the v1 App content endpoint is unavailable, so it returns `content_unavailable` before opening the account pool or requesting the rejected endpoint. |
 | `ranking` | `pixiv ranking [-t artwork\|novel] [--mode MODE --date YYYY-MM-DD --page N --limit N]` | Reads artwork or novel rankings. `artwork` is the default; `--date` is supported only for artwork ranking. |
+| `dic search` | `pixiv dic search QUERY [--page N --limit N --json\|--ndjson]` | Searches the public Pixiv encyclopedia at `dic.pixiv.net`. No local account is needed; one upstream result page is fetched, `--limit` truncates it, and no match is an empty result. |
+| `dic article` | `pixiv dic article TITLE_OR_URL [--lang ja\|en --no-counters --json]` | Reads one Pixiv encyclopedia article by title or `dic.pixiv.net` URL. `--lang en` exposes the English article's `translation`, and `--no-counters` omits the counter fields instead of reporting zero. |
 | `series` | `pixiv series SERIES_ID_OR_URL -t artwork\|novel [--page N --limit N --json\|--ndjson]` | Lists the artworks or novels in one series. The input may be a positive series ID or a supported artwork/novel series URL; the entity type is required and must match the URL namespace. |
 | `comment` | `pixiv comment ID -t artwork\|novel [--page N --limit N --json\|--ndjson]`; `pixiv comment create ID -t artwork\|novel --comment TEXT [--json]`; `pixiv comment reply ID -t artwork\|novel --parent-comment-id COMMENT_ID --comment TEXT [--json]`; `pixiv comment stamp ID -t artwork\|novel --stamp-id STAMP_ID [--comment TEXT] [--json]`; `pixiv comment delete COMMENT_ID -t artwork\|novel [--json]`; `pixiv comment stamps [--json\|--ndjson]` | Preserves the artwork/novel comment read route and adds explicit create, reply, stamp, delete, and stamp-list actions. Comment reads preserve optional `total`/`access_control`; opaque numeric `comment_access_control` remains nested under `access_control` without boolean inference. Comment mutations accept positive numeric IDs only; create/reply require a non-empty body, stamp accepts an optional body and forwards empty text for sticker-only wire, create/reply/stamp return `comment_id`, delete returns a status, and `stamps` returns output-safe stamp DTOs without pagination or runtime URLs. |
 | `bookmark` | `pixiv bookmark list\|tags\|detail\|add\|remove ...` | Lists artwork/novel bookmarks, reads artwork/novel bookmark tags/detail, or mutates artwork bookmarks. `list` and `tags` accept a user ID or user URL and support `--type artwork\|novel\|all`; `all` keeps artwork before novel and preserves typed records/tags. `detail`, `add`, and `remove` accept artwork/novel but not `all`; add/remove default to `artwork` and select the namespace with `--type`. |
@@ -560,6 +581,9 @@ extension. Extensions also replace ASCII control characters and remove trailing 
 | list commands | `--page` / `-p` | empty | 1-based logical page; must be used with a positive `--limit`. |
 | `ranking` | `--mode` | `day` | One of `day`, `day_male`, `day_female`, `week`, `week_original`, `week_rookie`, `month`, `day_manga`, `week_manga`, `month_manga`, `week_rookie_manga`, `day_r18`, `day_male_r18`, `day_female_r18`, `week_r18`, `week_r18g`. The final nine require authentication. |
 | `ranking` | `--date` | empty | Ranking date, typically `YYYY-MM-DD`. |
+| `dic search` | `--page` / `--limit` | empty | The encyclopedia search page has no cursor, so `--page` selects one upstream page and `--limit` truncates it. |
+| `dic article` | `--lang` | `ja` | Encyclopedia article language: `ja` or `en`. The English article's `translation` names the Japanese title. |
+| `dic article` | `--no-counters` | `false` | Skips the separate counter request; the JSON document then omits `views`, `works`, `comments`, and `checklists`. |
 | `detail` | `--type` / `-t` | `artwork` | Entity type: `artwork` (also accepts `illust`, `manga`, `ugoira`), `novel`, or `user`; omitted type in record mode is inferred from the record. `--content` is a retained novel-only compatibility flag and returns `content_unavailable` before account-pool execution while the v1 content endpoint is unavailable. |
 | `series`, `comment` | `--type` / `-t` | required | Entity type: `artwork` or `novel`; series accepts a positive ID or a supported series URL, and its URL namespace must match the selected type. Comment read/create/reply/stamp use a positive artwork/novel ID; comment delete uses the type to select the artwork or novel comment endpoint. The input is interpreted only after the type is selected. |
 | `comment create`, `comment reply` | `--comment` | required | Non-empty comment body. The CLI rejects an empty value and never truncates the supplied text. |

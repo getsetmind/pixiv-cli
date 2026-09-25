@@ -4,6 +4,8 @@
 
 ## 新增
 
+- 新增 `pixiv dic search` 与 `pixiv dic article`，无需本地账号即可读取 `dic.pixiv.net` 上的公开 Pixiv 百科。`dic article --no-counters` 跳过计数请求而不是报告 0；两个命令都提供百科记录的 `--json`/`--ndjson` 投影。
+
 - 为 `pixiv search SOURCE` 与 Pixiv MCP `reverse_search` tool 新增反向搜图。CLI 会自动把显式 HTTP(S) URL 和现有常规文件识别为图片模式；SauceNAO、ascii2d color/BOVW 与 `all` provider 返回稳定 JSON envelope、通用 artwork/user record 以及 canonical record 的 NDJSON，并明确报告 provider partial 结果。([`69caa31`](https://github.com/FlanChanXwO/pixiv-cli/commit/69caa31)、[`6599dec`](https://github.com/FlanChanXwO/pixiv-cli/commit/6599dec)、[`ef0dcfe`](https://github.com/FlanChanXwO/pixiv-cli/commit/ef0dcfe)、[`e67e21f`](https://github.com/FlanChanXwO/pixiv-cli/commit/e67e21f)、[`959414e`](https://github.com/FlanChanXwO/pixiv-cli/commit/959414e)、[`ce03802`](https://github.com/FlanChanXwO/pixiv-cli/commit/ce03802)、[`298e0f3`](https://github.com/FlanChanXwO/pixiv-cli/commit/298e0f3))
 
 ## 安全
@@ -40,3 +42,4 @@
 - 下载现在报告部分成功：每个作品原子写入其文件，单个作品的独立失败以失败集合返回而非中止整批，只有 context 取消才会立即停止。([#59](https://github.com/FlanChanXwO/pixiv-cli/pull/59))
 - 账号移除现在默认在 TTY 上确认，移除默认账号后自动重新选中第一个剩余账号。([#59](https://github.com/FlanChanXwO/pixiv-cli/pull/59))
 - 新增默认关闭的 `PIXIV_REVERSE_SEARCH_E2E=1` 维护脚本，用于在获授权环境观察真实 provider 兼容性；source 和 key 只从私有环境提供，绝不作为命令参数传入，且不属于普通 release 门禁。([`d103eb4`](https://github.com/FlanChanXwO/pixiv-cli/commit/d103eb4))
+- 把手动触发的六平台 native evidence 矩阵并入 `platform-smoke.yml` 的 `evidence: true` dispatch stage，由一个 workflow 同时拥有 PR smoke worker 与维护者 evidence 入口，且两个 stage 互不付费；evidence 仍只在受审默认分支运行，PR 也不再能通过改动该入口触发六平台 smoke。([`92e14ab8`](https://github.com/FlanChanXwO/pixiv-cli/commit/92e14ab8))

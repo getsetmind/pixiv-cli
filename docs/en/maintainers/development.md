@@ -82,7 +82,7 @@ sh scripts/test-rust-vendor.sh
 
 ### Native runner evidence
 
-`.github/workflows/native-evidence.yml` is an independent, non-publishing maintenance entry point and only runs through explicit `workflow_dispatch` on the audited default branch. Ordinary `main` pushes do not start another six-platform evidence matrix after PR verification. Global `permissions: {}`, job-only `contents: read`. It has no `environment`, secret, tag/Release/tap/signing command. Its platform matrix comes from the `native-evidence` capability in `ci/platforms.json`; the workflow installs the registry-selected Rust toolchain, checks vendored Rust inputs, calls `scripts/build-platform.sh` for the target staticlib/binary/archive chain, runs the real cgo GIF/APNG smoke, records evidence, and uploads only the evidence directory. Full-SHA actions, credential-free checkout, no-secret/no-publish boundaries and build ownership are covered by the focused test-only workflow contract rather than a runtime YAML self-policy.
+`.github/workflows/platform-smoke.yml` also owns the `native_evidence` stage: a manual `workflow_dispatch` with `evidence: true` runs it, and an ordinary PR-gate dispatch runs only the smoke stage. The two stages are mutually exclusive per run — `native_evidence` requires `inputs.evidence`, and the smoke `worker` job requires its negation — so neither run pays for the other. The evidence stage is an independent, non-publishing maintenance entry point and only runs on the audited default branch (`Require audited main ref`); ordinary `main` pushes do not start another six-platform evidence matrix after PR verification. The workflow keeps global `permissions: {}` and job-only `contents: read`; the evidence job has no `environment`, secret, tag/Release/tap/signing command. Its platform matrix comes from the `native-evidence` capability in `ci/platforms.json`; the job installs the registry-selected Rust toolchain, checks vendored Rust inputs, calls `scripts/build-platform.sh` for the target staticlib/binary/archive chain, runs the real cgo GIF/APNG smoke, records evidence, and uploads only the evidence directory. Full-SHA actions, credential-free checkout, no-secret/no-publish boundaries and build ownership are covered by the focused test-only workflow contract rather than a runtime YAML self-policy. `.github/workflows/native-evidence.yml` keeps a documentation-only change-scope rule: an entry point that no PR can run does not need a PR gate.
 
 For the two Windows targets, the Rust library uses `*-pc-windows-msvc`; the corresponding cgo selector must declare the library via `-L${SRCDIR}/… -lugoira_rs` and must not pass a drive-letter absolute `.lib` path directly to cgo; it must also explicitly carry the `advapi32`, `ntdll`, `userenv`, `ws2_32` and `dbghelp` import libraries required by the Rust `std`. Native evidence passes the registry-selected `CC='clang -fuse-ld=lld'` to `scripts/build-platform.sh` and to the native smoke; LLD can handle MSVC `.lib` and also lets Go skip the GCC-specific debug linker script. This is not a runtime fallback and does not change the C linker choice on darwin/linux.
 
@@ -458,8 +458,8 @@ An authorized recovery dispatch supplies the original `release_run_id` to the sp
 
 `.gitignore` already excludes:
 
-- `.DS_Store`
-- build artifacts `build/`, `pixiv`, `pixiv-cli`
+- `.DS_Store` and other OS/editor files
+- build artifacts `build/`, `dist/`, `bin/`, `pixiv`, `pixiv-cli`, `pixiv-auth`, `*.exe`
 - local download directories `downloads/`
 - local databases `*.db`
 - common cache and temporary files

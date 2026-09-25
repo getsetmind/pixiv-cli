@@ -1,16 +1,18 @@
 name: Browser provider native contracts
 
-# 该 workflow 只运行无凭据的 provider contract；真实浏览器 session 只允许在受保护
-# release-prep host 运行，不把 Keychain/DPAPI/Secret Service value 带入 CI。
-# 这是显式维护者 evidence，不在普通 main push 后重复运行。
+# This workflow runs credential-free provider contracts only. Real browser sessions
+# may run only on the protected release-prep host; Keychain/DPAPI/Secret Service
+# values never enter CI. This is explicit maintainer evidence and does not repeat
+# after an ordinary main push.
 on:
   workflow_dispatch: {}
 
 permissions: {}
 
 jobs:
-  # §13.1：平台集合的唯一事实源是 ci/platforms.json；这里经 tools/platformmatrix
-  # 解析 browser capability，workflow 不再硬编码六个平台。
+  # §13.1: ci/platforms.json is the single source of truth for the platform set.
+  # tools/platformmatrix resolves the browser capability, so the workflow no longer
+  # hardcodes six platforms.
   resolve_platforms:
     name: Browser setup
     runs-on: ubuntu-24.04
@@ -30,8 +32,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          # §13.2：平台身份来自 ci/platforms.json，Firefox 版本/URL/SHA256 来自
-          # 独立的 ci/browser-fixtures.json；两者在这里合并成 matrix。
+          # §13.2: platform identity comes from ci/platforms.json and the Firefox
+          # version/URL/SHA256 come from the separate ci/browser-fixtures.json;
+          # this step merges both into the matrix.
           platforms=$(go run ./tools/platformmatrix --capability browser)
           printf 'matrix=%s\n' "$(printf '%s' "$platforms" | jq -c --slurpfile fixtures ci/browser-fixtures.json '
             .include |= map(

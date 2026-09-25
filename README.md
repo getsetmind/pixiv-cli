@@ -4,7 +4,7 @@
 
 **Pixiv CLI · MCP stdio server · Go SDK**
 
-[English](README.md) · [简体中文](README.zh-CN.md)
+[English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md)
 
 <p><a href="https://github.com/FlanChanXwO/pixiv-cli/actions/workflows/ci.yml"><img alt="Quality gate" src="https://github.com/FlanChanXwO/pixiv-cli/actions/workflows/ci.yml/badge.svg?event=push"></a> <a href="https://github.com/FlanChanXwO/pixiv-cli/releases/latest"><img alt="Release" src="https://img.shields.io/github/v/release/FlanChanXwO/pixiv-cli?style=flat-square"></a> <a href="go.mod"><img alt="Go" src="https://img.shields.io/github/go-mod/go-version/FlanChanXwO/pixiv-cli?style=flat-square"></a> <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/FlanChanXwO/pixiv-cli?style=flat-square"></a> <img alt="Views" src="https://hits.sh/github.com/FlanChanXwO/pixiv-cli.svg?style=flat-square&amp;label=views"></p>
 
@@ -316,10 +316,6 @@ pixiv auth check
 | [Architecture](docs/en/maintainers/architecture.md) | Package boundaries and runtime flow |
 | [Development](docs/en/maintainers/development.md) | Toolchain, tests, builds, and releases |
 | [Changelog](changelog/README.md) | User-visible changes |
-
-## Contributing
-
-Bug reports, documentation fixes, tests, and focused features are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request; discuss large or public-interface changes first.
 
 ## License
 

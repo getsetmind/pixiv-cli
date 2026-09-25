@@ -61,7 +61,7 @@ func runScopeClassifier(t *testing.T, targetPath string) map[string]string {
 	// 先铺基线 fixture（内容不重要，只需让规则能命中路径）。
 	for _, fixture := range []string{
 		".github/workflows/pr-metadata.yml",
-		".github/workflows/platform-smoke.yml",
+		".github/workflows/native-evidence.yml",
 		".github/workflows/container-smoke.yml",
 		"scripts/classify-change-scope.sh",
 		"ci/platforms.json",
@@ -114,6 +114,10 @@ func runScopeClassifier(t *testing.T, targetPath string) map[string]string {
 // controller——它决定 smoke classification、dispatch 两个 worker、并持有
 // Platform/Container required gate。因此改动它必须真的跑 full smoke，否则
 // controller 自身的破坏性修改会被判成“只需 Quality”而跳过全部 smoke。
+//
+// 让 native evidence 与其宿主 platform-smoke.yml 保持纯文档分类：evidence stage
+// 只在默认分支的手动 dispatch 上运行，PR 无法用它影响自己的判定，也就不需要
+// 为一个 PR 触发不了的入口承担六平台 smoke。
 func TestSmokeControllerChangesRequireFullSmoke(t *testing.T) {
 	t.Parallel()
 
@@ -140,8 +144,9 @@ func TestTrustedSmokeOwnerScopesRemainCorrect(t *testing.T) {
 		{".github/workflows/container-smoke.yml", "true", "true", "true"},
 		{"ci/platforms.json", "true", "true", "true"},
 		{"tools/platformmatrix/main.go", "true", "true", "true"},
-		// platform worker 只拥有 platform smoke，不涉及容器。
-		{".github/workflows/platform-smoke.yml", "true", "true", "false"},
+		// smoke workflow 同时是手动 native evidence 入口；evidence 只从默认分支运行，
+		// 既不在 PR 执行，也就不是该 PR 的 scope owner，保持纯文档分类。
+		{".github/workflows/platform-smoke.yml", "false", "false", "false"},
 		// 分类策略文件只决定“是否运行”；R6 已让它从 trusted base 执行，
 		// 因此 PR 无法用它影响自己的判定，保持 Quality-only 即可。
 		{"scripts/classify-change-scope.sh", "true", "false", "false"},

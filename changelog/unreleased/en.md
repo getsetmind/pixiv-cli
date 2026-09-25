@@ -4,6 +4,8 @@
 
 ## Added
 
+- Added `pixiv dic search` and `pixiv dic article`, which read the public Pixiv encyclopedia at `dic.pixiv.net` without a local account. `dic article --no-counters` skips the counter request instead of reporting zeros, and both commands expose `--json`/`--ndjson` projections of the encyclopedia records.
+
 - Added reverse-image search to `pixiv search SOURCE` and the Pixiv MCP `reverse_search` tool. The CLI automatically selects image mode for explicit HTTP(S) URLs and existing regular files; SauceNAO, ascii2d color/BOVW, and `all` providers return a stable JSON envelope, generic artwork/user records, and NDJSON for canonical records, with explicit partial-provider semantics. ([`69caa31`](https://github.com/FlanChanXwO/pixiv-cli/commit/69caa31), [`6599dec`](https://github.com/FlanChanXwO/pixiv-cli/commit/6599dec), [`ef0dcfe`](https://github.com/FlanChanXwO/pixiv-cli/commit/ef0dcfe), [`e67e21f`](https://github.com/FlanChanXwO/pixiv-cli/commit/e67e21f), [`959414e`](https://github.com/FlanChanXwO/pixiv-cli/commit/959414e), [`ce03802`](https://github.com/FlanChanXwO/pixiv-cli/commit/ce03802), [`298e0f3`](https://github.com/FlanChanXwO/pixiv-cli/commit/298e0f3))
 
 ## Security
@@ -40,3 +42,4 @@
 - Download now reports partial success: each artwork writes its files atomically, independent per-artwork failures are returned as a failure set rather than aborting the whole batch, and only context cancellation stops immediately. ([#59](https://github.com/FlanChanXwO/pixiv-cli/pull/59))
 - Account removal now confirms on a TTY by default and reselects the first remaining account after the default is removed. ([#59](https://github.com/FlanChanXwO/pixiv-cli/pull/59))
 - Added a default-off `PIXIV_REVERSE_SEARCH_E2E=1` maintenance script for authorized real-provider compatibility observation; source and key are supplied through the private environment, never command arguments, and the check is not part of the normal release gate. ([`d103eb4`](https://github.com/FlanChanXwO/pixiv-cli/commit/d103eb4))
+- Merged the manual six-platform native evidence matrix into `platform-smoke.yml` as an `evidence: true` dispatch stage, so one workflow owns both the PR smoke worker and the maintainer evidence entry point without either stage paying for the other; evidence still runs only on the audited default branch and a PR can no longer trigger six-platform smoke by touching that entry point. ([`92e14ab8`](https://github.com/FlanChanXwO/pixiv-cli/commit/92e14ab8))

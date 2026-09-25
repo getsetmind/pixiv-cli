@@ -1,8 +1,17 @@
 name: Platform smoke workers
 
+# This workflow is both the PR smoke worker and the explicit maintainer native
+# evidence entry point. A PR-gate dispatch runs only the smoke stage; a manual
+# dispatch with evidence=true runs only the native evidence stage on the default
+# branch. The two stages never mix; see the per-job if conditions.
 on:
   workflow_dispatch:
     inputs:
+      evidence:
+        description: Also run the native evidence stage (default branch only)
+        required: false
+        default: false
+        type: boolean
       pr_number:
         description: Pull request number for this worker run
         required: false
@@ -33,6 +42,7 @@ jobs:
       contents: read
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
+      evidence_matrix: ${{ steps.evidence_matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -45,9 +55,17 @@ jobs:
         id: matrix
         shell: bash
         run: go run ./tools/platformmatrix --capability smoke --github-output "$GITHUB_OUTPUT"
+      - name: Resolve the native evidence matrix
+        id: evidence_matrix
+        shell: bash
+        run: go run ./tools/platformmatrix --capability native-evidence --github-output "$GITHUB_OUTPUT"
 
   worker:
     needs: setup
+    # The PR smoke worker and the evidence stage each own a whole run: a manual
+    # evidence dispatch carries no PR input, so this job must skip explicitly
+    # instead of repeating the six-platform smoke as if it were evidence.
+    if: ${{ !inputs.evidence }}
     name: Native platform - ${{ matrix.goos }}/${{ matrix.goarch }}
     runs-on: ${{ matrix.runner }}
     permissions:
@@ -138,6 +156,88 @@ jobs:
           PIXIV_E2E_BINARY="$(pwd)/$binary" \
           PIXIV_E2E_EXPECTED_VERSION="v${version}" \
           go test ./e2e -run '^TestPixivBinaryPackagedSmoke$' -count=1
+
+  native_evidence:
+    needs: setup
+    if: ${{ inputs.evidence }}
+    name: Native evidence ${{ matrix.goos }}/${{ matrix.goarch }}
+    runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: read
+    env:
+      RUSTUP_TOOLCHAIN: ${{ matrix.rust_toolchain }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.setup.outputs.evidence_matrix) }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
+        with:
+          go-version-file: go.mod
+      - name: Require audited main ref
+        shell: bash
+        run: test "$GITHUB_REF" = 'refs/heads/main'
+      - name: Install the pinned native Rust toolchain
+        shell: bash
+        run: rustup toolchain install '${{ matrix.rust_toolchain }}' --profile minimal --target '${{ matrix.rust_target }}' --no-self-update
+      - name: Check vendored Rust sources
+        shell: bash
+        run: sh scripts/test-rust-vendor.sh
+      - name: Build and package the versioned native binary
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="0.1.0-native-evidence.${GITHUB_RUN_ID}"
+          mkdir -p evidence
+          archive=$(sh scripts/build-platform.sh \
+            --target '${{ matrix.goos }}/${{ matrix.goarch }}' \
+            --rust-target '${{ matrix.rust_target }}' \
+            --cc '${{ matrix.cc }}' \
+            --version "$version" \
+            --output-dir evidence \
+            --package)
+          binary='evidence/pixiv'
+          if [ '${{ matrix.goos }}' = windows ]; then
+            binary='evidence/pixiv.exe'
+          fi
+          "$binary" --version
+          {
+            printf 'EVIDENCE_VERSION=%s\n' "$version"
+            printf 'EVIDENCE_BINARY=%s\n' "$binary"
+            printf 'EVIDENCE_ARCHIVE=%s\n' "$archive"
+          } >> "$GITHUB_ENV"
+      - name: Run native GIF/APNG smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          CC='${{ matrix.cc }}' go test ./internal/media/ugoira -run '^TestRustUgoiraEncoderNativeGIFAndAPNG$' -count=1
+      - name: Record staticlib, binary and archive evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          staticlib='libugoira_rs.a'
+          if [ '${{ matrix.goos }}' = windows ]; then
+            staticlib='ugoira_rs.lib'
+          fi
+          cp "internal/media/ugoira/rust/staticlib/${{ matrix.rust_target }}/$staticlib" "evidence/$staticlib"
+          go run ./scripts/cmd/nativeevidence record \
+            --repo-root . \
+            --version "$EVIDENCE_VERSION" \
+            --source-commit "$GITHUB_SHA" \
+            --target '${{ matrix.goos }}/${{ matrix.goarch }}' \
+            --rust-target '${{ matrix.rust_target }}' \
+            --staticlib "evidence/$staticlib" \
+            --binary "$EVIDENCE_BINARY" \
+            --archive "$EVIDENCE_ARCHIVE" \
+            --output evidence/native-evidence.json
+      - name: Upload native evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: native-evidence-${{ matrix.artifact }}
+          path: evidence
+          if-no-files-found: error
 
   publish:
     if: ${{ always() && inputs.check_run_id != '' }}
