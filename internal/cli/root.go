@@ -38,6 +38,7 @@ import (
 	pixivsearch "github.com/FlanChanXwO/pixiv-cli/internal/cli/commands/pixiv/search"
 	pixivseries "github.com/FlanChanXwO/pixiv-cli/internal/cli/commands/pixiv/series"
 	pixivtimeline "github.com/FlanChanXwO/pixiv-cli/internal/cli/commands/pixiv/timeline"
+	pixivugoira "github.com/FlanChanXwO/pixiv-cli/internal/cli/commands/pixiv/ugoira"
 	pixivuser "github.com/FlanChanXwO/pixiv-cli/internal/cli/commands/pixiv/user"
 	updatecommands "github.com/FlanChanXwO/pixiv-cli/internal/cli/commands/update"
 	clidiagnostics "github.com/FlanChanXwO/pixiv-cli/internal/cli/diagnostics"
@@ -717,6 +718,7 @@ func (a app) pixivCommands() []*cobra.Command {
 		pixivcomment.New(a.pixivDataDeps()),
 		pixivrecommended.New(a.recommendedDeps()),
 		pixivtimeline.New(a.pixivDataDeps()),
+		pixivugoira.New(a.ugoiraDeps()),
 		pixivmypixiv.New(a.pixivDataDeps()),
 		pixivuser.New(a.userDeps()),
 		pixivbookmark.New(a.pixivDataDeps()),
@@ -802,6 +804,26 @@ func (a app) userDeps() pixivuser.Dependencies {
 			return data.Pooled(ctx, pixivdeps.Request(request), attempt)
 		},
 		Follow: func() *cobra.Command { return pixivfollow.New(data) },
+	}
+}
+
+// ugoiraDeps 是 ugoira 元数据 owner 的专属端口：读取作品 kind 与 ugoira metadata，
+// 其余账号池/JSON 语义复用同一条 pixivDataDeps 端口。
+func (a app) ugoiraDeps() pixivugoira.Dependencies {
+	data := a.pixivDataDeps()
+	return pixivugoira.Dependencies{
+		Output:     a.out,
+		UsageError: newUsageError,
+		JSONOut:    data.JSONOut,
+		Pooled: func(ctx context.Context, request pixivugoira.Request, attempt func(context.Context, *pixiv.Client) (bool, error)) error {
+			return data.Pooled(ctx, pixivdeps.Request{HTTPSProxyOverride: request.HTTPSProxyOverride}, attempt)
+		},
+		FetchArtwork: func(ctx context.Context, client *pixiv.Client, id int64) (pixiv.Artwork, error) {
+			return client.Artwork(ctx, pixiv.ArtworkRequest{ArtworkID: id})
+		},
+		FetchUgoiraMetadata: func(ctx context.Context, client *pixiv.Client, id int64) (pixiv.UgoiraMetadata, error) {
+			return client.UgoiraMetadata(ctx, pixiv.UgoiraMetadataRequest{ArtworkID: id})
+		},
 	}
 }
 

@@ -1007,7 +1007,7 @@ func TestDownloadSourcesDownloadsDirectCDNURLWithSafeBasename(t *testing.T) {
 	require.Empty(t, report.Items[0].Title)
 	require.Empty(t, report.Items[0].Author)
 	require.Equal(t, "resource", report.Items[0].Type)
-	require.Equal(t, []downloader.DownloadedFile{{Path: gotPath, Page: 1}}, report.Items[0].Files)
+	require.Equal(t, []downloader.DownloadedFile{{Path: gotPath, Page: 1, Bytes: int64(len("direct-image"))}}, report.Items[0].Files)
 	assertFileBody(t, gotPath, "direct-image")
 }
 
