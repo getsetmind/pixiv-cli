@@ -28,6 +28,7 @@ import (
 	pixivbookmark "github.com/FlanChanXwO/pixiv-cli/internal/cli/commands/pixiv/bookmark"
 	pixivcomment "github.com/FlanChanXwO/pixiv-cli/internal/cli/commands/pixiv/comment"
 	pixivdetail "github.com/FlanChanXwO/pixiv-cli/internal/cli/commands/pixiv/detail"
+	pixivdic "github.com/FlanChanXwO/pixiv-cli/internal/cli/commands/pixiv/dic"
 	downloadcommands "github.com/FlanChanXwO/pixiv-cli/internal/cli/commands/pixiv/download"
 	pixivfollow "github.com/FlanChanXwO/pixiv-cli/internal/cli/commands/pixiv/follow"
 	mcpcommands "github.com/FlanChanXwO/pixiv-cli/internal/cli/commands/pixiv/mcp"
@@ -48,6 +49,7 @@ import (
 	fanboxmcpserver "github.com/FlanChanXwO/pixiv-cli/internal/mcpserver/fanbox"
 	mcpserver "github.com/FlanChanXwO/pixiv-cli/internal/mcpserver/pixiv"
 	downloader "github.com/FlanChanXwO/pixiv-cli/internal/media/downloader"
+	dicservice "github.com/FlanChanXwO/pixiv-cli/internal/services/dic"
 	fanboxapp "github.com/FlanChanXwO/pixiv-cli/internal/services/fanbox"
 	fanboxaccount "github.com/FlanChanXwO/pixiv-cli/internal/services/fanbox/account"
 	pixivapp "github.com/FlanChanXwO/pixiv-cli/internal/services/pixiv"
@@ -683,11 +685,33 @@ func (a app) pixivDataDeps() pixivdeps.Data {
 	}
 }
 
+// dicDeps 只把输出、usage 包装、runtime JSON 开关与匿名百科 client 交给 dic
+// owner。百科不读取本地账号，因此这里不注入账号池端口。
+func (a app) dicDeps() pixivdic.Dependencies {
+	return pixivdic.Dependencies{
+		Input:      a.in,
+		Output:     a.out,
+		UsageError: newUsageError,
+		JSONOut: func(override *bool) (bool, error) {
+			if override != nil {
+				return *override, nil
+			}
+			runtime, err := a.runtimeConfig()
+			if err != nil {
+				return false, err
+			}
+			return runtime.OutputJSON, nil
+		},
+		Reader: dicservice.New(dicservice.NewHTTPTransport(dicservice.HTTPTransportOptions{})),
+	}
+}
+
 func (a app) pixivCommands() []*cobra.Command {
 	return []*cobra.Command{
 		pixivsearch.New(a.searchDeps()),
 		pixivsearch.NewNovel(a.searchDeps()),
 		pixivdetail.New(a.detailDeps()),
+		pixivdic.New(a.dicDeps()),
 		pixivranking.New(a.pixivDataDeps()),
 		pixivseries.New(a.pixivDataDeps()),
 		pixivcomment.New(a.pixivDataDeps()),
