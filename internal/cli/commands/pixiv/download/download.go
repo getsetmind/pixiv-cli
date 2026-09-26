@@ -23,6 +23,8 @@ type Deps struct {
 	Output      io.Writer
 	ErrorOutput io.Writer
 	UsageError  func(error) error
+	// JSONOut 返回 JSON 输出开关（nil override 时读取 runtime config）。
+	JSONOut func(*bool) (bool, error)
 	// Open 为一次 operation 打开独立认证快照的 public SDK client。
 	Open func(CommandRequest) (*pixiv.Client, error)
 	// Pooled 在账号池安全重放边界内执行一次下载读取。

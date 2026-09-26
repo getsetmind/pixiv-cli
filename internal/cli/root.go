@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math"
 	"os"
 	"path/filepath"
 	"slices"
@@ -65,6 +66,7 @@ import (
 	database "github.com/FlanChanXwO/pixiv-cli/internal/storage/database"
 	filesecret "github.com/FlanChanXwO/pixiv-cli/internal/storage/file/secret"
 	"github.com/FlanChanXwO/pixiv-cli/internal/update"
+	"github.com/FlanChanXwO/pixiv-cli/sdk"
 	fanbox "github.com/FlanChanXwO/pixiv-cli/sdk/fanbox"
 	pixiv "github.com/FlanChanXwO/pixiv-cli/sdk/pixiv"
 	"github.com/spf13/cobra"
@@ -276,10 +278,11 @@ func runContext(ctx context.Context, args []string, in io.Reader, out io.Writer,
 		}
 	}
 	err = a.finishDiagnostics(err)
-	return a.exitWithNDJSONScope(err, commandWritesNDJSON(target) || commandAutoWritesNDJSON(target, out))
+	machineOutput := commandWritesNDJSON(target) || commandExplicitJSON(target)
+	return a.exitWithNDJSONScope(err, commandWritesNDJSON(target) || commandAutoWritesNDJSON(target, out), machineOutput)
 }
 
-func (a app) exitWithNDJSONScope(err error, ndjsonOutput bool) int {
+func (a app) exitWithNDJSONScope(err error, ndjsonOutput, machineOutput bool) int {
 	if err == nil {
 		return 0
 	}
@@ -300,8 +303,54 @@ func (a app) exitWithNDJSONScope(err error, ndjsonOutput bool) int {
 	if errors.As(err, &pipelineErr) {
 		return 1
 	}
+	if machineOutput {
+		if writeErr := writeErrorEnvelope(a.errOut, err); writeErr == nil {
+			return 1
+		}
+	}
 	fmt.Fprintln(a.errOut, "error:", err)
 	return 1
+}
+
+// commandExplicitJSON 报告目标命令是否显式传入 --json；只有显式机器可读输出才
+// 写 stderr error envelope，auto NDJSON 不写。
+func commandExplicitJSON(cmd *cobra.Command) bool {
+	if cmd == nil {
+		return false
+	}
+	flag := cmd.Flags().Lookup("json")
+	return flag != nil && flag.Changed
+}
+
+// errorEnvelope 是 --json/--ndjson 命令失败时的 machine-readable stderr 行。
+type errorEnvelope struct {
+	Error envelopeError `json:"error"`
+}
+
+type envelopeError struct {
+	Code              string `json:"code"`
+	Message           string `json:"message,omitempty"`
+	RetryAfterSeconds int64  `json:"retry_after_seconds,omitempty"`
+}
+
+// writeErrorEnvelope 只在显式机器可读输出时把分类错误写成一行 JSON。Message
+// 与非 JSON 路径打印的 error 文本同源，仍是 SDK/本地已脱敏的分类文本，不含
+// 原始上游响应、URL 或账号信息。
+func writeErrorEnvelope(out io.Writer, err error) error {
+	code := string(sdk.ReasonOf(err))
+	if code == "" {
+		code = "command_failed"
+	}
+	body := envelopeError{Code: code, Message: err.Error()}
+	var classified *sdk.Error
+	if errors.As(err, &classified) && classified.Retry.HasAfter {
+		seconds := int64(math.Ceil(time.Until(classified.Retry.After).Seconds()))
+		if seconds < 0 {
+			seconds = 0
+		}
+		body.RetryAfterSeconds = seconds
+	}
+	return json.NewEncoder(out).Encode(errorEnvelope{Error: body})
 }
 
 // startupError 保持解析成功后的启动副作用失败契约：它是命令启动失败，
@@ -620,6 +669,16 @@ func (a app) downloadDeps() downloadcommands.Deps {
 		Output:      a.out,
 		ErrorOutput: a.errOut,
 		UsageError:  newUsageError,
+		JSONOut: func(override *bool) (bool, error) {
+			if override != nil {
+				return *override, nil
+			}
+			runtime, err := a.runtimeConfig()
+			if err != nil {
+				return false, err
+			}
+			return runtime.OutputJSON, nil
+		},
 		Open: func(request downloadcommands.CommandRequest) (*pixiv.Client, error) {
 			sdk, err := load()
 			if err != nil {

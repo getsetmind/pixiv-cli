@@ -44,6 +44,7 @@ type downloadOptions struct {
 	quality          string
 	ugoiraMode       string
 	onError          string
+	ndjson           bool
 }
 
 var visualRecordTypes = map[string]struct{}{
@@ -127,6 +128,8 @@ func (a controller) newDownloadCommand() *cobra.Command {
 	flags.StringVar(&opts.quality, "quality", opts.quality, "static image quality: original, regular, small, thumb, mini")
 	flags.StringVar(&opts.ugoiraMode, "ugoira-mode", opts.ugoiraMode, "ugoira output mode: gif, apng")
 	flags.StringVar(&opts.onError, "on-error", "skip", "record failure strategy: skip or fail-fast")
+	flags.BoolVarP(&opts.jsonOut, "json", "j", false, "print a JSON artifact report")
+	flags.BoolVar(&opts.ndjson, "ndjson", false, "print one JSON artifact record per line")
 	requirements.Bind(cmd, requirements.DownloadCommand())
 	return cmd
 }
@@ -140,7 +143,8 @@ func (a controller) bindDownloadRuntimeFlags(cmd *cobra.Command, opts *downloadO
 }
 
 func (a controller) runDownload(cmd *cobra.Command, args []string, opts downloadOptions) error {
-	if _, err := pipeline.RecordFailureStrategy(opts.onError); err != nil {
+	failFast, err := pipeline.RecordFailureStrategy(opts.onError)
+	if err != nil {
 		return a.usageError(err)
 	}
 	pages, err := downloader.ParsePageSpec(opts.pages)
@@ -200,11 +204,35 @@ func (a controller) runDownload(cmd *cobra.Command, args []string, opts download
 	if len(args) == 0 {
 		return pipeline.ConsumeActionRecords(cmd.Context(), pipeline.Reader(cmd, a.in), a.errOut, "download", opts.onError, visualRecordTypes, downloadOne, a.usageError)
 	}
+	jsonOut, ndjson, err := a.outputModes(cmd, opts)
+	if err != nil {
+		return err
+	}
 	// 用户页与受资源策略允许的直链可能在一次调用里展开多个文件。只在结果中
 	// 尚无已发布文件时，账号池才可因有效 Retry-After 安全重放这次调用。
 	return a.deps.Pooled(cmd.Context(), clientReq, func(ctx context.Context, client *pixiv.Client) (bool, error) {
-		report, err := services.download.DownloadSources(ctx, client, args, request)
-		return downloadAttemptWithWarnings(a.errOut, report, err)
+		report, operationErr := services.download.DownloadSources(ctx, client, args, request)
+		committed := ReportCommitted(report)
+		if warningErr := ReportWarnings(a.errOut, report); warningErr != nil {
+			return committed, errors.Join(operationErr, warningErr)
+		}
+		if operationErr != nil {
+			return committed, operationErr
+		}
+		machine := jsonOut || ndjson
+		if machine && !failFast && (len(report.Items) > 0 || len(report.Failures) > 0) {
+			if err := writeDownloadReport(a.out, report, ndjson); err != nil {
+				return committed, pipeline.FatalRecordPipeline(err)
+			}
+		}
+		if len(report.Failures) == 0 {
+			return committed, nil
+		}
+		if machine && !failFast {
+			// 失败已作为 stdout 记录报告，root 不应再写 envelope。
+			return committed, &pipeline.PipelineDiagnosticError{}
+		}
+		return committed, ReportError(report)
 	})
 }
 
@@ -226,6 +254,26 @@ func downloadAttemptWithWarnings(w io.Writer, report downloader.DownloadReport, 
 		resultErr = errors.Join(resultErr, warningErr)
 	}
 	return committed, resultErr
+}
+
+// outputModes 解析 --json/--ndjson；两者互斥。--ndjson 优先生效，--json 未显式
+// 指定时沿用 runtime 的 JSON 输出开关。
+func (a controller) outputModes(cmd *cobra.Command, opts downloadOptions) (bool, bool, error) {
+	if cmd.Flags().Changed("json") && cmd.Flags().Changed("ndjson") {
+		return false, false, a.usageError(errors.New("--json and --ndjson cannot be used together"))
+	}
+	if opts.ndjson {
+		return false, true, nil
+	}
+	if a.deps.JSONOut == nil {
+		return false, false, nil
+	}
+	var override *bool
+	if cmd.Flags().Changed("json") {
+		override = &opts.jsonOut
+	}
+	jsonOut, err := a.deps.JSONOut(override)
+	return jsonOut, false, err
 }
 
 // ReportWarnings 把下载过程中的非阻断提示写到 stderr，避免污染 stdout 的
