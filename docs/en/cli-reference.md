@@ -9,7 +9,7 @@ those interfaces are linked under [Related documentation](#related-documentation
 Visual lists automatically emit canonical NDJSON when piped. Downloads accept artwork IDs/URLs,
 user/public-bookmark URLs, and resource-policy-allowed CDN URLs; they expose page selection, static quality,
 GIF/APNG mode, output directory, filename templates, and `--on-error`. Unsupported options fail as unknown flags.
-Successful downloads keep stdout empty; non-blocking ugoira filename fallback warnings go to stderr, while item
+Successful downloads keep stdout empty unless `--json`/`--ndjson` is given, which emits one artifact record per file (`{artwork_id, kind, page, path, bytes}` for static images and `{artwork_id, kind, path, bytes, quality, frames, frame_report}` for ugoira); non-blocking ugoira filename fallback warnings go to stderr, while item
 failures remain diagnostics and make the command non-zero. Proxy URIs accept `http`, `https`, `socks5`, and `socks5h`.
 
 `pixiv search SOURCE` also performs reverse-image search when `SOURCE` is an explicit HTTP(S) URL or an existing
@@ -475,7 +475,7 @@ ID/URL. `-` has no stdin sentinel meaning and is passed as ordinary text.
 
 The canonical data actions are `search`, `detail`, `ranking`, `series`, `comment`, `bookmark`, `download`, `user`, `timeline`, `mypixiv`, and `recommended`. The common short options are `-t/--type`, `-p/--page`, `-l/--limit`, `-o/--output` (download directory), and `-j/--json` where the command supports that semantic. They are option spellings, not command aliases. For example, `pixiv timeline latest --type artwork` is the canonical latest artwork feed. `novel search`, `user search`, and the root `follow` command remain compatibility routes and must map to the same application use cases.
 
-Only the structured entity filters documented by each command are accepted. The CLI does not publish an ignored top-level expression filter. Ugoira downloads currently accept `--ugoira-mode gif|apng` (`gif` by default); page selection and non-original quality remain unsupported for Ugoira.
+Only the structured entity filters documented by each command are accepted. The CLI does not publish an ignored top-level expression filter. Ugoira downloads accept `--ugoira-mode gif|apng|zip|raw` (`gif` by default); `zip`/`raw` store the upstream archive byte-for-byte, verify declared frames against the ZIP central directory, and quarantine missing, duplicated, unsafe, or unreadable archives under `.quarantine/`; page selection and non-original `--quality` remain unsupported for Ugoira.
 
 ### Pixiv encyclopedia
 
@@ -522,6 +522,7 @@ arrays. An article that does not exist fails the command with the upstream statu
 | `bookmark` | `pixiv bookmark list\|tags\|detail\|add\|remove ...` | Lists artwork/novel bookmarks, reads artwork/novel bookmark tags/detail, or mutates artwork bookmarks. `list` and `tags` accept a user ID or user URL and support `--type artwork\|novel\|all`; `all` keeps artwork before novel and preserves typed records/tags. `detail`, `add`, and `remove` accept artwork/novel but not `all`; add/remove default to `artwork` and select the namespace with `--type`. |
 | `user` | `pixiv user search\|detail\|artworks\|novels\|bookmarks\|following\|followers\|related\|blocked\|follow ...` | Reads user/profile/relationship data and manages user follows. Follow mutations accept a positive numeric user ID or a compatible user Record; omitted user IDs use the current account only where that subcommand says so. |
 | `download` | `pixiv download [options] SRC...` | Downloads artwork IDs/URLs, allowed CDN URLs, or visual works expanded from supported user and public-bookmark URLs. Artwork-series URLs are not download sources. `--output/-o` aliases `--download-path`. |
+| `ugoira` | `pixiv ugoira ID_OR_URL [--json]` | Reads one ugoira artwork's archive qualities and frame delays. `--json` prints the output-safe metadata DTO with the original archive first; a non-ugoira artwork returns `not_ugoira`. |
 | `timeline` | `pixiv timeline following\|latest -t artwork\|novel [--content-type TYPE ...]` | Reads followed-user or latest artwork/novel streams. `--type` selects the entity; artwork subtype is a separate `--content-type` option. Following artwork filters locally because its upstream endpoint has no subtype query; latest artwork supports only `illust|manga`. |
 | `mypixiv` | `pixiv mypixiv users\|works [-t artwork\|novel ...]` | Reads MyPixiv users and artwork/novel feeds. `users` is current-account-only and requires verified runtime identity; `works USER_ID` accepts positive numeric IDs only and never treats a URL as an ID. |
 | `recommended` | `pixiv recommended [-t artwork\|novel\|user\|all] [--content-type all\|illust\|manga] [--page N --limit N --json]` | Reads personalized recommendations. For artwork, `--page/--limit` first selects the raw recommendation window and `--content-type` then filters DTO subtypes inside that window; it is not sent upstream and never scans forward without bound to fill one subtype. `all` traverses the artwork stream once and partitions that same window into illust/manga. Positional `KIND` remains accepted for compatibility. |
@@ -604,7 +605,7 @@ extension. Extensions also replace ASCII control characters and remove trailing 
 | record actions | `--on-error` | `skip` | Skip malformed/incompatible records with a stderr diagnostic, or use `fail-fast`. |
 | `download` | `--pages` | empty | 1-based individual pages and closed ranges such as `1,3-5`; open-ended ranges are invalid. Default downloads every page, and missing pages fail explicitly. |
 | `download` | `--quality` | `original` | Static image quality: `original`, `regular` (longest side 1200), `small` (longest side 540), `thumb` (250×250 center crop), or `mini` (48×48 center crop). Ugoira rejects non-original quality or page selection as unsupported.
-| `download` | `--ugoira-mode` | `gif` | Ugoira output: `gif` or `apng`. |
+| `download` | `--ugoira-mode` | `gif` | Ugoira output: `gif`, `apng`, `zip`, or `raw`. `zip`/`raw` keep the upstream archive unchanged; `zip` is the canonical name and `raw` its alias. |
 | `download` | `--download-path` / `--output` / `-o` | `DOWNLOAD_PATH`, `config.toml`, or `./downloads` | Download directory. `--output` is an alias for this option and conflicts if both specify different directories. |
 | `download` | `--filename-template` | `FILENAME_TEMPLATE`, `config.toml`, or `{author} - {title}_{id}` | Supports `{id}`, `{title}`, `{author}`, `{author_id}`, `{date}`, `{tags}`, and `{num}`. Unknown placeholders and unmatched braces are errors; an invalid or empty-rendered ugoira template falls back to the default filename and emits a warning on stderr. |
 | `bookmark add` | `--type` / `-t` | `artwork` | Entity type: `artwork` or `novel`; selects the bookmark namespace for the positional ID or Record. `all` and other namespaces are rejected before any network call. |

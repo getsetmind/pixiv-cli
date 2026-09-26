@@ -34,7 +34,7 @@ type downloadIn struct {
 	Srcs       []string `json:"srcs,omitempty" jsonschema:"multiple PID, Pixiv artwork/user URL, or allowed CDN resource URLs"`
 	Pages      string   `json:"pages,omitempty" jsonschema:"1-based page selection, e.g. 1,3-5; default all pages"`
 	Quality    string   `json:"quality,omitempty" jsonschema:"static image quality: original, regular, small, thumb, mini"`
-	UgoiraMode string   `json:"ugoira_mode,omitempty" jsonschema:"ugoira output mode: gif or apng; default gif"`
+	UgoiraMode string   `json:"ugoira_mode,omitempty" jsonschema:"ugoira output mode: gif, apng, zip, or raw; default gif"`
 	// Delivery 仅保留 local_path 兼容字段；image_content 已移除。
 	Delivery string `json:"delivery,omitempty" jsonschema:"delivery mode: local_path only"`
 }
@@ -71,14 +71,22 @@ type downloadWarningOut struct {
 }
 
 type downloadFileOut struct {
-	IllustID  int64  `json:"illust_id"`
-	Title     string `json:"title"`
-	Author    string `json:"author"`
-	Path      string `json:"path"`
-	FileURI   string `json:"file_uri"`
-	MIMEType  string `json:"mime_type"`
-	SizeBytes int64  `json:"size_bytes"`
-	Page      int    `json:"page,omitempty"`
+	IllustID  int64            `json:"illust_id"`
+	Title     string           `json:"title"`
+	Author    string           `json:"author"`
+	Path      string           `json:"path"`
+	FileURI   string           `json:"file_uri"`
+	MIMEType  string           `json:"mime_type"`
+	SizeBytes int64            `json:"size_bytes"`
+	Page      int              `json:"page,omitempty"`
+	Quality   string           `json:"quality,omitempty"`
+	Frames    []ugoiraFrameOut `json:"frames,omitempty"`
+}
+
+// ugoiraFrameOut 是 MCP 输出的 ugoira 帧声明；顺序与 delay 原样来自上游元数据。
+type ugoiraFrameOut struct {
+	Filename          string `json:"filename"`
+	DelayMilliseconds int    `json:"delay_milliseconds"`
 }
 
 const (
@@ -320,6 +328,12 @@ func buildDownloadOut(delivery string, artworks []downloader.DownloadedArtwork) 
 				SizeBytes: info.Size(),
 				Page:      file.Page,
 			}
+			if artwork.Type == "ugoira" {
+				fileOut.Quality = artwork.Quality
+				for _, frame := range artwork.Frames {
+					fileOut.Frames = append(fileOut.Frames, ugoiraFrameOut{Filename: frame.Filename, DelayMilliseconds: frame.DelayMilliseconds})
+				}
+			}
 			item.Files = append(item.Files, fileOut)
 			out.Files = append(out.Files, fileOut)
 			lines = append(lines, fmt.Sprintf("- %s\n  URI: %s\n  MIME: %s\n  Size: %d bytes", fileOut.Path, fileOut.FileURI, fileOut.MIMEType, fileOut.SizeBytes))
@@ -360,7 +374,7 @@ type downloadRandomIn struct {
 	Count      *int   `json:"count,omitempty" jsonschema:"optional artwork count; defaults to 5; explicit value must be from 1 to 20"`
 	Pages      string `json:"pages,omitempty" jsonschema:"1-based page selection, e.g. 1,3-5; default all pages"`
 	Quality    string `json:"quality,omitempty" jsonschema:"static image quality: original, regular, small, thumb, mini"`
-	UgoiraMode string `json:"ugoira_mode,omitempty" jsonschema:"ugoira output mode; default gif"`
+	UgoiraMode string `json:"ugoira_mode,omitempty" jsonschema:"ugoira output mode: gif, apng, zip, or raw; default gif"`
 	Delivery   string `json:"delivery,omitempty" jsonschema:"delivery mode: local_path only"`
 }
 

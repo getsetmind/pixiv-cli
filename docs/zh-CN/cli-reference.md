@@ -5,7 +5,7 @@
 本文是 `pixiv` 命令的完整契约：安装、认证、命令、flag、配置、环境变量、匿名 fallback 和更新。
 SDK 与 MCP 细节不在此重复，入口见[相关文档](#相关文档)。
 
-> 视觉列表在管道中会自动输出 canonical NDJSON。下载接受作品 PID/URL、用户/公开收藏 URL 和经资源策略允许的 CDN 直链；目前支持页码、静态质量、`gif|apng`、输出目录、文件名模板和 `--on-error`；不支持的选项会作为 unknown flag 失败。成功下载的 stdout 为空；ugoira 文件名回退只在 stderr 输出非阻断 warning，作品失败则保留诊断并以非零退出。代理接受 `http`、`https`、`socks5` 与 `socks5h`；配置包含 `directory_template`、`request_interval`（可用 `PIXIV_REQUEST_INTERVAL` 或 `[network].request_interval` 设置）。
+> 视觉列表在管道中会自动输出 canonical NDJSON。下载接受作品 PID/URL、用户/公开收藏 URL 和经资源策略允许的 CDN 直链；目前支持页码、静态质量、`gif|apng|zip|raw`、输出目录、文件名模板和 `--on-error`；不支持的选项会作为 unknown flag 失败。成功下载的 stdout 默认仍为空，但传入 `--json`/`--ndjson` 时每个文件输出一条产物记录（静态图 `{artwork_id, kind, page, path, bytes}`，ugoira `{artwork_id, kind, path, bytes, quality, frames, frame_report}`）；ugoira 文件名回退只在 stderr 输出非阻断 warning，作品失败则保留诊断并以非零退出。代理接受 `http`、`https`、`socks5` 与 `socks5h`；配置包含 `directory_template`、`request_interval`（可用 `PIXIV_REQUEST_INTERVAL` 或 `[network].request_interval` 设置）。
 
 `pixiv search SOURCE` 在 `SOURCE` 是显式 HTTP(S) URL 或现有常规本地文件时也会执行反向搜图。
 反向搜图不依赖已认证的 Pixiv 账号，而是使用配置的第三方 provider，并可能把 source 上传到本机之外。
@@ -372,7 +372,7 @@ provider 失败或全部 provider 失败时非零退出，但在有响应数据�
 canonical 数据 action 是 `search`、`detail`、`ranking`、`series`、`comment`、`bookmark`、`download`、`user`、`timeline`、`mypixiv` 和 `recommended`。在适用命令中统一使用 `-t/--type`、`-p/--page`、`-l/--limit`、`-o/--output`（下载目录）和 `-j/--json`；这些是参数短名，不是命令别名。例如，`pixiv timeline latest --type artwork` 是最新作品流的 canonical 写法。`novel search`、`user search` 和根级 `follow` 仍是兼容路径，必须映射到同一 application 用例。
 
 只发布各命令实际接通的结构化实体 filter，不发布会被忽略的顶层表达式 filter。Ugoira 下载目前只接受
-`--ugoira-mode gif|apng`（默认 `gif`）；页码选择和非 original 质量会明确报不支持。
+`--ugoira-mode gif|apng|zip|raw`（默认 `gif`）；`zip`/`raw` 原样保存上游档案、用 ZIP central directory 校验声明帧，并把缺失、重复、不安全或损坏的档案隔离到 `.quarantine/`；页码选择和非 original 质量仍明确报不支持。
 
 ### Pixiv 百科
 
@@ -417,6 +417,7 @@ canonical 数据 action 是 `search`、`detail`、`ranking`、`series`、`commen
 | `bookmark` | `pixiv bookmark list\|tags\|detail\|add\|remove ...` | 读取作品/小说收藏、作品/小说收藏标签/详情，或修改作品收藏。`list` 和 `tags` 接受用户 ID 或用户 URL，并支持 `--type artwork\|novel\|all`；`all` 固定先作品后小说并保留 typed record/tag。`detail`/`add`/`remove` 支持 artwork/novel，不支持 `all`；add/remove 默认 `artwork`，用 `--type` 选择 namespace。 |
 | `user` | `pixiv user search\|detail\|artworks\|novels\|bookmarks\|following\|followers\|related\|blocked\|follow ...` | 读取用户、资料和关系，或管理用户关注；follow mutation 接受正数用户 ID 或兼容的 user Record，省略用户 ID 是否使用当前账号由具体子命令决定。 |
 | `download` | `pixiv download [options] SRC...` | 下载作品 ID/URL、允许的 CDN URL，或从受支持的用户、公开收藏 URL 展开视觉作品。作品系列 URL 不是下载来源。`--output/-o` 是 `--download-path` 的别名。 |
+| `ugoira` | `pixiv ugoira ID_OR_URL [--json]` | 读取一个 ugoira 作品的档案质量与帧延迟。`--json` 输出安全元数据 DTO，original 档案在前；非 ugoira 作品返回 `not_ugoira`。 |
 | `timeline` | `pixiv timeline following\|latest -t artwork\|novel [--content-type TYPE ...]` | 读取关注用户或最新作品流；`--type` 选择实体，作品子类型使用独立的 `--content-type`。following 作品因 upstream endpoint 没有子类型 query 而在本地筛选；latest 作品只支持 `illust|manga`。 |
 | `mypixiv` | `pixiv mypixiv users\|works [-t artwork\|novel ...]` | 读取 MyPixiv 用户以及作品/小说流。`users` 只使用当前账号且要求已验证的 runtime identity；`works USER_ID` 只接受正数数字 ID，不把 URL 当作 ID。 |
 | `recommended` | `pixiv recommended [-t artwork\|novel\|user\|all] [--content-type all\|illust\|manga] [--page N --limit N --json]` | 读取个性化推荐；对 artwork，`--page/--limit` 先选择原始 recommendation 逻辑窗口，再由 `--content-type` 在该窗口内按 DTO 子类型筛选，不发送 upstream 查询参数，也不会为了填满某个 subtype 无界向后扫描；`all` 只遍历一次 artwork stream 并在同一窗口内分成 illust/manga。位置参数 `KIND` 仍兼容。 |
@@ -499,7 +500,7 @@ Content-Type 与 URL 后缀不一致（例如 URL 为 `.png`、实体为 JPEG）
 | `download` | `--pages` | 空 | 1-based 单页或闭区间选择，如 `1,3-5`；开放区间无效。默认下载全部页，页不存在会明确失败。 |
 | `download` | `--quality` | `original` | 静态图质量：`original`、`regular`（最长边 1200）、`small`（最长边 540）、`thumb`（250×250 居中裁剪）、`mini`（48×48 居中裁剪）。Ugoira 对非 original 质量或页选择返回 unsupported。 |
 | `download` | `--download-path` / `--output` / `-o` | `DOWNLOAD_PATH`、`config.toml` 或 `./downloads` | 下载目录；`--output` 是别名，两个参数若值不同会冲突。 |
-| `download` | `--ugoira-mode` | `gif` | Ugoira 输出：`gif` 或 `apng`。 |
+| `download` | `--ugoira-mode` | `gif` | Ugoira 输出：`gif`、`apng`、`zip` 或 `raw`。`zip`/`raw` 不转换上游档案，`zip` 是规范名，`raw` 是别名。 |
 | `download` | `--filename-template` | `FILENAME_TEMPLATE`、`config.toml` 或 `{author} - {title}_{id}` | 支持 `{id}`、`{title}`、`{author}`、`{author_id}`、`{date}`、`{tags}`、`{num}`。未知占位符或不配对花括号会报错；Ugoira 模板非法或渲染为空时回退到默认文件名，并在 stderr 输出 warning。 |
 | `bookmark add` | `--type` / `-t` | `artwork` | 实体类型：`artwork` 或 `novel`；为位置 ID 或 Record 选择收藏 namespace。`all` 与其他 namespace 会在网络调用前拒绝。 |
 | `bookmark add` | `--restrict` | `public` | 新收藏的可见性：`public` 或 `private`。 |

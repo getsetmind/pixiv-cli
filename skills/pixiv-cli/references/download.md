@@ -13,7 +13,8 @@ Downloads write to disk — always run the checklist first.
    another download command.
 3. Use only the current download options: `--download-path` or its `--output`
    / `-o` alias, `--filename-template`, `--pages`, `--quality`,
-   `--ugoira-mode`, `--on-error`, and the command-scoped proxy flags. Unknown
+   `--ugoira-mode`, `--on-error`, `--json`/`--ndjson`, and the command-scoped
+   proxy flags. Unknown
    options fail locally; the v1 CLI does not publish archive, metadata,
    concurrency, retry, or directory-template download flags.
 
@@ -34,8 +35,10 @@ pixiv download 129543211 --ugoira-mode apng --output ./downloads
   error rather than a silent skip.
 - `--quality` accepts `original` (default), `regular`, `small`, `thumb`, and
   `mini` for static images. Invalid values fail before the download request.
-- `--ugoira-mode` accepts `gif` (default) or `apng`. Other containers are not
-  part of the current CLI contract and fail validation.
+- `--ugoira-mode` accepts `gif` (default), `apng`, `zip`, or `raw`. `zip`/`raw`
+  save the upstream archive unchanged and verify declared frames; missing,
+  duplicated, unsafe, or unreadable archives are quarantined under
+  `.quarantine/`. Other values fail validation.
 - `--output DIR` and `--download-path DIR` name the same destination. If both
   are provided, they must be identical. `--filename-template` accepts the
   placeholders shown by `pixiv download --help`: `{id}`, `{title}`, `{author}`,
@@ -71,7 +74,8 @@ pixiv download https://www.pixiv.net/users/12345678/bookmarks/artworks
 
 ## Animated works
 
-Animated downloads may take noticeable time. Do not impose an arbitrary timeout
+Use `pixiv ugoira ID_OR_URL [--json]` to read archive qualities and frame delays
+without downloading. Animated downloads may take noticeable time. Do not impose an arbitrary timeout
 or kill the process merely because it is slow — wait for completion, user
 cancellation, or a real error.
 
@@ -95,9 +99,12 @@ invalid records.
 
 ## Reporting results
 
-- Downloads are actions: successful CLI stdout is empty. Never parse a download
-  report from stdout. Inspect the requested local directory to report produced
-  files; errors are safe stderr diagnostics and make the command non-zero.
+- Downloads are actions: without `--json`/`--ndjson`, successful CLI stdout is
+  empty. `--json` (array) and `--ndjson` (one record per line) emit artifact
+  records for scripts; `{artwork_id, error:{code, path, missing}}` is a failed
+  work, not a produced file. Otherwise inspect the requested local directory to
+  report produced files; errors are safe stderr diagnostics and make the command
+  non-zero.
 - An invalid or empty-rendered ugoira filename template falls back to the default
   safe filename and emits a non-blocking warning on stderr; the successful item
   remains successful.
