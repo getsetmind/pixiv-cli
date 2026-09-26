@@ -137,17 +137,7 @@ Copy this single prompt into Codex, Claude Code, Cursor, or another local AI age
 
 ```text
 Install the latest stable pixiv-cli from https://github.com/FlanChanXwO/pixiv-cli for this machine: inspect the repository's scripts/install.sh or scripts/install.cmd first, choose the script matching the detected OS and architecture (the Windows path must use cmd.exe and must not invoke PowerShell), download only official GitHub Release assets, require the published SHA-256 check to pass before replacing anything, install per-user without administrator or root privileges, add only the chosen install directory to the user PATH, ask before installing any missing prerequisite, never read or output Pixiv credentials, verify with pixiv --version, and report the installed version plus every file and PATH change.
-
-Also install the `pixiv-cli` Skill that matches the same stable release tag (not main): download the full skills/pixiv-cli/ directory from that tag into the agent skills directory the user confirms. Do not guess the skills path and do not follow the main branch for skill content.
 ```
-
-### Install the pixiv-cli Skill from SkillHub
-
-Agents with SkillHub support can install the published [`pixiv-cli` Skill](https://www.skillhub.cn/skills/pixiv-cli) directly from SkillHub. Each Skill version matches the CLI release it teaches; always use `pixiv <cmd> --help` as the final source of command syntax.
-
-### Install the pixiv-cli Skill from ClawHub
-
-Agents using ClawHub can install the published [`pixiv-cli` Skill](https://clawhub.ai/flanchanxwo/skills/pixiv-cli) with `clawhub install pixiv-cli`; pin the installed skill to the matching published release version rather than following an unversioned latest tag.
 
 ### Homebrew (recommended on macOS and Linux)
 
@@ -313,8 +303,6 @@ pixiv auth check
 | [CLI reference](docs/en/cli-reference.md) | Commands, flags, auth, configuration, fallback, downloads, and updates |
 | [Go SDK](docs/en/sdk.md) | Public client, models, pagination, resources, and typed errors |
 | [MCP tools](docs/en/mcp-tools.md) | Tool schemas and output semantics |
-| [Architecture](docs/en/maintainers/architecture.md) | Package boundaries and runtime flow |
-| [Development](docs/en/maintainers/development.md) | Toolchain, tests, builds, and releases |
 | [Changelog](changelog/README.md) | User-visible changes |
 
 ## License

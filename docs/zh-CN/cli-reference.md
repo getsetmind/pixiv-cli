@@ -73,7 +73,7 @@ sh scripts/build.sh
 
 当前工作树已保存 darwin/linux/windows × amd64/arm64 的六个 runner-verified staticlib 与同源
 `manifest.json`；`scripts/build.sh` 会先校验 source digest、target/path 与每个库的 SHA-256，再构建
-本机 binary。完整要求、证据回填流程和失败含义见[开发流程](maintainers/development.md#rust-ugoira-staticlib)。
+本机 binary。
 
 ### Go 安装
 
@@ -731,10 +731,7 @@ check_enabled = false
 
 ## 相关文档
 
-本参考手册只定义 CLI 边界；其他接口与维护流程以对应权威文档为准：
+本参考手册只定义 CLI 边界；其他接口以对应权威文档为准：
 
 - [Go SDK](sdk.md)：public client、模型、分页、资源和 typed error。
 - [MCP tools](mcp-tools.md)：tool 名称、输入 schema、输出和 stdio 行为。
-- [架构](maintainers/architecture.md)：包职责和运行流程。
-- [开发流程](maintainers/development.md)：环境、测试、构建和发布门禁。
-- [Agent skill](../../skills/pixiv-cli/SKILL.md)：供 Agent 安全驱动已安装 CLI 的说明。

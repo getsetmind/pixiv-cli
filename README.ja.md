@@ -131,17 +131,7 @@ MCP サーバーで保存済みアカウントを再利用する場合は、`-v 
 
 ```text
 https://github.com/FlanChanXwO/pixiv-cli の最新安定版を、このマシンにインストールしてください。まずリポジトリの scripts/install.sh または scripts/install.cmd を確認し、検出した OS とアーキテクチャに合うスクリプトを選びます（Windows では cmd.exe を使い、PowerShell を呼び出してはいけません）。ダウンロードするのは公式 GitHub Release のアセットだけに限定し、公開された SHA-256 検証に合格しなければ既存のファイルを置き換えないでください。管理者権限や root 権限を使わずユーザー単位でインストールし、選択したインストールディレクトリだけをユーザー PATH に追加してください。不足している前提ツールがあれば、インストール前に確認を取ってください。Pixiv の認証情報は決して読み取らず、出力もしないでください。最後に pixiv --version で確認し、インストールしたバージョンと、変更したすべてのファイルおよび PATH の変更を報告してください。
-
-同じ安定版リリースタグに対応する `pixiv-cli` Skill もインストールしてください（main には従わない）。そのタグにある skills/pixiv-cli/ ディレクトリ全体を、ユーザーが確認したエージェントの skills ディレクトリへダウンロードします。skills のパスを推測せず、Skill の内容も main ブランチから取得しないでください。
 ```
-
-### SkillHub から pixiv-cli Skill をインストールする
-
-SkillHub に対応したエージェントは、公開されている [`pixiv-cli` Skill](https://www.skillhub.cn/skills/pixiv-cli) を SkillHub から直接インストールできます。各 Skill のバージョンは、それが対象とする CLI リリースと一致します。コマンド構文の最終的な根拠は、常に `pixiv <cmd> --help` です。
-
-### ClawHub から pixiv-cli Skill をインストールする
-
-ClawHub を使うエージェントは、`clawhub install pixiv-cli` で公開済みの [`pixiv-cli` Skill](https://clawhub.ai/flanchanxwo/skills/pixiv-cli) をインストールできます。バージョン未指定の latest タグを追うのではなく、公開されたリリースと同じバージョンに固定してください。
 
 ### Homebrew（macOS と Linux で推奨）
 
@@ -299,8 +289,6 @@ pixiv auth check
 | [CLI リファレンス](docs/en/cli-reference.md) | コマンド、フラグ、認証、設定、フォールバック、ダウンロード、更新 |
 | [Go SDK](docs/en/sdk.md) | 公開クライアント、モデル、ページネーション、リソース、型付きエラー |
 | [MCP ツール](docs/en/mcp-tools.md) | ツールスキーマと出力の意味 |
-| [アーキテクチャ](docs/en/maintainers/architecture.md) | パッケージ境界と実行フロー |
-| [開発](docs/en/maintainers/development.md) | ツールチェーン、テスト、ビルド、リリース |
 | [変更履歴](changelog/README.md) | ユーザーに影響する変更 |
 
 日本語で用意しているのはこの README だけです。CLI・SDK・MCP のリファレンスは英語版を参照してください。公開インターフェースの正本は英語ドキュメントです。

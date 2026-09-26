@@ -90,8 +90,7 @@ command via Git Bash, MSYS2, or WSL.
 
 The working tree ships six runner-verified staticlibs for darwin/linux/windows × amd64/arm64 plus a same-origin
 `manifest.json`; `scripts/build.sh` verifies the source digest, target/path, and each library's SHA-256 before
-building the native binary. See [the development guide](maintainers/development.md#rust-ugoira-staticlib) for the full
-requirements, evidence backfill process, and failure semantics.
+building the native binary.
 
 ### Go install
 
@@ -888,11 +887,7 @@ check_enabled = false
 
 ## Related documentation
 
-This reference intentionally stops at the CLI boundary. Use the authoritative guides for other interfaces and
-maintainer workflows:
+This reference intentionally stops at the CLI boundary. Use the authoritative guides for the other interfaces:
 
 - [Go SDK](sdk.md): public client, models, pagination, resources, and typed errors.
 - [MCP tools](mcp-tools.md): tool names, input schemas, output, and stdio behavior.
-- [Architecture](maintainers/architecture.md): package responsibilities and runtime flow.
-- [Development](maintainers/development.md): environment, tests, builds, and release gates.
-- [Agent skill](../../skills/pixiv-cli/SKILL.md): safe instructions for an agent driving the installed CLI.

@@ -137,17 +137,7 @@ docker run --rm -i ghcr.io/flanchanxwo/pixiv-cli:v1.2.3 mcp
 
 ```text
 请为这台机器安装 https://github.com/FlanChanXwO/pixiv-cli 的最新 stable 版本：先审阅仓库中的 scripts/install.sh 或 scripts/install.cmd，再根据检测到的操作系统与架构选择对应脚本（Windows 必须使用 cmd.exe，禁止调用 PowerShell），只下载官方 GitHub Release 资产，只有发布的 SHA-256 校验通过后才能替换文件，使用无需管理员或 root 权限的用户级目录，只把选定安装目录加入用户 PATH，缺少任何前置工具时先征求同意，绝不读取或输出 Pixiv 凭据，最后运行 pixiv --version 验证，并报告安装版本及全部文件和 PATH 变更。
-
-同时安装与该 stable 发布 tag 完全一致的 `pixiv-cli` Skill（不要跟随 main）：把该 tag 下的完整 skills/pixiv-cli/ 目录安装到用户确认的 Agent skills 目录。不要猜测 skills 路径，也不要用 main 上的 skill 内容。
 ```
-
-### 通过 SkillHub 安装 pixiv-cli Skill
-
-支持 SkillHub 的 Agent 可直接从 [SkillHub 的 `pixiv-cli` Skill 页面](https://www.skillhub.cn/skills/pixiv-cli) 安装已发布的 `pixiv-cli` Skill。每个 Skill 版本均与其指导的 CLI release 对应；命令语法始终以 `pixiv <cmd> --help` 为最终依据。
-
-### 通过 ClawHub 安装 pixiv-cli Skill
-
-使用 ClawHub 的 Agent 可从 [ClawHub 的 `pixiv-cli` Skill 页面](https://clawhub.ai/flanchanxwo/skills/pixiv-cli) 执行 `clawhub install pixiv-cli` 安装已发布的 `pixiv-cli` Skill；请固定到与 CLI 发布相同的 Skill 版本，不要跟随未固定的 latest。
 
 ### Homebrew（macOS 与 Linux 推荐）
 
@@ -312,8 +302,6 @@ pixiv auth check
 | [CLI 参考手册](docs/zh-CN/cli-reference.md) | 命令、flag、认证、配置、fallback、下载和更新 |
 | [Go SDK](docs/zh-CN/sdk.md) | Public client、模型、分页、资源和 typed error |
 | [MCP tools](docs/zh-CN/mcp-tools.md) | Tool schema 与输出语义 |
-| [架构](docs/zh-CN/maintainers/architecture.md) | 包边界和运行流程 |
-| [开发流程](docs/zh-CN/maintainers/development.md) | 工具链、测试、构建和发布 |
 | [更新日志](changelog/README.zh-CN.md) | 用户可感知变化 |
 
 ## 许可证
