@@ -29,6 +29,14 @@ type migration struct {
 	Checksum string
 }
 
+func (m migration) matchesChecksum(stored string) bool {
+	if stored == m.Checksum {
+		return true
+	}
+	lf := strings.ReplaceAll(m.SQL, "\r\n", "\n")
+	return stored == checksum([]byte(lf)) || stored == checksum([]byte(strings.ReplaceAll(lf, "\n", "\r\n")))
+}
+
 // embeddedMigrations 是嵌入的所有迁移，按版本升序。
 var embeddedMigrations []migration
 
@@ -132,7 +140,7 @@ func migrate(db *sql.DB) error {
 			if existing.Name != m.Name {
 				return fmt.Errorf("migration %d name drifted: %q != %q", m.Version, existing.Name, m.Name)
 			}
-			if existing.Checksum != m.Checksum && !(m.Version == 1 && existing.Checksum == legacyInitialMigrationChecksum) {
+			if !m.matchesChecksum(existing.Checksum) && !(m.Version == 1 && existing.Checksum == legacyInitialMigrationChecksum) {
 				return fmt.Errorf("migration %d checksum drifted", m.Version)
 			}
 			continue

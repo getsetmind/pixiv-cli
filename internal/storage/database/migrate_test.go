@@ -42,6 +42,34 @@ func TestOpenAppliesMigrationsAndApplicationID(t *testing.T) {
 	}
 }
 
+func TestOpenAcceptsMigrationChecksumsAcrossLineEndings(t *testing.T) {
+	for _, ending := range []string{"\n", "\r\n"} {
+		t.Run(fmt.Sprintf("%q", ending), func(t *testing.T) {
+			dir := t.TempDir()
+			db, err := Open(dir)
+			if err != nil {
+				t.Fatal(err)
+			}
+			for _, migration := range embeddedMigrations {
+				sql := strings.ReplaceAll(migration.SQL, "\r\n", "\n")
+				sql = strings.ReplaceAll(sql, "\n", ending)
+				if _, err := db.DB().Exec(`UPDATE schema_migration SET checksum=? WHERE version=?`, checksum([]byte(sql)), migration.Version); err != nil {
+					db.Close()
+					t.Fatal(err)
+				}
+			}
+			if err := db.Close(); err != nil {
+				t.Fatal(err)
+			}
+			reopened, err := Open(dir)
+			if err != nil {
+				t.Fatalf("migration checksum with %q line endings was rejected: %v", ending, err)
+			}
+			defer reopened.Close()
+		})
+	}
+}
+
 func TestOpenAcceptsLegacyInitialMigrationChecksum(t *testing.T) {
 	dir := t.TempDir()
 	db, err := Open(dir)
