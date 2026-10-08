@@ -202,3 +202,20 @@ cargo test -p pixiv-sdk --test resource_save --locked
 ```
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-save` を指定する。
+
+## Bookmark・follow の form 更新操作
+
+[form-mutations.json](contracts/form-mutations.json) は Go 版の9操作・178ケースを固定する。作品bookmarkの追加/削除と旧名AddBookmark/RemoveBookmark、小説bookmarkの追加/削除、follow/unfollow、廃止済みAI表示設定を含む。ID・restrictの検証優先順位、publicの既定値、大小文字と空白の扱い、重複・空・Unicode・制御文字を含むtags、送信method/path/form、HTTPエラーのSDKフィールドと要求回数を比較する。formのキー順は正規化し、同じキーの複数値の順は保持する。
+
+Rust の `pixiv` は各request型と操作に対応し、旧名wrapperも固有の操作名を保持する。Goの別名requestはRustのtype aliasで表現する。Restrictは未知値も表現できるStringとし、追加操作の境界でpublic/privateを検証する。削除ではrestrict/tagsを送信しない。SetAIArtworkVisibilityはVisibleの値にかかわらず通信せずContentUnavailableを返す。
+
+更新は `transport::Transport::post_form` を通し、2xxの本文をJSONとして解釈しない。空本文・不正JSON・エラーらしい本文でもHTTP成功を保持する。429のRetry-Afterを読み取り用GETと同じ自動再送には使わず、retryのSafeだけを既存SDK分類に従って返す。ローカル実HTTPの6ケースはform encodingと空/不正JSON・204・429を検証する。追加テストはvirtual timeで設定した送信間隔を確認する。OAuthのJSON応答処理は既存契約テストで引き続き検証する。
+
+この比較はWindows amd64のみ。CLI/MCPの操作・出力、bookmark/followのread-back、全認証状態・取消/deadline・TLS/DNS・redirect・実サービスの状態変更・他OSは未検証。HTTP成功だけで実サービスの状態変更を証明したとは扱わない。
+
+```text
+go test ./sdk/pixiv -run '^TestMigrationFormMutations' -count=1
+cargo test -p pixiv-sdk --test form_mutations --locked
+```
+
+基準を意図して更新する場合だけ Go テストの `-args -migration-update-mutation` を指定する。

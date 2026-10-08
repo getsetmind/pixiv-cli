@@ -1,4 +1,5 @@
 pub use crate::artwork::{ResourcePolicy, artwork_variant_resource};
+pub use crate::mutation::*;
 use crate::{
     Error, Reason, Result,
     models::{Artwork, ArtworkPage, UgoiraMetadata},
@@ -96,13 +97,41 @@ impl<T: Transport> Client<T> {
     }
 
     async fn send(&self, request: Request) -> Result<Response> {
+        self.pace().await;
+        self.transport.send(request).await
+    }
+
+    async fn pace(&self) {
         let mut last = self.last_request.lock().await;
         if let Some(previous) = *last {
             tokio::time::sleep_until(previous + self.interval).await;
         }
         *last = Some(Instant::now());
         drop(last);
-        self.transport.send(request).await
+    }
+
+    pub(crate) async fn post_form(
+        &self,
+        path: &str,
+        parameters: Vec<(String, String)>,
+        operation: &'static str,
+    ) -> Result<()> {
+        if self.access_token.is_empty() {
+            return Err(Error::new(Reason::Unauthorized, operation));
+        }
+        if self.expires_at.is_some_and(|expiry| expiry <= Utc::now()) {
+            return Err(Error::new(Reason::CredentialsExpired, operation));
+        }
+        let request = Request {
+            method: Method::POST,
+            url: format!("https://app-api.pixiv.net{path}"),
+            headers: headers(Some(&self.access_token)),
+            parameters,
+            operation,
+        };
+        self.pace().await;
+        checked(self.transport.post_form(request).await?, operation)?;
+        Ok(())
     }
 
     pub async fn artwork(&self, id: i64) -> Result<Artwork> {

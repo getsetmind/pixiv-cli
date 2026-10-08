@@ -48,6 +48,14 @@ impl fmt::Debug for Response {
 #[allow(async_fn_in_trait)]
 pub trait Transport: Send + Sync {
     async fn send(&self, request: Request) -> Result<Response>;
+    async fn post_form(&self, request: Request) -> Result<Response> {
+        let response = self.send(request).await?;
+        Ok(Response {
+            body: Value::Null,
+            retry_after: None,
+            ..response
+        })
+    }
 }
 
 #[derive(Clone)]
@@ -77,6 +85,15 @@ impl HttpTransport {
 
 impl Transport for HttpTransport {
     async fn send(&self, request: Request) -> Result<Response> {
+        self.send_request(request, true).await
+    }
+    async fn post_form(&self, request: Request) -> Result<Response> {
+        self.send_request(request, false).await
+    }
+}
+
+impl HttpTransport {
+    async fn send_request(&self, request: Request, decode_json: bool) -> Result<Response> {
         let mut builder = self.client.request(request.method.clone(), &request.url);
         for (name, value) in &request.headers {
             builder = builder.header(name, value);
@@ -91,6 +108,17 @@ impl Transport for HttpTransport {
             .await
             .map_err(|_| Error::new(Reason::UpstreamUnavailable, request.operation))?;
         let status = response.status().as_u16();
+        if !decode_json {
+            response
+                .bytes()
+                .await
+                .map_err(|_| Error::new(Reason::UpstreamUnavailable, request.operation))?;
+            return Ok(Response {
+                status,
+                retry_after: None,
+                body: Value::Null,
+            });
+        }
         let retry_after = response
             .headers()
             .get("retry-after")

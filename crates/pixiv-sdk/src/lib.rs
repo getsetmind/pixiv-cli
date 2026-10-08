@@ -4,6 +4,7 @@ pub mod cursor;
 pub mod dto;
 pub mod error;
 pub mod models;
+mod mutation;
 pub mod oauth;
 pub mod pixiv;
 pub mod reference;
