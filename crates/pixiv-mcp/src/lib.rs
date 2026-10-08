@@ -5,6 +5,7 @@ use pixiv_sdk::{
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
+pub mod stdio;
 
 #[derive(Clone, Debug, Default, Deserialize)]
 pub struct IllustReference {

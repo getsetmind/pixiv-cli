@@ -694,15 +694,28 @@
     },
     {
       "id": "cli:pixiv mcp",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv mcp"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-mcp/src/stdio.rs"
+      ],
+      "tests": [
+        "crates/pixiv-cli/tests/mcp_stdio.rs#mcp_process_exchanges_jsonrpc_without_stdout_diagnostics_or_credentials",
+        "internal/mcpserver/pixiv/migration_rpc_test.go#TestMigrationMCPRPCMatchesFrozenInitializationAndArgumentErrors",
+        "crates/pixiv-mcp/tests/stdio.rs#stdio_matches_go_initialization_protocol_and_detail_argument_errors",
+        "crates/pixiv-mcp/tests/stdio.rs#stdio_cancels_inflight_io_while_ping_remains_responsive"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "Rust mcp invokes the async stdio runtime. Child-process tests cover initialize/list/detail input and authentication errors, JSON-RPC-only stdout, empty stderr and normal EOF. Thirty Go protocol cases and 33 detail calls are compared through the runtime.",
+        "Only illust_detail is registered. CLI aliases/proxy flags/configuration/startup failures, stored accounts/pool/credential lifetime, all tools, full protocol/transport cancellation/disconnect behavior and other OS remain unverified."
+      ]
     },
     {
       "id": "cli:pixiv mypixiv",
@@ -1350,19 +1363,25 @@
       "rust_sources": [
         "crates/pixiv-mcp/src/lib.rs",
         "crates/pixiv-record/src/lib.rs",
-        "crates/pixiv-sdk/src/pixiv.rs"
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-mcp/src/stdio.rs"
       ],
       "tests": [
         "internal/mcpserver/pixiv/migration_detail_test.go#TestMigrationMCPArtworkDetailMatchesFrozenSchemaRecordsAndValidation",
         "crates/pixiv-mcp/tests/artwork_detail.rs#artwork_detail_matches_go_metadata_reference_validation_and_structured_records",
-        "crates/pixiv-record/tests/artwork.rs#artwork_records_match_go_canonical_identity_dtos_and_kind_rejection"
+        "crates/pixiv-record/tests/artwork.rs#artwork_records_match_go_canonical_identity_dtos_and_kind_rejection",
+        "internal/mcpserver/pixiv/migration_rpc_test.go#TestMigrationMCPRPCMatchesFrozenInitializationAndArgumentErrors",
+        "crates/pixiv-mcp/tests/stdio.rs#stdio_matches_go_initialization_protocol_and_detail_argument_errors",
+        "crates/pixiv-mcp/tests/stdio.rs#stdio_detail_calls_match_all_go_records_and_numeric_input_rejection",
+        "crates/pixiv-mcp/tests/stdio.rs#stdio_cancels_inflight_io_while_ping_remains_responsive",
+        "crates/pixiv-cli/tests/mcp_stdio.rs#mcp_process_exchanges_jsonrpc_without_stdout_diagnostics_or_credentials"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "33 Go session contracts fix actual tool schema, 17 artwork responses and 16 reference inputs, pool/HTTP calls and raw JSON-RPC response results. Rust compares metadata and 32 handler cases with the real SDK. Shared canonical records serve CLI and MCP; MCP structured numbers match the Go wrapper float64 conversion.",
-        "The captured numeric int64-max input fails in Go JSON-RPC decoding before the handler and remains unverified in Rust. Rust stdio/session/tool registration/schema validation/initialize/notifications/cancellation/concurrency, pool leases/authentication, other tools and other platforms remain unimplemented or unverified."
+        "33 Go session contracts fix actual tool schema, 17 artwork responses and 16 reference inputs, pool/HTTP calls and raw JSON-RPC response results. Rust compares metadata and 32 handler cases with the real SDK. Shared canonical records serve CLI and MCP; MCP structured numbers match the Go wrapper float64 conversion. All 33 calls now compare through stdio including int64-max rejection. A further 30 direct Go JSON-RPC contracts compare negotiation, ping, logging, protocol argument errors and in-flight cancellation; a duplex test checks concurrent ping and transport future release. The CLI mcp process exchanges protocol-only stdout with clean EOF.",
+        "Rust registers only illust_detail; complete 54-tool registration remains pending. Full JSON-RPC syntax/UTF-8/duplicate keys/params/schema types and diagnostic ordering, all ID types/reuse, early cancellation/deadline/disconnect/SIGINT, logging/progress notifications and full concurrency, pool leases/authentication/configuration/proxy flags, other tools and other platforms remain unimplemented or unverified."
       ]
     },
     {

@@ -333,3 +333,21 @@ cargo test -p pixiv-record --test artwork --locked
 ```
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-mcp-detail` を指定する。
+
+## MCP JSON-RPC・stdio の detail セッション
+
+[mcp-rpc.json](contracts/mcp-rpc.json) は Go の JSON-RPC connection を直接使い、30ケースを固定する。3版の protocol negotiation と未知・空版の fallback、ping、unknown method/tool、logging/setLevel、必須 params、arguments の省略/null/配列/型違い、未知 field、整数として表せる小数、大きな数値 ID の拒否、成功 record、通信中の cancellation を比較する。初期化には Go の serverInfo・instructions・capabilities を保持する。Go SDK の unknown method は code 0、logging の未知・空 level は正常応答であり、一般的な実装へ置き換えて期待値を変えない。
+
+Rust の `stdio::serve` は改行区切り JSON-RPC を読み、応答の ID を保持し、通知へ応答しない。独立した tool future を進め、進行中の呼び出しがある場合も ping へ応答する。cancellation 通知では該当 future を中止し、SDK transport の future を解放する。停止中の fixture transport を使う双方向セッションで ping・cancel・解放を検証する。通常 EOF は処理中の応答を排出して終了する。
+
+前節の33ケースも stdio から比較し、ハンドラー前の int64 最大値の拒否を含めて確認する。CLI バイナリの `mcp` コマンドはこの runtime を使う。子プロセスで初期化・tools/list・入力エラー・認証エラー・EOF を実行し、stdout が JSON-RPC のみであること、stderr と終了コードを確認する。
+
+tools/list の Rust 登録は現在 illust_detail だけであり、全54 tools の登録比較は未完了。全 JSON-RPC 構文・不正 UTF-8・重複 key・params/schema の全型と境界・複数の不正 field の診断順、全 ID 型と重複・再利用、開始前の cancel・deadline・disconnect・SIGINT、ログ通知・progress・全並行処理、認証保存/pool lease/credential 更新、CLI の proxy flags と設定・起動エラー、他 OS は未移植または未検証。前節の「stdio/initialize と数値 ID 拒否は未検証」は、ここに示すケースの範囲で解消した。
+
+```text
+go test ./internal/mcpserver/pixiv -run '^TestMigrationMCPRPC' -count=1
+cargo test -p pixiv-mcp --test stdio --locked
+cargo test -p pixiv-cli-rs --test mcp_stdio --locked
+```
+
+基準を意図して更新する場合だけ Go テストの `-args -migration-update-mcp-rpc` を指定する。

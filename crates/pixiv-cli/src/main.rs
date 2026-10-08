@@ -12,6 +12,7 @@ struct Arguments {
 
 #[derive(Subcommand)]
 enum Command {
+    Mcp,
     Detail {
         source: String,
         #[arg(long, short = 'j', conflicts_with = "ndjson")]
@@ -37,11 +38,13 @@ enum Command {
 async fn main() {
     let args = Arguments::parse();
     let machine_output = match &args.command {
+        Command::Mcp => false,
         Command::Detail { json, ndjson, .. } => *json || *ndjson,
         Command::Ugoira { json, .. } => *json,
         Command::Search { json, ndjson, .. } => *json || *ndjson,
     };
     let ndjson_output = match &args.command {
+        Command::Mcp => false,
         Command::Detail { ndjson, .. } => *ndjson,
         Command::Search { json, ndjson, .. } => *ndjson || (!*json && !io::stdout().is_terminal()),
         Command::Ugoira { .. } => false,
@@ -68,6 +71,9 @@ async fn execute(args: Arguments) -> Result<(), CommandError> {
         .ok();
     let client = Client::new(&token, proxy.as_deref())?;
     match args.command {
+        Command::Mcp => {
+            pixiv_mcp::stdio::serve(&client, tokio::io::stdin(), &mut tokio::io::stdout()).await?;
+        }
         Command::Detail { json, ndjson, .. } => {
             let mode = if ndjson {
                 DetailOutput::Ndjson
