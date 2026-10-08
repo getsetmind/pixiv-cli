@@ -3,7 +3,7 @@ use chrono::Utc;
 use rusqlite::{OptionalExtension, Row, Transaction, params};
 use std::{collections::BTreeSet, fmt};
 
-const COLUMNS: &str = "user_id,sort_order,username,refresh_token,credential_revision,premium_status,premium_checked_at,pool_frozen_until,pool_last_selected,created_at,updated_at,schedulable";
+pub(super) const COLUMNS: &str = "user_id,sort_order,username,refresh_token,credential_revision,premium_status,premium_checked_at,pool_frozen_until,pool_last_selected,created_at,updated_at,schedulable";
 
 #[derive(Clone)]
 pub struct PixivAccount {
@@ -241,7 +241,7 @@ fn save(transaction: &Transaction<'_>, account: &PixivAccount) -> Result<(), Acc
     Ok(())
 }
 
-fn scan(row: &Row<'_>) -> rusqlite::Result<PixivAccount> {
+pub(super) fn scan(row: &Row<'_>) -> rusqlite::Result<PixivAccount> {
     Ok(PixivAccount {
         user_id: row.get(0)?,
         sort_order: row.get(1)?,

@@ -1,6 +1,11 @@
 use rusqlite::{Connection, params};
 mod accounts;
 pub use accounts::{AccountError, PixivAccount};
+mod pool;
+pub use pool::{
+    PoolCandidate, PoolChooser, PoolError, PoolSelectionKind, PoolSnapshot, PoolStatus,
+    choose_pool_account,
+};
 use sha2::{Digest, Sha256};
 use std::{
     collections::BTreeMap,

@@ -589,3 +589,25 @@ cargo test -p pixiv-app --test accounts --locked
 ```
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-accounts` を指定する。
+
+## Pixiv pool の保存状態と chooser
+
+[pool.json](contracts/pool.json) は固定 Go の pool repository と chooser を実行した51操作。round_robin の循環と marker、random の候補数/選択/不正 index/失敗、attempted UID の除外、参加設定の一括更新と検証、凍結期限を短縮しない Freeze、期限切れ解除、status、選択失敗時の transaction rollback を比較する。候補・marker・status と最短凍結時刻、返却 account と保存後の全 account 列、診断を検証する。
+
+選択失敗は no_local_account/no_schedulable_account/all_frozen/exhausted を型と時刻で区別する。status の最短凍結時刻には参加停止中の account も含み、選択失敗の最短時刻は参加中だけを対象にする。選択の callback は純粋な snapshot を受け取り、snapshot 外の UID は拒否する。callback 不在の Go 診断も Rust の Option で維持する。
+
+選択時の期限解除・marker 更新は1つの transaction で扱う。失敗時は期限解除も戻り、成功時の返却 account は Go と同じく更新前の updated_at を保持して pool_last_selected だけ true にする。保存した updated_at は明示的な now に一致する。参加設定は単一の IN query/update を使い、marker を書き換えない。
+
+時刻は前節と同じ11/22の制御を使う。Freeze/参加設定の実行時刻だけ操作 window を検証して -1 にし、選択・status の明示 now と凍結値はそのまま比較する。token を含む account のデータは合成値のみであり、chooser の snapshot は token を含まない。
+
+Go/Rust の追加テストは default random source で候補1件を選ぶことと、空 snapshot では不正 strategy より先に exhausted と earliest を返すことを確認する。Rust の default random は OS entropy と rejection sampling を使う。分布・entropy 障害・実行回数の一致は検証していない。
+
+Windows amd64 の保存層と chooser の比較である。Scheduler の rate-limit/retry/replay/commit、session の lease/refresh とアカウント寿命、取消/並行・別 process・DB 障害、巨大な UID 集合と全境界、不正 strategy の全文字列、config・CLI/MCP の接続、他 OS は未移植または未検証。
+
+```text
+go test -race ./internal/storage/database -migration-rust-database -count=1
+go vet ./internal/storage/database
+cargo test -p pixiv-app --test pool --locked
+```
+
+基準を意図して更新する場合だけ Go テストの `-args -migration-update-pool` を指定する。
