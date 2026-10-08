@@ -1,4 +1,6 @@
-use pixiv_cli_rs::{DetailOutput, artwork_detail};
+#[path = "support/saved_account.rs"]
+mod saved_account;
+use pixiv_cli_rs::{DetailOutput, artwork_detail, saved_artwork_detail};
 use pixiv_sdk::{
     Client, Result,
     transport::{Request, Response, Transport},
@@ -16,6 +18,7 @@ struct Case {
     error: String,
     requests: usize,
 }
+#[derive(Clone)]
 struct Fixture {
     body: Value,
     requests: Arc<Mutex<usize>>,
@@ -38,42 +41,61 @@ async fn artwork_detail_modes_match_go_dtos_records_captions_and_failures() {
     .unwrap();
     assert_eq!(cases.len(), 72);
     for case in cases {
-        let requests = Arc::new(Mutex::new(0));
-        let client = Client::with_transport(
-            "fixture-access",
-            Fixture {
-                body: case.body,
-                requests: requests.clone(),
-            },
-        );
-        let mode = match case.mode.as_str() {
-            "json" => DetailOutput::Json,
-            "ndjson" => DetailOutput::Ndjson,
-            _ => DetailOutput::Human,
-        };
-        let mut out = vec![];
-        let error = artwork_detail(&client, case.id, mode, &mut out)
-            .await
-            .err()
-            .map(|error| error.to_string())
-            .unwrap_or_default();
-        assert_eq!(error, case.error, "{} {}", case.name, case.mode);
-        let output = String::from_utf8(out).unwrap();
-        if case.mode == "human" || case.output.is_empty() {
-            assert_eq!(output, case.output, "{}", case.name);
-        } else {
-            assert_eq!(
-                serde_json::from_str::<Value>(&output).unwrap(),
-                serde_json::from_str::<Value>(&case.output).unwrap(),
-                "{} {}",
-                case.name,
-                case.mode
+        for saved in [false, true] {
+            let requests = Arc::new(Mutex::new(0));
+            let client = Client::with_transport(
+                "fixture-access",
+                Fixture {
+                    body: case.body.clone(),
+                    requests: requests.clone(),
+                },
             );
-            if case.mode == "ndjson" {
-                assert_eq!(output.lines().count(), 1);
+            let mode = match case.mode.as_str() {
+                "json" => DetailOutput::Json,
+                "ndjson" => DetailOutput::Ndjson,
+                _ => DetailOutput::Human,
+            };
+            let mut out = vec![];
+            let result = if saved {
+                let application = saved_account::saved_execution(Fixture {
+                    body: case.body.clone(),
+                    requests: requests.clone(),
+                });
+                saved_artwork_detail(
+                    &application.execution,
+                    &pixiv_app::lifecycle::Context::new(),
+                    case.id,
+                    0,
+                    Some(""),
+                    mode,
+                    &mut out,
+                )
+                .await
+            } else {
+                artwork_detail(&client, case.id, mode, &mut out).await
+            };
+            let error = result
+                .err()
+                .map(|error| error.to_string())
+                .unwrap_or_default();
+            assert_eq!(error, case.error, "{} {}", case.name, case.mode);
+            let output = String::from_utf8(out).unwrap();
+            if case.mode == "human" || case.output.is_empty() {
+                assert_eq!(output, case.output, "{}", case.name);
+            } else {
+                assert_eq!(
+                    serde_json::from_str::<Value>(&output).unwrap(),
+                    serde_json::from_str::<Value>(&case.output).unwrap(),
+                    "{} {}",
+                    case.name,
+                    case.mode
+                );
+                if case.mode == "ndjson" {
+                    assert_eq!(output.lines().count(), 1);
+                }
             }
+            assert_eq!(*requests.lock().unwrap(), case.requests);
+            assert!(!output.contains("fixture-signature"));
         }
-        assert_eq!(*requests.lock().unwrap(), case.requests);
-        assert!(!output.contains("fixture-signature"));
     }
 }

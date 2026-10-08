@@ -1,4 +1,6 @@
-use pixiv_cli_rs::{DetailOutput, artwork_detail, finish_command};
+#[path = "support/saved_account.rs"]
+mod saved_account;
+use pixiv_cli_rs::{DetailOutput, artwork_detail, finish_command, saved_artwork_detail};
 use pixiv_sdk::{
     Client, Result,
     transport::{Request, Response, Transport},
@@ -16,6 +18,7 @@ struct Case {
     diagnostics: String,
     exit: i32,
 }
+#[derive(Clone)]
 struct Fixture;
 impl Transport for Fixture {
     async fn send(&self, _: Request) -> Result<Response> {
@@ -63,51 +66,67 @@ async fn detail_writer_failures_preserve_partial_output_diagnostics_and_ndjson_e
     .unwrap();
     assert_eq!(cases.len(), 27);
     for case in cases {
-        let mode = match case.mode.as_str() {
-            "json" => DetailOutput::Json,
-            "ndjson" => DetailOutput::Ndjson,
-            _ => DetailOutput::Human,
-        };
-        let mut writer = LimitedWriter {
-            output: vec![],
-            remaining: case.limit,
-            cause: case.cause.clone(),
-        };
-        let result = artwork_detail(
-            &Client::with_transport("fixture-access", Fixture),
-            42,
-            mode,
-            &mut writer,
-        )
-        .await;
-        let mut diagnostics = vec![];
-        let exit = finish_command(
-            result,
-            case.mode == "ndjson",
-            case.mode != "human",
-            &mut diagnostics,
-        );
-        let output = String::from_utf8(writer.output).unwrap();
-        let diagnostics = String::from_utf8(diagnostics).unwrap();
-        let label = format!("{} {} {}", case.mode, case.cause, case.limit);
-        assert_eq!(exit, case.exit, "{label}");
-        if case.limit == 100000 && case.mode != "human" {
-            assert_eq!(
-                serde_json::from_str::<Value>(&output).unwrap(),
-                serde_json::from_str::<Value>(&case.output).unwrap(),
-                "{label}"
+        for saved in [false, true] {
+            let mode = match case.mode.as_str() {
+                "json" => DetailOutput::Json,
+                "ndjson" => DetailOutput::Ndjson,
+                _ => DetailOutput::Human,
+            };
+            let mut writer = LimitedWriter {
+                output: vec![],
+                remaining: case.limit,
+                cause: case.cause.clone(),
+            };
+            let result = if saved {
+                let application = saved_account::saved_execution(Fixture);
+                saved_artwork_detail(
+                    &application.execution,
+                    &pixiv_app::lifecycle::Context::new(),
+                    42,
+                    0,
+                    Some(""),
+                    mode,
+                    &mut writer,
+                )
+                .await
+            } else {
+                artwork_detail(
+                    &Client::with_transport("fixture-access", Fixture),
+                    42,
+                    mode,
+                    &mut writer,
+                )
+                .await
+            };
+            let mut diagnostics = vec![];
+            let exit = finish_command(
+                result,
+                case.mode == "ndjson",
+                case.mode != "human",
+                &mut diagnostics,
             );
-        } else {
-            assert_eq!(output, case.output, "{label}");
-        }
-        if case.mode != "human" && !case.diagnostics.is_empty() {
-            assert_eq!(
-                serde_json::from_str::<Value>(&diagnostics).unwrap(),
-                serde_json::from_str::<Value>(&case.diagnostics).unwrap(),
-                "{label}"
-            );
-        } else {
-            assert_eq!(diagnostics, case.diagnostics, "{label}");
+            let output = String::from_utf8(writer.output).unwrap();
+            let diagnostics = String::from_utf8(diagnostics).unwrap();
+            let label = format!("{} {} {}", case.mode, case.cause, case.limit);
+            assert_eq!(exit, case.exit, "{label}");
+            if case.limit == 100000 && case.mode != "human" {
+                assert_eq!(
+                    serde_json::from_str::<Value>(&output).unwrap(),
+                    serde_json::from_str::<Value>(&case.output).unwrap(),
+                    "{label}"
+                );
+            } else {
+                assert_eq!(output, case.output, "{label}");
+            }
+            if case.mode != "human" && !case.diagnostics.is_empty() {
+                assert_eq!(
+                    serde_json::from_str::<Value>(&diagnostics).unwrap(),
+                    serde_json::from_str::<Value>(&case.diagnostics).unwrap(),
+                    "{label}"
+                );
+            } else {
+                assert_eq!(diagnostics, case.diagnostics, "{label}");
+            }
         }
     }
 }

@@ -1,0 +1,69 @@
+use serde::Deserialize;
+use std::process::Command;
+
+#[derive(Deserialize)]
+struct Case {
+    name: String,
+    config: String,
+    json: bool,
+    stdout: String,
+    stderr: String,
+    exit: i32,
+}
+
+#[test]
+fn detail_process_matches_go_saved_account_configuration_errors_without_changing_settings() {
+    let cases: Vec<Case> = serde_json::from_str(include_str!(
+        "../../../docs/migration/contracts/detail-accounts.json"
+    ))
+    .unwrap();
+    assert_eq!(cases.len(), 12);
+    for case in cases {
+        let home = tempfile::tempdir().unwrap();
+        let directory = home.path().join(".pixiv-cli");
+        std::fs::create_dir(&directory).unwrap();
+        let path = directory.join("config.toml");
+        std::fs::write(&path, &case.config).unwrap();
+        let mut command = Command::new(env!("CARGO_BIN_EXE_pixiv"));
+        command
+            .args(["detail", "42"])
+            .env("HOME", home.path())
+            .env("USERPROFILE", home.path())
+            .env("PIXIV_ACCESS_TOKEN", "")
+            .env_remove("https_proxy")
+            .env("HTTPS_PROXY", "")
+            .env("REQUEST_INTERVAL", "0");
+        if case.json {
+            command.arg("--json");
+        }
+        let output = command.output().unwrap();
+        assert_eq!(output.status.code(), Some(case.exit), "{}", case.name);
+        assert_eq!(
+            String::from_utf8(output.stdout).unwrap(),
+            case.stdout,
+            "{}",
+            case.name
+        );
+        if case.json {
+            assert_eq!(
+                serde_json::from_slice::<serde_json::Value>(&output.stderr).unwrap(),
+                serde_json::from_str::<serde_json::Value>(&case.stderr).unwrap(),
+                "{}",
+                case.name
+            );
+            assert_eq!(
+                output.stderr.iter().filter(|byte| **byte == b'\n').count(),
+                1
+            );
+        } else {
+            assert_eq!(
+                String::from_utf8(output.stderr).unwrap(),
+                case.stderr,
+                "{}",
+                case.name
+            );
+        }
+        assert_eq!(std::fs::read(&path).unwrap(), case.config.as_bytes());
+        assert!(!home.path().join(".pixiv-cli-rs").exists());
+    }
+}

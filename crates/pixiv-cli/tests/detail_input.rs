@@ -18,9 +18,37 @@ fn detail_inputs_match_go_process_errors_and_validate_before_client_configuratio
     ))
     .unwrap();
     assert_eq!(cases.len(), 122);
+    let accounts: Vec<Value> = serde_json::from_str(include_str!(
+        "../../../docs/migration/contracts/detail-accounts.json"
+    ))
+    .unwrap();
     for case in cases {
         assert_eq!(case.builds > 0, case.id > 0);
+        if case.builds > 0 {
+            assert_eq!(
+                pixiv_cli_rs::detail_artwork_id(&case.input).unwrap(),
+                case.id
+            );
+        }
+        let home = tempfile::tempdir().unwrap();
+        let directory = home.path().join(".pixiv-cli");
+        std::fs::create_dir(&directory).unwrap();
+        std::fs::write(directory.join("config.toml"), "").unwrap();
+        let stderr = if case.builds > 0 {
+            accounts
+                .iter()
+                .find(|row| row["name"] == "no_account" && row["json"] == case.json)
+                .unwrap()["stderr"]
+                .as_str()
+                .unwrap()
+        } else {
+            &case.stderr
+        };
         let mut command = Command::new(env!("CARGO_BIN_EXE_pixiv"));
+        command
+            .env("HOME", home.path())
+            .env("USERPROFILE", home.path())
+            .env("REQUEST_INTERVAL", "0");
         command.arg("detail");
         if case.json {
             command.arg("--json");
@@ -44,7 +72,7 @@ fn detail_inputs_match_go_process_errors_and_validate_before_client_configuratio
         if case.json {
             assert_eq!(
                 serde_json::from_slice::<Value>(&output.stderr).unwrap(),
-                serde_json::from_str::<Value>(&case.stderr).unwrap(),
+                serde_json::from_str::<Value>(stderr).unwrap(),
                 "input={}",
                 case.input
             );
@@ -55,10 +83,14 @@ fn detail_inputs_match_go_process_errors_and_validate_before_client_configuratio
         } else {
             assert_eq!(
                 String::from_utf8(output.stderr).unwrap(),
-                case.stderr,
+                stderr,
                 "input={}",
                 case.input
             );
         }
+        if case.builds == 0 {
+            assert!(!directory.join("pixiv-cli.db").exists());
+        }
+        assert_eq!(std::fs::read(directory.join("config.toml")).unwrap(), b"");
     }
 }

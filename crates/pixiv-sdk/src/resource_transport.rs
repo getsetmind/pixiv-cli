@@ -44,6 +44,7 @@ pub trait ResourceTransport: Send + Sync {
 
 pub(crate) async fn open(
     client: &reqwest::Client,
+    pacing: &crate::pacing::RequestPacing,
     request: ResourceReadRequest,
 ) -> Result<ResourceResponse<ResourceBody>> {
     let failure = || {
@@ -80,6 +81,7 @@ pub(crate) async fn open(
         HeaderValue::from_static("PixivAndroidApp/5.0.234 (Android 11; Pixel 5)"),
     );
     for sent in 1..=10 {
+        pacing.wait().await;
         let response = client
             .request(method.clone(), url.clone())
             .headers(headers.clone())

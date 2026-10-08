@@ -27,6 +27,7 @@ pub enum SchedulerError {
     Pool(PoolError),
     Account(AccountError),
     Config(ConfigError),
+    Proxy(crate::connection::ProxyError),
     Joined(Vec<SchedulerError>),
     Shared(Arc<SchedulerError>),
     Message(String),
@@ -45,6 +46,7 @@ impl fmt::Display for SchedulerError {
             Self::Pool(error) => fmt::Display::fmt(error, f),
             Self::Account(error) => fmt::Display::fmt(error, f),
             Self::Config(error) => fmt::Display::fmt(error, f),
+            Self::Proxy(error) => fmt::Display::fmt(error, f),
             Self::Shared(error) => fmt::Display::fmt(error, f),
             Self::Joined(errors) => {
                 for (index, error) in errors.iter().enumerate() {
@@ -70,6 +72,7 @@ impl StdError for SchedulerError {
             Self::Pool(error) => Some(error),
             Self::Account(error) => Some(error),
             Self::Config(error) => Some(error),
+            Self::Proxy(error) => Some(error),
             Self::Shared(error) => Some(error.as_ref()),
             Self::Joined(errors) => errors.first().map(|error| error as &dyn StdError),
             Self::Wrapped { source, .. } => Some(source.as_ref()),

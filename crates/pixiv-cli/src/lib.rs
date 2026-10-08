@@ -1,6 +1,9 @@
 mod json_spool;
 pub mod search;
 
+use pixiv_app::{
+    execution::Execution, facade::UseOutcome, lifecycle::Context, scheduler::SchedulerError,
+};
 use pixiv_sdk::{Client, Error, Reason, transport::Transport};
 use std::{
     fmt,
@@ -20,6 +23,13 @@ pub enum CommandError {
     Message(&'static str),
     MessageText(String),
     Output(io::Error),
+    App(SchedulerError),
+    State(Box<dyn std::error::Error + Send + Sync>),
+}
+impl From<SchedulerError> for CommandError {
+    fn from(error: SchedulerError) -> Self {
+        Self::App(error)
+    }
 }
 impl From<io::Error> for CommandError {
     fn from(error: io::Error) -> Self {
@@ -38,6 +48,8 @@ impl fmt::Display for CommandError {
             Self::Message(message) => f.write_str(message),
             Self::MessageText(message) => f.write_str(message),
             Self::Output(error) => error.fmt(f),
+            Self::App(error) => error.fmt(f),
+            Self::State(error) => error.fmt(f),
         }
     }
 }
@@ -46,21 +58,23 @@ impl std::error::Error for CommandError {
         match self {
             Self::Sdk(error) => Some(error),
             Self::Output(error) => Some(error),
+            Self::App(error) => Some(error),
+            Self::State(error) => Some(error.as_ref()),
             Self::Message(_) | Self::MessageText(_) => None,
         }
     }
 }
 impl CommandError {
     pub fn code(&self) -> &str {
-        match self {
-            Self::Sdk(error) => error.code.as_str(),
-            Self::Message(_) | Self::MessageText(_) | Self::Output(_) => "command_failed",
-        }
+        self.sdk_error()
+            .map(|error| error.code.as_str())
+            .unwrap_or("command_failed")
     }
     pub fn sdk_error(&self) -> Option<&Error> {
         match self {
             Self::Sdk(error) => Some(error),
-            Self::Message(_) | Self::MessageText(_) | Self::Output(_) => None,
+            Self::App(error) => error.classified(),
+            Self::Message(_) | Self::MessageText(_) | Self::Output(_) | Self::State(_) => None,
         }
     }
 }
@@ -104,6 +118,62 @@ pub async fn artwork_detail<T: Transport, W: Write>(
     out: &mut W,
 ) -> Result<(), CommandError> {
     let artwork = client.artwork(id).await?;
+    write_artwork_detail(&artwork, mode, out)
+}
+
+pub async fn saved_artwork_detail<T: Transport + 'static, W: Write>(
+    execution: &Execution<T>,
+    context: &Context,
+    id: i64,
+    user_id: i64,
+    proxy: Option<&str>,
+    mode: DetailOutput,
+    out: &mut W,
+) -> Result<(), CommandError> {
+    let result = std::sync::Arc::new(std::sync::Mutex::new(None));
+    let fetched = result.clone();
+    execution
+        .use_client(
+            Some(context),
+            user_id,
+            proxy,
+            Some(std::sync::Arc::new(move |_, client| {
+                let fetched = fetched.clone();
+                Box::pin(async move {
+                    match client.artwork(id).await {
+                        Ok(artwork) => {
+                            *fetched
+                                .lock()
+                                .unwrap_or_else(|poisoned| poisoned.into_inner()) = Some(artwork);
+                            UseOutcome {
+                                committed: false,
+                                error: None,
+                            }
+                        }
+                        Err(error) => UseOutcome {
+                            committed: false,
+                            error: Some(error.into()),
+                        },
+                    }
+                })
+            })),
+        )
+        .await?;
+    let artwork = result
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner())
+        .take()
+        .ok_or(CommandError::Message(
+            "pixiv artwork detail fetch returned no result",
+        ))?;
+    write_artwork_detail(&artwork, mode, out)
+}
+
+fn write_artwork_detail<W: Write>(
+    artwork: &pixiv_sdk::models::Artwork,
+    mode: DetailOutput,
+    out: &mut W,
+) -> Result<(), CommandError> {
     match mode {
         DetailOutput::Human => {
             let kind = serde_json::to_value(&artwork.kind).map_err(|_| local())?;
@@ -133,12 +203,12 @@ pub async fn artwork_detail<T: Transport, W: Write>(
             }
         }
         DetailOutput::Json => {
-            let encoded = serde_json::to_string_pretty(&pixiv_sdk::dto::ArtworkDto::from(&artwork))
+            let encoded = serde_json::to_string_pretty(&pixiv_sdk::dto::ArtworkDto::from(artwork))
                 .map_err(|_| local())?;
             writeln!(out, "{}", go_json_escape(encoded))?;
         }
         DetailOutput::Ndjson => {
-            let record = pixiv_record::from_artwork(&artwork)
+            let record = pixiv_record::from_artwork(artwork)
                 .map_err(|error| CommandError::Message(error.message()))?;
             let encoded = serde_json::to_string(&record).map_err(|_| local())?;
             writeln!(out, "{}", go_json_escape(encoded))?;
@@ -148,6 +218,23 @@ pub async fn artwork_detail<T: Transport, W: Write>(
 }
 fn local() -> Error {
     Error::new(Reason::LocalStateError, "output")
+}
+
+pub fn detail_artwork_id(source: &str) -> pixiv_sdk::Result<i64> {
+    if let Ok(id) = source.trim().parse::<i64>()
+        && id > 0
+    {
+        return Ok(id);
+    }
+    let reference = pixiv_sdk::reference::parse_url(source).map_err(|_| {
+        Error::new(Reason::InvalidArgument, "detail")
+            .with_detail("argument must be an entity ID or a supported Pixiv URL")
+    })?;
+    if reference.kind != pixiv_sdk::reference::REFERENCE_KIND_ARTWORK {
+        return Err(Error::new(Reason::InvalidArgument, "detail")
+            .with_detail("URL does not name a supported Pixiv artwork"));
+    }
+    Ok(reference.id)
 }
 fn go_json_escape(value: String) -> String {
     value

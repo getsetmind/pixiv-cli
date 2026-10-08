@@ -75,6 +75,202 @@ impl Transport for Connection {
     }
 }
 
+struct CurrentRetryConnection(Connection);
+impl Transport for CurrentRetryConnection {
+    async fn send(&self, request: Request) -> pixiv_sdk::Result<Response> {
+        self.0.send(request).await.map_err(|mut error| {
+            if error.code == Reason::RateLimited {
+                error.retry.after = Some(chrono::Utc::now() + chrono::TimeDelta::seconds(120));
+            }
+            error
+        })
+    }
+}
+
+#[tokio::test]
+async fn execution_reads_current_connection_and_default_account_before_refreshing_and_persisting() {
+    use pixiv_app::execution::Execution;
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("config.toml");
+    let mut database = Database::open(directory.path()).unwrap();
+    for id in [42, 43] {
+        database
+            .save_pixiv_credential(&PixivAccount::new(
+                id,
+                "stored",
+                format!("fixture-refresh-{id}").as_bytes(),
+            ))
+            .unwrap();
+    }
+    let database = Arc::new(Mutex::new(database));
+    let requests = Arc::new(Mutex::new(Vec::new()));
+    let connections = Arc::new(Mutex::new(Vec::new()));
+    let factory_database = database.clone();
+    let factory_requests = requests.clone();
+    let factory_connections = connections.clone();
+    let execution = Execution::new(Store::new(&path), database.clone(), move |options| {
+        factory_connections
+            .lock()
+            .unwrap()
+            .push((options.proxy().to_owned(), options.pacing()));
+        Ok(Connection {
+            requests: factory_requests.clone(),
+            database: factory_database.clone(),
+        })
+    });
+    for (id, proxy, interval, reason) in [
+        (42, "http://first.invalid", 10, Reason::RateLimited),
+        (
+            43,
+            "http://second.invalid",
+            20,
+            Reason::MalformedUpstreamResponse,
+        ),
+    ] {
+        std::fs::write(&path, format!("[pixiv.auth]\ndefault_user_id = {id}\n[pixiv.network]\nproxy_url = '{proxy}'\n[network]\nrequest_interval = '{interval}ms'\n")).unwrap();
+        let error = execution
+            .use_client(
+                Some(&Context::new()),
+                0,
+                None,
+                Some(Arc::new(|_, client: Arc<Client<Connection>>| {
+                    Box::pin(async move {
+                        UseOutcome {
+                            committed: false,
+                            error: client.artwork(1).await.err().map(Into::into),
+                        }
+                    })
+                })),
+            )
+            .await
+            .unwrap_err();
+        assert_eq!(error.classified().unwrap().code, reason);
+    }
+    assert_eq!(*requests.lock().unwrap(), [42, 43]);
+    assert_eq!(
+        *connections.lock().unwrap(),
+        [
+            (
+                "http://first.invalid".to_owned(),
+                std::time::Duration::from_millis(10)
+            ),
+            (
+                "http://second.invalid".to_owned(),
+                std::time::Duration::from_millis(20)
+            ),
+        ]
+    );
+    for id in [42, 43] {
+        assert_eq!(
+            database
+                .lock()
+                .unwrap()
+                .get_pixiv(id)
+                .unwrap()
+                .credential_revision,
+            2
+        );
+    }
+}
+
+#[tokio::test]
+async fn execution_pool_overrides_the_requested_account_and_persists_replay_state() {
+    use pixiv_app::execution::Execution;
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("config.toml");
+    std::fs::write(&path, "[pixiv.auth]\ndefault_user_id = 43\n[account_pool]\nenabled = true\nstrategy = 'round_robin'\n").unwrap();
+    let mut database = Database::open(directory.path()).unwrap();
+    for id in [42, 43] {
+        database
+            .save_pixiv_credential(&PixivAccount::new(
+                id,
+                "stored",
+                format!("fixture-refresh-{id}").as_bytes(),
+            ))
+            .unwrap();
+    }
+    database.set_all_pixiv_schedulable(true).unwrap();
+    let database = Arc::new(Mutex::new(database));
+    let requests = Arc::new(Mutex::new(Vec::new()));
+    let factory_database = database.clone();
+    let factory_requests = requests.clone();
+    let execution = Execution::new(Store::new(&path), database.clone(), move |_| {
+        Ok(CurrentRetryConnection(Connection {
+            requests: factory_requests.clone(),
+            database: factory_database.clone(),
+        }))
+    });
+    let error = execution
+        .use_client(
+            Some(&Context::new()),
+            99,
+            Some(""),
+            Some(Arc::new(
+                |_, client: Arc<Client<CurrentRetryConnection>>| {
+                    Box::pin(async move {
+                        UseOutcome {
+                            committed: false,
+                            error: client.artwork(1).await.err().map(Into::into),
+                        }
+                    })
+                },
+            )),
+        )
+        .await
+        .unwrap_err();
+    assert_eq!(
+        error.classified().unwrap().code,
+        Reason::MalformedUpstreamResponse
+    );
+    assert_eq!(*requests.lock().unwrap(), [42, 43]);
+    let database = database.lock().unwrap();
+    for id in [42, 43] {
+        let account = database.get_pixiv(id).unwrap();
+        assert_eq!(account.credential_revision, 2);
+        assert_eq!(account.pool_last_selected, id == 43);
+    }
+}
+
+#[tokio::test]
+async fn execution_rejects_configuration_and_proxy_errors_before_acquiring_an_account() {
+    use pixiv_app::{execution::Execution, scheduler::SchedulerError};
+    use std::error::Error as _;
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("config.toml");
+    let database = Arc::new(Mutex::new(Database::open(directory.path()).unwrap()));
+    let execution = Execution::<Connection>::new(Store::new(&path), database, |_| {
+        panic!("invalid configuration reached the transport")
+    });
+    std::fs::write(&path, "[account_pool]\nenabled = 'true'\n").unwrap();
+    let error = execution.use_client(None, 0, None, None).await.unwrap_err();
+    assert_eq!(error.to_string(), "account_pool.enabled must be a boolean");
+    assert!(
+        error
+            .source()
+            .unwrap()
+            .is::<pixiv_app::config::ConfigError>()
+    );
+    std::fs::write(
+        &path,
+        "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    )
+    .unwrap();
+    let error = execution.use_client(None, 0, None, None).await.unwrap_err();
+    assert!(matches!(error, SchedulerError::Proxy(_)));
+    assert!(
+        error
+            .source()
+            .unwrap()
+            .is::<pixiv_app::connection::ProxyError>()
+    );
+    assert!(!format!("{error:?}").contains("fixture-secret"));
+    let error = execution
+        .use_client(None, 0, Some(""), None)
+        .await
+        .unwrap_err();
+    assert_eq!(error.to_string(), "lifecycle: context is nil");
+}
+
 #[tokio::test]
 async fn pool_replay_refreshes_and_persists_each_selected_account_before_sdk_content() {
     let directory = tempfile::tempdir().unwrap();

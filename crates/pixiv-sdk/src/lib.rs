@@ -7,6 +7,7 @@ pub mod error;
 pub mod models;
 mod mutation;
 pub mod oauth;
+mod pacing;
 pub mod pixiv;
 pub mod reference;
 pub mod resource;

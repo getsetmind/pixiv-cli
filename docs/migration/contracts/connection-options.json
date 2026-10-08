@@ -1,0 +1,377 @@
+[
+  {
+    "input": {
+      "name": "direct",
+      "global": "",
+      "service": null,
+      "override": null,
+      "interval": 0
+    },
+    "message": "",
+    "invalid_proxy": false,
+    "proxy": "",
+    "pacing": 0,
+    "timeout": 0,
+    "http_client": true
+  },
+  {
+    "input": {
+      "name": "global",
+      "global": "http://global.invalid:80",
+      "service": null,
+      "override": null,
+      "interval": 0
+    },
+    "message": "",
+    "invalid_proxy": false,
+    "proxy": "http://global.invalid:80",
+    "pacing": 0,
+    "timeout": 0,
+    "http_client": true
+  },
+  {
+    "input": {
+      "name": "service",
+      "global": "http://global.invalid",
+      "service": "http://service.invalid",
+      "override": null,
+      "interval": 0
+    },
+    "message": "",
+    "invalid_proxy": false,
+    "proxy": "http://service.invalid",
+    "pacing": 0,
+    "timeout": 0,
+    "http_client": true
+  },
+  {
+    "input": {
+      "name": "service_direct",
+      "global": "http://global.invalid",
+      "service": "",
+      "override": null,
+      "interval": 0
+    },
+    "message": "",
+    "invalid_proxy": false,
+    "proxy": "",
+    "pacing": 0,
+    "timeout": 0,
+    "http_client": true
+  },
+  {
+    "input": {
+      "name": "override",
+      "global": "http://global.invalid",
+      "service": "http://service.invalid",
+      "override": "http://override.invalid",
+      "interval": 0
+    },
+    "message": "",
+    "invalid_proxy": false,
+    "proxy": "http://override.invalid",
+    "pacing": 0,
+    "timeout": 0,
+    "http_client": true
+  },
+  {
+    "input": {
+      "name": "override_direct",
+      "global": "http://global.invalid",
+      "service": "http://service.invalid",
+      "override": "",
+      "interval": 0
+    },
+    "message": "",
+    "invalid_proxy": false,
+    "proxy": "",
+    "pacing": 0,
+    "timeout": 0,
+    "http_client": true
+  },
+  {
+    "input": {
+      "name": "override_ignores_invalid_lower_sources",
+      "global": "%zz",
+      "service": "%zz",
+      "override": "",
+      "interval": 0
+    },
+    "message": "",
+    "invalid_proxy": false,
+    "proxy": "",
+    "pacing": 0,
+    "timeout": 0,
+    "http_client": true
+  },
+  {
+    "input": {
+      "name": "service_ignores_invalid_global",
+      "global": "%zz",
+      "service": "http://service.invalid",
+      "override": null,
+      "interval": 0
+    },
+    "message": "",
+    "invalid_proxy": false,
+    "proxy": "http://service.invalid",
+    "pacing": 0,
+    "timeout": 0,
+    "http_client": true
+  },
+  {
+    "input": {
+      "name": "pacing",
+      "global": "",
+      "service": null,
+      "override": null,
+      "interval": 2000000000
+    },
+    "message": "",
+    "invalid_proxy": false,
+    "proxy": "",
+    "pacing": 2000000000,
+    "timeout": 0,
+    "http_client": true
+  },
+  {
+    "input": {
+      "name": "pacing_and_proxy",
+      "global": "socks5h://proxy.invalid:1080",
+      "service": null,
+      "override": null,
+      "interval": 123456789
+    },
+    "message": "",
+    "invalid_proxy": false,
+    "proxy": "socks5h://proxy.invalid:1080",
+    "pacing": 123456789,
+    "timeout": 0,
+    "http_client": true
+  },
+  {
+    "input": {
+      "name": "proxy_http://proxy.invalid",
+      "global": "http://proxy.invalid",
+      "service": null,
+      "override": null,
+      "interval": 0
+    },
+    "message": "",
+    "invalid_proxy": false,
+    "proxy": "http://proxy.invalid",
+    "pacing": 0,
+    "timeout": 0,
+    "http_client": true
+  },
+  {
+    "input": {
+      "name": "proxy_https://proxy.invalid:8443",
+      "global": "https://proxy.invalid:8443",
+      "service": null,
+      "override": null,
+      "interval": 0
+    },
+    "message": "",
+    "invalid_proxy": false,
+    "proxy": "https://proxy.invalid:8443",
+    "pacing": 0,
+    "timeout": 0,
+    "http_client": true
+  },
+  {
+    "input": {
+      "name": "proxy_socks5://proxy.invalid:1080",
+      "global": "socks5://proxy.invalid:1080",
+      "service": null,
+      "override": null,
+      "interval": 0
+    },
+    "message": "",
+    "invalid_proxy": false,
+    "proxy": "socks5://proxy.invalid:1080",
+    "pacing": 0,
+    "timeout": 0,
+    "http_client": true
+  },
+  {
+    "input": {
+      "name": "proxy_socks5h://proxy.invalid:1080",
+      "global": "socks5h://proxy.invalid:1080",
+      "service": null,
+      "override": null,
+      "interval": 0
+    },
+    "message": "",
+    "invalid_proxy": false,
+    "proxy": "socks5h://proxy.invalid:1080",
+    "pacing": 0,
+    "timeout": 0,
+    "http_client": true
+  },
+  {
+    "input": {
+      "name": "proxy_http://[::1]:8080",
+      "global": "http://[::1]:8080",
+      "service": null,
+      "override": null,
+      "interval": 0
+    },
+    "message": "",
+    "invalid_proxy": false,
+    "proxy": "http://[::1]:8080",
+    "pacing": 0,
+    "timeout": 0,
+    "http_client": true
+  },
+  {
+    "input": {
+      "name": "proxy_http://synthetic-user:synthetic-password@proxy.invalid:7890",
+      "global": "http://synthetic-user:synthetic-password@proxy.invalid:7890",
+      "service": null,
+      "override": null,
+      "interval": 0
+    },
+    "message": "",
+    "invalid_proxy": false,
+    "proxy": "http://synthetic-user:synthetic-password@proxy.invalid:7890",
+    "pacing": 0,
+    "timeout": 0,
+    "http_client": true
+  },
+  {
+    "input": {
+      "name": "proxy_http://proxy.invalid/path?key=synthetic",
+      "global": "http://proxy.invalid/path?key=synthetic",
+      "service": null,
+      "override": null,
+      "interval": 0
+    },
+    "message": "",
+    "invalid_proxy": false,
+    "proxy": "http://proxy.invalid/path?key=synthetic",
+    "pacing": 0,
+    "timeout": 0,
+    "http_client": true
+  },
+  {
+    "input": {
+      "name": "proxy_http://proxy.invalid/%zz",
+      "global": "http://proxy.invalid/%zz",
+      "service": null,
+      "override": null,
+      "interval": 0
+    },
+    "message": "parse proxy URL: invalid proxy configuration",
+    "invalid_proxy": true,
+    "proxy": "",
+    "pacing": 0,
+    "timeout": 0,
+    "http_client": false
+  },
+  {
+    "input": {
+      "name": "proxy_ftp://proxy.invalid",
+      "global": "ftp://proxy.invalid",
+      "service": null,
+      "override": null,
+      "interval": 0
+    },
+    "message": "proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration",
+    "invalid_proxy": true,
+    "proxy": "",
+    "pacing": 0,
+    "timeout": 0,
+    "http_client": false
+  },
+  {
+    "input": {
+      "name": "proxy_proxy.invalid:8080",
+      "global": "proxy.invalid:8080",
+      "service": null,
+      "override": null,
+      "interval": 0
+    },
+    "message": "proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration",
+    "invalid_proxy": true,
+    "proxy": "",
+    "pacing": 0,
+    "timeout": 0,
+    "http_client": false
+  },
+  {
+    "input": {
+      "name": "proxy_//proxy.invalid",
+      "global": "//proxy.invalid",
+      "service": null,
+      "override": null,
+      "interval": 0
+    },
+    "message": "proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration",
+    "invalid_proxy": true,
+    "proxy": "",
+    "pacing": 0,
+    "timeout": 0,
+    "http_client": false
+  },
+  {
+    "input": {
+      "name": "proxy_http:///path",
+      "global": "http:///path",
+      "service": null,
+      "override": null,
+      "interval": 0
+    },
+    "message": "proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration",
+    "invalid_proxy": true,
+    "proxy": "",
+    "pacing": 0,
+    "timeout": 0,
+    "http_client": false
+  },
+  {
+    "input": {
+      "name": "proxy_http://",
+      "global": "http://",
+      "service": null,
+      "override": null,
+      "interval": 0
+    },
+    "message": "proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration",
+    "invalid_proxy": true,
+    "proxy": "",
+    "pacing": 0,
+    "timeout": 0,
+    "http_client": false
+  },
+  {
+    "input": {
+      "name": "proxy_ http://proxy.invalid",
+      "global": " http://proxy.invalid",
+      "service": null,
+      "override": null,
+      "interval": 0
+    },
+    "message": "parse proxy URL: invalid proxy configuration",
+    "invalid_proxy": true,
+    "proxy": "",
+    "pacing": 0,
+    "timeout": 0,
+    "http_client": false
+  },
+  {
+    "input": {
+      "name": "proxy_http://proxy.invalid:bad",
+      "global": "http://proxy.invalid:bad",
+      "service": null,
+      "override": null,
+      "interval": 0
+    },
+    "message": "parse proxy URL: invalid proxy configuration",
+    "invalid_proxy": true,
+    "proxy": "",
+    "pacing": 0,
+    "timeout": 0,
+    "http_client": false
+  }
+]

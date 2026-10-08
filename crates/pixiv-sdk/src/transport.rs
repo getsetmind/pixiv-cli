@@ -45,28 +45,32 @@ impl fmt::Debug for Response {
     }
 }
 
-#[allow(async_fn_in_trait)]
 pub trait Transport: Send + Sync {
-    async fn send(&self, request: Request) -> Result<Response>;
-    async fn post_form(&self, request: Request) -> Result<Response> {
-        let response = self.send(request).await?;
-        Ok(Response {
-            body: Value::Null,
-            retry_after: None,
-            ..response
-        })
+    fn send(&self, request: Request) -> impl std::future::Future<Output = Result<Response>> + Send;
+    fn post_form(
+        &self,
+        request: Request,
+    ) -> impl std::future::Future<Output = Result<Response>> + Send {
+        async move {
+            let response = self.send(request).await?;
+            Ok(Response {
+                body: Value::Null,
+                retry_after: None,
+                ..response
+            })
+        }
     }
 }
 
 #[derive(Clone)]
 pub struct HttpTransport {
     client: reqwest::Client,
+    pacing: crate::pacing::RequestPacing,
 }
 
 impl HttpTransport {
     pub fn new(proxy: Option<&str>) -> Result<Self> {
         let mut builder = reqwest::Client::builder()
-            .timeout(Duration::from_secs(60))
             .redirect(Policy::none())
             .no_proxy();
         if let Some(proxy) = proxy.filter(|value| !value.is_empty()) {
@@ -76,10 +80,16 @@ impl HttpTransport {
             );
         }
         Ok(Self {
+            pacing: crate::pacing::RequestPacing::new(Duration::ZERO),
             client: builder
                 .build()
                 .map_err(|_| Error::new(Reason::LocalStateError, "transport"))?,
         })
+    }
+
+    pub fn with_pacing(mut self, interval: Duration) -> Self {
+        self.pacing = crate::pacing::RequestPacing::new(interval);
+        self
     }
 }
 
@@ -103,6 +113,7 @@ impl HttpTransport {
         } else {
             builder.form(&request.parameters)
         };
+        self.pacing.wait().await;
         let response = builder
             .send()
             .await
@@ -150,7 +161,7 @@ impl ResourceTransport for HttpTransport {
         &self,
         request: ResourceReadRequest,
     ) -> Result<crate::resource::ResourceResponse<Self::Body>> {
-        crate::resource_transport::open(&self.client, request).await
+        crate::resource_transport::open(&self.client, &self.pacing, request).await
     }
 }
 

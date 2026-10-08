@@ -36,7 +36,11 @@
         "crates/pixiv-app/src/facade.rs",
         "crates/pixiv-sdk/src/error.rs",
         "crates/pixiv-app/src/config.rs",
-        "crates/pixiv-app/src/config/duration.rs"
+        "crates/pixiv-app/src/config/duration.rs",
+        "crates/pixiv-app/src/connection.rs",
+        "crates/pixiv-sdk/src/pacing.rs",
+        "crates/pixiv-sdk/src/resource_transport.rs",
+        "crates/pixiv-app/src/execution.rs"
       ],
       "tests": [
         "internal/storage/database/migration_contract_test.go#TestMigrationDatabasePreservesSchemaAndRejectsDrift",
@@ -77,7 +81,19 @@
         "internal/config/settings/migration_snapshot_test.go#TestMigrationConfigSnapshotUsesOneReadAndPropagatesFileFailures",
         "crates/pixiv-app/tests/config_snapshot.rs#config_snapshot_matches_go_runtime_precedence_and_default_accounts",
         "crates/pixiv-app/tests/config_snapshot.rs#captured_configuration_retains_file_and_environment_while_new_reads_observe_changes",
-        "crates/pixiv-app/tests/config_snapshot.rs#configuration_failures_stop_client_acquisition_and_retain_the_typed_cause"
+        "crates/pixiv-app/tests/config_snapshot.rs#configuration_failures_stop_client_acquisition_and_retain_the_typed_cause",
+        "internal/cli/migration_connection_test.go#TestMigrationConnectionOptionsPreserveProxyPresenceAndPacing",
+        "crates/pixiv-app/tests/connection.rs#command_connection_matches_go_proxy_presence_errors_and_pacing",
+        "crates/pixiv-app/tests/connection.rs#rejected_proxy_never_exposes_credentials_or_other_url_components",
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationPacingSharesOAuthContentResourceRedirectAndMutationStarts",
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationDefaultSDKClientLeavesTotalTimeoutToContext",
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationPacingCanceledWaitDoesNotReachTransportOrAdvanceItsLastStart",
+        "crates/pixiv-sdk/tests/pacing.rs#http_transport_matches_go_spacing_across_oauth_content_redirects_and_mutations",
+        "crates/pixiv-sdk/tests/pacing.rs#default_http_transport_keeps_a_pending_response_after_the_prototype_sixty_second_limit",
+        "crates/pixiv-sdk/tests/pacing.rs#aborting_a_resource_pacing_wait_releases_the_queue_without_consuming_a_request_start",
+        "crates/pixiv-app/tests/pool_session.rs#execution_reads_current_connection_and_default_account_before_refreshing_and_persisting",
+        "crates/pixiv-app/tests/pool_session.rs#execution_pool_overrides_the_requested_account_and_persists_replay_state",
+        "crates/pixiv-app/tests/pool_session.rs#execution_rejects_configuration_and_proxy_errors_before_acquiring_an_account"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -92,7 +108,9 @@
         "固定Goの公開OpenWithを経由した30ケースでopaque token/cookie拒否・refresh token欠落時の維持・nested/root選択・ID/expiry/null/型違いを比較。HTTP分類のOAuth fixtureも実OpenWithへ修正し、adapterがRetry-Afterを取り込まない契約を保持した。保存済みUIDとrevision CASへの接続は下記11ケースで比較。全JSON wire/Unicode・取消の全競合・code交換・CLI/MCP認証・他OSは未検証または未実装。",
         "固定Goの実account Service/SQLite/公開SDKの11ケースを採取し、Rust AccountServiceをsessionのaccount openerと実Databaseへ接続。明示/default/fallback、欠落、identity不一致、refresh中のrevision競合、refresh token維持、零expiry、context取消とcancel cause、保存前content禁止、session解放を比較。default設定file adapter・CLI/MCP composition・pool Use・SDK自前HTTP cleanup/options・全認証操作・SQL中断/全wire/OSは未実装または未検証。",
         "固定GoのFacade.Use/実Schedulerの20ケースでconfig/factory、pool無効/有効、UID/options、commit、callback/closeの全原因とSDK reason/cancel検索、safe replay/凍結、panic後closeを比較。Rustの実DB/account OAuth/SDK/session/poolを接続し、各選択UIDの保存前content禁止・freeze/marker・closeを確認。callback待機task abortでもclose/Gateを解放。CLI/MCP/config file、自前HTTP cleanup/options、実HTTP retry、連続runtime変更・全枯渇/joined/SQL取消/親子context/二重panic/他OSは未移植または未検証。",
-        "設定 snapshot・runtime・default UID の98ケースをGo/Rustで比較。file/env捕捉、explicit empty、型変換とdomain検証、removed_settingとエラー順序、日時・数値・duration境界、読み込み後のfile不変を確認。実StoreをAccountServiceのdefault UID readerとFacadeのpool config readerに接続してDB/refresh/pool replayをRustで検証し、設定失敗がclient取得前に止まることとtyped ConfigError/IO causeを確認。CLI/MCP/bootstrapの接続、config getの出力・秘匿性、設定パス・書き込み・コメント保存・権限、全TOML/型変換/診断/非UTF8入力、他OSは未完了。"
+        "設定 snapshot・runtime・default UID の98ケースをGo/Rustで比較。file/env捕捉、explicit empty、型変換とdomain検証、removed_settingとエラー順序、日時・数値・duration境界、読み込み後のfile不変を確認。実StoreをAccountServiceのdefault UID readerとFacadeのpool config readerに接続してDB/refresh/pool replayをRustで検証し、設定失敗がclient取得前に止まることとtyped ConfigError/IO causeを確認。CLI/MCP/bootstrapの接続、config getの出力・秘匿性、設定パス・書き込み・コメント保存・権限、全TOML/型変換/診断/非UTF8入力、他OSは未完了。",
+        "CommandConnectionの25ケースでproxy/interval/errorと実HTTP transport構築可否を比較し、選択したintervalをtransportへ渡す。共有HTTP pacingをGoのOpenWith後のcontent/resource redirect/mutation 5通信とRust実socketで比較（観測差5ms）。clone間でlast startを共有する。Goのdefault SDK HTTP timeout=0を再現しRust試作の60秒制限を削除。仮想61秒で保留responseが存続し、pacing待機task abort後も残り時間で次requestが再開することを確認。SDK Options全体/client再構築/pool replayの寿命/context取消/deadline/全競合/App API redirect/TLS/SOCKS wire/pool/idle cleanup/CLI/MCP bootstrap/他OSは未完了または未検証。",
+        "本番 Execution で Store・DB・refresh CAS・Gate・pool を接続し設定の fresh read と replay を検証。CLI/MCP 呼び出し元・ホームパス・初回設定作成は未接続。transport constructor 失敗の Gate 前後の順序差は未解消。"
       ]
     },
     {
@@ -200,7 +218,12 @@
         "crates/pixiv-app/src/facade.rs",
         "crates/pixiv-sdk/src/error.rs",
         "crates/pixiv-app/src/config.rs",
-        "crates/pixiv-app/src/config/duration.rs"
+        "crates/pixiv-app/src/config/duration.rs",
+        "crates/pixiv-app/src/connection.rs",
+        "crates/pixiv-sdk/src/pacing.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/resource_transport.rs",
+        "crates/pixiv-app/src/execution.rs"
       ],
       "tests": [
         "internal/storage/database/migration_pool_test.go#TestMigrationPoolPreservesSelectionFreezeMembershipAndRollback",
@@ -233,7 +256,19 @@
         "crates/pixiv-app/tests/config_snapshot.rs#configuration_failures_stop_client_acquisition_and_retain_the_typed_cause",
         "internal/config/settings/migration_snapshot_test.go#TestMigrationConfigSnapshotPreservesRuntimePrecedenceAndDefaultAccounts",
         "internal/config/settings/migration_snapshot_test.go#TestMigrationConfigSnapshotRetainsCapturedFileAndEnvironment",
-        "internal/config/settings/migration_snapshot_test.go#TestMigrationConfigSnapshotUsesOneReadAndPropagatesFileFailures"
+        "internal/config/settings/migration_snapshot_test.go#TestMigrationConfigSnapshotUsesOneReadAndPropagatesFileFailures",
+        "internal/cli/migration_connection_test.go#TestMigrationConnectionOptionsPreserveProxyPresenceAndPacing",
+        "crates/pixiv-app/tests/connection.rs#command_connection_matches_go_proxy_presence_errors_and_pacing",
+        "crates/pixiv-app/tests/connection.rs#rejected_proxy_never_exposes_credentials_or_other_url_components",
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationPacingSharesOAuthContentResourceRedirectAndMutationStarts",
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationDefaultSDKClientLeavesTotalTimeoutToContext",
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationPacingCanceledWaitDoesNotReachTransportOrAdvanceItsLastStart",
+        "crates/pixiv-sdk/tests/pacing.rs#http_transport_matches_go_spacing_across_oauth_content_redirects_and_mutations",
+        "crates/pixiv-sdk/tests/pacing.rs#default_http_transport_keeps_a_pending_response_after_the_prototype_sixty_second_limit",
+        "crates/pixiv-sdk/tests/pacing.rs#aborting_a_resource_pacing_wait_releases_the_queue_without_consuming_a_request_start",
+        "crates/pixiv-app/tests/pool_session.rs#execution_reads_current_connection_and_default_account_before_refreshing_and_persisting",
+        "crates/pixiv-app/tests/pool_session.rs#execution_pool_overrides_the_requested_account_and_persists_replay_state",
+        "crates/pixiv-app/tests/pool_session.rs#execution_rejects_configuration_and_proxy_errors_before_acquiring_an_account"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -246,7 +281,9 @@
         "Leaseの7ケースでValue/反復/8並行Close/同じerror instance/panic後の再実行防止をGo/Rustで比較。Facade.Openの明示opener/closerとGate/Leaseを17ケースで接続し、UID/options受渡し、取得後CloseまでのGate保持、部分client失敗のcloseと複数原因、panic後の再取得を検証。Rust取得待機task abortでもGateを解放。SessionErrorの全原因はerrors()/分類/取消APIで検索しstd sourceは先頭のみ。既定SDK CloseIdleConnections、Facade.Use/pool replay、全connection options、CLI/MCP/bootstrap、親子context/全競合/他OSは未移植または未検証。",
         "固定Goの実account Service/SQLite/公開SDKの11ケースを採取し、Rust AccountServiceをsessionのaccount openerと実Databaseへ接続。明示/default/fallback、欠落、identity不一致、refresh中のrevision競合、refresh token維持、零expiry、context取消とcancel cause、保存前content禁止、session解放を比較。default設定file adapter・CLI/MCP composition・pool Use・SDK自前HTTP cleanup/options・全認証操作・SQL中断/全wire/OSは未実装または未検証。",
         "固定GoのFacade.Use/実Schedulerの20ケースでconfig/factory、pool無効/有効、UID/options、commit、callback/closeの全原因とSDK reason/cancel検索、safe replay/凍結、panic後closeを比較。Rustの実DB/account OAuth/SDK/session/poolを接続し、各選択UIDの保存前content禁止・freeze/marker・closeを確認。callback待機task abortでもclose/Gateを解放。CLI/MCP/config file、自前HTTP cleanup/options、実HTTP retry、連続runtime変更・全枯渇/joined/SQL取消/親子context/二重panic/他OSは未移植または未検証。",
-        "設定 snapshot・runtime・default UID の98ケースをGo/Rustで比較。file/env捕捉、explicit empty、型変換とdomain検証、removed_settingとエラー順序、日時・数値・duration境界、読み込み後のfile不変を確認。実StoreをAccountServiceのdefault UID readerとFacadeのpool config readerに接続してDB/refresh/pool replayをRustで検証し、設定失敗がclient取得前に止まることとtyped ConfigError/IO causeを確認。CLI/MCP/bootstrapの接続、config getの出力・秘匿性、設定パス・書き込み・コメント保存・権限、全TOML/型変換/診断/非UTF8入力、他OSは未完了。"
+        "設定 snapshot・runtime・default UID の98ケースをGo/Rustで比較。file/env捕捉、explicit empty、型変換とdomain検証、removed_settingとエラー順序、日時・数値・duration境界、読み込み後のfile不変を確認。実StoreをAccountServiceのdefault UID readerとFacadeのpool config readerに接続してDB/refresh/pool replayをRustで検証し、設定失敗がclient取得前に止まることとtyped ConfigError/IO causeを確認。CLI/MCP/bootstrapの接続、config getの出力・秘匿性、設定パス・書き込み・コメント保存・権限、全TOML/型変換/診断/非UTF8入力、他OSは未完了。",
+        "CommandConnectionの25ケースでproxy/interval/errorと実HTTP transport構築可否を比較し、選択したintervalをtransportへ渡す。共有HTTP pacingをGoのOpenWith後のcontent/resource redirect/mutation 5通信とRust実socketで比較（観測差5ms）。clone間でlast startを共有する。Goのdefault SDK HTTP timeout=0を再現しRust試作の60秒制限を削除。仮想61秒で保留responseが存続し、pacing待機task abort後も残り時間で次requestが再開することを確認。SDK Options全体/client再構築/pool replayの寿命/context取消/deadline/全競合/App API redirect/TLS/SOCKS wire/pool/idle cleanup/CLI/MCP bootstrap/他OSは未完了または未検証。",
+        "本番 Execution で Store・DB・refresh CAS・Gate・pool を接続し設定の fresh read と replay を検証。CLI/MCP 呼び出し元・ホームパス・初回設定作成は未接続。transport constructor 失敗の Gate 前後の順序差は未解消。"
       ]
     },
     {
@@ -562,7 +599,12 @@
         "crates/pixiv-cli/src/main.rs",
         "crates/pixiv-sdk/src/reference.rs",
         "crates/pixiv-cli/src/lib.rs",
-        "crates/pixiv-record/src/lib.rs"
+        "crates/pixiv-record/src/lib.rs",
+        "crates/pixiv-app/src/connection.rs",
+        "crates/pixiv-sdk/src/pacing.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/resource_transport.rs",
+        "crates/pixiv-app/src/execution.rs"
       ],
       "tests": [
         "internal/cli/migration_detail_input_test.go#TestMigrationDetailInputMatchesFrozenErrorsBeforeAccountAccess",
@@ -571,14 +613,27 @@
         "crates/pixiv-cli/tests/detail_output.rs#artwork_detail_modes_match_go_dtos_records_captions_and_failures",
         "internal/cli/migration_writer_test.go#TestMigrationDetailWriterFailuresMatchFrozenExitAndDiagnostics",
         "crates/pixiv-cli/tests/detail_writer.rs#detail_writer_failures_preserve_partial_output_diagnostics_and_ndjson_exit",
-        "crates/pixiv-record/tests/artwork.rs#artwork_records_match_go_canonical_identity_dtos_and_kind_rejection"
+        "crates/pixiv-record/tests/artwork.rs#artwork_records_match_go_canonical_identity_dtos_and_kind_rejection",
+        "internal/cli/migration_connection_test.go#TestMigrationConnectionOptionsPreserveProxyPresenceAndPacing",
+        "crates/pixiv-app/tests/connection.rs#command_connection_matches_go_proxy_presence_errors_and_pacing",
+        "crates/pixiv-app/tests/connection.rs#rejected_proxy_never_exposes_credentials_or_other_url_components",
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationPacingSharesOAuthContentResourceRedirectAndMutationStarts",
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationDefaultSDKClientLeavesTotalTimeoutToContext",
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationPacingCanceledWaitDoesNotReachTransportOrAdvanceItsLastStart",
+        "crates/pixiv-sdk/tests/pacing.rs#http_transport_matches_go_spacing_across_oauth_content_redirects_and_mutations",
+        "crates/pixiv-sdk/tests/pacing.rs#default_http_transport_keeps_a_pending_response_after_the_prototype_sixty_second_limit",
+        "crates/pixiv-sdk/tests/pacing.rs#aborting_a_resource_pacing_wait_releases_the_queue_without_consuming_a_request_start",
+        "internal/cli/migration_detail_accounts_test.go#TestMigrationDetailUsesPersistedAccountAndConfigurationErrors",
+        "crates/pixiv-cli/tests/detail_accounts.rs#detail_process_matches_go_saved_account_configuration_errors_without_changing_settings"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
         "122 fixed Go detail input/error-exit cases and 72 SDK-to-detail output cases compare source parsing before client construction, plain/JSON errors and exit 1, human output and HTML captions, JSON DTOs and canonical NDJSON records. Rust production artwork_detail receives a real SDK client and output writer; fixture transports remain in tests. A further 27 writer contracts preserve partial output, command_failed diagnostics and exit status; only NDJSON BrokenPipe succeeds silently. Production finish_command retains io::Error causes and is shared by the binary.",
-        "Successful CLI process/network integration, TTY/configuration, record/text pipelines and aggregate JSON, OS/process BrokenPipe and stderr failures, all HTML and Unicode version differences, all flags/aliases and conflict errors, novel/user/content, account/authentication/transport, MCP and other platforms remain unverified."
+        "Successful CLI process/network integration, TTY/configuration, record/text pipelines and aggregate JSON, OS/process BrokenPipe and stderr failures, all HTML and Unicode version differences, all flags/aliases and conflict errors, novel/user/content, account/authentication/transport, MCP and other platforms remain unverified.",
+        "CommandConnectionの25ケースでproxy/interval/errorと実HTTP transport構築可否を比較し、選択したintervalをtransportへ渡す。共有HTTP pacingをGoのOpenWith後のcontent/resource redirect/mutation 5通信とRust実socketで比較（観測差5ms）。clone間でlast startを共有する。Goのdefault SDK HTTP timeout=0を再現しRust試作の60秒制限を削除。仮想61秒で保留responseが存続し、pacing待機task abort後も残り時間で次requestが再開することを確認。SDK Options全体/client再構築/pool replayの寿命/context取消/deadline/全競合/App API redirect/TLS/SOCKS wire/pool/idle cleanup/CLI/MCP bootstrap/他OSは未完了または未検証。",
+        "作品詳細 CLI を既存 .pixiv-cli の設定・DB・実 Execution へ接続。実 Go detailDeps の12ケースで隔離ホームの Rust 子プロセスの認証/設定エラーを比較。既存72出力/27writerケースは refresh CAS・実 DB・CLI presenter でも同じ期待値を検証。正常系 CLI 子プロセス HTTPS、初回設定生成、startup、proxy flags、全entity/record入力、MCP、content Context取消と通信/OS差は未実装または未検証。"
       ]
     },
     {
@@ -854,20 +909,34 @@
       },
       "rust_sources": [
         "crates/pixiv-cli/src/main.rs",
-        "crates/pixiv-mcp/src/stdio.rs"
+        "crates/pixiv-mcp/src/stdio.rs",
+        "crates/pixiv-app/src/connection.rs",
+        "crates/pixiv-sdk/src/pacing.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/resource_transport.rs"
       ],
       "tests": [
         "crates/pixiv-cli/tests/mcp_stdio.rs#mcp_process_exchanges_jsonrpc_without_stdout_diagnostics_or_credentials",
         "internal/mcpserver/pixiv/migration_rpc_test.go#TestMigrationMCPRPCMatchesFrozenInitializationAndArgumentErrors",
         "crates/pixiv-mcp/tests/stdio.rs#stdio_matches_go_initialization_protocol_and_detail_argument_errors",
-        "crates/pixiv-mcp/tests/stdio.rs#stdio_cancels_inflight_io_while_ping_remains_responsive"
+        "crates/pixiv-mcp/tests/stdio.rs#stdio_cancels_inflight_io_while_ping_remains_responsive",
+        "internal/cli/migration_connection_test.go#TestMigrationConnectionOptionsPreserveProxyPresenceAndPacing",
+        "crates/pixiv-app/tests/connection.rs#command_connection_matches_go_proxy_presence_errors_and_pacing",
+        "crates/pixiv-app/tests/connection.rs#rejected_proxy_never_exposes_credentials_or_other_url_components",
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationPacingSharesOAuthContentResourceRedirectAndMutationStarts",
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationDefaultSDKClientLeavesTotalTimeoutToContext",
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationPacingCanceledWaitDoesNotReachTransportOrAdvanceItsLastStart",
+        "crates/pixiv-sdk/tests/pacing.rs#http_transport_matches_go_spacing_across_oauth_content_redirects_and_mutations",
+        "crates/pixiv-sdk/tests/pacing.rs#default_http_transport_keeps_a_pending_response_after_the_prototype_sixty_second_limit",
+        "crates/pixiv-sdk/tests/pacing.rs#aborting_a_resource_pacing_wait_releases_the_queue_without_consuming_a_request_start"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
         "Rust mcp invokes the async stdio runtime. Child-process tests cover initialize/list/detail input and authentication errors, JSON-RPC-only stdout, empty stderr and normal EOF. Thirty Go protocol cases and 33 detail calls are compared through the runtime.",
-        "illust_detail and search_illust are registered. CLI aliases/proxy flags/configuration/startup failures, stored accounts/pool/credential lifetime, all tools, full protocol/transport cancellation/disconnect behavior and other OS remain unverified."
+        "illust_detail and search_illust are registered. CLI aliases/proxy flags/configuration/startup failures, stored accounts/pool/credential lifetime, all tools, full protocol/transport cancellation/disconnect behavior and other OS remain unverified.",
+        "CommandConnectionの25ケースでproxy/interval/errorと実HTTP transport構築可否を比較し、選択したintervalをtransportへ渡す。共有HTTP pacingをGoのOpenWith後のcontent/resource redirect/mutation 5通信とRust実socketで比較（観測差5ms）。clone間でlast startを共有する。Goのdefault SDK HTTP timeout=0を再現しRust試作の60秒制限を削除。仮想61秒で保留responseが存続し、pacing待機task abort後も残り時間で次requestが再開することを確認。SDK Options全体/client再構築/pool replayの寿命/context取消/deadline/全競合/App API redirect/TLS/SOCKS wire/pool/idle cleanup/CLI/MCP bootstrap/他OSは未完了または未検証。"
       ]
     },
     {
@@ -967,7 +1036,11 @@
         "crates/pixiv-cli/src/search.rs",
         "crates/pixiv-app/src/search_filter.rs",
         "crates/pixiv-cli/src/json_spool.rs",
-        "crates/pixiv-app/src/pagination.rs"
+        "crates/pixiv-app/src/pagination.rs",
+        "crates/pixiv-app/src/connection.rs",
+        "crates/pixiv-sdk/src/pacing.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/resource_transport.rs"
       ],
       "tests": [
         "internal/cli/commands/pixiv/search/migration_dates_test.go#TestMigrationQuickDateRangesMatchFrozenTokyoBoundaries",
@@ -991,7 +1064,16 @@
         "internal/shared/pagination/migration_traversal_test.go#TestMigrationTraversalPreservesLogicalWindowsCheckpointsAndPartialFailure",
         "crates/pixiv-app/tests/traversal.rs#traversal_matches_go_windows_checkpoints_cycles_and_partial_failure",
         "internal/shared/pagination/migration_streams_test.go#TestMigrationStreamsPreserveOrderedStateResumptionAndAtomicFailures",
-        "crates/pixiv-app/tests/streams.rs#streams_match_go_global_windows_ordered_state_resumption_and_atomic_failures"
+        "crates/pixiv-app/tests/streams.rs#streams_match_go_global_windows_ordered_state_resumption_and_atomic_failures",
+        "internal/cli/migration_connection_test.go#TestMigrationConnectionOptionsPreserveProxyPresenceAndPacing",
+        "crates/pixiv-app/tests/connection.rs#command_connection_matches_go_proxy_presence_errors_and_pacing",
+        "crates/pixiv-app/tests/connection.rs#rejected_proxy_never_exposes_credentials_or_other_url_components",
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationPacingSharesOAuthContentResourceRedirectAndMutationStarts",
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationDefaultSDKClientLeavesTotalTimeoutToContext",
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationPacingCanceledWaitDoesNotReachTransportOrAdvanceItsLastStart",
+        "crates/pixiv-sdk/tests/pacing.rs#http_transport_matches_go_spacing_across_oauth_content_redirects_and_mutations",
+        "crates/pixiv-sdk/tests/pacing.rs#default_http_transport_keeps_a_pending_response_after_the_prototype_sixty_second_limit",
+        "crates/pixiv-sdk/tests/pacing.rs#aborting_a_resource_pacing_wait_releases_the_queue_without_consuming_a_request_start"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -1005,7 +1087,8 @@
         "JSON の48ケースを加え出力比較は120ケース。非local検索はDTOをページごとにtemp fileへ書き込み、全取得成功後に固定サイズbufferでcommitする。正常/後続失敗/writer失敗/BrokenPipe/10バイトpartial出力、要求回数、Go/Rustの取得中spoolと終了後cleanupを比較。Rust future取消時cleanupも隔離子プロセスで確認。Unix0600は実行未検証。Windows ACL、容量不足/temp不正/seek/read/delete失敗、強制終了後回収、長期/大容量実測、pool replay/commit、他OSは未検証。",
         "bookmark min/max/strategy をGo CLIの393ケースで比較。nil/0、auto→local、local/best_effort/serverエラー、rating/論理page/重複/JSON filter completeness、全queryと後続失敗時の部分結果破棄を確認。入力不正18ケースは子プロセスでも比較。共通bookmark/context結合helperは192ケースでGoと一致しCLI/MCPから使用。正常CLI実HTTP、checkpoint失敗/実cursor resume/cycle、全selector組合せ、writer部分失敗、取消、pool/account/premium、大容量、他OSは未検証。strategy共通化は未実装。",
         "共通単一流paginationをGoの840ケースで比較。skip/limit/one-batch、循環、predicate/checkpoint/consume/fetch失敗、zero checkpoint、通常streamの部分結果/進捗とfiltered collectionの破棄を確認。CLI通常/rating/bookmarkとMCPに接続し既存90/120/393/144ケースを変更なしで再検証。2流の合成StreamState/nonzero initialと再開は別途3072ケースで比較。実SDK cursorの循環/checkpoint失敗/再開、取消/pool、他OSは未検証。",
-        "複数流engineをGoの3072ケースで比較。2流順序/重複/global skip/limit/one-batch、8初期state、非零ページ内cursor、checkpoint、初回返却stateからの2回目収集、後続流失敗時の全破棄を確認。checkpointのある単一流もengineへ接続しCLI rating/bookmarkとMCPの既存比較を維持。実SDK複数操作の公開コマンド接続/保存再開/binding、0流/3流以上、全境界、callback不在対応、取消/pool/account、他OSは未検証または未実装。"
+        "複数流engineをGoの3072ケースで比較。2流順序/重複/global skip/limit/one-batch、8初期state、非零ページ内cursor、checkpoint、初回返却stateからの2回目収集、後続流失敗時の全破棄を確認。checkpointのある単一流もengineへ接続しCLI rating/bookmarkとMCPの既存比較を維持。実SDK複数操作の公開コマンド接続/保存再開/binding、0流/3流以上、全境界、callback不在対応、取消/pool/account、他OSは未検証または未実装。",
+        "CommandConnectionの25ケースでproxy/interval/errorと実HTTP transport構築可否を比較し、選択したintervalをtransportへ渡す。共有HTTP pacingをGoのOpenWith後のcontent/resource redirect/mutation 5通信とRust実socketで比較（観測差5ms）。clone間でlast startを共有する。Goのdefault SDK HTTP timeout=0を再現しRust試作の60秒制限を削除。仮想61秒で保留responseが存続し、pacing待機task abort後も残り時間で次requestが再開することを確認。SDK Options全体/client再構築/pool replayの寿命/context取消/deadline/全競合/App API redirect/TLS/SOCKS wire/pool/idle cleanup/CLI/MCP bootstrap/他OSは未完了または未検証。"
       ]
     },
     {
@@ -7412,27 +7495,53 @@
     },
     {
       "id": "sdk/pixiv:New",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:New"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/pacing.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/resource_transport.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationPacingSharesOAuthContentResourceRedirectAndMutationStarts",
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationDefaultSDKClientLeavesTotalTimeoutToContext",
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationPacingCanceledWaitDoesNotReachTransportOrAdvanceItsLastStart",
+        "crates/pixiv-sdk/tests/pacing.rs#http_transport_matches_go_spacing_across_oauth_content_redirects_and_mutations",
+        "crates/pixiv-sdk/tests/pacing.rs#default_http_transport_keeps_a_pending_response_after_the_prototype_sixty_second_limit",
+        "crates/pixiv-sdk/tests/pacing.rs#aborting_a_resource_pacing_wait_releases_the_queue_without_consuming_a_request_start"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "CommandConnectionの25ケースでproxy/interval/errorと実HTTP transport構築可否を比較し、選択したintervalをtransportへ渡す。共有HTTP pacingをGoのOpenWith後のcontent/resource redirect/mutation 5通信とRust実socketで比較（観測差5ms）。clone間でlast startを共有する。Goのdefault SDK HTTP timeout=0を再現しRust試作の60秒制限を削除。仮想61秒で保留responseが存続し、pacing待機task abort後も残り時間で次requestが再開することを確認。SDK Options全体/client再構築/pool replayの寿命/context取消/deadline/全競合/App API redirect/TLS/SOCKS wire/pool/idle cleanup/CLI/MCP bootstrap/他OSは未完了または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NewWith",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NewWith"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/pacing.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/resource_transport.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationPacingSharesOAuthContentResourceRedirectAndMutationStarts",
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationDefaultSDKClientLeavesTotalTimeoutToContext",
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationPacingCanceledWaitDoesNotReachTransportOrAdvanceItsLastStart",
+        "crates/pixiv-sdk/tests/pacing.rs#http_transport_matches_go_spacing_across_oauth_content_redirects_and_mutations",
+        "crates/pixiv-sdk/tests/pacing.rs#default_http_transport_keeps_a_pending_response_after_the_prototype_sixty_second_limit",
+        "crates/pixiv-sdk/tests/pacing.rs#aborting_a_resource_pacing_wait_releases_the_queue_without_consuming_a_request_start"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "CommandConnectionの25ケースでproxy/interval/errorと実HTTP transport構築可否を比較し、選択したintervalをtransportへ渡す。共有HTTP pacingをGoのOpenWith後のcontent/resource redirect/mutation 5通信とRust実socketで比較（観測差5ms）。clone間でlast startを共有する。Goのdefault SDK HTTP timeout=0を再現しRust試作の60秒制限を削除。仮想61秒で保留responseが存続し、pacing待機task abort後も残り時間で次requestが再開することを確認。SDK Options全体/client再構築/pool replayの寿命/context取消/deadline/全競合/App API redirect/TLS/SOCKS wire/pool/idle cleanup/CLI/MCP bootstrap/他OSは未完了または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Novel",
@@ -7986,7 +8095,10 @@
         "crates/pixiv-sdk/src/oauth.rs",
         "crates/pixiv-sdk/src/pixiv.rs",
         "crates/pixiv-app/src/account_service.rs",
-        "crates/pixiv-app/src/sessions.rs"
+        "crates/pixiv-app/src/sessions.rs",
+        "crates/pixiv-sdk/src/pacing.rs",
+        "crates/pixiv-sdk/src/resource_transport.rs",
+        "crates/pixiv-app/src/execution.rs"
       ],
       "tests": [
         "sdk/pixiv/migration_http_status_test.go#TestMigrationHTTPStatusMatchesFrozenClassification",
@@ -7994,7 +8106,16 @@
         "sdk/pixiv/migration_oauth_refresh_test.go#TestMigrationOAuthRefreshPreservesOpaqueInputAndResponseFallback",
         "crates/pixiv-sdk/tests/oauth_refresh.rs#refresh_preserves_go_opaque_tokens_nested_fallback_and_zero_expiry",
         "internal/storage/database/migration_account_open_test.go#TestMigrationAccountOpenPersistsRotationBeforeContent",
-        "crates/pixiv-app/tests/account_service.rs#account_session_refreshes_checks_identity_and_persists_before_content"
+        "crates/pixiv-app/tests/account_service.rs#account_session_refreshes_checks_identity_and_persists_before_content",
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationPacingSharesOAuthContentResourceRedirectAndMutationStarts",
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationDefaultSDKClientLeavesTotalTimeoutToContext",
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationPacingCanceledWaitDoesNotReachTransportOrAdvanceItsLastStart",
+        "crates/pixiv-sdk/tests/pacing.rs#http_transport_matches_go_spacing_across_oauth_content_redirects_and_mutations",
+        "crates/pixiv-sdk/tests/pacing.rs#default_http_transport_keeps_a_pending_response_after_the_prototype_sixty_second_limit",
+        "crates/pixiv-sdk/tests/pacing.rs#aborting_a_resource_pacing_wait_releases_the_queue_without_consuming_a_request_start",
+        "crates/pixiv-app/tests/pool_session.rs#execution_reads_current_connection_and_default_account_before_refreshing_and_persisting",
+        "crates/pixiv-app/tests/pool_session.rs#execution_pool_overrides_the_requested_account_and_persists_replay_state",
+        "crates/pixiv-app/tests/pool_session.rs#execution_rejects_configuration_and_proxy_errors_before_acquiring_an_account"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -8002,44 +8123,85 @@
       "differences": [
         "HTTP status分類とrefresh/account sessionの下記契約を比較済み。正常応答・入力・認証・DTO・resource・実通信・再試行・保存の全契約は未移植または未検証。",
         "固定Goの公開OpenWithを経由した30ケースでopaque token/cookie拒否・refresh token欠落時の維持・nested/root選択・ID/expiry/null/型違いを比較。HTTP分類のOAuth fixtureも実OpenWithへ修正し、adapterがRetry-Afterを取り込まない契約を保持した。保存済みUIDとrevision CASへの接続は下記11ケースで比較。全JSON wire/Unicode・取消の全競合・code交換・CLI/MCP認証・他OSは未検証または未実装。",
-        "固定Goの実account Service/SQLite/公開SDKの11ケースを採取し、Rust AccountServiceをsessionのaccount openerと実Databaseへ接続。明示/default/fallback、欠落、identity不一致、refresh中のrevision競合、refresh token維持、零expiry、context取消とcancel cause、保存前content禁止、session解放を比較。default設定file adapter・CLI/MCP composition・pool Use・SDK自前HTTP cleanup/options・全認証操作・SQL中断/全wire/OSは未実装または未検証。"
+        "固定Goの実account Service/SQLite/公開SDKの11ケースを採取し、Rust AccountServiceをsessionのaccount openerと実Databaseへ接続。明示/default/fallback、欠落、identity不一致、refresh中のrevision競合、refresh token維持、零expiry、context取消とcancel cause、保存前content禁止、session解放を比較。default設定file adapter・CLI/MCP composition・pool Use・SDK自前HTTP cleanup/options・全認証操作・SQL中断/全wire/OSは未実装または未検証。",
+        "CommandConnectionの25ケースでproxy/interval/errorと実HTTP transport構築可否を比較し、選択したintervalをtransportへ渡す。共有HTTP pacingをGoのOpenWith後のcontent/resource redirect/mutation 5通信とRust実socketで比較（観測差5ms）。clone間でlast startを共有する。Goのdefault SDK HTTP timeout=0を再現しRust試作の60秒制限を削除。仮想61秒で保留responseが存続し、pacing待機task abort後も残り時間で次requestが再開することを確認。SDK Options全体/client再構築/pool replayの寿命/context取消/deadline/全競合/App API redirect/TLS/SOCKS wire/pool/idle cleanup/CLI/MCP bootstrap/他OSは未完了または未検証。",
+        "本番 Execution で Store・DB・refresh CAS・Gate・pool を接続し設定の fresh read と replay を検証。CLI/MCP 呼び出し元・ホームパス・初回設定作成は未接続。transport constructor 失敗の Gate 前後の順序差は未解消。"
       ]
     },
     {
       "id": "sdk/pixiv:OpenWith",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:OpenWith"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/pacing.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/resource_transport.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationPacingSharesOAuthContentResourceRedirectAndMutationStarts",
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationDefaultSDKClientLeavesTotalTimeoutToContext",
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationPacingCanceledWaitDoesNotReachTransportOrAdvanceItsLastStart",
+        "crates/pixiv-sdk/tests/pacing.rs#http_transport_matches_go_spacing_across_oauth_content_redirects_and_mutations",
+        "crates/pixiv-sdk/tests/pacing.rs#default_http_transport_keeps_a_pending_response_after_the_prototype_sixty_second_limit",
+        "crates/pixiv-sdk/tests/pacing.rs#aborting_a_resource_pacing_wait_releases_the_queue_without_consuming_a_request_start"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "CommandConnectionの25ケースでproxy/interval/errorと実HTTP transport構築可否を比較し、選択したintervalをtransportへ渡す。共有HTTP pacingをGoのOpenWith後のcontent/resource redirect/mutation 5通信とRust実socketで比較（観測差5ms）。clone間でlast startを共有する。Goのdefault SDK HTTP timeout=0を再現しRust試作の60秒制限を削除。仮想61秒で保留responseが存続し、pacing待機task abort後も残り時間で次requestが再開することを確認。SDK Options全体/client再構築/pool replayの寿命/context取消/deadline/全競合/App API redirect/TLS/SOCKS wire/pool/idle cleanup/CLI/MCP bootstrap/他OSは未完了または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Options",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Options"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/pacing.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/resource_transport.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationPacingSharesOAuthContentResourceRedirectAndMutationStarts",
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationDefaultSDKClientLeavesTotalTimeoutToContext",
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationPacingCanceledWaitDoesNotReachTransportOrAdvanceItsLastStart",
+        "crates/pixiv-sdk/tests/pacing.rs#http_transport_matches_go_spacing_across_oauth_content_redirects_and_mutations",
+        "crates/pixiv-sdk/tests/pacing.rs#default_http_transport_keeps_a_pending_response_after_the_prototype_sixty_second_limit",
+        "crates/pixiv-sdk/tests/pacing.rs#aborting_a_resource_pacing_wait_releases_the_queue_without_consuming_a_request_start"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "CommandConnectionの25ケースでproxy/interval/errorと実HTTP transport構築可否を比較し、選択したintervalをtransportへ渡す。共有HTTP pacingをGoのOpenWith後のcontent/resource redirect/mutation 5通信とRust実socketで比較（観測差5ms）。clone間でlast startを共有する。Goのdefault SDK HTTP timeout=0を再現しRust試作の60秒制限を削除。仮想61秒で保留responseが存続し、pacing待機task abort後も残り時間で次requestが再開することを確認。SDK Options全体/client再構築/pool replayの寿命/context取消/deadline/全競合/App API redirect/TLS/SOCKS wire/pool/idle cleanup/CLI/MCP bootstrap/他OSは未完了または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Pacing",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Pacing"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/pacing.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/resource_transport.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationPacingSharesOAuthContentResourceRedirectAndMutationStarts",
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationDefaultSDKClientLeavesTotalTimeoutToContext",
+        "sdk/pixiv/migration_pacing_test.go#TestMigrationPacingCanceledWaitDoesNotReachTransportOrAdvanceItsLastStart",
+        "crates/pixiv-sdk/tests/pacing.rs#http_transport_matches_go_spacing_across_oauth_content_redirects_and_mutations",
+        "crates/pixiv-sdk/tests/pacing.rs#default_http_transport_keeps_a_pending_response_after_the_prototype_sixty_second_limit",
+        "crates/pixiv-sdk/tests/pacing.rs#aborting_a_resource_pacing_wait_releases_the_queue_without_consuming_a_request_start"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "CommandConnectionの25ケースでproxy/interval/errorと実HTTP transport構築可否を比較し、選択したintervalをtransportへ渡す。共有HTTP pacingをGoのOpenWith後のcontent/resource redirect/mutation 5通信とRust実socketで比較（観測差5ms）。clone間でlast startを共有する。Goのdefault SDK HTTP timeout=0を再現しRust試作の60秒制限を削除。仮想61秒で保留responseが存続し、pacing待機task abort後も残り時間で次requestが再開することを確認。SDK Options全体/client再構築/pool replayの寿命/context取消/deadline/全競合/App API redirect/TLS/SOCKS wire/pool/idle cleanup/CLI/MCP bootstrap/他OSは未完了または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:pacingRoundTripper.CloseIdleConnections",

@@ -752,3 +752,59 @@ cargo test -p pixiv-app --test config_snapshot --test pool_session --locked
 ```
 
 基準を意図して更新する場合だけ `go test ./internal/config/settings -run TestMigrationConfigSnapshot -count=1 -args -migration-update-config-snapshot` を実行する。取得後の通常テストは更新フラグを付けずに比較する。
+
+## CLI／MCP の接続設定の選択
+
+[connection-options.json](contracts/connection-options.json) は固定 Go の CLI composition が SDK Options を構築する25ケース。コマンドの proxy override、Pixiv サービス別 proxy、全体 proxy の優先順位、明示した空文字列による直接接続、選択されなかった不正 proxy の無視、4種類の proxy scheme、IPv6、合成 userinfo、path／query、不正 URL の分類と秘匿したエラーを記録する。Go の実 HTTP client の proxy 関数・全体 timeout と、SDK の pacing option も取得する。通信は行わない。
+
+Rust の CommandConnection は取得済み RuntimeConfig から proxy と pacing interval を選ぶ。比較対象は選択した proxy、interval、不正 proxy の分類とエラー全文、実 HttpTransport の構築可否である。open_transport は選択した proxy と interval を transport へ渡す。Rust の parser エラーには入力 URL や parser cause を残さず、Debug も同じ安全な文字列を返す。実通信の pacing と全体 timeout の比較は次節に記録する。App API の redirect、TLS／connection pool、すべての URL 構文、CLI／MCP bootstrap への接続はまだ比較していない。
+
+```text
+go test ./internal/cli -count=1
+go vet ./internal/cli
+cargo test -p pixiv-app --test connection --locked
+```
+
+基準を意図して更新する場合だけ Go テストに `-run TestMigrationConnectionOptionsPreserveProxyPresenceAndPacing -args -migration-update-connection-options` を指定する。
+
+## HTTP transport の共有 pacing と timeout
+
+[pacing.json](contracts/pacing.json) は interval=0／125ms の2ケース。Go の公開 OpenWith で OAuth refresh を行った後、同じ SDK client の HTTP transport に content GET・resource GET と redirect・mutation POST を流す。method／path の5通信と、開始間隔の下限を比較する。Go の resource request／content model の契約をこのテストで再検証するものではない。
+
+Rust は HttpTransport::with_pacing により、通常 send・post_form・resource の各 redirect hop に同じ RequestPacing を使う。transport の clone も待機状態を共有する。Rust 側はローカル TCP サーバーを使い、各通信の method／path と開始間隔を比較する。Go は RoundTripper の呼び出し時刻、Rust はサーバーへの到着時刻を測るため、間隔判定に5msの観測許容幅を置く。実時刻を fixture に保存せず、下限判定を boolean に正規化する。125ms は移植した実装の定数ではなくテストで与える interval である。
+
+Go の既定 SDK New の全体 timeout=0 を再現テストで確認し、Rust の試作で設定していた60秒の全体 timeout を削除した。Rust テストは応答を保留したローカルサーバーに対し、Tokio の仮想時計を61秒進めても通信が完了しないことと、応答を再開すると成功することを確認する。reqwest 0.13.5 の既定 timeout/read_timeout が None であることも採用版のソースで確認した。
+
+Go では pacing 待機中の取消が inner transport を呼ばず last start を変更しないことを確認する。Rust では resource の pacing 待機を task abort し、同じ transport の POST が残りの待機時間で再開できることと、取消した request がサーバーに届かないことを仮想時計で確認する。task abort と Go の context cancel は別の入口として記録する。
+
+Windows amd64 での transport の比較である。SDK Options 全体との対応、client 再構築・pool replay ごとの pacing の寿命、context から全通信への取消、独立した request deadline、並行中の全競合、App API redirect、TLS・SOCKS wire・connection pool、既定 idle connection cleanup、CLI／MCP bootstrap、他 OS は未完了または未検証である。Client.with_pacing と transport の pacing を同時設定した場合の契約も未比較で、CLI の interval は CommandConnection が transport に渡す。
+
+```text
+go test ./sdk/pixiv -count=1
+go vet ./sdk/pixiv
+cargo test -p pixiv-sdk --test pacing --locked
+```
+
+基準を意図して更新する場合だけ Go テストに `-run TestMigrationPacingSharesOAuthContentResourceRedirectAndMutationStarts -args -migration-update-pacing` を指定する。
+
+## 保存済みアカウントの実行経路
+
+`crates/pixiv-app/src/execution.rs` は設定 Store、実 DB、AccountService、Gate、Facade、pool Scheduler を本番の組み立てとして接続する。`Execution::http` は account attempt ごとに transport を作成し、pacing の状態を account 間で共有しない。CLI の作品詳細はこの経路と既存 `.pixiv-cli` のパスを使う。MCP・他の CLI の接続、初回設定ファイル作成はまだ未実装である。
+
+`crates/pixiv-app/tests/pool_session.rs` の `execution_reads_current_connection_and_default_account_before_refreshing_and_persisting` は、この組み立てを使い、実設定ファイルの変更が次の実行の default account・proxy・間隔に反映され、refresh の CAS 保存が SDK content request より先に完了することを確認する。`execution_pool_overrides_the_requested_account_and_persists_replay_state` は実 DB の pool 選択、未確定の rate limit から別 account への replay、credential revision と last selected を確認する。retry の応答時刻だけは実時計の120秒後を fixture に与える。固定時刻を使う既存テストも維持する。
+
+`execution_rejects_configuration_and_proxy_errors_before_acquiring_an_account` は、設定・proxy エラーが transport 作成より前に返ること、型付き原因と秘匿性、明示空 proxy override を確認する。Go の参照は `internal/cli/composition.go`、既存の `TestFacadeUseBuildsPoolFromCurrentConfig`・`TestFacadeUseReplaysUncommittedAttemptsAndClosesEachLease`、connection/config snapshot 比較である。新規の CLI 子プロセス・MCP セッションの互換性を証明したものではない。
+
+`Transport::send` と `post_form` の future は Send を要求し、汎用 transport の OAuth を app の非同期 callback から実行できるようにする。テスト専用の transport・時計・分岐を本番 src へ追加しない。transport constructor のエラーは現在 Gate の取得後に発生するが、Go の HTTPClient constructor は facade 呼び出し前である。この順序差、App API redirect と TLS/OS の通信差は未解消として扱う。
+
+## 保存済みアカウントを使う作品詳細 CLI
+
+`internal/cli/migration_detail_accounts_test.go` は Go の実 `detailDeps`、設定 Store、アカウント Service、Facade、SQLite を使い、未認証・既定アカウント欠落・既定 UID 不正・空 pool・pool 不正・proxy 不正を通常/明示 JSON の12ケースとして [detail-accounts.json](contracts/detail-accounts.json) に固定する。startup hooks を実行する root は使わない。設定の初回作成、更新確認、URL handler の証拠ではない。
+
+`crates/pixiv-cli/tests/detail_accounts.rs` は隔離 HOME/USERPROFILE に設定を置いて実 Rust CLI を起動し、同じ出力・エラー分類・終了コード・設定の無変更を確認する。`detail` は試作の `PIXIV_ACCESS_TOKEN` 経路を使わず、既存パスの DB を開いて `saved_artwork_detail` と `Execution::http` を呼ぶ。通常出力の設定解決は DB を開く前、明示 JSON はその override を先に適用する。
+
+既存の72件の detail-output と27件の detail-writer は、従来の SDK 直結に加えて実 DB・refresh CAS・本番 Execution・CLI presenter の経路でも同じ期待値で実行する。共有 fixture は `tests/support/saved_account.rs` に分離し、content request の前に rotated token と revision が保存済みであることを確認する。正常出力の実 CLI 子プロセスから HTTPS までを通した比較はまだ未実施である。
+
+detail-input の既存 fixture は Go の偽 FetchArtwork が valid ID に対して `pixiv:Artwork: unauthorized` を返す入力境界用の契約である。Rust の valid 入力は同じ ID に解決することを維持し、起動後のエラーを新たに固定した実アカウント経路の `pixiv:auth: unauthorized: no pixiv account is authenticated` と比較する。不正入力の出力・終了コードは既存 fixture のまま維持し、DB を開かないことも確認する。既存 Go fixture の期待値は変更しない。
+
+初回設定作成・startup hooks・proxy flags・全 entity/record input・MCP のアカウント実行・content 取得中の Context 取消・通信/OS の未解消差分は残る。作品詳細を検証済みとはしない。

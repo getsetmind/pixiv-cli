@@ -1,6 +1,8 @@
 use clap::{Parser, Subcommand};
 use pixiv_cli_rs::search::SearchOptions;
-use pixiv_cli_rs::{CommandError, DetailOutput, artwork_detail, finish_command};
+use pixiv_cli_rs::{
+    CommandError, DetailOutput, detail_artwork_id, finish_command, saved_artwork_detail,
+};
 use pixiv_sdk::{Client, Error, Reason, reference::artwork_id};
 use std::io::{self, IsTerminal, Write};
 
@@ -74,6 +76,55 @@ async fn execute(args: Arguments) -> Result<(), CommandError> {
         }
         _ => None,
     };
+    if let Command::Detail { json, ndjson, .. } = &args.command {
+        let home_name = if cfg!(windows) { "USERPROFILE" } else { "HOME" };
+        let home = std::env::var_os(home_name)
+            .filter(|home| !home.is_empty())
+            .ok_or_else(|| {
+                let variable = if cfg!(windows) {
+                    "%USERPROFILE%"
+                } else {
+                    "$HOME"
+                };
+                CommandError::MessageText(format!(
+                    "determine home directory: {variable} is not defined"
+                ))
+            })?;
+        let directory = std::path::PathBuf::from(home).join(".pixiv-cli");
+        let config = pixiv_app::config::Store::new(directory.join("config.toml"));
+        let json_output = if *json {
+            true
+        } else {
+            config
+                .current()
+                .and_then(|snapshot| snapshot.runtime())
+                .map_err(pixiv_app::scheduler::SchedulerError::from)?
+                .output_json
+        };
+        let database = pixiv_app::database::Database::open(&directory)
+            .map_err(|error| CommandError::State(Box::new(error)))?;
+        let execution = pixiv_app::execution::Execution::http(
+            config,
+            std::sync::Arc::new(std::sync::Mutex::new(database)),
+        );
+        let mode = if *ndjson {
+            DetailOutput::Ndjson
+        } else if json_output {
+            DetailOutput::Json
+        } else {
+            DetailOutput::Human
+        };
+        return saved_artwork_detail(
+            &execution,
+            &pixiv_app::lifecycle::Context::new(),
+            detail_id.expect("detail input was resolved"),
+            0,
+            None,
+            mode,
+            &mut io::stdout().lock(),
+        )
+        .await;
+    }
     let token = std::env::var("PIXIV_ACCESS_TOKEN").unwrap_or_default();
     let proxy = std::env::var("https_proxy")
         .or_else(|_| std::env::var("HTTPS_PROXY"))
@@ -83,22 +134,7 @@ async fn execute(args: Arguments) -> Result<(), CommandError> {
         Command::Mcp => {
             pixiv_mcp::stdio::serve(&client, tokio::io::stdin(), &mut tokio::io::stdout()).await?;
         }
-        Command::Detail { json, ndjson, .. } => {
-            let mode = if ndjson {
-                DetailOutput::Ndjson
-            } else if json {
-                DetailOutput::Json
-            } else {
-                DetailOutput::Human
-            };
-            artwork_detail(
-                &client,
-                detail_id.expect("detail input was resolved"),
-                mode,
-                &mut io::stdout().lock(),
-            )
-            .await?;
-        }
+        Command::Detail { .. } => unreachable!("detail uses saved account execution"),
         Command::Search {
             options,
             json,
@@ -142,23 +178,6 @@ async fn execute(args: Arguments) -> Result<(), CommandError> {
         }
     }
     Ok(())
-}
-
-fn detail_artwork_id(source: &str) -> pixiv_sdk::Result<i64> {
-    if let Ok(id) = source.trim().parse::<i64>()
-        && id > 0
-    {
-        return Ok(id);
-    }
-    let reference = pixiv_sdk::reference::parse_url(source).map_err(|_| {
-        Error::new(Reason::InvalidArgument, "detail")
-            .with_detail("argument must be an entity ID or a supported Pixiv URL")
-    })?;
-    if reference.kind != pixiv_sdk::reference::REFERENCE_KIND_ARTWORK {
-        return Err(Error::new(Reason::InvalidArgument, "detail")
-            .with_detail("URL does not name a supported Pixiv artwork"));
-    }
-    Ok(reference.id)
 }
 
 fn local() -> Error {

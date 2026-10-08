@@ -1,0 +1,98 @@
+[
+  {
+    "name": "no_account",
+    "config": "",
+    "json": false,
+    "stdout": "",
+    "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+    "exit": 1
+  },
+  {
+    "name": "no_account",
+    "config": "",
+    "json": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:auth: unauthorized: no pixiv account is authenticated\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "missing_default",
+    "config": "[pixiv.auth]\ndefault_user_id = 43\n",
+    "json": false,
+    "stdout": "",
+    "stderr": "error: configured default pixiv account 43 is missing\n",
+    "exit": 1
+  },
+  {
+    "name": "missing_default",
+    "config": "[pixiv.auth]\ndefault_user_id = 43\n",
+    "json": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"configured default pixiv account 43 is missing\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "invalid_default",
+    "config": "[pixiv.auth]\ndefault_user_id = 0\n",
+    "json": false,
+    "stdout": "",
+    "stderr": "error: config: pixiv.auth.default_user_id must be a positive integer\n",
+    "exit": 1
+  },
+  {
+    "name": "invalid_default",
+    "config": "[pixiv.auth]\ndefault_user_id = 0\n",
+    "json": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"config: pixiv.auth.default_user_id must be a positive integer\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "empty_pool",
+    "config": "[account_pool]\nenabled = true\nstrategy = 'round_robin'\n",
+    "json": false,
+    "stdout": "",
+    "stderr": "error: pixiv:account_pool: unauthorized: account_pool_no_local_account\n",
+    "exit": 1
+  },
+  {
+    "name": "empty_pool",
+    "config": "[account_pool]\nenabled = true\nstrategy = 'round_robin'\n",
+    "json": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:account_pool: unauthorized: account_pool_no_local_account\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "invalid_pool",
+    "config": "[account_pool]\nenabled = 'true'\n",
+    "json": false,
+    "stdout": "",
+    "stderr": "error: account_pool.enabled must be a boolean\n",
+    "exit": 1
+  },
+  {
+    "name": "invalid_pool",
+    "config": "[account_pool]\nenabled = 'true'\n",
+    "json": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"account_pool.enabled must be a boolean\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "invalid_proxy",
+    "config": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "json": false,
+    "stdout": "",
+    "stderr": "error: proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration\n",
+    "exit": 1
+  },
+  {
+    "name": "invalid_proxy",
+    "config": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "json": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration\"}}\n",
+    "exit": 1
+  }
+]
