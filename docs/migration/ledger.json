@@ -407,17 +407,21 @@
       },
       "rust_sources": [
         "crates/pixiv-cli/src/main.rs",
-        "crates/pixiv-sdk/src/reference.rs"
+        "crates/pixiv-sdk/src/reference.rs",
+        "crates/pixiv-cli/src/lib.rs"
       ],
       "tests": [
         "internal/cli/migration_detail_input_test.go#TestMigrationDetailInputMatchesFrozenErrorsBeforeAccountAccess",
-        "crates/pixiv-cli/tests/detail_input.rs#detail_inputs_match_go_process_errors_and_validate_before_client_configuration"
+        "crates/pixiv-cli/tests/detail_input.rs#detail_inputs_match_go_process_errors_and_validate_before_client_configuration",
+        "internal/cli/commands/pixiv/detail/migration_output_test.go#TestMigrationArtworkDetailOutputMatchesFrozenModes",
+        "crates/pixiv-cli/tests/detail_output.rs#artwork_detail_modes_match_go_dtos_records_captions_and_failures"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "122 fixed Go detail command/error-exit cases compare source parsing, validation-before-factory order, empty stdout, plain/JSON stderr and exit 1; Rust runs a child process with missing credentials and invalid proxy for malformed inputs. Successful output, TTY/record/text pipelines, NDJSON/JSON/BrokenPipe, all flags/aliases, novel/user/content, configuration/account/authentication/transport, MCP and other platforms remain unverified."
+        "122 fixed Go detail input/error-exit cases and 72 SDK-to-detail output cases compare source parsing before client construction, plain/JSON errors and exit 1, human output and HTML captions, JSON DTOs and canonical NDJSON records. Rust production artwork_detail receives a real SDK client and output writer; fixture transports remain in tests.",
+        "Successful CLI process/network integration, TTY/configuration, record/text pipelines and aggregate JSON, BrokenPipe/writer failures, all HTML and Unicode version differences, all flags/aliases and conflict errors, novel/user/content, account/authentication/transport, MCP and other platforms remain unverified."
       ]
     },
     {

@@ -285,3 +285,18 @@ cargo test -p pixiv-cli-rs --test detail_input --locked
 ```
 
 基準を意図して更新する場合だけ対応する Go テストの `-args -migration-update-reference` または `-args -migration-update-detail-input` を指定する。
+
+## 作品 detail の成功出力
+
+[detail-output.json](contracts/detail-output.json) は Go の実 SDK と detail command を組み合わせた72ケースを固定する。通常表示・JSON・NDJSONそれぞれで、既存の作品 DTO/エラー fixture と追加の HTML caption を比較する。JSON は DTO の数値 ID、NDJSON は文字列 ID・type・canonical URL を含む record。未知 artwork kind は NDJSON record へ変換せず、Go と同じ command error を返す。JSON のキー順だけを正規化し、通常表示は byte に相当する文字列を比較する。
+
+Rust の CLI は `artwork_detail` を呼び、実 SDK client と output writer を渡す。SDK transport の差し替えは crate の `tests/` に置く。Human モードでは caption の HTML を scraper で文書として解析し、script/style を除外、br と block 要素の改行を保持する。表示できない文字は Go の QuoteToGraphic に対応するエスケープを使う。JSON/NDJSON では caption の元の markup を保持する。
+
+この比較は Windows amd64 の SDK→CLI出力処理。実バイナリの成功通信、TTY、設定による JSON 選択、record/text input pipeline、集約 JSON、BrokenPipe・writer failure、全 HTML/Unicode version の差、flags/aliases とその衝突エラー、MCP、他 OS は未検証。今回追加した `--ndjson` と `-j` の引数契約全体も未検証。CLI の入出力・エラーを揃えただけで作品 detail の全入口が完成したとは扱わない。
+
+```text
+go test ./internal/cli/commands/pixiv/detail -run '^TestMigrationArtworkDetailOutput' -count=1
+cargo test -p pixiv-cli-rs --test detail_output --locked
+```
+
+基準を意図して更新する場合だけ Go テストの `-args -migration-update-detail-output` を指定する。

@@ -1,4 +1,5 @@
 use clap::{Parser, Subcommand};
+use pixiv_cli_rs::{CommandError, DetailOutput, artwork_detail};
 use pixiv_sdk::{Client, Error, Reason, reference::artwork_id};
 use serde_json::json;
 use std::io::{self, IsTerminal, Write};
@@ -14,8 +15,10 @@ struct Arguments {
 enum Command {
     Detail {
         source: String,
-        #[arg(long)]
+        #[arg(long, short = 'j', conflicts_with = "ndjson")]
         json: bool,
+        #[arg(long)]
+        ndjson: bool,
     },
     Search {
         query: String,
@@ -35,16 +38,20 @@ enum Command {
 async fn main() {
     let args = Arguments::parse();
     let machine_output = match &args.command {
-        Command::Detail { json, .. } | Command::Ugoira { json, .. } => *json,
+        Command::Detail { json, ndjson, .. } => *json || *ndjson,
+        Command::Ugoira { json, .. } => *json,
         Command::Search { json, ndjson, .. } => *json || *ndjson,
     };
     match execute(args).await {
         Ok(()) => (),
         Err(error) => {
             if machine_output {
-                let mut body = json!({"code": error.code, "message": error.to_string()});
+                let mut body = json!({"code": error.code(), "message": error.to_string()});
                 if let Some(seconds) = error
-                    .retry_after_seconds_at(std::time::SystemTime::now().into())
+                    .sdk_error()
+                    .and_then(|error| {
+                        error.retry_after_seconds_at(std::time::SystemTime::now().into())
+                    })
                     .filter(|seconds| *seconds > 0)
                 {
                     body["retry_after_seconds"] = json!(seconds);
@@ -58,7 +65,7 @@ async fn main() {
     }
 }
 
-async fn execute(args: Arguments) -> pixiv_sdk::Result<()> {
+async fn execute(args: Arguments) -> Result<(), CommandError> {
     let detail_id = match &args.command {
         Command::Detail { source, .. } => Some(detail_artwork_id(source)?),
         _ => None,
@@ -69,21 +76,21 @@ async fn execute(args: Arguments) -> pixiv_sdk::Result<()> {
         .ok();
     let client = Client::new(&token, proxy.as_deref())?;
     match args.command {
-        Command::Detail { json, .. } => {
-            let artwork = client
-                .artwork(detail_id.expect("detail input was resolved"))
-                .await?;
-            if json {
-                output(
-                    &serde_json::to_string_pretty(&pixiv_sdk::dto::ArtworkDto::from(&artwork))
-                        .map_err(|_| local())?,
-                )?;
+        Command::Detail { json, ndjson, .. } => {
+            let mode = if ndjson {
+                DetailOutput::Ndjson
+            } else if json {
+                DetailOutput::Json
             } else {
-                output(&format!(
-                    "{} {} — {}",
-                    artwork.id, artwork.title, artwork.user.name
-                ))?;
-            }
+                DetailOutput::Human
+            };
+            artwork_detail(
+                &client,
+                detail_id.expect("detail input was resolved"),
+                mode,
+                &mut io::stdout().lock(),
+            )
+            .await?;
         }
         Command::Search {
             query,
