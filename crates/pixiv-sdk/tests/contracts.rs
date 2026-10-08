@@ -12,6 +12,19 @@ struct Fixture {
     requests: Mutex<Vec<Request>>,
 }
 
+#[test]
+fn transport_response_debug_never_exposes_upstream_artifacts() {
+    let response = Response {
+        status: 403,
+        retry_after_seconds: None,
+        body: json!({"cookie":"fixture-upstream-cookie","token":"fixture-upstream-token"}),
+    };
+    let debug = format!("{response:?}");
+    assert!(debug.contains("403"));
+    assert!(!debug.contains("fixture-upstream-cookie"));
+    assert!(!debug.contains("fixture-upstream-token"));
+}
+
 impl Fixture {
     fn new(response: Response) -> Self {
         Self {
@@ -108,7 +121,7 @@ async fn upstream_errors_preserve_retry_advice_without_exposing_response_bodies(
         .await
         .unwrap_err();
     assert_eq!(error.code, Reason::RateLimited);
-    assert_eq!(error.retry_after_seconds, Some(120));
+    assert_eq!(error.retry_after_seconds_at(chrono::Utc::now()), Some(120));
     assert!(!error.to_string().contains("fixture-upstream-secret"));
     assert!(
         !serde_json::to_string(&error)

@@ -42,7 +42,14 @@ async fn main() {
         Ok(()) => (),
         Err(error) => {
             if machine_output {
-                eprintln!("{}", json!({"error": error}));
+                let mut body = json!({"code": error.code, "message": error.to_string()});
+                if let Some(seconds) = error
+                    .retry_after_seconds_at(std::time::SystemTime::now().into())
+                    .filter(|seconds| *seconds > 0)
+                {
+                    body["retry_after_seconds"] = json!(seconds);
+                }
+                eprintln!("{}", json!({"error": body}));
             } else {
                 eprintln!("error: {error}");
             }

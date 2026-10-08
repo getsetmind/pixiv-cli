@@ -88,20 +88,20 @@ impl<T: Transport> Client<T> {
 
     pub async fn artwork(&self, id: i64) -> Result<Artwork> {
         if id <= 0 {
-            return Err(Error::new(Reason::InvalidArgument, "artwork"));
+            return Err(Error::new(Reason::InvalidArgument, "Artwork"));
         }
         let body = self
             .get(
                 "/v1/illust/detail",
                 vec![("illust_id".into(), id.to_string())],
-                "artwork",
+                "Artwork",
             )
             .await?;
         map_artwork(
             body.get("illust")
-                .ok_or_else(|| malformed("artwork"))?
+                .ok_or_else(|| malformed("Artwork"))?
                 .clone(),
-            "artwork",
+            "Artwork",
         )
     }
 

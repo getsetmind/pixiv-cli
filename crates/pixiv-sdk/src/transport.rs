@@ -1,4 +1,6 @@
+use crate::error::RetryAdvice;
 use crate::{Error, Reason, Result};
+use chrono::{TimeDelta, Utc};
 use reqwest::{Method, redirect::Policy};
 use serde_json::Value;
 use std::{fmt, time::Duration};
@@ -21,11 +23,19 @@ impl fmt::Debug for Request {
     }
 }
 
-#[derive(Debug)]
 pub struct Response {
     pub status: u16,
     pub retry_after_seconds: Option<u64>,
     pub body: Value,
+}
+
+impl fmt::Debug for Response {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("Response")
+            .field("status", &self.status)
+            .field("retry_after_seconds", &self.retry_after_seconds)
+            .finish_non_exhaustive()
+    }
 }
 
 #[allow(async_fn_in_trait)]
@@ -108,10 +118,15 @@ pub(crate) fn checked(response: Response, operation: &'static str) -> Result<Val
         500..=599 => Reason::UpstreamUnavailable,
         _ => Reason::UpstreamError,
     };
-    Err(Error {
-        code,
-        operation,
-        http_status: Some(response.status),
-        retry_after_seconds: response.retry_after_seconds,
-    })
+    let after = response
+        .retry_after_seconds
+        .and_then(|seconds| i64::try_from(seconds).ok())
+        .and_then(TimeDelta::try_seconds)
+        .and_then(|delta| Utc::now().checked_add_signed(delta));
+    Err(Error::new(code, operation)
+        .with_http_status(response.status)
+        .with_retry(RetryAdvice {
+            safe: after.is_some(),
+            after,
+        }))
 }

@@ -10,7 +10,7 @@ use serde::{
 use std::fmt;
 
 fn reference_error(operation: &'static str) -> Error {
-    Error::new(Reason::InvalidArgument, operation)
+    Error::with_product("", Reason::InvalidArgument, operation)
 }
 
 fn engine(url: bool) -> GeneralPurpose {
