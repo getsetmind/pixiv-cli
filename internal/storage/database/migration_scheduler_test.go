@@ -15,6 +15,7 @@ import (
 	settings "github.com/FlanChanXwO/pixiv-cli/internal/config/settings"
 	account "github.com/FlanChanXwO/pixiv-cli/internal/services/pixiv/account"
 	pool "github.com/FlanChanXwO/pixiv-cli/internal/services/pixiv/pool"
+	"github.com/FlanChanXwO/pixiv-cli/internal/shared/diagnostics"
 	"github.com/FlanChanXwO/pixiv-cli/internal/shared/lifecycle"
 	"github.com/FlanChanXwO/pixiv-cli/sdk"
 )
@@ -80,22 +81,23 @@ func TestMigrationSchedulerPendingAttemptCommitAndCancellation(t *testing.T) {
 }
 
 type migrationSchedulerCase struct {
-	Name           string           `json:"name"`
-	Mode           string           `json:"mode"`
-	Commit         bool             `json:"commit"`
-	Cancel         string           `json:"cancel"`
-	Once           bool             `json:"once"`
-	State          string           `json:"state"`
-	Enabled        bool             `json:"enabled"`
-	Strategy       string           `json:"strategy"`
-	StepNS         int64            `json:"step_ns"`
-	MissingAttempt bool             `json:"missing_attempt"`
-	Error          map[string]any   `json:"error"`
-	Attempts       []int64          `json:"attempts"`
-	Selects        [][]int64        `json:"selects"`
-	Clocks         []int64          `json:"clocks"`
-	Freezes        [][]int64        `json:"freezes"`
-	Rows           []map[string]any `json:"rows"`
+	Name           string              `json:"name"`
+	Mode           string              `json:"mode"`
+	Commit         bool                `json:"commit"`
+	Cancel         string              `json:"cancel"`
+	Once           bool                `json:"once"`
+	State          string              `json:"state"`
+	Enabled        bool                `json:"enabled"`
+	Strategy       string              `json:"strategy"`
+	StepNS         int64               `json:"step_ns"`
+	MissingAttempt bool                `json:"missing_attempt"`
+	Error          map[string]any      `json:"error"`
+	Attempts       []int64             `json:"attempts"`
+	Selects        [][]int64           `json:"selects"`
+	Clocks         []int64             `json:"clocks"`
+	Freezes        [][]int64           `json:"freezes"`
+	Rows           []map[string]any    `json:"rows"`
+	Events         []diagnostics.Event `json:"events"`
 }
 
 type migrationSchedulerState struct {
@@ -169,6 +171,9 @@ func TestMigrationSchedulerPreservesReplayCommitCancellationAndExhaustion(t *tes
 			ctx, stop = context.WithDeadline(context.Background(), time.Now().Add(-time.Second))
 			defer stop()
 		}
+		ctx = diagnostics.WithScope(ctx, diagnostics.SinkFunc(func(event diagnostics.Event) {
+			row.Events = append(row.Events, event)
+		}), diagnostics.ModulePixivCLI, 73)
 		if row.State != "empty" {
 			for _, id := range []int64{1, 2, 3} {
 				if err = db.SavePixivCredential(context.Background(), account.New(id, "synthetic", []byte("synthetic-token"))); err != nil {

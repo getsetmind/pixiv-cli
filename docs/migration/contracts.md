@@ -614,13 +614,13 @@ cargo test -p pixiv-app --test pool --locked
 
 ## Pixiv pool Scheduler の安全な再試行と取消
 
-[scheduler.json](contracts/scheduler.json) は固定 Go の Scheduler.Run を実行した97ケース。実 DB を使い、rate limit の Safe/HasAfter/期限、分類と wrapped cause、commit、試行中と開始前の取消、期限切れ、成功、候補枯渇、設定と storage の不備、不正 UID・重複選択、凍結失敗を比較する。選択時の attempted UID、試行順、clock の呼出順、凍結期限、最終 DB の参加・凍結・marker、診断全文・SDK 分類・retry advice・exhausted/取消/期限切れの判定を確認する。合成 storage 障害だけは狭い PoolState 境界から返す。
+[scheduler.json](contracts/scheduler.json) は固定 Go の Scheduler.Run を実行した97ケース。実 DB を使い、rate limit の Safe/HasAfter/期限、分類と wrapped cause、commit、試行中と開始前の取消、期限切れ、成功、候補枯渇、設定と storage の不備、不正 UID・重複選択、凍結失敗を比較する。選択時の attempted UID、試行順、clock の呼出順、凍結期限、最終 DB の参加・凍結・marker、診断全文・SDK 分類・retry advice・exhausted/取消/期限切れの判定、selected/froze イベントの全フィールドと順序を確認する。合成 storage 障害だけは狭い PoolState 境界から返す。
 
 Rust の Scheduler は async の試行と共有 Attempt を使う。commit 済みの失敗は取消より優先し、試行が成功を返した場合は取消後でも成功を返す。未 commit で SDK が明示的に安全な未来の rate-limit retry を許可した場合だけ次の account を選び、固定の再試行回数は設けない。凍結期限は選択時からの retry duration を、凍結時の clock に加える。これを進む clock のケースでも比較する。時刻・UID・null/空配列を正規化しない。
 
 Go と Rust の追加テストは、実際に待機中の試行へ別タスクから Attempt.commit と取消を通知する。commit は複数回呼んでも戻らず、未 commit の結果は取消、commit 済みの結果は元の SDK エラーとなり、どちらも再選択・凍結をしない。Rust の Context は共有する取消・deadline の通知と最初の原因の保持も検証する。
 
-Windows amd64 の Scheduler 基盤の比較であり、認証 session の lease/refresh、CLI/MCP/config と実通信への接続、selected/froze の診断イベントは未移植。Database adapter の取消は操作前の確認に限り、実行中 SQL の中断、親子 context の伝播、全ての取消競合、別 connection/process、巨大な候補集合、clock の極値、未知 selection kind の全 Unicode 表現、他 OS は未検証である。SDK の wrapped cause はエラーの分類と全文を保つが、任意の Go エラー型との互換を証明するものではない。
+Windows amd64 の Scheduler 基盤の比較であり、認証 session の lease/refresh、CLI/MCP/config と実通信への接続は未移植。Database adapter の取消は操作前の確認に限り、実行中 SQL の中断、親子 context の deadline・取消伝播、全ての取消競合、別 connection/process、巨大な候補集合、clock の極値、未知 selection kind の全 Unicode 表現、他 OS は未検証である。SDK の wrapped cause はエラーの分類と全文を保つが、任意の Go エラー型との互換を証明するものではない。
 
 ```text
 go test -race ./internal/storage/database -migration-rust-database -count=1
@@ -629,3 +629,21 @@ cargo test -p pixiv-app --test scheduler --locked
 ```
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-scheduler` を指定する。
+
+## 診断 scope と Scheduler のイベント
+
+[diagnostics.json](contracts/diagnostics.json) は固定 Go の診断 scope を実行した64ケース。scope の有無、nil sink、child scope、明示 module、context/Scope の直接通知、取消の組合せを比較する。Event の全13フィールドを検証し、空 module は scope から補い、明示 module は保持し、request ID は常に scope の値で上書きする。child は sink を引き継いで module と request ID だけ変更し、scope がないときは sink を作らない。取消済みでも scope があれば通知を続ける。
+
+Rust の Scope は共有 sink を持ち、Context の scope 派生は取消状態を共有する。sink 不在は無通知で、stdout/stderr へ直接書かない。Event は Go と同じ文字列と符号付き値、request ID は u64、duration は符号付き ns で表す。比較 fixture の大文字フィールド名は Go struct の既定 JSON 名であり、CLI/MCP の出力 schema を追加したものではない。
+
+Scheduler は UID が正の場合に selected を通知し、その後に既試行 UID を拒否する。froze は保存に成功した後だけ通知する。失敗・commit・取消・成功・候補枯渇で通知回数が変わることを、前節の97ケースで比較する。credential と任意のエラー本文はイベントへ渡さない。
+
+Windows amd64 の opt-in sink 境界までの検証である。CLI/MCP 起動時の scope 設定、presenter の表示・秘匿と URL 処理、ネットワーク・認証・ダウンロードなど他 subsystem のイベント、sink の並行実行・障害、フィールドの全境界値、他 OS は未移植または未検証。
+
+```text
+go test -race ./internal/shared/diagnostics -count=1
+go vet ./internal/shared/diagnostics ./internal/storage/database
+cargo test -p pixiv-app --test diagnostics --test scheduler --locked
+```
+
+基準を意図して更新する場合だけ Go テストの `-args -migration-update-diagnostics` を指定する。

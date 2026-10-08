@@ -1,6 +1,9 @@
+mod support;
+
 use chrono::{DateTime, Utc};
 use pixiv_app::{
     database::{Database, PixivAccount, PoolChooser, PoolError},
+    diagnostics::{Scope, Sink},
     lifecycle::{Attempt, Context},
     scheduler::{AttemptFuture, PoolState, Scheduler, SchedulerError},
 };
@@ -27,6 +30,7 @@ struct Case {
     clocks: Value,
     freezes: Value,
     rows: Value,
+    events: Value,
 }
 
 #[derive(Default)]
@@ -35,6 +39,7 @@ struct Trace {
     selects: Option<Vec<Vec<i64>>>,
     clocks: Option<Vec<i64>>,
     freezes: Option<Vec<Vec<i64>>>,
+    events: Option<Vec<Value>>,
 }
 
 struct State {
@@ -137,6 +142,16 @@ async fn scheduler_matches_go_replay_commit_cancellation_exhaustion_and_database
         if case.cancel == "before" {
             context.cancel();
         }
+        let event_trace = Arc::clone(&trace);
+        let sink: Arc<dyn Sink> = Arc::new(move |event| {
+            event_trace
+                .lock()
+                .unwrap()
+                .events
+                .get_or_insert_default()
+                .push(support::event_value(event));
+        });
+        let context = context.with_scope(Scope::new(Some(sink), "Pixiv CLI", 73));
         let mut tick = 0;
         let clock_trace = Arc::clone(&trace);
         let mut clock = || {
@@ -228,6 +243,7 @@ async fn scheduler_matches_go_replay_commit_cancellation_exhaustion_and_database
         assert_eq!(json!(trace.selects), case.selects, "{}", case.name);
         assert_eq!(json!(trace.clocks), case.clocks, "{}", case.name);
         assert_eq!(json!(trace.freezes), case.freezes, "{}", case.name);
+        assert_eq!(json!(trace.events), case.events, "{}", case.name);
         let rows: Vec<_>=state.database.list_pixiv().unwrap().into_iter().map(|a|json!({"id":a.user_id,"schedulable":a.schedulable,"frozen":a.pool_frozen_until,"selected":a.pool_last_selected})).collect();
         assert_eq!(json!(rows), case.rows, "{}", case.name);
     }

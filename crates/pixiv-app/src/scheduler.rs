@@ -3,6 +3,7 @@ use crate::{
         Database, PixivAccount, PoolChooser, PoolError, PoolSelectionKind, PoolSnapshot,
         choose_pool_account,
     },
+    diagnostics::Event,
     lifecycle::{Attempt, Context, ContextError},
 };
 use chrono::{DateTime, TimeDelta, Utc};
@@ -219,6 +220,13 @@ impl Scheduler<'_> {
                     "account pool state store selected an invalid user id".into(),
                 ));
             }
+            context.emit(Event {
+                module: "Pixiv account pool".into(),
+                kind: "account".into(),
+                operation: "selected".into(),
+                resource: format!("uid {id}"),
+                ..Event::default()
+            });
             if seen.contains(&id) {
                 return Err(SchedulerError::Message(format!(
                     "account pool state store selected attempted user id {id}"
@@ -260,6 +268,14 @@ impl Scheduler<'_> {
                 .as_deref_mut()
                 .unwrap()
                 .freeze(context, id, until)?;
+            context.emit(Event {
+                module: "Pixiv account pool".into(),
+                kind: "account".into(),
+                operation: "froze".into(),
+                resource: format!("uid {id}"),
+                reason: "account frozen".into(),
+                ..Event::default()
+            });
         }
     }
 }

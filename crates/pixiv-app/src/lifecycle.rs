@@ -1,3 +1,4 @@
+use crate::diagnostics::{Event, Scope};
 use std::{
     fmt,
     sync::{
@@ -39,6 +40,7 @@ impl std::error::Error for ContextError {}
 #[derive(Clone, Debug)]
 pub struct Context {
     state: Arc<ContextState>,
+    scope: Option<Scope>,
 }
 #[derive(Debug)]
 struct ContextState {
@@ -65,6 +67,27 @@ impl Context {
                 deadline,
                 token: CancellationToken::new(),
             }),
+            scope: None,
+        }
+    }
+    pub fn with_scope(&self, scope: Scope) -> Self {
+        Self {
+            state: Arc::clone(&self.state),
+            scope: Some(scope),
+        }
+    }
+    pub fn with_child_scope(&self, module: impl Into<String>, request_id: u64) -> Self {
+        match &self.scope {
+            Some(scope) => self.with_scope(scope.child(module, request_id)),
+            None => self.clone(),
+        }
+    }
+    pub fn scope(&self) -> Option<&Scope> {
+        self.scope.as_ref()
+    }
+    pub fn emit(&self, event: Event) {
+        if let Some(scope) = &self.scope {
+            scope.emit(event);
         }
     }
     pub fn cancel(&self) {
