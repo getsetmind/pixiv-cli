@@ -17,6 +17,7 @@ pub enum DetailOutput {
 pub enum CommandError {
     Sdk(Error),
     Message(&'static str),
+    MessageText(String),
     Output(io::Error),
 }
 impl From<io::Error> for CommandError {
@@ -34,6 +35,7 @@ impl fmt::Display for CommandError {
         match self {
             Self::Sdk(error) => error.fmt(f),
             Self::Message(message) => f.write_str(message),
+            Self::MessageText(message) => f.write_str(message),
             Self::Output(error) => error.fmt(f),
         }
     }
@@ -43,7 +45,7 @@ impl std::error::Error for CommandError {
         match self {
             Self::Sdk(error) => Some(error),
             Self::Output(error) => Some(error),
-            Self::Message(_) => None,
+            Self::Message(_) | Self::MessageText(_) => None,
         }
     }
 }
@@ -51,13 +53,13 @@ impl CommandError {
     pub fn code(&self) -> &str {
         match self {
             Self::Sdk(error) => error.code.as_str(),
-            Self::Message(_) | Self::Output(_) => "command_failed",
+            Self::Message(_) | Self::MessageText(_) | Self::Output(_) => "command_failed",
         }
     }
     pub fn sdk_error(&self) -> Option<&Error> {
         match self {
             Self::Sdk(error) => Some(error),
-            Self::Message(_) | Self::Output(_) => None,
+            Self::Message(_) | Self::MessageText(_) | Self::Output(_) => None,
         }
     }
 }

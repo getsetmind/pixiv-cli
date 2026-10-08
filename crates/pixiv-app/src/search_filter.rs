@@ -10,6 +10,11 @@ pub struct ArtworkFilter {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct FilterError(&'static str);
+impl FilterError {
+    pub fn message(&self) -> &'static str {
+        self.0
+    }
+}
 impl fmt::Display for FilterError {
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         formatter.write_str(self.0)

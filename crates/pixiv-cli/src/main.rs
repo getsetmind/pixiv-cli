@@ -99,17 +99,20 @@ async fn execute(args: Arguments) -> Result<(), CommandError> {
             )
             .await?;
         }
-        Command::Search { json, ndjson, .. } => {
-            let artworks = client
-                .search_artworks(search_request.expect("search options were resolved"))
-                .await?
-                .items;
+        Command::Search {
+            options,
+            json,
+            ndjson,
+            ..
+        } => {
+            let artworks = pixiv_cli_rs::search::collect_search(
+                &client,
+                search_request.expect("search options were resolved"),
+                &options,
+            )
+            .await?;
             if json {
-                let dtos: Vec<_> = artworks
-                    .iter()
-                    .map(pixiv_sdk::dto::ArtworkDto::from)
-                    .collect();
-                output(&serde_json::to_string_pretty(&dtos).map_err(|_| local())?)?;
+                pixiv_cli_rs::search::write_search_json(&artworks, &mut io::stdout().lock())?;
             } else {
                 for artwork in artworks {
                     if ndjson || !io::stdout().is_terminal() {

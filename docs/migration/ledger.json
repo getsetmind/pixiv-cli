@@ -823,15 +823,18 @@
         "internal/cli/migration_search_options_test.go#TestMigrationSearchSelectorsMatchFrozenQueriesAndValidationOrder",
         "crates/pixiv-cli/tests/search_options.rs#search_selectors_match_go_queries_normalization_validation_order_and_process_errors",
         "internal/shared/searchfilter/migration_filter_test.go#TestMigrationLocalFiltersMatchFrozenNormalizationBindingAndUnknownClasses",
-        "crates/pixiv-app/tests/search_filter.rs#local_filters_match_go_normalization_cursor_binding_and_unknown_rating_classes"
+        "crates/pixiv-app/tests/search_filter.rs#local_filters_match_go_normalization_cursor_binding_and_unknown_rating_classes",
+        "internal/cli/migration_search_pages_test.go#TestMigrationSearchRatingAndPagesMatchFrozenCollectionAndFailures",
+        "crates/pixiv-cli/tests/search_pages.rs#search_rating_and_logical_pages_match_go_without_dropping_duplicates_or_partial_failure_guards"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "CLI/MCP の日付計算 helper は固定時刻168ケースで比較。CLI の period/start-date/end-date flags を共通 helper と型付き SDK request に接続し、Go の実コマンド213ケースで日付入力の検証順を比較した。33ケースの SDK query、174ケースの子プロセス stderr・終了コード・クライアント設定前の拒否、半年/一年の42ケースを確認。NUL を含む6ケースは OS argv に渡せないため adapter のみ比較。検索は現在も先頭ページの試作であり、成功時の CLI 出力・実 HTTP までの接続、残りの flags・全検索条件・entity・ページ送り・account/pool・clock の極端な範囲・他 OS は未実装または未検証。",
-        "作品検索 selectors の210ケースで Go の CLI/SDK と比較。search-by/sort/content-type/ai-mode/aspect-ratio/resolution/draw-tool を型付き request に接続し、111ケースの GET/path/query と99ケースの子プロセスエラーを確認。content-type の空白・大小文字・illustration 別名・İLLUST、SDK 側での不正 sort 拒否、日付を含む検証順を維持した。正常 CLI の実 HTTP/出力、全ページ・ローカル rating/bookmark 処理、残り flags/entity/入力パイプ、保存/account/pool、全 Unicode、他 OS は未実装または未検証。",
-        "共通のローカル rating/content-type filter は Go の168ケースで正規化・エラー順・cursor context、正常80ケースの3360件のマッチ判定を比較。CLI の既存 content-type 正規化と MCP illust_filter の種別判定に接続した。CLI rating flags と論理ページ・重複排除、context の SDK binding/resume、bookmark の組合せ、Go の直接構築された不正 Filter/零値、全 Unicode と他 OS は未実装または未検証。"
+        "日付計算 helper は固定時刻168ケースで比較。period/start-date/end-date flags は Go の213ケースで検証順、33ケースの SDK query、174ケースの子プロセス stderr/終了コード、半年/一年42ケースを確認。NUL 6ケースは adapter のみ比較。時計の全範囲/全timezoneと他OSは未検証。",
+        "検索 selectors は Go の210ケースで比較。search-by/sort/content-type/ai-mode/aspect-ratio/resolution/draw-tool を型付き request に接続し111ケースの GET/path/query と99ケースの子プロセスエラーを確認。正常CLI実HTTP・残りflags/entity/入力パイプ・全Unicodeは未実装または未検証。",
+        "共通 rating/content-type filter は168ケースで正規化/エラー順/context、正常80ケースの3360判定を比較。CLI rating と MCP 種別判定に接続した。Go の直接構築された不正Filter/零値、contextのresume/cycle/checkpoint副作用は未検証。",
+        "rating/limit/page は Go CLI の90ケースでローカル判定後の論理ページ・空ページ補充・重複保持・後続失敗時の部分結果破棄・全queryを比較。成功76ケースのJSON envelope/DTOと入力不正10ケースの子プロセスを検証。収集はCLI内にありMCPとの共通traversal化は未実装。正常CLI実HTTP・account/pool・bookmark組合せ・全境界/取消・他OSは未検証。human表示、NDJSON record形状、非local human/NDJSONのstream/途中失敗出力、非local JSONのspool/bounded commit/メモリ使用量はGoと未一致。"
       ]
     },
     {
@@ -1674,7 +1677,7 @@
       "differences": [
         "Go MCP の144ケースで schema、検証、論理 page/limit、全 SDK 検索条件、空ページ補充、重複除去・作品フィルター、bookmark strategy/bounds/checkpoint/filter metadata、部分結果の破棄を固定し、Rust stdio の結果と全 HTTP query を比較した。範囲なしで strategy を指定した場合の重複・illust_filter の非適用も保持した。",
         "半年/一年の日付計算は固定時刻の168ケースで比較し、MCP は共通 helper を呼ぶ。長期 duration の実セッションから HTTP query までの比較、極端な clock・全 timezone、全 JSON wire 境界と複数不正 field の診断順、cursor 循環、検索 cancellation/deadline、pool 再実行・credential/account 状態、他 OS は未移植または未検証。Go の pool 実行回数も記録するが、Rust の pool 互換は未検証。",
-        "共通のローカル rating/content-type filter は Go の168ケースで正規化・エラー順・cursor context、正常80ケースの3360件のマッチ判定を比較。CLI の既存 content-type 正規化と MCP illust_filter の種別判定に接続した。CLI rating flags と論理ページ・重複排除、context の SDK binding/resume、bookmark の組合せ、Go の直接構築された不正 Filter/零値、全 Unicode と他 OS は未実装または未検証。"
+        "共通のローカル rating/content-type filter は Go の168ケースで正規化・エラー順・cursor context、正常80ケースの3360件のマッチ判定を比較。CLI の既存 content-type 正規化と MCP illust_filter の種別判定に接続した。CLI rating と論理ページは別途90ケースで比較したが、context の resume、bookmark の組合せ、Go の直接構築された不正 Filter/零値、全 Unicode と他 OS は未実装または未検証。"
       ]
     },
     {

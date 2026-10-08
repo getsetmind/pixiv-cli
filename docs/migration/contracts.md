@@ -459,3 +459,20 @@ cargo test -p pixiv-app --test search_filter --locked
 ```
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-search-filter` を指定する。
+
+## CLI の rating と論理ページ収集
+
+[search-pages.json](contracts/search-pages.json) は固定 Go 版の実際の CLI コマンド、共有 pagination、SDK を接続した90ケース。3ページの fixture 応答に sfw/r18/r18g/未知の x_restrict と複数の作品種別、同一ページ内・ページ間の重複を含める。rating と content-type、limit の省略・明示0・正数、論理 page、先頭の空ページ、後続の malformed 応答、入力不正と offset overflow を検証する。
+
+Rust CLI に `--rating`、`--limit/-l`、`--page/-p` を追加した。rating は content-type より先に正規化し、all 以外の条件では共通 filter の cursor context を SDK request に設定する。rating/x_restrict は HTTP query に追加しない。ローカル判定後に skip/limit を適用し、limit の省略では最初に結果のある upstream batch、明示0では全ページを返す。Go CLI のローカル収集は重複作品を保持するため、MCP の重複除去処理をそのまま流用しない。
+
+90ケースの adapter 検証結果・全 GET/path/query と、成功76ケースの実際の JSON presenter 出力を Go と比較する。後続ページの malformed 応答4ケースでは収集結果を返さず、JSON の部分結果も公開しない。入力不正10ケースは無効な proxy を設定した CLI 子プロセスで stderr・終了コードを比較し、クライアント設定前に拒否することを確認する。JSON は `{"illusts":[...]}` envelope とし、HTML 文字を Go と同じく escape する。比較は JSON の構造・値・配列順を維持して行う。
+
+Windows amd64 の fixture 比較であり、正常 CLI 子プロセスから実 HTTP までの接続、cursor context の resume・循環検出、checkpoint の副作用、全境界・取消/deadline、account/pool 再実行、bookmark との組合せ、他 OS は未検証。収集処理は現時点で CLI adapter 内にあり、MCP との共通 traversal 化は残っている。human の表示と NDJSON の record 形状はまだ Go と一致せず、非ローカル検索の human/NDJSON は収集後に出力するため Go の stream/途中失敗時の出力とも異なる。非ローカル JSON も Go のファイル spool に対して現在はメモリ収集であり、bounded output commit とメモリ使用量の互換は残っている。これらを JSON の成功から互換済みとは扱わない。
+
+```text
+go test -race ./internal/cli -run '^TestMigrationSearchRatingAndPages' -count=1
+cargo test -p pixiv-cli-rs --test search_pages --locked
+```
+
+基準を意図して更新する場合だけ Go テストの `-args -migration-update-search-pages` を指定する。

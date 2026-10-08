@@ -2,6 +2,13 @@ use crate::CommandError;
 use chrono::{DateTime, FixedOffset, NaiveDate};
 use clap::Args;
 use pixiv_sdk::pixiv::SearchArtworksRequest;
+use pixiv_sdk::{
+    Client,
+    models::{Artwork, ArtworkKind},
+    transport::Transport,
+};
+use std::collections::BTreeSet;
+use std::io::Write;
 
 #[derive(Args, Clone, Debug)]
 pub struct SearchOptions {
@@ -11,6 +18,12 @@ pub struct SearchOptions {
     pub sort: String,
     #[arg(long, default_value = "all", allow_hyphen_values = true)]
     pub content_type: String,
+    #[arg(long, default_value = "", allow_hyphen_values = true)]
+    pub rating: String,
+    #[arg(long, short = 'l', allow_hyphen_values = true)]
+    pub limit: Option<i64>,
+    #[arg(long, short = 'p', allow_hyphen_values = true)]
+    pub page: Option<i64>,
     #[arg(long, default_value = "all", allow_hyphen_values = true)]
     pub ai_mode: String,
     #[arg(long, default_value = "all", allow_hyphen_values = true)]
@@ -29,6 +42,9 @@ impl Default for SearchOptions {
             search_by: "tag-partial".into(),
             sort: "date_desc".into(),
             content_type: "all".into(),
+            rating: String::new(),
+            limit: None,
+            page: None,
             ai_mode: "all".into(),
             aspect_ratio: "all".into(),
             resolution: "all".into(),
@@ -55,12 +71,8 @@ impl SearchOptions {
                 ));
             }
         };
-        let filter =
-            pixiv_app::search_filter::normalize_filter("", &self.content_type).map_err(|_| {
-                CommandError::Message(
-                    "content-type must be one of all, illust-and-ugoira, illust, manga, ugoira",
-                )
-            })?;
+        let filter = pixiv_app::search_filter::normalize_filter(&self.rating, &self.content_type)
+            .map_err(|error| CommandError::Message(error.message()))?;
         if !matches!(self.ai_mode.as_str(), "all" | "exclude" | "only") {
             return Err(CommandError::Message(
                 "ai-mode must be one of all, exclude, only",
@@ -88,10 +100,118 @@ impl SearchOptions {
             aspect_ratio: self.aspect_ratio.clone(),
             resolution: self.resolution.clone(),
             tool: self.draw_tool.clone(),
+            cursor_context: if filter.rating == "all" {
+                String::new()
+            } else {
+                filter.cursor_context
+            },
             ..Default::default()
         };
         self.dates.apply(&mut request, now)?;
+        self.plan()?;
         Ok(request)
+    }
+
+    fn plan(&self) -> Result<SearchPlan, CommandError> {
+        let limit = self.limit.unwrap_or_default();
+        if limit < 0 {
+            return Err(CommandError::Message(
+                "limit must be zero or a positive integer",
+            ));
+        }
+        if self.page.is_some_and(|page| page <= 0) {
+            return Err(CommandError::Message("page must be a positive integer"));
+        }
+        let skip = if let Some(page) = self.page {
+            if limit <= 0 {
+                return Err(CommandError::Message(
+                    "--page requires --limit to be a positive integer",
+                ));
+            }
+            (page - 1).checked_mul(limit).ok_or(CommandError::Message(
+                "page and limit overflow the logical result offset",
+            ))?
+        } else {
+            0
+        };
+        Ok(SearchPlan {
+            limit: limit as usize,
+            skip: skip as usize,
+            one_batch: self.limit.is_none(),
+        })
+    }
+}
+
+struct SearchPlan {
+    limit: usize,
+    skip: usize,
+    one_batch: bool,
+}
+
+pub fn write_search_json<W: Write>(items: &[Artwork], out: &mut W) -> Result<(), CommandError> {
+    let dtos: Vec<_> = items.iter().map(pixiv_sdk::dto::ArtworkDto::from).collect();
+    let body = serde_json::to_string_pretty(&serde_json::json!({"illusts": dtos}))
+        .map_err(|_| pixiv_sdk::Error::new(pixiv_sdk::Reason::LocalStateError, "output"))?;
+    writeln!(out, "{}", crate::go_json_escape(body))?;
+    Ok(())
+}
+
+pub async fn collect_search<T: Transport>(
+    client: &Client<T>,
+    mut request: SearchArtworksRequest,
+    options: &SearchOptions,
+) -> Result<Vec<Artwork>, CommandError> {
+    let filter = pixiv_app::search_filter::normalize_filter(&options.rating, &options.content_type)
+        .map_err(|error| CommandError::Message(error.message()))?;
+    let local_filter = filter.rating != "all";
+    let plan = options.plan()?;
+    let mut skip = plan.skip;
+    let mut items = vec![];
+    let mut cursors = BTreeSet::new();
+    loop {
+        if !cursors.insert(request.cursor.as_str().to_owned()) {
+            let prefix = if local_filter {
+                "pagination stream 0 cursor repeated"
+            } else {
+                "pagination cursor repeated"
+            };
+            return Err(CommandError::MessageText(format!(
+                "{prefix}: {}",
+                request.cursor.as_str()
+            )));
+        }
+        let page = client.search_artworks(request.clone()).await?;
+        let mut batch: Vec<_> = page
+            .items
+            .into_iter()
+            .filter(|artwork| {
+                if !local_filter {
+                    return true;
+                }
+                let kind = match artwork.kind {
+                    ArtworkKind::Illust => "illust",
+                    ArtworkKind::Manga => "manga",
+                    ArtworkKind::Ugoira => "ugoira",
+                    ArtworkKind::Unknown => "unknown",
+                };
+                filter.matches(artwork.x_restrict, kind)
+            })
+            .collect();
+        let consumed = skip.min(batch.len());
+        skip -= consumed;
+        batch.drain(..consumed);
+        if plan.limit > 0 {
+            batch.truncate(plan.limit - items.len());
+        }
+        let returned = !batch.is_empty();
+        items.extend(batch);
+        if (plan.limit > 0 && items.len() >= plan.limit)
+            || (plan.one_batch && skip == 0 && returned)
+            || page.next.is_zero()
+        {
+            return Ok(items);
+        }
+        request.cursor = page.next;
     }
 }
 
