@@ -124,7 +124,7 @@ cargo test -p pixiv-sdk --test artwork_detail --test artwork_pages --locked
 
 Rust の `resource::OpenResourceRequest` は空 method・GET・HEAD を許可し、ヘッダー値の 0x00–0x1f と 0x7f を拒否する。`ResourceResponse<R>` は caller が所有する AsyncRead stream を保持し、生成時も metadata の読み取り時も body を先読みしない。未読・読了のどちらでも response の破棄が stream を解放する。ヘッダーは7種類の canonical keyだけをコピーし、複数値の順を保存する。Header の返却値や元の map を変更しても内部状態は変わらない。Content-Length は Go と同じ符号付き int64 とし、不正値・範囲外は0となる。
 
-この段階では共有の container と validation の比較のみ。HTTP の実ストリーム、HEAD/204/304 の空 body、redirect・cookie・条件付き取得、partial read・通信失敗、製品の reference 再解決・open/save、body の close 時のエラーは未移植または未検証。Go の明示 Close は Rust の所有権による Drop に対応させるが、実HTTPへの適用は別に検証する。
+共有 container の所有権は比較済み。実HTTPの取得は次節の transport テストで検証する。製品の reference 再解決・open/save、キャンセル、body の close 時のエラーは未移植または未検証。Go の明示 Close は Rust の所有権による Drop に対応させる。
 
 ```text
 go test ./sdk -run '^TestMigrationResource' -count=1
@@ -133,14 +133,19 @@ cargo test -p pixiv-sdk --test resource_io --locked
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-resource-io` を指定する。
 
-## Resource HTTP ストリームの Go 参照契約
+## Resource HTTP ストリーム
 
 [resource-stream.json](contracts/resource-stream.json) はローカル HTTP サーバーを使った Go 版の15ケースを固定する。GET・HEAD、206・204・304・404、途中で切れた body、301・302・303・307・308 の redirect、検証で拒否された redirect、redirect 回数の上限、Location のない応答を含む。送信ヘッダー、URL 検証の順序、応答の許可ヘッダー、読み取り結果と transport エラーを記録する。
 
-今回は Go 参照契約の追加のみで、Rust の実HTTPストリームは未移植。先読みしない取得、cookie jar、キャンセル、TLS、製品側の reference 再解決・open/save は別途検証する。
+Rust の `transport::ResourceTransport` と `HttpTransport` は、body を先読みせず `AsyncRead` として返す。HEAD・204・304 の空 body、非2xxの応答をそのまま返すこと、途中で切れた body の既読バイトと読み取りエラーを比較する。Range・If-None-Match の送信、アプリ用 Referer・User-Agent による上書き、許可した応答ヘッダーだけの公開も検証する。追加の実サーバーテストでは body 送信を待機させ、取得が先に返ることを確認する。
+
+[resource-redirect-headers.json](contracts/resource-redirect-headers.json) の2ケースは、同じホストの別ポートと別ホストへの redirect を比較する。後者では Go と同じく Authorization・Www-Authenticate・Cookie・Cookie2 を除去する。URL validator は初回と各 redirect 前に適用し、上限に達した後は呼び出さない。初回の policy エラーは保持し、redirect 中のエラーと body 読み取りエラーには生の URL や秘密値を含めない。
+
+この比較は Windows amd64 のみ。製品側の reference 再解決・open/save は未移植。cookie jar、subdomain・国際化ホスト名・複数段の信頼境界、URL/Location の全変種、gzip、TLS・DNS・deadline のエラー分類、キャンセルと実通信の中断、close 失敗、他OSは未検証。transport の現在の timeout は60秒で、Go の caller ごとの通信設定の移植も残る。
 
 ```text
-go test ./internal/services/pixiv/resource -run '^TestMigrationResourceStream' -count=1
+go test ./internal/services/pixiv/resource -run '^TestMigrationResource' -count=1
+cargo test -p pixiv-sdk --test resource_stream --locked
 ```
 
-基準を意図して更新する場合だけ Go テストの `-args -migration-update-stream` を指定する。
+基準を意図して更新する場合だけ Go テストの `-args -migration-update-stream` または `-args -migration-update-redirect-headers` を指定する。

@@ -8,6 +8,10 @@ use reqwest::{Method, redirect::Policy};
 use serde_json::Value;
 use std::{fmt, time::Duration};
 
+pub use crate::resource_transport::{
+    ResourceBody, ResourceReadRequest, ResourceTransport, ResourceUrlValidator,
+};
+
 #[derive(Clone)]
 pub struct Request {
     pub method: Method,
@@ -108,6 +112,17 @@ impl Transport for HttpTransport {
             retry_after,
             body,
         })
+    }
+}
+
+impl ResourceTransport for HttpTransport {
+    type Body = ResourceBody;
+
+    async fn open_resource(
+        &self,
+        request: ResourceReadRequest,
+    ) -> Result<crate::resource::ResourceResponse<Self::Body>> {
+        crate::resource_transport::open(&self.client, request).await
     }
 }
 

@@ -2413,18 +2413,22 @@
         "key": "sdk:NewResourceResponse"
       },
       "rust_sources": [
-        "crates/pixiv-sdk/src/resource_io.rs"
+        "crates/pixiv-sdk/src/resource_io.rs",
+        "crates/pixiv-sdk/src/resource_transport.rs"
       ],
       "tests": [
         "sdk/migration_resource_io_test.go#TestMigrationResourceIOMatchesFrozenHeadersAndValidation",
         "sdk/migration_resource_io_test.go#TestMigrationResourceResponseKeepsUnreadStreamOwnership",
-        "crates/pixiv-sdk/tests/resource_io.rs"
+        "crates/pixiv-sdk/tests/resource_io.rs",
+        "internal/services/pixiv/resource/migration_stream_test.go#TestMigrationResourceStreamMatchesFrozenHTTPBehavior",
+        "internal/services/pixiv/resource/migration_redirect_headers_test.go#TestMigrationResourceRedirectHeadersMatchGoTrustBoundary",
+        "crates/pixiv-sdk/tests/resource_stream.rs"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "共有container・ヘッダー・要求validationを比較済み。実HTTP stream、HEAD/204/304、redirect/cookie、条件付き取得、取消・部分失敗・close失敗、製品open/saveは未移植または未検証。"
+        "共有containerと実HTTP streamの17参照ケース、先読みしない取得、HEAD/204/304、redirectとhost変更時の認証ヘッダー除去、部分read失敗をWindows amd64で比較済み。cookie jar、subdomain/国際化host/複数段redirect、URL/Location全変種、gzip、TLS/DNS/deadline分類、取消・close失敗、製品open/saveと他OSは未移植または未検証。"
       ]
     },
     {
@@ -3001,18 +3005,22 @@
         "key": "sdk:ResourceResponse"
       },
       "rust_sources": [
-        "crates/pixiv-sdk/src/resource_io.rs"
+        "crates/pixiv-sdk/src/resource_io.rs",
+        "crates/pixiv-sdk/src/resource_transport.rs"
       ],
       "tests": [
         "sdk/migration_resource_io_test.go#TestMigrationResourceIOMatchesFrozenHeadersAndValidation",
         "sdk/migration_resource_io_test.go#TestMigrationResourceResponseKeepsUnreadStreamOwnership",
-        "crates/pixiv-sdk/tests/resource_io.rs"
+        "crates/pixiv-sdk/tests/resource_io.rs",
+        "internal/services/pixiv/resource/migration_stream_test.go#TestMigrationResourceStreamMatchesFrozenHTTPBehavior",
+        "internal/services/pixiv/resource/migration_redirect_headers_test.go#TestMigrationResourceRedirectHeadersMatchGoTrustBoundary",
+        "crates/pixiv-sdk/tests/resource_stream.rs"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "共有container・ヘッダー・要求validationを比較済み。実HTTP stream、HEAD/204/304、redirect/cookie、条件付き取得、取消・部分失敗・close失敗、製品open/saveは未移植または未検証。"
+        "共有containerと実HTTP streamの17参照ケース、先読みしない取得、HEAD/204/304、redirectとhost変更時の認証ヘッダー除去、部分read失敗をWindows amd64で比較済み。cookie jar、subdomain/国際化host/複数段redirect、URL/Location全変種、gzip、TLS/DNS/deadline分類、取消・close失敗、製品open/saveと他OSは未移植または未検証。"
       ]
     },
     {
@@ -3023,18 +3031,22 @@
         "key": "sdk:ResourceResponse.AcceptRanges"
       },
       "rust_sources": [
-        "crates/pixiv-sdk/src/resource_io.rs"
+        "crates/pixiv-sdk/src/resource_io.rs",
+        "crates/pixiv-sdk/src/resource_transport.rs"
       ],
       "tests": [
         "sdk/migration_resource_io_test.go#TestMigrationResourceIOMatchesFrozenHeadersAndValidation",
         "sdk/migration_resource_io_test.go#TestMigrationResourceResponseKeepsUnreadStreamOwnership",
-        "crates/pixiv-sdk/tests/resource_io.rs"
+        "crates/pixiv-sdk/tests/resource_io.rs",
+        "internal/services/pixiv/resource/migration_stream_test.go#TestMigrationResourceStreamMatchesFrozenHTTPBehavior",
+        "internal/services/pixiv/resource/migration_redirect_headers_test.go#TestMigrationResourceRedirectHeadersMatchGoTrustBoundary",
+        "crates/pixiv-sdk/tests/resource_stream.rs"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "共有container・ヘッダー・要求validationを比較済み。実HTTP stream、HEAD/204/304、redirect/cookie、条件付き取得、取消・部分失敗・close失敗、製品open/saveは未移植または未検証。"
+        "共有containerと実HTTP streamの17参照ケース、先読みしない取得、HEAD/204/304、redirectとhost変更時の認証ヘッダー除去、部分read失敗をWindows amd64で比較済み。cookie jar、subdomain/国際化host/複数段redirect、URL/Location全変種、gzip、TLS/DNS/deadline分類、取消・close失敗、製品open/saveと他OSは未移植または未検証。"
       ]
     },
     {
@@ -3045,18 +3057,22 @@
         "key": "sdk:ResourceResponse.CacheControl"
       },
       "rust_sources": [
-        "crates/pixiv-sdk/src/resource_io.rs"
+        "crates/pixiv-sdk/src/resource_io.rs",
+        "crates/pixiv-sdk/src/resource_transport.rs"
       ],
       "tests": [
         "sdk/migration_resource_io_test.go#TestMigrationResourceIOMatchesFrozenHeadersAndValidation",
         "sdk/migration_resource_io_test.go#TestMigrationResourceResponseKeepsUnreadStreamOwnership",
-        "crates/pixiv-sdk/tests/resource_io.rs"
+        "crates/pixiv-sdk/tests/resource_io.rs",
+        "internal/services/pixiv/resource/migration_stream_test.go#TestMigrationResourceStreamMatchesFrozenHTTPBehavior",
+        "internal/services/pixiv/resource/migration_redirect_headers_test.go#TestMigrationResourceRedirectHeadersMatchGoTrustBoundary",
+        "crates/pixiv-sdk/tests/resource_stream.rs"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "共有container・ヘッダー・要求validationを比較済み。実HTTP stream、HEAD/204/304、redirect/cookie、条件付き取得、取消・部分失敗・close失敗、製品open/saveは未移植または未検証。"
+        "共有containerと実HTTP streamの17参照ケース、先読みしない取得、HEAD/204/304、redirectとhost変更時の認証ヘッダー除去、部分read失敗をWindows amd64で比較済み。cookie jar、subdomain/国際化host/複数段redirect、URL/Location全変種、gzip、TLS/DNS/deadline分類、取消・close失敗、製品open/saveと他OSは未移植または未検証。"
       ]
     },
     {
@@ -3067,18 +3083,22 @@
         "key": "sdk:ResourceResponse.ContentLength"
       },
       "rust_sources": [
-        "crates/pixiv-sdk/src/resource_io.rs"
+        "crates/pixiv-sdk/src/resource_io.rs",
+        "crates/pixiv-sdk/src/resource_transport.rs"
       ],
       "tests": [
         "sdk/migration_resource_io_test.go#TestMigrationResourceIOMatchesFrozenHeadersAndValidation",
         "sdk/migration_resource_io_test.go#TestMigrationResourceResponseKeepsUnreadStreamOwnership",
-        "crates/pixiv-sdk/tests/resource_io.rs"
+        "crates/pixiv-sdk/tests/resource_io.rs",
+        "internal/services/pixiv/resource/migration_stream_test.go#TestMigrationResourceStreamMatchesFrozenHTTPBehavior",
+        "internal/services/pixiv/resource/migration_redirect_headers_test.go#TestMigrationResourceRedirectHeadersMatchGoTrustBoundary",
+        "crates/pixiv-sdk/tests/resource_stream.rs"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "共有container・ヘッダー・要求validationを比較済み。実HTTP stream、HEAD/204/304、redirect/cookie、条件付き取得、取消・部分失敗・close失敗、製品open/saveは未移植または未検証。"
+        "共有containerと実HTTP streamの17参照ケース、先読みしない取得、HEAD/204/304、redirectとhost変更時の認証ヘッダー除去、部分read失敗をWindows amd64で比較済み。cookie jar、subdomain/国際化host/複数段redirect、URL/Location全変種、gzip、TLS/DNS/deadline分類、取消・close失敗、製品open/saveと他OSは未移植または未検証。"
       ]
     },
     {
@@ -3089,18 +3109,22 @@
         "key": "sdk:ResourceResponse.ContentRange"
       },
       "rust_sources": [
-        "crates/pixiv-sdk/src/resource_io.rs"
+        "crates/pixiv-sdk/src/resource_io.rs",
+        "crates/pixiv-sdk/src/resource_transport.rs"
       ],
       "tests": [
         "sdk/migration_resource_io_test.go#TestMigrationResourceIOMatchesFrozenHeadersAndValidation",
         "sdk/migration_resource_io_test.go#TestMigrationResourceResponseKeepsUnreadStreamOwnership",
-        "crates/pixiv-sdk/tests/resource_io.rs"
+        "crates/pixiv-sdk/tests/resource_io.rs",
+        "internal/services/pixiv/resource/migration_stream_test.go#TestMigrationResourceStreamMatchesFrozenHTTPBehavior",
+        "internal/services/pixiv/resource/migration_redirect_headers_test.go#TestMigrationResourceRedirectHeadersMatchGoTrustBoundary",
+        "crates/pixiv-sdk/tests/resource_stream.rs"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "共有container・ヘッダー・要求validationを比較済み。実HTTP stream、HEAD/204/304、redirect/cookie、条件付き取得、取消・部分失敗・close失敗、製品open/saveは未移植または未検証。"
+        "共有containerと実HTTP streamの17参照ケース、先読みしない取得、HEAD/204/304、redirectとhost変更時の認証ヘッダー除去、部分read失敗をWindows amd64で比較済み。cookie jar、subdomain/国際化host/複数段redirect、URL/Location全変種、gzip、TLS/DNS/deadline分類、取消・close失敗、製品open/saveと他OSは未移植または未検証。"
       ]
     },
     {
@@ -3111,18 +3135,22 @@
         "key": "sdk:ResourceResponse.ContentType"
       },
       "rust_sources": [
-        "crates/pixiv-sdk/src/resource_io.rs"
+        "crates/pixiv-sdk/src/resource_io.rs",
+        "crates/pixiv-sdk/src/resource_transport.rs"
       ],
       "tests": [
         "sdk/migration_resource_io_test.go#TestMigrationResourceIOMatchesFrozenHeadersAndValidation",
         "sdk/migration_resource_io_test.go#TestMigrationResourceResponseKeepsUnreadStreamOwnership",
-        "crates/pixiv-sdk/tests/resource_io.rs"
+        "crates/pixiv-sdk/tests/resource_io.rs",
+        "internal/services/pixiv/resource/migration_stream_test.go#TestMigrationResourceStreamMatchesFrozenHTTPBehavior",
+        "internal/services/pixiv/resource/migration_redirect_headers_test.go#TestMigrationResourceRedirectHeadersMatchGoTrustBoundary",
+        "crates/pixiv-sdk/tests/resource_stream.rs"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "共有container・ヘッダー・要求validationを比較済み。実HTTP stream、HEAD/204/304、redirect/cookie、条件付き取得、取消・部分失敗・close失敗、製品open/saveは未移植または未検証。"
+        "共有containerと実HTTP streamの17参照ケース、先読みしない取得、HEAD/204/304、redirectとhost変更時の認証ヘッダー除去、部分read失敗をWindows amd64で比較済み。cookie jar、subdomain/国際化host/複数段redirect、URL/Location全変種、gzip、TLS/DNS/deadline分類、取消・close失敗、製品open/saveと他OSは未移植または未検証。"
       ]
     },
     {
@@ -3133,18 +3161,22 @@
         "key": "sdk:ResourceResponse.ETag"
       },
       "rust_sources": [
-        "crates/pixiv-sdk/src/resource_io.rs"
+        "crates/pixiv-sdk/src/resource_io.rs",
+        "crates/pixiv-sdk/src/resource_transport.rs"
       ],
       "tests": [
         "sdk/migration_resource_io_test.go#TestMigrationResourceIOMatchesFrozenHeadersAndValidation",
         "sdk/migration_resource_io_test.go#TestMigrationResourceResponseKeepsUnreadStreamOwnership",
-        "crates/pixiv-sdk/tests/resource_io.rs"
+        "crates/pixiv-sdk/tests/resource_io.rs",
+        "internal/services/pixiv/resource/migration_stream_test.go#TestMigrationResourceStreamMatchesFrozenHTTPBehavior",
+        "internal/services/pixiv/resource/migration_redirect_headers_test.go#TestMigrationResourceRedirectHeadersMatchGoTrustBoundary",
+        "crates/pixiv-sdk/tests/resource_stream.rs"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "共有container・ヘッダー・要求validationを比較済み。実HTTP stream、HEAD/204/304、redirect/cookie、条件付き取得、取消・部分失敗・close失敗、製品open/saveは未移植または未検証。"
+        "共有containerと実HTTP streamの17参照ケース、先読みしない取得、HEAD/204/304、redirectとhost変更時の認証ヘッダー除去、部分read失敗をWindows amd64で比較済み。cookie jar、subdomain/国際化host/複数段redirect、URL/Location全変種、gzip、TLS/DNS/deadline分類、取消・close失敗、製品open/saveと他OSは未移植または未検証。"
       ]
     },
     {
@@ -3155,18 +3187,22 @@
         "key": "sdk:ResourceResponse.Header"
       },
       "rust_sources": [
-        "crates/pixiv-sdk/src/resource_io.rs"
+        "crates/pixiv-sdk/src/resource_io.rs",
+        "crates/pixiv-sdk/src/resource_transport.rs"
       ],
       "tests": [
         "sdk/migration_resource_io_test.go#TestMigrationResourceIOMatchesFrozenHeadersAndValidation",
         "sdk/migration_resource_io_test.go#TestMigrationResourceResponseKeepsUnreadStreamOwnership",
-        "crates/pixiv-sdk/tests/resource_io.rs"
+        "crates/pixiv-sdk/tests/resource_io.rs",
+        "internal/services/pixiv/resource/migration_stream_test.go#TestMigrationResourceStreamMatchesFrozenHTTPBehavior",
+        "internal/services/pixiv/resource/migration_redirect_headers_test.go#TestMigrationResourceRedirectHeadersMatchGoTrustBoundary",
+        "crates/pixiv-sdk/tests/resource_stream.rs"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "共有container・ヘッダー・要求validationを比較済み。実HTTP stream、HEAD/204/304、redirect/cookie、条件付き取得、取消・部分失敗・close失敗、製品open/saveは未移植または未検証。"
+        "共有containerと実HTTP streamの17参照ケース、先読みしない取得、HEAD/204/304、redirectとhost変更時の認証ヘッダー除去、部分read失敗をWindows amd64で比較済み。cookie jar、subdomain/国際化host/複数段redirect、URL/Location全変種、gzip、TLS/DNS/deadline分類、取消・close失敗、製品open/saveと他OSは未移植または未検証。"
       ]
     },
     {
@@ -3177,18 +3213,22 @@
         "key": "sdk:ResourceResponse.LastModified"
       },
       "rust_sources": [
-        "crates/pixiv-sdk/src/resource_io.rs"
+        "crates/pixiv-sdk/src/resource_io.rs",
+        "crates/pixiv-sdk/src/resource_transport.rs"
       ],
       "tests": [
         "sdk/migration_resource_io_test.go#TestMigrationResourceIOMatchesFrozenHeadersAndValidation",
         "sdk/migration_resource_io_test.go#TestMigrationResourceResponseKeepsUnreadStreamOwnership",
-        "crates/pixiv-sdk/tests/resource_io.rs"
+        "crates/pixiv-sdk/tests/resource_io.rs",
+        "internal/services/pixiv/resource/migration_stream_test.go#TestMigrationResourceStreamMatchesFrozenHTTPBehavior",
+        "internal/services/pixiv/resource/migration_redirect_headers_test.go#TestMigrationResourceRedirectHeadersMatchGoTrustBoundary",
+        "crates/pixiv-sdk/tests/resource_stream.rs"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "共有container・ヘッダー・要求validationを比較済み。実HTTP stream、HEAD/204/304、redirect/cookie、条件付き取得、取消・部分失敗・close失敗、製品open/saveは未移植または未検証。"
+        "共有containerと実HTTP streamの17参照ケース、先読みしない取得、HEAD/204/304、redirectとhost変更時の認証ヘッダー除去、部分read失敗をWindows amd64で比較済み。cookie jar、subdomain/国際化host/複数段redirect、URL/Location全変種、gzip、TLS/DNS/deadline分類、取消・close失敗、製品open/saveと他OSは未移植または未検証。"
       ]
     },
     {
