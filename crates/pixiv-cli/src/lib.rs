@@ -1,5 +1,8 @@
 use pixiv_sdk::{Client, Error, Reason, models::ArtworkKind, transport::Transport};
-use std::{fmt, io::Write};
+use std::{
+    fmt,
+    io::{self, Write},
+};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum DetailOutput {
@@ -12,6 +15,12 @@ pub enum DetailOutput {
 pub enum CommandError {
     Sdk(Error),
     Message(&'static str),
+    Output(io::Error),
+}
+impl From<io::Error> for CommandError {
+    fn from(error: io::Error) -> Self {
+        Self::Output(error)
+    }
 }
 impl From<Error> for CommandError {
     fn from(error: Error) -> Self {
@@ -23,23 +32,64 @@ impl fmt::Display for CommandError {
         match self {
             Self::Sdk(error) => error.fmt(f),
             Self::Message(message) => f.write_str(message),
+            Self::Output(error) => error.fmt(f),
         }
     }
 }
-impl std::error::Error for CommandError {}
+impl std::error::Error for CommandError {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            Self::Sdk(error) => Some(error),
+            Self::Output(error) => Some(error),
+            Self::Message(_) => None,
+        }
+    }
+}
 impl CommandError {
     pub fn code(&self) -> &str {
         match self {
             Self::Sdk(error) => error.code.as_str(),
-            Self::Message(_) => "command_failed",
+            Self::Message(_) | Self::Output(_) => "command_failed",
         }
     }
     pub fn sdk_error(&self) -> Option<&Error> {
         match self {
             Self::Sdk(error) => Some(error),
-            Self::Message(_) => None,
+            Self::Message(_) | Self::Output(_) => None,
         }
     }
+}
+
+pub fn finish_command<W: Write>(
+    result: Result<(), CommandError>,
+    ndjson_output: bool,
+    machine_output: bool,
+    diagnostics: &mut W,
+) -> i32 {
+    let Err(error) = result else {
+        return 0;
+    };
+    if ndjson_output
+        && matches!(&error, CommandError::Output(cause) if cause.kind() == io::ErrorKind::BrokenPipe)
+    {
+        return 0;
+    }
+    if machine_output {
+        let mut body = serde_json::json!({"code": error.code(), "message": error.to_string()});
+        if let Some(seconds) = error
+            .sdk_error()
+            .and_then(|error| error.retry_after_seconds_at(std::time::SystemTime::now().into()))
+            .filter(|seconds| *seconds > 0)
+        {
+            body["retry_after_seconds"] = seconds.into();
+        }
+        let envelope = go_json_escape(serde_json::json!({"error": body}).to_string());
+        if writeln!(diagnostics, "{envelope}").is_ok() {
+            return 1;
+        }
+    }
+    let _ = writeln!(diagnostics, "error: {error}");
+    1
 }
 
 pub async fn artwork_detail<T: Transport, W: Write>(
@@ -58,16 +108,29 @@ pub async fn artwork_detail<T: Transport, W: Write>(
                 .map(|tag| tag.name.as_str())
                 .collect::<Vec<_>>()
                 .join(",");
-            write!(out,"url: https://www.pixiv.net/artworks/{}\nid: {}\ntitle: {}\nauthor: {} ({})\ntype: {}\npage_count: {}\nbookmarks: {}\nviews: {}\ntags: {}\n",artwork.id,artwork.id,artwork.title,artwork.user.name,artwork.user.id,kind.as_str().unwrap_or_default(),artwork.page_count,artwork.total_bookmarks,artwork.total_views,tags).map_err(|_|local())?;
+            write!(
+                out,
+                "url: https://www.pixiv.net/artworks/{}\nid: {}\ntitle: {}\nauthor: {} ({})\ntype: {}\npage_count: {}\nbookmarks: {}\nviews: {}\ntags: {}\n",
+                artwork.id,
+                artwork.id,
+                artwork.title,
+                artwork.user.name,
+                artwork.user.id,
+                kind.as_str().unwrap_or_default(),
+                artwork.page_count,
+                artwork.total_bookmarks,
+                artwork.total_views,
+                tags
+            )?;
             let caption = plain_caption(&artwork.caption);
             if !caption.is_empty() {
-                writeln!(out, "caption:\n{caption}").map_err(|_| local())?;
+                writeln!(out, "caption:\n{caption}")?;
             }
         }
         DetailOutput::Json => {
             let encoded = serde_json::to_string_pretty(&pixiv_sdk::dto::ArtworkDto::from(&artwork))
                 .map_err(|_| local())?;
-            writeln!(out, "{}", go_json_escape(encoded)).map_err(|_| local())?;
+            writeln!(out, "{}", go_json_escape(encoded))?;
         }
         DetailOutput::Ndjson => {
             let record_type = match artwork.kind {
@@ -87,7 +150,7 @@ pub async fn artwork_detail<T: Transport, W: Write>(
             record["type"] = record_type.into();
             record["url"] = format!("https://www.pixiv.net/artworks/{}", artwork.id).into();
             let encoded = serde_json::to_string(&record).map_err(|_| local())?;
-            writeln!(out, "{}", go_json_escape(encoded)).map_err(|_| local())?;
+            writeln!(out, "{}", go_json_escape(encoded))?;
         }
     }
     Ok(())

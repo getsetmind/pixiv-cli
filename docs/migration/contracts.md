@@ -300,3 +300,18 @@ cargo test -p pixiv-cli-rs --test detail_output --locked
 ```
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-detail-output` を指定する。
+
+## detail の writer failure と終了コード
+
+[detail-writer.json](contracts/detail-writer.json) は Go の detail command と本番の終了処理を組み合わせた27ケースを固定する。通常表示・JSON・NDJSONについて、BrokenPipe、権限エラー、その他の writer failure を、先頭から失敗・8 byte 後に失敗・成功の3条件で比較する。テスト用の作品は SDK が返す illustration と同じ RawKind を持つ。部分出力、診断、終了コードを記録し、NDJSON 中の BrokenPipe だけは診断なし・終了コード0、通常表示と JSON の BrokenPipe および他の writer failure は終了コード1とする。
+
+Rust は実 SDK client から `artwork_detail` を呼び、本番バイナリも使う `finish_command` で終了条件を比較する。出力エラーの io::Error と種別を保持し、SDK のエラーに置き換えない。比較用の writer と transport は crate の `tests/` に置く。成功時の JSON と診断 envelope の object key 順だけを正規化し、部分出力は文字列をそのまま比較する。
+
+Windows amd64 の注入した writer error に対する契約であり、OS の実パイプを使う子プロセス、SIGPIPE、TTY、stderr 自体の失敗、Search/Ugoira の全出力契約、他 OS は未検証。前節の writer failure の未検証範囲は、この27ケースを除く実プロセス・OS境界に残る。
+
+```text
+go test ./internal/cli -run '^TestMigrationDetailWriter' -count=1
+cargo test -p pixiv-cli-rs --test detail_writer --locked
+```
+
+基準を意図して更新する場合だけ Go テストの `-args -migration-update-writer` を指定する。

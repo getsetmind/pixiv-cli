@@ -1,7 +1,6 @@
 use clap::{Parser, Subcommand};
-use pixiv_cli_rs::{CommandError, DetailOutput, artwork_detail};
+use pixiv_cli_rs::{CommandError, DetailOutput, artwork_detail, finish_command};
 use pixiv_sdk::{Client, Error, Reason, reference::artwork_id};
-use serde_json::json;
 use std::io::{self, IsTerminal, Write};
 
 #[derive(Parser)]
@@ -42,26 +41,19 @@ async fn main() {
         Command::Ugoira { json, .. } => *json,
         Command::Search { json, ndjson, .. } => *json || *ndjson,
     };
-    match execute(args).await {
-        Ok(()) => (),
-        Err(error) => {
-            if machine_output {
-                let mut body = json!({"code": error.code(), "message": error.to_string()});
-                if let Some(seconds) = error
-                    .sdk_error()
-                    .and_then(|error| {
-                        error.retry_after_seconds_at(std::time::SystemTime::now().into())
-                    })
-                    .filter(|seconds| *seconds > 0)
-                {
-                    body["retry_after_seconds"] = json!(seconds);
-                }
-                eprintln!("{}", json!({"error": body}));
-            } else {
-                eprintln!("error: {error}");
-            }
-            std::process::exit(1);
-        }
+    let ndjson_output = match &args.command {
+        Command::Detail { ndjson, .. } => *ndjson,
+        Command::Search { json, ndjson, .. } => *ndjson || (!*json && !io::stdout().is_terminal()),
+        Command::Ugoira { .. } => false,
+    };
+    let exit = finish_command(
+        execute(args).await,
+        ndjson_output,
+        machine_output,
+        &mut io::stderr().lock(),
+    );
+    if exit != 0 {
+        std::process::exit(exit);
     }
 }
 
@@ -164,6 +156,6 @@ fn local() -> Error {
     Error::new(Reason::LocalStateError, "output")
 }
 
-fn output(value: &str) -> pixiv_sdk::Result<()> {
-    writeln!(io::stdout().lock(), "{value}").map_err(|_| local())
+fn output(value: &str) -> Result<(), CommandError> {
+    writeln!(io::stdout().lock(), "{value}").map_err(CommandError::from)
 }

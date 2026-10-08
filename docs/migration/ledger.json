@@ -414,14 +414,16 @@
         "internal/cli/migration_detail_input_test.go#TestMigrationDetailInputMatchesFrozenErrorsBeforeAccountAccess",
         "crates/pixiv-cli/tests/detail_input.rs#detail_inputs_match_go_process_errors_and_validate_before_client_configuration",
         "internal/cli/commands/pixiv/detail/migration_output_test.go#TestMigrationArtworkDetailOutputMatchesFrozenModes",
-        "crates/pixiv-cli/tests/detail_output.rs#artwork_detail_modes_match_go_dtos_records_captions_and_failures"
+        "crates/pixiv-cli/tests/detail_output.rs#artwork_detail_modes_match_go_dtos_records_captions_and_failures",
+        "internal/cli/migration_writer_test.go#TestMigrationDetailWriterFailuresMatchFrozenExitAndDiagnostics",
+        "crates/pixiv-cli/tests/detail_writer.rs#detail_writer_failures_preserve_partial_output_diagnostics_and_ndjson_exit"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "122 fixed Go detail input/error-exit cases and 72 SDK-to-detail output cases compare source parsing before client construction, plain/JSON errors and exit 1, human output and HTML captions, JSON DTOs and canonical NDJSON records. Rust production artwork_detail receives a real SDK client and output writer; fixture transports remain in tests.",
-        "Successful CLI process/network integration, TTY/configuration, record/text pipelines and aggregate JSON, BrokenPipe/writer failures, all HTML and Unicode version differences, all flags/aliases and conflict errors, novel/user/content, account/authentication/transport, MCP and other platforms remain unverified."
+        "122 fixed Go detail input/error-exit cases and 72 SDK-to-detail output cases compare source parsing before client construction, plain/JSON errors and exit 1, human output and HTML captions, JSON DTOs and canonical NDJSON records. Rust production artwork_detail receives a real SDK client and output writer; fixture transports remain in tests. A further 27 writer contracts preserve partial output, command_failed diagnostics and exit status; only NDJSON BrokenPipe succeeds silently. Production finish_command retains io::Error causes and is shared by the binary.",
+        "Successful CLI process/network integration, TTY/configuration, record/text pipelines and aggregate JSON, OS/process BrokenPipe and stderr failures, all HTML and Unicode version differences, all flags/aliases and conflict errors, novel/user/content, account/authentication/transport, MCP and other platforms remain unverified."
       ]
     },
     {
