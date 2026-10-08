@@ -1,42 +1,13 @@
+use crate::codec::{Payload, PayloadSeed, decode_base64, engine, normalize_json};
 use crate::{Error, Reason, Result};
-use base64::{
-    Engine, alphabet,
-    engine::{DecodePaddingMode, GeneralPurpose, GeneralPurposeConfig},
-};
+use base64::Engine;
 use serde::{
     Deserialize, Deserializer, Serialize, Serializer,
-    de::{self, DeserializeSeed, IgnoredAny, MapAccess, SeqAccess, Visitor},
+    de::{self, IgnoredAny, MapAccess, Visitor},
 };
 use std::fmt;
-
 fn reference_error(operation: &'static str) -> Error {
     Error::with_product("", Reason::InvalidArgument, operation)
-}
-
-fn engine(url: bool) -> GeneralPurpose {
-    GeneralPurpose::new(
-        if url {
-            &alphabet::URL_SAFE
-        } else {
-            &alphabet::STANDARD
-        },
-        GeneralPurposeConfig::new()
-            .with_encode_padding(!url)
-            .with_decode_padding_mode(if url {
-                DecodePaddingMode::RequireNone
-            } else {
-                DecodePaddingMode::RequireCanonical
-            })
-            .with_decode_allow_trailing_bits(true),
-    )
-}
-
-fn decode_base64(text: &str, url: bool) -> std::result::Result<Vec<u8>, base64::DecodeError> {
-    let bytes: Vec<_> = text
-        .bytes()
-        .filter(|byte| !matches!(byte, b'\r' | b'\n'))
-        .collect();
-    engine(url).decode(bytes)
 }
 
 #[derive(Clone, Default, Eq, Hash, PartialEq)]
@@ -127,8 +98,10 @@ impl ResourceRef {
     fn decode(&self) -> Result<Envelope> {
         let raw =
             decode_base64(&self.text, true).map_err(|_| reference_error("decodeResourceRef"))?;
-        let envelope: Envelope = serde_json::from_str(&normalize_json(&raw)?)
-            .map_err(|_| reference_error("decodeResourceRef"))?;
+        let envelope: Envelope = serde_json::from_str(
+            &normalize_json(&raw).map_err(|_| reference_error("decodeResourceRef"))?,
+        )
+        .map_err(|_| reference_error("decodeResourceRef"))?;
         if envelope.version != 1 || envelope.product.is_empty() || envelope.payload.length == 0 {
             return Err(reference_error("decodeResourceRef"));
         }
@@ -206,147 +179,4 @@ impl<'de> Deserialize<'de> for Envelope {
         }
         deserializer.deserialize_map(EnvelopeVisitor)
     }
-}
-
-#[derive(Default)]
-struct Payload {
-    bytes: Vec<u8>,
-    length: usize,
-}
-
-struct PayloadSeed<'a>(&'a mut Payload);
-
-impl<'de> DeserializeSeed<'de> for PayloadSeed<'_> {
-    type Value = ();
-
-    fn deserialize<D: Deserializer<'de>>(
-        self,
-        deserializer: D,
-    ) -> std::result::Result<(), D::Error> {
-        struct PayloadVisitor<'a>(&'a mut Payload);
-        impl<'de> Visitor<'de> for PayloadVisitor<'_> {
-            type Value = ();
-
-            fn expecting(&self, f: &mut fmt::Formatter) -> fmt::Result {
-                f.write_str("a base64 string or byte array")
-            }
-
-            fn visit_str<E: de::Error>(self, value: &str) -> std::result::Result<(), E> {
-                let decoded = decode_base64(value, false).map_err(E::custom)?;
-                self.0.bytes = vec![0; value.len() / 4 * 3];
-                self.0.bytes[..decoded.len()].copy_from_slice(&decoded);
-                self.0.length = decoded.len();
-                Ok(())
-            }
-
-            fn visit_unit<E: de::Error>(self) -> std::result::Result<(), E> {
-                *self.0 = Payload::default();
-                Ok(())
-            }
-
-            fn visit_seq<S: SeqAccess<'de>>(
-                self,
-                mut sequence: S,
-            ) -> std::result::Result<(), S::Error> {
-                let mut length = 0;
-                while let Some(byte) = sequence.next_element::<Option<u8>>()? {
-                    if length == self.0.bytes.len() {
-                        self.0.bytes.push(0);
-                    }
-                    if let Some(byte) = byte {
-                        self.0.bytes[length] = byte;
-                    }
-                    length += 1;
-                }
-                if length == 0 {
-                    self.0.bytes.clear();
-                }
-                // Truncation would lose Go's retained values for nulls in later duplicate arrays.
-                self.0.length = length;
-                Ok(())
-            }
-        }
-        deserializer.deserialize_any(PayloadVisitor(self.0))
-    }
-}
-
-fn normalize_json(raw: &[u8]) -> Result<String> {
-    // Lossy decoding groups invalid bytes, unlike Go's JSON decoder.
-    let mut text = String::new();
-    let mut remaining = raw;
-    while !remaining.is_empty() {
-        match std::str::from_utf8(remaining) {
-            Ok(valid) => {
-                text.push_str(valid);
-                break;
-            }
-            Err(error) => {
-                text.push_str(
-                    std::str::from_utf8(&remaining[..error.valid_up_to()])
-                        .expect("validated UTF-8 prefix"),
-                );
-                text.push('\u{fffd}');
-                remaining = &remaining[error.valid_up_to() + 1..];
-            }
-        }
-    }
-    let bytes = text.as_bytes();
-    let mut normalized = Vec::with_capacity(bytes.len());
-    let mut index = 0;
-    let mut in_string = false;
-    let mut depth = 0_u32;
-    while index < bytes.len() {
-        if in_string && bytes[index] == b'\\' && index + 1 < bytes.len() {
-            if let Some(code) = unicode_escape(bytes, index) {
-                if (0xd800..=0xdbff).contains(&code)
-                    && unicode_escape(bytes, index + 6)
-                        .is_some_and(|low| (0xdc00..=0xdfff).contains(&low))
-                {
-                    normalized.extend_from_slice(&bytes[index..index + 12]);
-                    index += 12;
-                } else {
-                    if (0xd800..=0xdfff).contains(&code) {
-                        normalized.extend_from_slice(b"\\ufffd");
-                    } else {
-                        normalized.extend_from_slice(&bytes[index..index + 6]);
-                    }
-                    index += 6;
-                }
-            } else {
-                normalized.extend_from_slice(&bytes[index..index + 2]);
-                index += 2;
-            }
-        } else {
-            if bytes[index] == b'"' {
-                in_string = !in_string;
-            }
-            if !in_string {
-                match bytes[index] {
-                    b'{' | b'[' => {
-                        depth += 1;
-                        if depth > 10000 {
-                            return Err(reference_error("decodeResourceRef"));
-                        }
-                    }
-                    b'}' | b']' => {
-                        depth = depth
-                            .checked_sub(1)
-                            .ok_or_else(|| reference_error("decodeResourceRef"))?;
-                    }
-                    _ => {}
-                }
-            }
-            normalized.push(bytes[index]);
-            index += 1;
-        }
-    }
-    Ok(String::from_utf8(normalized).expect("normalization preserves UTF-8"))
-}
-
-fn unicode_escape(bytes: &[u8], index: usize) -> Option<u16> {
-    let escape = bytes.get(index..index.checked_add(6)?)?;
-    if !escape.starts_with(b"\\u") {
-        return None;
-    }
-    u16::from_str_radix(std::str::from_utf8(&escape[2..]).ok()?, 16).ok()
 }
