@@ -183,16 +183,7 @@ pub(crate) fn map(
 }
 
 impl ResourcePolicy {
-    fn image(
-        &self,
-        kind: &str,
-        id: i64,
-        page: i64,
-        variant: &str,
-        url: &str,
-        dimensions: (i64, i64),
-    ) -> Result<ImageResource> {
-        let (width, height) = dimensions;
+    pub(crate) fn validate(&self, url: &str) -> Result<()> {
         let forbidden =
             |detail| Error::new(Reason::ResourceForbidden, "resource").with_detail(detail);
         let parsed = url::Url::parse(url).map_err(|_| forbidden("invalid resource URL"))?;
@@ -217,6 +208,20 @@ impl ResourcePolicy {
         }) {
             return Err(forbidden("resource host is not allowed"));
         }
+        Ok(())
+    }
+
+    fn image(
+        &self,
+        kind: &str,
+        id: i64,
+        page: i64,
+        variant: &str,
+        url: &str,
+        dimensions: (i64, i64),
+    ) -> Result<ImageResource> {
+        self.validate(url)?;
+        let (width, height) = dimensions;
         let reference = encode_identity(kind, id, page, variant)?;
         let resource = Resource {
             reference,
@@ -232,6 +237,99 @@ impl ResourcePolicy {
             height,
         })
     }
+}
+
+pub(crate) fn resource_url(value: Value, page: i64, variant: &str) -> Result<String> {
+    let malformed = || Error::new(Reason::MalformedUpstreamResponse, "OpenResource");
+    let unavailable = || malformed().with_detail("resource metadata has no usable URL");
+    let wire: WireArtwork = serde_json::from_value(value).map_err(|_| malformed())?;
+    if wire.id.unwrap_or_default() <= 0 {
+        return Err(malformed());
+    }
+    if page < 0 {
+        return image_url(&wire.image_urls.unwrap_or_default(), variant).ok_or_else(unavailable);
+    }
+    if let Some(candidate) = wire
+        .meta_pages
+        .as_deref()
+        .unwrap_or_default()
+        .get(page as usize)
+    {
+        let images = candidate.image_urls.as_ref();
+        let url = if variant.is_empty() || variant == "original" {
+            images
+                .and_then(Images::first)
+                .map(|(_, url)| url.to_owned())
+        } else {
+            images.and_then(|images| image_url(images, variant))
+        };
+        return url.ok_or_else(unavailable);
+    }
+    if page == 0
+        && let Some(original) = wire
+            .meta_single_page
+            .and_then(|single| single.original_image_url)
+        && !original.is_empty()
+    {
+        return if variant.is_empty() || variant == "original" {
+            Ok(original)
+        } else {
+            derive_variant(&original, variant).ok_or_else(unavailable)
+        };
+    }
+    Err(unavailable())
+}
+
+fn image_url(images: &Images, variant: &str) -> Option<String> {
+    if variant.is_empty() {
+        return images.first().map(|(_, url)| url.to_owned());
+    }
+    let direct = match variant {
+        "original" => &images.original,
+        "large" => &images.large,
+        "medium" => &images.medium,
+        "square_medium" => &images.square_medium,
+        _ => &None,
+    };
+    direct
+        .as_ref()
+        .filter(|url| !url.is_empty())
+        .cloned()
+        .or_else(|| {
+            images
+                .original
+                .as_deref()
+                .and_then(|url| derive_variant(url, variant))
+        })
+}
+
+fn derive_variant(original: &str, variant: &str) -> Option<String> {
+    let mut url = url::Url::parse(original.trim()).ok()?;
+    if url.scheme() != "https" {
+        return None;
+    }
+    let (crop, suffix) = match variant {
+        "regular" => ("c/1200x1200/", "_master1200"),
+        "small" => ("c/540x540_70/", "_master1200"),
+        "thumb" => ("c/250x250_80_a2/", "_square1200"),
+        "mini" => ("c/48x48/", "_square1200"),
+        _ => return None,
+    };
+    let (_, relative) = url.path().split_once("/img-original/img/")?;
+    let (directory, basename) = relative
+        .rsplit_once('/')
+        .map(|(dir, base)| (format!("{dir}/"), base))
+        .unwrap_or_else(|| (String::new(), relative));
+    let stem = basename
+        .rsplit_once('.')
+        .filter(|(stem, _)| !stem.is_empty())
+        .map(|(stem, _)| stem)
+        .unwrap_or(basename);
+    let path = format!("/{crop}img-master/img/{directory}{stem}{suffix}.jpg");
+    url.set_path(&path);
+    url.set_query(None);
+    url.set_fragment(None);
+    Some(url.to_string())
 }
 
 pub(crate) fn pages(value: Value, policy: &ResourcePolicy) -> Result<Vec<ArtworkPage>> {

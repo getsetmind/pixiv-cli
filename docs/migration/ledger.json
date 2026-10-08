@@ -5701,15 +5701,27 @@
     },
     {
       "id": "sdk/pixiv:Client.OpenResource",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.OpenResource"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/artwork.rs",
+        "crates/pixiv-sdk/src/resource_transport.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_open_resource_test.go#TestMigrationArtworkOpenResourceMatchesFrozenResolution",
+        "crates/pixiv-sdk/tests/artwork_open_resource.rs",
+        "crates/pixiv-sdk/tests/resource_stream.rs"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "artworkの未登録ref再解決・画質導出・要求validationと優先順位・URL policy・条件付きヘッダー・registry再利用を82ケースで比較。novel_cover/user_profile/ugoira_archive/novel_image/novel_file/stamp再解決、save、取消は未移植。失敗途中のregistry、並行取得、全JSONキー/重複/null、percent-encoded導出、認証全状態、SDK実TLS接続、他OSは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.PostArtworkComment",

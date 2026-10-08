@@ -2,13 +2,17 @@ pub use crate::artwork::{ResourcePolicy, artwork_variant_resource};
 use crate::{
     Error, Reason, Result,
     models::{Artwork, ArtworkPage, UgoiraFrame, UgoiraMetadata},
-    transport::{HttpTransport, Request, Response, Transport, checked},
+    resource::{OpenResourceRequest, Resource, ResourceHeaders, ResourceResponse},
+    transport::{
+        HttpTransport, Request, ResourceReadRequest, ResourceTransport, Response, Transport,
+        checked,
+    },
 };
 use chrono::{DateTime, Utc};
 use reqwest::Method;
 use serde::Deserialize;
 use serde_json::Value;
-use std::{fmt, time::Duration};
+use std::{collections::BTreeMap, fmt, sync::Arc, time::Duration};
 use tokio::{sync::Mutex, time::Instant};
 
 pub struct Client<T = HttpTransport> {
@@ -18,6 +22,7 @@ pub struct Client<T = HttpTransport> {
     interval: Duration,
     last_request: Mutex<Option<Instant>>,
     resource_policy: ResourcePolicy,
+    resource_urls: std::sync::Mutex<BTreeMap<String, String>>,
 }
 
 impl<T> fmt::Debug for Client<T> {
@@ -44,6 +49,7 @@ impl<T: Transport> Client<T> {
             interval: Duration::ZERO,
             last_request: Mutex::new(None),
             resource_policy: ResourcePolicy::default(),
+            resource_urls: std::sync::Mutex::new(BTreeMap::new()),
         }
     }
 
@@ -111,14 +117,16 @@ impl<T: Transport> Client<T> {
                 "Artwork",
             )
             .await?;
-        crate::artwork::map(
+        let artwork = crate::artwork::map(
             body.get("illust")
                 .ok_or_else(|| malformed("Artwork"))?
                 .clone(),
             "Artwork",
             true,
             &self.resource_policy,
-        )
+        )?;
+        self.remember_artwork(&artwork);
+        Ok(artwork)
     }
 
     pub async fn artwork_pages(&self, id: i64) -> Result<Vec<ArtworkPage>> {
@@ -133,12 +141,16 @@ impl<T: Transport> Client<T> {
                 "ArtworkPages",
             )
             .await?;
-        crate::artwork::pages(
+        let pages = crate::artwork::pages(
             body.get("illust")
                 .ok_or_else(|| malformed("ArtworkPages"))?
                 .clone(),
             &self.resource_policy,
-        )
+        )?;
+        for page in &pages {
+            self.remember_resource(&page.image.resource);
+        }
+        Ok(pages)
     }
 
     pub async fn search_artworks(&self, query: &str) -> Result<Vec<Artwork>> {
@@ -163,9 +175,29 @@ impl<T: Transport> Client<T> {
         list.iter()
             .cloned()
             .map(|value| {
-                crate::artwork::map(value, "search_artworks", false, &self.resource_policy)
+                let artwork =
+                    crate::artwork::map(value, "search_artworks", false, &self.resource_policy)?;
+                self.remember_artwork(&artwork);
+                Ok(artwork)
             })
             .collect()
+    }
+
+    fn remember_resource(&self, resource: &Resource) {
+        if !resource.reference.is_zero() && !resource.url.is_empty() {
+            self.resource_urls
+                .lock()
+                .unwrap_or_else(|poisoned| poisoned.into_inner())
+                .insert(resource.reference.to_string(), resource.url.clone());
+        }
+    }
+
+    fn remember_artwork(&self, artwork: &Artwork) {
+        self.remember_resource(&artwork.cover.resource);
+        self.remember_resource(&artwork.user.profile_image.resource);
+        for page in &artwork.pages {
+            self.remember_resource(&page.image.resource);
+        }
     }
 
     pub async fn ugoira_metadata(&self, id: i64) -> Result<UgoiraMetadata> {
@@ -215,6 +247,109 @@ impl<T: Transport> Client<T> {
                 })
                 .collect(),
         })
+    }
+}
+
+impl<T: Transport + ResourceTransport> Client<T> {
+    pub async fn open_resource(
+        &self,
+        request: OpenResourceRequest,
+    ) -> Result<ResourceResponse<T::Body>> {
+        request.validate()?;
+        let invalid = || {
+            Error::new(Reason::InvalidArgument, "OpenResource")
+                .with_detail("invalid resource reference")
+        };
+        #[derive(Default, Deserialize)]
+        struct Identity {
+            k: Option<String>,
+            id: Option<i64>,
+            p: Option<i64>,
+            v: Option<String>,
+        }
+        if request.reference.product().map_err(|_| invalid())? != "pixiv" {
+            return Err(invalid());
+        }
+        let payload = request.reference.payload().map_err(|_| invalid())?;
+        let normalized = crate::codec::normalize_json(&payload).map_err(|_| invalid())?;
+        let value: Value = serde_json::from_str(&normalized).map_err(|_| invalid())?;
+        let identity = serde_json::from_value::<Option<Identity>>(value)
+            .map_err(|_| invalid())?
+            .unwrap_or_default();
+        let kind = identity.k.unwrap_or_default();
+        let id = identity.id.unwrap_or_default();
+        let page = identity.p.unwrap_or_default();
+        let variant = identity.v.unwrap_or_default();
+        if kind.is_empty() || id <= 0 || page < -1 {
+            return Err(invalid());
+        }
+        let cached = self
+            .resource_urls
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner())
+            .get(request.reference.as_str())
+            .cloned();
+        let url = if let Some(url) = cached {
+            url
+        } else {
+            if kind != "artwork" {
+                return Err(Error::new(Reason::InvalidArgument, "OpenResource")
+                    .with_detail("resource kind is unsupported"));
+            }
+            let body = self
+                .get(
+                    "/v1/illust/detail",
+                    vec![("illust_id".into(), id.to_string())],
+                    "OpenResource",
+                )
+                .await?;
+            let url = crate::artwork::resource_url(
+                body.get("illust")
+                    .cloned()
+                    .ok_or_else(|| malformed("OpenResource"))?,
+                page,
+                &variant,
+            )?;
+            self.resource_policy.validate(&url).map_err(|_| {
+                Error::new(Reason::ResourceForbidden, "OpenResource")
+                    .with_detail("resolved resource URL is not allowed")
+            })?;
+            self.resource_urls
+                .lock()
+                .unwrap_or_else(|poisoned| poisoned.into_inner())
+                .insert(request.reference.to_string(), url.clone());
+            url
+        };
+        self.resource_policy.validate(&url).map_err(|_| {
+            Error::new(Reason::ResourceForbidden, "OpenResource")
+                .with_detail("resource URL is not allowed")
+        })?;
+        let mut headers =
+            ResourceHeaders::from([("Referer".into(), vec!["https://app-api.pixiv.net/".into()])]);
+        for (name, value) in [
+            ("Range", request.range),
+            ("If-None-Match", request.if_none_match),
+            ("If-Modified-Since", request.if_modified_since),
+            ("If-Range", request.if_range),
+        ] {
+            if !value.is_empty() {
+                headers.insert(name.into(), vec![value]);
+            }
+        }
+        let policy = self.resource_policy.clone();
+        self.transport
+            .open_resource(ResourceReadRequest {
+                url,
+                method: if request.method.is_empty() {
+                    "GET".into()
+                } else {
+                    request.method
+                },
+                headers,
+                operation: "OpenResource",
+                validate: Some(Arc::new(move |url| policy.validate(url))),
+            })
+            .await
     }
 }
 
