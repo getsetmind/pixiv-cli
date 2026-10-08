@@ -5721,7 +5721,7 @@
         "windows-amd64"
       ],
       "differences": [
-        "artwork/novel_cover/user_profile/stamp/ugoira_archiveの未登録ref再解決・要求validation・URL policy・条件付きヘッダー・registry再利用を162ケースで比較。archive再解決ではGoと同じframe名検証を適用し、delayの0/負値/欠落/nullを受け入れる。novel_image/novel_file再解決、save、取消、公開UgoiraMetadataの全DTOと検証は未移植または未検証。失敗途中のregistry、並行取得、全JSONキー/重複/null、percent-encoded導出、認証全状態、SDK実TLS接続、他OSは未検証。"
+        "artwork/novel_cover/user_profile/stamp/ugoira_archiveの未登録ref再解決・要求validation・URL policy・条件付きヘッダー・registry再利用を162ケースで比較。archive再解決ではGoと同じframe名検証を適用し、delayの0/負値/欠落/nullを受け入れる。公開UgoiraMetadataは別の45ケースとarchive再利用を比較。novel_image/novel_file再解決、save、取消は未移植または未検証。うごイラ以外の失敗途中のregistry、並行取得、全JSONキー/重複/null、percent-encoded導出、認証全状態、SDK実TLS接続、他OSは未検証。"
       ]
     },
     {
@@ -5990,15 +5990,29 @@
     },
     {
       "id": "sdk/pixiv:Client.UgoiraMetadata",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.UgoiraMetadata"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/ugoira.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_ugoira_test.go#TestMigrationUgoiraMetadataMatchesFrozenDTOAndValidation",
+        "crates/pixiv-sdk/tests/ugoira_metadata.rs",
+        "crates/pixiv-sdk/tests/artwork_open_resource.rs"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "公開metadataの45ケースでarchive順序・符号付きdelay・frame検証・DTO・エラー優先順位・失敗後のarchive registry再利用を比較。全JSONキーの大小文字/重複/null、全失敗経路のregistry、並行取得、CLI/MCPの全契約、保存/変換、他OSは未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.UnfollowUser",
@@ -8687,39 +8701,81 @@
     },
     {
       "id": "sdk/pixiv:ToUgoiraArchiveDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ToUgoiraArchiveDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/ugoira.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_ugoira_test.go#TestMigrationUgoiraMetadataMatchesFrozenDTOAndValidation",
+        "crates/pixiv-sdk/tests/ugoira_metadata.rs",
+        "crates/pixiv-sdk/tests/artwork_open_resource.rs"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "公開metadataの45ケースでarchive順序・符号付きdelay・frame検証・DTO・エラー優先順位・失敗後のarchive registry再利用を比較。全JSONキーの大小文字/重複/null、全失敗経路のregistry、並行取得、CLI/MCPの全契約、保存/変換、他OSは未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:ToUgoiraFrameDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ToUgoiraFrameDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/ugoira.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_ugoira_test.go#TestMigrationUgoiraMetadataMatchesFrozenDTOAndValidation",
+        "crates/pixiv-sdk/tests/ugoira_metadata.rs",
+        "crates/pixiv-sdk/tests/artwork_open_resource.rs"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "公開metadataの45ケースでarchive順序・符号付きdelay・frame検証・DTO・エラー優先順位・失敗後のarchive registry再利用を比較。全JSONキーの大小文字/重複/null、全失敗経路のregistry、並行取得、CLI/MCPの全契約、保存/変換、他OSは未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:ToUgoiraMetadataDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ToUgoiraMetadataDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/ugoira.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_ugoira_test.go#TestMigrationUgoiraMetadataMatchesFrozenDTOAndValidation",
+        "crates/pixiv-sdk/tests/ugoira_metadata.rs",
+        "crates/pixiv-sdk/tests/artwork_open_resource.rs"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "公開metadataの45ケースでarchive順序・符号付きdelay・frame検証・DTO・エラー優先順位・失敗後のarchive registry再利用を比較。全JSONキーの大小文字/重複/null、全失敗経路のregistry、並行取得、CLI/MCPの全契約、保存/変換、他OSは未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:ToUserDetailDTO",
@@ -8843,75 +8899,159 @@
     },
     {
       "id": "sdk/pixiv:UgoiraArchive",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:UgoiraArchive"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/ugoira.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_ugoira_test.go#TestMigrationUgoiraMetadataMatchesFrozenDTOAndValidation",
+        "crates/pixiv-sdk/tests/ugoira_metadata.rs",
+        "crates/pixiv-sdk/tests/artwork_open_resource.rs"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "公開metadataの45ケースでarchive順序・符号付きdelay・frame検証・DTO・エラー優先順位・失敗後のarchive registry再利用を比較。全JSONキーの大小文字/重複/null、全失敗経路のregistry、並行取得、CLI/MCPの全契約、保存/変換、他OSは未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:UgoiraArchiveDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:UgoiraArchiveDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/ugoira.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_ugoira_test.go#TestMigrationUgoiraMetadataMatchesFrozenDTOAndValidation",
+        "crates/pixiv-sdk/tests/ugoira_metadata.rs",
+        "crates/pixiv-sdk/tests/artwork_open_resource.rs"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "公開metadataの45ケースでarchive順序・符号付きdelay・frame検証・DTO・エラー優先順位・失敗後のarchive registry再利用を比較。全JSONキーの大小文字/重複/null、全失敗経路のregistry、並行取得、CLI/MCPの全契約、保存/変換、他OSは未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:UgoiraFrame",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:UgoiraFrame"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/ugoira.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_ugoira_test.go#TestMigrationUgoiraMetadataMatchesFrozenDTOAndValidation",
+        "crates/pixiv-sdk/tests/ugoira_metadata.rs",
+        "crates/pixiv-sdk/tests/artwork_open_resource.rs"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "公開metadataの45ケースでarchive順序・符号付きdelay・frame検証・DTO・エラー優先順位・失敗後のarchive registry再利用を比較。全JSONキーの大小文字/重複/null、全失敗経路のregistry、並行取得、CLI/MCPの全契約、保存/変換、他OSは未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:UgoiraFrameDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:UgoiraFrameDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/ugoira.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_ugoira_test.go#TestMigrationUgoiraMetadataMatchesFrozenDTOAndValidation",
+        "crates/pixiv-sdk/tests/ugoira_metadata.rs",
+        "crates/pixiv-sdk/tests/artwork_open_resource.rs"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "公開metadataの45ケースでarchive順序・符号付きdelay・frame検証・DTO・エラー優先順位・失敗後のarchive registry再利用を比較。全JSONキーの大小文字/重複/null、全失敗経路のregistry、並行取得、CLI/MCPの全契約、保存/変換、他OSは未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:UgoiraMetadata",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:UgoiraMetadata"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/ugoira.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_ugoira_test.go#TestMigrationUgoiraMetadataMatchesFrozenDTOAndValidation",
+        "crates/pixiv-sdk/tests/ugoira_metadata.rs",
+        "crates/pixiv-sdk/tests/artwork_open_resource.rs"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "公開metadataの45ケースでarchive順序・符号付きdelay・frame検証・DTO・エラー優先順位・失敗後のarchive registry再利用を比較。全JSONキーの大小文字/重複/null、全失敗経路のregistry、並行取得、CLI/MCPの全契約、保存/変換、他OSは未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:UgoiraMetadataDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:UgoiraMetadataDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/ugoira.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_ugoira_test.go#TestMigrationUgoiraMetadataMatchesFrozenDTOAndValidation",
+        "crates/pixiv-sdk/tests/ugoira_metadata.rs",
+        "crates/pixiv-sdk/tests/artwork_open_resource.rs"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "公開metadataの45ケースでarchive順序・符号付きdelay・frame検証・DTO・エラー優先順位・失敗後のarchive registry再利用を比較。全JSONキーの大小文字/重複/null、全失敗経路のregistry、並行取得、CLI/MCPの全契約、保存/変換、他OSは未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:UgoiraMetadataRequest",

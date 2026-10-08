@@ -7,42 +7,7 @@ pub(crate) fn resolve(kind: &str, id: i64, variant: &str, body: &Value) -> Resul
     let unavailable = || malformed().with_detail("resource metadata has no usable URL");
     match kind {
         "ugoira_archive" => {
-            let metadata = body
-                .get("ugoira_metadata")
-                .filter(|value| value.is_object())
-                .ok_or_else(malformed)?;
-            let urls = metadata
-                .get("zip_urls")
-                .filter(|value| value.is_object())
-                .ok_or_else(malformed)?;
-            let frames = metadata
-                .get("frames")
-                .and_then(Value::as_array)
-                .ok_or_else(malformed)?;
-            if !fields(Some(urls), &["original", "medium"], &[], &[])
-                || (text(Some(urls), "original").is_none() && text(Some(urls), "medium").is_none())
-                || frames.is_empty()
-            {
-                return Err(malformed());
-            }
-            let mut names = BTreeSet::new();
-            for frame in frames {
-                if !fields(Some(frame), &["file"], &[], &["delay"]) {
-                    return Err(malformed());
-                }
-                let file = text(Some(frame), "file").ok_or_else(malformed)?;
-                let normalized = file.replace('\\', "/");
-                if file.contains('\0')
-                    || normalized.starts_with('/')
-                    || normalized.as_bytes().get(1) == Some(&b':')
-                    || normalized
-                        .split('/')
-                        .any(|part| matches!(part, "" | "." | ".."))
-                    || !names.insert(normalized)
-                {
-                    return Err(malformed());
-                }
-            }
+            let (urls, _) = validated_ugoira(body, "OpenResource")?;
             let selected = if variant.is_empty() {
                 text(Some(urls), "original").or_else(|| text(Some(urls), "medium"))
             } else if matches!(variant, "original" | "medium") {
@@ -209,6 +174,50 @@ pub(crate) fn resolve(kind: &str, id: i64, variant: &str, body: &Value) -> Resul
         _ => Err(Error::new(Reason::InvalidArgument, "OpenResource")
             .with_detail("resource kind is unsupported")),
     }
+}
+
+pub(crate) fn validated_ugoira<'a>(
+    body: &'a Value,
+    operation: &'static str,
+) -> Result<(&'a Value, &'a [Value])> {
+    let malformed = || Error::new(Reason::MalformedUpstreamResponse, operation);
+    let metadata = body
+        .get("ugoira_metadata")
+        .filter(|value| value.is_object())
+        .ok_or_else(malformed)?;
+    let urls = metadata
+        .get("zip_urls")
+        .filter(|value| value.is_object())
+        .ok_or_else(malformed)?;
+    let frames = metadata
+        .get("frames")
+        .and_then(Value::as_array)
+        .ok_or_else(malformed)?;
+    if !fields(Some(urls), &["original", "medium"], &[], &[])
+        || (text(Some(urls), "original").is_none() && text(Some(urls), "medium").is_none())
+        || frames.is_empty()
+    {
+        return Err(malformed());
+    }
+    let mut names = BTreeSet::new();
+    for frame in frames {
+        if !fields(Some(frame), &["file"], &[], &["delay"]) {
+            return Err(malformed());
+        }
+        let file = text(Some(frame), "file").ok_or_else(malformed)?;
+        let normalized = file.replace('\\', "/");
+        if file.contains('\0')
+            || normalized.starts_with('/')
+            || normalized.as_bytes().get(1) == Some(&b':')
+            || normalized
+                .split('/')
+                .any(|part| matches!(part, "" | "." | ".."))
+            || !names.insert(normalized)
+        {
+            return Err(malformed());
+        }
+    }
+    Ok((urls, frames))
 }
 
 fn fields(value: Option<&Value>, strings: &[&str], booleans: &[&str], integers: &[&str]) -> bool {

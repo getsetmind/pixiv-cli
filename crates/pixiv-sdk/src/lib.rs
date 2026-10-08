@@ -12,6 +12,7 @@ mod resource_io;
 mod resource_resolution;
 mod resource_transport;
 pub mod transport;
+mod ugoira;
 
 pub use error::{Error, Reason, Result};
 pub use pixiv::Client;

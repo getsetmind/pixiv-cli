@@ -70,11 +70,18 @@ pub struct Artwork {
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 pub struct UgoiraFrame {
     pub filename: String,
-    pub delay_milliseconds: u32,
+    pub delay_milliseconds: i64,
 }
 
-#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
+#[derive(Clone, Debug, PartialEq)]
+pub struct UgoiraArchive {
+    pub quality: String,
+    pub resource: Resource,
+}
+
+#[derive(Clone, Debug, PartialEq)]
 pub struct UgoiraMetadata {
     pub artwork_id: i64,
+    pub archives: Vec<UgoiraArchive>,
     pub frames: Vec<UgoiraFrame>,
 }

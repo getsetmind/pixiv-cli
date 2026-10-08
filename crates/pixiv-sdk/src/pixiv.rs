@@ -1,7 +1,7 @@
 pub use crate::artwork::{ResourcePolicy, artwork_variant_resource};
 use crate::{
     Error, Reason, Result,
-    models::{Artwork, ArtworkPage, UgoiraFrame, UgoiraMetadata},
+    models::{Artwork, ArtworkPage, UgoiraMetadata},
     resource::{OpenResourceRequest, Resource, ResourceHeaders, ResourceResponse},
     transport::{
         HttpTransport, Request, ResourceReadRequest, ResourceTransport, Response, Transport,
@@ -202,50 +202,18 @@ impl<T: Transport> Client<T> {
 
     pub async fn ugoira_metadata(&self, id: i64) -> Result<UgoiraMetadata> {
         if id <= 0 {
-            return Err(Error::new(Reason::InvalidArgument, "ugoira_metadata"));
+            return Err(Error::new(Reason::InvalidArgument, "UgoiraMetadata")
+                .with_detail("artwork ID must be positive"));
         }
         let body = self
             .get(
                 "/v1/ugoira/metadata",
                 vec![("illust_id".into(), id.to_string())],
-                "ugoira_metadata",
+                "UgoiraMetadata",
             )
             .await?;
-        #[derive(Deserialize)]
-        struct Metadata {
-            frames: Vec<Frame>,
-            zip_urls: Value,
-        }
-        #[derive(Deserialize)]
-        struct Frame {
-            file: String,
-            delay: u32,
-        }
-        let metadata: Metadata = serde_json::from_value(
-            body.get("ugoira_metadata")
-                .cloned()
-                .ok_or_else(|| malformed("ugoira_metadata"))?,
-        )
-        .map_err(|_| malformed("ugoira_metadata"))?;
-        if !metadata.zip_urls.is_object()
-            || metadata.frames.is_empty()
-            || metadata
-                .frames
-                .iter()
-                .any(|frame| frame.file.is_empty() || frame.delay == 0)
-        {
-            return Err(malformed("ugoira_metadata"));
-        }
-        Ok(UgoiraMetadata {
-            artwork_id: id,
-            frames: metadata
-                .frames
-                .into_iter()
-                .map(|frame| UgoiraFrame {
-                    filename: frame.file,
-                    delay_milliseconds: frame.delay,
-                })
-                .collect(),
+        crate::ugoira::map(id, &body, &self.resource_policy, |resource| {
+            self.remember_resource(resource);
         })
     }
 }

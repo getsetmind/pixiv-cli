@@ -114,7 +114,12 @@ async fn execute(args: Arguments) -> pixiv_sdk::Result<()> {
         Command::Ugoira { source, json } => {
             let metadata = client.ugoira_metadata(artwork_id(&source)?).await?;
             if json {
-                output(&serde_json::to_string_pretty(&metadata).map_err(|_| local())?)?;
+                output(
+                    &serde_json::to_string_pretty(&pixiv_sdk::dto::UgoiraMetadataDto::from(
+                        &metadata,
+                    ))
+                    .map_err(|_| local())?,
+                )?;
             } else {
                 output(&format!("frames: {}", metadata.frames.len()))?;
                 for frame in metadata.frames {

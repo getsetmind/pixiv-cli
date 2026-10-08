@@ -220,21 +220,32 @@ impl ResourcePolicy {
         url: &str,
         dimensions: (i64, i64),
     ) -> Result<ImageResource> {
-        self.validate(url)?;
         let (width, height) = dimensions;
-        let reference = encode_identity(kind, id, page, variant)?;
-        let resource = Resource {
-            reference,
-            url: url.to_owned(),
-            request_headers: [("Referer".into(), "https://app-api.pixiv.net/".into())].into(),
-            expires_at: None,
-            requires_credentials: false,
-        };
+        let resource = self.resource(kind, id, page, variant, url)?;
         Ok(ImageResource {
             resource,
             variant: variant.to_owned(),
             width,
             height,
+        })
+    }
+
+    pub(crate) fn resource(
+        &self,
+        kind: &str,
+        id: i64,
+        page: i64,
+        variant: &str,
+        url: &str,
+    ) -> Result<Resource> {
+        self.validate(url)?;
+        let reference = encode_identity(kind, id, page, variant)?;
+        Ok(Resource {
+            reference,
+            url: url.to_owned(),
+            request_headers: [("Referer".into(), "https://app-api.pixiv.net/".into())].into(),
+            expires_at: None,
+            requires_credentials: false,
         })
     }
 }

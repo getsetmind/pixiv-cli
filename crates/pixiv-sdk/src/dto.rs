@@ -1,9 +1,54 @@
 use crate::{
-    models::{Artwork, ArtworkKind, ArtworkPage, ImageResource, Tag, User},
+    models::{
+        Artwork, ArtworkKind, ArtworkPage, ImageResource, Tag, UgoiraArchive, UgoiraFrame,
+        UgoiraMetadata, User,
+    },
     resource::Resource,
 };
 use chrono::{DateTime, Utc};
 use serde::Serialize;
+
+#[derive(Serialize)]
+pub struct UgoiraArchiveDto<'a> {
+    pub quality: &'a str,
+    pub resource: Option<ResourceDto<'a>>,
+}
+impl<'a> From<&'a UgoiraArchive> for UgoiraArchiveDto<'a> {
+    fn from(value: &'a UgoiraArchive) -> Self {
+        Self {
+            quality: &value.quality,
+            resource: ResourceDto::from_resource(&value.resource),
+        }
+    }
+}
+#[derive(Serialize)]
+pub struct UgoiraFrameDto<'a> {
+    pub filename: &'a str,
+    pub delay_milliseconds: i64,
+}
+impl<'a> From<&'a UgoiraFrame> for UgoiraFrameDto<'a> {
+    fn from(value: &'a UgoiraFrame) -> Self {
+        Self {
+            filename: &value.filename,
+            delay_milliseconds: value.delay_milliseconds,
+        }
+    }
+}
+#[derive(Serialize)]
+pub struct UgoiraMetadataDto<'a> {
+    pub artwork_id: i64,
+    pub archives: Vec<UgoiraArchiveDto<'a>>,
+    pub frames: Vec<UgoiraFrameDto<'a>>,
+}
+impl<'a> From<&'a UgoiraMetadata> for UgoiraMetadataDto<'a> {
+    fn from(value: &'a UgoiraMetadata) -> Self {
+        Self {
+            artwork_id: value.artwork_id,
+            archives: value.archives.iter().map(UgoiraArchiveDto::from).collect(),
+            frames: value.frames.iter().map(UgoiraFrameDto::from).collect(),
+        }
+    }
+}
 
 #[derive(Serialize)]
 pub struct ResourceDto<'a> {
