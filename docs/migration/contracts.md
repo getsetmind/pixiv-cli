@@ -354,14 +354,19 @@ cargo test -p pixiv-cli-rs --test mcp_stdio --locked
 
 ## SearchArtworks の検索条件・ページ送り・checkpoint 基準
 
-[search-artworks.json](contracts/search-artworks.json) は固定 Go SDK の114ケースを記録する。検索語、target、sort、期間、日付、content type、AI mode、縦横比、解像度、tool、bookmark 範囲、cursor context の既定値・有効値・不正値を含む。実際の HTTP query、完全な Artwork DTO、次ページの cursor、エラー理由とメッセージを保存する。既存の作品詳細 fixture も検索応答に使い、返却項目の欠落を確認できるようにする。
+[search-artworks.json](contracts/search-artworks.json) は固定 Go SDK の118ケースを記録する。検索語、target、sort、期間、日付、content type、AI mode、縦横比、解像度、tool、bookmark 範囲、cursor context の既定値・有効値・不正値を含む。実際の HTTP query、完全な Artwork DTO、次ページの cursor、エラー理由とメッセージを保存する。既存の作品詳細 fixture も検索応答に使い、返却項目の欠落を確認できるようにする。検索語と context の特殊文字、および検索語→target→sort、日付→bookmark 範囲の検証順も固定する。
 
 AI の only は取得後のローカルフィルターであり、checkpoint の消費位置はフィルター後の件数に対して適用する。途中ページがフィルターで空になっても次ページは残る。checkpoint の加算・超過・整数 overflow、検索語と cursor context の変更、旧 binding と別 continuation kind を含む。OAuth で確認したアカウントと未確認の client instance の双方で、同一・別 client による cursor 再利用を検証する。ランダムな instance ID だけを固定文字列へ正規化し、再利用の成否は実際の異なる client で確認する。
 
-この追加は Go 基準の固定であり、Rust の比較テストと型付き検索 request、全条件、ページ送り、checkpoint は未実装。既存の Rust 検索は先頭ページの試作であり、SDK の検索互換を検証済みとは扱わない。CLI/MCP の検索条件・出力・ページ上限、全 JSON wire 境界と複数不正値の検証順、通信・認証保存・他 OS も未検証。
+Rust の外部テストは同じ118ケースで、query・DTO・cursor envelope と payload・エラーを比較する。`SearchArtworksRequest` と `search_artworks` は検索条件を受け取り、items と next を含む Page を返す。`checkpoint_search_artworks` は元の query と現在の cursor から消費位置を加算する。HTTP query と cursor の digest は別に組み立て、ローカルフィルター・解像度・context を検索条件の binding に含める。上流の next_url は許可した検索 endpoint と query key を検証して offset だけを取り出し、URL 自体は再実行しない。
+
+`Client::from_credentials` は OAuth credentials のアカウント ID と期限を設定する。OAuth 応答の ID は文字列と整数の双方を受け入れる。access token だけから作る client はアカウントを推測せず、ランダムな非秘密の instance ID に cursor を結び付ける。Rust テストでも正規化前の instance ID の形式を確認し、別 client での再利用の拒否を比較する。
+
+CLI の試作検索も型付き request を使うように更新したが、現在は先頭ページを表示する。CLI/MCP の全検索条件・出力・ページ上限、全 JSON wire 境界・cursor payload の大文字小文字や重複 key・複数不正値の全検証順、乱数生成失敗時の constructor の契約、通信・認証保存・他 OS は未実装または未検証。SDK の検索互換全体を検証済みとは扱わない。
 
 ```text
 go test -race ./sdk/pixiv -run '^TestMigrationSearchArtworks' -count=1
+cargo test -p pixiv-sdk --test search_artworks --locked
 ```
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-search` を指定する。

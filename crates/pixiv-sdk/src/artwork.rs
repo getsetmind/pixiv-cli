@@ -88,6 +88,22 @@ struct WireArtwork {
     meta_pages: Option<Vec<MetaPage>>,
 }
 
+pub(crate) fn validate_list(values: &[Value], operation: &'static str) -> Result<()> {
+    let malformed = || Error::new(Reason::MalformedUpstreamResponse, operation);
+    let items: Vec<Option<WireArtwork>> = values
+        .iter()
+        .cloned()
+        .map(|value| serde_json::from_value(value).map_err(|_| malformed()))
+        .collect::<Result<_>>()?;
+    if items
+        .iter()
+        .any(|item| item.as_ref().and_then(|item| item.id).unwrap_or_default() <= 0)
+    {
+        return Err(malformed());
+    }
+    Ok(())
+}
+
 pub(crate) fn map(
     value: Value,
     operation: &'static str,

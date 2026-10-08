@@ -106,6 +106,10 @@ func TestMigrationSearchArtworksMatchesFrozenFiltersPagesAndCheckpoints(t *testi
 		rows = append(rows, migrationSearchRow{Name: name, Input: input, Bodies: []json.RawMessage{body}, Steps: []migrationSearchStep{{Action: "search"}}})
 	}
 	add("default", migrationSearchInput{Word: "  日本語 & tag  "})
+	add("query-escaping", migrationSearchInput{Word: " ~*+%/=?&日本語 ", CursorContext: "private ~*+%"})
+	add("validation:word-before-target", migrationSearchInput{Target: "bad"})
+	add("validation:target-before-sort", migrationSearchInput{Word: "fixture", Target: "bad", Sort: "bad"})
+	add("validation:date-before-bookmarks", migrationSearchInput{Word: "fixture", StartDate: "bad", BookmarkMin: func() *int { value := -1; return &value }()})
 	for _, field := range []string{"word", "target", "sort", "duration", "content_type", "ai_mode", "aspect_ratio", "resolution", "start_date", "end_date", "tool", "cursor_context"} {
 		values := map[string][]string{"word": {"", " \t"}, "target": {"partial_match_for_tags", "exact_match_for_tags", "title_and_caption", "keyword", "bad"}, "sort": {"date_desc", "date_asc", "popular_desc", "bad"}, "duration": {"within_last_day", "within_last_week", "within_last_month", "bad"}, "content_type": {"all", "illust-and-ugoira", "illust", "manga", "ugoira", "bad"}, "ai_mode": {"all", "exclude", "only", "bad"}, "aspect_ratio": {"all", "landscape", "portrait", "square", "bad"}, "resolution": {"all", "high", "medium", "low", "bad"}, "start_date": {"2024-02-29", "2025-02-29", "0000-01-01", "2026-1-01"}, "end_date": {"2026-12-31", "bad"}, "tool": {"unlisted exact tool"}, "cursor_context": {"private filter context"}}[field]
 		for _, value := range values {

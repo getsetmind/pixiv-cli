@@ -187,19 +187,24 @@ async fn exchange<T: Transport>(
         user: Identity,
     }
     #[derive(Deserialize)]
+    #[serde(untagged)]
+    enum IdentityId {
+        Text(String),
+        Number(i64),
+    }
+    #[derive(Deserialize)]
     struct Identity {
-        id: String,
+        id: IdentityId,
         name: String,
     }
     let payload: Payload = serde_json::from_value(body.get("response").cloned().unwrap_or(body))
         .map_err(|_| Error::new(Reason::MalformedUpstreamResponse, operation))?;
-    let user_id = payload
-        .user
-        .id
-        .parse::<i64>()
-        .ok()
-        .filter(|id| *id > 0)
-        .ok_or_else(|| Error::new(Reason::MalformedUpstreamResponse, operation))?;
+    let user_id = match payload.user.id {
+        IdentityId::Text(value) => value.parse::<i64>().ok(),
+        IdentityId::Number(value) => Some(value),
+    }
+    .filter(|id| *id > 0)
+    .ok_or_else(|| Error::new(Reason::MalformedUpstreamResponse, operation))?;
     if payload.access_token.is_empty()
         || payload.refresh_token.is_empty()
         || payload.expires_in <= 0

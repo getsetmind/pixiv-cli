@@ -4,6 +4,7 @@ pub use crate::bookmark::{
     UserNovelBookmarkTagsRequest,
 };
 pub use crate::mutation::*;
+pub use crate::search::SearchArtworksRequest;
 use crate::{
     Error, Reason, Result,
     models::{Artwork, ArtworkPage, UgoiraMetadata},
@@ -26,7 +27,9 @@ pub struct Client<T = HttpTransport> {
     expires_at: Option<DateTime<Utc>>,
     interval: Duration,
     last_request: Mutex<Option<Instant>>,
-    resource_policy: ResourcePolicy,
+    pub(crate) resource_policy: ResourcePolicy,
+    pub(crate) user_id: i64,
+    pub(crate) cursor_instance: Option<String>,
     resource_urls: std::sync::Mutex<BTreeMap<String, String>>,
 }
 
@@ -47,6 +50,10 @@ impl Client<HttpTransport> {
 
 impl<T: Transport> Client<T> {
     pub fn with_transport(access_token: &str, transport: T) -> Self {
+        let mut random = [0_u8; 16];
+        let cursor_instance = getrandom::fill(&mut random)
+            .ok()
+            .map(|()| random.iter().map(|byte| format!("{byte:02x}")).collect());
         Self {
             transport,
             access_token: access_token.trim().to_owned(),
@@ -54,8 +61,17 @@ impl<T: Transport> Client<T> {
             interval: Duration::ZERO,
             last_request: Mutex::new(None),
             resource_policy: ResourcePolicy::default(),
+            user_id: 0,
+            cursor_instance,
             resource_urls: std::sync::Mutex::new(BTreeMap::new()),
         }
+    }
+
+    pub fn from_credentials(credentials: &crate::oauth::Credentials, transport: T) -> Self {
+        let mut client = Self::with_transport(credentials.access_token(), transport)
+            .with_expiry(credentials.expires_at);
+        client.user_id = credentials.user_id;
+        client
     }
 
     pub fn with_pacing(mut self, interval: Duration) -> Self {
@@ -186,36 +202,6 @@ impl<T: Transport> Client<T> {
         Ok(pages)
     }
 
-    pub async fn search_artworks(&self, query: &str) -> Result<Vec<Artwork>> {
-        if query.trim().is_empty() {
-            return Err(Error::new(Reason::InvalidArgument, "search_artworks"));
-        }
-        let body = self
-            .get(
-                "/v1/search/illust",
-                vec![
-                    ("word".into(), query.into()),
-                    ("search_target".into(), "partial_match_for_tags".into()),
-                    ("sort".into(), "date_desc".into()),
-                ],
-                "search_artworks",
-            )
-            .await?;
-        let list = body
-            .get("illusts")
-            .and_then(Value::as_array)
-            .ok_or_else(|| malformed("search_artworks"))?;
-        list.iter()
-            .cloned()
-            .map(|value| {
-                let artwork =
-                    crate::artwork::map(value, "search_artworks", false, &self.resource_policy)?;
-                self.remember_artwork(&artwork);
-                Ok(artwork)
-            })
-            .collect()
-    }
-
     fn remember_resource(&self, resource: &Resource) {
         if !resource.reference.is_zero() && !resource.url.is_empty() {
             self.resource_urls
@@ -225,7 +211,7 @@ impl<T: Transport> Client<T> {
         }
     }
 
-    fn remember_artwork(&self, artwork: &Artwork) {
+    pub(crate) fn remember_artwork(&self, artwork: &Artwork) {
         self.remember_resource(&artwork.cover.resource);
         self.remember_resource(&artwork.user.profile_image.resource);
         for page in &artwork.pages {

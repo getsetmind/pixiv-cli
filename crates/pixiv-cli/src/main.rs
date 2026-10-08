@@ -95,7 +95,13 @@ async fn execute(args: Arguments) -> Result<(), CommandError> {
             json,
             ndjson,
         } => {
-            let artworks = client.search_artworks(&query).await?;
+            let artworks = client
+                .search_artworks(pixiv_sdk::pixiv::SearchArtworksRequest {
+                    word: query,
+                    ..Default::default()
+                })
+                .await?
+                .items;
             if json {
                 let dtos: Vec<_> = artworks
                     .iter()

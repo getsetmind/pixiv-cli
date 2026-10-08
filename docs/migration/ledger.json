@@ -5716,13 +5716,21 @@
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.CheckpointSearchArtworks"
       },
-      "rust_sources": [],
-      "tests": [
-        "sdk/pixiv/migration_search_test.go#TestMigrationSearchArtworksMatchesFrozenFiltersPagesAndCheckpoints"
+      "rust_sources": [
+        "crates/pixiv-sdk/src/search.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/artwork.rs",
+        "crates/pixiv-sdk/src/oauth.rs"
       ],
-      "verified_platforms": [],
+      "tests": [
+        "sdk/pixiv/migration_search_test.go#TestMigrationSearchArtworksMatchesFrozenFiltersPagesAndCheckpoints",
+        "crates/pixiv-sdk/tests/search_artworks.rs#search_filters_pages_and_identity_bound_checkpoints_match_frozen_go"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
       "differences": [
-        "Go の検索条件・AI only のローカルフィルター・全ページ・checkpoint・アカウント/client instance の cursor binding を114ケースで固定した。Rust の比較テスト、型付き request、条件・ページ送り・checkpoint は未実装。既存の Rust search は先頭ページの試作。CLI/MCP、全 JSON wire 境界・検証順、通信・認証保存、他 OS は未検証。"
+        "型付き検索 request、全検索条件・AI only のローカルフィルター・全ページ・checkpoint・アカウント/client instance の cursor binding を118ケースで Go/Rust 比較した。CLI は先頭ページの試作。CLI/MCP の全条件・出力・ページ上限、全 JSON wire 境界・cursor payload の大文字小文字/重複 key、複数不正値の全検証順、constructor の乱数生成失敗、通信・認証保存、他 OS は未実装または未検証。"
       ]
     },
     {
@@ -6226,14 +6234,20 @@
         "key": "sdk/pixiv:Client.SearchArtworks"
       },
       "rust_sources": [
-        "crates/pixiv-sdk/src/pixiv.rs"
+        "crates/pixiv-sdk/src/search.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/artwork.rs",
+        "crates/pixiv-sdk/src/oauth.rs"
       ],
       "tests": [
-        "sdk/pixiv/migration_search_test.go#TestMigrationSearchArtworksMatchesFrozenFiltersPagesAndCheckpoints"
+        "sdk/pixiv/migration_search_test.go#TestMigrationSearchArtworksMatchesFrozenFiltersPagesAndCheckpoints",
+        "crates/pixiv-sdk/tests/search_artworks.rs#search_filters_pages_and_identity_bound_checkpoints_match_frozen_go"
       ],
-      "verified_platforms": [],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
       "differences": [
-        "Go の検索条件・AI only のローカルフィルター・全ページ・checkpoint・アカウント/client instance の cursor binding を114ケースで固定した。Rust の比較テスト、型付き request、条件・ページ送り・checkpoint は未実装。既存の Rust search は先頭ページの試作。CLI/MCP、全 JSON wire 境界・検証順、通信・認証保存、他 OS は未検証。"
+        "型付き検索 request、全検索条件・AI only のローカルフィルター・全ページ・checkpoint・アカウント/client instance の cursor binding を118ケースで Go/Rust 比較した。CLI は先頭ページの試作。CLI/MCP の全条件・出力・ページ上限、全 JSON wire 境界・cursor payload の大文字小文字/重複 key、複数不正値の全検証順、constructor の乱数生成失敗、通信・認証保存、他 OS は未実装または未検証。"
       ]
     },
     {
@@ -8519,13 +8533,21 @@
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:SearchArtworksRequest"
       },
-      "rust_sources": [],
-      "tests": [
-        "sdk/pixiv/migration_search_test.go#TestMigrationSearchArtworksMatchesFrozenFiltersPagesAndCheckpoints"
+      "rust_sources": [
+        "crates/pixiv-sdk/src/search.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/artwork.rs",
+        "crates/pixiv-sdk/src/oauth.rs"
       ],
-      "verified_platforms": [],
+      "tests": [
+        "sdk/pixiv/migration_search_test.go#TestMigrationSearchArtworksMatchesFrozenFiltersPagesAndCheckpoints",
+        "crates/pixiv-sdk/tests/search_artworks.rs#search_filters_pages_and_identity_bound_checkpoints_match_frozen_go"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
       "differences": [
-        "Go の検索条件・AI only のローカルフィルター・全ページ・checkpoint・アカウント/client instance の cursor binding を114ケースで固定した。Rust の比較テスト、型付き request、条件・ページ送り・checkpoint は未実装。既存の Rust search は先頭ページの試作。CLI/MCP、全 JSON wire 境界・検証順、通信・認証保存、他 OS は未検証。"
+        "型付き検索 request、全検索条件・AI only のローカルフィルター・全ページ・checkpoint・アカウント/client instance の cursor binding を118ケースで Go/Rust 比較した。CLI は先頭ページの試作。CLI/MCP の全条件・出力・ページ上限、全 JSON wire 境界・cursor payload の大文字小文字/重複 key、複数不正値の全検証順、constructor の乱数生成失敗、通信・認証保存、他 OS は未実装または未検証。"
       ]
     },
     {
