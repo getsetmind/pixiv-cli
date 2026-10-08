@@ -408,7 +408,8 @@
       "rust_sources": [
         "crates/pixiv-cli/src/main.rs",
         "crates/pixiv-sdk/src/reference.rs",
-        "crates/pixiv-cli/src/lib.rs"
+        "crates/pixiv-cli/src/lib.rs",
+        "crates/pixiv-record/src/lib.rs"
       ],
       "tests": [
         "internal/cli/migration_detail_input_test.go#TestMigrationDetailInputMatchesFrozenErrorsBeforeAccountAccess",
@@ -416,7 +417,8 @@
         "internal/cli/commands/pixiv/detail/migration_output_test.go#TestMigrationArtworkDetailOutputMatchesFrozenModes",
         "crates/pixiv-cli/tests/detail_output.rs#artwork_detail_modes_match_go_dtos_records_captions_and_failures",
         "internal/cli/migration_writer_test.go#TestMigrationDetailWriterFailuresMatchFrozenExitAndDiagnostics",
-        "crates/pixiv-cli/tests/detail_writer.rs#detail_writer_failures_preserve_partial_output_diagnostics_and_ndjson_exit"
+        "crates/pixiv-cli/tests/detail_writer.rs#detail_writer_failures_preserve_partial_output_diagnostics_and_ndjson_exit",
+        "crates/pixiv-record/tests/artwork.rs#artwork_records_match_go_canonical_identity_dtos_and_kind_rejection"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -1340,15 +1342,28 @@
     },
     {
       "id": "mcp:pixiv:illust_detail",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "illust_detail"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/lib.rs",
+        "crates/pixiv-record/src/lib.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_detail_test.go#TestMigrationMCPArtworkDetailMatchesFrozenSchemaRecordsAndValidation",
+        "crates/pixiv-mcp/tests/artwork_detail.rs#artwork_detail_matches_go_metadata_reference_validation_and_structured_records",
+        "crates/pixiv-record/tests/artwork.rs#artwork_records_match_go_canonical_identity_dtos_and_kind_rejection"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "33 Go session contracts fix actual tool schema, 17 artwork responses and 16 reference inputs, pool/HTTP calls and raw JSON-RPC response results. Rust compares metadata and 32 handler cases with the real SDK. Shared canonical records serve CLI and MCP; MCP structured numbers match the Go wrapper float64 conversion.",
+        "The captured numeric int64-max input fails in Go JSON-RPC decoding before the handler and remains unverified in Rust. Rust stdio/session/tool registration/schema validation/initialize/notifications/cancellation/concurrency, pool leases/authentication, other tools and other platforms remain unimplemented or unverified."
+      ]
     },
     {
       "id": "mcp:pixiv:illust_ranking",

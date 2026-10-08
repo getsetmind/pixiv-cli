@@ -1,0 +1,3188 @@
+{
+  "tool": {
+    "description": "Get detailed information from exactly one artwork ID or supported Pixiv URL.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "illust_id": {
+          "description": "artwork ID; provide exactly one of illust_id or url",
+          "type": "integer"
+        },
+        "url": {
+          "description": "supported Pixiv artwork URL; provide exactly one of illust_id or url",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "illust_detail",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "type": "object"
+    }
+  },
+  "cases": [
+    {
+      "name": "complete",
+      "arguments": {
+        "illust_id": 42
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "create_date": "2026-01-02T03:04:05.123456789+09:00",
+          "height": 480,
+          "id": 42,
+          "illust_ai_type": 2,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+          },
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": 1,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "illust",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 7,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+            }
+          },
+          "width": 640,
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "ai_type": 2,
+              "caption": "\u003cp\u003efixture\u003c/p\u003e",
+              "cover": {
+                "height": 480,
+                "resource": {
+                  "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TFRFc0luWWlPaUp2Y21sbmFXNWhiQ0o5In0"
+                },
+                "variant": "original",
+                "width": 640
+              },
+              "height": 480,
+              "id": "42",
+              "kind": "illustration",
+              "page_count": 1,
+              "pages": [
+                {
+                  "height": 480,
+                  "image": {
+                    "height": 480,
+                    "resource": {
+                      "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9"
+                    },
+                    "variant": "original",
+                    "width": 640
+                  },
+                  "page_index": 0,
+                  "width": 640
+                }
+              ],
+              "published_at": "2026-01-01T18:04:05.123456789Z",
+              "raw_kind": "illust",
+              "tags": [
+                {
+                  "name": "tag",
+                  "translated_name": "訳"
+                },
+                {
+                  "name": "untranslated",
+                  "translated_name": ""
+                }
+              ],
+              "title": "日本語 \u003ctitle\u003e",
+              "tools": [
+                "pen",
+                "brush"
+              ],
+              "total_bookmarks": 12,
+              "total_views": 34,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/42",
+              "user": {
+                "account": "fixture",
+                "comment": "profile",
+                "id": 7,
+                "is_followed": true,
+                "name": "author",
+                "profile_image": {
+                  "height": 0,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9"
+                  },
+                  "variant": "medium",
+                  "width": 0
+                }
+              },
+              "width": 640,
+              "x_restrict": 1
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "minimal",
+      "arguments": {
+        "illust_id": 42
+      },
+      "body": {
+        "illust": {
+          "create_date": "2026-01-02T03:04:05.123456789+09:00",
+          "id": 42
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: unsupported artwork kind for record"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "manga-pages",
+      "arguments": {
+        "illust_id": 42
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "create_date": "2026-01-02T03:04:05.123456789+09:00",
+          "height": 480,
+          "id": 42,
+          "illust_ai_type": 2,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+          },
+          "meta_pages": [
+            {
+              "height": 200,
+              "image_urls": {
+                "large": "https://i.pximg.net/page0.jpg"
+              },
+              "page_index": 99,
+              "width": 100
+            },
+            {
+              "height": 400,
+              "image_urls": {
+                "original": "https://i.pximg.net/page1.png"
+              },
+              "width": 300
+            }
+          ],
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": 3,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "manga",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 7,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+            }
+          },
+          "width": 640,
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "ai_type": 2,
+              "caption": "\u003cp\u003efixture\u003c/p\u003e",
+              "cover": {
+                "height": 480,
+                "resource": {
+                  "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TFRFc0luWWlPaUp2Y21sbmFXNWhiQ0o5In0"
+                },
+                "variant": "original",
+                "width": 640
+              },
+              "height": 480,
+              "id": "42",
+              "kind": "manga",
+              "page_count": 3,
+              "pages": [
+                {
+                  "height": 200,
+                  "image": {
+                    "height": 200,
+                    "resource": {
+                      "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9"
+                    },
+                    "variant": "original",
+                    "width": 100
+                  },
+                  "page_index": 0,
+                  "width": 100
+                },
+                {
+                  "height": 400,
+                  "image": {
+                    "height": 400,
+                    "resource": {
+                      "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0"
+                    },
+                    "variant": "original",
+                    "width": 300
+                  },
+                  "page_index": 1,
+                  "width": 300
+                }
+              ],
+              "published_at": "2026-01-01T18:04:05.123456789Z",
+              "raw_kind": "manga",
+              "tags": [
+                {
+                  "name": "tag",
+                  "translated_name": "訳"
+                },
+                {
+                  "name": "untranslated",
+                  "translated_name": ""
+                }
+              ],
+              "title": "日本語 \u003ctitle\u003e",
+              "tools": [
+                "pen",
+                "brush"
+              ],
+              "total_bookmarks": 12,
+              "total_views": 34,
+              "type": "manga",
+              "url": "https://www.pixiv.net/artworks/42",
+              "user": {
+                "account": "fixture",
+                "comment": "profile",
+                "id": 7,
+                "is_followed": true,
+                "name": "author",
+                "profile_image": {
+                  "height": 0,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9"
+                  },
+                  "variant": "medium",
+                  "width": 0
+                }
+              },
+              "width": 640,
+              "x_restrict": 1
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "unknown-kind",
+      "arguments": {
+        "illust_id": 42
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "create_date": "2026-01-02T03:04:05.123456789+09:00",
+          "height": 480,
+          "id": 42,
+          "illust_ai_type": 2,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+          },
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": 1,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "future_kind",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 7,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+            }
+          },
+          "width": 640,
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: unsupported artwork kind for record"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "ugoira",
+      "arguments": {
+        "illust_id": 42
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "create_date": "2026-01-02T03:04:05.123456789+09:00",
+          "height": 480,
+          "id": 42,
+          "illust_ai_type": 2,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+          },
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": 1,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "ugoira",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 7,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+            }
+          },
+          "width": 640,
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "ai_type": 2,
+              "caption": "\u003cp\u003efixture\u003c/p\u003e",
+              "cover": {
+                "height": 480,
+                "resource": {
+                  "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TFRFc0luWWlPaUp2Y21sbmFXNWhiQ0o5In0"
+                },
+                "variant": "original",
+                "width": 640
+              },
+              "height": 480,
+              "id": "42",
+              "kind": "ugoira",
+              "page_count": 1,
+              "pages": [
+                {
+                  "height": 480,
+                  "image": {
+                    "height": 480,
+                    "resource": {
+                      "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9"
+                    },
+                    "variant": "original",
+                    "width": 640
+                  },
+                  "page_index": 0,
+                  "width": 640
+                }
+              ],
+              "published_at": "2026-01-01T18:04:05.123456789Z",
+              "raw_kind": "ugoira",
+              "tags": [
+                {
+                  "name": "tag",
+                  "translated_name": "訳"
+                },
+                {
+                  "name": "untranslated",
+                  "translated_name": ""
+                }
+              ],
+              "title": "日本語 \u003ctitle\u003e",
+              "tools": [
+                "pen",
+                "brush"
+              ],
+              "total_bookmarks": 12,
+              "total_views": 34,
+              "type": "ugoira",
+              "url": "https://www.pixiv.net/artworks/42",
+              "user": {
+                "account": "fixture",
+                "comment": "profile",
+                "id": 7,
+                "is_followed": true,
+                "name": "author",
+                "profile_image": {
+                  "height": 0,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9"
+                  },
+                  "variant": "medium",
+                  "width": 0
+                }
+              },
+              "width": 640,
+              "x_restrict": 1
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "legacy-ai",
+      "arguments": {
+        "illust_id": 42
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "create_date": "2026-01-02T03:04:05.123456789+09:00",
+          "height": 480,
+          "id": 42,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+          },
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": 1,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "illust",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 7,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+            }
+          },
+          "width": 640,
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "ai_type": 1,
+              "caption": "\u003cp\u003efixture\u003c/p\u003e",
+              "cover": {
+                "height": 480,
+                "resource": {
+                  "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TFRFc0luWWlPaUp2Y21sbmFXNWhiQ0o5In0"
+                },
+                "variant": "original",
+                "width": 640
+              },
+              "height": 480,
+              "id": "42",
+              "kind": "illustration",
+              "page_count": 1,
+              "pages": [
+                {
+                  "height": 480,
+                  "image": {
+                    "height": 480,
+                    "resource": {
+                      "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9"
+                    },
+                    "variant": "original",
+                    "width": 640
+                  },
+                  "page_index": 0,
+                  "width": 640
+                }
+              ],
+              "published_at": "2026-01-01T18:04:05.123456789Z",
+              "raw_kind": "illust",
+              "tags": [
+                {
+                  "name": "tag",
+                  "translated_name": "訳"
+                },
+                {
+                  "name": "untranslated",
+                  "translated_name": ""
+                }
+              ],
+              "title": "日本語 \u003ctitle\u003e",
+              "tools": [
+                "pen",
+                "brush"
+              ],
+              "total_bookmarks": 12,
+              "total_views": 34,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/42",
+              "user": {
+                "account": "fixture",
+                "comment": "profile",
+                "id": 7,
+                "is_followed": true,
+                "name": "author",
+                "profile_image": {
+                  "height": 0,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9"
+                  },
+                  "variant": "medium",
+                  "width": 0
+                }
+              },
+              "width": 640,
+              "x_restrict": 1
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "nulls",
+      "arguments": {
+        "illust_id": 42
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": null,
+          "create_date": "2026-01-02T03:04:05.123456789+09:00",
+          "height": 480,
+          "id": 42,
+          "illust_ai_type": null,
+          "image_urls": null,
+          "meta_pages": null,
+          "meta_single_page": null,
+          "page_count": null,
+          "tags": null,
+          "title": null,
+          "tools": null,
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "illust",
+          "user": null,
+          "width": 640,
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "ai_type": 1,
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "height": 480,
+              "id": "42",
+              "kind": "illustration",
+              "page_count": 0,
+              "published_at": "2026-01-01T18:04:05.123456789Z",
+              "raw_kind": "illust",
+              "tags": [],
+              "title": "",
+              "total_bookmarks": 12,
+              "total_views": 34,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/42",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 0,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "width": 640,
+              "x_restrict": 1
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "negative-counters",
+      "arguments": {
+        "illust_id": 42
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "create_date": "2026-01-02T03:04:05.123456789+09:00",
+          "height": -1,
+          "id": 42,
+          "illust_ai_type": -1,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+          },
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": -1,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": -1,
+          "total_view": -1,
+          "type": "illust",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 7,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+            }
+          },
+          "width": -1,
+          "x_restrict": -1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "ai_type": -1,
+              "caption": "\u003cp\u003efixture\u003c/p\u003e",
+              "cover": {
+                "height": -1,
+                "resource": {
+                  "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TFRFc0luWWlPaUp2Y21sbmFXNWhiQ0o5In0"
+                },
+                "variant": "original",
+                "width": -1
+              },
+              "height": -1,
+              "id": "42",
+              "kind": "illustration",
+              "page_count": -1,
+              "pages": [
+                {
+                  "height": -1,
+                  "image": {
+                    "height": -1,
+                    "resource": {
+                      "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9"
+                    },
+                    "variant": "original",
+                    "width": -1
+                  },
+                  "page_index": 0,
+                  "width": -1
+                }
+              ],
+              "published_at": "2026-01-01T18:04:05.123456789Z",
+              "raw_kind": "illust",
+              "tags": [
+                {
+                  "name": "tag",
+                  "translated_name": "訳"
+                },
+                {
+                  "name": "untranslated",
+                  "translated_name": ""
+                }
+              ],
+              "title": "日本語 \u003ctitle\u003e",
+              "tools": [
+                "pen",
+                "brush"
+              ],
+              "total_bookmarks": -1,
+              "total_views": -1,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/42",
+              "user": {
+                "account": "fixture",
+                "comment": "profile",
+                "id": 7,
+                "is_followed": true,
+                "name": "author",
+                "profile_image": {
+                  "height": 0,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9"
+                  },
+                  "variant": "medium",
+                  "width": 0
+                }
+              },
+              "width": -1,
+              "x_restrict": -1
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "large-identities",
+      "arguments": {
+        "illust_id": 42
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "create_date": "2026-01-02T03:04:05.123456789+09:00",
+          "height": 480,
+          "id": 9223372036854775807,
+          "illust_ai_type": 2,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+          },
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": 1,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "illust",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 9223372036854775807,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+            }
+          },
+          "width": 640,
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "ai_type": 2,
+              "caption": "\u003cp\u003efixture\u003c/p\u003e",
+              "cover": {
+                "height": 480,
+                "resource": {
+                  "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvNU1qSXpNemN5TURNMk9EVTBOemMxT0RBM0xDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0"
+                },
+                "variant": "original",
+                "width": 640
+              },
+              "height": 480,
+              "id": "9223372036854775807",
+              "kind": "illustration",
+              "page_count": 1,
+              "pages": [
+                {
+                  "height": 480,
+                  "image": {
+                    "height": 480,
+                    "resource": {
+                      "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvNU1qSXpNemN5TURNMk9EVTBOemMxT0RBM0xDSjJJam9pYjNKcFoybHVZV3dpZlE9PSJ9"
+                    },
+                    "variant": "original",
+                    "width": 640
+                  },
+                  "page_index": 0,
+                  "width": 640
+                }
+              ],
+              "published_at": "2026-01-01T18:04:05.123456789Z",
+              "raw_kind": "illust",
+              "tags": [
+                {
+                  "name": "tag",
+                  "translated_name": "訳"
+                },
+                {
+                  "name": "untranslated",
+                  "translated_name": ""
+                }
+              ],
+              "title": "日本語 \u003ctitle\u003e",
+              "tools": [
+                "pen",
+                "brush"
+              ],
+              "total_bookmarks": 12,
+              "total_views": 34,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/9223372036854775807",
+              "user": {
+                "account": "fixture",
+                "comment": "profile",
+                "id": 9223372036854776000,
+                "is_followed": true,
+                "name": "author",
+                "profile_image": {
+                  "height": 0,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamt5TWpNek56SXdNelk0TlRRM056VTRNRGNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9"
+                  },
+                  "variant": "medium",
+                  "width": 0
+                }
+              },
+              "width": 640,
+              "x_restrict": 1
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "invalid-profile-ignored",
+      "arguments": {
+        "illust_id": 42
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "create_date": "2026-01-02T03:04:05.123456789+09:00",
+          "height": 480,
+          "id": 42,
+          "illust_ai_type": 2,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+          },
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": 1,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "illust",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 7,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://evil.invalid/profile.jpg"
+            }
+          },
+          "width": 640,
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "ai_type": 2,
+              "caption": "\u003cp\u003efixture\u003c/p\u003e",
+              "cover": {
+                "height": 480,
+                "resource": {
+                  "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TFRFc0luWWlPaUp2Y21sbmFXNWhiQ0o5In0"
+                },
+                "variant": "original",
+                "width": 640
+              },
+              "height": 480,
+              "id": "42",
+              "kind": "illustration",
+              "page_count": 1,
+              "pages": [
+                {
+                  "height": 480,
+                  "image": {
+                    "height": 480,
+                    "resource": {
+                      "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9"
+                    },
+                    "variant": "original",
+                    "width": 640
+                  },
+                  "page_index": 0,
+                  "width": 640
+                }
+              ],
+              "published_at": "2026-01-01T18:04:05.123456789Z",
+              "raw_kind": "illust",
+              "tags": [
+                {
+                  "name": "tag",
+                  "translated_name": "訳"
+                },
+                {
+                  "name": "untranslated",
+                  "translated_name": ""
+                }
+              ],
+              "title": "日本語 \u003ctitle\u003e",
+              "tools": [
+                "pen",
+                "brush"
+              ],
+              "total_bookmarks": 12,
+              "total_views": 34,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/42",
+              "user": {
+                "account": "fixture",
+                "comment": "profile",
+                "id": 7,
+                "is_followed": true,
+                "name": "author",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "width": 640,
+              "x_restrict": 1
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "invalid-cover",
+      "arguments": {
+        "illust_id": 42
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "create_date": "2026-01-02T03:04:05.123456789+09:00",
+          "height": 480,
+          "id": 42,
+          "illust_ai_type": 2,
+          "image_urls": {
+            "original": "https://evil.invalid/image.jpg"
+          },
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": 1,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "illust",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 7,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+            }
+          },
+          "width": 640,
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:resource: resource_forbidden: resource host is not allowed"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "missing-page-image",
+      "arguments": {
+        "illust_id": 42
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "create_date": "2026-01-02T03:04:05.123456789+09:00",
+          "height": 480,
+          "id": 42,
+          "illust_ai_type": 2,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+          },
+          "meta_pages": [
+            {}
+          ],
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": 1,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "illust",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 7,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+            }
+          },
+          "width": 640,
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:ArtworkPages: malformed_upstream_response: page has no image URL"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "invalid-time",
+      "arguments": {
+        "illust_id": 42
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "create_date": "not-a-date",
+          "height": 480,
+          "id": 42,
+          "illust_ai_type": 2,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+          },
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": 1,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "illust",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 7,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+            }
+          },
+          "width": 640,
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:Artwork: malformed_upstream_response: invalid publish time"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "missing-time",
+      "arguments": {
+        "illust_id": 42
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "height": 480,
+          "id": 42,
+          "illust_ai_type": 2,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+          },
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": 1,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "illust",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 7,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+            }
+          },
+          "width": 640,
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:Artwork: malformed_upstream_response: invalid publish time"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "invalid-time-and-page",
+      "arguments": {
+        "illust_id": 42
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "create_date": "not-a-date",
+          "height": 480,
+          "id": 42,
+          "illust_ai_type": 2,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+          },
+          "meta_pages": [
+            {}
+          ],
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": 1,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "illust",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 7,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+            }
+          },
+          "width": 640,
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:Artwork: malformed_upstream_response: invalid publish time"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "invalid-id",
+      "arguments": {
+        "illust_id": 42
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "create_date": "2026-01-02T03:04:05.123456789+09:00",
+          "height": 480,
+          "id": 0,
+          "illust_ai_type": 2,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+          },
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": 1,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "illust",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 7,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+            }
+          },
+          "width": 640,
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:Artwork: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "invalid-field-type",
+      "arguments": {
+        "illust_id": 42
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "create_date": "2026-01-02T03:04:05.123456789+09:00",
+          "height": 480,
+          "id": 42,
+          "illust_ai_type": 2,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+          },
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": 1,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "illust",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 7,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+            }
+          },
+          "width": "wide",
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:Artwork: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "reference-a",
+      "arguments": {},
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "create_date": "2026-01-02T03:04:05.123456789+09:00",
+          "height": 480,
+          "id": 42,
+          "illust_ai_type": 2,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+          },
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": 1,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "illust",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 7,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+            }
+          },
+          "width": 640,
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: provide exactly one of illust_id or url"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": ""
+    },
+    {
+      "name": "reference-b",
+      "arguments": {
+        "illust_id": 0
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "create_date": "2026-01-02T03:04:05.123456789+09:00",
+          "height": 480,
+          "id": 42,
+          "illust_ai_type": 2,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+          },
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": 1,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "illust",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 7,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+            }
+          },
+          "width": 640,
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: provide exactly one of illust_id or url"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": ""
+    },
+    {
+      "name": "reference-c",
+      "arguments": {
+        "illust_id": -1
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "create_date": "2026-01-02T03:04:05.123456789+09:00",
+          "height": 480,
+          "id": 42,
+          "illust_ai_type": 2,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+          },
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": 1,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "illust",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 7,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+            }
+          },
+          "width": 640,
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: illust_id must be a positive integer"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": ""
+    },
+    {
+      "name": "reference-d",
+      "arguments": {
+        "illust_id": 42,
+        "url": "https://www.pixiv.net/artworks/42"
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "create_date": "2026-01-02T03:04:05.123456789+09:00",
+          "height": 480,
+          "id": 42,
+          "illust_ai_type": 2,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+          },
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": 1,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "illust",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 7,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+            }
+          },
+          "width": 640,
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: provide exactly one of illust_id or url"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": ""
+    },
+    {
+      "name": "reference-e",
+      "arguments": {
+        "illust_id": 42,
+        "url": " "
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "create_date": "2026-01-02T03:04:05.123456789+09:00",
+          "height": 480,
+          "id": 42,
+          "illust_ai_type": 2,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+          },
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": 1,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "illust",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 7,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+            }
+          },
+          "width": 640,
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "ai_type": 2,
+              "caption": "\u003cp\u003efixture\u003c/p\u003e",
+              "cover": {
+                "height": 480,
+                "resource": {
+                  "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TFRFc0luWWlPaUp2Y21sbmFXNWhiQ0o5In0"
+                },
+                "variant": "original",
+                "width": 640
+              },
+              "height": 480,
+              "id": "42",
+              "kind": "illustration",
+              "page_count": 1,
+              "pages": [
+                {
+                  "height": 480,
+                  "image": {
+                    "height": 480,
+                    "resource": {
+                      "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9"
+                    },
+                    "variant": "original",
+                    "width": 640
+                  },
+                  "page_index": 0,
+                  "width": 640
+                }
+              ],
+              "published_at": "2026-01-01T18:04:05.123456789Z",
+              "raw_kind": "illust",
+              "tags": [
+                {
+                  "name": "tag",
+                  "translated_name": "訳"
+                },
+                {
+                  "name": "untranslated",
+                  "translated_name": ""
+                }
+              ],
+              "title": "日本語 \u003ctitle\u003e",
+              "tools": [
+                "pen",
+                "brush"
+              ],
+              "total_bookmarks": 12,
+              "total_views": 34,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/42",
+              "user": {
+                "account": "fixture",
+                "comment": "profile",
+                "id": 7,
+                "is_followed": true,
+                "name": "author",
+                "profile_image": {
+                  "height": 0,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9"
+                  },
+                  "variant": "medium",
+                  "width": 0
+                }
+              },
+              "width": 640,
+              "x_restrict": 1
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "reference-f",
+      "arguments": {
+        "illust_id": 0,
+        "url": "https://www.pixiv.net/artworks/42"
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "create_date": "2026-01-02T03:04:05.123456789+09:00",
+          "height": 480,
+          "id": 42,
+          "illust_ai_type": 2,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+          },
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": 1,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "illust",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 7,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+            }
+          },
+          "width": 640,
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "ai_type": 2,
+              "caption": "\u003cp\u003efixture\u003c/p\u003e",
+              "cover": {
+                "height": 480,
+                "resource": {
+                  "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TFRFc0luWWlPaUp2Y21sbmFXNWhiQ0o5In0"
+                },
+                "variant": "original",
+                "width": 640
+              },
+              "height": 480,
+              "id": "42",
+              "kind": "illustration",
+              "page_count": 1,
+              "pages": [
+                {
+                  "height": 480,
+                  "image": {
+                    "height": 480,
+                    "resource": {
+                      "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9"
+                    },
+                    "variant": "original",
+                    "width": 640
+                  },
+                  "page_index": 0,
+                  "width": 640
+                }
+              ],
+              "published_at": "2026-01-01T18:04:05.123456789Z",
+              "raw_kind": "illust",
+              "tags": [
+                {
+                  "name": "tag",
+                  "translated_name": "訳"
+                },
+                {
+                  "name": "untranslated",
+                  "translated_name": ""
+                }
+              ],
+              "title": "日本語 \u003ctitle\u003e",
+              "tools": [
+                "pen",
+                "brush"
+              ],
+              "total_bookmarks": 12,
+              "total_views": 34,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/42",
+              "user": {
+                "account": "fixture",
+                "comment": "profile",
+                "id": 7,
+                "is_followed": true,
+                "name": "author",
+                "profile_image": {
+                  "height": 0,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9"
+                  },
+                  "variant": "medium",
+                  "width": 0
+                }
+              },
+              "width": 640,
+              "x_restrict": 1
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "reference-g",
+      "arguments": {
+        "url": "42"
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "create_date": "2026-01-02T03:04:05.123456789+09:00",
+          "height": 480,
+          "id": 42,
+          "illust_ai_type": 2,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+          },
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": 1,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "illust",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 7,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+            }
+          },
+          "width": 640,
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:ParseURL: invalid_argument: bare integer cannot be resolved to a resource type"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": ""
+    },
+    {
+      "name": "reference-h",
+      "arguments": {
+        "url": "https://www.pixiv.net/artworks/42"
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "create_date": "2026-01-02T03:04:05.123456789+09:00",
+          "height": 480,
+          "id": 42,
+          "illust_ai_type": 2,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+          },
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": 1,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "illust",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 7,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+            }
+          },
+          "width": 640,
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "ai_type": 2,
+              "caption": "\u003cp\u003efixture\u003c/p\u003e",
+              "cover": {
+                "height": 480,
+                "resource": {
+                  "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TFRFc0luWWlPaUp2Y21sbmFXNWhiQ0o5In0"
+                },
+                "variant": "original",
+                "width": 640
+              },
+              "height": 480,
+              "id": "42",
+              "kind": "illustration",
+              "page_count": 1,
+              "pages": [
+                {
+                  "height": 480,
+                  "image": {
+                    "height": 480,
+                    "resource": {
+                      "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9"
+                    },
+                    "variant": "original",
+                    "width": 640
+                  },
+                  "page_index": 0,
+                  "width": 640
+                }
+              ],
+              "published_at": "2026-01-01T18:04:05.123456789Z",
+              "raw_kind": "illust",
+              "tags": [
+                {
+                  "name": "tag",
+                  "translated_name": "訳"
+                },
+                {
+                  "name": "untranslated",
+                  "translated_name": ""
+                }
+              ],
+              "title": "日本語 \u003ctitle\u003e",
+              "tools": [
+                "pen",
+                "brush"
+              ],
+              "total_bookmarks": 12,
+              "total_views": 34,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/42",
+              "user": {
+                "account": "fixture",
+                "comment": "profile",
+                "id": 7,
+                "is_followed": true,
+                "name": "author",
+                "profile_image": {
+                  "height": 0,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9"
+                  },
+                  "variant": "medium",
+                  "width": 0
+                }
+              },
+              "width": 640,
+              "x_restrict": 1
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "reference-i",
+      "arguments": {
+        "url": " https://www.pixiv.net/en/artworks/+0042?x=y "
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "create_date": "2026-01-02T03:04:05.123456789+09:00",
+          "height": 480,
+          "id": 42,
+          "illust_ai_type": 2,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+          },
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": 1,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "illust",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 7,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+            }
+          },
+          "width": 640,
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "ai_type": 2,
+              "caption": "\u003cp\u003efixture\u003c/p\u003e",
+              "cover": {
+                "height": 480,
+                "resource": {
+                  "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TFRFc0luWWlPaUp2Y21sbmFXNWhiQ0o5In0"
+                },
+                "variant": "original",
+                "width": 640
+              },
+              "height": 480,
+              "id": "42",
+              "kind": "illustration",
+              "page_count": 1,
+              "pages": [
+                {
+                  "height": 480,
+                  "image": {
+                    "height": 480,
+                    "resource": {
+                      "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9"
+                    },
+                    "variant": "original",
+                    "width": 640
+                  },
+                  "page_index": 0,
+                  "width": 640
+                }
+              ],
+              "published_at": "2026-01-01T18:04:05.123456789Z",
+              "raw_kind": "illust",
+              "tags": [
+                {
+                  "name": "tag",
+                  "translated_name": "訳"
+                },
+                {
+                  "name": "untranslated",
+                  "translated_name": ""
+                }
+              ],
+              "title": "日本語 \u003ctitle\u003e",
+              "tools": [
+                "pen",
+                "brush"
+              ],
+              "total_bookmarks": 12,
+              "total_views": 34,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/42",
+              "user": {
+                "account": "fixture",
+                "comment": "profile",
+                "id": 7,
+                "is_followed": true,
+                "name": "author",
+                "profile_image": {
+                  "height": 0,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9"
+                  },
+                  "variant": "medium",
+                  "width": 0
+                }
+              },
+              "width": 640,
+              "x_restrict": 1
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "reference-j",
+      "arguments": {
+        "url": "https://www.pixiv.net/users/42"
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "create_date": "2026-01-02T03:04:05.123456789+09:00",
+          "height": 480,
+          "id": 42,
+          "illust_ai_type": 2,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+          },
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": 1,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "illust",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 7,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+            }
+          },
+          "width": 640,
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: URL does not name a Pixiv artwork"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": ""
+    },
+    {
+      "name": "reference-k",
+      "arguments": {
+        "url": "https://evil.invalid/artworks/42"
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "create_date": "2026-01-02T03:04:05.123456789+09:00",
+          "height": 480,
+          "id": 42,
+          "illust_ai_type": 2,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+          },
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": 1,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "illust",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 7,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+            }
+          },
+          "width": 640,
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:ParseURL: invalid_argument: URL must be https on pixiv.net without userinfo or port"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": ""
+    },
+    {
+      "name": "reference-l",
+      "arguments": {
+        "url": "https://www.pixiv.net/artworks/0"
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "create_date": "2026-01-02T03:04:05.123456789+09:00",
+          "height": 480,
+          "id": 42,
+          "illust_ai_type": 2,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+          },
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": 1,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "illust",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 7,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+            }
+          },
+          "width": 640,
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:ParseURL: invalid_argument: URL does not name a supported Pixiv resource"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": ""
+    },
+    {
+      "name": "reference-m",
+      "arguments": {
+        "url": "https://www.pixiv.net/artworks/9223372036854775807"
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "create_date": "2026-01-02T03:04:05.123456789+09:00",
+          "height": 480,
+          "id": 42,
+          "illust_ai_type": 2,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+          },
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": 1,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "illust",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 7,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+            }
+          },
+          "width": 640,
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "ai_type": 2,
+              "caption": "\u003cp\u003efixture\u003c/p\u003e",
+              "cover": {
+                "height": 480,
+                "resource": {
+                  "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TFRFc0luWWlPaUp2Y21sbmFXNWhiQ0o5In0"
+                },
+                "variant": "original",
+                "width": 640
+              },
+              "height": 480,
+              "id": "42",
+              "kind": "illustration",
+              "page_count": 1,
+              "pages": [
+                {
+                  "height": 480,
+                  "image": {
+                    "height": 480,
+                    "resource": {
+                      "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9"
+                    },
+                    "variant": "original",
+                    "width": 640
+                  },
+                  "page_index": 0,
+                  "width": 640
+                }
+              ],
+              "published_at": "2026-01-01T18:04:05.123456789Z",
+              "raw_kind": "illust",
+              "tags": [
+                {
+                  "name": "tag",
+                  "translated_name": "訳"
+                },
+                {
+                  "name": "untranslated",
+                  "translated_name": ""
+                }
+              ],
+              "title": "日本語 \u003ctitle\u003e",
+              "tools": [
+                "pen",
+                "brush"
+              ],
+              "total_bookmarks": 12,
+              "total_views": 34,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/42",
+              "user": {
+                "account": "fixture",
+                "comment": "profile",
+                "id": 7,
+                "is_followed": true,
+                "name": "author",
+                "profile_image": {
+                  "height": 0,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9"
+                  },
+                  "variant": "medium",
+                  "width": 0
+                }
+              },
+              "width": 640,
+              "x_restrict": 1
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "reference-n",
+      "arguments": {
+        "illust_id": 9223372036854775807
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "create_date": "2026-01-02T03:04:05.123456789+09:00",
+          "height": 480,
+          "id": 42,
+          "illust_ai_type": 2,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+          },
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": 1,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "illust",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 7,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+            }
+          },
+          "width": 640,
+          "x_restrict": 1
+        }
+      },
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: json: cannot unmarshal number 9223372036854776000 into Go struct field illustReferenceIn.illust_id of type int64"
+    },
+    {
+      "name": "reference-o",
+      "arguments": {
+        "url": "https://www.pixiv.net/novel/show.php?id=42"
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "create_date": "2026-01-02T03:04:05.123456789+09:00",
+          "height": 480,
+          "id": 42,
+          "illust_ai_type": 2,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+          },
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": 1,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "illust",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 7,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+            }
+          },
+          "width": 640,
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: URL does not name a Pixiv artwork"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": ""
+    },
+    {
+      "name": "reference-p",
+      "arguments": {
+        "url": "https://www.pixiv.net/artworks/42#bookmark"
+      },
+      "body": {
+        "illust": {
+          "ai_type": 1,
+          "caption": "\u003cp\u003efixture\u003c/p\u003e",
+          "create_date": "2026-01-02T03:04:05.123456789+09:00",
+          "height": 480,
+          "id": 42,
+          "illust_ai_type": 2,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+          },
+          "meta_single_page": {
+            "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+          },
+          "page_count": 1,
+          "tags": [
+            {
+              "name": "tag",
+              "translated_name": "訳"
+            },
+            {
+              "name": "untranslated"
+            }
+          ],
+          "title": "日本語 \u003ctitle\u003e",
+          "tools": [
+            "pen",
+            "brush"
+          ],
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "type": "illust",
+          "user": {
+            "account": "fixture",
+            "comment": "profile",
+            "id": 7,
+            "is_followed": true,
+            "name": "author",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+            }
+          },
+          "width": 640,
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "ai_type": 2,
+              "caption": "\u003cp\u003efixture\u003c/p\u003e",
+              "cover": {
+                "height": 480,
+                "resource": {
+                  "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TFRFc0luWWlPaUp2Y21sbmFXNWhiQ0o5In0"
+                },
+                "variant": "original",
+                "width": 640
+              },
+              "height": 480,
+              "id": "42",
+              "kind": "illustration",
+              "page_count": 1,
+              "pages": [
+                {
+                  "height": 480,
+                  "image": {
+                    "height": 480,
+                    "resource": {
+                      "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9"
+                    },
+                    "variant": "original",
+                    "width": 640
+                  },
+                  "page_index": 0,
+                  "width": 640
+                }
+              ],
+              "published_at": "2026-01-01T18:04:05.123456789Z",
+              "raw_kind": "illust",
+              "tags": [
+                {
+                  "name": "tag",
+                  "translated_name": "訳"
+                },
+                {
+                  "name": "untranslated",
+                  "translated_name": ""
+                }
+              ],
+              "title": "日本語 \u003ctitle\u003e",
+              "tools": [
+                "pen",
+                "brush"
+              ],
+              "total_bookmarks": 12,
+              "total_views": 34,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/42",
+              "user": {
+                "account": "fixture",
+                "comment": "profile",
+                "id": 7,
+                "is_followed": true,
+                "name": "author",
+                "profile_image": {
+                  "height": 0,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9"
+                  },
+                  "variant": "medium",
+                  "width": 0
+                }
+              },
+              "width": 640,
+              "x_restrict": 1
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    }
+  ]
+}

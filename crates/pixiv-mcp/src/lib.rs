@@ -1,0 +1,123 @@
+use pixiv_sdk::{
+    Client,
+    reference::{REFERENCE_KIND_ARTWORK, parse_url},
+    transport::Transport,
+};
+use serde::{Deserialize, Serialize};
+use serde_json::{Value, json};
+
+#[derive(Clone, Debug, Default, Deserialize)]
+pub struct IllustReference {
+    #[serde(default)]
+    pub illust_id: i64,
+    #[serde(default)]
+    pub url: String,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CallToolResult {
+    pub content: Vec<TextContent>,
+    pub structured_content: Records,
+    #[serde(skip_serializing_if = "std::ops::Not::not")]
+    pub is_error: bool,
+}
+#[derive(Debug, Serialize)]
+pub struct TextContent {
+    #[serde(rename = "type")]
+    pub kind: &'static str,
+    pub text: String,
+}
+#[derive(Debug, Serialize)]
+pub struct Records {
+    pub records: Vec<Value>,
+}
+
+pub fn illust_detail_tool() -> Value {
+    json!({
+        "name": "illust_detail",
+        "description": "Get detailed information from exactly one artwork ID or supported Pixiv URL.",
+        "inputSchema": {"type":"object", "additionalProperties":false, "properties":{
+            "illust_id":{"type":"integer", "description":"artwork ID; provide exactly one of illust_id or url"},
+            "url":{"type":"string", "description":"supported Pixiv artwork URL; provide exactly one of illust_id or url"}
+        }},
+        "outputSchema": {"type":"object", "additionalProperties":false, "required":["records"], "properties":{
+            "records":{"type":"array", "items":{"type":"object", "additionalProperties":true, "required":["id","type","url"], "properties":{
+                "id":{"type":"string"}, "type":{"type":"string"}, "url":{"type":"string"}
+            }}}
+        }}
+    })
+}
+
+pub async fn illust_detail<T: Transport>(
+    client: &Client<T>,
+    input: IllustReference,
+) -> CallToolResult {
+    let id = match resolve_artwork(input) {
+        Ok(id) => id,
+        Err(error) => return failure(error),
+    };
+    let artwork = match client.artwork(id).await {
+        Ok(artwork) => artwork,
+        Err(error) => return failure(error.to_string()),
+    };
+    match pixiv_record::from_artwork(&artwork) {
+        Ok(mut record) => {
+            structured_wire_numbers(&mut record);
+            CallToolResult {
+                content: vec![TextContent {
+                    kind: "text",
+                    text: "Retrieved 1 records.".into(),
+                }],
+                structured_content: Records {
+                    records: vec![record],
+                },
+                is_error: false,
+            }
+        }
+        Err(error) => failure(error.to_string()),
+    }
+}
+fn structured_wire_numbers(value: &mut Value) {
+    match value {
+        Value::Number(number) => {
+            // Exact DTO numbers would differ from the Go MCP wrapper's float64 round trip.
+            let decimal = number
+                .as_f64()
+                .expect("DTO number fits float64")
+                .to_string();
+            *value = serde_json::from_str(&decimal).expect("finite DTO number is JSON");
+        }
+        Value::Array(values) => values.iter_mut().for_each(structured_wire_numbers),
+        Value::Object(values) => values.values_mut().for_each(structured_wire_numbers),
+        _ => {}
+    }
+}
+fn resolve_artwork(input: IllustReference) -> Result<i64, String> {
+    let has_id = input.illust_id != 0;
+    let has_url = !input.url.trim().is_empty();
+    if has_id == has_url {
+        return Err("provide exactly one of illust_id or url".into());
+    }
+    if has_id {
+        if input.illust_id <= 0 {
+            return Err("illust_id must be a positive integer".into());
+        }
+        return Ok(input.illust_id);
+    }
+    let reference = parse_url(&input.url).map_err(|error| error.to_string())?;
+    if reference.kind != REFERENCE_KIND_ARTWORK {
+        return Err("URL does not name a Pixiv artwork".into());
+    }
+    Ok(reference.id)
+}
+fn failure(error: String) -> CallToolResult {
+    CallToolResult {
+        content: vec![TextContent {
+            kind: "text",
+            text: format!("Error: {error}"),
+        }],
+        structured_content: Records { records: vec![] },
+        is_error: true,
+    }
+}

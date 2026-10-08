@@ -1,4 +1,4 @@
-use pixiv_sdk::{Client, Error, Reason, models::ArtworkKind, transport::Transport};
+use pixiv_sdk::{Client, Error, Reason, transport::Transport};
 use std::{
     fmt,
     io::{self, Write},
@@ -133,22 +133,8 @@ pub async fn artwork_detail<T: Transport, W: Write>(
             writeln!(out, "{}", go_json_escape(encoded))?;
         }
         DetailOutput::Ndjson => {
-            let record_type = match artwork.kind {
-                ArtworkKind::Illust => "illust",
-                ArtworkKind::Manga => "manga",
-                ArtworkKind::Ugoira => "ugoira",
-                ArtworkKind::Unknown => {
-                    return Err(CommandError::Message("unsupported artwork kind for record"));
-                }
-            };
-            if artwork.id <= 0 {
-                return Err(CommandError::Message("record id must be positive"));
-            }
-            let mut record = serde_json::to_value(pixiv_sdk::dto::ArtworkDto::from(&artwork))
-                .map_err(|_| local())?;
-            record["id"] = artwork.id.to_string().into();
-            record["type"] = record_type.into();
-            record["url"] = format!("https://www.pixiv.net/artworks/{}", artwork.id).into();
+            let record = pixiv_record::from_artwork(&artwork)
+                .map_err(|error| CommandError::Message(error.message()))?;
             let encoded = serde_json::to_string(&record).map_err(|_| local())?;
             writeln!(out, "{}", go_json_escape(encoded))?;
         }

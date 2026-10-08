@@ -315,3 +315,21 @@ cargo test -p pixiv-cli-rs --test detail_writer --locked
 ```
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-writer` を指定する。
+
+## MCP illust_detail の schema とハンドラー
+
+[mcp-detail.json](contracts/mcp-detail.json) は Go の実 MCP セッションで tools/list と tools/call を実行し、33ケースを固定する。作品応答17ケースと入力16ケースを使い、schema、取得前の exactly-one 検証、URL の種別、SDK エラー、未知 kind の拒否、成功・失敗の text content と structured records、pool の実行回数と HTTP 要求回数を記録する。SDK には既存の作品 fixture を直接返す transport を渡す。JSON-RPC connection の応答を client の structured content 再デコード前に捕捉し、テスト用モデル再変換や client 側の数値変換を期待値に混ぜない。
+
+Rust の `pixiv-mcp` crate は同じ SDK と fixture transport を使い、ハンドラーへ到達する32ケースと tool metadata を比較する。成功では text content は件数の要約だけとし、完全な作品は structured content に置く。失敗でも空の records を返し、isError を立てる。`pixiv-record` crate で canonical record の生成を共通化し、CLI の NDJSON と MCP の双方から使う。共有 record 自体は既存 Go 出力の17ケースでも比較する。
+
+Go の MCP サーバー wrapper は structured content を float64 経由で変換するため、大きな数値の user ID は丸められる。Rust の MCP 出力もこの wire の振る舞いを保つ。共有 record、文字列の record ID・URL、opaque resource reference、CLI の DTO/NDJSON の数値はこの変換に含めない。
+
+数値の illust_id に int64 最大値を指定した1ケースは、Go MCP の入力変換で handler 前の JSON-RPC invalid params となる。この応答も固定するが、Rust の比較対象は現在ハンドラーと metadata に限り、この1ケースは未検証。Rust の stdio/JSON-RPC セッション・tool 登録・schema 検証・initialize・通知・キャンセル・並行処理、pool lease と credential 更新、他53 tools、他 OS は未移植または未検証であり、MCP 実行環境が完成したとは扱わない。
+
+```text
+go test ./internal/mcpserver/pixiv -run '^TestMigrationMCPArtworkDetail' -count=1
+cargo test -p pixiv-mcp --test artwork_detail --locked
+cargo test -p pixiv-record --test artwork --locked
+```
+
+基準を意図して更新する場合だけ Go テストの `-args -migration-update-mcp-detail` を指定する。
