@@ -99,6 +99,7 @@ pub enum Cause {
     DeadlineExceeded,
     Redacted(String),
     Classified(Box<Error>),
+    Wrapped { message: String, source: Box<Cause> },
 }
 
 impl fmt::Display for Cause {
@@ -108,6 +109,7 @@ impl fmt::Display for Cause {
             Self::DeadlineExceeded => f.write_str("context deadline exceeded"),
             Self::Redacted(message) => f.write_str(message),
             Self::Classified(error) => fmt::Display::fmt(error, f),
+            Self::Wrapped { message, source } => write!(f, "{message}: {source}"),
         }
     }
 }
@@ -116,6 +118,7 @@ impl StdError for Cause {
     fn source(&self) -> Option<&(dyn StdError + 'static)> {
         match self {
             Self::Classified(error) => Some(error.as_ref()),
+            Self::Wrapped { source, .. } => Some(source.as_ref()),
             _ => None,
         }
     }

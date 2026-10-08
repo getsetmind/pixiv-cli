@@ -23,7 +23,9 @@
       },
       "rust_sources": [
         "crates/pixiv-app/src/database.rs",
-        "crates/pixiv-app/src/database/accounts.rs"
+        "crates/pixiv-app/src/database/accounts.rs",
+        "crates/pixiv-app/src/scheduler.rs",
+        "crates/pixiv-app/src/lifecycle.rs"
       ],
       "tests": [
         "internal/storage/database/migration_contract_test.go#TestMigrationDatabasePreservesSchemaAndRejectsDrift",
@@ -35,14 +37,20 @@
         "internal/storage/database/migration_accounts_test.go#TestMigrationAccountsGoRustCredentialInteroperability",
         "crates/pixiv-app/tests/accounts.rs#accounts_match_go_atomic_import_metadata_removal_and_revision_conflicts",
         "crates/pixiv-app/tests/accounts.rs#account_credentials_are_copied_and_debug_output_is_redacted",
-        "crates/pixiv-app/tests/accounts.rs#stale_parallel_refreshes_commit_exactly_one_rotation"
+        "crates/pixiv-app/tests/accounts.rs#stale_parallel_refreshes_commit_exactly_one_rotation",
+        "internal/storage/database/migration_scheduler_test.go#TestMigrationSchedulerPreservesReplayCommitCancellationAndExhaustion",
+        "internal/storage/database/migration_scheduler_test.go#TestMigrationSchedulerPendingAttemptCommitAndCancellation",
+        "crates/pixiv-app/tests/scheduler.rs#scheduler_matches_go_replay_commit_cancellation_exhaustion_and_database_state",
+        "crates/pixiv-app/tests/scheduler.rs#pending_attempt_observes_external_commit_and_cancellation_without_replay",
+        "crates/pixiv-app/tests/scheduler.rs#context_wakes_on_deadline_and_keeps_the_first_cancellation_cause"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "認証DBの基盤のみ着手。Go Openの19ケースでschema/index/台帳、v1→v3、checksum、application_id、版/名前の拒否と失敗後状態、合成アカウントのtoken/revisionを比較。Rust作成・Go v3・Go v1の3ファイルをRust子プロセス経由でGoが再開。CLI auth自体、FANBOX repository・refresh application・pool scheduler/config/取消・強制終了復旧・全障害・Windows ACL・Unix mode・他OSは未移植または未検証。接続内pragma/lockは未比較。user_version=3に未知第4台帳行がある場合も固定Goが受け入れる挙動を維持。SQLite driver固有のempty-ledgerエラーは失敗箇所まで比較。",
-        "Pixiv repositoryのsave/batch/list/get/remove/metadata/rotation CASを31操作で比較。token copy/Debug秘匿、8件の共有connection更新で成功1件/conflict7件、Go→Rust→Go→Rustの実ファイル状態を検証。時刻は操作前に11/22へ制御し実際の更新時刻が操作window内であることを確認して-1化。SQLite固有診断は制約種別と対象列のみ比較。CLI auth自体、FANBOX、refresh UID照合/app接続、pool scheduler/lease、別connection/process競合、取消/強制停止、全境界/障害、config・MCP、他OSは未実装または未検証。"
+        "認証DBの基盤のみ着手。Go Openの19ケースでschema/index/台帳、v1→v3、checksum、application_id、版/名前の拒否と失敗後状態、合成アカウントのtoken/revisionを比較。Rust作成・Go v3・Go v1の3ファイルをRust子プロセス経由でGoが再開。CLI auth自体、FANBOX repository・refresh application・pool診断/session/config/SQL取消・強制終了復旧・全障害・Windows ACL・Unix mode・他OSは未移植または未検証。接続内pragma/lockは未比較。user_version=3に未知第4台帳行がある場合も固定Goが受け入れる挙動を維持。SQLite driver固有のempty-ledgerエラーは失敗箇所まで比較。",
+        "Pixiv repositoryのsave/batch/list/get/remove/metadata/rotation CASを31操作で比較。token copy/Debug秘匿、8件の共有connection更新で成功1件/conflict7件、Go→Rust→Go→Rustの実ファイル状態を検証。時刻は操作前に11/22へ制御し実際の更新時刻が操作window内であることを確認して-1化。SQLite固有診断は制約種別と対象列のみ比較。CLI auth自体、FANBOX、refresh UID照合/app接続、pool診断/session lease、別connection/process競合、取消/強制停止、全境界/障害、config・MCP、他OSは未実装または未検証。",
+        "Schedulerの再試行・commit・取消・枯渇・clock・保存状態をGoの97ケースで比較し、待機中の試行への外部commit/取消もGo/Rustで検証。wrapped SDK causeの分類と全文を保持。CLI/MCP/configと認証session lease/refresh・実通信への接続、selected/froze診断イベントは未移植。SQL実行中の取消、親子context、全競合・clock極値・全Unicode診断、他OSは未検証。"
       ]
     },
     {
@@ -138,19 +146,27 @@
       },
       "rust_sources": [
         "crates/pixiv-app/src/database.rs",
-        "crates/pixiv-app/src/database/pool.rs"
+        "crates/pixiv-app/src/database/pool.rs",
+        "crates/pixiv-app/src/scheduler.rs",
+        "crates/pixiv-app/src/lifecycle.rs"
       ],
       "tests": [
         "internal/storage/database/migration_pool_test.go#TestMigrationPoolPreservesSelectionFreezeMembershipAndRollback",
         "internal/storage/database/migration_pool_test.go#TestMigrationPoolChooserDefaultRandomAndEmptySnapshot",
         "crates/pixiv-app/tests/pool.rs#pool_matches_go_selection_freeze_membership_snapshots_and_transaction_rollback",
-        "crates/pixiv-app/tests/pool.rs#pool_default_random_source_and_empty_snapshot_preserve_go_results"
+        "crates/pixiv-app/tests/pool.rs#pool_default_random_source_and_empty_snapshot_preserve_go_results",
+        "internal/storage/database/migration_scheduler_test.go#TestMigrationSchedulerPreservesReplayCommitCancellationAndExhaustion",
+        "internal/storage/database/migration_scheduler_test.go#TestMigrationSchedulerPendingAttemptCommitAndCancellation",
+        "crates/pixiv-app/tests/scheduler.rs#scheduler_matches_go_replay_commit_cancellation_exhaustion_and_database_state",
+        "crates/pixiv-app/tests/scheduler.rs#pending_attempt_observes_external_commit_and_cancellation_without_replay",
+        "crates/pixiv-app/tests/scheduler.rs#context_wakes_on_deadline_and_keeps_the_first_cancellation_cause"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "pool保存層とchooserのみ着手。Goの51操作でround_robin/random、候補snapshot/marker/attempt除外、4原因とearliest、参加設定/凍結/期限解除、失敗時transaction rollback、返却accountと保存時刻を比較。default randomの候補1件とempty snapshotも両実装で確認。CLIコマンド自体、Scheduler retry/replay/commit、session lease/refresh、取消/並行/別process/DB障害、巨大UIDと全境界・不正strategy文字列、乱数分布/entropy障害、config/MCP、他OSは未移植または未検証。"
+        "pool保存層とchooserの検証。Goの51操作でround_robin/random、候補snapshot/marker/attempt除外、4原因とearliest、参加設定/凍結/期限解除、失敗時transaction rollback、返却accountと保存時刻を比較。default randomの候補1件とempty snapshotも両実装で確認。CLIコマンド自体、session lease/refresh、SQL取消/並行/別process/DB障害、巨大UIDと全境界・不正strategy文字列、乱数分布/entropy障害、config/MCP、他OSは未移植または未検証。",
+        "Schedulerの再試行・commit・取消・枯渇・clock・保存状態をGoの97ケースで比較し、待機中の試行への外部commit/取消もGo/Rustで検証。wrapped SDK causeの分類と全文を保持。CLI/MCP/configと認証session lease/refresh・実通信への接続、selected/froze診断イベントは未移植。SQL実行中の取消、親子context、全競合・clock極値・全Unicode診断、他OSは未検証。"
       ]
     },
     {
@@ -2259,18 +2275,26 @@
         "key": "sdk:Error"
       },
       "rust_sources": [
-        "crates/pixiv-sdk/src/error.rs"
+        "crates/pixiv-sdk/src/error.rs",
+        "crates/pixiv-app/src/scheduler.rs",
+        "crates/pixiv-app/src/lifecycle.rs"
       ],
       "tests": [
         "sdk/migration_error_test.go#TestMigrationErrorsMatchFrozenClassificationAndMetadata",
         "crates/pixiv-sdk/tests/errors.rs",
-        "crates/pixiv-cli/tests/errors.rs"
+        "crates/pixiv-cli/tests/errors.rs",
+        "internal/storage/database/migration_scheduler_test.go#TestMigrationSchedulerPreservesReplayCommitCancellationAndExhaustion",
+        "internal/storage/database/migration_scheduler_test.go#TestMigrationSchedulerPendingAttemptCommitAndCancellation",
+        "crates/pixiv-app/tests/scheduler.rs#scheduler_matches_go_replay_commit_cancellation_exhaustion_and_database_state",
+        "crates/pixiv-app/tests/scheduler.rs#pending_attempt_observes_external_commit_and_cancellation_without_replay",
+        "crates/pixiv-app/tests/scheduler.rs#context_wakes_on_deadline_and_keeps_the_first_cancellation_cause"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "空・未知の Reason と任意の redacted cause 型の表現は未移植。製品別 HTTP/通信失敗のマッピングと実際の取消は未検証。"
+        "空・未知の Reason と任意の redacted cause 型の表現は未移植。製品別 HTTP/通信失敗のマッピングと実際の取消は未検証。",
+        "Schedulerの再試行・commit・取消・枯渇・clock・保存状態をGoの97ケースで比較し、待機中の試行への外部commit/取消もGo/Rustで検証。wrapped SDK causeの分類と全文を保持。CLI/MCP/configと認証session lease/refresh・実通信への接続、selected/froze診断イベントは未移植。SQL実行中の取消、親子context、全競合・clock極値・全Unicode診断、他OSは未検証。"
       ]
     },
     {
@@ -2281,18 +2305,26 @@
         "key": "sdk:Error.Error"
       },
       "rust_sources": [
-        "crates/pixiv-sdk/src/error.rs"
+        "crates/pixiv-sdk/src/error.rs",
+        "crates/pixiv-app/src/scheduler.rs",
+        "crates/pixiv-app/src/lifecycle.rs"
       ],
       "tests": [
         "sdk/migration_error_test.go#TestMigrationErrorsMatchFrozenClassificationAndMetadata",
         "crates/pixiv-sdk/tests/errors.rs",
-        "crates/pixiv-cli/tests/errors.rs"
+        "crates/pixiv-cli/tests/errors.rs",
+        "internal/storage/database/migration_scheduler_test.go#TestMigrationSchedulerPreservesReplayCommitCancellationAndExhaustion",
+        "internal/storage/database/migration_scheduler_test.go#TestMigrationSchedulerPendingAttemptCommitAndCancellation",
+        "crates/pixiv-app/tests/scheduler.rs#scheduler_matches_go_replay_commit_cancellation_exhaustion_and_database_state",
+        "crates/pixiv-app/tests/scheduler.rs#pending_attempt_observes_external_commit_and_cancellation_without_replay",
+        "crates/pixiv-app/tests/scheduler.rs#context_wakes_on_deadline_and_keeps_the_first_cancellation_cause"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "空・未知の Reason と任意の redacted cause 型の表現は未移植。製品別 HTTP/通信失敗のマッピングと実際の取消は未検証。"
+        "空・未知の Reason と任意の redacted cause 型の表現は未移植。製品別 HTTP/通信失敗のマッピングと実際の取消は未検証。",
+        "Schedulerの再試行・commit・取消・枯渇・clock・保存状態をGoの97ケースで比較し、待機中の試行への外部commit/取消もGo/Rustで検証。wrapped SDK causeの分類と全文を保持。CLI/MCP/configと認証session lease/refresh・実通信への接続、selected/froze診断イベントは未移植。SQL実行中の取消、親子context、全競合・clock極値・全Unicode診断、他OSは未検証。"
       ]
     },
     {
@@ -2303,18 +2335,26 @@
         "key": "sdk:Error.Is"
       },
       "rust_sources": [
-        "crates/pixiv-sdk/src/error.rs"
+        "crates/pixiv-sdk/src/error.rs",
+        "crates/pixiv-app/src/scheduler.rs",
+        "crates/pixiv-app/src/lifecycle.rs"
       ],
       "tests": [
         "sdk/migration_error_test.go#TestMigrationErrorsMatchFrozenClassificationAndMetadata",
         "crates/pixiv-sdk/tests/errors.rs",
-        "crates/pixiv-cli/tests/errors.rs"
+        "crates/pixiv-cli/tests/errors.rs",
+        "internal/storage/database/migration_scheduler_test.go#TestMigrationSchedulerPreservesReplayCommitCancellationAndExhaustion",
+        "internal/storage/database/migration_scheduler_test.go#TestMigrationSchedulerPendingAttemptCommitAndCancellation",
+        "crates/pixiv-app/tests/scheduler.rs#scheduler_matches_go_replay_commit_cancellation_exhaustion_and_database_state",
+        "crates/pixiv-app/tests/scheduler.rs#pending_attempt_observes_external_commit_and_cancellation_without_replay",
+        "crates/pixiv-app/tests/scheduler.rs#context_wakes_on_deadline_and_keeps_the_first_cancellation_cause"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "空・未知の Reason と任意の redacted cause 型の表現は未移植。製品別 HTTP/通信失敗のマッピングと実際の取消は未検証。"
+        "空・未知の Reason と任意の redacted cause 型の表現は未移植。製品別 HTTP/通信失敗のマッピングと実際の取消は未検証。",
+        "Schedulerの再試行・commit・取消・枯渇・clock・保存状態をGoの97ケースで比較し、待機中の試行への外部commit/取消もGo/Rustで検証。wrapped SDK causeの分類と全文を保持。CLI/MCP/configと認証session lease/refresh・実通信への接続、selected/froze診断イベントは未移植。SQL実行中の取消、親子context、全競合・clock極値・全Unicode診断、他OSは未検証。"
       ]
     },
     {
@@ -2325,18 +2365,26 @@
         "key": "sdk:Error.Unwrap"
       },
       "rust_sources": [
-        "crates/pixiv-sdk/src/error.rs"
+        "crates/pixiv-sdk/src/error.rs",
+        "crates/pixiv-app/src/scheduler.rs",
+        "crates/pixiv-app/src/lifecycle.rs"
       ],
       "tests": [
         "sdk/migration_error_test.go#TestMigrationErrorsMatchFrozenClassificationAndMetadata",
         "crates/pixiv-sdk/tests/errors.rs",
-        "crates/pixiv-cli/tests/errors.rs"
+        "crates/pixiv-cli/tests/errors.rs",
+        "internal/storage/database/migration_scheduler_test.go#TestMigrationSchedulerPreservesReplayCommitCancellationAndExhaustion",
+        "internal/storage/database/migration_scheduler_test.go#TestMigrationSchedulerPendingAttemptCommitAndCancellation",
+        "crates/pixiv-app/tests/scheduler.rs#scheduler_matches_go_replay_commit_cancellation_exhaustion_and_database_state",
+        "crates/pixiv-app/tests/scheduler.rs#pending_attempt_observes_external_commit_and_cancellation_without_replay",
+        "crates/pixiv-app/tests/scheduler.rs#context_wakes_on_deadline_and_keeps_the_first_cancellation_cause"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "空・未知の Reason と任意の redacted cause 型の表現は未移植。製品別 HTTP/通信失敗のマッピングと実際の取消は未検証。"
+        "空・未知の Reason と任意の redacted cause 型の表現は未移植。製品別 HTTP/通信失敗のマッピングと実際の取消は未検証。",
+        "Schedulerの再試行・commit・取消・枯渇・clock・保存状態をGoの97ケースで比較し、待機中の試行への外部commit/取消もGo/Rustで検証。wrapped SDK causeの分類と全文を保持。CLI/MCP/configと認証session lease/refresh・実通信への接続、selected/froze診断イベントは未移植。SQL実行中の取消、親子context、全競合・clock極値・全Unicode診断、他OSは未検証。"
       ]
     },
     {
@@ -3392,18 +3440,26 @@
         "key": "sdk:RetryAdvice"
       },
       "rust_sources": [
-        "crates/pixiv-sdk/src/error.rs"
+        "crates/pixiv-sdk/src/error.rs",
+        "crates/pixiv-app/src/scheduler.rs",
+        "crates/pixiv-app/src/lifecycle.rs"
       ],
       "tests": [
         "sdk/migration_error_test.go#TestMigrationErrorsMatchFrozenClassificationAndMetadata",
         "crates/pixiv-sdk/tests/errors.rs",
-        "crates/pixiv-cli/tests/errors.rs"
+        "crates/pixiv-cli/tests/errors.rs",
+        "internal/storage/database/migration_scheduler_test.go#TestMigrationSchedulerPreservesReplayCommitCancellationAndExhaustion",
+        "internal/storage/database/migration_scheduler_test.go#TestMigrationSchedulerPendingAttemptCommitAndCancellation",
+        "crates/pixiv-app/tests/scheduler.rs#scheduler_matches_go_replay_commit_cancellation_exhaustion_and_database_state",
+        "crates/pixiv-app/tests/scheduler.rs#pending_attempt_observes_external_commit_and_cancellation_without_replay",
+        "crates/pixiv-app/tests/scheduler.rs#context_wakes_on_deadline_and_keeps_the_first_cancellation_cause"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "空・未知の Reason と任意の redacted cause 型の表現は未移植。製品別 HTTP/通信失敗のマッピングと実際の取消は未検証。"
+        "空・未知の Reason と任意の redacted cause 型の表現は未移植。製品別 HTTP/通信失敗のマッピングと実際の取消は未検証。",
+        "Schedulerの再試行・commit・取消・枯渇・clock・保存状態をGoの97ケースで比較し、待機中の試行への外部commit/取消もGo/Rustで検証。wrapped SDK causeの分類と全文を保持。CLI/MCP/configと認証session lease/refresh・実通信への接続、selected/froze診断イベントは未移植。SQL実行中の取消、親子context、全競合・clock極値・全Unicode診断、他OSは未検証。"
       ]
     },
     {
@@ -3768,18 +3824,26 @@
         "key": "sdk:WithCause"
       },
       "rust_sources": [
-        "crates/pixiv-sdk/src/error.rs"
+        "crates/pixiv-sdk/src/error.rs",
+        "crates/pixiv-app/src/scheduler.rs",
+        "crates/pixiv-app/src/lifecycle.rs"
       ],
       "tests": [
         "sdk/migration_error_test.go#TestMigrationErrorsMatchFrozenClassificationAndMetadata",
         "crates/pixiv-sdk/tests/errors.rs",
-        "crates/pixiv-cli/tests/errors.rs"
+        "crates/pixiv-cli/tests/errors.rs",
+        "internal/storage/database/migration_scheduler_test.go#TestMigrationSchedulerPreservesReplayCommitCancellationAndExhaustion",
+        "internal/storage/database/migration_scheduler_test.go#TestMigrationSchedulerPendingAttemptCommitAndCancellation",
+        "crates/pixiv-app/tests/scheduler.rs#scheduler_matches_go_replay_commit_cancellation_exhaustion_and_database_state",
+        "crates/pixiv-app/tests/scheduler.rs#pending_attempt_observes_external_commit_and_cancellation_without_replay",
+        "crates/pixiv-app/tests/scheduler.rs#context_wakes_on_deadline_and_keeps_the_first_cancellation_cause"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "空・未知の Reason と任意の redacted cause 型の表現は未移植。製品別 HTTP/通信失敗のマッピングと実際の取消は未検証。"
+        "空・未知の Reason と任意の redacted cause 型の表現は未移植。製品別 HTTP/通信失敗のマッピングと実際の取消は未検証。",
+        "Schedulerの再試行・commit・取消・枯渇・clock・保存状態をGoの97ケースで比較し、待機中の試行への外部commit/取消もGo/Rustで検証。wrapped SDK causeの分類と全文を保持。CLI/MCP/configと認証session lease/refresh・実通信への接続、selected/froze診断イベントは未移植。SQL実行中の取消、親子context、全競合・clock極値・全Unicode診断、他OSは未検証。"
       ]
     },
     {

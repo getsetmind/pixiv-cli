@@ -611,3 +611,21 @@ cargo test -p pixiv-app --test pool --locked
 ```
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-pool` を指定する。
+
+## Pixiv pool Scheduler の安全な再試行と取消
+
+[scheduler.json](contracts/scheduler.json) は固定 Go の Scheduler.Run を実行した97ケース。実 DB を使い、rate limit の Safe/HasAfter/期限、分類と wrapped cause、commit、試行中と開始前の取消、期限切れ、成功、候補枯渇、設定と storage の不備、不正 UID・重複選択、凍結失敗を比較する。選択時の attempted UID、試行順、clock の呼出順、凍結期限、最終 DB の参加・凍結・marker、診断全文・SDK 分類・retry advice・exhausted/取消/期限切れの判定を確認する。合成 storage 障害だけは狭い PoolState 境界から返す。
+
+Rust の Scheduler は async の試行と共有 Attempt を使う。commit 済みの失敗は取消より優先し、試行が成功を返した場合は取消後でも成功を返す。未 commit で SDK が明示的に安全な未来の rate-limit retry を許可した場合だけ次の account を選び、固定の再試行回数は設けない。凍結期限は選択時からの retry duration を、凍結時の clock に加える。これを進む clock のケースでも比較する。時刻・UID・null/空配列を正規化しない。
+
+Go と Rust の追加テストは、実際に待機中の試行へ別タスクから Attempt.commit と取消を通知する。commit は複数回呼んでも戻らず、未 commit の結果は取消、commit 済みの結果は元の SDK エラーとなり、どちらも再選択・凍結をしない。Rust の Context は共有する取消・deadline の通知と最初の原因の保持も検証する。
+
+Windows amd64 の Scheduler 基盤の比較であり、認証 session の lease/refresh、CLI/MCP/config と実通信への接続、selected/froze の診断イベントは未移植。Database adapter の取消は操作前の確認に限り、実行中 SQL の中断、親子 context の伝播、全ての取消競合、別 connection/process、巨大な候補集合、clock の極値、未知 selection kind の全 Unicode 表現、他 OS は未検証である。SDK の wrapped cause はエラーの分類と全文を保つが、任意の Go エラー型との互換を証明するものではない。
+
+```text
+go test -race ./internal/storage/database -migration-rust-database -count=1
+go vet ./internal/storage/database
+cargo test -p pixiv-app --test scheduler --locked
+```
+
+基準を意図して更新する場合だけ Go テストの `-args -migration-update-scheduler` を指定する。

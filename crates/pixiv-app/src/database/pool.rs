@@ -53,6 +53,7 @@ pub enum PoolError {
     Account(AccountError),
     Storage(rusqlite::Error),
     Message(String),
+    UnknownSelection(String),
 }
 impl fmt::Display for PoolError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -63,6 +64,9 @@ impl fmt::Display for PoolError {
             Self::Account(error) => fmt::Display::fmt(error, f),
             Self::Storage(error) => fmt::Display::fmt(error, f),
             Self::Message(message) => f.write_str(message),
+            Self::UnknownSelection(kind) => {
+                write!(f, "pixiv account pool selection failed: {kind}")
+            }
         }
     }
 }
