@@ -91,3 +91,9 @@ pub struct ArtworkBookmarkDetail {
     pub tags: Vec<String>,
 }
 pub type NovelBookmarkDetail = ArtworkBookmarkDetail;
+
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
+pub struct BookmarkTag {
+    pub name: String,
+    pub count: i64,
+}

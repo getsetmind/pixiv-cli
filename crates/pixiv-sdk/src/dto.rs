@@ -23,6 +23,20 @@ impl From<&crate::models::ArtworkBookmarkDetail> for ArtworkBookmarkDetailDto {
 }
 pub type NovelBookmarkDetailDto = ArtworkBookmarkDetailDto;
 
+#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
+pub struct BookmarkTagDto {
+    pub name: String,
+    pub count: i64,
+}
+impl From<&crate::models::BookmarkTag> for BookmarkTagDto {
+    fn from(value: &crate::models::BookmarkTag) -> Self {
+        Self {
+            name: value.name.clone(),
+            count: value.count,
+        }
+    }
+}
+
 #[derive(Serialize)]
 pub struct UgoiraArchiveDto<'a> {
     pub quality: &'a str,

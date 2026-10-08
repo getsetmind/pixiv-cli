@@ -236,3 +236,18 @@ cargo test -p pixiv-sdk --test bookmark_detail --locked
 ```
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-bookmark` を指定する。
+
+## 小説のブックマークタグ一覧
+
+[novel-bookmark-tags.json](contracts/novel-bookmark-tags.json) は、Go の `UserNovelBookmarkTags` の38ケースを固定する。ID、restrict、cursor の検証順序と通信前の拒否、送信先と query、HTTP エラー、必須の bookmark_tags 配列、タグ名・件数の型、DTO と空の next を比較する。restrict の空文字は public に変換せず、そのまま送信する。
+
+Rust の `user_novel_bookmark_tags` は `UserNovelBookmarkTagsRequest` を受け取り、`Page<BookmarkTag>` を返す。Go の対応環境における int を i64 で表現し、負の件数や最大値、重複タグ、配列順、空白だけの名前を保持する。欠落・null の件数は 0。空の配列は成功するが、配列の欠落・null や空の名前は malformed_upstream_response。next_url は null または欠落だけを受け入れ、空文字でも拒否する。継続が非対応という Go の契約を維持し、非ゼロ cursor は要求を送らず invalid_cursor にする。`BookmarkTagDto` は model の名前をコピーする。
+
+比較対象は Windows amd64 の fixture transport。作品のブックマークタグ一覧とそのページ送り、全 JSON キーの大小文字・重複・不正 UTF-8、実 transport との接続、全認証・取消/deadline、CLI/MCP、実サービス、他 OS は未検証。
+
+```text
+go test ./sdk/pixiv -run '^TestMigrationNovelBookmarkTags' -count=1
+cargo test -p pixiv-sdk --test novel_bookmark_tags --locked
+```
+
+基準を意図して更新する場合だけ Go テストの `-args -migration-update-bookmark-tags` を指定する。

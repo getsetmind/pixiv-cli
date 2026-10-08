@@ -26,7 +26,79 @@ struct Tag {
     is_registered: Option<bool>,
 }
 
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
+pub struct UserNovelBookmarkTagsRequest {
+    pub user_id: i64,
+    pub restrict: crate::mutation::Restrict,
+    pub cursor: crate::cursor::Cursor,
+}
+
+#[derive(Deserialize)]
+struct TagsEnvelope {
+    bookmark_tags: Option<Vec<Option<CountedTag>>>,
+    next_url: Option<String>,
+}
+#[derive(Default, Deserialize)]
+struct CountedTag {
+    name: Option<String>,
+    count: Option<i64>,
+}
+
 impl<T: Transport> Client<T> {
+    pub async fn user_novel_bookmark_tags(
+        &self,
+        request: UserNovelBookmarkTagsRequest,
+    ) -> Result<crate::cursor::Page<crate::models::BookmarkTag>> {
+        let operation = "UserNovelBookmarkTags";
+        if request.user_id <= 0 {
+            return Err(Error::new(Reason::InvalidArgument, operation)
+                .with_detail("user ID must be positive"));
+        }
+        if !matches!(request.restrict.as_str(), "" | "public" | "private") {
+            return Err(Error::new(Reason::InvalidArgument, operation)
+                .with_detail("restrict is unsupported"));
+        }
+        if !request.cursor.is_zero() {
+            return Err(Error::new(Reason::InvalidCursor, operation)
+                .with_detail("novel bookmark tags continuation is not supported"));
+        }
+        let body = self
+            .get(
+                "/v1/user/bookmark-tags/novel",
+                vec![
+                    ("user_id".into(), request.user_id.to_string()),
+                    ("restrict".into(), request.restrict),
+                ],
+                operation,
+            )
+            .await?;
+        let malformed = || Error::new(Reason::MalformedUpstreamResponse, operation);
+        let envelope: Option<TagsEnvelope> =
+            serde_json::from_value(body).map_err(|_| malformed())?;
+        let envelope = envelope.ok_or_else(malformed)?;
+        if envelope.next_url.is_some() {
+            return Err(malformed());
+        }
+        let tags = envelope.bookmark_tags.ok_or_else(malformed)?;
+        let items = tags
+            .into_iter()
+            .map(|tag| {
+                let tag = tag.unwrap_or_default();
+                let name = tag.name.unwrap_or_default();
+                if name.is_empty() {
+                    return Err(malformed());
+                }
+                Ok(crate::models::BookmarkTag {
+                    name,
+                    count: tag.count.unwrap_or_default(),
+                })
+            })
+            .collect::<Result<Vec<_>>>()?;
+        Ok(crate::cursor::Page {
+            items,
+            next: Default::default(),
+        })
+    }
     pub async fn artwork_bookmark(
         &self,
         request: ArtworkBookmarkRequest,
