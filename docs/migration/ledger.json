@@ -647,7 +647,9 @@
         "internal/cli/migration_detail_startup_test.go#TestMigrationDetailStartupInitializesConfigurationBeforeInputAndAccountAccess",
         "crates/pixiv-app/tests/config_initialization.rs#initial_configuration_matches_go_default_bytes_and_preserves_existing_documents",
         "crates/pixiv-app/tests/config_initialization.rs#initialization_tightens_the_directory_and_preserves_existing_file_permissions",
-        "crates/pixiv-cli/tests/detail_accounts.rs#detail_startup_matches_go_initialization_input_order_and_database_creation"
+        "crates/pixiv-cli/tests/detail_accounts.rs#detail_startup_matches_go_initialization_input_order_and_database_creation",
+        "internal/cli/migration_detail_proxy_test.go#TestMigrationDetailProxyFlagsPreservePresenceAndDiagnosticOrder",
+        "crates/pixiv-cli/tests/detail_proxy.rs#detail_proxy_flags_match_go_presence_precedence_and_diagnostic_order"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -657,7 +659,8 @@
         "Successful CLI process/network integration, TTY/configuration, record/text pipelines and aggregate JSON, OS/process BrokenPipe and stderr failures, all HTML and Unicode version differences, all flags/aliases and conflict errors, novel/user/content, account/authentication/transport, MCP and other platforms remain unverified.",
         "CommandConnectionの25ケースでproxy/interval/errorと実HTTP transport構築可否を比較し、選択したintervalをtransportへ渡す。共有HTTP pacingをGoのOpenWith後のcontent/resource redirect/mutation 5通信とRust実socketで比較（観測差5ms）。clone間でlast startを共有する。Goのdefault SDK HTTP timeout=0を再現しRust試作の60秒制限を削除。仮想61秒で保留responseが存続し、pacing待機task abort後も残り時間で次requestが再開することを確認。SDK Options全体/client再構築/pool replayの寿命/context取消/deadline/全競合/App API redirect/TLS/SOCKS wire/pool/idle cleanup/CLI/MCP bootstrap/他OSは未完了または未検証。",
         "作品詳細 CLI を既存 .pixiv-cli の設定・DB・実 Execution へ接続。実 Go detailDeps の12ケースで隔離ホームの Rust 子プロセスの認証/設定エラーを比較。既存72出力/27writerケースは refresh CAS・実 DB・CLI presenter でも同じ期待値を検証。正常系 CLI 子プロセス HTTPS、初回設定生成、startup、proxy flags、全entity/record入力、MCP、content Context取消と通信/OS差は未実装または未検証。",
-        "作品詳細の初回設定作成と Runtime 検証を入力より先へ接続。Go 実 DefaultStore 4ケースと実 Run/root 10ケースで bytes・既存設定保持・エラー順序・DB有無を比較。Unix mode テストは Windows では未実行。Close エラーの報告は未移植、filesystem 失敗/並行/symlink・startup hooks・他OSは未検証。config コマンドの CLI 実行は依然未接続。"
+        "作品詳細の初回設定作成と Runtime 検証を入力より先へ接続。Go 実 DefaultStore 4ケースと実 Run/root 10ケースで bytes・既存設定保持・エラー順序・DB有無を比較。Unix mode テストは Windows では未実行。Close エラーの報告は未移植、filesystem 失敗/並行/symlink・startup hooks・他OSは未検証。config コマンドの CLI 実行は依然未接続。",
+        "detailのproxy/no-proxyをExecutionへ接続。実Go Run/rootと実Rust子プロセスの22ケースで明示空/設定上書き/no-proxy false/falseを含む併用/重複last値/入力・設定エラー順、設定保持、DB有無を比較。Go detailにuser IDフラグはなく既存default選択を維持。実proxy通信、全flag構文/help、MCP・他CLI、全entity/record入力、他OSは未完了。"
       ]
     },
     {

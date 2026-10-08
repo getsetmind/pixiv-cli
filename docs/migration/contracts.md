@@ -840,3 +840,11 @@ rate limit の最初の応答には Retry-After=0、SDK の再試行後には120
 `crates/pixiv-mcp/tests/pool.rs` は同じ body・条件を実 Rust Execution と duplex stdio に与え、2回の result と実 DB 状態を比較する。各 SDK client が所有する transport の Drop 回数を Go の Close callback 回数と比較し、account attempt ごとに所有物が解放されることを確認する。HTTP idle connection の cleanup API 自体の互換性は、この回数比較では証明しない。
 
 作品詳細の上記 pool replay と、pool 有効時の内容取得取消後の再利用は Windows amd64 で確認した。OAuth 中・Gate 待機中・切替中の MCP 取消、全 scheduler 状態、並行呼び出し、idle cleanup、検索の途中ページ継続、disconnect/EOF と他 OS は未検証である。
+
+## 作品詳細 CLI の proxy 指定
+
+[detail-proxy.json](contracts/detail-proxy.json) は実 Go Run/root を通す22ケースである。設定内の不正 proxy、`--proxy` の明示空値と上書き、`--no-proxy` の true/false、両フラグの併用、重複 proxy の最後の値を通常/明示 JSON で固定する。入力・設定エラーと併用エラーが重なるケースも含める。既存の更新 cleanup と URL handler のテスト seam だけを無効化し、保存済み account と設定の実経路を使う。
+
+`crates/pixiv-cli/tests/detail_proxy.rs` は隔離 HOME/USERPROFILE の実 Rust バイナリで stdout・stderr・終了コード、設定の保持と DB 作成の有無を比較する。実 Runtime/入力/DB の処理順序に沿って override を解決し、`Execution::read` に渡す。指定の有無は値と別に保持し、`--no-proxy=false` は設定を維持するが、`--proxy` との併用時には false でも Go と同じエラーを返す。重複 flag の上書きは detail コマンドに適用する。
+
+固定 Go の detail に user ID フラグはなく、既存設定によるアカウント選択を維持する。実 proxy を通す通信、全 flag 構文と help、MCP/他 CLI の proxy フラグ、novel/user/content、record 入力と他 OS は未検証または未移植である。この比較だけで detail 全体を検証済みとはしない。

@@ -1,0 +1,294 @@
+[
+  {
+    "name": "configured_invalid",
+    "input": "42",
+    "config": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "flags": [],
+    "json": false,
+    "stdout": "",
+    "stderr": "error: proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration\n",
+    "exit": 1,
+    "database": true
+  },
+  {
+    "name": "configured_invalid",
+    "input": "42",
+    "config": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "flags": [],
+    "json": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration\"}}\n",
+    "exit": 1,
+    "database": true
+  },
+  {
+    "name": "clear_configured",
+    "input": "42",
+    "config": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "flags": [
+      "--no-proxy"
+    ],
+    "json": false,
+    "stdout": "",
+    "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+    "exit": 1,
+    "database": true
+  },
+  {
+    "name": "clear_configured",
+    "input": "42",
+    "config": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "flags": [
+      "--no-proxy"
+    ],
+    "json": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:auth: unauthorized: no pixiv account is authenticated\"}}\n",
+    "exit": 1,
+    "database": true
+  },
+  {
+    "name": "explicit_empty",
+    "input": "42",
+    "config": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "flags": [
+      "--proxy="
+    ],
+    "json": false,
+    "stdout": "",
+    "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+    "exit": 1,
+    "database": true
+  },
+  {
+    "name": "explicit_empty",
+    "input": "42",
+    "config": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "flags": [
+      "--proxy="
+    ],
+    "json": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:auth: unauthorized: no pixiv account is authenticated\"}}\n",
+    "exit": 1,
+    "database": true
+  },
+  {
+    "name": "explicit_override",
+    "input": "42",
+    "config": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "flags": [
+      "--proxy=http://override.invalid"
+    ],
+    "json": false,
+    "stdout": "",
+    "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+    "exit": 1,
+    "database": true
+  },
+  {
+    "name": "explicit_override",
+    "input": "42",
+    "config": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "flags": [
+      "--proxy=http://override.invalid"
+    ],
+    "json": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:auth: unauthorized: no pixiv account is authenticated\"}}\n",
+    "exit": 1,
+    "database": true
+  },
+  {
+    "name": "no_proxy_false",
+    "input": "42",
+    "config": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "flags": [
+      "--no-proxy=false"
+    ],
+    "json": false,
+    "stdout": "",
+    "stderr": "error: proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration\n",
+    "exit": 1,
+    "database": true
+  },
+  {
+    "name": "no_proxy_false",
+    "input": "42",
+    "config": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "flags": [
+      "--no-proxy=false"
+    ],
+    "json": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration\"}}\n",
+    "exit": 1,
+    "database": true
+  },
+  {
+    "name": "invalid_override",
+    "input": "42",
+    "config": "",
+    "flags": [
+      "--proxy=ftp://fixture-user:fixture-secret@override.invalid"
+    ],
+    "json": false,
+    "stdout": "",
+    "stderr": "error: proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration\n",
+    "exit": 1,
+    "database": true
+  },
+  {
+    "name": "invalid_override",
+    "input": "42",
+    "config": "",
+    "flags": [
+      "--proxy=ftp://fixture-user:fixture-secret@override.invalid"
+    ],
+    "json": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration\"}}\n",
+    "exit": 1,
+    "database": true
+  },
+  {
+    "name": "conflict",
+    "input": "42",
+    "config": "",
+    "flags": [
+      "--proxy=",
+      "--no-proxy"
+    ],
+    "json": false,
+    "stdout": "",
+    "stderr": "error: use either --proxy or --no-proxy, not both\n",
+    "exit": 1,
+    "database": true
+  },
+  {
+    "name": "conflict",
+    "input": "42",
+    "config": "",
+    "flags": [
+      "--proxy=",
+      "--no-proxy"
+    ],
+    "json": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"use either --proxy or --no-proxy, not both\"}}\n",
+    "exit": 1,
+    "database": true
+  },
+  {
+    "name": "conflict_false",
+    "input": "42",
+    "config": "",
+    "flags": [
+      "--proxy=",
+      "--no-proxy=false"
+    ],
+    "json": false,
+    "stdout": "",
+    "stderr": "error: use either --proxy or --no-proxy, not both\n",
+    "exit": 1,
+    "database": true
+  },
+  {
+    "name": "conflict_false",
+    "input": "42",
+    "config": "",
+    "flags": [
+      "--proxy=",
+      "--no-proxy=false"
+    ],
+    "json": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"use either --proxy or --no-proxy, not both\"}}\n",
+    "exit": 1,
+    "database": true
+  },
+  {
+    "name": "invalid_input_before_conflict",
+    "input": "0",
+    "config": "",
+    "flags": [
+      "--proxy=",
+      "--no-proxy"
+    ],
+    "json": false,
+    "stdout": "",
+    "stderr": "error: pixiv:detail: invalid_argument: argument must be an entity ID or a supported Pixiv URL\n",
+    "exit": 1,
+    "database": false
+  },
+  {
+    "name": "invalid_input_before_conflict",
+    "input": "0",
+    "config": "",
+    "flags": [
+      "--proxy=",
+      "--no-proxy"
+    ],
+    "json": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"invalid_argument\",\"message\":\"pixiv:detail: invalid_argument: argument must be an entity ID or a supported Pixiv URL\"}}\n",
+    "exit": 1,
+    "database": false
+  },
+  {
+    "name": "invalid_config_before_conflict",
+    "input": "42",
+    "config": "[unfinished\n",
+    "flags": [
+      "--proxy=",
+      "--no-proxy"
+    ],
+    "json": false,
+    "stdout": "",
+    "stderr": "error: toml: expected character ]\n",
+    "exit": 1,
+    "database": false
+  },
+  {
+    "name": "invalid_config_before_conflict",
+    "input": "42",
+    "config": "[unfinished\n",
+    "flags": [
+      "--proxy=",
+      "--no-proxy"
+    ],
+    "json": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"toml: expected character ]\"}}\n",
+    "exit": 1,
+    "database": false
+  },
+  {
+    "name": "last_proxy_wins",
+    "input": "42",
+    "config": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "flags": [
+      "--proxy=ftp://override.invalid",
+      "--proxy="
+    ],
+    "json": false,
+    "stdout": "",
+    "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+    "exit": 1,
+    "database": true
+  },
+  {
+    "name": "last_proxy_wins",
+    "input": "42",
+    "config": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "flags": [
+      "--proxy=ftp://override.invalid",
+      "--proxy="
+    ],
+    "json": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:auth: unauthorized: no pixiv account is authenticated\"}}\n",
+    "exit": 1,
+    "database": true
+  }
+]

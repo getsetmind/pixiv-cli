@@ -1,4 +1,4 @@
-use clap::{Parser, Subcommand};
+use clap::{Args, Parser, Subcommand};
 use pixiv_cli_rs::search::SearchOptions;
 use pixiv_cli_rs::{
     CommandError, DetailOutput, detail_artwork_id, finish_command, saved_artwork_detail,
@@ -13,11 +13,37 @@ struct Arguments {
     command: Command,
 }
 
+#[derive(Args)]
+struct ProxyOptions {
+    #[arg(long)]
+    proxy: Option<String>,
+    #[arg(long, num_args = 0..=1, require_equals = true, default_missing_value = "true")]
+    no_proxy: Option<bool>,
+}
+
+impl ProxyOptions {
+    fn override_value(&self) -> Result<Option<&str>, CommandError> {
+        if self.proxy.is_some() && self.no_proxy.is_some() {
+            return Err(CommandError::Message(
+                "use either --proxy or --no-proxy, not both",
+            ));
+        }
+        if self.no_proxy == Some(true) {
+            Ok(Some(""))
+        } else {
+            Ok(self.proxy.as_deref())
+        }
+    }
+}
+
 #[derive(Subcommand)]
 enum Command {
     Mcp,
+    #[command(args_override_self = true)]
     Detail {
         source: String,
+        #[command(flatten)]
+        connection: ProxyOptions,
         #[arg(long, short = 'j', conflicts_with = "ndjson")]
         json: bool,
         #[arg(long)]
@@ -101,7 +127,13 @@ async fn execute(args: Arguments) -> Result<(), CommandError> {
         }
         _ => None,
     };
-    if let Command::Detail { json, ndjson, .. } = &args.command {
+    if let Command::Detail {
+        json,
+        ndjson,
+        connection,
+        ..
+    } = &args.command
+    {
         let (directory, config) = account_config.expect("detail startup was resolved");
         let json_output = if *json {
             true
@@ -130,7 +162,7 @@ async fn execute(args: Arguments) -> Result<(), CommandError> {
             &pixiv_app::lifecycle::Context::new(),
             detail_id.expect("detail input was resolved"),
             0,
-            None,
+            connection.override_value()?,
             mode,
             &mut io::stdout().lock(),
         )
