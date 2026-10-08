@@ -8,7 +8,6 @@ use pixiv_sdk::{
 };
 use serde::Deserialize;
 use serde_json::{Value, json};
-use sha2::{Digest, Sha256};
 use std::collections::BTreeSet;
 
 #[derive(Clone, Debug, Default, Deserialize)]
@@ -457,18 +456,10 @@ async fn collect<T: Transport>(
         ..Default::default()
     };
     if has_range {
-        let bound =
-            |value: Option<i64>| value.map_or_else(|| "none".to_owned(), |value| value.to_string());
-        request.cursor_context = format!(
-            "{:x}",
-            Sha256::digest(
-                format!(
-                    "bookmark/v1\n{strategy}\n{}\n{}",
-                    bound(input.bookmark_min),
-                    bound(input.bookmark_max)
-                )
-                .as_bytes()
-            )
+        request.cursor_context = pixiv_app::search_filter::bookmark_context(
+            input.bookmark_min,
+            input.bookmark_max,
+            strategy,
         );
         if strategy == "local" {
             request.bookmark_min = None;

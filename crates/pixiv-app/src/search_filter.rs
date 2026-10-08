@@ -15,6 +15,33 @@ impl FilterError {
         self.0
     }
 }
+
+pub fn bookmark_context(min: Option<i64>, max: Option<i64>, strategy: &str) -> String {
+    let bound =
+        |value: Option<i64>| value.map_or_else(|| "none".to_owned(), |value| value.to_string());
+    format!(
+        "{:x}",
+        Sha256::digest(
+            format!("bookmark/v1\n{strategy}\n{}\n{}", bound(min), bound(max)).as_bytes()
+        )
+    )
+}
+
+pub fn combine_contexts(values: &[&str]) -> String {
+    let parts = values
+        .iter()
+        .copied()
+        .filter(|value| !value.is_empty())
+        .collect::<Vec<_>>();
+    match parts.as_slice() {
+        [] => String::new(),
+        [value] => value.to_string(),
+        _ => format!(
+            "{:x}",
+            Sha256::digest(format!("search/v1\n{}\n", parts.join("\n")).as_bytes())
+        ),
+    }
+}
 impl fmt::Display for FilterError {
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         formatter.write_str(self.0)

@@ -494,3 +494,24 @@ cargo test -p pixiv-cli-rs --test search_spool --locked
 ```
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-search-output` を指定する。
+
+## CLI 検索の bookmark 条件と continuation binding
+
+[search-bookmark.json](contracts/search-bookmark.json) は固定 Go CLI の393ケース。3種類の件数範囲、strategy の省略/auto/local/best_effort/server、limit の省略/0/2と論理 page、rating の省略/r18、human/NDJSON/JSON を組み合わせた360ケースに、入力不正27ケース・負の bookmark 件数と後続 malformed 応答6ケースを加える。前節のページ fixture の件数を ID×10 に変更した合成データを使い、全 GET/path/query、出力、エラー、終了コードを比較する。
+
+Rust CLI に `--bookmark-min`、`--bookmark-max`、`--bookmark-strategy` を追加した。未指定と明示0を区別し、日付→件数範囲→論理ページ→strategy の検証順を維持する。auto は local に解決する。local は通常の候補流から件数を判定し、best_effort は upstream に件数範囲を送ってからローカルでも判定する。server は固定 Go 版と同じく検証済み premium evidence がないエラーで拒否する。strategy だけの指定は範囲不足のエラーとする。
+
+件数と rating の判定後に skip/limit を適用し、同一作品の重複を保持する。途中切り詰めでは実際に消費した upstream position の SDK checkpoint を作成する。JSON に min/max・membership・実際の strategy・partial/complete_for_source を含む filter metadata を出し、全出力モードで後続失敗時の部分結果を公開しない。入力不正18ケースは無効な proxy を設定した CLI 子プロセスでも比較し、クライアント設定より前に拒否することを確認する。
+
+[bookmark-context.json](contracts/bookmark-context.json) の192ケースで、Go の BookmarkContext と CLI の context 結合を比較する。nil/0/10/64bit最大値、strategy、先行の rating context を固定し、結合順を維持する。共通 helper を CLI と MCP から使い、MCP の既存144ケースも全 Rust チェックで再検証する。
+
+Windows amd64 の fixture 検証であり、正常 CLI 子プロセスから実 HTTP、checkpoint の失敗・実 cursor の resume/別query拒否・循環、全入力組合せ、bookmark と全 content-type/他 selector の組合せ、writer の途中失敗、取消/deadline、pool/account/premium 状態、巨大な結果、他 OS は未検証。収集 traversal と strategy 解決の MCP/CLI 共通化も残っている。JSON の object key 順だけ正規化し、フィールドの省略と値・配列順・metadata は維持する。
+
+```text
+go test -race ./internal/cli -run '^TestMigrationSearchBookmark' -count=1
+go test -race ./internal/cli/commands/pixiv/search -run '^TestMigrationBookmarkContexts' -count=1
+cargo test -p pixiv-cli-rs --test search_bookmark --locked
+cargo test -p pixiv-app --test bookmark_context --locked
+```
+
+基準を意図して更新する場合だけ Go テストにそれぞれ `-args -migration-update-search-bookmark`、`-args -migration-update-bookmark-context` を指定する。

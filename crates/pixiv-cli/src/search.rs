@@ -24,6 +24,12 @@ pub struct SearchOptions {
     pub limit: Option<i64>,
     #[arg(long, short = 'p', allow_hyphen_values = true)]
     pub page: Option<i64>,
+    #[arg(long, allow_hyphen_values = true)]
+    pub bookmark_min: Option<i64>,
+    #[arg(long, allow_hyphen_values = true)]
+    pub bookmark_max: Option<i64>,
+    #[arg(long, allow_hyphen_values = true)]
+    pub bookmark_strategy: Option<String>,
     #[arg(long, default_value = "all", allow_hyphen_values = true)]
     pub ai_mode: String,
     #[arg(long, default_value = "all", allow_hyphen_values = true)]
@@ -45,6 +51,9 @@ impl Default for SearchOptions {
             rating: String::new(),
             limit: None,
             page: None,
+            bookmark_min: None,
+            bookmark_max: None,
+            bookmark_strategy: None,
             ai_mode: "all".into(),
             aspect_ratio: "all".into(),
             resolution: "all".into(),
@@ -108,6 +117,27 @@ impl SearchOptions {
             ..Default::default()
         };
         self.dates.apply(&mut request, now)?;
+        if self.bookmark_min.is_some_and(|value| value < 0) {
+            return Err(CommandError::Message(
+                "bookmark-min must be greater than or equal to zero",
+            ));
+        }
+        if self.bookmark_max.is_some_and(|value| value < 0) {
+            return Err(CommandError::Message(
+                "bookmark-max must be greater than or equal to zero",
+            ));
+        }
+        if self
+            .bookmark_min
+            .zip(self.bookmark_max)
+            .is_some_and(|(min, max)| min > max)
+        {
+            return Err(CommandError::Message(
+                "bookmark-min cannot be greater than bookmark-max",
+            ));
+        }
+        request.bookmark_min = self.bookmark_min;
+        request.bookmark_max = self.bookmark_max;
         self.plan()?;
         Ok(request)
     }
@@ -182,6 +212,12 @@ pub async fn artwork_search<T: Transport, W: Write>(
         .map_err(|error| CommandError::Message(error.message()))?
         .rating
         != "all";
+    if options.bookmark_min.is_some()
+        || options.bookmark_max.is_some()
+        || options.bookmark_strategy.is_some()
+    {
+        return bookmark_search(client, request, options, mode, out).await;
+    }
     if mode == crate::DetailOutput::Json {
         if local {
             let items = collect_search(client, request, options).await?;
@@ -193,49 +229,185 @@ pub async fn artwork_search<T: Transport, W: Write>(
     }
     let mut heading_written = false;
     let mut present = |items: Vec<Artwork>| -> Result<(), CommandError> {
-        if mode == crate::DetailOutput::Human && !heading_written {
-            writeln!(out, "illustrations for {}", quote(&word))?;
-            heading_written = true;
-        }
-        for item in items {
-            if mode == crate::DetailOutput::Ndjson {
-                let record = pixiv_record::from_artwork(&item)
-                    .map_err(|error| CommandError::Message(error.message()))?;
-                let encoded = serde_json::to_string(&record).map_err(|_| {
-                    pixiv_sdk::Error::new(pixiv_sdk::Reason::LocalStateError, "output")
-                })?;
-                writeln!(out, "{}", crate::go_json_escape(encoded))?;
-            } else {
-                let url = if item.id > 0 {
-                    format!("https://www.pixiv.net/artworks/{}", item.id)
-                } else {
-                    String::new()
-                };
-                writeln!(out, "{url}")?;
-                let tags = item
-                    .tags
-                    .iter()
-                    .map(|tag| tag.name.as_str())
-                    .collect::<Vec<_>>()
-                    .join(",");
-                writeln!(
-                    out,
-                    "{} {} by {} bookmarks:{} views:{} tags:{}",
-                    item.id,
-                    quote(&item.title),
-                    item.user.name,
-                    item.total_bookmarks,
-                    item.total_views,
-                    tags
-                )?;
-            }
-        }
-        Ok(())
+        present_search(&word, &items, mode, &mut heading_written, out)
     };
     if local {
         present(collect_search(client, request, options).await?)
     } else {
         visit_search(client, request, options, present).await
+    }
+}
+
+fn present_search<W: Write>(
+    word: &str,
+    items: &[Artwork],
+    mode: crate::DetailOutput,
+    heading_written: &mut bool,
+    out: &mut W,
+) -> Result<(), CommandError> {
+    if mode == crate::DetailOutput::Human && !*heading_written {
+        writeln!(out, "illustrations for {}", quote(word))?;
+        *heading_written = true;
+    }
+    for item in items {
+        if mode == crate::DetailOutput::Ndjson {
+            let record = pixiv_record::from_artwork(item)
+                .map_err(|error| CommandError::Message(error.message()))?;
+            let encoded = serde_json::to_string(&record)
+                .map_err(|_| pixiv_sdk::Error::new(pixiv_sdk::Reason::LocalStateError, "output"))?;
+            writeln!(out, "{}", crate::go_json_escape(encoded))?;
+        } else {
+            let url = if item.id > 0 {
+                format!("https://www.pixiv.net/artworks/{}", item.id)
+            } else {
+                String::new()
+            };
+            writeln!(out, "{url}")?;
+            let tags = item
+                .tags
+                .iter()
+                .map(|tag| tag.name.as_str())
+                .collect::<Vec<_>>()
+                .join(",");
+            writeln!(
+                out,
+                "{} {} by {} bookmarks:{} views:{} tags:{}",
+                item.id,
+                quote(&item.title),
+                item.user.name,
+                item.total_bookmarks,
+                item.total_views,
+                tags
+            )?;
+        }
+    }
+    Ok(())
+}
+
+async fn bookmark_search<T: Transport, W: Write>(
+    client: &Client<T>,
+    mut request: SearchArtworksRequest,
+    options: &SearchOptions,
+    mode: crate::DetailOutput,
+    out: &mut W,
+) -> Result<(), CommandError> {
+    if options.bookmark_min.is_none() && options.bookmark_max.is_none() {
+        return Err(CommandError::Message(
+            "--bookmark-strategy requires --bookmark-min or --bookmark-max",
+        ));
+    }
+    let strategy = match options.bookmark_strategy.as_deref().unwrap_or("auto") {
+        "auto" | "local" => "local",
+        "best_effort" => "best_effort",
+        "server" => {
+            return Err(pixiv_sdk::Error::new(
+                pixiv_sdk::Reason::UpstreamUnavailable,
+                "SearchArtworks",
+            )
+            .with_detail(
+                "server bookmark strategy requires verified premium membership and evidence",
+            )
+            .into());
+        }
+        _ => {
+            return Err(CommandError::Message(
+                "bookmark-strategy must be one of auto, local, best_effort, server",
+            ));
+        }
+    };
+    let context = pixiv_app::search_filter::bookmark_context(
+        options.bookmark_min,
+        options.bookmark_max,
+        strategy,
+    );
+    request.cursor_context =
+        pixiv_app::search_filter::combine_contexts(&[&request.cursor_context, &context]);
+    if strategy == "local" {
+        request.bookmark_min = None;
+        request.bookmark_max = None;
+    }
+    let filter = pixiv_app::search_filter::normalize_filter(&options.rating, &options.content_type)
+        .map_err(|error| CommandError::Message(error.message()))?;
+    let plan = options.plan()?;
+    let mut skip = plan.skip;
+    let mut items = vec![];
+    let mut cursors = BTreeSet::new();
+    let more = loop {
+        if !cursors.insert(request.cursor.as_str().to_owned()) {
+            return Err(CommandError::MessageText(format!(
+                "pagination stream 0 cursor repeated: {}",
+                request.cursor.as_str()
+            )));
+        }
+        let page = client.search_artworks(request.clone()).await?;
+        let mut batch = vec![];
+        for (index, item) in page.items.into_iter().enumerate() {
+            if item.total_bookmarks < 0 {
+                return Err(pixiv_sdk::Error::new(
+                    pixiv_sdk::Reason::MalformedUpstreamResponse,
+                    "SearchArtworks",
+                )
+                .with_detail("artwork bookmark count is negative")
+                .into());
+            }
+            if options
+                .bookmark_min
+                .is_some_and(|min| item.total_bookmarks < min)
+                || options
+                    .bookmark_max
+                    .is_some_and(|max| item.total_bookmarks > max)
+            {
+                continue;
+            }
+            let kind = match item.kind {
+                ArtworkKind::Illust => "illust",
+                ArtworkKind::Manga => "manga",
+                ArtworkKind::Ugoira => "ugoira",
+                ArtworkKind::Unknown => "unknown",
+            };
+            if filter.rating != "all" && !filter.matches(item.x_restrict, kind) {
+                continue;
+            }
+            batch.push((index + 1, item));
+        }
+        let consumed = skip.min(batch.len());
+        skip -= consumed;
+        batch.drain(..consumed);
+        if plan.limit > 0 && batch.len() > plan.limit - items.len() {
+            let remaining = plan.limit - items.len();
+            client.checkpoint_search_artworks(request.clone(), batch[remaining - 1].0 as i64)?;
+            items.extend(batch.into_iter().take(remaining).map(|(_, item)| item));
+            break true;
+        }
+        let returned = !batch.is_empty();
+        items.extend(batch.into_iter().map(|(_, item)| item));
+        if (plan.limit > 0 && items.len() >= plan.limit)
+            || (plan.one_batch && skip == 0 && returned)
+            || page.next.is_zero()
+        {
+            break !page.next.is_zero();
+        }
+        request.cursor = page.next;
+    };
+    if mode == crate::DetailOutput::Json {
+        let mut metadata = serde_json::json!({"membership":"unknown","strategy":strategy,"completeness":if more{"partial"}else{"complete_for_source"}});
+        if let Some(min) = options.bookmark_min {
+            metadata["min"] = min.into();
+        }
+        if let Some(max) = options.bookmark_max {
+            metadata["max"] = max.into();
+        }
+        let dtos = items
+            .iter()
+            .map(pixiv_sdk::dto::ArtworkDto::from)
+            .collect::<Vec<_>>();
+        let body =
+            serde_json::to_string_pretty(&serde_json::json!({"illusts":dtos,"filter":metadata}))
+                .map_err(|_| pixiv_sdk::Error::new(pixiv_sdk::Reason::LocalStateError, "output"))?;
+        writeln!(out, "{}", crate::go_json_escape(body))?;
+        Ok(())
+    } else {
+        present_search(&request.word, &items, mode, &mut false, out)
     }
 }
 
