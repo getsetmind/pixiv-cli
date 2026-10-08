@@ -26,7 +26,8 @@
         "crates/pixiv-app/src/database/accounts.rs",
         "crates/pixiv-app/src/scheduler.rs",
         "crates/pixiv-app/src/lifecycle.rs",
-        "crates/pixiv-app/src/diagnostics.rs"
+        "crates/pixiv-app/src/diagnostics.rs",
+        "crates/pixiv-app/src/gate.rs"
       ],
       "tests": [
         "internal/storage/database/migration_contract_test.go#TestMigrationDatabasePreservesSchemaAndRejectsDrift",
@@ -45,7 +46,10 @@
         "crates/pixiv-app/tests/scheduler.rs#pending_attempt_observes_external_commit_and_cancellation_without_replay",
         "crates/pixiv-app/tests/scheduler.rs#context_wakes_on_deadline_and_keeps_the_first_cancellation_cause",
         "internal/shared/diagnostics/migration_test.go#TestMigrationDiagnosticsPreserveScopeAndEventFields",
-        "crates/pixiv-app/tests/diagnostics.rs#diagnostic_scopes_match_go_inheritance_silence_cancellation_and_all_event_fields"
+        "crates/pixiv-app/tests/diagnostics.rs#diagnostic_scopes_match_go_inheritance_silence_cancellation_and_all_event_fields",
+        "internal/services/pixiv/pool/migration_gate_test.go#TestMigrationGatePreservesValidationCancellationAndRelease",
+        "crates/pixiv-app/tests/gate.rs#rotation_gate_matches_go_validation_cancellation_callback_failure_and_panic_release",
+        "crates/pixiv-app/tests/gate.rs#rotation_gate_serializes_clones_and_releases_an_aborted_owner"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -54,7 +58,8 @@
         "認証DBの基盤のみ着手。Go Openの19ケースでschema/index/台帳、v1→v3、checksum、application_id、版/名前の拒否と失敗後状態、合成アカウントのtoken/revisionを比較。Rust作成・Go v3・Go v1の3ファイルをRust子プロセス経由でGoが再開。CLI auth自体、FANBOX repository・refresh application・pool session/config/SQL取消・強制終了復旧・全障害・Windows ACL・Unix mode・他OSは未移植または未検証。接続内pragma/lockは未比較。user_version=3に未知第4台帳行がある場合も固定Goが受け入れる挙動を維持。SQLite driver固有のempty-ledgerエラーは失敗箇所まで比較。",
         "Pixiv repositoryのsave/batch/list/get/remove/metadata/rotation CASを31操作で比較。token copy/Debug秘匿、8件の共有connection更新で成功1件/conflict7件、Go→Rust→Go→Rustの実ファイル状態を検証。時刻は操作前に11/22へ制御し実際の更新時刻が操作window内であることを確認して-1化。SQLite固有診断は制約種別と対象列のみ比較。CLI auth自体、FANBOX、refresh UID照合/app接続、pool session lease、別connection/process競合、取消/強制停止、全境界/障害、config・MCP、他OSは未実装または未検証。",
         "Schedulerの再試行・commit・取消・枯渇・clock・保存状態をGoの97ケースで比較し、待機中の試行への外部commit/取消もGo/Rustで検証。wrapped SDK causeの分類と全文を保持。CLI/MCP/configと認証session lease/refresh・実通信への接続は未移植。SQL実行中の取消、親子context、全競合・clock極値・全Unicode診断、他OSは未検証。",
-        "Schedulerの97ケースにselected/frozeイベント全13フィールドと順序の比較を追加。重複UID拒否前のselectedとFreeze成功後だけのfrozeを維持。診断scopeの有無/nil sink/child/明示module/直接通知/取消の64ケースをGo/Rustで比較し、module補完・request ID上書き・取消後の通知・scope不在の無通知を検証。CLI/MCP bootstrap/presenterと他subsystemの診断、並行sink/障害・全値域、他OSは未移植または未検証。"
+        "Schedulerの97ケースにselected/frozeイベント全13フィールドと順序の比較を追加。重複UID拒否前のselectedとFreeze成功後だけのfrozeを維持。診断scopeの有無/nil sink/child/明示module/直接通知/取消の64ケースをGo/Rustで比較し、module補完・request ID上書き・取消後の通知・scope不在の無通知を検証。CLI/MCP bootstrap/presenterと他subsystemの診断、並行sink/障害・全値域、他OSは未移植または未検証。",
+        "refresh rotation Gateの12ケースで未設定/callback不在/成功/失敗/取消/deadline/panic後の解放をGo/Rustで比較。Rustの共有Permitによりclone間を直列化し、task abort後の解放も検証。GoのAcquire/ReleaseはRustの所有guard/dropに対応。取消済みかつ空き枠のselectは両結果が許容される。client/Lease・refresh成果とCASのapp接続、CLI/MCP/bootstrap、別process/全競合/負荷/公平性、他OSは未移植または未検証。"
       ]
     },
     {
@@ -153,7 +158,8 @@
         "crates/pixiv-app/src/database/pool.rs",
         "crates/pixiv-app/src/scheduler.rs",
         "crates/pixiv-app/src/lifecycle.rs",
-        "crates/pixiv-app/src/diagnostics.rs"
+        "crates/pixiv-app/src/diagnostics.rs",
+        "crates/pixiv-app/src/gate.rs"
       ],
       "tests": [
         "internal/storage/database/migration_pool_test.go#TestMigrationPoolPreservesSelectionFreezeMembershipAndRollback",
@@ -166,7 +172,10 @@
         "crates/pixiv-app/tests/scheduler.rs#pending_attempt_observes_external_commit_and_cancellation_without_replay",
         "crates/pixiv-app/tests/scheduler.rs#context_wakes_on_deadline_and_keeps_the_first_cancellation_cause",
         "internal/shared/diagnostics/migration_test.go#TestMigrationDiagnosticsPreserveScopeAndEventFields",
-        "crates/pixiv-app/tests/diagnostics.rs#diagnostic_scopes_match_go_inheritance_silence_cancellation_and_all_event_fields"
+        "crates/pixiv-app/tests/diagnostics.rs#diagnostic_scopes_match_go_inheritance_silence_cancellation_and_all_event_fields",
+        "internal/services/pixiv/pool/migration_gate_test.go#TestMigrationGatePreservesValidationCancellationAndRelease",
+        "crates/pixiv-app/tests/gate.rs#rotation_gate_matches_go_validation_cancellation_callback_failure_and_panic_release",
+        "crates/pixiv-app/tests/gate.rs#rotation_gate_serializes_clones_and_releases_an_aborted_owner"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -174,7 +183,8 @@
       "differences": [
         "pool保存層とchooserの検証。Goの51操作でround_robin/random、候補snapshot/marker/attempt除外、4原因とearliest、参加設定/凍結/期限解除、失敗時transaction rollback、返却accountと保存時刻を比較。default randomの候補1件とempty snapshotも両実装で確認。CLIコマンド自体、session lease/refresh、SQL取消/並行/別process/DB障害、巨大UIDと全境界・不正strategy文字列、乱数分布/entropy障害、config/MCP、他OSは未移植または未検証。",
         "Schedulerの再試行・commit・取消・枯渇・clock・保存状態をGoの97ケースで比較し、待機中の試行への外部commit/取消もGo/Rustで検証。wrapped SDK causeの分類と全文を保持。CLI/MCP/configと認証session lease/refresh・実通信への接続は未移植。SQL実行中の取消、親子context、全競合・clock極値・全Unicode診断、他OSは未検証。",
-        "Schedulerの97ケースにselected/frozeイベント全13フィールドと順序の比較を追加。重複UID拒否前のselectedとFreeze成功後だけのfrozeを維持。診断scopeの有無/nil sink/child/明示module/直接通知/取消の64ケースをGo/Rustで比較し、module補完・request ID上書き・取消後の通知・scope不在の無通知を検証。CLI/MCP bootstrap/presenterと他subsystemの診断、並行sink/障害・全値域、他OSは未移植または未検証。"
+        "Schedulerの97ケースにselected/frozeイベント全13フィールドと順序の比較を追加。重複UID拒否前のselectedとFreeze成功後だけのfrozeを維持。診断scopeの有無/nil sink/child/明示module/直接通知/取消の64ケースをGo/Rustで比較し、module補完・request ID上書き・取消後の通知・scope不在の無通知を検証。CLI/MCP bootstrap/presenterと他subsystemの診断、並行sink/障害・全値域、他OSは未移植または未検証。",
+        "refresh rotation Gateの12ケースで未設定/callback不在/成功/失敗/取消/deadline/panic後の解放をGo/Rustで比較。Rustの共有Permitによりclone間を直列化し、task abort後の解放も検証。GoのAcquire/ReleaseはRustの所有guard/dropに対応。取消済みかつ空き枠のselectは両結果が許容される。client/Lease・refresh成果とCASのapp接続、CLI/MCP/bootstrap、別process/全競合/負荷/公平性、他OSは未移植または未検証。"
       ]
     },
     {

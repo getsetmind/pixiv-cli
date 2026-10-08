@@ -1,6 +1,7 @@
 pub mod database;
 pub mod dates;
 pub mod diagnostics;
+pub mod gate;
 pub mod lifecycle;
 pub mod pagination;
 pub mod scheduler;

@@ -647,3 +647,21 @@ cargo test -p pixiv-app --test diagnostics --test scheduler --locked
 ```
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-diagnostics` を指定する。
+
+## Pixiv refresh rotation の Gate
+
+[gate.json](contracts/gate.json) は固定 Go の Gate を実行した12ケース。nil/zero の未設定、callback 不在、成功・失敗・callback 内の取消、占有中の取消・期限切れ・待機後の取消、panic 後の再取得を比較する。エラー全文、取消/期限切れの種別、callback の実行有無、処理後の再利用を確認する。未設定の検証が callback 検証より先に行われ、callback で取消しても返却した元のエラーを保持する。
+
+Rust の Gate は共有する1枠の semaphore を使い、clone も同じ枠を待つ。Go の Acquire/Release は Rust の acquire と所有する Permit の drop に対応する。run は callback の終了・エラー・panic で guard を解放し、実際の task abort でも枠が戻ることを Rust の追加テストで確認する。Default は Go の zero Gate に対応する未設定で、new が使用可能な Gate を作る。待機中は Context の取消と deadline を受け付ける。
+
+既に取消済みで空き枠もある場合、固定 Go の select は取得成功と取消の両方を選び得る。Rust も無条件に取消を優先せず、同時に ready の2分岐から選ぶ。この非決定的なケースの選択割合や待機順の公平性は比較していない。Go の未取得 Release の待機・二重 Release は Rust の所有権 API では表現しない。実行中 callback の強制中断や refresh の成果を保証する仕組みではない。
+
+Windows amd64 の Gate 境界の比較である。認証 client/Lease と Gate の接続、refresh UID 検証・token rotation 永続化との接続、CLI/MCP/bootstrap、複数 Gate/別 process の協調、全取消競合・負荷・他 OS は未移植または未検証。
+
+```text
+go test -race ./internal/services/pixiv/pool -count=1
+go vet ./internal/services/pixiv/pool
+cargo test -p pixiv-app --test gate --locked
+```
+
+基準を意図して更新する場合だけ Go テストの `-args -migration-update-gate` を指定する。
