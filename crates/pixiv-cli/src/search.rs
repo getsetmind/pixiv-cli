@@ -434,7 +434,7 @@ async fn visit_search<T: Transport>(
     client: &Client<T>,
     request: SearchArtworksRequest,
     options: &SearchOptions,
-    consume: impl FnMut(Vec<Artwork>) -> Result<(), CommandError>,
+    mut consume: impl FnMut(Vec<Artwork>) -> Result<(), CommandError>,
 ) -> Result<(), CommandError> {
     let filter = pixiv_app::search_filter::normalize_filter(&options.rating, &options.content_type)
         .map_err(|error| CommandError::Message(error.message()))?;
@@ -447,38 +447,56 @@ async fn visit_search<T: Transport>(
             .checkpoint_search_artworks(query, consumed as i64)
             .map_err(CommandError::from)
     });
-    pixiv_app::pagination::traverse_pages(
-        pixiv_app::pagination::Plan {
-            skip: plan.skip as i64,
-            limit: plan.limit as i64,
-            one_batch: plan.one_batch,
-        },
-        request.cursor.clone(),
-        |cursor| {
-            let mut query = request.clone();
-            query.cursor = cursor;
-            async move {
-                let page = client
-                    .search_artworks(query)
-                    .await
-                    .map_err(CommandError::from)?;
-                Ok((page.items, page.next))
-            }
-        },
-        |item: &Artwork| {
-            let kind = match item.kind {
-                ArtworkKind::Illust => "illust",
-                ArtworkKind::Manga => "manga",
-                ArtworkKind::Ugoira => "ugoira",
-                ArtworkKind::Unknown => "unknown",
-            };
-            Ok(!local || filter.matches(item.x_restrict, kind))
-        },
-        checkpoint,
-        consume,
-    )
-    .await
-    .map_err(traversal_error)?;
+    let plan = pixiv_app::pagination::Plan {
+        skip: plan.skip as i64,
+        limit: plan.limit as i64,
+        one_batch: plan.one_batch,
+    };
+    let fetch = |cursor| {
+        let mut query = request.clone();
+        query.cursor = cursor;
+        async move {
+            let page = client
+                .search_artworks(query)
+                .await
+                .map_err(CommandError::from)?;
+            Ok((page.items, page.next))
+        }
+    };
+    let include = |item: &Artwork| {
+        let kind = match item.kind {
+            ArtworkKind::Illust => "illust",
+            ArtworkKind::Manga => "manga",
+            ArtworkKind::Ugoira => "ugoira",
+            ArtworkKind::Unknown => "unknown",
+        };
+        Ok(!local || filter.matches(item.x_restrict, kind))
+    };
+    if local {
+        let page = pixiv_app::pagination::collect_pages(
+            plan,
+            request.cursor.clone(),
+            fetch,
+            include,
+            checkpoint,
+        )
+        .await
+        .map_err(traversal_error)?;
+        if !page.items.is_empty() {
+            consume(page.items)?;
+        }
+    } else {
+        pixiv_app::pagination::traverse_pages(
+            plan,
+            request.cursor.clone(),
+            fetch,
+            include,
+            checkpoint,
+            consume,
+        )
+        .await
+        .map_err(traversal_error)?;
+    }
     Ok(())
 }
 

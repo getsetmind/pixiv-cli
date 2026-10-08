@@ -32,6 +32,21 @@ pub struct Collection<T, C> {
     pub next: C,
     pub result: PageResult,
 }
+pub struct Stream<F, I, K> {
+    pub fetch: F,
+    pub include: I,
+    pub checkpoint: K,
+}
+#[derive(Clone, Debug, Default)]
+pub struct StreamState<C> {
+    pub current: i64,
+    pub cursors: Vec<C>,
+}
+pub struct StreamCollection<T, C> {
+    pub items: Vec<T>,
+    pub state: StreamState<C>,
+    pub result: PageResult,
+}
 #[derive(Debug)]
 pub enum Cause<E> {
     Source(E),
@@ -161,14 +176,44 @@ pub async fn collect_pages<T, C, E, F, U, I, K>(
     checkpoint: Option<K>,
 ) -> Result<Collection<T, C>, Failure<E>>
 where
-    C: Cursor,
+    C: Cursor + Default,
     F: FnMut(C) -> U,
     U: Future<Output = Result<(Vec<T>, C), E>>,
     I: FnMut(&T) -> Result<bool, E>,
     K: FnMut(C, usize) -> Result<C, E>,
 {
+    if let Some(checkpoint) = checkpoint {
+        let mut streams = [Stream {
+            fetch,
+            include,
+            checkpoint,
+        }];
+        let page = collect_streams(
+            plan,
+            &mut streams,
+            StreamState {
+                current: 0,
+                cursors: vec![initial],
+            },
+        )
+        .await?;
+        let next = if page.state.current == 0 {
+            page.state
+                .cursors
+                .into_iter()
+                .next()
+                .expect("single stream cursor exists")
+        } else {
+            C::default()
+        };
+        return Ok(Collection {
+            items: page.items,
+            next,
+            result: page.result,
+        });
+    }
     let mut items = vec![];
-    let traversal = traverse_pages(plan, initial, fetch, include, checkpoint, |batch| {
+    let traversal = traverse_pages(plan, initial, fetch, include, None::<K>, |batch| {
         items.extend(batch);
         Ok(())
     })
@@ -182,4 +227,137 @@ where
         next: traversal.next,
         result: traversal.result,
     })
+}
+
+pub async fn collect_streams<T, C, E, F, U, I, K>(
+    plan: Plan,
+    streams: &mut [Stream<F, I, K>],
+    initial: StreamState<C>,
+) -> Result<StreamCollection<T, C>, Failure<E>>
+where
+    C: Cursor + Default,
+    F: FnMut(C) -> U,
+    U: Future<Output = Result<(Vec<T>, C), E>>,
+    I: FnMut(&T) -> Result<bool, E>,
+    K: FnMut(C, usize) -> Result<C, E>,
+{
+    for (value, message) in [
+        (plan.skip, "page skip must be zero or positive"),
+        (plan.limit, "page limit must be zero or positive"),
+    ] {
+        if value < 0 {
+            return Err(stream_message(message));
+        }
+    }
+    let count = streams.len();
+    if initial.current < 0 || initial.current > count as i64 {
+        return Err(stream_message("stream state current index is out of range"));
+    }
+    if !initial.cursors.is_empty() && initial.cursors.len() != count {
+        return Err(stream_message(
+            "stream state cursor count does not match stream count",
+        ));
+    }
+    let mut state = initial;
+    if state.cursors.is_empty() {
+        state.cursors.resize_with(count, C::default);
+    }
+    let mut items = vec![];
+    let mut result = PageResult::default();
+    let mut skip = plan.skip as usize;
+    let limit = plan.limit as usize;
+    let mut seeking = skip > 0;
+    while state.current < count as i64 {
+        let index = state.current as usize;
+        let stream = &mut streams[index];
+        let mut cursor = state.cursors[index].clone();
+        let mut seen = BTreeSet::new();
+        loop {
+            if !seen.insert(cursor.text().to_owned()) {
+                return Err(stream_message(format!(
+                    "pagination stream {index} cursor repeated: {}",
+                    cursor.text()
+                )));
+            }
+            let (batch, next) = (stream.fetch)(cursor.clone())
+                .await
+                .map_err(stream_source)?;
+            let mut matched = vec![];
+            for (position, item) in batch.into_iter().enumerate() {
+                if (stream.include)(&item).map_err(stream_source)? {
+                    matched.push((position + 1, item));
+                }
+            }
+            let removed = skip.min(matched.len());
+            skip -= removed;
+            matched.drain(..removed);
+            if seeking && skip == 0 && !matched.is_empty() {
+                seeking = false;
+            }
+            let returned = !matched.is_empty();
+            if limit > 0 && matched.len() > limit - result.returned {
+                let remaining = limit - result.returned;
+                let checkpoint =
+                    (stream.checkpoint)(cursor, matched[remaining - 1].0).map_err(stream_source)?;
+                if checkpoint.is_zero() {
+                    return Err(stream_message("stream checkpoint cursor must not be zero"));
+                }
+                matched.truncate(remaining);
+                state.cursors[index] = checkpoint;
+                result.has_more = true;
+            }
+            result.returned += matched.len();
+            items.extend(matched.into_iter().map(|(_, item)| item));
+            if limit > 0 && result.returned >= limit {
+                if !result.has_more {
+                    state.cursors[index] = next;
+                    if state.cursors[index].is_zero() {
+                        state.current += 1;
+                    }
+                    result.has_more = state.current < count as i64;
+                }
+                return Ok(StreamCollection {
+                    items,
+                    state,
+                    result,
+                });
+            }
+            if plan.one_batch && !seeking && returned {
+                state.cursors[index] = next;
+                if state.cursors[index].is_zero() {
+                    state.current += 1;
+                }
+                result.has_more = state.current < count as i64;
+                return Ok(StreamCollection {
+                    items,
+                    state,
+                    result,
+                });
+            }
+            state.cursors[index] = next.clone();
+            if next.is_zero() {
+                state.current += 1;
+                break;
+            }
+            cursor = next;
+        }
+    }
+    Ok(StreamCollection {
+        items,
+        state,
+        result,
+    })
+}
+
+fn stream_message<E>(message: impl Into<String>) -> Failure<E> {
+    Failure {
+        cause: Cause::Message(message.into()),
+        result: PageResult::default(),
+    }
+}
+fn stream_source<E>(error: E) -> Failure<E> {
+    Failure {
+        cause: Cause::Source(error),
+        result: PageResult::default(),
+    }
 }

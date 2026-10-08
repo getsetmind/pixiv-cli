@@ -836,7 +836,9 @@
         "internal/cli/commands/pixiv/search/migration_bookmark_context_test.go#TestMigrationBookmarkContextsPreserveNilZeroStrategyAndOrderedCombination",
         "crates/pixiv-app/tests/bookmark_context.rs#bookmark_contexts_match_go_nil_zero_strategy_and_ordered_combination",
         "internal/shared/pagination/migration_traversal_test.go#TestMigrationTraversalPreservesLogicalWindowsCheckpointsAndPartialFailure",
-        "crates/pixiv-app/tests/traversal.rs#traversal_matches_go_windows_checkpoints_cycles_and_partial_failure"
+        "crates/pixiv-app/tests/traversal.rs#traversal_matches_go_windows_checkpoints_cycles_and_partial_failure",
+        "internal/shared/pagination/migration_streams_test.go#TestMigrationStreamsPreserveOrderedStateResumptionAndAtomicFailures",
+        "crates/pixiv-app/tests/streams.rs#streams_match_go_global_windows_ordered_state_resumption_and_atomic_failures"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -849,7 +851,8 @@
         "human/NDJSON の72ケースで見出し/URL/title引用/作者/件数/tags、共通record、論理page/空ページ/重複、通常検索のstreamと後続失敗時の先行出力保持、local検索の成功後出力、writer失敗後の要求停止、BrokenPipeの終了コード/診断をGoと比較。正常CLI子プロセス/TTY自動切替、全Unicode、human/NDJSON partial writer、record変換失敗、取消、pool replay/commit、bookmark、他OSは未検証。",
         "JSON の48ケースを加え出力比較は120ケース。非local検索はDTOをページごとにtemp fileへ書き込み、全取得成功後に固定サイズbufferでcommitする。正常/後続失敗/writer失敗/BrokenPipe/10バイトpartial出力、要求回数、Go/Rustの取得中spoolと終了後cleanupを比較。Rust future取消時cleanupも隔離子プロセスで確認。Unix0600は実行未検証。Windows ACL、容量不足/temp不正/seek/read/delete失敗、強制終了後回収、長期/大容量実測、pool replay/commit、他OSは未検証。",
         "bookmark min/max/strategy をGo CLIの393ケースで比較。nil/0、auto→local、local/best_effort/serverエラー、rating/論理page/重複/JSON filter completeness、全queryと後続失敗時の部分結果破棄を確認。入力不正18ケースは子プロセスでも比較。共通bookmark/context結合helperは192ケースでGoと一致しCLI/MCPから使用。正常CLI実HTTP、checkpoint失敗/実cursor resume/cycle、全selector組合せ、writer部分失敗、取消、pool/account/premium、大容量、他OSは未検証。strategy共通化は未実装。",
-        "共通単一流paginationをGoの840ケースで比較。skip/limit/one-batch、循環、predicate/checkpoint/consume/fetch失敗、zero checkpoint、通常streamの部分結果/進捗とfiltered collectionの破棄を確認。CLI通常/rating/bookmarkとMCPに接続し既存90/120/393/144ケースを変更なしで再検証。複数stream/StreamState、nonzero initial、実SDK cursorの循環/checkpoint失敗、取消/pool、他OSは未検証または未実装。"
+        "共通単一流paginationをGoの840ケースで比較。skip/limit/one-batch、循環、predicate/checkpoint/consume/fetch失敗、zero checkpoint、通常streamの部分結果/進捗とfiltered collectionの破棄を確認。CLI通常/rating/bookmarkとMCPに接続し既存90/120/393/144ケースを変更なしで再検証。2流の合成StreamState/nonzero initialと再開は別途3072ケースで比較。実SDK cursorの循環/checkpoint失敗/再開、取消/pool、他OSは未検証。",
+        "複数流engineをGoの3072ケースで比較。2流順序/重複/global skip/limit/one-batch、8初期state、非零ページ内cursor、checkpoint、初回返却stateからの2回目収集、後続流失敗時の全破棄を確認。checkpointのある単一流もengineへ接続しCLI rating/bookmarkとMCPの既存比較を維持。実SDK複数操作の公開コマンド接続/保存再開/binding、0流/3流以上、全境界、callback不在対応、取消/pool/account、他OSは未検証または未実装。"
       ]
     },
     {
@@ -1689,7 +1692,9 @@
         "internal/cli/commands/pixiv/search/migration_bookmark_context_test.go#TestMigrationBookmarkContextsPreserveNilZeroStrategyAndOrderedCombination",
         "crates/pixiv-app/tests/bookmark_context.rs#bookmark_contexts_match_go_nil_zero_strategy_and_ordered_combination",
         "internal/shared/pagination/migration_traversal_test.go#TestMigrationTraversalPreservesLogicalWindowsCheckpointsAndPartialFailure",
-        "crates/pixiv-app/tests/traversal.rs#traversal_matches_go_windows_checkpoints_cycles_and_partial_failure"
+        "crates/pixiv-app/tests/traversal.rs#traversal_matches_go_windows_checkpoints_cycles_and_partial_failure",
+        "internal/shared/pagination/migration_streams_test.go#TestMigrationStreamsPreserveOrderedStateResumptionAndAtomicFailures",
+        "crates/pixiv-app/tests/streams.rs#streams_match_go_global_windows_ordered_state_resumption_and_atomic_failures"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -1699,7 +1704,8 @@
         "半年/一年の日付計算は固定時刻の168ケースで比較し、MCP は共通 helper を呼ぶ。長期 duration の実セッションから HTTP query までの比較、極端な clock・全 timezone、全 JSON wire 境界と複数不正 field の診断順、cursor 循環、検索 cancellation/deadline、pool 再実行・credential/account 状態、他 OS は未移植または未検証。Go の pool 実行回数も記録するが、Rust の pool 互換は未検証。",
         "共通のローカル rating/content-type filter は Go の168ケースで正規化・エラー順・cursor context、正常80ケースの3360件のマッチ判定を比較。CLI の既存 content-type 正規化と MCP illust_filter の種別判定に接続した。CLI rating と論理ページは別途90ケースで比較したが、context の resume、bookmark の組合せ、Go の直接構築された不正 Filter/零値、全 Unicode と他 OS は未実装または未検証。",
         "bookmark cursor context をCLIと共通helperへ移し、nil/0/strategy/context結合の192ケースをGoと比較。MCPの既存144ケースも再検証した。CLIのbookmark条件は別途393ケースで比較済みだが、全組合せとstrategy共通化、実cursor resume/cancellation/account状態は未検証または未実装。",
-        "共通単一流paginationをGoの840ケースで比較。skip/limit/one-batch、循環、predicate/checkpoint/consume/fetch失敗、zero checkpoint、通常streamの部分結果/進捗とfiltered collectionの破棄を確認。CLI通常/rating/bookmarkとMCPに接続し既存90/120/393/144ケースを変更なしで再検証。複数stream/StreamState、nonzero initial、実SDK cursorの循環/checkpoint失敗、取消/pool、他OSは未検証または未実装。"
+        "共通単一流paginationをGoの840ケースで比較。skip/limit/one-batch、循環、predicate/checkpoint/consume/fetch失敗、zero checkpoint、通常streamの部分結果/進捗とfiltered collectionの破棄を確認。CLI通常/rating/bookmarkとMCPに接続し既存90/120/393/144ケースを変更なしで再検証。2流の合成StreamState/nonzero initialと再開は別途3072ケースで比較。実SDK cursorの循環/checkpoint失敗/再開、取消/pool、他OSは未検証。",
+        "複数流engineをGoの3072ケースで比較。2流順序/重複/global skip/limit/one-batch、8初期state、非零ページ内cursor、checkpoint、初回返却stateからの2回目収集、後続流失敗時の全破棄を確認。checkpointのある単一流もengineへ接続しCLI rating/bookmarkとMCPの既存比較を維持。実SDK複数操作の公開コマンド接続/保存再開/binding、0流/3流以上、全境界、callback不在対応、取消/pool/account、他OSは未検証または未実装。"
       ]
     },
     {

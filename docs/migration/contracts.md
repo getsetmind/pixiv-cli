@@ -522,7 +522,7 @@ cargo test -p pixiv-app --test bookmark_context --locked
 
 Rust の [pagination.rs](../../crates/pixiv-app/src/pagination.rs) を CLI の通常/rating/bookmark 検索と MCP 検索から呼ぶ。SDK cursor は decode・再生成せず cursor trait で扱い、切り詰め時だけ入口の SDK checkpoint を呼ぶ。CLI の streaming/spool とローカル結果の出力、MCP の重複除去と strategy の特殊条件は adapter に保持する。MCP の limit 省略の内部値は上限0と one-batch に変換する。CLI の90/120/393ケースと MCP の144ケースを期待値を変更せず再検証した。
 
-単一流・zero initial cursor の Windows amd64 fixture 検証である。複数流の連結・StreamState と再開、nonzero initial cursor、実 SDK cursor の循環/checkpoint失敗、取消/deadline、pool replay/commit、他 OS は未検証または未実装。Rust では callback は型で必須とするため Go の nil callback 診断との対応はまだ記録していない。
+この840ケースは単一流・zero initial cursor の Windows amd64 fixture 検証である。複数流と合成 cursor の再開は次節で検証する。実 SDK cursor の循環/checkpoint失敗・再開、取消/deadline、pool replay/commit、他 OS は未検証。Rust では callback は型で必須とするため Go の nil callback 診断との対応はまだ記録していない。
 
 ```text
 go test -race ./internal/shared/pagination -run '^TestMigrationTraversal' -count=1
@@ -530,3 +530,20 @@ cargo test -p pixiv-app --test traversal --locked
 ```
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-traversal` を指定する。
+
+## 複数流の StreamState と再開
+
+[streams.json](contracts/streams.json) は固定 Go の CollectStreamsFrom を実行した3072ケース。2つの順序付き候補流に重複・空ページを含め、skip/limit/one-batch、predicate の有無、8種類の初期 state、fetch/predicate/checkpoint/zero checkpoint/cursor 循環を組み合わせる。結果の順序・重複、流をまたぐ単一のページ予算、各 cursor・checkpoint の消費位置、current/cursors、returned/has_more、失敗時の nil と進捗の破棄を比較する。
+
+初期 state は先頭・第2流・完了位置・非零のページ内 cursor・不正 current・cursor 数不一致を含む。初回が成功して has_more の場合は、その返却 state を再び同じ Go/Rust の収集に渡し、残りの項目・完了位置・追加要求・エラーも比較する。cursor はテスト transport 内だけで decode し、本番 engine は不透明な値のまま扱う。
+
+Rust の共通 engine に Stream/StreamState/collect_streams を追加し、checkpoint のある単一流 collection をこの engine へ接続した。CLI rating/bookmark と MCP bookmark collection もこの経路を使う。通常の streaming は既存 traverse_pages を使い、CLI の90/120/393ケース・MCP の144ケース・単一流840ケースを期待値を変更せず再検証する。
+
+Windows amd64 の合成 cursor と2流の fixture 検証であり、複数の実 SDK 操作を使う公開コマンドはまだ接続していない。実 SDK cursor の binding/identity・保存と再開、0流/3流以上、全境界、callback 不在の型対応、取消/deadline、pool/account 切替、他 OS は未検証または未実装。
+
+```text
+go test -race ./internal/shared/pagination -run '^TestMigrationStreams' -count=1
+cargo test -p pixiv-app --test streams --locked
+```
+
+基準を意図して更新する場合だけ Go テストの `-args -migration-update-streams` を指定する。
