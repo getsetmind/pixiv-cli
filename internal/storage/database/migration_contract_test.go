@@ -15,6 +15,14 @@ import (
 var updateDatabaseContract = flag.Bool("migration-update-database", false, "update the database migration contract")
 var rustDatabaseContract = flag.Bool("migration-rust-database", false, "run Rust/Go database interoperability")
 
+func migrationRustTargetDirectory() string {
+	base := os.Getenv("CARGO_TARGET_DIR")
+	if base == "" {
+		base = "target"
+	}
+	return filepath.Join(base, "go-interop")
+}
+
 type migrationContract struct {
 	Name  string         `json:"name"`
 	Setup string         `json:"setup"`
@@ -53,7 +61,7 @@ func TestMigrationDatabaseGoRustFileInteroperability(t *testing.T) {
 				}
 				conn.Close()
 			}
-			command := exec.Command("cargo", "test", "-p", "pixiv-app", "--test", "database", "--locked", "database_opens_shared_go_file", "--", "--ignored", "--exact")
+			command := exec.Command("cargo", "test", "--target-dir", migrationRustTargetDirectory(), "-p", "pixiv-app", "--test", "database", "--locked", "database_opens_shared_go_file", "--", "--ignored", "--exact")
 			command.Dir = filepath.Join("..", "..", "..")
 			command.Env = append(os.Environ(), "PIXIV_MIGRATION_DATABASE_DIRECTORY="+dir)
 			output, err := command.CombinedOutput()

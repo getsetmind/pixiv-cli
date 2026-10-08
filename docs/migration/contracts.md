@@ -665,3 +665,25 @@ cargo test -p pixiv-app --test gate --locked
 ```
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-gate` を指定する。
+
+## client の取得・解放と Gate/Lease の接続
+
+[lease.json](contracts/lease.json) は固定 Go の Lease の7ケース。nil、解放関数不在、成功・失敗・panic、8件の同時 Close を比較する。Value は Close 後も保持し、解放関数は1回だけ実行し、各 Close は同じエラー instance を返す。最初の Close が panic した場合も解放済みとなり、以後は再実行せず成功を返す。Rust は共有 Mutex 内で解放を直列化し、panic を記録して lock を解放してから再送出する。Close のエラーは Arc で同じ instance を共有する。nil Lease は Rust の Option 不在に対応する。
+
+[sessions.json](contracts/sessions.json) は固定 Go の Facade.Open の17ケース。Context/Accounts/Gate の不在、zero Gate、占有中の取消、既定/明示/負 UID、opener の失敗・部分 client・nil client・panic、closer の失敗・panic を比較する。client を返す前に Gate を取得し、返した Lease が明示 Close まで枠を保持すること、Close の繰り返しでも1回だけ client と Gate を解放することを確認する。部分 client の open 失敗は close して両エラーを残し、opener/closer の panic 後も Gate を再取得できる。合成 opener と明示 closer は実際の account/client 境界であり、通信を呼ばない SDK client を使う。
+
+Rust の ClientSessions は account opener・Gate・明示 close callback を接続する。user ID と接続 options は opener へそのまま渡し、0 の既定 account 選択は account service の責務として残す。options は generic 型で保持し、比較では AcceptLanguage の受渡しを確認する。SDK の全 Options 対応を証明するものではない。Lease は明示 Close が必要で、単なる drop は close callback を実行しない。Rust の取得待機中 task abort は、まだ client を返していない Gate の解放まで追加テストで検証する。
+
+SessionError は open と close のエラーを順に保持し、全文は Go errors.Join と同じ改行で結合する。errors() は全原因、classified()/is_canceled()/is_deadline_exceeded() は全原因を検索する。Rust std::error::Error の source は先頭原因のみであり、複数原因の全探索はこれらの API を使う。
+
+Windows amd64 の client lifetime と明示 adapter の比較である。Go の CloseClient 不在時の既定 CloseIdleConnections に対応する SDK transport の解放は未実装で、Rust adapter には明示 closer を要求する。Facade.Use の pool replay/commit と close エラーの結合、実 account service の既定選択・refresh・UID 照合・CAS、設定と全 SDK options、CLI/MCP/bootstrap、親子 Context、全取消競合・panic/負荷、他 OS は未移植または未検証。
+
+```text
+go test -race ./internal/shared/lifecycle ./internal/services/pixiv -count=1
+go vet ./internal/shared/lifecycle ./internal/services/pixiv
+cargo test -p pixiv-app --test lease --test sessions --locked
+```
+
+基準を意図して更新する場合だけ Go テストの `-args -migration-update-lease` または `-args -migration-update-sessions` をそれぞれの package に指定する。
+
+Go/Rust DB 相互テストは、Go 用 native 環境と通常 Cargo のキャッシュを混在させないため `target/go-interop` を使う。CARGO_TARGET_DIR が指定されている場合は、その下の go-interop を使う。初回は独立したビルドが必要だが、以後は同じ場所を再利用する。対象テスト・実行回数・結果の照合は変えない。

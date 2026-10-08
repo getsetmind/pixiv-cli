@@ -80,7 +80,7 @@ func TestMigrationAccountsGoRustCredentialInteroperability(t *testing.T) {
 	db.Close()
 	run := func(phase string) {
 		t.Helper()
-		command := exec.Command("cargo", "test", "-p", "pixiv-app", "--test", "accounts", "--locked", "accounts_exchange_with_go_repository", "--", "--ignored", "--exact")
+		command := exec.Command("cargo", "test", "--target-dir", migrationRustTargetDirectory(), "-p", "pixiv-app", "--test", "accounts", "--locked", "accounts_exchange_with_go_repository", "--", "--ignored", "--exact")
 		command.Dir = filepath.Join("..", "..", "..")
 		command.Env = append(os.Environ(), "PIXIV_MIGRATION_DATABASE_DIRECTORY="+dir, "PIXIV_MIGRATION_ACCOUNT_PHASE="+phase)
 		output, err := command.CombinedOutput()

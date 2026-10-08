@@ -1,4 +1,5 @@
 use crate::diagnostics::{Event, Scope};
+pub use crate::lease::Lease;
 use std::{
     fmt,
     sync::{
