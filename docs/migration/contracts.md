@@ -57,3 +57,18 @@ cargo test -p pixiv-sdk --test cursors --test resource_ref --locked
 ```
 
 レビュー済みの基準更新には Go テストの `-args -migration-update-cursors` を使用する。通常の検証では更新しない。
+
+## Pixiv HTTP エラー分類
+
+[http-status.json](contracts/http-status.json) は固定 Go 版の content API と OAuth の分類から採取した 64 ケースを持つ。16 種類の HTTP status と Retry-After の有無を組み合わせる。Rust は公開の `Client::artwork` と `oauth::refresh` を fixture transport 経由で呼び、reason、status、product、operation、表示、retry の有無と期限、要求が 1 回であることを比較する。
+
+Content API の 400 は InvalidArgument、401 は CredentialsExpired、404 は NotFound、410 は ContentUnavailable となる。OAuth の 400・401 は CredentialsExpired、404・410 は UpstreamError となる。両方で HTTP の 5xx は UpstreamError であり、通信不能の UpstreamUnavailable と区別する。retry advice は 401・429 と OAuth の 400 にだけ付く。
+
+この比較は分類済み HTTP 応答に対する契約である。実通信の Retry-After ヘッダー検証（HTTP-date・不正値・範囲）、Go の読み取り時の自動再試行、通信原因の分類・取消、認証開始と成功応答の全契約は未移植・未検証として残す。OAuth の refresh 失敗には公開 SDK の Open、code 交換には Complete の operation 名を使う。
+
+```text
+go test ./sdk/pixiv -run '^TestMigrationHTTPStatus' -count=1
+cargo test -p pixiv-sdk --test http_status --locked
+```
+
+基準を意図して更新する場合だけ Go テストの `-args -migration-update-http-status` を指定する。

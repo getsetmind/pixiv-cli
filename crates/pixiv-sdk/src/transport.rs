@@ -109,17 +109,32 @@ impl Transport for HttpTransport {
 }
 
 pub(crate) fn checked(response: Response, operation: &'static str) -> Result<Value> {
+    checked_status(response, operation, false)
+}
+
+pub(crate) fn checked_oauth(response: Response, operation: &'static str) -> Result<Value> {
+    checked_status(response, operation, true)
+}
+
+fn checked_status(response: Response, operation: &'static str, oauth: bool) -> Result<Value> {
     let code = match response.status {
         200..=299 => return Ok(response.body),
-        401 => Reason::Unauthorized,
+        400 if oauth => Reason::CredentialsExpired,
+        400 => Reason::InvalidArgument,
+        401 => Reason::CredentialsExpired,
         403 => Reason::Forbidden,
-        404 => Reason::NotFound,
+        404 if !oauth => Reason::NotFound,
+        410 if !oauth => Reason::ContentUnavailable,
         429 => Reason::RateLimited,
-        500..=599 => Reason::UpstreamUnavailable,
         _ => Reason::UpstreamError,
     };
-    let after = response
-        .retry_after_seconds
+    let retry = matches!(response.status, 401 | 429) || (oauth && response.status == 400);
+    let seconds = if retry {
+        response.retry_after_seconds
+    } else {
+        None
+    };
+    let after = seconds
         .and_then(|seconds| i64::try_from(seconds).ok())
         .and_then(TimeDelta::try_seconds)
         .and_then(|delta| Utc::now().checked_add_signed(delta));

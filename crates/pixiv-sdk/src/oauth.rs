@@ -1,6 +1,6 @@
 use crate::{
     Error, Reason, Result,
-    transport::{Request, Transport, checked},
+    transport::{Request, Transport, checked_oauth},
 };
 use base64::{Engine, engine::general_purpose::URL_SAFE_NO_PAD};
 use chrono::{DateTime, TimeDelta, Utc};
@@ -120,6 +120,7 @@ impl LoginSession {
         }
         exchange(
             transport,
+            "Complete",
             vec![
                 ("grant_type", "authorization_code".to_owned()),
                 ("code", codes[0].clone()),
@@ -142,6 +143,7 @@ pub async fn refresh<T: Transport>(transport: &T, refresh_token: &str) -> Result
     }
     exchange(
         transport,
+        "Open",
         vec![
             ("grant_type", "refresh_token".to_owned()),
             ("refresh_token", token.to_owned()),
@@ -150,7 +152,11 @@ pub async fn refresh<T: Transport>(transport: &T, refresh_token: &str) -> Result
     .await
 }
 
-async fn exchange<T: Transport>(transport: &T, extra: Vec<(&str, String)>) -> Result<Credentials> {
+async fn exchange<T: Transport>(
+    transport: &T,
+    operation: &'static str,
+    extra: Vec<(&str, String)>,
+) -> Result<Credentials> {
     let mut parameters = vec![
         ("client_id".to_owned(), CLIENT_ID.to_owned()),
         ("client_secret".to_owned(), CLIENT_SECRET.to_owned()),
@@ -161,17 +167,17 @@ async fn exchange<T: Transport>(transport: &T, extra: Vec<(&str, String)>) -> Re
             .into_iter()
             .map(|(key, value)| (key.to_owned(), value)),
     );
-    let body = checked(
+    let body = checked_oauth(
         transport
             .send(Request {
                 method: Method::POST,
                 url: "https://oauth.secure.pixiv.net/auth/token".to_owned(),
                 headers: super::pixiv::headers(None),
                 parameters,
-                operation: "oauth",
+                operation,
             })
             .await?,
-        "oauth",
+        operation,
     )?;
     #[derive(Deserialize)]
     struct Payload {
@@ -186,23 +192,23 @@ async fn exchange<T: Transport>(transport: &T, extra: Vec<(&str, String)>) -> Re
         name: String,
     }
     let payload: Payload = serde_json::from_value(body.get("response").cloned().unwrap_or(body))
-        .map_err(|_| Error::new(Reason::MalformedUpstreamResponse, "oauth"))?;
+        .map_err(|_| Error::new(Reason::MalformedUpstreamResponse, operation))?;
     let user_id = payload
         .user
         .id
         .parse::<i64>()
         .ok()
         .filter(|id| *id > 0)
-        .ok_or_else(|| Error::new(Reason::MalformedUpstreamResponse, "oauth"))?;
+        .ok_or_else(|| Error::new(Reason::MalformedUpstreamResponse, operation))?;
     if payload.access_token.is_empty()
         || payload.refresh_token.is_empty()
         || payload.expires_in <= 0
     {
-        return Err(Error::new(Reason::MalformedUpstreamResponse, "oauth"));
+        return Err(Error::new(Reason::MalformedUpstreamResponse, operation));
     }
     let expires_at = TimeDelta::try_seconds(payload.expires_in)
         .and_then(|duration| Utc::now().checked_add_signed(duration))
-        .ok_or_else(|| Error::new(Reason::MalformedUpstreamResponse, "oauth"))?;
+        .ok_or_else(|| Error::new(Reason::MalformedUpstreamResponse, operation))?;
     Ok(Credentials {
         access_token: payload.access_token,
         refresh_token: payload.refresh_token,

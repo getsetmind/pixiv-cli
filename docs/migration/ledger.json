@@ -5053,15 +5053,26 @@
     },
     {
       "id": "sdk/pixiv:Client.Artwork",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.Artwork"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/oauth.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_http_status_test.go#TestMigrationHTTPStatusMatchesFrozenClassification",
+        "crates/pixiv-sdk/tests/http_status.rs"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "HTTP status 分類だけを比較済み。正常応答・入力・認証・DTO・resource・実通信・再試行・保存の全契約は未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.ArtworkBookmark",
@@ -6865,15 +6876,26 @@
     },
     {
       "id": "sdk/pixiv:Open",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Open"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/oauth.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_http_status_test.go#TestMigrationHTTPStatusMatchesFrozenClassification",
+        "crates/pixiv-sdk/tests/http_status.rs"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "HTTP status 分類だけを比較済み。正常応答・入力・認証・DTO・resource・実通信・再試行・保存の全契約は未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:OpenWith",
