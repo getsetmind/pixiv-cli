@@ -423,3 +423,22 @@ cargo test -p pixiv-cli-rs --test search_dates --locked
 ```
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-search-date-options` を指定する。
+
+## CLI の作品検索条件
+
+[search-options.json](contracts/search-options.json) は固定 Go 版の実際の CLI・SDK を接続した210ケース。`search-by`、`sort`、`content-type`、`ai-mode`、`aspect-ratio`、`resolution`、`draw-tool` の既定値・正常値・不正値と、複数条件や日付を組み合わせた検証順を human/JSON/NDJSON の3モードで記録する。期待値は本番の Go コマンドと SDK から取得し、Go の本番コードは変更しない。
+
+Rust の `SearchOptions` は本番の Clap 引数を受け取り、型付き SDK request を作成する。content-type は Go と同じ空白除去と小文字化を行い、`illustration` を `illust` に対応させる。大文字 I に点が付いた `İLLUST` も含めて比較する。AI・aspect-ratio・resolution と search-by は文字列を厳密に判定する。draw-tool は Go と同じく値をそのまま query に渡し、表示されているカタログにない値も CLI では拒否しない。
+
+検証順は search-by、content-type、AI、aspect-ratio、resolution、period・日付とする。不正 sort は Go と同じく adapter では拒否せず、SDK が通信前に返す `invalid_argument` を維持する。空 sort は SDK の既定値に対応し、`popular_desc` も受け入れる。
+
+111ケースで fixture transport へ実際の Rust SDK を接続し、Go の GET・path・全 query と比較する。99ケースでは CLI 子プロセスの stderr・stdout・終了コードを比較する。adapter が拒否する87ケースは無効な proxy を設定し、SDK の sort エラー12ケースは空 token と proxy なしで通信前のエラーを確認する。Go の Pooled 実行回数と adapter の解決可否も比較するが、account/pool の移植済みとは扱わない。
+
+Windows amd64 の fixture 比較であり、正常時の実 CLI 子プロセスから HTTP・表示までの接続、AI only と全条件を組み合わせた実 CLI の全ページ、rating・bookmark のローカル処理、残りの flags・entity・入力パイプ、設定・account/pool、全 Unicode の大小文字、他 OS は未実装または未検証。検索コマンド全体の完了条件は満たしていない。
+
+```text
+go test -race ./internal/cli -run '^TestMigrationSearchSelectorsMatchFrozenQueriesAndValidationOrder$' -count=1
+cargo test -p pixiv-cli-rs --test search_options --locked
+```
+
+基準を意図して更新する場合だけ Go テストの `-args -migration-update-search-options` を指定する。

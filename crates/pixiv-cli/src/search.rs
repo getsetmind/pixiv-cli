@@ -3,6 +3,110 @@ use chrono::{DateTime, FixedOffset, NaiveDate};
 use clap::Args;
 use pixiv_sdk::pixiv::SearchArtworksRequest;
 
+#[derive(Args, Clone, Debug)]
+pub struct SearchOptions {
+    #[arg(long, default_value = "tag-partial", allow_hyphen_values = true)]
+    pub search_by: String,
+    #[arg(long, default_value = "date_desc", allow_hyphen_values = true)]
+    pub sort: String,
+    #[arg(long, default_value = "all", allow_hyphen_values = true)]
+    pub content_type: String,
+    #[arg(long, default_value = "all", allow_hyphen_values = true)]
+    pub ai_mode: String,
+    #[arg(long, default_value = "all", allow_hyphen_values = true)]
+    pub aspect_ratio: String,
+    #[arg(long, default_value = "all", allow_hyphen_values = true)]
+    pub resolution: String,
+    #[arg(long, default_value = "", allow_hyphen_values = true)]
+    pub draw_tool: String,
+    #[command(flatten)]
+    pub dates: SearchDateOptions,
+}
+
+impl Default for SearchOptions {
+    fn default() -> Self {
+        Self {
+            search_by: "tag-partial".into(),
+            sort: "date_desc".into(),
+            content_type: "all".into(),
+            ai_mode: "all".into(),
+            aspect_ratio: "all".into(),
+            resolution: "all".into(),
+            draw_tool: String::new(),
+            dates: SearchDateOptions::default(),
+        }
+    }
+}
+
+impl SearchOptions {
+    pub fn request(
+        &self,
+        word: &str,
+        now: DateTime<FixedOffset>,
+    ) -> Result<SearchArtworksRequest, CommandError> {
+        let target = match self.search_by.as_str() {
+            "tag-partial" => "partial_match_for_tags",
+            "tag-exact" => "exact_match_for_tags",
+            "title-caption" => "title_and_caption",
+            "tag-title-caption" => "keyword",
+            _ => {
+                return Err(CommandError::Message(
+                    "search-by must be one of tag-partial, tag-exact, title-caption, tag-title-caption",
+                ));
+            }
+        };
+        let content: String = self
+            .content_type
+            .trim()
+            .chars()
+            .map(|character| character.to_lowercase().next().unwrap_or(character))
+            .collect();
+        let content_type = match content.as_str() {
+            "" | "all" => "all",
+            "illust" | "illustration" => "illust",
+            "illust-and-ugoira" => "illust-and-ugoira",
+            "manga" => "manga",
+            "ugoira" => "ugoira",
+            _ => {
+                return Err(CommandError::Message(
+                    "content-type must be one of all, illust-and-ugoira, illust, manga, ugoira",
+                ));
+            }
+        };
+        if !matches!(self.ai_mode.as_str(), "all" | "exclude" | "only") {
+            return Err(CommandError::Message(
+                "ai-mode must be one of all, exclude, only",
+            ));
+        }
+        if !matches!(
+            self.aspect_ratio.as_str(),
+            "all" | "landscape" | "portrait" | "square"
+        ) {
+            return Err(CommandError::Message(
+                "aspect-ratio must be one of all, landscape, portrait, square",
+            ));
+        }
+        if !matches!(self.resolution.as_str(), "all" | "high" | "medium" | "low") {
+            return Err(CommandError::Message(
+                "resolution must be one of all, high, medium, low",
+            ));
+        }
+        let mut request = SearchArtworksRequest {
+            word: word.into(),
+            target: target.into(),
+            sort: self.sort.clone(),
+            content_type: content_type.into(),
+            ai_mode: self.ai_mode.clone(),
+            aspect_ratio: self.aspect_ratio.clone(),
+            resolution: self.resolution.clone(),
+            tool: self.draw_tool.clone(),
+            ..Default::default()
+        };
+        self.dates.apply(&mut request, now)?;
+        Ok(request)
+    }
+}
+
 #[derive(Args, Clone, Debug, Default)]
 pub struct SearchDateOptions {
     #[arg(long, default_value = "", allow_hyphen_values = true)]

@@ -1,5 +1,5 @@
 use clap::{Parser, Subcommand};
-use pixiv_cli_rs::search::SearchDateOptions;
+use pixiv_cli_rs::search::SearchOptions;
 use pixiv_cli_rs::{CommandError, DetailOutput, artwork_detail, finish_command};
 use pixiv_sdk::{Client, Error, Reason, reference::artwork_id};
 use std::io::{self, IsTerminal, Write};
@@ -24,7 +24,7 @@ enum Command {
     Search {
         query: String,
         #[command(flatten)]
-        dates: SearchDateOptions,
+        options: Box<SearchOptions>,
         #[arg(long, conflicts_with = "ndjson")]
         json: bool,
         #[arg(long)]
@@ -69,13 +69,8 @@ async fn execute(args: Arguments) -> Result<(), CommandError> {
         _ => None,
     };
     let search_request = match &args.command {
-        Command::Search { query, dates, .. } => {
-            let mut request = pixiv_sdk::pixiv::SearchArtworksRequest {
-                word: query.clone(),
-                ..Default::default()
-            };
-            dates.apply(&mut request, chrono::Utc::now().fixed_offset())?;
-            Some(request)
+        Command::Search { query, options, .. } => {
+            Some(options.request(query, chrono::Utc::now().fixed_offset())?)
         }
         _ => None,
     };
@@ -106,7 +101,7 @@ async fn execute(args: Arguments) -> Result<(), CommandError> {
         }
         Command::Search { json, ndjson, .. } => {
             let artworks = client
-                .search_artworks(search_request.expect("search date options were resolved"))
+                .search_artworks(search_request.expect("search options were resolved"))
                 .await?
                 .items;
             if json {
