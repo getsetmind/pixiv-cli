@@ -335,9 +335,13 @@ fn kind(artwork: &Artwork) -> &'static str {
         ArtworkKind::Unknown => "unknown",
     }
 }
-fn matches(artwork: &Artwork, filter: &IllustFilter) -> bool {
+fn matches(
+    artwork: &Artwork,
+    filter: &IllustFilter,
+    local_type: &pixiv_app::search_filter::ArtworkFilter,
+) -> bool {
     filter.id.is_none_or(|id| artwork.id == id)
-        && (filter.r#type.is_empty() || kind(artwork) == filter.r#type)
+        && local_type.matches(artwork.x_restrict, kind(artwork))
         && filter
             .min_views
             .is_none_or(|minimum| artwork.total_views >= minimum)
@@ -392,6 +396,15 @@ async fn collect<T: Transport>(
     input: &SearchIllustInput,
     plan: &Plan,
 ) -> Result<(Vec<Artwork>, bool, Option<Value>), String> {
+    let local_type = pixiv_app::search_filter::normalize_filter(
+        "",
+        input
+            .illust_filter
+            .as_ref()
+            .map(|filter| filter.r#type.as_str())
+            .unwrap_or_default(),
+    )
+    .map_err(|error| error.to_string())?;
     let has_range = input.bookmark_min.is_some() || input.bookmark_max.is_some();
     let bookmark_branch = has_range || !input.bookmark_strategy.is_empty();
     for (value, detail) in [
@@ -501,7 +514,7 @@ async fn collect<T: Transport>(
                 && (input
                     .illust_filter
                     .as_ref()
-                    .is_some_and(|filter| !matches(&artwork, filter))
+                    .is_some_and(|filter| !matches(&artwork, filter, &local_type))
                     || !seen.insert(format!("{}:{}", kind(&artwork), artwork.id)))
             {
                 continue;

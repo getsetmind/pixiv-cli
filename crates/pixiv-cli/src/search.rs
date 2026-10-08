@@ -55,24 +55,12 @@ impl SearchOptions {
                 ));
             }
         };
-        let content: String = self
-            .content_type
-            .trim()
-            .chars()
-            .map(|character| character.to_lowercase().next().unwrap_or(character))
-            .collect();
-        let content_type = match content.as_str() {
-            "" | "all" => "all",
-            "illust" | "illustration" => "illust",
-            "illust-and-ugoira" => "illust-and-ugoira",
-            "manga" => "manga",
-            "ugoira" => "ugoira",
-            _ => {
-                return Err(CommandError::Message(
+        let filter =
+            pixiv_app::search_filter::normalize_filter("", &self.content_type).map_err(|_| {
+                CommandError::Message(
                     "content-type must be one of all, illust-and-ugoira, illust, manga, ugoira",
-                ));
-            }
-        };
+                )
+            })?;
         if !matches!(self.ai_mode.as_str(), "all" | "exclude" | "only") {
             return Err(CommandError::Message(
                 "ai-mode must be one of all, exclude, only",
@@ -95,7 +83,7 @@ impl SearchOptions {
             word: word.into(),
             target: target.into(),
             sort: self.sort.clone(),
-            content_type: content_type.into(),
+            content_type: filter.content_type.into(),
             ai_mode: self.ai_mode.clone(),
             aspect_ratio: self.aspect_ratio.clone(),
             resolution: self.resolution.clone(),

@@ -442,3 +442,20 @@ cargo test -p pixiv-cli-rs --test search_options --locked
 ```
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-search-options` を指定する。
+
+## 共通のローカル rating・作品種別フィルター
+
+[search-local-filter.json](contracts/search-local-filter.json) は Go の実際の `searchfilter.NormalizeFilter`、`CursorContext`、`Matches` から取得した168ケース。rating と content-type の空値・既定値・別名・空白・大小文字・不正値、および両方が不正な場合のエラー優先順位を固定する。正常な80ケースでは、6種類の `x_restrict` と7種類の作品種別を組み合わせ、3,360件のマッチ判定を記録する。未知の制限値は all で保持し、明示的な rating では除外する。
+
+共通の `pixiv-app::search_filter` に正規化、ローカル判定、`filter/v1` と canonical rating/content-type を SHA-256 に渡す cursor context を実装した。空の作品種別と illustration は illust として扱う。aggregate の illust-and-ugoira は manga を含まない。不正な rating は content-type の検証より先に拒否する。
+
+CLI の既存 content-type 正規化と、MCP の illust_filter によるローカル種別判定をこの処理へ接続した。MCP の呼び出しでは rating は all とし、正規化は作品ごとに繰り返さず1回の検索で共有する。既存 CLI の検索条件・日付テストと MCP の144ケースも回帰検証する。
+
+この比較は Windows amd64 の合成値のみ。CLI の rating flags、ローカル判定後の論理ページ・重複排除、cursor context の SDK request への接続・resume、bookmark との組合せ、Go の直接構築された不正な Filter・零値、全 Unicode、他 OS は未実装または未検証。共有 helper の実装を検索コマンド全体の移植完了とは扱わない。
+
+```text
+go test -race ./internal/shared/searchfilter -count=1
+cargo test -p pixiv-app --test search_filter --locked
+```
+
+基準を意図して更新する場合だけ Go テストの `-args -migration-update-search-filter` を指定する。
