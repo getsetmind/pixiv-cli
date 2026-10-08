@@ -1,4 +1,5 @@
 mod duration;
+mod initialization;
 
 use crate::facade::PoolConfig;
 use std::collections::BTreeMap;
@@ -12,6 +13,7 @@ pub enum ConfigError {
     Syntax(toml::de::Error),
     Invalid(String),
     Removed(&'static str),
+    Joined(Vec<ConfigError>),
 }
 
 impl ConfigError {
@@ -41,6 +43,15 @@ impl fmt::Display for ConfigError {
                 }
             }
             Self::Invalid(message) => formatter.write_str(message),
+            Self::Joined(errors) => {
+                for (index, error) in errors.iter().enumerate() {
+                    if index > 0 {
+                        formatter.write_str("\n")?;
+                    }
+                    fmt::Display::fmt(error, formatter)?;
+                }
+                Ok(())
+            }
             Self::Removed(alias) => write!(
                 formatter,
                 "removed_setting: config key {alias:?} was removed; clear it with `pixiv config unset {alias}`"
@@ -54,6 +65,7 @@ impl std::error::Error for ConfigError {
         match self {
             Self::Io(error) => Some(error),
             Self::Syntax(error) => Some(error),
+            Self::Joined(errors) => errors.first().map(|error| error as &dyn std::error::Error),
             _ => None,
         }
     }
@@ -130,6 +142,10 @@ impl Store {
 
     pub fn path(&self) -> &Path {
         &self.path
+    }
+
+    pub fn ensure_defaults(&self) -> Result<(), ConfigError> {
+        initialization::ensure(&self.path)
     }
 
     pub fn current(&self) -> Result<Snapshot, ConfigError> {

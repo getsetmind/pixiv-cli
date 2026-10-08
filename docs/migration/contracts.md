@@ -789,7 +789,7 @@ cargo test -p pixiv-sdk --test pacing --locked
 
 ## 保存済みアカウントの実行経路
 
-`crates/pixiv-app/src/execution.rs` は設定 Store、実 DB、AccountService、Gate、Facade、pool Scheduler を本番の組み立てとして接続する。`Execution::http` は account attempt ごとに transport を作成し、pacing の状態を account 間で共有しない。CLI の作品詳細はこの経路と既存 `.pixiv-cli` のパスを使う。MCP・他の CLI の接続、初回設定ファイル作成はまだ未実装である。
+`crates/pixiv-app/src/execution.rs` は設定 Store、実 DB、AccountService、Gate、Facade、pool Scheduler を本番の組み立てとして接続する。`Execution::http` は account attempt ごとに transport を作成し、pacing の状態を account 間で共有しない。CLI の作品詳細はこの経路と既存 `.pixiv-cli` のパスを使い、初回設定作成も行う。MCP・他の CLI の接続はまだ未実装である。
 
 `crates/pixiv-app/tests/pool_session.rs` の `execution_reads_current_connection_and_default_account_before_refreshing_and_persisting` は、この組み立てを使い、実設定ファイルの変更が次の実行の default account・proxy・間隔に反映され、refresh の CAS 保存が SDK content request より先に完了することを確認する。`execution_pool_overrides_the_requested_account_and_persists_replay_state` は実 DB の pool 選択、未確定の rate limit から別 account への replay、credential revision と last selected を確認する。retry の応答時刻だけは実時計の120秒後を fixture に与える。固定時刻を使う既存テストも維持する。
 
@@ -807,4 +807,14 @@ cargo test -p pixiv-sdk --test pacing --locked
 
 detail-input の既存 fixture は Go の偽 FetchArtwork が valid ID に対して `pixiv:Artwork: unauthorized` を返す入力境界用の契約である。Rust の valid 入力は同じ ID に解決することを維持し、起動後のエラーを新たに固定した実アカウント経路の `pixiv:auth: unauthorized: no pixiv account is authenticated` と比較する。不正入力の出力・終了コードは既存 fixture のまま維持し、DB を開かないことも確認する。既存 Go fixture の期待値は変更しない。
 
-初回設定作成・startup hooks・proxy flags・全 entity/record input・MCP のアカウント実行・content 取得中の Context 取消・通信/OS の未解消差分は残る。作品詳細を検証済みとはしない。
+startup hooks・proxy flags・全 entity/record input・MCP のアカウント実行・content 取得中の Context 取消・通信/OS の未解消差分は残る。作品詳細を検証済みとはしない。
+
+## 作品詳細の初回起動と設定作成
+
+[config-initialization.json](contracts/config-initialization.json) は実 Go DefaultStore の初回生成・空ファイル・未知キー/コメント/CRLF を含む既存ファイル・不正 TOML の4ケースである。初回生成の bytes と2回目の非上書きを固定する。Rust Store の `ensure_defaults` は本番の `config/default.toml` を排他的に作成し、書き込みと sync の失敗時は未完成ファイルを削除する。既存ファイルは読み込み・修正せず保持する。
+
+[detail-startup.json](contracts/detail-startup.json) は Go の実 Run/root を通した10ケースで、初回作成が作品 ID 検証より先であること、設定構文エラーが ID エラーより先であること、設定エラー・ID エラー時には DB を作らないことを固定する。通常/明示 JSON、設定生成 bytes、stdout・stderr・終了コード・DB の有無を Rust の実子プロセスと比較する。Go の更新 cleanup と URL handler だけは既存のテスト seam で無効化し、OS 連携の証拠とはしない。
+
+Rust の作品詳細起動は設定作成と Runtime 検証を入力解決の前へ接続する。初回生成と読み込みは同じ Store を使う。設定はその後の JSON output resolver と SDK options/pool で Go と同様に fresh read する。未知キー・コメント・改行を含む既存設定は変更しない。
+
+Unix 向けのテストは、ディレクトリ 0700・新規ファイル 0600・既存ファイルの mode 保持を確認する。Windows 実行ではそのテストは実行対象外で、他 OS の証拠とはしない。close エラーの報告、write/sync/cleanup 失敗の比較、全 filesystem error の表示・symlink・並行初期化・他 OS と startup hooks は未検証である。Rust の close は File の drop に依存し、Go の Close エラーを返す契約は未移植である。

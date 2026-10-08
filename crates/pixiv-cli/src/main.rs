@@ -66,6 +66,31 @@ async fn main() {
 }
 
 async fn execute(args: Arguments) -> Result<(), CommandError> {
+    let detail_config = if matches!(&args.command, Command::Detail { .. }) {
+        let home_name = if cfg!(windows) { "USERPROFILE" } else { "HOME" };
+        let home = std::env::var_os(home_name)
+            .filter(|home| !home.is_empty())
+            .ok_or_else(|| {
+                let variable = if cfg!(windows) {
+                    "%USERPROFILE%"
+                } else {
+                    "$HOME"
+                };
+                CommandError::MessageText(format!("{variable} is not defined"))
+            })?;
+        let directory = std::path::PathBuf::from(home).join(".pixiv-cli");
+        let config = pixiv_app::config::Store::new(directory.join("config.toml"));
+        config
+            .ensure_defaults()
+            .map_err(pixiv_app::scheduler::SchedulerError::from)?;
+        config
+            .current()
+            .and_then(|snapshot| snapshot.runtime())
+            .map_err(pixiv_app::scheduler::SchedulerError::from)?;
+        Some((directory, config))
+    } else {
+        None
+    };
     let detail_id = match &args.command {
         Command::Detail { source, .. } => Some(detail_artwork_id(source)?),
         _ => None,
@@ -77,21 +102,7 @@ async fn execute(args: Arguments) -> Result<(), CommandError> {
         _ => None,
     };
     if let Command::Detail { json, ndjson, .. } = &args.command {
-        let home_name = if cfg!(windows) { "USERPROFILE" } else { "HOME" };
-        let home = std::env::var_os(home_name)
-            .filter(|home| !home.is_empty())
-            .ok_or_else(|| {
-                let variable = if cfg!(windows) {
-                    "%USERPROFILE%"
-                } else {
-                    "$HOME"
-                };
-                CommandError::MessageText(format!(
-                    "determine home directory: {variable} is not defined"
-                ))
-            })?;
-        let directory = std::path::PathBuf::from(home).join(".pixiv-cli");
-        let config = pixiv_app::config::Store::new(directory.join("config.toml"));
+        let (directory, config) = detail_config.expect("detail startup was resolved");
         let json_output = if *json {
             true
         } else {

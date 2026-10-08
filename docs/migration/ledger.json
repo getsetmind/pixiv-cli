@@ -511,7 +511,9 @@
       },
       "rust_sources": [
         "crates/pixiv-app/src/config.rs",
-        "crates/pixiv-app/src/config/duration.rs"
+        "crates/pixiv-app/src/config/duration.rs",
+        "crates/pixiv-app/src/config/initialization.rs",
+        "crates/pixiv-cli/src/main.rs"
       ],
       "tests": [
         "internal/config/settings/migration_snapshot_test.go#TestMigrationConfigSnapshotPreservesRuntimePrecedenceAndDefaultAccounts",
@@ -520,11 +522,17 @@
         "crates/pixiv-app/tests/config_snapshot.rs#config_snapshot_matches_go_runtime_precedence_and_default_accounts",
         "crates/pixiv-app/tests/config_snapshot.rs#captured_configuration_retains_file_and_environment_while_new_reads_observe_changes",
         "crates/pixiv-app/tests/config_snapshot.rs#configuration_failures_stop_client_acquisition_and_retain_the_typed_cause",
-        "crates/pixiv-app/tests/pool_session.rs#pool_replay_refreshes_and_persists_each_selected_account_before_sdk_content"
+        "crates/pixiv-app/tests/pool_session.rs#pool_replay_refreshes_and_persists_each_selected_account_before_sdk_content",
+        "internal/config/settings/migration_initialization_test.go#TestMigrationInitialConfigurationPreservesExistingDocumentsAndDefaultBytes",
+        "internal/cli/migration_detail_startup_test.go#TestMigrationDetailStartupInitializesConfigurationBeforeInputAndAccountAccess",
+        "crates/pixiv-app/tests/config_initialization.rs#initial_configuration_matches_go_default_bytes_and_preserves_existing_documents",
+        "crates/pixiv-app/tests/config_initialization.rs#initialization_tightens_the_directory_and_preserves_existing_file_permissions",
+        "crates/pixiv-cli/tests/detail_accounts.rs#detail_startup_matches_go_initialization_input_order_and_database_creation"
       ],
       "verified_platforms": [],
       "differences": [
-        "設定 snapshot・runtime・default UID の98ケースをGo/Rustで比較。file/env捕捉、explicit empty、型変換とdomain検証、removed_settingとエラー順序、日時・数値・duration境界、読み込み後のfile不変を確認。実StoreをAccountServiceのdefault UID readerとFacadeのpool config readerに接続してDB/refresh/pool replayをRustで検証し、設定失敗がclient取得前に止まることとtyped ConfigError/IO causeを確認。CLI/MCP/bootstrapの接続、config getの出力・秘匿性、設定パス・書き込み・コメント保存・権限、全TOML/型変換/診断/非UTF8入力、他OSは未完了。"
+        "設定 snapshot・runtime・default UID の98ケースをGo/Rustで比較。file/env捕捉、explicit empty、型変換とdomain検証、removed_settingとエラー順序、日時・数値・duration境界、読み込み後のfile不変を確認。実StoreをAccountServiceのdefault UID readerとFacadeのpool config readerに接続してDB/refresh/pool replayをRustで検証し、設定失敗がclient取得前に止まることとtyped ConfigError/IO causeを確認。CLI/MCP/bootstrapの接続、config getの出力・秘匿性、設定パス・書き込み・コメント保存・権限、全TOML/型変換/診断/非UTF8入力、他OSは未完了。",
+        "作品詳細の初回設定作成と Runtime 検証を入力より先へ接続。Go 実 DefaultStore 4ケースと実 Run/root 10ケースで bytes・既存設定保持・エラー順序・DB有無を比較。Unix mode テストは Windows では未実行。Close エラーの報告は未移植、filesystem 失敗/並行/symlink・startup hooks・他OSは未検証。config コマンドの CLI 実行は依然未接続。"
       ]
     },
     {
@@ -536,7 +544,9 @@
       },
       "rust_sources": [
         "crates/pixiv-app/src/config.rs",
-        "crates/pixiv-app/src/config/duration.rs"
+        "crates/pixiv-app/src/config/duration.rs",
+        "crates/pixiv-app/src/config/initialization.rs",
+        "crates/pixiv-cli/src/main.rs"
       ],
       "tests": [
         "internal/config/settings/migration_snapshot_test.go#TestMigrationConfigSnapshotPreservesRuntimePrecedenceAndDefaultAccounts",
@@ -545,11 +555,17 @@
         "crates/pixiv-app/tests/config_snapshot.rs#config_snapshot_matches_go_runtime_precedence_and_default_accounts",
         "crates/pixiv-app/tests/config_snapshot.rs#captured_configuration_retains_file_and_environment_while_new_reads_observe_changes",
         "crates/pixiv-app/tests/config_snapshot.rs#configuration_failures_stop_client_acquisition_and_retain_the_typed_cause",
-        "crates/pixiv-app/tests/pool_session.rs#pool_replay_refreshes_and_persists_each_selected_account_before_sdk_content"
+        "crates/pixiv-app/tests/pool_session.rs#pool_replay_refreshes_and_persists_each_selected_account_before_sdk_content",
+        "internal/config/settings/migration_initialization_test.go#TestMigrationInitialConfigurationPreservesExistingDocumentsAndDefaultBytes",
+        "internal/cli/migration_detail_startup_test.go#TestMigrationDetailStartupInitializesConfigurationBeforeInputAndAccountAccess",
+        "crates/pixiv-app/tests/config_initialization.rs#initial_configuration_matches_go_default_bytes_and_preserves_existing_documents",
+        "crates/pixiv-app/tests/config_initialization.rs#initialization_tightens_the_directory_and_preserves_existing_file_permissions",
+        "crates/pixiv-cli/tests/detail_accounts.rs#detail_startup_matches_go_initialization_input_order_and_database_creation"
       ],
       "verified_platforms": [],
       "differences": [
-        "設定 snapshot・runtime・default UID の98ケースをGo/Rustで比較。file/env捕捉、explicit empty、型変換とdomain検証、removed_settingとエラー順序、日時・数値・duration境界、読み込み後のfile不変を確認。実StoreをAccountServiceのdefault UID readerとFacadeのpool config readerに接続してDB/refresh/pool replayをRustで検証し、設定失敗がclient取得前に止まることとtyped ConfigError/IO causeを確認。CLI/MCP/bootstrapの接続、config getの出力・秘匿性、設定パス・書き込み・コメント保存・権限、全TOML/型変換/診断/非UTF8入力、他OSは未完了。"
+        "設定 snapshot・runtime・default UID の98ケースをGo/Rustで比較。file/env捕捉、explicit empty、型変換とdomain検証、removed_settingとエラー順序、日時・数値・duration境界、読み込み後のfile不変を確認。実StoreをAccountServiceのdefault UID readerとFacadeのpool config readerに接続してDB/refresh/pool replayをRustで検証し、設定失敗がclient取得前に止まることとtyped ConfigError/IO causeを確認。CLI/MCP/bootstrapの接続、config getの出力・秘匿性、設定パス・書き込み・コメント保存・権限、全TOML/型変換/診断/非UTF8入力、他OSは未完了。",
+        "作品詳細の初回設定作成と Runtime 検証を入力より先へ接続。Go 実 DefaultStore 4ケースと実 Run/root 10ケースで bytes・既存設定保持・エラー順序・DB有無を比較。Unix mode テストは Windows では未実行。Close エラーの報告は未移植、filesystem 失敗/並行/symlink・startup hooks・他OSは未検証。config コマンドの CLI 実行は依然未接続。"
       ]
     },
     {
@@ -604,7 +620,9 @@
         "crates/pixiv-sdk/src/pacing.rs",
         "crates/pixiv-sdk/src/transport.rs",
         "crates/pixiv-sdk/src/resource_transport.rs",
-        "crates/pixiv-app/src/execution.rs"
+        "crates/pixiv-app/src/execution.rs",
+        "crates/pixiv-app/src/config.rs",
+        "crates/pixiv-app/src/config/initialization.rs"
       ],
       "tests": [
         "internal/cli/migration_detail_input_test.go#TestMigrationDetailInputMatchesFrozenErrorsBeforeAccountAccess",
@@ -624,7 +642,12 @@
         "crates/pixiv-sdk/tests/pacing.rs#default_http_transport_keeps_a_pending_response_after_the_prototype_sixty_second_limit",
         "crates/pixiv-sdk/tests/pacing.rs#aborting_a_resource_pacing_wait_releases_the_queue_without_consuming_a_request_start",
         "internal/cli/migration_detail_accounts_test.go#TestMigrationDetailUsesPersistedAccountAndConfigurationErrors",
-        "crates/pixiv-cli/tests/detail_accounts.rs#detail_process_matches_go_saved_account_configuration_errors_without_changing_settings"
+        "crates/pixiv-cli/tests/detail_accounts.rs#detail_process_matches_go_saved_account_configuration_errors_without_changing_settings",
+        "internal/config/settings/migration_initialization_test.go#TestMigrationInitialConfigurationPreservesExistingDocumentsAndDefaultBytes",
+        "internal/cli/migration_detail_startup_test.go#TestMigrationDetailStartupInitializesConfigurationBeforeInputAndAccountAccess",
+        "crates/pixiv-app/tests/config_initialization.rs#initial_configuration_matches_go_default_bytes_and_preserves_existing_documents",
+        "crates/pixiv-app/tests/config_initialization.rs#initialization_tightens_the_directory_and_preserves_existing_file_permissions",
+        "crates/pixiv-cli/tests/detail_accounts.rs#detail_startup_matches_go_initialization_input_order_and_database_creation"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -633,7 +656,8 @@
         "122 fixed Go detail input/error-exit cases and 72 SDK-to-detail output cases compare source parsing before client construction, plain/JSON errors and exit 1, human output and HTML captions, JSON DTOs and canonical NDJSON records. Rust production artwork_detail receives a real SDK client and output writer; fixture transports remain in tests. A further 27 writer contracts preserve partial output, command_failed diagnostics and exit status; only NDJSON BrokenPipe succeeds silently. Production finish_command retains io::Error causes and is shared by the binary.",
         "Successful CLI process/network integration, TTY/configuration, record/text pipelines and aggregate JSON, OS/process BrokenPipe and stderr failures, all HTML and Unicode version differences, all flags/aliases and conflict errors, novel/user/content, account/authentication/transport, MCP and other platforms remain unverified.",
         "CommandConnectionの25ケースでproxy/interval/errorと実HTTP transport構築可否を比較し、選択したintervalをtransportへ渡す。共有HTTP pacingをGoのOpenWith後のcontent/resource redirect/mutation 5通信とRust実socketで比較（観測差5ms）。clone間でlast startを共有する。Goのdefault SDK HTTP timeout=0を再現しRust試作の60秒制限を削除。仮想61秒で保留responseが存続し、pacing待機task abort後も残り時間で次requestが再開することを確認。SDK Options全体/client再構築/pool replayの寿命/context取消/deadline/全競合/App API redirect/TLS/SOCKS wire/pool/idle cleanup/CLI/MCP bootstrap/他OSは未完了または未検証。",
-        "作品詳細 CLI を既存 .pixiv-cli の設定・DB・実 Execution へ接続。実 Go detailDeps の12ケースで隔離ホームの Rust 子プロセスの認証/設定エラーを比較。既存72出力/27writerケースは refresh CAS・実 DB・CLI presenter でも同じ期待値を検証。正常系 CLI 子プロセス HTTPS、初回設定生成、startup、proxy flags、全entity/record入力、MCP、content Context取消と通信/OS差は未実装または未検証。"
+        "作品詳細 CLI を既存 .pixiv-cli の設定・DB・実 Execution へ接続。実 Go detailDeps の12ケースで隔離ホームの Rust 子プロセスの認証/設定エラーを比較。既存72出力/27writerケースは refresh CAS・実 DB・CLI presenter でも同じ期待値を検証。正常系 CLI 子プロセス HTTPS、初回設定生成、startup、proxy flags、全entity/record入力、MCP、content Context取消と通信/OS差は未実装または未検証。",
+        "作品詳細の初回設定作成と Runtime 検証を入力より先へ接続。Go 実 DefaultStore 4ケースと実 Run/root 10ケースで bytes・既存設定保持・エラー順序・DB有無を比較。Unix mode テストは Windows では未実行。Close エラーの報告は未移植、filesystem 失敗/並行/symlink・startup hooks・他OSは未検証。config コマンドの CLI 実行は依然未接続。"
       ]
     },
     {
