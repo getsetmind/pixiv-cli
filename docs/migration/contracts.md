@@ -117,3 +117,18 @@ cargo test -p pixiv-sdk --test artwork_detail --test artwork_pages --locked
 ```
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-pages` を指定する。
+
+## 共有 resource の要求・応答
+
+[resource-io.json](contracts/resource-io.json) は Go 版の `OpenResourceRequest.Validate` の 144 ケースと `NewResourceResponse` の 18 ケースを持つ。許可メソッドと大小文字、4 種類のヘッダーの全制御バイト、複数エラーの優先順位、UTF-8 を検証する。Validate は reference の identity を検証せず、製品側が再検証する。
+
+Rust の `resource::OpenResourceRequest` は空 method・GET・HEAD を許可し、ヘッダー値の 0x00–0x1f と 0x7f を拒否する。`ResourceResponse<R>` は caller が所有する AsyncRead stream を保持し、生成時も metadata の読み取り時も body を先読みしない。未読・読了のどちらでも response の破棄が stream を解放する。ヘッダーは7種類の canonical keyだけをコピーし、複数値の順を保存する。Header の返却値や元の map を変更しても内部状態は変わらない。Content-Length は Go と同じ符号付き int64 とし、不正値・範囲外は0となる。
+
+この段階では共有の container と validation の比較のみ。HTTP の実ストリーム、HEAD/204/304 の空 body、redirect・cookie・条件付き取得、partial read・通信失敗、製品の reference 再解決・open/save、body の close 時のエラーは未移植または未検証。Go の明示 Close は Rust の所有権による Drop に対応させるが、実HTTPへの適用は別に検証する。
+
+```text
+go test ./sdk -run '^TestMigrationResource' -count=1
+cargo test -p pixiv-sdk --test resource_io --locked
+```
+
+基準を意図して更新する場合だけ Go テストの `-args -migration-update-resource-io` を指定する。

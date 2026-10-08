@@ -8,6 +8,7 @@ pub mod oauth;
 pub mod pixiv;
 pub mod reference;
 pub mod resource;
+mod resource_io;
 pub mod transport;
 
 pub use error::{Error, Reason, Result};

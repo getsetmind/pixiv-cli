@@ -1,4 +1,8 @@
 use crate::codec::{Payload, PayloadSeed, decode_base64, engine, normalize_json};
+pub use crate::resource_io::{
+    OpenResourceRequest, RESOURCE_METHOD_GET, RESOURCE_METHOD_HEAD, ResourceHeaders,
+    ResourceResponse,
+};
 use crate::{Error, Reason, Result};
 use base64::Engine;
 use serde::{
