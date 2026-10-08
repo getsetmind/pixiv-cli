@@ -389,3 +389,18 @@ cargo test -p pixiv-mcp --test search_illust --locked
 ```
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-mcp-search` を指定する。
+
+## CLI/MCP の半年・一年の日付範囲
+
+[search-date-inputs.json](contracts/search-date-inputs.json) の固定時刻を Go の CLI と MCP の実際の quickDateRange helper に渡し、それぞれ [search-dates-cli.json](contracts/search-dates-cli.json) と [search-dates-mcp.json](contracts/search-dates-mcp.json) に168ケースを記録する。東京の午前0時の前後、UTC・UTC-8・UTC-12・UTC+14、月末、うるう日、1900/2000年、年0・年9999の境界、未対応 duration を含む。実時刻を期待値に含めず、Go の本番 helper は変更しない。
+
+共通のアプリケーション処理用 `pixiv-app` crate を追加し、`dates::quick_date_range` を Rust の外部テストで双方の Go 結果と比較する。半年・一年では東京の日付へ変換し、同じ日号が対象月にない場合は月末へ丸める。それ以外の duration は明示日付へ展開しない。年の表記は Go と揃え、負の年は符号の後に最低4桁、10000年は余分な `+` を付けずに表す。元の MCP の `%Y` に任せる実装では、この10000年の表記が異なる。
+
+MCP の実行処理は現在時刻を共通 helper に渡し、日時計算の重複を除いた。前節の「半年/一年と日付境界が未検証」は、この168ケースの日付計算について解消した。CLI の検索 flags・日付入力検証から共通 helper への接続、長期 duration の実 MCP セッションから SDK HTTP query までの比較、clock の極端な範囲・全 timezone・他 OS は未実装または未検証。Go の汎用 AddMonthsClamped の全範囲を移植済みとは扱わない。
+
+```text
+go test -race ./internal/cli/commands/pixiv/search ./internal/mcpserver/pixiv/tools/search_illust -run '^TestMigrationQuickDateRanges' -count=1
+cargo test -p pixiv-app --test search_dates --locked
+```
+
+基準を意図して更新する場合だけ Go テストの `-args -migration-update-search-dates` を指定する。Go の CLI と MCP の package は別々の出力ファイルを更新する。

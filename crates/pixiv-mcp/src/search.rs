@@ -1,5 +1,5 @@
 use crate::{CallToolResult, Records, TextContent};
-use chrono::{FixedOffset, Months, NaiveDate, Utc};
+use chrono::{NaiveDate, Utc};
 use pixiv_sdk::{
     Client, Error, Reason,
     models::{Artwork, ArtworkKind},
@@ -278,22 +278,12 @@ fn valid_date(value: &str) -> bool {
 fn validate(input: &mut SearchIllustInput) -> Result<Plan, String> {
     if input.start_date.is_empty()
         && input.end_date.is_empty()
-        && matches!(input.duration.as_str(), "within_half_year" | "within_year")
+        && let Some(range) =
+            pixiv_app::dates::quick_date_range(&input.duration, Utc::now().fixed_offset())
+                .map_err(|error| error.to_string())?
     {
-        let today = Utc::now()
-            .with_timezone(&FixedOffset::east_opt(9 * 3600).expect("Tokyo offset is valid"))
-            .date_naive();
-        let months = if input.duration == "within_half_year" {
-            6
-        } else {
-            12
-        };
-        input.start_date = today
-            .checked_sub_months(Months::new(months))
-            .ok_or("date range overflow")?
-            .format("%Y-%m-%d")
-            .to_string();
-        input.end_date = today.format("%Y-%m-%d").to_string();
+        input.start_date = range.start_date;
+        input.end_date = range.end_date;
         input.duration.clear();
     }
     if !input.duration.is_empty() && (!input.start_date.is_empty() || !input.end_date.is_empty()) {

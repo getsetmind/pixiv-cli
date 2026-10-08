@@ -803,15 +803,25 @@
     },
     {
       "id": "cli:pixiv search",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv search"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-app/src/dates.rs"
+      ],
+      "tests": [
+        "internal/cli/commands/pixiv/search/migration_dates_test.go#TestMigrationQuickDateRangesMatchFrozenTokyoBoundaries",
+        "crates/pixiv-app/tests/search_dates.rs#search_ranges_match_both_go_adapters_at_tokyo_midnight_month_ends_and_leap_days"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "CLI/MCP の半年・一年の日付計算 helper を固定時刻の168ケースで比較し、共通 pixiv-app crate に実装した。Rust CLI の検索は現在も先頭ページの試作であり、flags・入力検証・共通 helper への接続、全検索条件・entity・ページ送り・出力・終了コード・account/pool、他 OS は未実装または未検証。"
+      ]
     },
     {
       "id": "cli:pixiv series",
@@ -1635,18 +1645,21 @@
         "crates/pixiv-mcp/src/search.rs",
         "crates/pixiv-mcp/src/stdio.rs",
         "crates/pixiv-sdk/src/search.rs",
-        "crates/pixiv-record/src/lib.rs"
+        "crates/pixiv-record/src/lib.rs",
+        "crates/pixiv-app/src/dates.rs"
       ],
       "tests": [
         "internal/mcpserver/pixiv/migration_search_test.go#TestMigrationMCPSearchMatchesFrozenFiltersLogicalPagesAndBookmarkStrategies",
-        "crates/pixiv-mcp/tests/search_illust.rs#search_tool_matches_go_schema_logical_pages_filters_and_bookmark_strategies"
+        "crates/pixiv-mcp/tests/search_illust.rs#search_tool_matches_go_schema_logical_pages_filters_and_bookmark_strategies",
+        "internal/mcpserver/pixiv/tools/search_illust/migration_dates_test.go#TestMigrationQuickDateRangesMatchFrozenTokyoBoundaries",
+        "crates/pixiv-app/tests/search_dates.rs#search_ranges_match_both_go_adapters_at_tokyo_midnight_month_ends_and_leap_days"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
         "Go MCP の144ケースで schema、検証、論理 page/limit、全 SDK 検索条件、空ページ補充、重複除去・作品フィルター、bookmark strategy/bounds/checkpoint/filter metadata、部分結果の破棄を固定し、Rust stdio の結果と全 HTTP query を比較した。範囲なしで strategy を指定した場合の重複・illust_filter の非適用も保持した。",
-        "半年/一年の長期 duration・日付境界、全 JSON wire 境界と複数不正 field の診断順、cursor 循環、検索 cancellation/deadline、pool 再実行・credential/account 状態、他 OS は未移植または未検証。Go の pool 実行回数も記録するが、Rust の pool 互換は未検証。"
+        "半年/一年の日付計算は固定時刻の168ケースで比較し、MCP は共通 helper を呼ぶ。長期 duration の実セッションから HTTP query までの比較、極端な clock・全 timezone、全 JSON wire 境界と複数不正 field の診断順、cursor 循環、検索 cancellation/deadline、pool 再実行・credential/account 状態、他 OS は未移植または未検証。Go の pool 実行回数も記録するが、Rust の pool 互換は未検証。"
       ]
     },
     {
