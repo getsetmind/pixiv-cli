@@ -3255,39 +3255,81 @@
     },
     {
       "id": "sdk:SavedResource",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk:SavedResource"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/save.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/resource.rs",
+        "crates/pixiv-sdk/src/artwork.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_save_test.go#TestMigrationResourceSaveMatchesFrozenFilesProgressAndErrors",
+        "crates/pixiv-sdk/tests/resource_save.rs",
+        "crates/pixiv-sdk/tests/artwork_open_resource.rs"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "SaveResource/SaveResourceURLの40ケースで完成ファイル・上書き保護・エラー優先順位・進捗・body所有権・一時ファイル削除を比較。future破棄時の後始末もRustで検証。SaveResourceはugoira_archive fixtureのみで、全kind/identity/API失敗、実HTTP/redirect/TLS、context/deadline API、Unix権限・特殊path・symlink・disk full・sync/close失敗・並行保存、async runtimeへの同期ファイル操作の影響、CLI/MCPは未検証。"
+      ]
     },
     {
       "id": "sdk:SaveOptions",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk:SaveOptions"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/save.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/resource.rs",
+        "crates/pixiv-sdk/src/artwork.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_save_test.go#TestMigrationResourceSaveMatchesFrozenFilesProgressAndErrors",
+        "crates/pixiv-sdk/tests/resource_save.rs",
+        "crates/pixiv-sdk/tests/artwork_open_resource.rs"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "SaveResource/SaveResourceURLの40ケースで完成ファイル・上書き保護・エラー優先順位・進捗・body所有権・一時ファイル削除を比較。future破棄時の後始末もRustで検証。SaveResourceはugoira_archive fixtureのみで、全kind/identity/API失敗、実HTTP/redirect/TLS、context/deadline API、Unix権限・特殊path・symlink・disk full・sync/close失敗・並行保存、async runtimeへの同期ファイル操作の影響、CLI/MCPは未検証。"
+      ]
     },
     {
       "id": "sdk:SaveProgress",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk:SaveProgress"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/save.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/resource.rs",
+        "crates/pixiv-sdk/src/artwork.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_save_test.go#TestMigrationResourceSaveMatchesFrozenFilesProgressAndErrors",
+        "crates/pixiv-sdk/tests/resource_save.rs",
+        "crates/pixiv-sdk/tests/artwork_open_resource.rs"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "SaveResource/SaveResourceURLの40ケースで完成ファイル・上書き保護・エラー優先順位・進捗・body所有権・一時ファイル削除を比較。future破棄時の後始末もRustで検証。SaveResourceはugoira_archive fixtureのみで、全kind/identity/API失敗、実HTTP/redirect/TLS、context/deadline API、Unix権限・特殊path・symlink・disk full・sync/close失敗・並行保存、async runtimeへの同期ファイル操作の影響、CLI/MCPは未検証。"
+      ]
     },
     {
       "id": "sdk:ToResourceDTO",
@@ -5870,27 +5912,55 @@
     },
     {
       "id": "sdk/pixiv:Client.SaveResource",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.SaveResource"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/save.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/resource.rs",
+        "crates/pixiv-sdk/src/artwork.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_save_test.go#TestMigrationResourceSaveMatchesFrozenFilesProgressAndErrors",
+        "crates/pixiv-sdk/tests/resource_save.rs",
+        "crates/pixiv-sdk/tests/artwork_open_resource.rs"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "SaveResource/SaveResourceURLの40ケースで完成ファイル・上書き保護・エラー優先順位・進捗・body所有権・一時ファイル削除を比較。future破棄時の後始末もRustで検証。SaveResourceはugoira_archive fixtureのみで、全kind/identity/API失敗、実HTTP/redirect/TLS、context/deadline API、Unix権限・特殊path・symlink・disk full・sync/close失敗・並行保存、async runtimeへの同期ファイル操作の影響、CLI/MCPは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.SaveResourceURL",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.SaveResourceURL"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/save.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/resource.rs",
+        "crates/pixiv-sdk/src/artwork.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_save_test.go#TestMigrationResourceSaveMatchesFrozenFilesProgressAndErrors",
+        "crates/pixiv-sdk/tests/resource_save.rs",
+        "crates/pixiv-sdk/tests/artwork_open_resource.rs"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "SaveResource/SaveResourceURLの40ケースで完成ファイル・上書き保護・エラー優先順位・進捗・body所有権・一時ファイル削除を比較。future破棄時の後始末もRustで検証。SaveResourceはugoira_archive fixtureのみで、全kind/identity/API失敗、実HTTP/redirect/TLS、context/deadline API、Unix権限・特殊path・symlink・disk full・sync/close失敗・並行保存、async runtimeへの同期ファイル操作の影響、CLI/MCPは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.SearchArtworks",

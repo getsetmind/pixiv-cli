@@ -219,14 +219,63 @@ impl<T: Transport> Client<T> {
 }
 
 impl<T: Transport + ResourceTransport> Client<T> {
-    pub async fn open_resource(
+    pub async fn save_resource(
         &self,
-        request: OpenResourceRequest,
-    ) -> Result<ResourceResponse<T::Body>> {
-        request.validate()?;
+        reference: crate::resource::ResourceRef,
+        options: crate::resource::SaveOptions,
+    ) -> Result<crate::resource::SavedResource> {
+        let operation = "SaveResource";
+        crate::save::validate_path(&options, operation)?;
+        let url = self.resolve_resource_url(&reference, operation).await?;
+        self.resource_policy.validate(&url).map_err(|_| {
+            Error::new(Reason::ResourceForbidden, operation)
+                .with_detail("resource URL is not allowed")
+        })?;
+        let response = self
+            .open_resource(OpenResourceRequest {
+                reference,
+                method: "GET".into(),
+                ..Default::default()
+            })
+            .await?;
+        crate::save::write(response, options, operation).await
+    }
+
+    pub async fn save_resource_url(
+        &self,
+        url: &str,
+        options: crate::resource::SaveOptions,
+    ) -> Result<crate::resource::SavedResource> {
+        let operation = "SaveResourceURL";
+        crate::save::validate_path(&options, operation)?;
+        self.resource_policy.validate(url).map_err(|_| {
+            Error::new(Reason::ResourceForbidden, operation)
+                .with_detail("resource URL is not allowed")
+        })?;
+        let policy = self.resource_policy.clone();
+        let response = self
+            .transport
+            .open_resource(ResourceReadRequest {
+                url: url.into(),
+                method: "GET".into(),
+                headers: ResourceHeaders::from([(
+                    "Referer".into(),
+                    vec!["https://app-api.pixiv.net/".into()],
+                )]),
+                operation,
+                validate: Some(Arc::new(move |url| policy.validate(url))),
+            })
+            .await?;
+        crate::save::write(response, options, operation).await
+    }
+
+    async fn resolve_resource_url(
+        &self,
+        reference: &crate::resource::ResourceRef,
+        operation: &'static str,
+    ) -> Result<String> {
         let invalid = || {
-            Error::new(Reason::InvalidArgument, "OpenResource")
-                .with_detail("invalid resource reference")
+            Error::new(Reason::InvalidArgument, operation).with_detail("invalid resource reference")
         };
         #[derive(Default, Deserialize)]
         struct Identity {
@@ -235,10 +284,10 @@ impl<T: Transport + ResourceTransport> Client<T> {
             p: Option<i64>,
             v: Option<String>,
         }
-        if request.reference.product().map_err(|_| invalid())? != "pixiv" {
+        if reference.product().map_err(|_| invalid())? != "pixiv" {
             return Err(invalid());
         }
-        let payload = request.reference.payload().map_err(|_| invalid())?;
+        let payload = reference.payload().map_err(|_| invalid())?;
         let normalized = crate::codec::normalize_json(&payload).map_err(|_| invalid())?;
         let value: Value = serde_json::from_str(&normalized).map_err(|_| invalid())?;
         let identity = serde_json::from_value::<Option<Identity>>(value)
@@ -255,7 +304,7 @@ impl<T: Transport + ResourceTransport> Client<T> {
             .resource_urls
             .lock()
             .unwrap_or_else(|poisoned| poisoned.into_inner())
-            .get(request.reference.as_str())
+            .get(reference.as_str())
             .cloned();
         let url = if let Some(url) = cached {
             url
@@ -276,32 +325,44 @@ impl<T: Transport + ResourceTransport> Client<T> {
                     vec![("illust_id".into(), id.to_string())],
                 ),
                 _ => {
-                    return Err(Error::new(Reason::InvalidArgument, "OpenResource")
+                    return Err(Error::new(Reason::InvalidArgument, operation)
                         .with_detail("resource kind is unsupported"));
                 }
             };
-            let body = self.get(endpoint, parameters, "OpenResource").await?;
+            let body = self.get(endpoint, parameters, operation).await?;
             let url = if kind == "artwork" {
                 crate::artwork::resource_url(
                     body.get("illust")
                         .cloned()
-                        .ok_or_else(|| malformed("OpenResource"))?,
+                        .ok_or_else(|| malformed(operation))?,
                     page,
                     &variant,
+                    operation,
                 )?
             } else {
-                crate::resource_resolution::resolve(&kind, id, &variant, &body)?
+                crate::resource_resolution::resolve(&kind, id, &variant, &body, operation)?
             };
             self.resource_policy.validate(&url).map_err(|_| {
-                Error::new(Reason::ResourceForbidden, "OpenResource")
+                Error::new(Reason::ResourceForbidden, operation)
                     .with_detail("resolved resource URL is not allowed")
             })?;
             self.resource_urls
                 .lock()
                 .unwrap_or_else(|poisoned| poisoned.into_inner())
-                .insert(request.reference.to_string(), url.clone());
+                .insert(reference.to_string(), url.clone());
             url
         };
+        Ok(url)
+    }
+
+    pub async fn open_resource(
+        &self,
+        request: OpenResourceRequest,
+    ) -> Result<ResourceResponse<T::Body>> {
+        request.validate()?;
+        let url = self
+            .resolve_resource_url(&request.reference, "OpenResource")
+            .await?;
         self.resource_policy.validate(&url).map_err(|_| {
             Error::new(Reason::ResourceForbidden, "OpenResource")
                 .with_detail("resource URL is not allowed")

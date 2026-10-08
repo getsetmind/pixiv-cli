@@ -250,8 +250,13 @@ impl ResourcePolicy {
     }
 }
 
-pub(crate) fn resource_url(value: Value, page: i64, variant: &str) -> Result<String> {
-    let malformed = || Error::new(Reason::MalformedUpstreamResponse, "OpenResource");
+pub(crate) fn resource_url(
+    value: Value,
+    page: i64,
+    variant: &str,
+    operation: &'static str,
+) -> Result<String> {
+    let malformed = || Error::new(Reason::MalformedUpstreamResponse, operation);
     let unavailable = || malformed().with_detail("resource metadata has no usable URL");
     let wire: WireArtwork = serde_json::from_value(value).map_err(|_| malformed())?;
     if wire.id.unwrap_or_default() <= 0 {

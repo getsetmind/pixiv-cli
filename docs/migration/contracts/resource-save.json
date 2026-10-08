@@ -1,0 +1,1476 @@
+[
+  {
+    "name": "url-nested",
+    "via_ref": false,
+    "path": "nested/asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 200,
+    "length": "7",
+    "body": "payload",
+    "failure": "",
+    "setup": "",
+    "error": null,
+    "cause": "",
+    "size": 7,
+    "content_type": "image/png",
+    "path_matches": true,
+    "progress": [
+      {
+        "Total": 7,
+        "Done": 3
+      },
+      {
+        "Total": 7,
+        "Done": 6
+      },
+      {
+        "Total": 7,
+        "Done": 7
+      }
+    ],
+    "calls": 1,
+    "closes": 1,
+    "final": "payload",
+    "exists": true,
+    "temporary_files": 0
+  },
+  {
+    "name": "url-overwrite",
+    "via_ref": false,
+    "path": "asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 206,
+    "length": "7",
+    "body": "payload",
+    "failure": "",
+    "setup": "file",
+    "error": null,
+    "cause": "",
+    "size": 7,
+    "content_type": "image/png",
+    "path_matches": true,
+    "progress": [
+      {
+        "Total": 7,
+        "Done": 3
+      },
+      {
+        "Total": 7,
+        "Done": 6
+      },
+      {
+        "Total": 7,
+        "Done": 7
+      }
+    ],
+    "calls": 1,
+    "closes": 1,
+    "final": "payload",
+    "exists": true,
+    "temporary_files": 0
+  },
+  {
+    "name": "url-empty",
+    "via_ref": false,
+    "path": "asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 204,
+    "length": "",
+    "body": "",
+    "failure": "",
+    "setup": "",
+    "error": null,
+    "cause": "",
+    "size": 0,
+    "content_type": "image/png",
+    "path_matches": true,
+    "progress": [],
+    "calls": 1,
+    "closes": 1,
+    "final": "",
+    "exists": true,
+    "temporary_files": 0
+  },
+  {
+    "name": "url-unknown-size",
+    "via_ref": false,
+    "path": "asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 200,
+    "length": "bad",
+    "body": "payload",
+    "failure": "",
+    "setup": "",
+    "error": null,
+    "cause": "",
+    "size": 7,
+    "content_type": "image/png",
+    "path_matches": true,
+    "progress": [
+      {
+        "Total": 0,
+        "Done": 3
+      },
+      {
+        "Total": 0,
+        "Done": 6
+      },
+      {
+        "Total": 0,
+        "Done": 7
+      }
+    ],
+    "calls": 1,
+    "closes": 1,
+    "final": "payload",
+    "exists": true,
+    "temporary_files": 0
+  },
+  {
+    "name": "url-negative-size",
+    "via_ref": false,
+    "path": "asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 200,
+    "length": "-1",
+    "body": "payload",
+    "failure": "",
+    "setup": "",
+    "error": null,
+    "cause": "",
+    "size": 7,
+    "content_type": "image/png",
+    "path_matches": true,
+    "progress": [
+      {
+        "Total": -1,
+        "Done": 3
+      },
+      {
+        "Total": -1,
+        "Done": 6
+      },
+      {
+        "Total": -1,
+        "Done": 7
+      }
+    ],
+    "calls": 1,
+    "closes": 1,
+    "final": "payload",
+    "exists": true,
+    "temporary_files": 0
+  },
+  {
+    "name": "url-read-failure",
+    "via_ref": false,
+    "path": "asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 200,
+    "length": "7",
+    "body": "payload",
+    "failure": "read",
+    "setup": "",
+    "error": {
+      "Product": "pixiv",
+      "Operation": "SaveResourceURL",
+      "Reason": "local_state_error",
+      "Detail": "cannot write resource",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "cause": "",
+    "size": 0,
+    "content_type": "",
+    "path_matches": false,
+    "progress": [
+      {
+        "Total": 7,
+        "Done": 3
+      },
+      {
+        "Total": 7,
+        "Done": 6
+      },
+      {
+        "Total": 7,
+        "Done": 7
+      }
+    ],
+    "calls": 1,
+    "closes": 1,
+    "final": "",
+    "exists": false,
+    "temporary_files": 0
+  },
+  {
+    "name": "url-failed-overwrite",
+    "via_ref": false,
+    "path": "asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 200,
+    "length": "7",
+    "body": "payload",
+    "failure": "read",
+    "setup": "file",
+    "error": {
+      "Product": "pixiv",
+      "Operation": "SaveResourceURL",
+      "Reason": "local_state_error",
+      "Detail": "cannot write resource",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "cause": "",
+    "size": 0,
+    "content_type": "",
+    "path_matches": false,
+    "progress": [
+      {
+        "Total": 7,
+        "Done": 3
+      },
+      {
+        "Total": 7,
+        "Done": 6
+      },
+      {
+        "Total": 7,
+        "Done": 7
+      }
+    ],
+    "calls": 1,
+    "closes": 1,
+    "final": "previous",
+    "exists": true,
+    "temporary_files": 0
+  },
+  {
+    "name": "url-cancel-cause",
+    "via_ref": false,
+    "path": "asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 200,
+    "length": "7",
+    "body": "payload",
+    "failure": "cancel",
+    "setup": "",
+    "error": {
+      "Product": "pixiv",
+      "Operation": "SaveResourceURL",
+      "Reason": "local_state_error",
+      "Detail": "cannot write resource",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "cause": "cancel",
+    "size": 0,
+    "content_type": "",
+    "path_matches": false,
+    "progress": [
+      {
+        "Total": 7,
+        "Done": 3
+      },
+      {
+        "Total": 7,
+        "Done": 6
+      },
+      {
+        "Total": 7,
+        "Done": 7
+      }
+    ],
+    "calls": 1,
+    "closes": 1,
+    "final": "",
+    "exists": false,
+    "temporary_files": 0
+  },
+  {
+    "name": "url-deadline-cause",
+    "via_ref": false,
+    "path": "asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 200,
+    "length": "7",
+    "body": "payload",
+    "failure": "deadline",
+    "setup": "",
+    "error": {
+      "Product": "pixiv",
+      "Operation": "SaveResourceURL",
+      "Reason": "local_state_error",
+      "Detail": "cannot write resource",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "cause": "deadline",
+    "size": 0,
+    "content_type": "",
+    "path_matches": false,
+    "progress": [
+      {
+        "Total": 7,
+        "Done": 3
+      },
+      {
+        "Total": 7,
+        "Done": 6
+      },
+      {
+        "Total": 7,
+        "Done": 7
+      }
+    ],
+    "calls": 1,
+    "closes": 1,
+    "final": "",
+    "exists": false,
+    "temporary_files": 0
+  },
+  {
+    "name": "url-directory-destination",
+    "via_ref": false,
+    "path": "asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 200,
+    "length": "7",
+    "body": "payload",
+    "failure": "",
+    "setup": "directory",
+    "error": {
+      "Product": "pixiv",
+      "Operation": "SaveResourceURL",
+      "Reason": "local_state_error",
+      "Detail": "cannot write resource",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "cause": "",
+    "size": 0,
+    "content_type": "",
+    "path_matches": false,
+    "progress": [
+      {
+        "Total": 7,
+        "Done": 3
+      },
+      {
+        "Total": 7,
+        "Done": 6
+      },
+      {
+        "Total": 7,
+        "Done": 7
+      }
+    ],
+    "calls": 1,
+    "closes": 1,
+    "final": "\u003cdirectory\u003e",
+    "exists": true,
+    "temporary_files": 0
+  },
+  {
+    "name": "url-parent-file",
+    "via_ref": false,
+    "path": "blocked/asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 200,
+    "length": "7",
+    "body": "payload",
+    "failure": "",
+    "setup": "parent-file",
+    "error": {
+      "Product": "pixiv",
+      "Operation": "SaveResourceURL",
+      "Reason": "local_state_error",
+      "Detail": "cannot write resource",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "cause": "",
+    "size": 0,
+    "content_type": "",
+    "path_matches": false,
+    "progress": [],
+    "calls": 1,
+    "closes": 1,
+    "final": "",
+    "exists": false,
+    "temporary_files": 0
+  },
+  {
+    "name": "url-empty-path",
+    "via_ref": false,
+    "path": "",
+    "url": "http://invalid/",
+    "status": 404,
+    "length": "7",
+    "body": "payload",
+    "failure": "",
+    "setup": "",
+    "error": {
+      "Product": "pixiv",
+      "Operation": "SaveResourceURL",
+      "Reason": "invalid_argument",
+      "Detail": "destination path is required",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "cause": "",
+    "size": 0,
+    "content_type": "",
+    "path_matches": false,
+    "progress": [],
+    "calls": 0,
+    "closes": 0,
+    "final": "",
+    "exists": false,
+    "temporary_files": 0
+  },
+  {
+    "name": "url-blank-path",
+    "via_ref": false,
+    "path": " \t",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 200,
+    "length": "7",
+    "body": "payload",
+    "failure": "",
+    "setup": "",
+    "error": {
+      "Product": "pixiv",
+      "Operation": "SaveResourceURL",
+      "Reason": "invalid_argument",
+      "Detail": "destination path is required",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "cause": "",
+    "size": 0,
+    "content_type": "",
+    "path_matches": false,
+    "progress": [],
+    "calls": 0,
+    "closes": 0,
+    "final": "",
+    "exists": false,
+    "temporary_files": 0
+  },
+  {
+    "name": "url-bad-url",
+    "via_ref": false,
+    "path": "asset.bin",
+    "url": "http://i.pximg.net/asset.bin",
+    "status": 200,
+    "length": "7",
+    "body": "payload",
+    "failure": "",
+    "setup": "",
+    "error": {
+      "Product": "pixiv",
+      "Operation": "SaveResourceURL",
+      "Reason": "resource_forbidden",
+      "Detail": "resource URL is not allowed",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "cause": "",
+    "size": 0,
+    "content_type": "",
+    "path_matches": false,
+    "progress": [],
+    "calls": 0,
+    "closes": 0,
+    "final": "",
+    "exists": false,
+    "temporary_files": 0
+  },
+  {
+    "name": "url-status-199",
+    "via_ref": false,
+    "path": "asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 199,
+    "length": "7",
+    "body": "payload",
+    "failure": "",
+    "setup": "file",
+    "error": {
+      "Product": "pixiv",
+      "Operation": "SaveResourceURL",
+      "Reason": "upstream_error",
+      "Detail": "resource returned a non-success status",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "cause": "",
+    "size": 0,
+    "content_type": "",
+    "path_matches": false,
+    "progress": [],
+    "calls": 1,
+    "closes": 1,
+    "final": "previous",
+    "exists": true,
+    "temporary_files": 0
+  },
+  {
+    "name": "url-status-300",
+    "via_ref": false,
+    "path": "asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 300,
+    "length": "7",
+    "body": "payload",
+    "failure": "",
+    "setup": "file",
+    "error": {
+      "Product": "pixiv",
+      "Operation": "SaveResourceURL",
+      "Reason": "upstream_error",
+      "Detail": "resource returned a non-success status",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "cause": "",
+    "size": 0,
+    "content_type": "",
+    "path_matches": false,
+    "progress": [],
+    "calls": 1,
+    "closes": 1,
+    "final": "previous",
+    "exists": true,
+    "temporary_files": 0
+  },
+  {
+    "name": "url-status-304",
+    "via_ref": false,
+    "path": "asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 304,
+    "length": "7",
+    "body": "payload",
+    "failure": "",
+    "setup": "file",
+    "error": {
+      "Product": "pixiv",
+      "Operation": "SaveResourceURL",
+      "Reason": "upstream_error",
+      "Detail": "resource returned a non-success status",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "cause": "",
+    "size": 0,
+    "content_type": "",
+    "path_matches": false,
+    "progress": [],
+    "calls": 1,
+    "closes": 1,
+    "final": "previous",
+    "exists": true,
+    "temporary_files": 0
+  },
+  {
+    "name": "url-status-401",
+    "via_ref": false,
+    "path": "asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 401,
+    "length": "7",
+    "body": "payload",
+    "failure": "",
+    "setup": "file",
+    "error": {
+      "Product": "pixiv",
+      "Operation": "SaveResourceURL",
+      "Reason": "upstream_error",
+      "Detail": "resource returned a non-success status",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "cause": "",
+    "size": 0,
+    "content_type": "",
+    "path_matches": false,
+    "progress": [],
+    "calls": 1,
+    "closes": 1,
+    "final": "previous",
+    "exists": true,
+    "temporary_files": 0
+  },
+  {
+    "name": "url-status-404",
+    "via_ref": false,
+    "path": "asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 404,
+    "length": "7",
+    "body": "payload",
+    "failure": "",
+    "setup": "file",
+    "error": {
+      "Product": "pixiv",
+      "Operation": "SaveResourceURL",
+      "Reason": "upstream_error",
+      "Detail": "resource returned a non-success status",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "cause": "",
+    "size": 0,
+    "content_type": "",
+    "path_matches": false,
+    "progress": [],
+    "calls": 1,
+    "closes": 1,
+    "final": "previous",
+    "exists": true,
+    "temporary_files": 0
+  },
+  {
+    "name": "url-status-500",
+    "via_ref": false,
+    "path": "asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 500,
+    "length": "7",
+    "body": "payload",
+    "failure": "",
+    "setup": "file",
+    "error": {
+      "Product": "pixiv",
+      "Operation": "SaveResourceURL",
+      "Reason": "upstream_error",
+      "Detail": "resource returned a non-success status",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "cause": "",
+    "size": 0,
+    "content_type": "",
+    "path_matches": false,
+    "progress": [],
+    "calls": 1,
+    "closes": 1,
+    "final": "previous",
+    "exists": true,
+    "temporary_files": 0
+  },
+  {
+    "name": "ref-nested",
+    "via_ref": true,
+    "path": "nested/asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 200,
+    "length": "7",
+    "body": "payload",
+    "failure": "",
+    "setup": "",
+    "error": null,
+    "cause": "",
+    "size": 7,
+    "content_type": "image/png",
+    "path_matches": true,
+    "progress": [
+      {
+        "Total": 7,
+        "Done": 3
+      },
+      {
+        "Total": 7,
+        "Done": 6
+      },
+      {
+        "Total": 7,
+        "Done": 7
+      }
+    ],
+    "calls": 1,
+    "closes": 1,
+    "final": "payload",
+    "exists": true,
+    "temporary_files": 0
+  },
+  {
+    "name": "ref-overwrite",
+    "via_ref": true,
+    "path": "asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 206,
+    "length": "7",
+    "body": "payload",
+    "failure": "",
+    "setup": "file",
+    "error": null,
+    "cause": "",
+    "size": 7,
+    "content_type": "image/png",
+    "path_matches": true,
+    "progress": [
+      {
+        "Total": 7,
+        "Done": 3
+      },
+      {
+        "Total": 7,
+        "Done": 6
+      },
+      {
+        "Total": 7,
+        "Done": 7
+      }
+    ],
+    "calls": 1,
+    "closes": 1,
+    "final": "payload",
+    "exists": true,
+    "temporary_files": 0
+  },
+  {
+    "name": "ref-empty",
+    "via_ref": true,
+    "path": "asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 204,
+    "length": "",
+    "body": "",
+    "failure": "",
+    "setup": "",
+    "error": null,
+    "cause": "",
+    "size": 0,
+    "content_type": "image/png",
+    "path_matches": true,
+    "progress": [],
+    "calls": 1,
+    "closes": 1,
+    "final": "",
+    "exists": true,
+    "temporary_files": 0
+  },
+  {
+    "name": "ref-unknown-size",
+    "via_ref": true,
+    "path": "asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 200,
+    "length": "bad",
+    "body": "payload",
+    "failure": "",
+    "setup": "",
+    "error": null,
+    "cause": "",
+    "size": 7,
+    "content_type": "image/png",
+    "path_matches": true,
+    "progress": [
+      {
+        "Total": 0,
+        "Done": 3
+      },
+      {
+        "Total": 0,
+        "Done": 6
+      },
+      {
+        "Total": 0,
+        "Done": 7
+      }
+    ],
+    "calls": 1,
+    "closes": 1,
+    "final": "payload",
+    "exists": true,
+    "temporary_files": 0
+  },
+  {
+    "name": "ref-negative-size",
+    "via_ref": true,
+    "path": "asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 200,
+    "length": "-1",
+    "body": "payload",
+    "failure": "",
+    "setup": "",
+    "error": null,
+    "cause": "",
+    "size": 7,
+    "content_type": "image/png",
+    "path_matches": true,
+    "progress": [
+      {
+        "Total": -1,
+        "Done": 3
+      },
+      {
+        "Total": -1,
+        "Done": 6
+      },
+      {
+        "Total": -1,
+        "Done": 7
+      }
+    ],
+    "calls": 1,
+    "closes": 1,
+    "final": "payload",
+    "exists": true,
+    "temporary_files": 0
+  },
+  {
+    "name": "ref-read-failure",
+    "via_ref": true,
+    "path": "asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 200,
+    "length": "7",
+    "body": "payload",
+    "failure": "read",
+    "setup": "",
+    "error": {
+      "Product": "pixiv",
+      "Operation": "SaveResource",
+      "Reason": "local_state_error",
+      "Detail": "cannot write resource",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "cause": "",
+    "size": 0,
+    "content_type": "",
+    "path_matches": false,
+    "progress": [
+      {
+        "Total": 7,
+        "Done": 3
+      },
+      {
+        "Total": 7,
+        "Done": 6
+      },
+      {
+        "Total": 7,
+        "Done": 7
+      }
+    ],
+    "calls": 1,
+    "closes": 1,
+    "final": "",
+    "exists": false,
+    "temporary_files": 0
+  },
+  {
+    "name": "ref-failed-overwrite",
+    "via_ref": true,
+    "path": "asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 200,
+    "length": "7",
+    "body": "payload",
+    "failure": "read",
+    "setup": "file",
+    "error": {
+      "Product": "pixiv",
+      "Operation": "SaveResource",
+      "Reason": "local_state_error",
+      "Detail": "cannot write resource",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "cause": "",
+    "size": 0,
+    "content_type": "",
+    "path_matches": false,
+    "progress": [
+      {
+        "Total": 7,
+        "Done": 3
+      },
+      {
+        "Total": 7,
+        "Done": 6
+      },
+      {
+        "Total": 7,
+        "Done": 7
+      }
+    ],
+    "calls": 1,
+    "closes": 1,
+    "final": "previous",
+    "exists": true,
+    "temporary_files": 0
+  },
+  {
+    "name": "ref-cancel-cause",
+    "via_ref": true,
+    "path": "asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 200,
+    "length": "7",
+    "body": "payload",
+    "failure": "cancel",
+    "setup": "",
+    "error": {
+      "Product": "pixiv",
+      "Operation": "SaveResource",
+      "Reason": "local_state_error",
+      "Detail": "cannot write resource",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "cause": "cancel",
+    "size": 0,
+    "content_type": "",
+    "path_matches": false,
+    "progress": [
+      {
+        "Total": 7,
+        "Done": 3
+      },
+      {
+        "Total": 7,
+        "Done": 6
+      },
+      {
+        "Total": 7,
+        "Done": 7
+      }
+    ],
+    "calls": 1,
+    "closes": 1,
+    "final": "",
+    "exists": false,
+    "temporary_files": 0
+  },
+  {
+    "name": "ref-deadline-cause",
+    "via_ref": true,
+    "path": "asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 200,
+    "length": "7",
+    "body": "payload",
+    "failure": "deadline",
+    "setup": "",
+    "error": {
+      "Product": "pixiv",
+      "Operation": "SaveResource",
+      "Reason": "local_state_error",
+      "Detail": "cannot write resource",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "cause": "deadline",
+    "size": 0,
+    "content_type": "",
+    "path_matches": false,
+    "progress": [
+      {
+        "Total": 7,
+        "Done": 3
+      },
+      {
+        "Total": 7,
+        "Done": 6
+      },
+      {
+        "Total": 7,
+        "Done": 7
+      }
+    ],
+    "calls": 1,
+    "closes": 1,
+    "final": "",
+    "exists": false,
+    "temporary_files": 0
+  },
+  {
+    "name": "ref-directory-destination",
+    "via_ref": true,
+    "path": "asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 200,
+    "length": "7",
+    "body": "payload",
+    "failure": "",
+    "setup": "directory",
+    "error": {
+      "Product": "pixiv",
+      "Operation": "SaveResource",
+      "Reason": "local_state_error",
+      "Detail": "cannot write resource",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "cause": "",
+    "size": 0,
+    "content_type": "",
+    "path_matches": false,
+    "progress": [
+      {
+        "Total": 7,
+        "Done": 3
+      },
+      {
+        "Total": 7,
+        "Done": 6
+      },
+      {
+        "Total": 7,
+        "Done": 7
+      }
+    ],
+    "calls": 1,
+    "closes": 1,
+    "final": "\u003cdirectory\u003e",
+    "exists": true,
+    "temporary_files": 0
+  },
+  {
+    "name": "ref-parent-file",
+    "via_ref": true,
+    "path": "blocked/asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 200,
+    "length": "7",
+    "body": "payload",
+    "failure": "",
+    "setup": "parent-file",
+    "error": {
+      "Product": "pixiv",
+      "Operation": "SaveResource",
+      "Reason": "local_state_error",
+      "Detail": "cannot write resource",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "cause": "",
+    "size": 0,
+    "content_type": "",
+    "path_matches": false,
+    "progress": [],
+    "calls": 1,
+    "closes": 1,
+    "final": "",
+    "exists": false,
+    "temporary_files": 0
+  },
+  {
+    "name": "ref-empty-path",
+    "via_ref": true,
+    "path": "",
+    "url": "http://invalid/",
+    "status": 404,
+    "length": "7",
+    "body": "payload",
+    "failure": "",
+    "setup": "",
+    "error": {
+      "Product": "pixiv",
+      "Operation": "SaveResource",
+      "Reason": "invalid_argument",
+      "Detail": "destination path is required",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "cause": "",
+    "size": 0,
+    "content_type": "",
+    "path_matches": false,
+    "progress": [],
+    "calls": 0,
+    "closes": 0,
+    "final": "",
+    "exists": false,
+    "temporary_files": 0
+  },
+  {
+    "name": "ref-blank-path",
+    "via_ref": true,
+    "path": " \t",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 200,
+    "length": "7",
+    "body": "payload",
+    "failure": "",
+    "setup": "",
+    "error": {
+      "Product": "pixiv",
+      "Operation": "SaveResource",
+      "Reason": "invalid_argument",
+      "Detail": "destination path is required",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "cause": "",
+    "size": 0,
+    "content_type": "",
+    "path_matches": false,
+    "progress": [],
+    "calls": 0,
+    "closes": 0,
+    "final": "",
+    "exists": false,
+    "temporary_files": 0
+  },
+  {
+    "name": "ref-bad-url",
+    "via_ref": true,
+    "path": "asset.bin",
+    "url": "http://i.pximg.net/asset.bin",
+    "status": 200,
+    "length": "7",
+    "body": "payload",
+    "failure": "",
+    "setup": "",
+    "error": {
+      "Product": "pixiv",
+      "Operation": "SaveResource",
+      "Reason": "resource_forbidden",
+      "Detail": "resolved resource URL is not allowed",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "cause": "",
+    "size": 0,
+    "content_type": "",
+    "path_matches": false,
+    "progress": [],
+    "calls": 0,
+    "closes": 0,
+    "final": "",
+    "exists": false,
+    "temporary_files": 0
+  },
+  {
+    "name": "ref-status-199",
+    "via_ref": true,
+    "path": "asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 199,
+    "length": "7",
+    "body": "payload",
+    "failure": "",
+    "setup": "file",
+    "error": {
+      "Product": "pixiv",
+      "Operation": "SaveResource",
+      "Reason": "upstream_error",
+      "Detail": "resource returned a non-success status",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "cause": "",
+    "size": 0,
+    "content_type": "",
+    "path_matches": false,
+    "progress": [],
+    "calls": 1,
+    "closes": 1,
+    "final": "previous",
+    "exists": true,
+    "temporary_files": 0
+  },
+  {
+    "name": "ref-status-300",
+    "via_ref": true,
+    "path": "asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 300,
+    "length": "7",
+    "body": "payload",
+    "failure": "",
+    "setup": "file",
+    "error": {
+      "Product": "pixiv",
+      "Operation": "SaveResource",
+      "Reason": "upstream_error",
+      "Detail": "resource returned a non-success status",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "cause": "",
+    "size": 0,
+    "content_type": "",
+    "path_matches": false,
+    "progress": [],
+    "calls": 1,
+    "closes": 1,
+    "final": "previous",
+    "exists": true,
+    "temporary_files": 0
+  },
+  {
+    "name": "ref-status-304",
+    "via_ref": true,
+    "path": "asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 304,
+    "length": "7",
+    "body": "payload",
+    "failure": "",
+    "setup": "file",
+    "error": {
+      "Product": "pixiv",
+      "Operation": "SaveResource",
+      "Reason": "upstream_error",
+      "Detail": "resource returned a non-success status",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "cause": "",
+    "size": 0,
+    "content_type": "",
+    "path_matches": false,
+    "progress": [],
+    "calls": 1,
+    "closes": 1,
+    "final": "previous",
+    "exists": true,
+    "temporary_files": 0
+  },
+  {
+    "name": "ref-status-401",
+    "via_ref": true,
+    "path": "asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 401,
+    "length": "7",
+    "body": "payload",
+    "failure": "",
+    "setup": "file",
+    "error": {
+      "Product": "pixiv",
+      "Operation": "SaveResource",
+      "Reason": "upstream_error",
+      "Detail": "resource returned a non-success status",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "cause": "",
+    "size": 0,
+    "content_type": "",
+    "path_matches": false,
+    "progress": [],
+    "calls": 1,
+    "closes": 1,
+    "final": "previous",
+    "exists": true,
+    "temporary_files": 0
+  },
+  {
+    "name": "ref-status-404",
+    "via_ref": true,
+    "path": "asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 404,
+    "length": "7",
+    "body": "payload",
+    "failure": "",
+    "setup": "file",
+    "error": {
+      "Product": "pixiv",
+      "Operation": "SaveResource",
+      "Reason": "upstream_error",
+      "Detail": "resource returned a non-success status",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "cause": "",
+    "size": 0,
+    "content_type": "",
+    "path_matches": false,
+    "progress": [],
+    "calls": 1,
+    "closes": 1,
+    "final": "previous",
+    "exists": true,
+    "temporary_files": 0
+  },
+  {
+    "name": "ref-status-500",
+    "via_ref": true,
+    "path": "asset.bin",
+    "url": "https://i.pximg.net/asset.bin?fixture=secret",
+    "status": 500,
+    "length": "7",
+    "body": "payload",
+    "failure": "",
+    "setup": "file",
+    "error": {
+      "Product": "pixiv",
+      "Operation": "SaveResource",
+      "Reason": "upstream_error",
+      "Detail": "resource returned a non-success status",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "cause": "",
+    "size": 0,
+    "content_type": "",
+    "path_matches": false,
+    "progress": [],
+    "calls": 1,
+    "closes": 1,
+    "final": "previous",
+    "exists": true,
+    "temporary_files": 0
+  }
+]

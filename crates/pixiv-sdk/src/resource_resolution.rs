@@ -2,12 +2,18 @@ use crate::{Error, Reason, Result, pixiv::ResourcePolicy};
 use serde_json::Value;
 use std::collections::BTreeSet;
 
-pub(crate) fn resolve(kind: &str, id: i64, variant: &str, body: &Value) -> Result<String> {
-    let malformed = || Error::new(Reason::MalformedUpstreamResponse, "OpenResource");
+pub(crate) fn resolve(
+    kind: &str,
+    id: i64,
+    variant: &str,
+    body: &Value,
+    operation: &'static str,
+) -> Result<String> {
+    let malformed = || Error::new(Reason::MalformedUpstreamResponse, operation);
     let unavailable = || malformed().with_detail("resource metadata has no usable URL");
     match kind {
         "ugoira_archive" => {
-            let (urls, _) = validated_ugoira(body, "OpenResource")?;
+            let (urls, _) = validated_ugoira(body, operation)?;
             let selected = if variant.is_empty() {
                 text(Some(urls), "original").or_else(|| text(Some(urls), "medium"))
             } else if matches!(variant, "original" | "medium") {
@@ -171,7 +177,7 @@ pub(crate) fn resolve(kind: &str, id: i64, variant: &str, body: &Value) -> Resul
             }
             selected.ok_or_else(unavailable)
         }
-        _ => Err(Error::new(Reason::InvalidArgument, "OpenResource")
+        _ => Err(Error::new(Reason::InvalidArgument, operation)
             .with_detail("resource kind is unsupported")),
     }
 }

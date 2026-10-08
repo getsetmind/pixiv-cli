@@ -3,6 +3,7 @@ pub use crate::resource_io::{
     OpenResourceRequest, RESOURCE_METHOD_GET, RESOURCE_METHOD_HEAD, ResourceHeaders,
     ResourceResponse,
 };
+pub use crate::save::{SaveOptions, SaveProgress, SavedResource};
 use crate::{Error, Reason, Result};
 use base64::Engine;
 use serde::{

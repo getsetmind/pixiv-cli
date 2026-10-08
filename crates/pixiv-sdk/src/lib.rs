@@ -11,6 +11,7 @@ pub mod resource;
 mod resource_io;
 mod resource_resolution;
 mod resource_transport;
+mod save;
 pub mod transport;
 mod ugoira;
 
