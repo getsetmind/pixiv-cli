@@ -1,6 +1,7 @@
+pub use crate::artwork::{ResourcePolicy, artwork_variant_resource};
 use crate::{
     Error, Reason, Result,
-    models::{Artwork, UgoiraFrame, UgoiraMetadata},
+    models::{Artwork, ArtworkPage, UgoiraFrame, UgoiraMetadata},
     transport::{HttpTransport, Request, Response, Transport, checked},
 };
 use chrono::{DateTime, Utc};
@@ -16,6 +17,7 @@ pub struct Client<T = HttpTransport> {
     expires_at: Option<DateTime<Utc>>,
     interval: Duration,
     last_request: Mutex<Option<Instant>>,
+    resource_policy: ResourcePolicy,
 }
 
 impl<T> fmt::Debug for Client<T> {
@@ -41,11 +43,16 @@ impl<T: Transport> Client<T> {
             expires_at: None,
             interval: Duration::ZERO,
             last_request: Mutex::new(None),
+            resource_policy: ResourcePolicy::default(),
         }
     }
 
     pub fn with_pacing(mut self, interval: Duration) -> Self {
         self.interval = interval;
+        self
+    }
+    pub fn with_resource_policy(mut self, policy: ResourcePolicy) -> Self {
+        self.resource_policy = policy;
         self
     }
     pub fn with_expiry(mut self, expires_at: DateTime<Utc>) -> Self {
@@ -110,6 +117,27 @@ impl<T: Transport> Client<T> {
                 .clone(),
             "Artwork",
             true,
+            &self.resource_policy,
+        )
+    }
+
+    pub async fn artwork_pages(&self, id: i64) -> Result<Vec<ArtworkPage>> {
+        if id <= 0 {
+            return Err(Error::new(Reason::InvalidArgument, "ArtworkPages")
+                .with_detail("artwork ID must be positive"));
+        }
+        let body = self
+            .get(
+                "/v1/illust/detail",
+                vec![("illust_id".into(), id.to_string())],
+                "ArtworkPages",
+            )
+            .await?;
+        crate::artwork::pages(
+            body.get("illust")
+                .ok_or_else(|| malformed("ArtworkPages"))?
+                .clone(),
+            &self.resource_policy,
         )
     }
 
@@ -134,7 +162,9 @@ impl<T: Transport> Client<T> {
             .ok_or_else(|| malformed("search_artworks"))?;
         list.iter()
             .cloned()
-            .map(|value| crate::artwork::map(value, "search_artworks", false))
+            .map(|value| {
+                crate::artwork::map(value, "search_artworks", false, &self.resource_policy)
+            })
             .collect()
     }
 

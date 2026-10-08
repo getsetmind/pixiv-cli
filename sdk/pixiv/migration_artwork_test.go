@@ -83,6 +83,7 @@ func TestMigrationArtworkMatchesFrozenDTOAndRequests(t *testing.T) {
 		{"missing-page-image", 42, func(v map[string]any) { v["meta_pages"] = []any{map[string]any{}} }},
 		{"invalid-time", 42, func(v map[string]any) { v["create_date"] = "not-a-date" }},
 		{"missing-time", 42, func(v map[string]any) { delete(v, "create_date") }},
+		{"invalid-time-and-page", 42, func(v map[string]any) { v["create_date"] = "not-a-date"; v["meta_pages"] = []any{map[string]any{}} }},
 		{"invalid-id", 42, func(v map[string]any) { v["id"] = 0 }},
 		{"invalid-field-type", 42, func(v map[string]any) { v["width"] = "wide" }},
 		{"zero-request", 0, func(map[string]any) {}},

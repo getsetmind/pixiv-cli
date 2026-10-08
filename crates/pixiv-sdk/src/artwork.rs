@@ -7,6 +7,11 @@ use chrono::DateTime;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
+#[derive(Clone, Debug, Default)]
+pub struct ResourcePolicy {
+    pub allowed_hosts: Vec<String>,
+}
+
 #[derive(Default, Deserialize)]
 struct Images {
     original: Option<String>,
@@ -83,7 +88,12 @@ struct WireArtwork {
     meta_pages: Option<Vec<MetaPage>>,
 }
 
-pub(crate) fn map(value: Value, operation: &'static str, detail: bool) -> Result<Artwork> {
+pub(crate) fn map(
+    value: Value,
+    operation: &'static str,
+    detail: bool,
+    policy: &ResourcePolicy,
+) -> Result<Artwork> {
     let wire: WireArtwork = serde_json::from_value(value)
         .map_err(|_| Error::new(Reason::MalformedUpstreamResponse, operation))?;
     let id = wire.id.unwrap_or_default();
@@ -111,7 +121,11 @@ pub(crate) fn map(value: Value, operation: &'static str, detail: bool) -> Result
         .profile_image_urls
         .and_then(|images| images.medium)
         .filter(|url| !url.is_empty())
-        .and_then(|url| image("user_profile", user_id, -1, "medium", &url, 0, 0).ok())
+        .and_then(|url| {
+            policy
+                .image("user_profile", user_id, -1, "medium", &url, (0, 0))
+                .ok()
+        })
         .unwrap_or_default();
     let user = User {
         id: user_id,
@@ -123,41 +137,20 @@ pub(crate) fn map(value: Value, operation: &'static str, detail: bool) -> Result
     };
     let images = wire.image_urls.unwrap_or_default();
     let cover = match images.first() {
-        Some((variant, url)) => image("artwork", id, -1, variant, url, width, height)?,
+        Some((variant, url)) => policy.image("artwork", id, -1, variant, url, (width, height))?,
         None => ImageResource::default(),
     };
-    let mut pages = Vec::new();
-    if detail {
-        let meta_pages = wire.meta_pages.unwrap_or_default();
-        if !meta_pages.is_empty() {
-            for (index, page) in meta_pages.into_iter().enumerate() {
-                let images = page.image_urls.unwrap_or_default();
-                let (_, url) = images.first().ok_or_else(|| {
-                    Error::new(Reason::MalformedUpstreamResponse, "ArtworkPages")
-                        .with_detail("page has no image URL")
-                })?;
-                let width = page.width.unwrap_or_default();
-                let height = page.height.unwrap_or_default();
-                pages.push(ArtworkPage {
-                    page_index: index,
-                    image: image("artwork", id, index as i64, "original", url, width, height)?,
-                    width,
-                    height,
-                });
-            }
-        } else if let Some(url) = wire
-            .meta_single_page
-            .and_then(|page| page.original_image_url)
-            .filter(|url| !url.is_empty())
-        {
-            pages.push(ArtworkPage {
-                page_index: 0,
-                image: image("artwork", id, 0, "original", &url, width, height)?,
-                width,
-                height,
-            });
-        }
-    }
+    let pages = if detail {
+        map_pages(
+            id,
+            (width, height),
+            wire.meta_pages.as_deref(),
+            wire.meta_single_page.as_ref(),
+            policy,
+        )?
+    } else {
+        Vec::new()
+    };
     Ok(Artwork {
         id,
         title: wire.title.unwrap_or_default(),
@@ -189,29 +182,127 @@ pub(crate) fn map(value: Value, operation: &'static str, detail: bool) -> Result
     })
 }
 
-fn image(
-    kind: &str,
+impl ResourcePolicy {
+    fn image(
+        &self,
+        kind: &str,
+        id: i64,
+        page: i64,
+        variant: &str,
+        url: &str,
+        dimensions: (i64, i64),
+    ) -> Result<ImageResource> {
+        let (width, height) = dimensions;
+        let forbidden =
+            |detail| Error::new(Reason::ResourceForbidden, "resource").with_detail(detail);
+        let parsed = url::Url::parse(url).map_err(|_| forbidden("invalid resource URL"))?;
+        let userinfo = url.split_once("://").is_some_and(|(_, tail)| {
+            tail.split(['/', '?', '#'])
+                .next()
+                .is_some_and(|authority| authority.contains('@'))
+        });
+        if parsed.scheme() != "https" || userinfo {
+            return Err(forbidden("resource URL must be https without userinfo"));
+        }
+        if parsed.path().is_empty() || parsed.path() == "/" {
+            return Err(forbidden("resource URL has no path"));
+        }
+        if !matches!(
+            parsed.host_str(),
+            Some("i.pximg.net" | "s.pximg.net" | "i-f.pximg.net")
+        ) && !self.allowed_hosts.iter().any(|allowed| {
+            parsed
+                .host_str()
+                .is_some_and(|host| host.eq_ignore_ascii_case(allowed.trim()))
+        }) {
+            return Err(forbidden("resource host is not allowed"));
+        }
+        let reference = encode_identity(kind, id, page, variant)?;
+        let resource = Resource {
+            reference,
+            url: url.to_owned(),
+            request_headers: [("Referer".into(), "https://app-api.pixiv.net/".into())].into(),
+            expires_at: None,
+            requires_credentials: false,
+        };
+        Ok(ImageResource {
+            resource,
+            variant: variant.to_owned(),
+            width,
+            height,
+        })
+    }
+}
+
+pub(crate) fn pages(value: Value, policy: &ResourcePolicy) -> Result<Vec<ArtworkPage>> {
+    let wire: WireArtwork = serde_json::from_value(value)
+        .map_err(|_| Error::new(Reason::MalformedUpstreamResponse, "ArtworkPages"))?;
+    if wire.id.unwrap_or_default() <= 0 {
+        return Err(Error::new(
+            Reason::MalformedUpstreamResponse,
+            "ArtworkPages",
+        ));
+    }
+    map_pages(
+        wire.id.unwrap_or_default(),
+        (
+            wire.width.unwrap_or_default(),
+            wire.height.unwrap_or_default(),
+        ),
+        wire.meta_pages.as_deref(),
+        wire.meta_single_page.as_ref(),
+        policy,
+    )
+}
+
+fn map_pages(
     id: i64,
-    page: i64,
-    variant: &str,
-    url: &str,
-    width: i64,
-    height: i64,
-) -> Result<ImageResource> {
-    let forbidden = |detail| Error::new(Reason::ResourceForbidden, "resource").with_detail(detail);
-    let parsed = url::Url::parse(url).map_err(|_| forbidden("invalid resource URL"))?;
-    if parsed.scheme() != "https" || !parsed.username().is_empty() || parsed.password().is_some() {
-        return Err(forbidden("resource URL must be https without userinfo"));
+    dimensions: (i64, i64),
+    meta_pages: Option<&[MetaPage]>,
+    single_page: Option<&SinglePage>,
+    policy: &ResourcePolicy,
+) -> Result<Vec<ArtworkPage>> {
+    let mut pages = Vec::new();
+    let meta_pages = meta_pages.unwrap_or_default();
+    if !meta_pages.is_empty() {
+        for (index, page) in meta_pages.iter().enumerate() {
+            let images = page.image_urls.as_ref();
+            let (_, url) = images.and_then(Images::first).ok_or_else(|| {
+                Error::new(Reason::MalformedUpstreamResponse, "ArtworkPages")
+                    .with_detail("page has no image URL")
+            })?;
+            let width = page.width.unwrap_or_default();
+            let height = page.height.unwrap_or_default();
+            pages.push(ArtworkPage {
+                page_index: index,
+                image: policy.image(
+                    "artwork",
+                    id,
+                    index as i64,
+                    "original",
+                    url,
+                    (width, height),
+                )?,
+                width,
+                height,
+            });
+        }
+    } else if let Some(url) = single_page
+        .and_then(|page| page.original_image_url.as_deref())
+        .filter(|url| !url.is_empty())
+    {
+        let (width, height) = dimensions;
+        pages.push(ArtworkPage {
+            page_index: 0,
+            image: policy.image("artwork", id, 0, "original", url, (width, height))?,
+            width,
+            height,
+        });
     }
-    if parsed.path().is_empty() || parsed.path() == "/" {
-        return Err(forbidden("resource URL has no path"));
-    }
-    if !matches!(
-        parsed.host_str(),
-        Some("i.pximg.net" | "s.pximg.net" | "i-f.pximg.net")
-    ) {
-        return Err(forbidden("resource host is not allowed"));
-    }
+    Ok(pages)
+}
+
+fn encode_identity(kind: &str, id: i64, page: i64, variant: &str) -> Result<ResourceRef> {
     #[derive(Serialize)]
     struct Identity<'a> {
         k: &'a str,
@@ -224,7 +315,7 @@ fn image(
     fn is_zero(value: &i64) -> bool {
         *value == 0
     }
-    let payload = serde_json::to_vec(&Identity {
+    let payload = serde_json::to_string(&Identity {
         k: kind,
         id,
         p: page,
@@ -233,18 +324,44 @@ fn image(
     .map_err(|_| {
         Error::new(Reason::UpstreamError, "resource")
             .with_detail("cannot encode resource reference")
-    })?;
-    let resource = Resource {
-        reference: ResourceRef::new("pixiv", &payload)?,
-        url: url.to_owned(),
-        request_headers: [("Referer".into(), "https://app-api.pixiv.net/".into())].into(),
-        expires_at: None,
-        requires_credentials: false,
+    })?
+    .replace('<', "\\u003c")
+    .replace('>', "\\u003e")
+    .replace('&', "\\u0026")
+    .replace('\u{2028}', "\\u2028")
+    .replace('\u{2029}', "\\u2029");
+    ResourceRef::new("pixiv", payload.as_bytes())
+}
+
+pub fn artwork_variant_resource(original: &Resource, variant: &str) -> Result<ResourceRef> {
+    if variant.is_empty() || variant == "original" {
+        return Ok(original.reference.clone());
+    }
+    #[derive(Default, Deserialize)]
+    struct Identity {
+        k: Option<String>,
+        id: Option<i64>,
+        p: Option<i64>,
+        v: Option<String>,
+    }
+    let payload = original.reference.payload()?;
+    let invalid = || {
+        Error::new(Reason::InvalidArgument, "resource")
+            .with_detail("cannot decode resource reference")
     };
-    Ok(ImageResource {
-        resource,
-        variant: variant.to_owned(),
-        width,
-        height,
-    })
+    let normalized = crate::codec::normalize_json(&payload).map_err(|_| invalid())?;
+    let identity = serde_json::from_str::<Option<Identity>>(&normalized)
+        .map_err(|_| invalid())?
+        .unwrap_or_default();
+    let kind = identity.k.unwrap_or_default();
+    let id = identity.id.unwrap_or_default();
+    if kind.is_empty() || id <= 0 {
+        return Err(invalid());
+    }
+    if kind != "artwork" {
+        return Err(Error::new(Reason::InvalidArgument, "resource")
+            .with_detail("only artwork resources support quality variants"));
+    }
+    let _ = identity.v;
+    encode_identity(&kind, id, identity.p.unwrap_or_default(), variant)
 }

@@ -46,7 +46,7 @@ async fn artwork_detail_matches_go_dto_resources_errors_and_requests() {
         "../../../docs/migration/contracts/artwork-detail.json"
     ))
     .unwrap();
-    assert_eq!(cases.len(), 18);
+    assert_eq!(cases.len(), 19);
     for case in cases {
         let requests = Mutex::new(vec![]);
         let client = Client::with_transport(
