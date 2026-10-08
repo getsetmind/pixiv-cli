@@ -468,7 +468,7 @@ Rust CLI に `--rating`、`--limit/-l`、`--page/-p` を追加した。rating �
 
 90ケースの adapter 検証結果・全 GET/path/query と、成功76ケースの実際の JSON presenter 出力を Go と比較する。後続ページの malformed 応答4ケースでは収集結果を返さず、JSON の部分結果も公開しない。入力不正10ケースは無効な proxy を設定した CLI 子プロセスで stderr・終了コードを比較し、クライアント設定前に拒否することを確認する。JSON は `{"illusts":[...]}` envelope とし、HTML 文字を Go と同じく escape する。比較は JSON の構造・値・配列順を維持して行う。
 
-Windows amd64 の fixture 比較であり、正常 CLI 子プロセスから実 HTTP までの接続、cursor context の resume・循環検出、checkpoint の副作用、全境界・取消/deadline、account/pool 再実行、bookmark との組合せ、他 OS は未検証。収集処理は現時点で CLI adapter 内にあり、MCP との共通 traversal 化は残っている。human の表示と NDJSON の record 形状はまだ Go と一致せず、非ローカル検索の human/NDJSON は収集後に出力するため Go の stream/途中失敗時の出力とも異なる。非ローカル JSON も Go のファイル spool に対して現在はメモリ収集であり、bounded output commit とメモリ使用量の互換は残っている。これらを JSON の成功から互換済みとは扱わない。
+Windows amd64 の fixture 比較であり、正常 CLI 子プロセスから実 HTTP までの接続、cursor context の resume・循環検出、checkpoint の副作用、全境界・取消/deadline、account/pool 再実行、bookmark との組合せ、他 OS は未検証。収集処理は現時点で CLI adapter 内にあり、MCP との共通 traversal 化は残っている。human/NDJSON の検証範囲は次節に記録する。非ローカル JSON は Go のファイル spool に対して現在はメモリ収集であり、bounded output commit とメモリ使用量の互換は残っている。
 
 ```text
 go test -race ./internal/cli -run '^TestMigrationSearchRatingAndPages' -count=1
@@ -476,3 +476,18 @@ cargo test -p pixiv-cli-rs --test search_pages --locked
 ```
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-search-pages` を指定する。
+
+## CLI 検索の human/NDJSON と出力失敗
+
+[search-output.json](contracts/search-output.json) は前節の fixture 12種類を参照し、human/NDJSON と正常 writer・通常の書き込み失敗・BrokenPipe を組み合わせた固定 Go 版の72ケース。全 HTTP query、stdout/stderr、エラー、終了コードを比較する。human は見出し・URL・引用された title・作者・bookmarks/views/tags を byte 一致で確認し、NDJSON は既存の共通 record 変換を使い、各行の構造と値・行順を比較する。
+
+非ローカル検索はページを取得するたびに出力し、後続の malformed 応答があっても先行出力を保持する。rating によるローカル検索は収集の成功後に出力し、後続ページの失敗時には stdout が空のままとなる。先頭の空ページの補充、論理 page、重複保持、ローカル結果が空の場合の human 見出しも確認する。書き込み失敗後の追加要求停止、human の BrokenPipe が失敗・明示 NDJSON の BrokenPipe が成功となる終了コードと診断も比較した。
+
+検証は Windows amd64 の CLI adapter と実際の終了処理に限定する。正常の CLI 子プロセス・TTY/pipe の自動切替、全 Unicode の引用、途中まで書き込む writer、未知の kind/不正 ID による record 変換失敗、取消/deadline、pool の replay/commit 境界、bookmark、他 OS は未検証。JSON のファイル spool と MCP との共通 traversal 化も残る。
+
+```text
+go test -race ./internal/cli -run '^TestMigrationSearchOutput' -count=1
+cargo test -p pixiv-cli-rs --test search_output --locked
+```
+
+基準を意図して更新する場合だけ Go テストの `-args -migration-update-search-output` を指定する。

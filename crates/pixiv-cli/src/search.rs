@@ -158,15 +158,110 @@ pub fn write_search_json<W: Write>(items: &[Artwork], out: &mut W) -> Result<(),
 
 pub async fn collect_search<T: Transport>(
     client: &Client<T>,
-    mut request: SearchArtworksRequest,
+    request: SearchArtworksRequest,
     options: &SearchOptions,
 ) -> Result<Vec<Artwork>, CommandError> {
+    let mut items = vec![];
+    visit_search(client, request, options, |batch| {
+        items.extend(batch);
+        Ok(())
+    })
+    .await?;
+    Ok(items)
+}
+
+pub async fn artwork_search<T: Transport, W: Write>(
+    client: &Client<T>,
+    request: SearchArtworksRequest,
+    options: &SearchOptions,
+    mode: crate::DetailOutput,
+    out: &mut W,
+) -> Result<(), CommandError> {
+    let word = request.word.clone();
+    if mode == crate::DetailOutput::Json {
+        let items = collect_search(client, request, options).await?;
+        return write_search_json(&items, out);
+    }
+    let local = pixiv_app::search_filter::normalize_filter(&options.rating, &options.content_type)
+        .map_err(|error| CommandError::Message(error.message()))?
+        .rating
+        != "all";
+    let mut heading_written = false;
+    let mut present = |items: Vec<Artwork>| -> Result<(), CommandError> {
+        if mode == crate::DetailOutput::Human && !heading_written {
+            writeln!(out, "illustrations for {}", quote(&word))?;
+            heading_written = true;
+        }
+        for item in items {
+            if mode == crate::DetailOutput::Ndjson {
+                let record = pixiv_record::from_artwork(&item)
+                    .map_err(|error| CommandError::Message(error.message()))?;
+                let encoded = serde_json::to_string(&record).map_err(|_| {
+                    pixiv_sdk::Error::new(pixiv_sdk::Reason::LocalStateError, "output")
+                })?;
+                writeln!(out, "{}", crate::go_json_escape(encoded))?;
+            } else {
+                let url = if item.id > 0 {
+                    format!("https://www.pixiv.net/artworks/{}", item.id)
+                } else {
+                    String::new()
+                };
+                writeln!(out, "{url}")?;
+                let tags = item
+                    .tags
+                    .iter()
+                    .map(|tag| tag.name.as_str())
+                    .collect::<Vec<_>>()
+                    .join(",");
+                writeln!(
+                    out,
+                    "{} {} by {} bookmarks:{} views:{} tags:{}",
+                    item.id,
+                    quote(&item.title),
+                    item.user.name,
+                    item.total_bookmarks,
+                    item.total_views,
+                    tags
+                )?;
+            }
+        }
+        Ok(())
+    };
+    if local {
+        present(collect_search(client, request, options).await?)
+    } else {
+        visit_search(client, request, options, present).await
+    }
+}
+
+fn quote(value: &str) -> String {
+    let mut out = String::from("\"");
+    for ch in value.chars() {
+        if ch != ' '
+            && unicode_general_category::get_general_category(ch)
+                == unicode_general_category::GeneralCategory::SpaceSeparator
+        {
+            out.push_str(&format!("\\u{:04x}", ch as u32));
+        } else {
+            out.push_str(&crate::safe_line(&ch.to_string()));
+        }
+    }
+    out.push('"');
+    out
+}
+
+async fn visit_search<T: Transport>(
+    client: &Client<T>,
+    mut request: SearchArtworksRequest,
+    options: &SearchOptions,
+    mut consume: impl FnMut(Vec<Artwork>) -> Result<(), CommandError>,
+) -> Result<(), CommandError> {
     let filter = pixiv_app::search_filter::normalize_filter(&options.rating, &options.content_type)
         .map_err(|error| CommandError::Message(error.message()))?;
     let local_filter = filter.rating != "all";
     let plan = options.plan()?;
     let mut skip = plan.skip;
-    let mut items = vec![];
+    let mut returned_count = 0;
     let mut cursors = BTreeSet::new();
     loop {
         if !cursors.insert(request.cursor.as_str().to_owned()) {
@@ -201,15 +296,18 @@ pub async fn collect_search<T: Transport>(
         skip -= consumed;
         batch.drain(..consumed);
         if plan.limit > 0 {
-            batch.truncate(plan.limit - items.len());
+            batch.truncate(plan.limit - returned_count);
         }
         let returned = !batch.is_empty();
-        items.extend(batch);
-        if (plan.limit > 0 && items.len() >= plan.limit)
+        returned_count += batch.len();
+        if returned {
+            consume(batch)?;
+        }
+        if (plan.limit > 0 && returned_count >= plan.limit)
             || (plan.one_batch && skip == 0 && returned)
             || page.next.is_zero()
         {
-            return Ok(items);
+            return Ok(());
         }
         request.cursor = page.next;
     }

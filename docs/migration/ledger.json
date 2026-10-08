@@ -825,7 +825,9 @@
         "internal/shared/searchfilter/migration_filter_test.go#TestMigrationLocalFiltersMatchFrozenNormalizationBindingAndUnknownClasses",
         "crates/pixiv-app/tests/search_filter.rs#local_filters_match_go_normalization_cursor_binding_and_unknown_rating_classes",
         "internal/cli/migration_search_pages_test.go#TestMigrationSearchRatingAndPagesMatchFrozenCollectionAndFailures",
-        "crates/pixiv-cli/tests/search_pages.rs#search_rating_and_logical_pages_match_go_without_dropping_duplicates_or_partial_failure_guards"
+        "crates/pixiv-cli/tests/search_pages.rs#search_rating_and_logical_pages_match_go_without_dropping_duplicates_or_partial_failure_guards",
+        "internal/cli/migration_search_output_test.go#TestMigrationSearchOutputPreservesStreamingAndWriterFailures",
+        "crates/pixiv-cli/tests/search_output.rs#search_output_matches_go_records_streaming_partial_results_and_writer_failures"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -834,7 +836,8 @@
         "日付計算 helper は固定時刻168ケースで比較。period/start-date/end-date flags は Go の213ケースで検証順、33ケースの SDK query、174ケースの子プロセス stderr/終了コード、半年/一年42ケースを確認。NUL 6ケースは adapter のみ比較。時計の全範囲/全timezoneと他OSは未検証。",
         "検索 selectors は Go の210ケースで比較。search-by/sort/content-type/ai-mode/aspect-ratio/resolution/draw-tool を型付き request に接続し111ケースの GET/path/query と99ケースの子プロセスエラーを確認。正常CLI実HTTP・残りflags/entity/入力パイプ・全Unicodeは未実装または未検証。",
         "共通 rating/content-type filter は168ケースで正規化/エラー順/context、正常80ケースの3360判定を比較。CLI rating と MCP 種別判定に接続した。Go の直接構築された不正Filter/零値、contextのresume/cycle/checkpoint副作用は未検証。",
-        "rating/limit/page は Go CLI の90ケースでローカル判定後の論理ページ・空ページ補充・重複保持・後続失敗時の部分結果破棄・全queryを比較。成功76ケースのJSON envelope/DTOと入力不正10ケースの子プロセスを検証。収集はCLI内にありMCPとの共通traversal化は未実装。正常CLI実HTTP・account/pool・bookmark組合せ・全境界/取消・他OSは未検証。human表示、NDJSON record形状、非local human/NDJSONのstream/途中失敗出力、非local JSONのspool/bounded commit/メモリ使用量はGoと未一致。"
+        "rating/limit/page は Go CLI の90ケースでローカル判定後の論理ページ・空ページ補充・重複保持・後続失敗時の部分結果破棄・全queryを比較。成功76ケースのJSON envelope/DTOと入力不正10ケースの子プロセスを検証。収集はCLI内にありMCPとの共通traversal化は未実装。正常CLI実HTTP・account/pool・bookmark組合せ・全境界/取消・他OSは未検証。非local JSONのspool/bounded commit/メモリ使用量はGoと未一致。",
+        "human/NDJSON の72ケースで見出し/URL/title引用/作者/件数/tags、共通record、論理page/空ページ/重複、通常検索のstreamと後続失敗時の先行出力保持、local検索の成功後出力、writer失敗後の要求停止、BrokenPipeの終了コード/診断をGoと比較。正常CLI子プロセス/TTY自動切替、全Unicode、partial writer、record変換失敗、取消、pool replay/commit、bookmark、他OSは未検証。"
       ]
     },
     {

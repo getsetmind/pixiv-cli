@@ -105,29 +105,21 @@ async fn execute(args: Arguments) -> Result<(), CommandError> {
             ndjson,
             ..
         } => {
-            let artworks = pixiv_cli_rs::search::collect_search(
+            let mode = if json {
+                DetailOutput::Json
+            } else if ndjson || !io::stdout().is_terminal() {
+                DetailOutput::Ndjson
+            } else {
+                DetailOutput::Human
+            };
+            pixiv_cli_rs::search::artwork_search(
                 &client,
                 search_request.expect("search options were resolved"),
                 &options,
+                mode,
+                &mut io::stdout().lock(),
             )
             .await?;
-            if json {
-                pixiv_cli_rs::search::write_search_json(&artworks, &mut io::stdout().lock())?;
-            } else {
-                for artwork in artworks {
-                    if ndjson || !io::stdout().is_terminal() {
-                        output(
-                            &serde_json::to_string(&pixiv_sdk::dto::ArtworkDto::from(&artwork))
-                                .map_err(|_| local())?,
-                        )?;
-                    } else {
-                        output(&format!(
-                            "{} {} — {}",
-                            artwork.id, artwork.title, artwork.user.name
-                        ))?;
-                    }
-                }
-            }
         }
         Command::Ugoira { source, json } => {
             let metadata = client.ugoira_metadata(artwork_id(&source)?).await?;
