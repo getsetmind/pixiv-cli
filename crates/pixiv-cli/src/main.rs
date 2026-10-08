@@ -72,7 +72,10 @@ async fn execute(args: Arguments) -> pixiv_sdk::Result<()> {
         Command::Detail { source, json } => {
             let artwork = client.artwork(artwork_id(&source)?).await?;
             if json {
-                output(&serde_json::to_string_pretty(&artwork).map_err(|_| local())?)?;
+                output(
+                    &serde_json::to_string_pretty(&pixiv_sdk::dto::ArtworkDto::from(&artwork))
+                        .map_err(|_| local())?,
+                )?;
             } else {
                 output(&format!(
                     "{} {} — {}",
@@ -87,11 +90,18 @@ async fn execute(args: Arguments) -> pixiv_sdk::Result<()> {
         } => {
             let artworks = client.search_artworks(&query).await?;
             if json {
-                output(&serde_json::to_string_pretty(&artworks).map_err(|_| local())?)?;
+                let dtos: Vec<_> = artworks
+                    .iter()
+                    .map(pixiv_sdk::dto::ArtworkDto::from)
+                    .collect();
+                output(&serde_json::to_string_pretty(&dtos).map_err(|_| local())?)?;
             } else {
                 for artwork in artworks {
                     if ndjson || !io::stdout().is_terminal() {
-                        output(&serde_json::to_string(&artwork).map_err(|_| local())?)?;
+                        output(
+                            &serde_json::to_string(&pixiv_sdk::dto::ArtworkDto::from(&artwork))
+                                .map_err(|_| local())?,
+                        )?;
                     } else {
                         output(&format!(
                             "{} {} — {}",

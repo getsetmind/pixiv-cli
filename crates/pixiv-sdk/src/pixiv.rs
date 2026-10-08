@@ -1,6 +1,6 @@
 use crate::{
     Error, Reason, Result,
-    models::{Artwork, ArtworkKind, Tag, UgoiraFrame, UgoiraMetadata, User},
+    models::{Artwork, UgoiraFrame, UgoiraMetadata},
     transport::{HttpTransport, Request, Response, Transport, checked},
 };
 use chrono::{DateTime, Utc};
@@ -56,7 +56,7 @@ impl<T: Transport> Client<T> {
     async fn get(
         &self,
         path: &str,
-        mut parameters: Vec<(String, String)>,
+        parameters: Vec<(String, String)>,
         operation: &'static str,
     ) -> Result<Value> {
         if self.access_token.is_empty() {
@@ -65,7 +65,6 @@ impl<T: Transport> Client<T> {
         if self.expires_at.is_some_and(|expiry| expiry <= Utc::now()) {
             return Err(Error::new(Reason::CredentialsExpired, operation));
         }
-        parameters.push(("filter".to_owned(), "for_android".to_owned()));
         let request = Request {
             method: Method::GET,
             url: format!("https://app-api.pixiv.net{path}"),
@@ -95,7 +94,8 @@ impl<T: Transport> Client<T> {
 
     pub async fn artwork(&self, id: i64) -> Result<Artwork> {
         if id <= 0 {
-            return Err(Error::new(Reason::InvalidArgument, "Artwork"));
+            return Err(Error::new(Reason::InvalidArgument, "Artwork")
+                .with_detail("artwork ID must be positive"));
         }
         let body = self
             .get(
@@ -104,11 +104,12 @@ impl<T: Transport> Client<T> {
                 "Artwork",
             )
             .await?;
-        map_artwork(
+        crate::artwork::map(
             body.get("illust")
                 .ok_or_else(|| malformed("Artwork"))?
                 .clone(),
             "Artwork",
+            true,
         )
     }
 
@@ -133,7 +134,7 @@ impl<T: Transport> Client<T> {
             .ok_or_else(|| malformed("search_artworks"))?;
         list.iter()
             .cloned()
-            .map(|value| map_artwork(value, "search_artworks"))
+            .map(|value| crate::artwork::map(value, "search_artworks", false))
             .collect()
     }
 
@@ -206,53 +207,4 @@ pub(crate) fn headers(token: Option<&str>) -> Vec<(String, String)> {
 
 fn malformed(operation: &'static str) -> Error {
     Error::new(Reason::MalformedUpstreamResponse, operation)
-}
-
-fn map_artwork(value: Value, operation: &'static str) -> Result<Artwork> {
-    #[derive(Deserialize)]
-    struct WireArtwork {
-        id: i64,
-        title: String,
-        caption: String,
-        #[serde(rename = "type")]
-        kind: String,
-        tags: Vec<Tag>,
-        user: User,
-        create_date: DateTime<Utc>,
-        total_bookmarks: u64,
-        total_view: u64,
-        width: u32,
-        height: u32,
-        page_count: u32,
-        x_restrict: u32,
-        #[serde(default)]
-        illust_ai_type: u32,
-    }
-    let wire: WireArtwork = serde_json::from_value(value).map_err(|_| malformed(operation))?;
-    if wire.id <= 0 || wire.user.id <= 0 || wire.page_count == 0 {
-        return Err(malformed(operation));
-    }
-    let kind = match wire.kind.as_str() {
-        "illust" => ArtworkKind::Illust,
-        "manga" => ArtworkKind::Manga,
-        "ugoira" => ArtworkKind::Ugoira,
-        _ => ArtworkKind::Unknown,
-    };
-    Ok(Artwork {
-        id: wire.id,
-        title: wire.title,
-        caption: wire.caption,
-        kind,
-        raw_kind: wire.kind,
-        tags: wire.tags,
-        user: wire.user,
-        published_at: wire.create_date,
-        total_bookmarks: wire.total_bookmarks,
-        total_views: wire.total_view,
-        width: wire.width,
-        height: wire.height,
-        page_count: wire.page_count,
-        x_restrict: wire.x_restrict,
-        ai_type: wire.illust_ai_type,
-    })
 }

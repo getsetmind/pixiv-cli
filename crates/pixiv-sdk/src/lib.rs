@@ -1,5 +1,7 @@
+mod artwork;
 mod codec;
 pub mod cursor;
+pub mod dto;
 pub mod error;
 pub mod models;
 pub mod oauth;

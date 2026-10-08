@@ -6,6 +6,23 @@ use serde::{
     de::{self, IgnoredAny, MapAccess, Visitor},
 };
 use std::fmt;
+
+#[derive(Clone, Default, PartialEq)]
+pub struct Resource {
+    pub reference: ResourceRef,
+    pub url: String,
+    pub request_headers: std::collections::BTreeMap<String, String>,
+    pub expires_at: Option<chrono::DateTime<chrono::Utc>>,
+    pub requires_credentials: bool,
+}
+impl fmt::Debug for Resource {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("Resource")
+            .field("reference", &self.reference)
+            .field("requires_credentials", &self.requires_credentials)
+            .finish_non_exhaustive()
+    }
+}
 fn reference_error(operation: &'static str) -> Error {
     Error::with_product("", Reason::InvalidArgument, operation)
 }
