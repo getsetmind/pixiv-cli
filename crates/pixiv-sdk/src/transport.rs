@@ -1,4 +1,4 @@
-use crate::error::RetryAdvice;
+use crate::error::{RetryAdvice, TransportKind};
 use crate::{Error, Reason, Result};
 use chrono::{
     DateTime, TimeDelta, Utc,
@@ -6,7 +6,7 @@ use chrono::{
 };
 use reqwest::{Method, redirect::Policy};
 use serde_json::Value;
-use std::{fmt, time::Duration};
+use std::{error::Error as StdError, fmt, time::Duration};
 
 pub use crate::resource_transport::{
     ResourceBody, ResourceReadRequest, ResourceTransport, ResourceUrlValidator,
@@ -115,25 +115,25 @@ impl HttpTransport {
         };
         let original = builder
             .build()
-            .map_err(|_| Error::new(Reason::UpstreamUnavailable, request.operation))?;
+            .map_err(|error| request_failure(&error, request.operation))?;
         let response = self.follow_redirects(original, request.operation).await?;
         let status = response.status().as_u16();
+        let retry_after = response
+            .headers()
+            .get("retry-after")
+            .and_then(|value| value.to_str().ok())
+            .and_then(|value| parse_retry_after(value, Utc::now()));
+        let bytes = response
+            .bytes()
+            .await
+            .map_err(|error| request_failure(&error, request.operation))?;
         if !decode_json {
-            response
-                .bytes()
-                .await
-                .map_err(|_| Error::new(Reason::UpstreamUnavailable, request.operation))?;
             return Ok(Response {
                 status,
                 retry_after: None,
                 body: Value::Null,
             });
         }
-        let retry_after = response
-            .headers()
-            .get("retry-after")
-            .and_then(|value| value.to_str().ok())
-            .and_then(|value| parse_retry_after(value, Utc::now()));
         if !(200..300).contains(&status) {
             return Ok(Response {
                 status,
@@ -141,9 +141,7 @@ impl HttpTransport {
                 body: Value::Null,
             });
         }
-        let body = response
-            .json()
-            .await
+        let body = serde_json::from_slice(&bytes)
             .map_err(|_| Error::new(Reason::MalformedUpstreamResponse, request.operation))?;
         Ok(Response {
             status,
@@ -157,7 +155,7 @@ impl HttpTransport {
         original: reqwest::Request,
         operation: &'static str,
     ) -> Result<reqwest::Response> {
-        let failure = || Error::new(Reason::UpstreamUnavailable, operation);
+        let failure = || classified_transport_failure("unknown", operation);
         let mut current = original.try_clone().ok_or_else(failure)?;
         let mut strip_sensitive = false;
         let mut include_body = true;
@@ -165,7 +163,11 @@ impl HttpTransport {
             let previous_url = current.url().clone();
             let previous_method = current.method().clone();
             self.pacing.wait().await;
-            let response = self.client.execute(current).await.map_err(|_| failure())?;
+            let response = self
+                .client
+                .execute(current)
+                .await
+                .map_err(|error| request_failure(&error, operation))?;
             let status = response.status().as_u16();
             if !matches!(status, 301 | 302 | 303 | 307 | 308) {
                 return Ok(response);
@@ -235,6 +237,49 @@ impl HttpTransport {
         }
         Err(failure())
     }
+}
+
+fn request_failure(error: &reqwest::Error, operation: &'static str) -> Error {
+    let mut source: Option<&(dyn StdError + 'static)> = Some(error);
+    let mut tls = false;
+    let mut refused = false;
+    let mut reset = false;
+    let mut timeout = error.is_timeout();
+    while let Some(error) = source {
+        tls |= error.is::<rustls::Error>();
+        if let Some(error) = error.downcast_ref::<std::io::Error>() {
+            refused |= error.kind() == std::io::ErrorKind::ConnectionRefused;
+            reset |= error.kind() == std::io::ErrorKind::ConnectionReset;
+            timeout |= error.kind() == std::io::ErrorKind::TimedOut;
+        }
+        source = error
+            .downcast_ref::<std::io::Error>()
+            .and_then(std::io::Error::get_ref)
+            .map(|inner| inner as &(dyn StdError + 'static))
+            .or_else(|| error.source());
+    }
+    let kind = if tls {
+        "tls"
+    } else if refused {
+        "connection_refused"
+    } else if reset {
+        "connection_reset"
+    } else if timeout {
+        "timeout"
+    } else {
+        "unknown"
+    };
+    classified_transport_failure(kind, operation)
+}
+
+fn classified_transport_failure(kind: &str, operation: &'static str) -> Error {
+    Error::new(Reason::UpstreamUnavailable, operation)
+        .with_transport(if kind == "tls" {
+            TransportKind::Tls
+        } else {
+            TransportKind::Http
+        })
+        .with_detail(format!("transport: {kind}"))
 }
 
 fn valid_location_escapes(location: &str) -> bool {

@@ -5493,17 +5493,21 @@
         "crates/pixiv-sdk/src/artwork.rs",
         "crates/pixiv-sdk/src/models.rs",
         "crates/pixiv-sdk/src/dto.rs",
-        "crates/pixiv-sdk/src/resource.rs"
+        "crates/pixiv-sdk/src/resource.rs",
+        "crates/pixiv-sdk/src/transport.rs"
       ],
       "tests": [
         "sdk/pixiv/migration_artwork_test.go#TestMigrationArtworkMatchesFrozenDTOAndRequests",
-        "crates/pixiv-sdk/tests/artwork_detail.rs"
+        "crates/pixiv-sdk/tests/artwork_detail.rs",
+        "sdk/pixiv/migration_transport_failure_test.go#TestMigrationSDKTransportFailureClassificationAndBodyConsumption",
+        "crates/pixiv-sdk/tests/transport_failure.rs#sdk_transport_failures_match_go_classification_and_consume_error_bodies"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "作品詳細の19ケースを比較済み。CLI/MCP正常出力、resourceのregistry・再解決・open/save、JSON重複key・不正UTF-8・配列内null、日時の全変種と他の操作からのDTOは未移植または未検証。"
+        "作品詳細の19ケースを比較済み。CLI/MCP正常出力、resourceのregistry・再解決・open/save、JSON重複key・不正UTF-8・配列内null、日時の全変種と他の操作からのDTOは未移植または未検証。",
+        "通信失敗の DNS/proxyconnect 分類、timeout 実測、Context deadline/取消の全条件、TLS certificate/alert の全種類、正常 HTTPS endpoint の実 CLI/MCP wire、network 診断イベント、他 OS/arch は未検証または未移植。比較済み21ケースの範囲は contracts.md を参照。"
       ]
     },
     {
@@ -5956,13 +5960,16 @@
       ],
       "tests": [
         "sdk/pixiv/migration_mutation_test.go#TestMigrationFormMutationsMatchFrozenValidationWireAndStatus",
-        "crates/pixiv-sdk/tests/form_mutations.rs"
+        "crates/pixiv-sdk/tests/form_mutations.rs",
+        "sdk/pixiv/migration_transport_failure_test.go#TestMigrationSDKTransportFailureClassificationAndBodyConsumption",
+        "crates/pixiv-sdk/tests/transport_failure.rs#sdk_transport_failures_match_go_classification_and_consume_error_bodies"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。",
+        "通信失敗の DNS/proxyconnect 分類、timeout 実測、Context deadline/取消の全条件、TLS certificate/alert の全種類、正常 HTTPS endpoint の実 CLI/MCP wire、network 診断イベント、他 OS/arch は未検証または未移植。比較済み21ケースの範囲は contracts.md を参照。"
       ]
     },
     {
@@ -6034,13 +6041,16 @@
         "internal/services/pixiv/appapi/appapi_test.go",
         "crates/pixiv-sdk/tests/retry_after.rs",
         "sdk/pixiv/migration_artwork_test.go#TestMigrationArtworkMatchesFrozenDTOAndRequests",
-        "crates/pixiv-sdk/tests/artwork_detail.rs"
+        "crates/pixiv-sdk/tests/artwork_detail.rs",
+        "sdk/pixiv/migration_transport_failure_test.go#TestMigrationSDKTransportFailureClassificationAndBodyConsumption",
+        "crates/pixiv-sdk/tests/transport_failure.rs#sdk_transport_failures_match_go_classification_and_consume_error_bodies"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "作品詳細の19ケースを比較済み。CLI/MCP正常出力、resourceのregistry・再解決・open/save、JSON重複key・不正UTF-8・配列内null、日時の全変種と他の操作からのDTOは未移植または未検証。"
+        "作品詳細の19ケースを比較済み。CLI/MCP正常出力、resourceのregistry・再解決・open/save、JSON重複key・不正UTF-8・配列内null、日時の全変種と他の操作からのDTOは未移植または未検証。",
+        "通信失敗の DNS/proxyconnect 分類、timeout 実測、Context deadline/取消の全条件、TLS certificate/alert の全種類、正常 HTTPS endpoint の実 CLI/MCP wire、network 診断イベント、他 OS/arch は未検証または未移植。比較済み21ケースの範囲は contracts.md を参照。"
       ]
     },
     {
@@ -8187,7 +8197,9 @@
         "crates/pixiv-app/tests/pool_session.rs#execution_pool_overrides_the_requested_account_and_persists_replay_state",
         "crates/pixiv-app/tests/pool_session.rs#execution_rejects_configuration_and_proxy_errors_before_acquiring_an_account",
         "sdk/pixiv/migration_redirect_test.go#TestMigrationSDKHTTPRedirectPreservesMethodsHeadersAndOriginalBody",
-        "crates/pixiv-sdk/tests/http_redirect.rs#sdk_http_redirect_matches_go_methods_headers_body_and_limit"
+        "crates/pixiv-sdk/tests/http_redirect.rs#sdk_http_redirect_matches_go_methods_headers_body_and_limit",
+        "sdk/pixiv/migration_transport_failure_test.go#TestMigrationSDKTransportFailureClassificationAndBodyConsumption",
+        "crates/pixiv-sdk/tests/transport_failure.rs#sdk_transport_failures_match_go_classification_and_consume_error_bodies"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -8195,7 +8207,8 @@
       "differences": [
         "全 SDK Options、client 再構築、pool replay の所有期間、Context 取消/deadline/全競合、pool と HTTP idle cleanup、CLI/MCP bootstrap との接続全条件、TLS/SOCKS wire、他 OS/arch は未完了または未検証。",
         "redirect の HTTPS downgrade、user-info/IDN/IPv6/全 URL 構文、独自 Host/CookieJar/CheckRedirect、body drain/connection reuse、型付き通信エラーと診断、SDK/CLI/MCP の固定 HTTPS endpoint を通す正常系は未完了または未検証。",
-        "OAuth/refresh の全 JSON wire・Unicode・入力/正常応答/認証/DTO、code 交換、全認証操作、resource/retry/保存の全条件、SQL 中断と全取消競合は未移植または未検証。transport constructor が Go の facade 呼び出し前に対して Rust では Gate 取得後となる順序差も未解消。"
+        "OAuth/refresh の全 JSON wire・Unicode・入力/正常応答/認証/DTO、code 交換、全認証操作、resource/retry/保存の全条件、SQL 中断と全取消競合は未移植または未検証。transport constructor が Go の facade 呼び出し前に対して Rust では Gate 取得後となる順序差も未解消。",
+        "通信失敗の DNS/proxyconnect 分類、timeout 実測、Context deadline/取消の全条件、TLS certificate/alert の全種類、正常 HTTPS endpoint の実 CLI/MCP wire、network 診断イベント、他 OS/arch は未検証または未移植。比較済み21ケースの範囲は contracts.md を参照。"
       ]
     },
     {
@@ -8218,14 +8231,17 @@
         "crates/pixiv-sdk/tests/pacing.rs#default_http_transport_keeps_a_pending_response_after_the_prototype_sixty_second_limit",
         "crates/pixiv-sdk/tests/pacing.rs#aborting_a_resource_pacing_wait_releases_the_queue_without_consuming_a_request_start",
         "sdk/pixiv/migration_redirect_test.go#TestMigrationSDKHTTPRedirectPreservesMethodsHeadersAndOriginalBody",
-        "crates/pixiv-sdk/tests/http_redirect.rs#sdk_http_redirect_matches_go_methods_headers_body_and_limit"
+        "crates/pixiv-sdk/tests/http_redirect.rs#sdk_http_redirect_matches_go_methods_headers_body_and_limit",
+        "sdk/pixiv/migration_transport_failure_test.go#TestMigrationSDKTransportFailureClassificationAndBodyConsumption",
+        "crates/pixiv-sdk/tests/transport_failure.rs#sdk_transport_failures_match_go_classification_and_consume_error_bodies"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
         "全 SDK Options、client 再構築、pool replay の所有期間、Context 取消/deadline/全競合、pool と HTTP idle cleanup、CLI/MCP bootstrap との接続全条件、TLS/SOCKS wire、他 OS/arch は未完了または未検証。",
-        "redirect の HTTPS downgrade、user-info/IDN/IPv6/全 URL 構文、独自 Host/CookieJar/CheckRedirect、body drain/connection reuse、型付き通信エラーと診断、SDK/CLI/MCP の固定 HTTPS endpoint を通す正常系は未完了または未検証。"
+        "redirect の HTTPS downgrade、user-info/IDN/IPv6/全 URL 構文、独自 Host/CookieJar/CheckRedirect、body drain/connection reuse、型付き通信エラーと診断、SDK/CLI/MCP の固定 HTTPS endpoint を通す正常系は未完了または未検証。",
+        "通信失敗の DNS/proxyconnect 分類、timeout 実測、Context deadline/取消の全条件、TLS certificate/alert の全種類、正常 HTTPS endpoint の実 CLI/MCP wire、network 診断イベント、他 OS/arch は未検証または未移植。比較済み21ケースの範囲は contracts.md を参照。"
       ]
     },
     {

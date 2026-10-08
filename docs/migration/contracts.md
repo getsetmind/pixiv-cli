@@ -868,3 +868,13 @@ rate limit の最初の応答には Retry-After=0、SDK の再試行後には120
 通常 API は Go と同じ method 変換と body/header 除去を行う。一度 body を除去したら後続の307でも復元しない。資格情報関連の6ヘッダーは、初期ホストから信頼しない宛先へ移った時点で除去し、その後も復元しない。共有 reqwest の自動 redirect は無効のままとし、画像 resource は既存の URL validator と手動追従を維持する。
 
 この比較は HTTP transport の境界を検証する。SDK の固定 HTTPS URL を使う実 CLI/MCP 正常系、HTTPS downgrade、TLS/SOCKS、user-info/IDN/IPv6/全 URL 構文、独自 Host・CookieJar・CheckRedirect、redirect body の drain と connection reuse、通信失敗の型付き分類・原因・診断、他 OS は未検証または未移植である。redirect の失敗 boolean が一致しても、エラー表示全体の互換性を証明したとはしない。
+
+## SDK の通信失敗と body 読取
+
+[transport-failure.json](contracts/transport-failure.json) は Go の実公開 SDK を通した21ケースである。Artwork・OpenWith・AddArtworkBookmark の各入口へ、接続拒否・reset・EOF・TLS record エラー・不正 HTTP head・2xx/503 の body 読取失敗を与え、reason・transport・detail・表示・HTTP status・retry・要求回数を固定する。通信失敗の型付き原因と body だけをテストの HTTPClient 境界で置き換える。
+
+`crates/pixiv-sdk/tests/transport_failure.rs` は同じ公開操作と実 HttpTransport を使用する。テスト用 Transport は固定 endpoint を隔離ローカル宛先へ変更するだけで、接続拒否・RST・EOF・不正 TLS record・不正 HTTP head・body 切断を実ソケットで起こす。接続拒否の port は listen しない socket で保持し、他のプロセスによる再利用を防ぐ。要求数は SDK から transport への呼び出し数を比較し、接続できなかった要求を wire の受信数と同一視しない。
+
+Rust は reqwest の型付き原因を辿り、入れ子の io::Error に含まれる rustls::Error も分類する。原始エラーの文字列を分類へ使わず、URL・資格情報・応答内容を公開エラーへ保持しない。JSON 読取は HTTP status を判定する前に body 全体を読み、途中切断は2xx/503の両方で Go と同じ通信エラーにする。完全に読み取れた不正 JSON は既存の malformed 分類を維持する。form も body 読取失敗を返す。
+
+この比較は Windows amd64 で実施した。DNS・proxyconnect の型付き分類、timeout の実測、Context deadline/取消の全条件、TLS certificate/alert の全種類、正常 HTTPS endpoint と実 CLI/MCP wire、ネットワーク診断イベント、他 OS/arch は未検証または未移植である。socket2 は dev-dependency に分離し、rustls は本番の型付き原因の識別に使う依存である。
