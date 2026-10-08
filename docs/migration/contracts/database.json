@@ -1,0 +1,954 @@
+[
+  {
+    "name": "fresh",
+    "setup": "",
+    "error": "",
+    "state": {
+      "application_id": 1346984003,
+      "fanbox": [],
+      "ledger": [
+        [
+          1,
+          "0001_initial",
+          "9b4f2e2c94a19a0958720dc824897b2eb6b47249b465ff097c49b1ff6ae60d37"
+        ],
+        [
+          2,
+          "0002_fanbox_creator_id_not_null",
+          "ff4f91ea6c57b68e6b311ba7eb07beac191c5f2c3be2eae5a828c33cc91207d7"
+        ],
+        [
+          3,
+          "0003_pixiv_account_schedulable",
+          "21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd"
+        ]
+      ],
+      "pixiv": [],
+      "schema": [
+        [
+          "index",
+          "pixiv_account_one_pool_last_selected",
+          "CREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1"
+        ],
+        [
+          "table",
+          "fanbox_account",
+          "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n)"
+        ],
+        [
+          "table",
+          "pixiv_account",
+          "CREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n)"
+        ],
+        [
+          "table",
+          "schema_migration",
+          "CREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n)"
+        ]
+      ],
+      "user_version": 3
+    }
+  },
+  {
+    "name": "legacy-v1",
+    "setup": "-- 0001_initial.sql\n-- v1 initial auth database. Table names are singular; sort_order is never\n-- renumbered after account deletion. This is the complete pre-release schema;\n-- future released schema changes must use a new numbered migration.\n\nCREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1))\n);\n\nCREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1;\n\nCREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NULL,\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n);\n\nCREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n);\nINSERT INTO schema_migration VALUES(1,'0001_initial','0247f7ea8739433ce47074048a1c8707728e7f3d04cf47c3ff6f15282f8e641f',11);\nPRAGMA user_version=1;\nINSERT INTO pixiv_account(user_id,sort_order,username,refresh_token,credential_revision,created_at,updated_at) VALUES(7,2,'synthetic',x'010203',4,10,20);\nINSERT INTO fanbox_account VALUES(9,3,'synthetic',NULL,x'040506',5,30,10,20);",
+    "error": "",
+    "state": {
+      "application_id": 1346984003,
+      "fanbox": [
+        [
+          9,
+          3,
+          "synthetic",
+          "",
+          "040506",
+          5,
+          30,
+          10,
+          20
+        ]
+      ],
+      "ledger": [
+        [
+          1,
+          "0001_initial",
+          "0247f7ea8739433ce47074048a1c8707728e7f3d04cf47c3ff6f15282f8e641f"
+        ],
+        [
+          2,
+          "0002_fanbox_creator_id_not_null",
+          "ff4f91ea6c57b68e6b311ba7eb07beac191c5f2c3be2eae5a828c33cc91207d7"
+        ],
+        [
+          3,
+          "0003_pixiv_account_schedulable",
+          "21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd"
+        ]
+      ],
+      "pixiv": [
+        [
+          7,
+          2,
+          "synthetic",
+          "010203",
+          4,
+          1,
+          10,
+          20
+        ]
+      ],
+      "schema": [
+        [
+          "index",
+          "pixiv_account_one_pool_last_selected",
+          "CREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1"
+        ],
+        [
+          "table",
+          "fanbox_account",
+          "CREATE TABLE \"fanbox_account\" (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n)"
+        ],
+        [
+          "table",
+          "pixiv_account",
+          "CREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL, schedulable INTEGER NOT NULL DEFAULT 1\n    CHECK (schedulable IN (0, 1)),\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1))\n)"
+        ],
+        [
+          "table",
+          "schema_migration",
+          "CREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n)"
+        ]
+      ],
+      "user_version": 3
+    }
+  },
+  {
+    "name": "reopen",
+    "setup": "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n);\nCREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n);\nCREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n);\nCREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1;\nINSERT INTO schema_migration VALUES(1,'0001_initial','9b4f2e2c94a19a0958720dc824897b2eb6b47249b465ff097c49b1ff6ae60d37',11);\nINSERT INTO schema_migration VALUES(2,'0002_fanbox_creator_id_not_null','ff4f91ea6c57b68e6b311ba7eb07beac191c5f2c3be2eae5a828c33cc91207d7',11);\nINSERT INTO schema_migration VALUES(3,'0003_pixiv_account_schedulable','21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd',11);\nPRAGMA application_id=1346984003;\nPRAGMA user_version=3;",
+    "error": "",
+    "state": {
+      "application_id": 1346984003,
+      "fanbox": [],
+      "ledger": [
+        [
+          1,
+          "0001_initial",
+          "9b4f2e2c94a19a0958720dc824897b2eb6b47249b465ff097c49b1ff6ae60d37"
+        ],
+        [
+          2,
+          "0002_fanbox_creator_id_not_null",
+          "ff4f91ea6c57b68e6b311ba7eb07beac191c5f2c3be2eae5a828c33cc91207d7"
+        ],
+        [
+          3,
+          "0003_pixiv_account_schedulable",
+          "21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd"
+        ]
+      ],
+      "pixiv": [],
+      "schema": [
+        [
+          "index",
+          "pixiv_account_one_pool_last_selected",
+          "CREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1"
+        ],
+        [
+          "table",
+          "fanbox_account",
+          "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n)"
+        ],
+        [
+          "table",
+          "pixiv_account",
+          "CREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n)"
+        ],
+        [
+          "table",
+          "schema_migration",
+          "CREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n)"
+        ]
+      ],
+      "user_version": 3
+    }
+  },
+  {
+    "name": "application-unset",
+    "setup": "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n);\nCREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n);\nCREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n);\nCREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1;\nINSERT INTO schema_migration VALUES(1,'0001_initial','9b4f2e2c94a19a0958720dc824897b2eb6b47249b465ff097c49b1ff6ae60d37',11);\nINSERT INTO schema_migration VALUES(2,'0002_fanbox_creator_id_not_null','ff4f91ea6c57b68e6b311ba7eb07beac191c5f2c3be2eae5a828c33cc91207d7',11);\nINSERT INTO schema_migration VALUES(3,'0003_pixiv_account_schedulable','21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd',11);\nPRAGMA application_id=0;\nPRAGMA user_version=3;",
+    "error": "",
+    "state": {
+      "application_id": 1346984003,
+      "fanbox": [],
+      "ledger": [
+        [
+          1,
+          "0001_initial",
+          "9b4f2e2c94a19a0958720dc824897b2eb6b47249b465ff097c49b1ff6ae60d37"
+        ],
+        [
+          2,
+          "0002_fanbox_creator_id_not_null",
+          "ff4f91ea6c57b68e6b311ba7eb07beac191c5f2c3be2eae5a828c33cc91207d7"
+        ],
+        [
+          3,
+          "0003_pixiv_account_schedulable",
+          "21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd"
+        ]
+      ],
+      "pixiv": [],
+      "schema": [
+        [
+          "index",
+          "pixiv_account_one_pool_last_selected",
+          "CREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1"
+        ],
+        [
+          "table",
+          "fanbox_account",
+          "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n)"
+        ],
+        [
+          "table",
+          "pixiv_account",
+          "CREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n)"
+        ],
+        [
+          "table",
+          "schema_migration",
+          "CREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n)"
+        ]
+      ],
+      "user_version": 3
+    }
+  },
+  {
+    "name": "application-drift",
+    "setup": "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n);\nCREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n);\nCREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n);\nCREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1;\nINSERT INTO schema_migration VALUES(1,'0001_initial','9b4f2e2c94a19a0958720dc824897b2eb6b47249b465ff097c49b1ff6ae60d37',11);\nINSERT INTO schema_migration VALUES(2,'0002_fanbox_creator_id_not_null','ff4f91ea6c57b68e6b311ba7eb07beac191c5f2c3be2eae5a828c33cc91207d7',11);\nINSERT INTO schema_migration VALUES(3,'0003_pixiv_account_schedulable','21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd',11);\nPRAGMA application_id=4660;\nPRAGMA user_version=3;",
+    "error": "database: database belongs to another application (application_id=0x1234)",
+    "state": {
+      "application_id": 4660,
+      "fanbox": [],
+      "ledger": [
+        [
+          1,
+          "0001_initial",
+          "9b4f2e2c94a19a0958720dc824897b2eb6b47249b465ff097c49b1ff6ae60d37"
+        ],
+        [
+          2,
+          "0002_fanbox_creator_id_not_null",
+          "ff4f91ea6c57b68e6b311ba7eb07beac191c5f2c3be2eae5a828c33cc91207d7"
+        ],
+        [
+          3,
+          "0003_pixiv_account_schedulable",
+          "21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd"
+        ]
+      ],
+      "pixiv": [],
+      "schema": [
+        [
+          "index",
+          "pixiv_account_one_pool_last_selected",
+          "CREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1"
+        ],
+        [
+          "table",
+          "fanbox_account",
+          "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n)"
+        ],
+        [
+          "table",
+          "pixiv_account",
+          "CREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n)"
+        ],
+        [
+          "table",
+          "schema_migration",
+          "CREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n)"
+        ]
+      ],
+      "user_version": 3
+    }
+  },
+  {
+    "name": "future-version",
+    "setup": "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n);\nCREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n);\nCREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n);\nCREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1;\nINSERT INTO schema_migration VALUES(1,'0001_initial','9b4f2e2c94a19a0958720dc824897b2eb6b47249b465ff097c49b1ff6ae60d37',11);\nINSERT INTO schema_migration VALUES(2,'0002_fanbox_creator_id_not_null','ff4f91ea6c57b68e6b311ba7eb07beac191c5f2c3be2eae5a828c33cc91207d7',11);\nINSERT INTO schema_migration VALUES(3,'0003_pixiv_account_schedulable','21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd',11);\nPRAGMA application_id=1346984003;\nPRAGMA user_version=4;",
+    "error": "database schema version 4 is newer than binary schema version 3; refusing to run a downgrade",
+    "state": {
+      "application_id": 1346984003,
+      "fanbox": [],
+      "ledger": [
+        [
+          1,
+          "0001_initial",
+          "9b4f2e2c94a19a0958720dc824897b2eb6b47249b465ff097c49b1ff6ae60d37"
+        ],
+        [
+          2,
+          "0002_fanbox_creator_id_not_null",
+          "ff4f91ea6c57b68e6b311ba7eb07beac191c5f2c3be2eae5a828c33cc91207d7"
+        ],
+        [
+          3,
+          "0003_pixiv_account_schedulable",
+          "21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd"
+        ]
+      ],
+      "pixiv": [],
+      "schema": [
+        [
+          "index",
+          "pixiv_account_one_pool_last_selected",
+          "CREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1"
+        ],
+        [
+          "table",
+          "fanbox_account",
+          "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n)"
+        ],
+        [
+          "table",
+          "pixiv_account",
+          "CREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n)"
+        ],
+        [
+          "table",
+          "schema_migration",
+          "CREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n)"
+        ]
+      ],
+      "user_version": 4
+    }
+  },
+  {
+    "name": "user-version-zero",
+    "setup": "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n);\nCREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n);\nCREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n);\nCREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1;\nINSERT INTO schema_migration VALUES(1,'0001_initial','9b4f2e2c94a19a0958720dc824897b2eb6b47249b465ff097c49b1ff6ae60d37',11);\nINSERT INTO schema_migration VALUES(2,'0002_fanbox_creator_id_not_null','ff4f91ea6c57b68e6b311ba7eb07beac191c5f2c3be2eae5a828c33cc91207d7',11);\nINSERT INTO schema_migration VALUES(3,'0003_pixiv_account_schedulable','21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd',11);\nPRAGMA application_id=1346984003;\nPRAGMA user_version=0;",
+    "error": "",
+    "state": {
+      "application_id": 1346984003,
+      "fanbox": [],
+      "ledger": [
+        [
+          1,
+          "0001_initial",
+          "9b4f2e2c94a19a0958720dc824897b2eb6b47249b465ff097c49b1ff6ae60d37"
+        ],
+        [
+          2,
+          "0002_fanbox_creator_id_not_null",
+          "ff4f91ea6c57b68e6b311ba7eb07beac191c5f2c3be2eae5a828c33cc91207d7"
+        ],
+        [
+          3,
+          "0003_pixiv_account_schedulable",
+          "21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd"
+        ]
+      ],
+      "pixiv": [],
+      "schema": [
+        [
+          "index",
+          "pixiv_account_one_pool_last_selected",
+          "CREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1"
+        ],
+        [
+          "table",
+          "fanbox_account",
+          "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n)"
+        ],
+        [
+          "table",
+          "pixiv_account",
+          "CREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n)"
+        ],
+        [
+          "table",
+          "schema_migration",
+          "CREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n)"
+        ]
+      ],
+      "user_version": 3
+    }
+  },
+  {
+    "name": "user-version-one",
+    "setup": "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n);\nCREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n);\nCREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n);\nCREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1;\nINSERT INTO schema_migration VALUES(1,'0001_initial','9b4f2e2c94a19a0958720dc824897b2eb6b47249b465ff097c49b1ff6ae60d37',11);\nINSERT INTO schema_migration VALUES(2,'0002_fanbox_creator_id_not_null','ff4f91ea6c57b68e6b311ba7eb07beac191c5f2c3be2eae5a828c33cc91207d7',11);\nINSERT INTO schema_migration VALUES(3,'0003_pixiv_account_schedulable','21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd',11);\nPRAGMA application_id=1346984003;\nPRAGMA user_version=1;",
+    "error": "",
+    "state": {
+      "application_id": 1346984003,
+      "fanbox": [],
+      "ledger": [
+        [
+          1,
+          "0001_initial",
+          "9b4f2e2c94a19a0958720dc824897b2eb6b47249b465ff097c49b1ff6ae60d37"
+        ],
+        [
+          2,
+          "0002_fanbox_creator_id_not_null",
+          "ff4f91ea6c57b68e6b311ba7eb07beac191c5f2c3be2eae5a828c33cc91207d7"
+        ],
+        [
+          3,
+          "0003_pixiv_account_schedulable",
+          "21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd"
+        ]
+      ],
+      "pixiv": [],
+      "schema": [
+        [
+          "index",
+          "pixiv_account_one_pool_last_selected",
+          "CREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1"
+        ],
+        [
+          "table",
+          "fanbox_account",
+          "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n)"
+        ],
+        [
+          "table",
+          "pixiv_account",
+          "CREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n)"
+        ],
+        [
+          "table",
+          "schema_migration",
+          "CREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n)"
+        ]
+      ],
+      "user_version": 3
+    }
+  },
+  {
+    "name": "user-version-two",
+    "setup": "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n);\nCREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n);\nCREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n);\nCREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1;\nINSERT INTO schema_migration VALUES(1,'0001_initial','9b4f2e2c94a19a0958720dc824897b2eb6b47249b465ff097c49b1ff6ae60d37',11);\nINSERT INTO schema_migration VALUES(2,'0002_fanbox_creator_id_not_null','ff4f91ea6c57b68e6b311ba7eb07beac191c5f2c3be2eae5a828c33cc91207d7',11);\nINSERT INTO schema_migration VALUES(3,'0003_pixiv_account_schedulable','21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd',11);\nPRAGMA application_id=1346984003;\nPRAGMA user_version=2;",
+    "error": "",
+    "state": {
+      "application_id": 1346984003,
+      "fanbox": [],
+      "ledger": [
+        [
+          1,
+          "0001_initial",
+          "9b4f2e2c94a19a0958720dc824897b2eb6b47249b465ff097c49b1ff6ae60d37"
+        ],
+        [
+          2,
+          "0002_fanbox_creator_id_not_null",
+          "ff4f91ea6c57b68e6b311ba7eb07beac191c5f2c3be2eae5a828c33cc91207d7"
+        ],
+        [
+          3,
+          "0003_pixiv_account_schedulable",
+          "21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd"
+        ]
+      ],
+      "pixiv": [],
+      "schema": [
+        [
+          "index",
+          "pixiv_account_one_pool_last_selected",
+          "CREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1"
+        ],
+        [
+          "table",
+          "fanbox_account",
+          "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n)"
+        ],
+        [
+          "table",
+          "pixiv_account",
+          "CREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n)"
+        ],
+        [
+          "table",
+          "schema_migration",
+          "CREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n)"
+        ]
+      ],
+      "user_version": 3
+    }
+  },
+  {
+    "name": "name-drift",
+    "setup": "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n);\nCREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n);\nCREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n);\nCREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1;\nINSERT INTO schema_migration VALUES(1,'0001_initial','9b4f2e2c94a19a0958720dc824897b2eb6b47249b465ff097c49b1ff6ae60d37',11);\nINSERT INTO schema_migration VALUES(2,'changed','ff4f91ea6c57b68e6b311ba7eb07beac191c5f2c3be2eae5a828c33cc91207d7',11);\nINSERT INTO schema_migration VALUES(3,'0003_pixiv_account_schedulable','21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd',11);\nPRAGMA application_id=1346984003;\nPRAGMA user_version=3;",
+    "error": "migration 2 name drifted: \"changed\" != \"0002_fanbox_creator_id_not_null\"",
+    "state": {
+      "application_id": 1346984003,
+      "fanbox": [],
+      "ledger": [
+        [
+          1,
+          "0001_initial",
+          "9b4f2e2c94a19a0958720dc824897b2eb6b47249b465ff097c49b1ff6ae60d37"
+        ],
+        [
+          2,
+          "changed",
+          "ff4f91ea6c57b68e6b311ba7eb07beac191c5f2c3be2eae5a828c33cc91207d7"
+        ],
+        [
+          3,
+          "0003_pixiv_account_schedulable",
+          "21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd"
+        ]
+      ],
+      "pixiv": [],
+      "schema": [
+        [
+          "index",
+          "pixiv_account_one_pool_last_selected",
+          "CREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1"
+        ],
+        [
+          "table",
+          "fanbox_account",
+          "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n)"
+        ],
+        [
+          "table",
+          "pixiv_account",
+          "CREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n)"
+        ],
+        [
+          "table",
+          "schema_migration",
+          "CREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n)"
+        ]
+      ],
+      "user_version": 3
+    }
+  },
+  {
+    "name": "checksum-drift",
+    "setup": "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n);\nCREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n);\nCREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n);\nCREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1;\nINSERT INTO schema_migration VALUES(1,'0001_initial','9b4f2e2c94a19a0958720dc824897b2eb6b47249b465ff097c49b1ff6ae60d37',11);\nINSERT INTO schema_migration VALUES(2,'0002_fanbox_creator_id_not_null','changed',11);\nINSERT INTO schema_migration VALUES(3,'0003_pixiv_account_schedulable','21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd',11);\nPRAGMA application_id=1346984003;\nPRAGMA user_version=3;",
+    "error": "migration 2 checksum drifted",
+    "state": {
+      "application_id": 1346984003,
+      "fanbox": [],
+      "ledger": [
+        [
+          1,
+          "0001_initial",
+          "9b4f2e2c94a19a0958720dc824897b2eb6b47249b465ff097c49b1ff6ae60d37"
+        ],
+        [
+          2,
+          "0002_fanbox_creator_id_not_null",
+          "changed"
+        ],
+        [
+          3,
+          "0003_pixiv_account_schedulable",
+          "21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd"
+        ]
+      ],
+      "pixiv": [],
+      "schema": [
+        [
+          "index",
+          "pixiv_account_one_pool_last_selected",
+          "CREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1"
+        ],
+        [
+          "table",
+          "fanbox_account",
+          "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n)"
+        ],
+        [
+          "table",
+          "pixiv_account",
+          "CREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n)"
+        ],
+        [
+          "table",
+          "schema_migration",
+          "CREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n)"
+        ]
+      ],
+      "user_version": 3
+    }
+  },
+  {
+    "name": "first-gap",
+    "setup": "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n);\nCREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n);\nCREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n);\nCREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1;\nINSERT INTO schema_migration VALUES(2,'0002_fanbox_creator_id_not_null','ff4f91ea6c57b68e6b311ba7eb07beac191c5f2c3be2eae5a828c33cc91207d7',11);\nINSERT INTO schema_migration VALUES(3,'0003_pixiv_account_schedulable','21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd',11);\nPRAGMA application_id=1346984003;\nPRAGMA user_version=3;",
+    "error": "migration version gap: first applied version is 2, want 1",
+    "state": {
+      "application_id": 1346984003,
+      "fanbox": [],
+      "ledger": [
+        [
+          2,
+          "0002_fanbox_creator_id_not_null",
+          "ff4f91ea6c57b68e6b311ba7eb07beac191c5f2c3be2eae5a828c33cc91207d7"
+        ],
+        [
+          3,
+          "0003_pixiv_account_schedulable",
+          "21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd"
+        ]
+      ],
+      "pixiv": [],
+      "schema": [
+        [
+          "index",
+          "pixiv_account_one_pool_last_selected",
+          "CREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1"
+        ],
+        [
+          "table",
+          "fanbox_account",
+          "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n)"
+        ],
+        [
+          "table",
+          "pixiv_account",
+          "CREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n)"
+        ],
+        [
+          "table",
+          "schema_migration",
+          "CREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n)"
+        ]
+      ],
+      "user_version": 3
+    }
+  },
+  {
+    "name": "middle-gap",
+    "setup": "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n);\nCREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n);\nCREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n);\nCREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1;\nINSERT INTO schema_migration VALUES(1,'0001_initial','9b4f2e2c94a19a0958720dc824897b2eb6b47249b465ff097c49b1ff6ae60d37',11);\nINSERT INTO schema_migration VALUES(3,'0003_pixiv_account_schedulable','21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd',11);\nPRAGMA application_id=1346984003;\nPRAGMA user_version=3;",
+    "error": "migration version gap: 3 follows 1",
+    "state": {
+      "application_id": 1346984003,
+      "fanbox": [],
+      "ledger": [
+        [
+          1,
+          "0001_initial",
+          "9b4f2e2c94a19a0958720dc824897b2eb6b47249b465ff097c49b1ff6ae60d37"
+        ],
+        [
+          3,
+          "0003_pixiv_account_schedulable",
+          "21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd"
+        ]
+      ],
+      "pixiv": [],
+      "schema": [
+        [
+          "index",
+          "pixiv_account_one_pool_last_selected",
+          "CREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1"
+        ],
+        [
+          "table",
+          "fanbox_account",
+          "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n)"
+        ],
+        [
+          "table",
+          "pixiv_account",
+          "CREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n)"
+        ],
+        [
+          "table",
+          "schema_migration",
+          "CREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n)"
+        ]
+      ],
+      "user_version": 3
+    }
+  },
+  {
+    "name": "future-ledger",
+    "setup": "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n);\nCREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n);\nCREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n);\nCREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1;\nINSERT INTO schema_migration VALUES(1,'0001_initial','9b4f2e2c94a19a0958720dc824897b2eb6b47249b465ff097c49b1ff6ae60d37',11);\nINSERT INTO schema_migration VALUES(2,'0002_fanbox_creator_id_not_null','ff4f91ea6c57b68e6b311ba7eb07beac191c5f2c3be2eae5a828c33cc91207d7',11);\nINSERT INTO schema_migration VALUES(3,'0003_pixiv_account_schedulable','21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd',11);\nINSERT INTO schema_migration VALUES(4,'future','changed',11);\nPRAGMA application_id=1346984003;\nPRAGMA user_version=3;",
+    "error": "",
+    "state": {
+      "application_id": 1346984003,
+      "fanbox": [],
+      "ledger": [
+        [
+          1,
+          "0001_initial",
+          "9b4f2e2c94a19a0958720dc824897b2eb6b47249b465ff097c49b1ff6ae60d37"
+        ],
+        [
+          2,
+          "0002_fanbox_creator_id_not_null",
+          "ff4f91ea6c57b68e6b311ba7eb07beac191c5f2c3be2eae5a828c33cc91207d7"
+        ],
+        [
+          3,
+          "0003_pixiv_account_schedulable",
+          "21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd"
+        ],
+        [
+          4,
+          "future",
+          "changed"
+        ]
+      ],
+      "pixiv": [],
+      "schema": [
+        [
+          "index",
+          "pixiv_account_one_pool_last_selected",
+          "CREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1"
+        ],
+        [
+          "table",
+          "fanbox_account",
+          "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n)"
+        ],
+        [
+          "table",
+          "pixiv_account",
+          "CREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n)"
+        ],
+        [
+          "table",
+          "schema_migration",
+          "CREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n)"
+        ]
+      ],
+      "user_version": 3
+    }
+  },
+  {
+    "name": "missing-tail",
+    "setup": "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n);\nCREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n);\nCREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n);\nCREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1;\nINSERT INTO schema_migration VALUES(1,'0001_initial','9b4f2e2c94a19a0958720dc824897b2eb6b47249b465ff097c49b1ff6ae60d37',11);\nINSERT INTO schema_migration VALUES(2,'0002_fanbox_creator_id_not_null','ff4f91ea6c57b68e6b311ba7eb07beac191c5f2c3be2eae5a828c33cc91207d7',11);\nPRAGMA application_id=1346984003;\nPRAGMA user_version=3;",
+    "error": "",
+    "state": {
+      "application_id": 1346984003,
+      "fanbox": [],
+      "ledger": [
+        [
+          1,
+          "0001_initial",
+          "9b4f2e2c94a19a0958720dc824897b2eb6b47249b465ff097c49b1ff6ae60d37"
+        ],
+        [
+          2,
+          "0002_fanbox_creator_id_not_null",
+          "ff4f91ea6c57b68e6b311ba7eb07beac191c5f2c3be2eae5a828c33cc91207d7"
+        ],
+        [
+          3,
+          "0003_pixiv_account_schedulable",
+          "21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd"
+        ]
+      ],
+      "pixiv": [],
+      "schema": [
+        [
+          "index",
+          "pixiv_account_one_pool_last_selected",
+          "CREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1"
+        ],
+        [
+          "table",
+          "fanbox_account",
+          "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n)"
+        ],
+        [
+          "table",
+          "pixiv_account",
+          "CREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n)"
+        ],
+        [
+          "table",
+          "schema_migration",
+          "CREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n)"
+        ]
+      ],
+      "user_version": 3
+    }
+  },
+  {
+    "name": "empty-ledger",
+    "setup": "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n);\nCREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n);\nCREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n);\nCREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1;\nPRAGMA application_id=1346984003;\nPRAGMA user_version=3;",
+    "error": "apply migration 1 (0001_initial): SQL logic error: table pixiv_account already exists (1)",
+    "state": {
+      "application_id": 1346984003,
+      "fanbox": [],
+      "ledger": [],
+      "pixiv": [],
+      "schema": [
+        [
+          "index",
+          "pixiv_account_one_pool_last_selected",
+          "CREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1"
+        ],
+        [
+          "table",
+          "fanbox_account",
+          "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n)"
+        ],
+        [
+          "table",
+          "pixiv_account",
+          "CREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n)"
+        ],
+        [
+          "table",
+          "schema_migration",
+          "CREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n)"
+        ]
+      ],
+      "user_version": 3
+    }
+  },
+  {
+    "name": "legacy-checksum",
+    "setup": "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n);\nCREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n);\nCREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n);\nCREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1;\nINSERT INTO schema_migration VALUES(1,'0001_initial','0247f7ea8739433ce47074048a1c8707728e7f3d04cf47c3ff6f15282f8e641f',11);\nINSERT INTO schema_migration VALUES(2,'0002_fanbox_creator_id_not_null','ff4f91ea6c57b68e6b311ba7eb07beac191c5f2c3be2eae5a828c33cc91207d7',11);\nINSERT INTO schema_migration VALUES(3,'0003_pixiv_account_schedulable','21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd',11);\nPRAGMA application_id=1346984003;\nPRAGMA user_version=3;",
+    "error": "",
+    "state": {
+      "application_id": 1346984003,
+      "fanbox": [],
+      "ledger": [
+        [
+          1,
+          "0001_initial",
+          "0247f7ea8739433ce47074048a1c8707728e7f3d04cf47c3ff6f15282f8e641f"
+        ],
+        [
+          2,
+          "0002_fanbox_creator_id_not_null",
+          "ff4f91ea6c57b68e6b311ba7eb07beac191c5f2c3be2eae5a828c33cc91207d7"
+        ],
+        [
+          3,
+          "0003_pixiv_account_schedulable",
+          "21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd"
+        ]
+      ],
+      "pixiv": [],
+      "schema": [
+        [
+          "index",
+          "pixiv_account_one_pool_last_selected",
+          "CREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1"
+        ],
+        [
+          "table",
+          "fanbox_account",
+          "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n)"
+        ],
+        [
+          "table",
+          "pixiv_account",
+          "CREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n)"
+        ],
+        [
+          "table",
+          "schema_migration",
+          "CREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n)"
+        ]
+      ],
+      "user_version": 3
+    }
+  },
+  {
+    "name": "checksum-lf",
+    "setup": "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n);\nCREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n);\nCREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n);\nCREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1;\nINSERT INTO schema_migration VALUES(1,'0001_initial','9b4f2e2c94a19a0958720dc824897b2eb6b47249b465ff097c49b1ff6ae60d37',11);\nINSERT INTO schema_migration VALUES(2,'0002_fanbox_creator_id_not_null','ff4f91ea6c57b68e6b311ba7eb07beac191c5f2c3be2eae5a828c33cc91207d7',11);\nINSERT INTO schema_migration VALUES(3,'0003_pixiv_account_schedulable','21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd',11);\nPRAGMA application_id=1346984003;\nPRAGMA user_version=3;",
+    "error": "",
+    "state": {
+      "application_id": 1346984003,
+      "fanbox": [],
+      "ledger": [
+        [
+          1,
+          "0001_initial",
+          "9b4f2e2c94a19a0958720dc824897b2eb6b47249b465ff097c49b1ff6ae60d37"
+        ],
+        [
+          2,
+          "0002_fanbox_creator_id_not_null",
+          "ff4f91ea6c57b68e6b311ba7eb07beac191c5f2c3be2eae5a828c33cc91207d7"
+        ],
+        [
+          3,
+          "0003_pixiv_account_schedulable",
+          "21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd"
+        ]
+      ],
+      "pixiv": [],
+      "schema": [
+        [
+          "index",
+          "pixiv_account_one_pool_last_selected",
+          "CREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1"
+        ],
+        [
+          "table",
+          "fanbox_account",
+          "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n)"
+        ],
+        [
+          "table",
+          "pixiv_account",
+          "CREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n)"
+        ],
+        [
+          "table",
+          "schema_migration",
+          "CREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n)"
+        ]
+      ],
+      "user_version": 3
+    }
+  },
+  {
+    "name": "checksum-crlf",
+    "setup": "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n);\nCREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n);\nCREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n);\nCREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1;\nINSERT INTO schema_migration VALUES(1,'0001_initial','f33bf57399dd7c50a1a0bea79c9185ad4f83ad9c164338dcc86615654819da10',11);\nINSERT INTO schema_migration VALUES(2,'0002_fanbox_creator_id_not_null','60590d407eb512ad90025da7a2f6af27e8d352efeb133c8658be6c2fbc3dfee5',11);\nINSERT INTO schema_migration VALUES(3,'0003_pixiv_account_schedulable','e5ff0a6af27476ca9433de15e8cd55d53a90d1c70f59544675c75b315510e0f7',11);\nPRAGMA application_id=1346984003;\nPRAGMA user_version=3;",
+    "error": "",
+    "state": {
+      "application_id": 1346984003,
+      "fanbox": [],
+      "ledger": [
+        [
+          1,
+          "0001_initial",
+          "f33bf57399dd7c50a1a0bea79c9185ad4f83ad9c164338dcc86615654819da10"
+        ],
+        [
+          2,
+          "0002_fanbox_creator_id_not_null",
+          "60590d407eb512ad90025da7a2f6af27e8d352efeb133c8658be6c2fbc3dfee5"
+        ],
+        [
+          3,
+          "0003_pixiv_account_schedulable",
+          "e5ff0a6af27476ca9433de15e8cd55d53a90d1c70f59544675c75b315510e0f7"
+        ]
+      ],
+      "pixiv": [],
+      "schema": [
+        [
+          "index",
+          "pixiv_account_one_pool_last_selected",
+          "CREATE UNIQUE INDEX pixiv_account_one_pool_last_selected\n    ON pixiv_account(pool_last_selected)\n    WHERE pool_last_selected = 1"
+        ],
+        [
+          "table",
+          "fanbox_account",
+          "CREATE TABLE fanbox_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    display_name        TEXT NOT NULL,\n    creator_id          TEXT NOT NULL DEFAULT '',\n    session_id          BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    validated_at        INTEGER NOT NULL,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0)\n)"
+        ],
+        [
+          "table",
+          "pixiv_account",
+          "CREATE TABLE pixiv_account (\n    user_id             INTEGER PRIMARY KEY,\n    sort_order          INTEGER NOT NULL UNIQUE,\n    username            TEXT NOT NULL,\n    refresh_token       BLOB NOT NULL,\n    credential_revision INTEGER NOT NULL,\n    premium_status      INTEGER NULL,\n    premium_checked_at  INTEGER NULL,\n    pool_frozen_until   INTEGER NULL,\n    pool_last_selected  INTEGER NOT NULL DEFAULT 0,\n    schedulable         INTEGER NOT NULL DEFAULT 1,\n    created_at          INTEGER NOT NULL,\n    updated_at          INTEGER NOT NULL,\n    CHECK (user_id \u003e 0),\n    CHECK (sort_order \u003e 0),\n    CHECK (credential_revision \u003e 0),\n    CHECK (premium_status IS NULL OR premium_status IN (0, 1)),\n    CHECK (pool_last_selected IN (0, 1)),\n    CHECK (schedulable IN (0, 1))\n)"
+        ],
+        [
+          "table",
+          "schema_migration",
+          "CREATE TABLE schema_migration (\n    version    INTEGER PRIMARY KEY,\n    name       TEXT NOT NULL UNIQUE,\n    checksum   TEXT NOT NULL,\n    applied_at INTEGER NOT NULL\n)"
+        ]
+      ],
+      "user_version": 3
+    }
+  }
+]

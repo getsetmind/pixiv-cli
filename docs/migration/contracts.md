@@ -547,3 +547,23 @@ cargo test -p pixiv-app --test streams --locked
 ```
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-streams` を指定する。
+
+## 認証 DB の schema と既存ファイル
+
+[database.json](contracts/database.json) は固定 Go の database.Open を実行した19ケース。新規作成、v3 の再開、旧 v1 の nullable creator_id と schedulable の追加、LF/CRLF と既知の旧 checksum、未設定・異なる application_id、user_version、migration の名前・checksum・版の欠落を比較する。schema と index の SQL、台帳、合成アカウントの UID・順序・token bytes・credential revision・時刻を検証し、失敗後の DB 状態も確認する。
+
+Rust の Database::open は既存と同じ pixiv-cli.db と Go の SQL migration を使う。migration ごとの transaction、schema が既に満たす場合の台帳追加、application_id と user_version を維持する。接続には Go と同じ foreign_keys/synchronous/secure_delete/trusted_schema と待機なしの busy timeout を設定する。接続内 pragma の実行値、lock と並行接続はまだ比較していない。
+
+Go の別テストは隔離した Rust テスト子プロセスを明示実行し、Rust が新規作成したファイル・Go v3 ファイル・Go 旧 v1 ファイルを、Go で再開して同じ結果を確認する。Rust の ignored helper はこの3ケースから実行され、通常の workspace test だけでは実行されない。実ユーザーの home・DB・資格情報は使わない。
+
+SQL テキストの改行だけ LF に正規化し、migration の applied_at は実行時刻なので比較から除く。既存アカウントの created_at/updated_at は除外しない。SQLite driver 固有のエラー文は empty-ledger の失敗箇所までを比較し、同ケースの残存 schema は厳密に比較する。他の明示的な拒否診断は全文を比較する。固定 Go は user_version が3でも連続した第4台帳行を受け入れるため、Rust もこの振る舞いを維持する。これを未知 schema の安全性の証明には使わない。
+
+Windows amd64 の合成 DB 検証である。アカウント repository、refresh CAS、pool lease、設定・CLI/MCP の接続、取消/強制終了復旧、disk/permission/lock 障害、全旧 schema、不正台帳の全組合せ、Windows ACL、Unix mode、他 OS は未移植または未検証。既存の SQL を本番 asset として共有し、テスト fixture は本番依存に含めない。
+
+```text
+go test -race ./internal/storage/database -migration-rust-database -count=1
+go vet ./internal/storage/database
+cargo test -p pixiv-app --test database --locked
+```
+
+基準を意図して更新する場合だけ Go テストの `-args -migration-update-database` を指定する。Rust/Go のファイル相互検証には両 toolchain が必要であり、`-migration-rust-database` を省略した実行をその証拠には使わない。

@@ -16,15 +16,26 @@
     },
     {
       "id": "cli:pixiv auth",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv auth"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-app/src/database.rs"
+      ],
+      "tests": [
+        "internal/storage/database/migration_contract_test.go#TestMigrationDatabasePreservesSchemaAndRejectsDrift",
+        "internal/storage/database/migration_contract_test.go#TestMigrationDatabaseGoRustFileInteroperability",
+        "crates/pixiv-app/tests/database.rs#database_matches_go_schema_upgrade_reopen_and_drift_rejection",
+        "crates/pixiv-app/tests/database.rs#database_rejects_empty_directory_and_creates_private_files"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "認証DBの基盤のみ着手。Go Openの19ケースでschema/index/台帳、v1→v3、checksum、application_id、版/名前の拒否と失敗後状態、合成アカウントのtoken/revisionを比較。Rust作成・Go v3・Go v1の3ファイルをRust子プロセス経由でGoが再開。CLI auth自体、account repository/refresh CAS/pool/config/取消・強制終了復旧・全障害・Windows ACL・Unix mode・他OSは未移植または未検証。接続内pragma/lockは未比較。user_version=3に未知第4台帳行がある場合も固定Goが受け入れる挙動を維持。SQLite driver固有のempty-ledgerエラーは失敗箇所まで比較。"
+      ]
     },
     {
       "id": "cli:pixiv auth _callback",
