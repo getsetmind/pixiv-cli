@@ -132,3 +132,15 @@ cargo test -p pixiv-sdk --test resource_io --locked
 ```
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-resource-io` を指定する。
+
+## Resource HTTP ストリームの Go 参照契約
+
+[resource-stream.json](contracts/resource-stream.json) はローカル HTTP サーバーを使った Go 版の15ケースを固定する。GET・HEAD、206・204・304・404、途中で切れた body、301・302・303・307・308 の redirect、検証で拒否された redirect、redirect 回数の上限、Location のない応答を含む。送信ヘッダー、URL 検証の順序、応答の許可ヘッダー、読み取り結果と transport エラーを記録する。
+
+今回は Go 参照契約の追加のみで、Rust の実HTTPストリームは未移植。先読みしない取得、cookie jar、キャンセル、TLS、製品側の reference 再解決・open/save は別途検証する。
+
+```text
+go test ./internal/services/pixiv/resource -run '^TestMigrationResourceStream' -count=1
+```
+
+基準を意図して更新する場合だけ Go テストの `-args -migration-update-stream` を指定する。
