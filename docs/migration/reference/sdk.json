@@ -1,0 +1,3670 @@
+[
+  {
+    "id": "sdk/fanbox:Asset",
+    "kind": "type",
+    "source": "sdk/fanbox/models.go",
+    "line": 116,
+    "declaration": "Asset struct {\n\tID        string\n\tKind      AssetKind\n\tName      string\n\tResource  sdk.Resource\n\tThumbnail ImageResource\n}"
+  },
+  {
+    "id": "sdk/fanbox:AssetDTO",
+    "kind": "type",
+    "source": "sdk/fanbox/dto.go",
+    "line": 89,
+    "declaration": "AssetDTO struct {\n\tID        string           `json:\"id\"`\n\tKind      AssetKind        `json:\"kind\"`\n\tName      string           `json:\"name\"`\n\tResource  *sdk.ResourceDTO `json:\"resource\"`\n\tThumbnail ImageResourceDTO `json:\"thumbnail\"`\n}"
+  },
+  {
+    "id": "sdk/fanbox:AssetKind",
+    "kind": "type",
+    "source": "sdk/fanbox/models.go",
+    "line": 10,
+    "declaration": "AssetKind string"
+  },
+  {
+    "id": "sdk/fanbox:AssetKindFile",
+    "kind": "const",
+    "source": "sdk/fanbox/models.go",
+    "line": 15,
+    "declaration": "AssetKindFile AssetKind = \"file\""
+  },
+  {
+    "id": "sdk/fanbox:AssetKindImage",
+    "kind": "const",
+    "source": "sdk/fanbox/models.go",
+    "line": 14,
+    "declaration": "AssetKindImage AssetKind = \"image\""
+  },
+  {
+    "id": "sdk/fanbox:Client",
+    "kind": "type",
+    "source": "sdk/fanbox/fanbox.go",
+    "line": 68,
+    "declaration": "Client struct {\n\tsession      *protocol.Session\n\tcreators     *creators.Client\n\tcreatorTags  *creatorTags.Client\n\tcreatorPosts *postposts.Client\n\tpostInfo     *postinfo.Client\n\thome         *home.Client\n\tsupporting   *supporting.Client\n\tresource     *fanboxresource.Client\n\n\tresourceMu   sync.RWMutex\n\tresourceURLs map[string]string\n\n\tidentityMu sync.Mutex\n\tuserID     int64\n}"
+  },
+  {
+    "id": "sdk/fanbox:Client.CloseIdleConnections",
+    "kind": "method",
+    "source": "sdk/fanbox/fanbox.go",
+    "line": 137,
+    "declaration": "func (c *Client) CloseIdleConnections()"
+  },
+  {
+    "id": "sdk/fanbox:Client.Creator",
+    "kind": "method",
+    "source": "sdk/fanbox/ops.go",
+    "line": 41,
+    "declaration": "func (c *Client) Creator(ctx context.Context, request CreatorRequest) (Creator, error)"
+  },
+  {
+    "id": "sdk/fanbox:Client.CreatorPosts",
+    "kind": "method",
+    "source": "sdk/fanbox/ops.go",
+    "line": 95,
+    "declaration": "func (c *Client) CreatorPosts(ctx context.Context, request CreatorPostsRequest) (sdk.Page[Post], error)"
+  },
+  {
+    "id": "sdk/fanbox:Client.CreatorTags",
+    "kind": "method",
+    "source": "sdk/fanbox/ops.go",
+    "line": 79,
+    "declaration": "func (c *Client) CreatorTags(ctx context.Context, request CreatorTagsRequest) ([]CreatorTag, error)"
+  },
+  {
+    "id": "sdk/fanbox:Client.Creators",
+    "kind": "method",
+    "source": "sdk/fanbox/ops.go",
+    "line": 53,
+    "declaration": "func (c *Client) Creators(ctx context.Context, request CreatorsRequest) (sdk.Page[CreatorSummary], error)"
+  },
+  {
+    "id": "sdk/fanbox:Client.CurrentUser",
+    "kind": "method",
+    "source": "sdk/fanbox/ops.go",
+    "line": 32,
+    "declaration": "func (c *Client) CurrentUser(ctx context.Context, request CurrentUserRequest) (User, error)"
+  },
+  {
+    "id": "sdk/fanbox:Client.Home",
+    "kind": "method",
+    "source": "sdk/fanbox/ops.go",
+    "line": 141,
+    "declaration": "func (c *Client) Home(ctx context.Context, request HomeRequest) (sdk.Page[Post], error)"
+  },
+  {
+    "id": "sdk/fanbox:Client.OpenResource",
+    "kind": "method",
+    "source": "sdk/fanbox/resource.go",
+    "line": 77,
+    "declaration": "func (c *Client) OpenResource(ctx context.Context, request sdk.OpenResourceRequest) (*sdk.ResourceResponse, error)"
+  },
+  {
+    "id": "sdk/fanbox:Client.Post",
+    "kind": "method",
+    "source": "sdk/fanbox/ops.go",
+    "line": 129,
+    "declaration": "func (c *Client) Post(ctx context.Context, request PostRequest) (Post, error)"
+  },
+  {
+    "id": "sdk/fanbox:Client.ResolveURL",
+    "kind": "method",
+    "source": "sdk/fanbox/reference.go",
+    "line": 35,
+    "declaration": "func (c *Client) ResolveURL(ctx context.Context, request ResolveURLRequest) (Reference, error)"
+  },
+  {
+    "id": "sdk/fanbox:Client.SaveResource",
+    "kind": "method",
+    "source": "sdk/fanbox/resource.go",
+    "line": 104,
+    "declaration": "func (c *Client) SaveResource(ctx context.Context, ref sdk.ResourceRef, options sdk.SaveOptions) (sdk.SavedResource, error)"
+  },
+  {
+    "id": "sdk/fanbox:Client.Supporting",
+    "kind": "method",
+    "source": "sdk/fanbox/ops.go",
+    "line": 155,
+    "declaration": "func (c *Client) Supporting(ctx context.Context, request SupportingRequest) (sdk.Page[Post], error)"
+  },
+  {
+    "id": "sdk/fanbox:Client.TaggedPosts",
+    "kind": "method",
+    "source": "sdk/fanbox/ops.go",
+    "line": 112,
+    "declaration": "func (c *Client) TaggedPosts(ctx context.Context, request TaggedPostsRequest) (sdk.Page[Post], error)"
+  },
+  {
+    "id": "sdk/fanbox:Client.ValidateSession",
+    "kind": "method",
+    "source": "sdk/fanbox/ops.go",
+    "line": 23,
+    "declaration": "func (c *Client) ValidateSession(ctx context.Context) error"
+  },
+  {
+    "id": "sdk/fanbox:Creator",
+    "kind": "type",
+    "source": "sdk/fanbox/models.go",
+    "line": 43,
+    "declaration": "Creator struct {\n\tCreatorSummary\n\tHasAdultContent   bool\n\tIsFollowing       bool\n\tCover             ImageResource\n\tPlanFee           int\n\tHasSupportingPlan bool\n}"
+  },
+  {
+    "id": "sdk/fanbox:CreatorDTO",
+    "kind": "type",
+    "source": "sdk/fanbox/dto.go",
+    "line": 32,
+    "declaration": "CreatorDTO struct {\n\tID                string           `json:\"id\"`\n\tName              string           `json:\"name\"`\n\tIcon              ImageResourceDTO `json:\"icon\"`\n\tHasAdultContent   bool             `json:\"has_adult_content\"`\n\tIsFollowing       bool             `json:\"is_following\"`\n\tCover             ImageResourceDTO `json:\"cover\"`\n\tPlanFee           int              `json:\"plan_fee\"`\n\tHasSupportingPlan bool             `json:\"has_supporting_plan\"`\n}"
+  },
+  {
+    "id": "sdk/fanbox:CreatorListFollowing",
+    "kind": "const",
+    "source": "sdk/fanbox/request.go",
+    "line": 11,
+    "declaration": "CreatorListFollowing CreatorListKind = \"following\""
+  },
+  {
+    "id": "sdk/fanbox:CreatorListKind",
+    "kind": "type",
+    "source": "sdk/fanbox/request.go",
+    "line": 6,
+    "declaration": "CreatorListKind string"
+  },
+  {
+    "id": "sdk/fanbox:CreatorListSupporting",
+    "kind": "const",
+    "source": "sdk/fanbox/request.go",
+    "line": 10,
+    "declaration": "CreatorListSupporting CreatorListKind = \"supporting\""
+  },
+  {
+    "id": "sdk/fanbox:CreatorPostsRequest",
+    "kind": "type",
+    "source": "sdk/fanbox/request.go",
+    "line": 33,
+    "declaration": "CreatorPostsRequest struct {\n\tCreatorID string\n\tCursor    sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/fanbox:CreatorRequest",
+    "kind": "type",
+    "source": "sdk/fanbox/request.go",
+    "line": 15,
+    "declaration": "CreatorRequest struct {\n\tCreatorID string\n}"
+  },
+  {
+    "id": "sdk/fanbox:CreatorSummary",
+    "kind": "type",
+    "source": "sdk/fanbox/models.go",
+    "line": 35,
+    "declaration": "CreatorSummary struct {\n\tID   string\n\tName string\n\tIcon ImageResource\n}"
+  },
+  {
+    "id": "sdk/fanbox:CreatorSummaryDTO",
+    "kind": "type",
+    "source": "sdk/fanbox/dto.go",
+    "line": 24,
+    "declaration": "CreatorSummaryDTO struct {\n\tID   string           `json:\"id\"`\n\tName string           `json:\"name\"`\n\tIcon ImageResourceDTO `json:\"icon\"`\n}"
+  },
+  {
+    "id": "sdk/fanbox:CreatorTag",
+    "kind": "type",
+    "source": "sdk/fanbox/models.go",
+    "line": 160,
+    "declaration": "CreatorTag struct {\n\tName string\n\tURL  string\n}"
+  },
+  {
+    "id": "sdk/fanbox:CreatorTagDTO",
+    "kind": "type",
+    "source": "sdk/fanbox/dto.go",
+    "line": 129,
+    "declaration": "CreatorTagDTO struct {\n\tName string `json:\"name\"`\n\tURL  string `json:\"url\"`\n}"
+  },
+  {
+    "id": "sdk/fanbox:CreatorTagsRequest",
+    "kind": "type",
+    "source": "sdk/fanbox/request.go",
+    "line": 27,
+    "declaration": "CreatorTagsRequest struct {\n\tCreatorID string\n}"
+  },
+  {
+    "id": "sdk/fanbox:CreatorsRequest",
+    "kind": "type",
+    "source": "sdk/fanbox/request.go",
+    "line": 21,
+    "declaration": "CreatorsRequest struct {\n\tKind   CreatorListKind\n\tCursor sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/fanbox:CurrentUserRequest",
+    "kind": "type",
+    "source": "sdk/fanbox/request.go",
+    "line": 61,
+    "declaration": "CurrentUserRequest struct{}"
+  },
+  {
+    "id": "sdk/fanbox:FileResource",
+    "kind": "type",
+    "source": "sdk/fanbox/models.go",
+    "line": 29,
+    "declaration": "FileResource struct {\n\tResource sdk.Resource\n\tName     string\n}"
+  },
+  {
+    "id": "sdk/fanbox:FileResourceDTO",
+    "kind": "type",
+    "source": "sdk/fanbox/dto.go",
+    "line": 18,
+    "declaration": "FileResourceDTO struct {\n\tResource *sdk.ResourceDTO `json:\"resource\"`\n\tName     string           `json:\"name\"`\n}"
+  },
+  {
+    "id": "sdk/fanbox:FlareSolverrOptions",
+    "kind": "type",
+    "source": "sdk/fanbox/fanbox.go",
+    "line": 60,
+    "declaration": "FlareSolverrOptions struct {\n\tURL      string\n\tProxyURL string\n}"
+  },
+  {
+    "id": "sdk/fanbox:HomeRequest",
+    "kind": "type",
+    "source": "sdk/fanbox/request.go",
+    "line": 51,
+    "declaration": "HomeRequest struct {\n\tCursor sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/fanbox:ImageResource",
+    "kind": "type",
+    "source": "sdk/fanbox/models.go",
+    "line": 20,
+    "declaration": "ImageResource struct {\n\tResource sdk.Resource\n\tVariant  string\n\tWidth    int\n\tHeight   int\n}"
+  },
+  {
+    "id": "sdk/fanbox:ImageResourceDTO",
+    "kind": "type",
+    "source": "sdk/fanbox/dto.go",
+    "line": 10,
+    "declaration": "ImageResourceDTO struct {\n\tResource *sdk.ResourceDTO `json:\"resource\"`\n\tVariant  string           `json:\"variant\"`\n\tWidth    int              `json:\"width\"`\n\tHeight   int              `json:\"height\"`\n}"
+  },
+  {
+    "id": "sdk/fanbox:Open",
+    "kind": "function",
+    "source": "sdk/fanbox/fanbox.go",
+    "line": 96,
+    "declaration": "func Open(credentials SessionCredentials) (*Client, error)"
+  },
+  {
+    "id": "sdk/fanbox:OpenWith",
+    "kind": "function",
+    "source": "sdk/fanbox/fanbox.go",
+    "line": 101,
+    "declaration": "func OpenWith(credentials SessionCredentials, options Options) (*Client, error)"
+  },
+  {
+    "id": "sdk/fanbox:Options",
+    "kind": "type",
+    "source": "sdk/fanbox/fanbox.go",
+    "line": 40,
+    "declaration": "Options struct {\n\tHTTPClient *http.Client\n\n\tProxyURL string\n\n\tUserAgent string\n\n\tFlareSolverr *FlareSolverrOptions\n}"
+  },
+  {
+    "id": "sdk/fanbox:Post",
+    "kind": "type",
+    "source": "sdk/fanbox/models.go",
+    "line": 136,
+    "declaration": "Post struct {\n\tID            string\n\tTitle         string\n\tPublishedAt   time.Time\n\tCreatorID     string\n\tFeeRequired   int\n\tIsRestricted  bool\n\tIsPinned      bool\n\tRestrictedFor int\n\tCommentCount  int\n\tCover         ImageResource\n\tBody          *PostBody\n}"
+  },
+  {
+    "id": "sdk/fanbox:PostArticleBlock",
+    "kind": "type",
+    "source": "sdk/fanbox/models.go",
+    "line": 81,
+    "declaration": "PostArticleBlock struct {\n\tText string\n}"
+  },
+  {
+    "id": "sdk/fanbox:PostArticleBlockDTO",
+    "kind": "type",
+    "source": "sdk/fanbox/dto.go",
+    "line": 57,
+    "declaration": "PostArticleBlockDTO struct {\n\tText string `json:\"text\"`\n}"
+  },
+  {
+    "id": "sdk/fanbox:PostBlock",
+    "kind": "type",
+    "source": "sdk/fanbox/models.go",
+    "line": 105,
+    "declaration": "PostBlock struct {\n\tKind    PostBlockKind\n\tImage   *PostImageBlock\n\tFile    *PostFileBlock\n\tArticle *PostArticleBlock\n\tVideo   *PostVideoEmbed\n\tUnknown *PostUnknownBlock\n}"
+  },
+  {
+    "id": "sdk/fanbox:PostBlockArticle",
+    "kind": "const",
+    "source": "sdk/fanbox/models.go",
+    "line": 59,
+    "declaration": "PostBlockArticle PostBlockKind = \"article\""
+  },
+  {
+    "id": "sdk/fanbox:PostBlockDTO",
+    "kind": "type",
+    "source": "sdk/fanbox/dto.go",
+    "line": 79,
+    "declaration": "PostBlockDTO struct {\n\tKind    PostBlockKind        `json:\"kind\"`\n\tImage   *PostImageBlockDTO   `json:\"image\"`\n\tFile    *PostFileBlockDTO    `json:\"file\"`\n\tArticle *PostArticleBlockDTO `json:\"article\"`\n\tVideo   *PostVideoEmbedDTO   `json:\"video\"`\n\tUnknown *PostUnknownBlockDTO `json:\"unknown\"`\n}"
+  },
+  {
+    "id": "sdk/fanbox:PostBlockFile",
+    "kind": "const",
+    "source": "sdk/fanbox/models.go",
+    "line": 58,
+    "declaration": "PostBlockFile PostBlockKind = \"file\""
+  },
+  {
+    "id": "sdk/fanbox:PostBlockImage",
+    "kind": "const",
+    "source": "sdk/fanbox/models.go",
+    "line": 57,
+    "declaration": "PostBlockImage PostBlockKind = \"image\""
+  },
+  {
+    "id": "sdk/fanbox:PostBlockKind",
+    "kind": "type",
+    "source": "sdk/fanbox/models.go",
+    "line": 53,
+    "declaration": "PostBlockKind string"
+  },
+  {
+    "id": "sdk/fanbox:PostBlockUnknown",
+    "kind": "const",
+    "source": "sdk/fanbox/models.go",
+    "line": 63,
+    "declaration": "PostBlockUnknown PostBlockKind = \"unknown\""
+  },
+  {
+    "id": "sdk/fanbox:PostBlockVideo",
+    "kind": "const",
+    "source": "sdk/fanbox/models.go",
+    "line": 60,
+    "declaration": "PostBlockVideo PostBlockKind = \"video\""
+  },
+  {
+    "id": "sdk/fanbox:PostBody",
+    "kind": "type",
+    "source": "sdk/fanbox/models.go",
+    "line": 128,
+    "declaration": "PostBody struct {\n\tText   string\n\tBlocks []PostBlock\n\tAssets []Asset\n}"
+  },
+  {
+    "id": "sdk/fanbox:PostBodyDTO",
+    "kind": "type",
+    "source": "sdk/fanbox/dto.go",
+    "line": 98,
+    "declaration": "PostBodyDTO struct {\n\tText   string         `json:\"text\"`\n\tBlocks []PostBlockDTO `json:\"blocks\"`\n\tAssets []AssetDTO     `json:\"assets\"`\n}"
+  },
+  {
+    "id": "sdk/fanbox:PostDTO",
+    "kind": "type",
+    "source": "sdk/fanbox/dto.go",
+    "line": 105,
+    "declaration": "PostDTO struct {\n\tID            string           `json:\"id\"`\n\tTitle         string           `json:\"title\"`\n\tPublishedAt   time.Time        `json:\"published_at\"`\n\tCreatorID     string           `json:\"creator_id\"`\n\tFeeRequired   int              `json:\"fee_required\"`\n\tIsRestricted  bool             `json:\"is_restricted\"`\n\tIsPinned      bool             `json:\"is_pinned\"`\n\tRestrictedFor int              `json:\"restricted_for\"`\n\tCommentCount  int              `json:\"comment_count\"`\n\tCover         ImageResourceDTO `json:\"cover\"`\n\tBody          *PostBodyDTO     `json:\"body\"`\n}"
+  },
+  {
+    "id": "sdk/fanbox:PostFileBlock",
+    "kind": "type",
+    "source": "sdk/fanbox/models.go",
+    "line": 73,
+    "declaration": "PostFileBlock struct {\n\tResource sdk.Resource\n\tName     string\n\tCaption  string\n}"
+  },
+  {
+    "id": "sdk/fanbox:PostFileBlockDTO",
+    "kind": "type",
+    "source": "sdk/fanbox/dto.go",
+    "line": 50,
+    "declaration": "PostFileBlockDTO struct {\n\tResource *sdk.ResourceDTO `json:\"resource\"`\n\tName     string           `json:\"name\"`\n\tCaption  string           `json:\"caption\"`\n}"
+  },
+  {
+    "id": "sdk/fanbox:PostImageBlock",
+    "kind": "type",
+    "source": "sdk/fanbox/models.go",
+    "line": 67,
+    "declaration": "PostImageBlock struct {\n\tResource sdk.Resource\n\tCaption  string\n}"
+  },
+  {
+    "id": "sdk/fanbox:PostImageBlockDTO",
+    "kind": "type",
+    "source": "sdk/fanbox/dto.go",
+    "line": 44,
+    "declaration": "PostImageBlockDTO struct {\n\tResource *sdk.ResourceDTO `json:\"resource\"`\n\tCaption  string           `json:\"caption\"`\n}"
+  },
+  {
+    "id": "sdk/fanbox:PostRequest",
+    "kind": "type",
+    "source": "sdk/fanbox/request.go",
+    "line": 46,
+    "declaration": "PostRequest struct {\n\tPostID string\n}"
+  },
+  {
+    "id": "sdk/fanbox:PostUnknownBlock",
+    "kind": "type",
+    "source": "sdk/fanbox/models.go",
+    "line": 99,
+    "declaration": "PostUnknownBlock struct {\n\tRawType string\n\tPayload map[string]string\n}"
+  },
+  {
+    "id": "sdk/fanbox:PostUnknownBlockDTO",
+    "kind": "type",
+    "source": "sdk/fanbox/dto.go",
+    "line": 73,
+    "declaration": "PostUnknownBlockDTO struct {\n\tRawType string            `json:\"raw_type\"`\n\tPayload map[string]string `json:\"payload\"`\n}"
+  },
+  {
+    "id": "sdk/fanbox:PostVideoEmbed",
+    "kind": "type",
+    "source": "sdk/fanbox/models.go",
+    "line": 88,
+    "declaration": "PostVideoEmbed struct {\n\tProvider     string\n\tContentID    string\n\tCanonicalURL string\n\tTitle        string\n\tThumbnailURL string\n\tVideoID      string\n\tEmbeddedData map[string]string\n}"
+  },
+  {
+    "id": "sdk/fanbox:PostVideoEmbedDTO",
+    "kind": "type",
+    "source": "sdk/fanbox/dto.go",
+    "line": 62,
+    "declaration": "PostVideoEmbedDTO struct {\n\tProvider     string            `json:\"provider\"`\n\tContentID    string            `json:\"content_id\"`\n\tCanonicalURL string            `json:\"canonical_url\"`\n\tTitle        string            `json:\"title\"`\n\tThumbnailURL string            `json:\"thumbnail_url\"`\n\tVideoID      string            `json:\"video_id\"`\n\tEmbeddedData map[string]string `json:\"embedded_data\"`\n}"
+  },
+  {
+    "id": "sdk/fanbox:Reference",
+    "kind": "type",
+    "source": "sdk/fanbox/reference.go",
+    "line": 25,
+    "declaration": "Reference struct {\n\tKind      ReferenceKind\n\tCreatorID string\n\tPostID    string\n\tTag       string\n}"
+  },
+  {
+    "id": "sdk/fanbox:ReferenceKind",
+    "kind": "type",
+    "source": "sdk/fanbox/reference.go",
+    "line": 13,
+    "declaration": "ReferenceKind string"
+  },
+  {
+    "id": "sdk/fanbox:ReferenceKindCreator",
+    "kind": "const",
+    "source": "sdk/fanbox/reference.go",
+    "line": 17,
+    "declaration": "ReferenceKindCreator ReferenceKind = \"creator\""
+  },
+  {
+    "id": "sdk/fanbox:ReferenceKindCreatorPosts",
+    "kind": "const",
+    "source": "sdk/fanbox/reference.go",
+    "line": 18,
+    "declaration": "ReferenceKindCreatorPosts ReferenceKind = \"creator_posts\""
+  },
+  {
+    "id": "sdk/fanbox:ReferenceKindPost",
+    "kind": "const",
+    "source": "sdk/fanbox/reference.go",
+    "line": 19,
+    "declaration": "ReferenceKindPost ReferenceKind = \"post\""
+  },
+  {
+    "id": "sdk/fanbox:ReferenceKindTag",
+    "kind": "const",
+    "source": "sdk/fanbox/reference.go",
+    "line": 20,
+    "declaration": "ReferenceKindTag ReferenceKind = \"tag\""
+  },
+  {
+    "id": "sdk/fanbox:ResolveURLRequest",
+    "kind": "type",
+    "source": "sdk/fanbox/request.go",
+    "line": 64,
+    "declaration": "ResolveURLRequest struct {\n\tRawURL string\n}"
+  },
+  {
+    "id": "sdk/fanbox:SessionCredentials",
+    "kind": "type",
+    "source": "sdk/fanbox/fanbox.go",
+    "line": 24,
+    "declaration": "SessionCredentials struct {\n\tFANBOXSESSID string `json:\"-\"`\n}"
+  },
+  {
+    "id": "sdk/fanbox:SessionCredentials.Format",
+    "kind": "method",
+    "source": "sdk/fanbox/fanbox.go",
+    "line": 35,
+    "declaration": "func (SessionCredentials) Format(state fmt.State, _ rune)"
+  },
+  {
+    "id": "sdk/fanbox:SessionCredentials.GoString",
+    "kind": "method",
+    "source": "sdk/fanbox/fanbox.go",
+    "line": 32,
+    "declaration": "func (SessionCredentials) GoString() string"
+  },
+  {
+    "id": "sdk/fanbox:SessionCredentials.String",
+    "kind": "method",
+    "source": "sdk/fanbox/fanbox.go",
+    "line": 29,
+    "declaration": "func (SessionCredentials) String() string"
+  },
+  {
+    "id": "sdk/fanbox:SupportingRequest",
+    "kind": "type",
+    "source": "sdk/fanbox/request.go",
+    "line": 56,
+    "declaration": "SupportingRequest struct {\n\tCursor sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/fanbox:TaggedPostsRequest",
+    "kind": "type",
+    "source": "sdk/fanbox/request.go",
+    "line": 39,
+    "declaration": "TaggedPostsRequest struct {\n\tCreatorID string\n\tTag       string\n\tCursor    sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/fanbox:ToAssetDTO",
+    "kind": "function",
+    "source": "sdk/fanbox/dto.go",
+    "line": 233,
+    "declaration": "func ToAssetDTO(value Asset) AssetDTO"
+  },
+  {
+    "id": "sdk/fanbox:ToCreatorDTO",
+    "kind": "function",
+    "source": "sdk/fanbox/dto.go",
+    "line": 156,
+    "declaration": "func ToCreatorDTO(value Creator) CreatorDTO"
+  },
+  {
+    "id": "sdk/fanbox:ToCreatorSummaryDTO",
+    "kind": "function",
+    "source": "sdk/fanbox/dto.go",
+    "line": 151,
+    "declaration": "func ToCreatorSummaryDTO(value CreatorSummary) CreatorSummaryDTO"
+  },
+  {
+    "id": "sdk/fanbox:ToCreatorTagDTO",
+    "kind": "function",
+    "source": "sdk/fanbox/dto.go",
+    "line": 290,
+    "declaration": "func ToCreatorTagDTO(value CreatorTag) CreatorTagDTO"
+  },
+  {
+    "id": "sdk/fanbox:ToFileResourceDTO",
+    "kind": "function",
+    "source": "sdk/fanbox/dto.go",
+    "line": 146,
+    "declaration": "func ToFileResourceDTO(value FileResource) FileResourceDTO"
+  },
+  {
+    "id": "sdk/fanbox:ToImageResourceDTO",
+    "kind": "function",
+    "source": "sdk/fanbox/dto.go",
+    "line": 136,
+    "declaration": "func ToImageResourceDTO(value ImageResource) ImageResourceDTO"
+  },
+  {
+    "id": "sdk/fanbox:ToPostArticleBlockDTO",
+    "kind": "function",
+    "source": "sdk/fanbox/dto.go",
+    "line": 180,
+    "declaration": "func ToPostArticleBlockDTO(value PostArticleBlock) PostArticleBlockDTO"
+  },
+  {
+    "id": "sdk/fanbox:ToPostBlockDTO",
+    "kind": "function",
+    "source": "sdk/fanbox/dto.go",
+    "line": 203,
+    "declaration": "func ToPostBlockDTO(value PostBlock) PostBlockDTO"
+  },
+  {
+    "id": "sdk/fanbox:ToPostBodyDTO",
+    "kind": "function",
+    "source": "sdk/fanbox/dto.go",
+    "line": 244,
+    "declaration": "func ToPostBodyDTO(value PostBody) PostBodyDTO"
+  },
+  {
+    "id": "sdk/fanbox:ToPostDTO",
+    "kind": "function",
+    "source": "sdk/fanbox/dto.go",
+    "line": 257,
+    "declaration": "func ToPostDTO(value Post) PostDTO"
+  },
+  {
+    "id": "sdk/fanbox:ToPostFileBlockDTO",
+    "kind": "function",
+    "source": "sdk/fanbox/dto.go",
+    "line": 175,
+    "declaration": "func ToPostFileBlockDTO(value PostFileBlock) PostFileBlockDTO"
+  },
+  {
+    "id": "sdk/fanbox:ToPostImageBlockDTO",
+    "kind": "function",
+    "source": "sdk/fanbox/dto.go",
+    "line": 170,
+    "declaration": "func ToPostImageBlockDTO(value PostImageBlock) PostImageBlockDTO"
+  },
+  {
+    "id": "sdk/fanbox:ToPostUnknownBlockDTO",
+    "kind": "function",
+    "source": "sdk/fanbox/dto.go",
+    "line": 198,
+    "declaration": "func ToPostUnknownBlockDTO(value PostUnknownBlock) PostUnknownBlockDTO"
+  },
+  {
+    "id": "sdk/fanbox:ToPostVideoEmbedDTO",
+    "kind": "function",
+    "source": "sdk/fanbox/dto.go",
+    "line": 185,
+    "declaration": "func ToPostVideoEmbedDTO(value PostVideoEmbed) PostVideoEmbedDTO"
+  },
+  {
+    "id": "sdk/fanbox:ToUserDTO",
+    "kind": "function",
+    "source": "sdk/fanbox/dto.go",
+    "line": 279,
+    "declaration": "func ToUserDTO(value User) UserDTO"
+  },
+  {
+    "id": "sdk/fanbox:User",
+    "kind": "type",
+    "source": "sdk/fanbox/models.go",
+    "line": 151,
+    "declaration": "User struct {\n\tUserID        int64\n\tDisplayName   string\n\tCreatorID     string\n\tCreatorStatus string\n\tIsCreator     bool\n}"
+  },
+  {
+    "id": "sdk/fanbox:UserDTO",
+    "kind": "type",
+    "source": "sdk/fanbox/dto.go",
+    "line": 120,
+    "declaration": "UserDTO struct {\n\tUserID        int64  `json:\"user_id\"`\n\tDisplayName   string `json:\"display_name\"`\n\tCreatorID     string `json:\"creator_id\"`\n\tCreatorStatus string `json:\"creator_status\"`\n\tIsCreator     bool   `json:\"is_creator\"`\n}"
+  },
+  {
+    "id": "sdk/fanbox:progressReader.Read",
+    "kind": "method",
+    "source": "sdk/fanbox/resource.go",
+    "line": 244,
+    "declaration": "func (r *progressReader) Read(p []byte) (int, error)"
+  },
+  {
+    "id": "sdk/pixiv:AddArtworkBookmarkRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 427,
+    "declaration": "AddArtworkBookmarkRequest struct {\n\tArtworkID int64\n\tRestrict  Restrict\n\tTags      []string\n}"
+  },
+  {
+    "id": "sdk/pixiv:AddBookmarkRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 419,
+    "declaration": "AddBookmarkRequest struct {\n\tArtworkID int64\n\tRestrict  Restrict\n\tTags      []string\n}"
+  },
+  {
+    "id": "sdk/pixiv:AddNovelBookmarkRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 446,
+    "declaration": "AddNovelBookmarkRequest struct {\n\tNovelID  int64\n\tRestrict Restrict\n\tTags     []string\n}"
+  },
+  {
+    "id": "sdk/pixiv:Artwork",
+    "kind": "type",
+    "source": "sdk/pixiv/models.go",
+    "line": 73,
+    "declaration": "Artwork struct {\n\tID             int64\n\tTitle          string\n\tCaption        string\n\tKind           ArtworkKind\n\tRawKind        string\n\tTags           []Tag\n\tUser           User\n\tPublishedAt    time.Time\n\tUpdatedAt      *time.Time\n\tTotalBookmarks int\n\tTotalViews     int\n\tWidth          int\n\tHeight         int\n\tPageCount      int\n\tXRestrict      int\n\tAIType         int\n\tTools          []string\n\tCover          ImageResource\n\tPages          []ArtworkPage\n}"
+  },
+  {
+    "id": "sdk/pixiv:ArtworkBookmarkDetail",
+    "kind": "type",
+    "source": "sdk/pixiv/models.go",
+    "line": 264,
+    "declaration": "ArtworkBookmarkDetail struct {\n\tRestrict Restrict\n\tTags     []string\n}"
+  },
+  {
+    "id": "sdk/pixiv:ArtworkBookmarkDetailDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 224,
+    "declaration": "ArtworkBookmarkDetailDTO struct {\n\tRestrict Restrict `json:\"restrict\"`\n\tTags     []string `json:\"tags\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:ArtworkBookmarkRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 257,
+    "declaration": "ArtworkBookmarkRequest struct {\n\tArtworkID int64\n}"
+  },
+  {
+    "id": "sdk/pixiv:ArtworkCommentsRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 223,
+    "declaration": "ArtworkCommentsRequest struct {\n\tArtworkID int64\n\tCursor    sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/pixiv:ArtworkDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 40,
+    "declaration": "ArtworkDTO struct {\n\tID             int64            `json:\"id\"`\n\tTitle          string           `json:\"title\"`\n\tCaption        string           `json:\"caption\"`\n\tKind           ArtworkKind      `json:\"kind\"`\n\tRawKind        string           `json:\"raw_kind\"`\n\tTags           []TagDTO         `json:\"tags\"`\n\tUser           UserDTO          `json:\"user\"`\n\tPublishedAt    time.Time        `json:\"published_at\"`\n\tUpdatedAt      *time.Time       `json:\"updated_at,omitempty\"`\n\tTotalBookmarks int              `json:\"total_bookmarks\"`\n\tTotalViews     int              `json:\"total_views\"`\n\tWidth          int              `json:\"width\"`\n\tHeight         int              `json:\"height\"`\n\tPageCount      int              `json:\"page_count\"`\n\tXRestrict      int              `json:\"x_restrict\"`\n\tAIType         int              `json:\"ai_type\"`\n\tTools          []string         `json:\"tools,omitempty\"`\n\tCover          ImageResourceDTO `json:\"cover\"`\n\tPages          []ArtworkPageDTO `json:\"pages,omitempty\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:ArtworkKind",
+    "kind": "type",
+    "source": "sdk/pixiv/models.go",
+    "line": 20,
+    "declaration": "ArtworkKind string"
+  },
+  {
+    "id": "sdk/pixiv:ArtworkKindIllustration",
+    "kind": "const",
+    "source": "sdk/pixiv/models.go",
+    "line": 24,
+    "declaration": "ArtworkKindIllustration ArtworkKind = \"illustration\""
+  },
+  {
+    "id": "sdk/pixiv:ArtworkKindManga",
+    "kind": "const",
+    "source": "sdk/pixiv/models.go",
+    "line": 25,
+    "declaration": "ArtworkKindManga ArtworkKind = \"manga\""
+  },
+  {
+    "id": "sdk/pixiv:ArtworkKindUgoira",
+    "kind": "const",
+    "source": "sdk/pixiv/models.go",
+    "line": 26,
+    "declaration": "ArtworkKindUgoira ArtworkKind = \"ugoira\""
+  },
+  {
+    "id": "sdk/pixiv:ArtworkKindUnknown",
+    "kind": "const",
+    "source": "sdk/pixiv/models.go",
+    "line": 29,
+    "declaration": "ArtworkKindUnknown ArtworkKind = \"unknown\""
+  },
+  {
+    "id": "sdk/pixiv:ArtworkPage",
+    "kind": "type",
+    "source": "sdk/pixiv/models.go",
+    "line": 59,
+    "declaration": "ArtworkPage struct {\n\tPageIndex int\n\tImage     ImageResource\n\tWidth     int\n\tHeight    int\n}"
+  },
+  {
+    "id": "sdk/pixiv:ArtworkPageDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 31,
+    "declaration": "ArtworkPageDTO struct {\n\tPageIndex int              `json:\"page_index\"`\n\tImage     ImageResourceDTO `json:\"image\"`\n\tWidth     int              `json:\"width\"`\n\tHeight    int              `json:\"height\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:ArtworkPagesRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 131,
+    "declaration": "ArtworkPagesRequest struct {\n\tArtworkID int64\n}"
+  },
+  {
+    "id": "sdk/pixiv:ArtworkRankingRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 148,
+    "declaration": "ArtworkRankingRequest struct {\n\tMode   RankingMode\n\tDate   string\n\tCursor sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/pixiv:ArtworkRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 126,
+    "declaration": "ArtworkRequest struct {\n\tArtworkID int64\n}"
+  },
+  {
+    "id": "sdk/pixiv:ArtworkSeriesRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 142,
+    "declaration": "ArtworkSeriesRequest struct {\n\tSeriesID int64\n\tCursor   sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/pixiv:ArtworkVariantResource",
+    "kind": "function",
+    "source": "sdk/pixiv/resource.go",
+    "line": 72,
+    "declaration": "func ArtworkVariantResource(original sdk.Resource, variant string) (sdk.ResourceRef, error)"
+  },
+  {
+    "id": "sdk/pixiv:BeginLogin",
+    "kind": "function",
+    "source": "sdk/pixiv/login.go",
+    "line": 46,
+    "declaration": "func BeginLogin(options LoginOptions) (*LoginSession, error)"
+  },
+  {
+    "id": "sdk/pixiv:BookmarkTag",
+    "kind": "type",
+    "source": "sdk/pixiv/models.go",
+    "line": 250,
+    "declaration": "BookmarkTag struct {\n\tName  string\n\tCount int\n}"
+  },
+  {
+    "id": "sdk/pixiv:BookmarkTagDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 211,
+    "declaration": "BookmarkTagDTO struct {\n\tName  string `json:\"name\"`\n\tCount int    `json:\"count\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:Client",
+    "kind": "type",
+    "source": "sdk/pixiv/pixiv.go",
+    "line": 83,
+    "declaration": "Client struct {\n\tapp                *appapi.Client\n\tartworkBookmark    *artworkbookmark.Client\n\tartworkDetail      *artworkdetail.Client\n\tartworkComments    *artworkcomments.Client\n\tartworkRelated     *artworkrelated.Client\n\tartworkRanking     *artworkranking.Client\n\tartworkRecommended *artworkrecommended.Client\n\tartworkSearch      *artworksearch.Client\n\tartworkSeries      *artworkseries.Client\n\tartworkTimeline    *artworktimeline.Client\n\tartworkTrending    *artworktrending.Client\n\tnovelComments      *novelcomments.Client\n\tnovelDetail        *noveldetail.Client\n\tnovelRecommended   *novelrecommended.Client\n\tnovelRanking       *novelranking.Client\n\tnovelSearch        *novelsearch.Client\n\tnovelSeries        *novelseries.Client\n\tnovelTimeline      *noveltimeline.Client\n\tuserBlocked        *userblocked.Client\n\tuserDetail         *userdetail.Client\n\tuserFollowers      *userfollowers.Client\n\tuserFollowing      *userfollowing.Client\n\tuserFollow         *userfollow.Client\n\tuserMyPixiv        *usermypixiv.Client\n\tuserNovelBookmarks *usernovelbookmarks.Client\n\tuserNovels         *usernovels.Client\n\tuserRecommended    *userrecommended.Client\n\tuserRelated        *userrelated.Client\n\tuserSearch         *usersearch.Client\n\tstamps             *stamps.Client\n\tresClient          *resource.Client\n\topts               Options\n\n\thttpClient *http.Client\n\tselfHTTP   bool\n\n\tuserID    int64\n\tuserName  string\n\texpiresAt time.Time\n\n\tcursorInstance string\n\n\tresourceMu   sync.RWMutex\n\tresourceURLs map[string]string\n}"
+  },
+  {
+    "id": "sdk/pixiv:Client.AddArtworkBookmark",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_mutation.go",
+    "line": 14,
+    "declaration": "func (c *Client) AddArtworkBookmark(ctx context.Context, request AddArtworkBookmarkRequest) error"
+  },
+  {
+    "id": "sdk/pixiv:Client.AddBookmark",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_mutation.go",
+    "line": 39,
+    "declaration": "func (c *Client) AddBookmark(ctx context.Context, request AddBookmarkRequest) error"
+  },
+  {
+    "id": "sdk/pixiv:Client.AddNovelBookmark",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_mutation.go",
+    "line": 73,
+    "declaration": "func (c *Client) AddNovelBookmark(ctx context.Context, request AddNovelBookmarkRequest) error"
+  },
+  {
+    "id": "sdk/pixiv:Client.Artwork",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_artwork.go",
+    "line": 18,
+    "declaration": "func (c *Client) Artwork(ctx context.Context, request ArtworkRequest) (Artwork, error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.ArtworkBookmark",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_artwork.go",
+    "line": 335,
+    "declaration": "func (c *Client) ArtworkBookmark(ctx context.Context, request ArtworkBookmarkRequest) (ArtworkBookmarkDetail, error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.ArtworkComments",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_artwork.go",
+    "line": 318,
+    "declaration": "func (c *Client) ArtworkComments(ctx context.Context, request ArtworkCommentsRequest) (CommentPage, error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.ArtworkPages",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_artwork.go",
+    "line": 30,
+    "declaration": "func (c *Client) ArtworkPages(ctx context.Context, request ArtworkPagesRequest) ([]ArtworkPage, error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.ArtworkRanking",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_artwork.go",
+    "line": 100,
+    "declaration": "func (c *Client) ArtworkRanking(ctx context.Context, request ArtworkRankingRequest) (sdk.Page[Artwork], error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.ArtworkSeries",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_artwork.go",
+    "line": 59,
+    "declaration": "func (c *Client) ArtworkSeries(ctx context.Context, request ArtworkSeriesRequest) (sdk.Page[Artwork], error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.CheckpointSearchArtworks",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_artwork_search.go",
+    "line": 142,
+    "declaration": "func (c *Client) CheckpointSearchArtworks(request SearchArtworksRequest, consumed int) (sdk.Cursor, error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.CloseIdleConnections",
+    "kind": "method",
+    "source": "sdk/pixiv/pixiv.go",
+    "line": 257,
+    "declaration": "func (c *Client) CloseIdleConnections()"
+  },
+  {
+    "id": "sdk/pixiv:Client.CurrentUser",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_user.go",
+    "line": 167,
+    "declaration": "func (c *Client) CurrentUser(ctx context.Context, request CurrentUserRequest) (UserDetail, error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.DeleteArtworkComment",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_comment.go",
+    "line": 60,
+    "declaration": "func (c *Client) DeleteArtworkComment(ctx context.Context, request DeleteArtworkCommentRequest) error"
+  },
+  {
+    "id": "sdk/pixiv:Client.DeleteNovelComment",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_comment.go",
+    "line": 119,
+    "declaration": "func (c *Client) DeleteNovelComment(ctx context.Context, request DeleteNovelCommentRequest) error"
+  },
+  {
+    "id": "sdk/pixiv:Client.FollowUser",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_mutation.go",
+    "line": 101,
+    "declaration": "func (c *Client) FollowUser(ctx context.Context, request FollowUserRequest) error"
+  },
+  {
+    "id": "sdk/pixiv:Client.FollowingArtworks",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_artwork.go",
+    "line": 142,
+    "declaration": "func (c *Client) FollowingArtworks(ctx context.Context, request FollowingArtworksRequest) (sdk.Page[Artwork], error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.FollowingNovels",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_novel.go",
+    "line": 186,
+    "declaration": "func (c *Client) FollowingNovels(ctx context.Context, request FollowingNovelsRequest) (sdk.Page[Novel], error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.LatestArtworks",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_artwork.go",
+    "line": 160,
+    "declaration": "func (c *Client) LatestArtworks(ctx context.Context, request LatestArtworksRequest) (sdk.Page[Artwork], error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.LatestNovels",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_novel.go",
+    "line": 204,
+    "declaration": "func (c *Client) LatestNovels(ctx context.Context, request LatestNovelsRequest) (sdk.Page[Novel], error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.MyPixivArtworks",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_artwork.go",
+    "line": 274,
+    "declaration": "func (c *Client) MyPixivArtworks(ctx context.Context, request MyPixivArtworksRequest) (sdk.Page[Artwork], error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.MyPixivNovels",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_novel.go",
+    "line": 300,
+    "declaration": "func (c *Client) MyPixivNovels(ctx context.Context, request MyPixivNovelsRequest) (sdk.Page[Novel], error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.MyPixivUsers",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_user.go",
+    "line": 148,
+    "declaration": "func (c *Client) MyPixivUsers(ctx context.Context, request MyPixivUsersRequest) (sdk.Page[UserPreview], error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.Novel",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_novel.go",
+    "line": 67,
+    "declaration": "func (c *Client) Novel(ctx context.Context, request NovelRequest) (Novel, error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.NovelBookmark",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_novel.go",
+    "line": 288,
+    "declaration": "func (c *Client) NovelBookmark(ctx context.Context, request NovelBookmarkRequest) (NovelBookmarkDetail, error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.NovelComments",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_novel.go",
+    "line": 153,
+    "declaration": "func (c *Client) NovelComments(ctx context.Context, request NovelCommentsRequest) (CommentPage, error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.NovelContent",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_novel.go",
+    "line": 145,
+    "declaration": "func (c *Client) NovelContent(ctx context.Context, request NovelContentRequest) (NovelContent, error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.NovelRanking",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_novel.go",
+    "line": 117,
+    "declaration": "func (c *Client) NovelRanking(ctx context.Context, request NovelRankingRequest) (sdk.Page[Novel], error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.NovelSeries",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_novel.go",
+    "line": 79,
+    "declaration": "func (c *Client) NovelSeries(ctx context.Context, request NovelSeriesRequest) (NovelSeriesResult, error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.OpenResource",
+    "kind": "method",
+    "source": "sdk/pixiv/resource.go",
+    "line": 135,
+    "declaration": "func (c *Client) OpenResource(ctx context.Context, request sdk.OpenResourceRequest) (*sdk.ResourceResponse, error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.PostArtworkComment",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_comment.go",
+    "line": 16,
+    "declaration": "func (c *Client) PostArtworkComment(ctx context.Context, request PostArtworkCommentRequest) (CommentMutationResult, error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.PostNovelComment",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_comment.go",
+    "line": 75,
+    "declaration": "func (c *Client) PostNovelComment(ctx context.Context, request PostNovelCommentRequest) (CommentMutationResult, error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.RecommendedArtworks",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_artwork.go",
+    "line": 128,
+    "declaration": "func (c *Client) RecommendedArtworks(ctx context.Context, request RecommendedArtworksRequest) (sdk.Page[Artwork], error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.RecommendedNovels",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_novel.go",
+    "line": 172,
+    "declaration": "func (c *Client) RecommendedNovels(ctx context.Context, request RecommendedNovelsRequest) (sdk.Page[Novel], error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.RecommendedUsers",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_user.go",
+    "line": 48,
+    "declaration": "func (c *Client) RecommendedUsers(ctx context.Context, request RecommendedUsersRequest) (sdk.Page[UserPreview], error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.RelatedArtworks",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_artwork.go",
+    "line": 42,
+    "declaration": "func (c *Client) RelatedArtworks(ctx context.Context, request RelatedArtworksRequest) (sdk.Page[Artwork], error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.RelatedUsers",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_user.go",
+    "line": 70,
+    "declaration": "func (c *Client) RelatedUsers(ctx context.Context, request RelatedUsersRequest) (sdk.Page[UserPreview], error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.RemoveArtworkBookmark",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_mutation.go",
+    "line": 48,
+    "declaration": "func (c *Client) RemoveArtworkBookmark(ctx context.Context, request RemoveArtworkBookmarkRequest) error"
+  },
+  {
+    "id": "sdk/pixiv:Client.RemoveBookmark",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_mutation.go",
+    "line": 67,
+    "declaration": "func (c *Client) RemoveBookmark(ctx context.Context, request RemoveBookmarkRequest) error"
+  },
+  {
+    "id": "sdk/pixiv:Client.RemoveNovelBookmark",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_mutation.go",
+    "line": 90,
+    "declaration": "func (c *Client) RemoveNovelBookmark(ctx context.Context, request RemoveNovelBookmarkRequest) error"
+  },
+  {
+    "id": "sdk/pixiv:Client.ReplyArtworkComment",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_comment.go",
+    "line": 38,
+    "declaration": "func (c *Client) ReplyArtworkComment(ctx context.Context, request ReplyArtworkCommentRequest) (CommentMutationResult, error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.ReplyNovelComment",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_comment.go",
+    "line": 97,
+    "declaration": "func (c *Client) ReplyNovelComment(ctx context.Context, request ReplyNovelCommentRequest) (CommentMutationResult, error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.SaveResource",
+    "kind": "method",
+    "source": "sdk/pixiv/resource.go",
+    "line": 179,
+    "declaration": "func (c *Client) SaveResource(ctx context.Context, ref sdk.ResourceRef, options sdk.SaveOptions) (sdk.SavedResource, error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.SaveResourceURL",
+    "kind": "method",
+    "source": "sdk/pixiv/resource.go",
+    "line": 208,
+    "declaration": "func (c *Client) SaveResourceURL(ctx context.Context, rawURL string, options sdk.SaveOptions) (sdk.SavedResource, error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.SearchArtworks",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_artwork_search.go",
+    "line": 13,
+    "declaration": "func (c *Client) SearchArtworks(ctx context.Context, request SearchArtworksRequest) (sdk.Page[Artwork], error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.SearchNovels",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_novel.go",
+    "line": 21,
+    "declaration": "func (c *Client) SearchNovels(ctx context.Context, request SearchNovelsRequest) (sdk.Page[Novel], error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.SearchUsers",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_user.go",
+    "line": 19,
+    "declaration": "func (c *Client) SearchUsers(ctx context.Context, request SearchUsersRequest) (sdk.Page[UserPreview], error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.SetAIArtworkVisibility",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_mutation.go",
+    "line": 132,
+    "declaration": "func (c *Client) SetAIArtworkVisibility(ctx context.Context, request SetAIArtworkVisibilityRequest) error"
+  },
+  {
+    "id": "sdk/pixiv:Client.StampArtworkComment",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_stamps.go",
+    "line": 32,
+    "declaration": "func (c *Client) StampArtworkComment(ctx context.Context, request StampArtworkCommentRequest) (CommentMutationResult, error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.StampNovelComment",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_stamps.go",
+    "line": 53,
+    "declaration": "func (c *Client) StampNovelComment(ctx context.Context, request StampNovelCommentRequest) (CommentMutationResult, error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.Stamps",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_stamps.go",
+    "line": 14,
+    "declaration": "func (c *Client) Stamps(ctx context.Context, request StampsRequest) ([]Stamp, error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.TrendingArtworkTags",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_artwork.go",
+    "line": 288,
+    "declaration": "func (c *Client) TrendingArtworkTags(ctx context.Context, request TrendingArtworkTagsRequest) ([]TrendingTag, error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.UgoiraMetadata",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_artwork.go",
+    "line": 306,
+    "declaration": "func (c *Client) UgoiraMetadata(ctx context.Context, request UgoiraMetadataRequest) (UgoiraMetadata, error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.UnfollowUser",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_mutation.go",
+    "line": 118,
+    "declaration": "func (c *Client) UnfollowUser(ctx context.Context, request UnfollowUserRequest) error"
+  },
+  {
+    "id": "sdk/pixiv:Client.User",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_user.go",
+    "line": 36,
+    "declaration": "func (c *Client) User(ctx context.Context, request UserRequest) (UserDetail, error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.UserArtworkBookmarkTags",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_artwork.go",
+    "line": 246,
+    "declaration": "func (c *Client) UserArtworkBookmarkTags(ctx context.Context, request UserArtworkBookmarkTagsRequest) (sdk.Page[BookmarkTag], error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.UserArtworkBookmarks",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_artwork.go",
+    "line": 222,
+    "declaration": "func (c *Client) UserArtworkBookmarks(ctx context.Context, request UserArtworkBookmarksRequest) (sdk.Page[Artwork], error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.UserArtworks",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_artwork.go",
+    "line": 201,
+    "declaration": "func (c *Client) UserArtworks(ctx context.Context, request UserArtworksRequest) (sdk.Page[Artwork], error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.UserBlockedUsers",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_user.go",
+    "line": 129,
+    "declaration": "func (c *Client) UserBlockedUsers(ctx context.Context, request UserBlockedUsersRequest) (sdk.Page[UserPreview], error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.UserFollowers",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_user.go",
+    "line": 108,
+    "declaration": "func (c *Client) UserFollowers(ctx context.Context, request UserFollowersRequest) (sdk.Page[UserPreview], error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.UserFollowing",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_user.go",
+    "line": 87,
+    "declaration": "func (c *Client) UserFollowing(ctx context.Context, request UserFollowingRequest) (sdk.Page[UserPreview], error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.UserID",
+    "kind": "method",
+    "source": "sdk/pixiv/pixiv.go",
+    "line": 272,
+    "declaration": "func (c *Client) UserID() int64"
+  },
+  {
+    "id": "sdk/pixiv:Client.UserNovelBookmarkTags",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_novel.go",
+    "line": 262,
+    "declaration": "func (c *Client) UserNovelBookmarkTags(ctx context.Context, request UserNovelBookmarkTagsRequest) (sdk.Page[BookmarkTag], error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.UserNovelBookmarks",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_novel.go",
+    "line": 235,
+    "declaration": "func (c *Client) UserNovelBookmarks(ctx context.Context, request UserNovelBookmarksRequest) (sdk.Page[Novel], error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.UserNovels",
+    "kind": "method",
+    "source": "sdk/pixiv/ops_novel.go",
+    "line": 218,
+    "declaration": "func (c *Client) UserNovels(ctx context.Context, request UserNovelsRequest) (sdk.Page[Novel], error)"
+  },
+  {
+    "id": "sdk/pixiv:Client.Username",
+    "kind": "method",
+    "source": "sdk/pixiv/pixiv.go",
+    "line": 276,
+    "declaration": "func (c *Client) Username() string"
+  },
+  {
+    "id": "sdk/pixiv:Comment",
+    "kind": "type",
+    "source": "sdk/pixiv/models.go",
+    "line": 196,
+    "declaration": "Comment struct {\n\tID            int64\n\tUser          User\n\tComment       string\n\tCreatedAt     time.Time\n\tParentComment *Comment\n}"
+  },
+  {
+    "id": "sdk/pixiv:CommentAccessControl",
+    "kind": "type",
+    "source": "sdk/pixiv/models.go",
+    "line": 213,
+    "declaration": "CommentAccessControl struct {\n\tCanComment bool\n\tIsLocked   bool\n\n\tNumericValue *int64\n}"
+  },
+  {
+    "id": "sdk/pixiv:CommentAccessControlDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 166,
+    "declaration": "CommentAccessControlDTO struct {\n\tCanComment bool `json:\"can_comment\"`\n\tIsLocked   bool `json:\"is_locked\"`\n\n\tNumericValue *int64 `json:\"-\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:CommentAccessControlDTO.MarshalJSON",
+    "kind": "method",
+    "source": "sdk/pixiv/dto.go",
+    "line": 176,
+    "declaration": "func (value CommentAccessControlDTO) MarshalJSON() ([]byte, error)"
+  },
+  {
+    "id": "sdk/pixiv:CommentDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 157,
+    "declaration": "CommentDTO struct {\n\tID            int64       `json:\"id\"`\n\tUser          UserDTO     `json:\"user\"`\n\tComment       string      `json:\"comment\"`\n\tCreatedAt     time.Time   `json:\"created_at\"`\n\tParentComment *CommentDTO `json:\"parent_comment\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:CommentMutationResult",
+    "kind": "type",
+    "source": "sdk/pixiv/models.go",
+    "line": 207,
+    "declaration": "CommentMutationResult struct {\n\tCommentID int64\n}"
+  },
+  {
+    "id": "sdk/pixiv:CommentPage",
+    "kind": "type",
+    "source": "sdk/pixiv/models.go",
+    "line": 226,
+    "declaration": "CommentPage struct {\n\tPage          sdk.Page[Comment]\n\tTotal         *int64\n\tAccessControl *CommentAccessControl\n}"
+  },
+  {
+    "id": "sdk/pixiv:CommentPageDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 189,
+    "declaration": "CommentPageDTO struct {\n\tPage          sdk.PageDTO[CommentDTO]  `json:\"page\"`\n\tTotal         *int64                   `json:\"total\"`\n\tAccessControl *CommentAccessControlDTO `json:\"access_control\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:Credentials",
+    "kind": "type",
+    "source": "sdk/pixiv/credentials.go",
+    "line": 18,
+    "declaration": "Credentials struct {\n\tUserID    int64\n\tUsername  string\n\tExpiresAt time.Time\n\n\taccessToken  string\n\trefreshToken string\n}"
+  },
+  {
+    "id": "sdk/pixiv:Credentials.AccessToken",
+    "kind": "method",
+    "source": "sdk/pixiv/credentials.go",
+    "line": 28,
+    "declaration": "func (c Credentials) AccessToken() string"
+  },
+  {
+    "id": "sdk/pixiv:Credentials.Format",
+    "kind": "method",
+    "source": "sdk/pixiv/credentials.go",
+    "line": 45,
+    "declaration": "func (c Credentials) Format(state fmt.State, verb rune)"
+  },
+  {
+    "id": "sdk/pixiv:Credentials.GoString",
+    "kind": "method",
+    "source": "sdk/pixiv/credentials.go",
+    "line": 41,
+    "declaration": "func (c Credentials) GoString() string"
+  },
+  {
+    "id": "sdk/pixiv:Credentials.MarshalJSON",
+    "kind": "method",
+    "source": "sdk/pixiv/credentials.go",
+    "line": 51,
+    "declaration": "func (c Credentials) MarshalJSON() ([]byte, error)"
+  },
+  {
+    "id": "sdk/pixiv:Credentials.RefreshToken",
+    "kind": "method",
+    "source": "sdk/pixiv/credentials.go",
+    "line": 32,
+    "declaration": "func (c Credentials) RefreshToken() string"
+  },
+  {
+    "id": "sdk/pixiv:Credentials.String",
+    "kind": "method",
+    "source": "sdk/pixiv/credentials.go",
+    "line": 35,
+    "declaration": "func (c Credentials) String() string"
+  },
+  {
+    "id": "sdk/pixiv:CurrentUserRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 415,
+    "declaration": "CurrentUserRequest struct{}"
+  },
+  {
+    "id": "sdk/pixiv:DeleteArtworkCommentRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 242,
+    "declaration": "DeleteArtworkCommentRequest struct {\n\tCommentID int64\n}"
+  },
+  {
+    "id": "sdk/pixiv:DeleteNovelCommentRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 313,
+    "declaration": "DeleteNovelCommentRequest struct {\n\tCommentID int64\n}"
+  },
+  {
+    "id": "sdk/pixiv:DurationFilter",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 27,
+    "declaration": "DurationFilter string"
+  },
+  {
+    "id": "sdk/pixiv:DurationLastDay",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 31,
+    "declaration": "DurationLastDay DurationFilter = \"within_last_day\""
+  },
+  {
+    "id": "sdk/pixiv:DurationLastMonth",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 33,
+    "declaration": "DurationLastMonth DurationFilter = \"within_last_month\""
+  },
+  {
+    "id": "sdk/pixiv:DurationLastWeek",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 32,
+    "declaration": "DurationLastWeek DurationFilter = \"within_last_week\""
+  },
+  {
+    "id": "sdk/pixiv:FollowUserRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 459,
+    "declaration": "FollowUserRequest struct {\n\tUserID   int64\n\tRestrict Restrict\n}"
+  },
+  {
+    "id": "sdk/pixiv:FollowingArtworksRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 160,
+    "declaration": "FollowingArtworksRequest struct {\n\tRestrict Restrict\n\tCursor   sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/pixiv:FollowingNovelsRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 338,
+    "declaration": "FollowingNovelsRequest struct {\n\tRestrict Restrict\n\tCursor   sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/pixiv:ImageResource",
+    "kind": "type",
+    "source": "sdk/pixiv/models.go",
+    "line": 43,
+    "declaration": "ImageResource struct {\n\tResource sdk.Resource\n\tVariant  string\n\tWidth    int\n\tHeight   int\n}"
+  },
+  {
+    "id": "sdk/pixiv:ImageResourceDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 17,
+    "declaration": "ImageResourceDTO struct {\n\tResource *sdk.ResourceDTO `json:\"resource\"`\n\tVariant  string           `json:\"variant\"`\n\tWidth    int              `json:\"width\"`\n\tHeight   int              `json:\"height\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:IsOfficialOAuthCallbackURL",
+    "kind": "function",
+    "source": "sdk/pixiv/login_urls.go",
+    "line": 12,
+    "declaration": "func IsOfficialOAuthCallbackURL(rawURL string) bool"
+  },
+  {
+    "id": "sdk/pixiv:IsOfficialOAuthStartURL",
+    "kind": "function",
+    "source": "sdk/pixiv/login_urls.go",
+    "line": 22,
+    "declaration": "func IsOfficialOAuthStartURL(rawURL string) bool"
+  },
+  {
+    "id": "sdk/pixiv:LatestArtworksRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 166,
+    "declaration": "LatestArtworksRequest struct {\n\tContentType SearchContentType\n\tCursor      sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/pixiv:LatestNovelsRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 344,
+    "declaration": "LatestNovelsRequest struct {\n\tCursor sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/pixiv:LoginOptions",
+    "kind": "type",
+    "source": "sdk/pixiv/login.go",
+    "line": 18,
+    "declaration": "LoginOptions struct {\n\tHTTPClient *http.Client\n}"
+  },
+  {
+    "id": "sdk/pixiv:LoginSession",
+    "kind": "type",
+    "source": "sdk/pixiv/login.go",
+    "line": 30,
+    "declaration": "LoginSession struct {\n\tstate *loginSessionState\n}"
+  },
+  {
+    "id": "sdk/pixiv:LoginSession.AcceptsCallbackURL",
+    "kind": "method",
+    "source": "sdk/pixiv/login.go",
+    "line": 83,
+    "declaration": "func (s *LoginSession) AcceptsCallbackURL(rawURL string) bool"
+  },
+  {
+    "id": "sdk/pixiv:LoginSession.AuthorizationURL",
+    "kind": "method",
+    "source": "sdk/pixiv/login.go",
+    "line": 72,
+    "declaration": "func (s *LoginSession) AuthorizationURL() string"
+  },
+  {
+    "id": "sdk/pixiv:LoginSession.CloseIdleConnections",
+    "kind": "method",
+    "source": "sdk/pixiv/login.go",
+    "line": 132,
+    "declaration": "func (s *LoginSession) CloseIdleConnections()"
+  },
+  {
+    "id": "sdk/pixiv:LoginSession.Complete",
+    "kind": "method",
+    "source": "sdk/pixiv/login.go",
+    "line": 102,
+    "declaration": "func (s *LoginSession) Complete(ctx context.Context, callbackURL string) (Credentials, error)"
+  },
+  {
+    "id": "sdk/pixiv:LoginSession.Format",
+    "kind": "method",
+    "source": "sdk/pixiv/login.go",
+    "line": 157,
+    "declaration": "func (LoginSession) Format(state fmt.State, _ rune)"
+  },
+  {
+    "id": "sdk/pixiv:LoginSession.GoString",
+    "kind": "method",
+    "source": "sdk/pixiv/login.go",
+    "line": 154,
+    "declaration": "func (LoginSession) GoString() string"
+  },
+  {
+    "id": "sdk/pixiv:LoginSession.String",
+    "kind": "method",
+    "source": "sdk/pixiv/login.go",
+    "line": 151,
+    "declaration": "func (LoginSession) String() string"
+  },
+  {
+    "id": "sdk/pixiv:MyPixivArtworksRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 205,
+    "declaration": "MyPixivArtworksRequest struct {\n\tCursor sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/pixiv:MyPixivNovelsRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 363,
+    "declaration": "MyPixivNovelsRequest struct {\n\tCursor sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/pixiv:MyPixivUsersRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 410,
+    "declaration": "MyPixivUsersRequest struct {\n\tCursor sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/pixiv:New",
+    "kind": "function",
+    "source": "sdk/pixiv/pixiv.go",
+    "line": 178,
+    "declaration": "func New(accessToken string) (*Client, error)"
+  },
+  {
+    "id": "sdk/pixiv:NewWith",
+    "kind": "function",
+    "source": "sdk/pixiv/pixiv.go",
+    "line": 183,
+    "declaration": "func NewWith(accessToken string, options Options) (*Client, error)"
+  },
+  {
+    "id": "sdk/pixiv:Novel",
+    "kind": "type",
+    "source": "sdk/pixiv/models.go",
+    "line": 99,
+    "declaration": "Novel struct {\n\tID             int64\n\tTitle          string\n\tCaption        string\n\tUser           User\n\tTags           []Tag\n\tPublishedAt    time.Time\n\tUpdatedAt      *time.Time\n\tXRestrict      int\n\tTextLength     int\n\tIsOriginal     bool\n\tTotalBookmarks int\n\tTotalViews     int\n\tCover          ImageResource\n}"
+  },
+  {
+    "id": "sdk/pixiv:NovelBlock",
+    "kind": "type",
+    "source": "sdk/pixiv/novel_content.go",
+    "line": 76,
+    "declaration": "NovelBlock struct {\n\tKind    NovelBlockKind\n\tText    string\n\tMarks   []NovelMark\n\tImage   *NovelImageBlock\n\tFile    *NovelFileBlock\n\tUnknown *NovelUnknownBlock\n}"
+  },
+  {
+    "id": "sdk/pixiv:NovelBlockDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 273,
+    "declaration": "NovelBlockDTO struct {\n\tKind    NovelBlockKind        `json:\"kind\"`\n\tText    string                `json:\"text\"`\n\tMarks   []NovelMarkDTO        `json:\"marks\"`\n\tImage   *NovelImageBlockDTO   `json:\"image\"`\n\tFile    *NovelFileBlockDTO    `json:\"file\"`\n\tUnknown *NovelUnknownBlockDTO `json:\"unknown\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:NovelBlockFile",
+    "kind": "const",
+    "source": "sdk/pixiv/novel_content.go",
+    "line": 13,
+    "declaration": "NovelBlockFile NovelBlockKind = \"file\""
+  },
+  {
+    "id": "sdk/pixiv:NovelBlockHeader",
+    "kind": "const",
+    "source": "sdk/pixiv/novel_content.go",
+    "line": 11,
+    "declaration": "NovelBlockHeader NovelBlockKind = \"header\""
+  },
+  {
+    "id": "sdk/pixiv:NovelBlockImage",
+    "kind": "const",
+    "source": "sdk/pixiv/novel_content.go",
+    "line": 12,
+    "declaration": "NovelBlockImage NovelBlockKind = \"image\""
+  },
+  {
+    "id": "sdk/pixiv:NovelBlockKind",
+    "kind": "type",
+    "source": "sdk/pixiv/novel_content.go",
+    "line": 6,
+    "declaration": "NovelBlockKind string"
+  },
+  {
+    "id": "sdk/pixiv:NovelBlockParagraph",
+    "kind": "const",
+    "source": "sdk/pixiv/novel_content.go",
+    "line": 10,
+    "declaration": "NovelBlockParagraph NovelBlockKind = \"paragraph\""
+  },
+  {
+    "id": "sdk/pixiv:NovelBlockUnknown",
+    "kind": "const",
+    "source": "sdk/pixiv/novel_content.go",
+    "line": 16,
+    "declaration": "NovelBlockUnknown NovelBlockKind = \"unknown\""
+  },
+  {
+    "id": "sdk/pixiv:NovelBookmarkDetail",
+    "kind": "type",
+    "source": "sdk/pixiv/models.go",
+    "line": 271,
+    "declaration": "NovelBookmarkDetail struct {\n\tRestrict Restrict\n\tTags     []string\n}"
+  },
+  {
+    "id": "sdk/pixiv:NovelBookmarkDetailDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 230,
+    "declaration": "NovelBookmarkDetailDTO struct {\n\tRestrict Restrict `json:\"restrict\"`\n\tTags     []string `json:\"tags\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:NovelBookmarkRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 263,
+    "declaration": "NovelBookmarkRequest struct {\n\tNovelID int64\n}"
+  },
+  {
+    "id": "sdk/pixiv:NovelCommentsRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 294,
+    "declaration": "NovelCommentsRequest struct {\n\tNovelID int64\n\tCursor  sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/pixiv:NovelContent",
+    "kind": "type",
+    "source": "sdk/pixiv/novel_content.go",
+    "line": 89,
+    "declaration": "NovelContent struct {\n\tNovelID int64\n\tTitle   string\n\tCaption string\n\tBlocks  []NovelBlock\n}"
+  },
+  {
+    "id": "sdk/pixiv:NovelContentDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 283,
+    "declaration": "NovelContentDTO struct {\n\tNovelID int64           `json:\"novel_id\"`\n\tTitle   string          `json:\"title\"`\n\tCaption string          `json:\"caption\"`\n\tBlocks  []NovelBlockDTO `json:\"blocks\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:NovelContentRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 289,
+    "declaration": "NovelContentRequest struct {\n\tNovelID int64\n}"
+  },
+  {
+    "id": "sdk/pixiv:NovelDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 63,
+    "declaration": "NovelDTO struct {\n\tID             int64            `json:\"id\"`\n\tTitle          string           `json:\"title\"`\n\tCaption        string           `json:\"caption\"`\n\tUser           UserDTO          `json:\"user\"`\n\tTags           []TagDTO         `json:\"tags\"`\n\tPublishedAt    time.Time        `json:\"published_at\"`\n\tUpdatedAt      *time.Time       `json:\"updated_at\"`\n\tXRestrict      int              `json:\"x_restrict\"`\n\tTextLength     int              `json:\"text_length\"`\n\tIsOriginal     bool             `json:\"is_original\"`\n\tTotalBookmarks int              `json:\"total_bookmarks\"`\n\tTotalViews     int              `json:\"total_views\"`\n\tCover          ImageResourceDTO `json:\"cover\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:NovelFileBlock",
+    "kind": "type",
+    "source": "sdk/pixiv/novel_content.go",
+    "line": 58,
+    "declaration": "NovelFileBlock struct {\n\tResource sdk.Resource\n\tFilename string\n\tCaption  string\n\tSize     int64\n}"
+  },
+  {
+    "id": "sdk/pixiv:NovelFileBlockDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 259,
+    "declaration": "NovelFileBlockDTO struct {\n\tResource *sdk.ResourceDTO `json:\"resource\"`\n\tFilename string           `json:\"filename\"`\n\tCaption  string           `json:\"caption\"`\n\tSize     int64            `json:\"size\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:NovelImageBlock",
+    "kind": "type",
+    "source": "sdk/pixiv/novel_content.go",
+    "line": 50,
+    "declaration": "NovelImageBlock struct {\n\tResource sdk.Resource\n\tCaption  string\n\tWidth    int\n\tHeight   int\n}"
+  },
+  {
+    "id": "sdk/pixiv:NovelImageBlockDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 251,
+    "declaration": "NovelImageBlockDTO struct {\n\tResource *sdk.ResourceDTO `json:\"resource\"`\n\tCaption  string           `json:\"caption\"`\n\tWidth    int              `json:\"width\"`\n\tHeight   int              `json:\"height\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:NovelMark",
+    "kind": "type",
+    "source": "sdk/pixiv/novel_content.go",
+    "line": 41,
+    "declaration": "NovelMark struct {\n\tKind  NovelMarkKind\n\tText  string\n\tRuby  *NovelRuby\n\tHref  string\n\tClass string\n}"
+  },
+  {
+    "id": "sdk/pixiv:NovelMarkCustom",
+    "kind": "const",
+    "source": "sdk/pixiv/novel_content.go",
+    "line": 29,
+    "declaration": "NovelMarkCustom NovelMarkKind = \"custom\""
+  },
+  {
+    "id": "sdk/pixiv:NovelMarkDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 242,
+    "declaration": "NovelMarkDTO struct {\n\tKind  NovelMarkKind `json:\"kind\"`\n\tText  string        `json:\"text\"`\n\tRuby  *NovelRubyDTO `json:\"ruby\"`\n\tHref  string        `json:\"href\"`\n\tClass string        `json:\"class\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:NovelMarkDelete",
+    "kind": "const",
+    "source": "sdk/pixiv/novel_content.go",
+    "line": 26,
+    "declaration": "NovelMarkDelete NovelMarkKind = \"delete\""
+  },
+  {
+    "id": "sdk/pixiv:NovelMarkEmphasis",
+    "kind": "const",
+    "source": "sdk/pixiv/novel_content.go",
+    "line": 25,
+    "declaration": "NovelMarkEmphasis NovelMarkKind = \"emphasis\""
+  },
+  {
+    "id": "sdk/pixiv:NovelMarkKind",
+    "kind": "type",
+    "source": "sdk/pixiv/novel_content.go",
+    "line": 20,
+    "declaration": "NovelMarkKind string"
+  },
+  {
+    "id": "sdk/pixiv:NovelMarkLink",
+    "kind": "const",
+    "source": "sdk/pixiv/novel_content.go",
+    "line": 28,
+    "declaration": "NovelMarkLink NovelMarkKind = \"link\""
+  },
+  {
+    "id": "sdk/pixiv:NovelMarkRuby",
+    "kind": "const",
+    "source": "sdk/pixiv/novel_content.go",
+    "line": 27,
+    "declaration": "NovelMarkRuby NovelMarkKind = \"ruby\""
+  },
+  {
+    "id": "sdk/pixiv:NovelMarkStrong",
+    "kind": "const",
+    "source": "sdk/pixiv/novel_content.go",
+    "line": 24,
+    "declaration": "NovelMarkStrong NovelMarkKind = \"strong\""
+  },
+  {
+    "id": "sdk/pixiv:NovelMarkUnknown",
+    "kind": "const",
+    "source": "sdk/pixiv/novel_content.go",
+    "line": 30,
+    "declaration": "NovelMarkUnknown NovelMarkKind = \"unknown\""
+  },
+  {
+    "id": "sdk/pixiv:NovelRankingRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 332,
+    "declaration": "NovelRankingRequest struct {\n\tMode   RankingMode\n\tCursor sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/pixiv:NovelRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 278,
+    "declaration": "NovelRequest struct {\n\tNovelID int64\n}"
+  },
+  {
+    "id": "sdk/pixiv:NovelRuby",
+    "kind": "type",
+    "source": "sdk/pixiv/novel_content.go",
+    "line": 34,
+    "declaration": "NovelRuby struct {\n\tText     string\n\tFurigana string\n}"
+  },
+  {
+    "id": "sdk/pixiv:NovelRubyDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 236,
+    "declaration": "NovelRubyDTO struct {\n\tText     string `json:\"text\"`\n\tFurigana string `json:\"furigana\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:NovelSeries",
+    "kind": "type",
+    "source": "sdk/pixiv/models.go",
+    "line": 233,
+    "declaration": "NovelSeries struct {\n\tID          int64\n\tTitle       string\n\tCaption     string\n\tUser        User\n\tIsConcluded bool\n}"
+  },
+  {
+    "id": "sdk/pixiv:NovelSeriesDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 196,
+    "declaration": "NovelSeriesDTO struct {\n\tID          int64   `json:\"id\"`\n\tTitle       string  `json:\"title\"`\n\tCaption     string  `json:\"caption\"`\n\tUser        UserDTO `json:\"user\"`\n\tIsConcluded bool    `json:\"is_concluded\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:NovelSeriesRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 283,
+    "declaration": "NovelSeriesRequest struct {\n\tSeriesID int64\n\tCursor   sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/pixiv:NovelSeriesResult",
+    "kind": "type",
+    "source": "sdk/pixiv/models.go",
+    "line": 242,
+    "declaration": "NovelSeriesResult struct {\n\tSeries NovelSeries\n\tNovels sdk.Page[Novel]\n}"
+  },
+  {
+    "id": "sdk/pixiv:NovelSeriesResultDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 205,
+    "declaration": "NovelSeriesResultDTO struct {\n\tSeries NovelSeriesDTO        `json:\"series\"`\n\tNovels sdk.PageDTO[NovelDTO] `json:\"novels\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:NovelUnknownBlock",
+    "kind": "type",
+    "source": "sdk/pixiv/novel_content.go",
+    "line": 68,
+    "declaration": "NovelUnknownBlock struct {\n\tRawType string\n\tPayload map[string]string\n}"
+  },
+  {
+    "id": "sdk/pixiv:NovelUnknownBlockDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 267,
+    "declaration": "NovelUnknownBlockDTO struct {\n\tRawType string            `json:\"raw_type\"`\n\tPayload map[string]string `json:\"payload\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:Open",
+    "kind": "function",
+    "source": "sdk/pixiv/pixiv.go",
+    "line": 138,
+    "declaration": "func Open(ctx context.Context, refreshToken string) (*Client, Credentials, error)"
+  },
+  {
+    "id": "sdk/pixiv:OpenWith",
+    "kind": "function",
+    "source": "sdk/pixiv/pixiv.go",
+    "line": 143,
+    "declaration": "func OpenWith(ctx context.Context, refreshToken string, options Options) (*Client, Credentials, error)"
+  },
+  {
+    "id": "sdk/pixiv:Options",
+    "kind": "type",
+    "source": "sdk/pixiv/pixiv.go",
+    "line": 65,
+    "declaration": "Options struct {\n\tHTTPClient *http.Client\n\n\tAcceptLanguage string\n\tPacing         Pacing\n\tResourcePolicy ResourcePolicy\n}"
+  },
+  {
+    "id": "sdk/pixiv:Pacing",
+    "kind": "type",
+    "source": "sdk/pixiv/pixiv.go",
+    "line": 50,
+    "declaration": "Pacing struct {\n\tMinInterval time.Duration\n}"
+  },
+  {
+    "id": "sdk/pixiv:ParseURL",
+    "kind": "function",
+    "source": "sdk/pixiv/reference.go",
+    "line": 41,
+    "declaration": "func ParseURL(rawURL string) (Reference, error)"
+  },
+  {
+    "id": "sdk/pixiv:PostArtworkCommentRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 229,
+    "declaration": "PostArtworkCommentRequest struct {\n\tArtworkID int64\n\tComment   string\n}"
+  },
+  {
+    "id": "sdk/pixiv:PostNovelCommentRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 300,
+    "declaration": "PostNovelCommentRequest struct {\n\tNovelID int64\n\tComment string\n}"
+  },
+  {
+    "id": "sdk/pixiv:RankingMode",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 37,
+    "declaration": "RankingMode string"
+  },
+  {
+    "id": "sdk/pixiv:RankingModeDay",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 41,
+    "declaration": "RankingModeDay RankingMode = \"day\""
+  },
+  {
+    "id": "sdk/pixiv:RankingModeDayFemale",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 43,
+    "declaration": "RankingModeDayFemale RankingMode = \"day_female\""
+  },
+  {
+    "id": "sdk/pixiv:RankingModeDayFemaleR18",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 54,
+    "declaration": "RankingModeDayFemaleR18 RankingMode = \"day_female_r18\""
+  },
+  {
+    "id": "sdk/pixiv:RankingModeDayMale",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 42,
+    "declaration": "RankingModeDayMale RankingMode = \"day_male\""
+  },
+  {
+    "id": "sdk/pixiv:RankingModeDayMaleR18",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 53,
+    "declaration": "RankingModeDayMaleR18 RankingMode = \"day_male_r18\""
+  },
+  {
+    "id": "sdk/pixiv:RankingModeDayManga",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 48,
+    "declaration": "RankingModeDayManga RankingMode = \"day_manga\""
+  },
+  {
+    "id": "sdk/pixiv:RankingModeDayR18",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 52,
+    "declaration": "RankingModeDayR18 RankingMode = \"day_r18\""
+  },
+  {
+    "id": "sdk/pixiv:RankingModeMonth",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 47,
+    "declaration": "RankingModeMonth RankingMode = \"month\""
+  },
+  {
+    "id": "sdk/pixiv:RankingModeMonthManga",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 50,
+    "declaration": "RankingModeMonthManga RankingMode = \"month_manga\""
+  },
+  {
+    "id": "sdk/pixiv:RankingModeWeek",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 44,
+    "declaration": "RankingModeWeek RankingMode = \"week\""
+  },
+  {
+    "id": "sdk/pixiv:RankingModeWeekManga",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 49,
+    "declaration": "RankingModeWeekManga RankingMode = \"week_manga\""
+  },
+  {
+    "id": "sdk/pixiv:RankingModeWeekOriginal",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 45,
+    "declaration": "RankingModeWeekOriginal RankingMode = \"week_original\""
+  },
+  {
+    "id": "sdk/pixiv:RankingModeWeekR18",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 55,
+    "declaration": "RankingModeWeekR18 RankingMode = \"week_r18\""
+  },
+  {
+    "id": "sdk/pixiv:RankingModeWeekR18G",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 56,
+    "declaration": "RankingModeWeekR18G RankingMode = \"week_r18g\""
+  },
+  {
+    "id": "sdk/pixiv:RankingModeWeekRookie",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 46,
+    "declaration": "RankingModeWeekRookie RankingMode = \"week_rookie\""
+  },
+  {
+    "id": "sdk/pixiv:RankingModeWeekRookieManga",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 51,
+    "declaration": "RankingModeWeekRookieManga RankingMode = \"week_rookie_manga\""
+  },
+  {
+    "id": "sdk/pixiv:RecommendedArtworksRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 155,
+    "declaration": "RecommendedArtworksRequest struct {\n\tCursor sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/pixiv:RecommendedNovelsRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 327,
+    "declaration": "RecommendedNovelsRequest struct {\n\tCursor sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/pixiv:RecommendedUsersRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 379,
+    "declaration": "RecommendedUsersRequest struct {\n\tCursor sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/pixiv:Reference",
+    "kind": "type",
+    "source": "sdk/pixiv/reference.go",
+    "line": 28,
+    "declaration": "Reference struct {\n\tKind        ReferenceKind\n\tID          int64\n\tOwnerUserID int64\n}"
+  },
+  {
+    "id": "sdk/pixiv:Reference.CanonicalURL",
+    "kind": "method",
+    "source": "sdk/pixiv/reference.go",
+    "line": 71,
+    "declaration": "func (r Reference) CanonicalURL() (string, error)"
+  },
+  {
+    "id": "sdk/pixiv:ReferenceKind",
+    "kind": "type",
+    "source": "sdk/pixiv/reference.go",
+    "line": 12,
+    "declaration": "ReferenceKind string"
+  },
+  {
+    "id": "sdk/pixiv:ReferenceKindArtwork",
+    "kind": "const",
+    "source": "sdk/pixiv/reference.go",
+    "line": 16,
+    "declaration": "ReferenceKindArtwork ReferenceKind = \"artwork\""
+  },
+  {
+    "id": "sdk/pixiv:ReferenceKindArtworkSeries",
+    "kind": "const",
+    "source": "sdk/pixiv/reference.go",
+    "line": 20,
+    "declaration": "ReferenceKindArtworkSeries ReferenceKind = \"artwork_series\""
+  },
+  {
+    "id": "sdk/pixiv:ReferenceKindNovel",
+    "kind": "const",
+    "source": "sdk/pixiv/reference.go",
+    "line": 17,
+    "declaration": "ReferenceKindNovel ReferenceKind = \"novel\""
+  },
+  {
+    "id": "sdk/pixiv:ReferenceKindNovelSeries",
+    "kind": "const",
+    "source": "sdk/pixiv/reference.go",
+    "line": 21,
+    "declaration": "ReferenceKindNovelSeries ReferenceKind = \"novel_series\""
+  },
+  {
+    "id": "sdk/pixiv:ReferenceKindUser",
+    "kind": "const",
+    "source": "sdk/pixiv/reference.go",
+    "line": 18,
+    "declaration": "ReferenceKindUser ReferenceKind = \"user\""
+  },
+  {
+    "id": "sdk/pixiv:ReferenceKindUserBookmarks",
+    "kind": "const",
+    "source": "sdk/pixiv/reference.go",
+    "line": 19,
+    "declaration": "ReferenceKindUserBookmarks ReferenceKind = \"user_bookmarks\""
+  },
+  {
+    "id": "sdk/pixiv:RelatedArtworksRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 136,
+    "declaration": "RelatedArtworksRequest struct {\n\tArtworkID int64\n\tCursor    sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/pixiv:RelatedUsersRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 384,
+    "declaration": "RelatedUsersRequest struct {\n\tUserID int64\n\tCursor sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/pixiv:RemoveArtworkBookmarkRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 435,
+    "declaration": "RemoveArtworkBookmarkRequest struct {\n\tArtworkID int64\n}"
+  },
+  {
+    "id": "sdk/pixiv:RemoveBookmarkRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 440,
+    "declaration": "RemoveBookmarkRequest struct {\n\tArtworkID int64\n}"
+  },
+  {
+    "id": "sdk/pixiv:RemoveNovelBookmarkRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 454,
+    "declaration": "RemoveNovelBookmarkRequest struct {\n\tNovelID int64\n}"
+  },
+  {
+    "id": "sdk/pixiv:ReplyArtworkCommentRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 235,
+    "declaration": "ReplyArtworkCommentRequest struct {\n\tArtworkID       int64\n\tComment         string\n\tParentCommentID int64\n}"
+  },
+  {
+    "id": "sdk/pixiv:ReplyNovelCommentRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 306,
+    "declaration": "ReplyNovelCommentRequest struct {\n\tNovelID         int64\n\tComment         string\n\tParentCommentID int64\n}"
+  },
+  {
+    "id": "sdk/pixiv:ResourcePolicy",
+    "kind": "type",
+    "source": "sdk/pixiv/pixiv.go",
+    "line": 58,
+    "declaration": "ResourcePolicy struct {\n\tAllowedHosts []string\n}"
+  },
+  {
+    "id": "sdk/pixiv:Restrict",
+    "kind": "type",
+    "source": "sdk/pixiv/models.go",
+    "line": 11,
+    "declaration": "Restrict string"
+  },
+  {
+    "id": "sdk/pixiv:RestrictPrivate",
+    "kind": "const",
+    "source": "sdk/pixiv/models.go",
+    "line": 16,
+    "declaration": "RestrictPrivate Restrict = \"private\""
+  },
+  {
+    "id": "sdk/pixiv:RestrictPublic",
+    "kind": "const",
+    "source": "sdk/pixiv/models.go",
+    "line": 15,
+    "declaration": "RestrictPublic Restrict = \"public\""
+  },
+  {
+    "id": "sdk/pixiv:SearchAIMode",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 72,
+    "declaration": "SearchAIMode string"
+  },
+  {
+    "id": "sdk/pixiv:SearchAIModeAll",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 76,
+    "declaration": "SearchAIModeAll SearchAIMode = \"all\""
+  },
+  {
+    "id": "sdk/pixiv:SearchAIModeExclude",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 77,
+    "declaration": "SearchAIModeExclude SearchAIMode = \"exclude\""
+  },
+  {
+    "id": "sdk/pixiv:SearchAIModeOnly",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 78,
+    "declaration": "SearchAIModeOnly SearchAIMode = \"only\""
+  },
+  {
+    "id": "sdk/pixiv:SearchArtworksRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 105,
+    "declaration": "SearchArtworksRequest struct {\n\tWord        string\n\tTarget      SearchTarget\n\tSort        SortMode\n\tDuration    DurationFilter\n\tStartDate   string\n\tEndDate     string\n\tContentType SearchContentType\n\tAIMode      SearchAIMode\n\tAspectRatio SearchAspectRatio\n\tResolution  SearchResolution\n\tTool        string\n\tBookmarkMin *int\n\tBookmarkMax *int\n\tCursor      sdk.Cursor\n\n\tCursorContext string\n}"
+  },
+  {
+    "id": "sdk/pixiv:SearchAspectRatio",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 82,
+    "declaration": "SearchAspectRatio string"
+  },
+  {
+    "id": "sdk/pixiv:SearchAspectRatioAll",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 86,
+    "declaration": "SearchAspectRatioAll SearchAspectRatio = \"all\""
+  },
+  {
+    "id": "sdk/pixiv:SearchAspectRatioLandscape",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 87,
+    "declaration": "SearchAspectRatioLandscape SearchAspectRatio = \"landscape\""
+  },
+  {
+    "id": "sdk/pixiv:SearchAspectRatioPortrait",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 88,
+    "declaration": "SearchAspectRatioPortrait SearchAspectRatio = \"portrait\""
+  },
+  {
+    "id": "sdk/pixiv:SearchAspectRatioSquare",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 89,
+    "declaration": "SearchAspectRatioSquare SearchAspectRatio = \"square\""
+  },
+  {
+    "id": "sdk/pixiv:SearchContentType",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 60,
+    "declaration": "SearchContentType string"
+  },
+  {
+    "id": "sdk/pixiv:SearchContentTypeAll",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 64,
+    "declaration": "SearchContentTypeAll SearchContentType = \"all\""
+  },
+  {
+    "id": "sdk/pixiv:SearchContentTypeIllust",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 66,
+    "declaration": "SearchContentTypeIllust SearchContentType = \"illust\""
+  },
+  {
+    "id": "sdk/pixiv:SearchContentTypeIllustAndUgoira",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 65,
+    "declaration": "SearchContentTypeIllustAndUgoira SearchContentType = \"illust-and-ugoira\""
+  },
+  {
+    "id": "sdk/pixiv:SearchContentTypeManga",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 67,
+    "declaration": "SearchContentTypeManga SearchContentType = \"manga\""
+  },
+  {
+    "id": "sdk/pixiv:SearchContentTypeUgoira",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 68,
+    "declaration": "SearchContentTypeUgoira SearchContentType = \"ugoira\""
+  },
+  {
+    "id": "sdk/pixiv:SearchNovelsRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 269,
+    "declaration": "SearchNovelsRequest struct {\n\tWord     string\n\tTarget   SearchTarget\n\tSort     SortMode\n\tDuration DurationFilter\n\tCursor   sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/pixiv:SearchResolution",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 93,
+    "declaration": "SearchResolution string"
+  },
+  {
+    "id": "sdk/pixiv:SearchResolutionAll",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 97,
+    "declaration": "SearchResolutionAll SearchResolution = \"all\""
+  },
+  {
+    "id": "sdk/pixiv:SearchResolutionHigh",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 98,
+    "declaration": "SearchResolutionHigh SearchResolution = \"high\""
+  },
+  {
+    "id": "sdk/pixiv:SearchResolutionLow",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 100,
+    "declaration": "SearchResolutionLow SearchResolution = \"low\""
+  },
+  {
+    "id": "sdk/pixiv:SearchResolutionMedium",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 99,
+    "declaration": "SearchResolutionMedium SearchResolution = \"medium\""
+  },
+  {
+    "id": "sdk/pixiv:SearchTarget",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 6,
+    "declaration": "SearchTarget string"
+  },
+  {
+    "id": "sdk/pixiv:SearchTargetExactMatchForTags",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 11,
+    "declaration": "SearchTargetExactMatchForTags SearchTarget = \"exact_match_for_tags\""
+  },
+  {
+    "id": "sdk/pixiv:SearchTargetKeyword",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 13,
+    "declaration": "SearchTargetKeyword SearchTarget = \"keyword\""
+  },
+  {
+    "id": "sdk/pixiv:SearchTargetPartialMatchForTags",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 10,
+    "declaration": "SearchTargetPartialMatchForTags SearchTarget = \"partial_match_for_tags\""
+  },
+  {
+    "id": "sdk/pixiv:SearchTargetTitleAndCaption",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 12,
+    "declaration": "SearchTargetTitleAndCaption SearchTarget = \"title_and_caption\""
+  },
+  {
+    "id": "sdk/pixiv:SearchUsersRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 368,
+    "declaration": "SearchUsersRequest struct {\n\tWord   string\n\tCursor sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/pixiv:SetAIArtworkVisibilityRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 471,
+    "declaration": "SetAIArtworkVisibilityRequest struct {\n\tVisible bool\n}"
+  },
+  {
+    "id": "sdk/pixiv:SortMode",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 17,
+    "declaration": "SortMode string"
+  },
+  {
+    "id": "sdk/pixiv:SortModeDateAsc",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 22,
+    "declaration": "SortModeDateAsc SortMode = \"date_asc\""
+  },
+  {
+    "id": "sdk/pixiv:SortModeDateDesc",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 21,
+    "declaration": "SortModeDateDesc SortMode = \"date_desc\""
+  },
+  {
+    "id": "sdk/pixiv:SortModePopularDesc",
+    "kind": "const",
+    "source": "sdk/pixiv/request.go",
+    "line": 23,
+    "declaration": "SortModePopularDesc SortMode = \"popular_desc\""
+  },
+  {
+    "id": "sdk/pixiv:Stamp",
+    "kind": "type",
+    "source": "sdk/pixiv/models.go",
+    "line": 52,
+    "declaration": "Stamp struct {\n\tID    int64\n\tImage ImageResource\n}"
+  },
+  {
+    "id": "sdk/pixiv:StampArtworkCommentRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 249,
+    "declaration": "StampArtworkCommentRequest struct {\n\tArtworkID int64\n\tComment   string\n\tStampID   int64\n}"
+  },
+  {
+    "id": "sdk/pixiv:StampDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 25,
+    "declaration": "StampDTO struct {\n\tID    int64            `json:\"id\"`\n\tImage ImageResourceDTO `json:\"image\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:StampNovelCommentRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 320,
+    "declaration": "StampNovelCommentRequest struct {\n\tNovelID int64\n\tComment string\n\tStampID int64\n}"
+  },
+  {
+    "id": "sdk/pixiv:StampsRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 214,
+    "declaration": "StampsRequest struct{}"
+  },
+  {
+    "id": "sdk/pixiv:Tag",
+    "kind": "type",
+    "source": "sdk/pixiv/models.go",
+    "line": 34,
+    "declaration": "Tag struct {\n\tName           string\n\tTranslatedName string\n}"
+  },
+  {
+    "id": "sdk/pixiv:TagDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 11,
+    "declaration": "TagDTO struct {\n\tName           string `json:\"name\"`\n\tTranslatedName string `json:\"translated_name\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:ToArtworkBookmarkDetailDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 571,
+    "declaration": "func ToArtworkBookmarkDetailDTO(value ArtworkBookmarkDetail) ArtworkBookmarkDetailDTO"
+  },
+  {
+    "id": "sdk/pixiv:ToArtworkDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 342,
+    "declaration": "func ToArtworkDTO(value Artwork) ArtworkDTO"
+  },
+  {
+    "id": "sdk/pixiv:ToArtworkPageDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 332,
+    "declaration": "func ToArtworkPageDTO(value ArtworkPage) ArtworkPageDTO"
+  },
+  {
+    "id": "sdk/pixiv:ToBookmarkTagDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 561,
+    "declaration": "func ToBookmarkTagDTO(value BookmarkTag) BookmarkTagDTO"
+  },
+  {
+    "id": "sdk/pixiv:ToCommentAccessControlDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 510,
+    "declaration": "func ToCommentAccessControlDTO(value CommentAccessControl) CommentAccessControlDTO"
+  },
+  {
+    "id": "sdk/pixiv:ToCommentDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 491,
+    "declaration": "func ToCommentDTO(value Comment) CommentDTO"
+  },
+  {
+    "id": "sdk/pixiv:ToCommentPageDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 520,
+    "declaration": "func ToCommentPageDTO(value CommentPage) CommentPageDTO"
+  },
+  {
+    "id": "sdk/pixiv:ToImageResourceDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 316,
+    "declaration": "func ToImageResourceDTO(value ImageResource) ImageResourceDTO"
+  },
+  {
+    "id": "sdk/pixiv:ToNovelBlockDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 611,
+    "declaration": "func ToNovelBlockDTO(value NovelBlock) NovelBlockDTO"
+  },
+  {
+    "id": "sdk/pixiv:ToNovelBookmarkDetailDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 576,
+    "declaration": "func ToNovelBookmarkDetailDTO(value NovelBookmarkDetail) NovelBookmarkDetailDTO"
+  },
+  {
+    "id": "sdk/pixiv:ToNovelContentDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 636,
+    "declaration": "func ToNovelContentDTO(value NovelContent) NovelContentDTO"
+  },
+  {
+    "id": "sdk/pixiv:ToNovelDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 375,
+    "declaration": "func ToNovelDTO(value Novel) NovelDTO"
+  },
+  {
+    "id": "sdk/pixiv:ToNovelFileBlockDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 601,
+    "declaration": "func ToNovelFileBlockDTO(value NovelFileBlock) NovelFileBlockDTO"
+  },
+  {
+    "id": "sdk/pixiv:ToNovelImageBlockDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 596,
+    "declaration": "func ToNovelImageBlockDTO(value NovelImageBlock) NovelImageBlockDTO"
+  },
+  {
+    "id": "sdk/pixiv:ToNovelMarkDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 586,
+    "declaration": "func ToNovelMarkDTO(value NovelMark) NovelMarkDTO"
+  },
+  {
+    "id": "sdk/pixiv:ToNovelRubyDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 581,
+    "declaration": "func ToNovelRubyDTO(value NovelRuby) NovelRubyDTO"
+  },
+  {
+    "id": "sdk/pixiv:ToNovelSeriesDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 538,
+    "declaration": "func ToNovelSeriesDTO(value NovelSeries) NovelSeriesDTO"
+  },
+  {
+    "id": "sdk/pixiv:ToNovelSeriesResultDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 549,
+    "declaration": "func ToNovelSeriesResultDTO(value NovelSeriesResult) NovelSeriesResultDTO"
+  },
+  {
+    "id": "sdk/pixiv:ToNovelUnknownBlockDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 606,
+    "declaration": "func ToNovelUnknownBlockDTO(value NovelUnknownBlock) NovelUnknownBlockDTO"
+  },
+  {
+    "id": "sdk/pixiv:ToStampDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 327,
+    "declaration": "func ToStampDTO(value Stamp) StampDTO"
+  },
+  {
+    "id": "sdk/pixiv:ToTagDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 310,
+    "declaration": "func ToTagDTO(value Tag) TagDTO"
+  },
+  {
+    "id": "sdk/pixiv:ToTrendingTagDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 566,
+    "declaration": "func ToTrendingTagDTO(value TrendingTag) TrendingTagDTO"
+  },
+  {
+    "id": "sdk/pixiv:ToUgoiraArchiveDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 645,
+    "declaration": "func ToUgoiraArchiveDTO(value UgoiraArchive) UgoiraArchiveDTO"
+  },
+  {
+    "id": "sdk/pixiv:ToUgoiraFrameDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 650,
+    "declaration": "func ToUgoiraFrameDTO(value UgoiraFrame) UgoiraFrameDTO"
+  },
+  {
+    "id": "sdk/pixiv:ToUgoiraMetadataDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 655,
+    "declaration": "func ToUgoiraMetadataDTO(value UgoiraMetadata) UgoiraMetadataDTO"
+  },
+  {
+    "id": "sdk/pixiv:ToUserDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 398,
+    "declaration": "func ToUserDTO(value User) UserDTO"
+  },
+  {
+    "id": "sdk/pixiv:ToUserDetailDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 468,
+    "declaration": "func ToUserDetailDTO(value UserDetail) UserDetailDTO"
+  },
+  {
+    "id": "sdk/pixiv:ToUserPreviewDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 478,
+    "declaration": "func ToUserPreviewDTO(value UserPreview) UserPreviewDTO"
+  },
+  {
+    "id": "sdk/pixiv:ToUserProfileDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 410,
+    "declaration": "func ToUserProfileDTO(value UserProfile) UserProfileDTO"
+  },
+  {
+    "id": "sdk/pixiv:ToUserProfilePublicityDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 437,
+    "declaration": "func ToUserProfilePublicityDTO(value UserProfilePublicity) UserProfilePublicityDTO"
+  },
+  {
+    "id": "sdk/pixiv:ToUserWorkspaceDTO",
+    "kind": "function",
+    "source": "sdk/pixiv/dto.go",
+    "line": 449,
+    "declaration": "func ToUserWorkspaceDTO(value UserWorkspace) UserWorkspaceDTO"
+  },
+  {
+    "id": "sdk/pixiv:TrendingArtworkTagsRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 210,
+    "declaration": "TrendingArtworkTagsRequest struct{}"
+  },
+  {
+    "id": "sdk/pixiv:TrendingTag",
+    "kind": "type",
+    "source": "sdk/pixiv/models.go",
+    "line": 256,
+    "declaration": "TrendingTag struct {\n\tTag            string\n\tTranslatedName string\n\tArtwork        Artwork\n}"
+  },
+  {
+    "id": "sdk/pixiv:TrendingTagDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 217,
+    "declaration": "TrendingTagDTO struct {\n\tTag            string     `json:\"tag\"`\n\tTranslatedName string     `json:\"translated_name\"`\n\tArtwork        ArtworkDTO `json:\"artwork\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:UgoiraArchive",
+    "kind": "type",
+    "source": "sdk/pixiv/ugoira.go",
+    "line": 20,
+    "declaration": "UgoiraArchive struct {\n\tQuality  UgoiraQuality\n\tResource sdk.Resource\n}"
+  },
+  {
+    "id": "sdk/pixiv:UgoiraArchiveDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 291,
+    "declaration": "UgoiraArchiveDTO struct {\n\tQuality  UgoiraQuality    `json:\"quality\"`\n\tResource *sdk.ResourceDTO `json:\"resource\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:UgoiraFrame",
+    "kind": "type",
+    "source": "sdk/pixiv/ugoira.go",
+    "line": 29,
+    "declaration": "UgoiraFrame struct {\n\tFilename          string\n\tDelayMilliseconds int\n}"
+  },
+  {
+    "id": "sdk/pixiv:UgoiraFrameDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 297,
+    "declaration": "UgoiraFrameDTO struct {\n\tFilename          string `json:\"filename\"`\n\tDelayMilliseconds int    `json:\"delay_milliseconds\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:UgoiraMetadata",
+    "kind": "type",
+    "source": "sdk/pixiv/ugoira.go",
+    "line": 38,
+    "declaration": "UgoiraMetadata struct {\n\tArtworkID int64\n\tArchives  []UgoiraArchive\n\tFrames    []UgoiraFrame\n}"
+  },
+  {
+    "id": "sdk/pixiv:UgoiraMetadataDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 303,
+    "declaration": "UgoiraMetadataDTO struct {\n\tArtworkID int64              `json:\"artwork_id\"`\n\tArchives  []UgoiraArchiveDTO `json:\"archives\"`\n\tFrames    []UgoiraFrameDTO   `json:\"frames\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:UgoiraMetadataRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 218,
+    "declaration": "UgoiraMetadataRequest struct {\n\tArtworkID int64\n}"
+  },
+  {
+    "id": "sdk/pixiv:UgoiraQuality",
+    "kind": "type",
+    "source": "sdk/pixiv/ugoira.go",
+    "line": 6,
+    "declaration": "UgoiraQuality string"
+  },
+  {
+    "id": "sdk/pixiv:UgoiraQualityMedium",
+    "kind": "const",
+    "source": "sdk/pixiv/ugoira.go",
+    "line": 12,
+    "declaration": "UgoiraQualityMedium UgoiraQuality = \"medium\""
+  },
+  {
+    "id": "sdk/pixiv:UgoiraQualityOriginal",
+    "kind": "const",
+    "source": "sdk/pixiv/ugoira.go",
+    "line": 15,
+    "declaration": "UgoiraQualityOriginal UgoiraQuality = \"original\""
+  },
+  {
+    "id": "sdk/pixiv:UnfollowUserRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 465,
+    "declaration": "UnfollowUserRequest struct {\n\tUserID int64\n}"
+  },
+  {
+    "id": "sdk/pixiv:User",
+    "kind": "type",
+    "source": "sdk/pixiv/models.go",
+    "line": 117,
+    "declaration": "User struct {\n\tID           int64\n\tName         string\n\tAccount      string\n\tComment      string\n\tIsFollowed   bool\n\tProfileImage ImageResource\n}"
+  },
+  {
+    "id": "sdk/pixiv:UserArtworkBookmarkTagsRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 188,
+    "declaration": "UserArtworkBookmarkTagsRequest struct {\n\tUserID   int64\n\tRestrict Restrict\n\tCursor   sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/pixiv:UserArtworkBookmarksRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 179,
+    "declaration": "UserArtworkBookmarksRequest struct {\n\tUserID   int64\n\tRestrict Restrict\n\tTag      string\n\tCursor   sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/pixiv:UserArtworksRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 172,
+    "declaration": "UserArtworksRequest struct {\n\tUserID int64\n\tKind   ArtworkKind\n\tCursor sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/pixiv:UserBlockedUsersRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 404,
+    "declaration": "UserBlockedUsersRequest struct {\n\tUserID int64\n\tCursor sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/pixiv:UserDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 80,
+    "declaration": "UserDTO struct {\n\tID           int64            `json:\"id\"`\n\tName         string           `json:\"name\"`\n\tAccount      string           `json:\"account\"`\n\tComment      string           `json:\"comment\"`\n\tIsFollowed   bool             `json:\"is_followed\"`\n\tProfileImage ImageResourceDTO `json:\"profile_image\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:UserDetail",
+    "kind": "type",
+    "source": "sdk/pixiv/models.go",
+    "line": 128,
+    "declaration": "UserDetail struct {\n\tUser             User\n\tProfile          UserProfile\n\tProfilePublicity UserProfilePublicity\n\tWorkspace        UserWorkspace\n}"
+  },
+  {
+    "id": "sdk/pixiv:UserDetailDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 142,
+    "declaration": "UserDetailDTO struct {\n\tUser             UserDTO                 `json:\"user\"`\n\tProfile          UserProfileDTO          `json:\"profile\"`\n\tProfilePublicity UserProfilePublicityDTO `json:\"profile_publicity\"`\n\tWorkspace        UserWorkspaceDTO        `json:\"workspace\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:UserFollowersRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 397,
+    "declaration": "UserFollowersRequest struct {\n\tUserID   int64\n\tRestrict Restrict\n\tCursor   sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/pixiv:UserFollowingRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 390,
+    "declaration": "UserFollowingRequest struct {\n\tUserID   int64\n\tRestrict Restrict\n\tCursor   sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/pixiv:UserNovelBookmarkTagsRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 198,
+    "declaration": "UserNovelBookmarkTagsRequest struct {\n\tUserID   int64\n\tRestrict Restrict\n\tCursor   sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/pixiv:UserNovelBookmarksRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 355,
+    "declaration": "UserNovelBookmarksRequest struct {\n\tUserID   int64\n\tRestrict Restrict\n\tTag      string\n\tCursor   sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/pixiv:UserNovelsRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 349,
+    "declaration": "UserNovelsRequest struct {\n\tUserID int64\n\tCursor sdk.Cursor\n}"
+  },
+  {
+    "id": "sdk/pixiv:UserPreview",
+    "kind": "type",
+    "source": "sdk/pixiv/models.go",
+    "line": 189,
+    "declaration": "UserPreview struct {\n\tUser    User\n\tIllusts []Artwork\n\tNovels  []Novel\n}"
+  },
+  {
+    "id": "sdk/pixiv:UserPreviewDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 150,
+    "declaration": "UserPreviewDTO struct {\n\tUser    UserDTO      `json:\"user\"`\n\tIllusts []ArtworkDTO `json:\"illusts\"`\n\tNovels  []NovelDTO   `json:\"novels\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:UserProfile",
+    "kind": "type",
+    "source": "sdk/pixiv/models.go",
+    "line": 136,
+    "declaration": "UserProfile struct {\n\tWebpage                   string\n\tGender                    string\n\tBirthDay                  string\n\tBirthYear                 int\n\tRegion                    string\n\tCountryCode               string\n\tJob                       string\n\tTotalFollowUsers          int\n\tTotalMyPixivUsers         int\n\tTotalIllusts              int\n\tTotalManga                int\n\tTotalNovels               int\n\tTotalIllustBookmarks      int\n\tTotalIllustSeries         int\n\tTotalNovelSeries          int\n\tBackgroundImageURL        string\n\tTwitterAccount            string\n\tTwitterURL                string\n\tPawooURL                  string\n\tIsPremium                 bool\n\tIsUsingCustomProfileImage bool\n}"
+  },
+  {
+    "id": "sdk/pixiv:UserProfileDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 90,
+    "declaration": "UserProfileDTO struct {\n\tWebpage                   string `json:\"webpage\"`\n\tGender                    string `json:\"gender\"`\n\tBirthDay                  string `json:\"birth_day\"`\n\tBirthYear                 int    `json:\"birth_year\"`\n\tRegion                    string `json:\"region\"`\n\tCountryCode               string `json:\"country_code\"`\n\tJob                       string `json:\"job\"`\n\tTotalFollowUsers          int    `json:\"total_follow_users\"`\n\tTotalMyPixivUsers         int    `json:\"total_my_pixiv_users\"`\n\tTotalIllusts              int    `json:\"total_illusts\"`\n\tTotalManga                int    `json:\"total_manga\"`\n\tTotalNovels               int    `json:\"total_novels\"`\n\tTotalIllustBookmarks      int    `json:\"total_illust_bookmarks\"`\n\tTotalIllustSeries         int    `json:\"total_illust_series\"`\n\tTotalNovelSeries          int    `json:\"total_novel_series\"`\n\tBackgroundImageURL        string `json:\"background_image_url\"`\n\tTwitterAccount            string `json:\"twitter_account\"`\n\tTwitterURL                string `json:\"twitter_url\"`\n\tPawooURL                  string `json:\"pawoo_url\"`\n\tIsPremium                 bool   `json:\"is_premium\"`\n\tIsUsingCustomProfileImage bool   `json:\"is_using_custom_profile_image\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:UserProfilePublicity",
+    "kind": "type",
+    "source": "sdk/pixiv/models.go",
+    "line": 161,
+    "declaration": "UserProfilePublicity struct {\n\tGender    bool\n\tRegion    bool\n\tBirthDay  bool\n\tBirthYear bool\n\tJob       bool\n\tPawoo     bool\n}"
+  },
+  {
+    "id": "sdk/pixiv:UserProfilePublicityDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 115,
+    "declaration": "UserProfilePublicityDTO struct {\n\tGender    bool `json:\"gender\"`\n\tRegion    bool `json:\"region\"`\n\tBirthDay  bool `json:\"birth_day\"`\n\tBirthYear bool `json:\"birth_year\"`\n\tJob       bool `json:\"job\"`\n\tPawoo     bool `json:\"pawoo\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:UserRequest",
+    "kind": "type",
+    "source": "sdk/pixiv/request.go",
+    "line": 374,
+    "declaration": "UserRequest struct {\n\tUserID int64\n}"
+  },
+  {
+    "id": "sdk/pixiv:UserWorkspace",
+    "kind": "type",
+    "source": "sdk/pixiv/models.go",
+    "line": 171,
+    "declaration": "UserWorkspace struct {\n\tPC                string\n\tMonitor           string\n\tTool              string\n\tScanner           string\n\tTablet            string\n\tMouse             string\n\tPrinter           string\n\tDesktop           string\n\tMusic             string\n\tDesk              string\n\tChair             string\n\tComment           string\n\tWorkspaceImageURL string\n}"
+  },
+  {
+    "id": "sdk/pixiv:UserWorkspaceDTO",
+    "kind": "type",
+    "source": "sdk/pixiv/dto.go",
+    "line": 125,
+    "declaration": "UserWorkspaceDTO struct {\n\tPC                string `json:\"pc\"`\n\tMonitor           string `json:\"monitor\"`\n\tTool              string `json:\"tool\"`\n\tScanner           string `json:\"scanner\"`\n\tTablet            string `json:\"tablet\"`\n\tMouse             string `json:\"mouse\"`\n\tPrinter           string `json:\"printer\"`\n\tDesktop           string `json:\"desktop\"`\n\tMusic             string `json:\"music\"`\n\tDesk              string `json:\"desk\"`\n\tChair             string `json:\"chair\"`\n\tComment           string `json:\"comment\"`\n\tWorkspaceImageURL string `json:\"workspace_image_url\"`\n}"
+  },
+  {
+    "id": "sdk/pixiv:diagnosticRoundTripper.CloseIdleConnections",
+    "kind": "method",
+    "source": "sdk/pixiv/pixiv.go",
+    "line": 373,
+    "declaration": "func (r *diagnosticRoundTripper) CloseIdleConnections()"
+  },
+  {
+    "id": "sdk/pixiv:diagnosticRoundTripper.RoundTrip",
+    "kind": "method",
+    "source": "sdk/pixiv/pixiv.go",
+    "line": 325,
+    "declaration": "func (r *diagnosticRoundTripper) RoundTrip(request *http.Request) (*http.Response, error)"
+  },
+  {
+    "id": "sdk/pixiv:pacingRoundTripper.CloseIdleConnections",
+    "kind": "method",
+    "source": "sdk/pixiv/pixiv.go",
+    "line": 407,
+    "declaration": "func (p *pacingRoundTripper) CloseIdleConnections()"
+  },
+  {
+    "id": "sdk/pixiv:pacingRoundTripper.RoundTrip",
+    "kind": "method",
+    "source": "sdk/pixiv/pixiv.go",
+    "line": 389,
+    "declaration": "func (p *pacingRoundTripper) RoundTrip(req *http.Request) (*http.Response, error)"
+  },
+  {
+    "id": "sdk/pixiv:progressReader.Read",
+    "kind": "method",
+    "source": "sdk/pixiv/resource.go",
+    "line": 251,
+    "declaration": "func (r *progressReader) Read(p []byte) (int, error)"
+  },
+  {
+    "id": "sdk:ChallengeRequired",
+    "kind": "const",
+    "source": "sdk/error.go",
+    "line": 24,
+    "declaration": "ChallengeRequired Reason = \"challenge_required\""
+  },
+  {
+    "id": "sdk:ContentUnavailable",
+    "kind": "const",
+    "source": "sdk/error.go",
+    "line": 23,
+    "declaration": "ContentUnavailable Reason = \"content_unavailable\""
+  },
+  {
+    "id": "sdk:CredentialsExpired",
+    "kind": "const",
+    "source": "sdk/error.go",
+    "line": 20,
+    "declaration": "CredentialsExpired Reason = \"credentials_expired\""
+  },
+  {
+    "id": "sdk:Cursor",
+    "kind": "type",
+    "source": "sdk/cursor.go",
+    "line": 40,
+    "declaration": "Cursor struct {\n\ttext string\n}"
+  },
+  {
+    "id": "sdk:Cursor.IsZero",
+    "kind": "method",
+    "source": "sdk/cursor.go",
+    "line": 120,
+    "declaration": "func (c Cursor) IsZero() bool"
+  },
+  {
+    "id": "sdk:Cursor.MarshalJSON",
+    "kind": "method",
+    "source": "sdk/cursor.go",
+    "line": 146,
+    "declaration": "func (c Cursor) MarshalJSON() ([]byte, error)"
+  },
+  {
+    "id": "sdk:Cursor.MarshalText",
+    "kind": "method",
+    "source": "sdk/cursor.go",
+    "line": 125,
+    "declaration": "func (c Cursor) MarshalText() ([]byte, error)"
+  },
+  {
+    "id": "sdk:Cursor.String",
+    "kind": "method",
+    "source": "sdk/cursor.go",
+    "line": 165,
+    "declaration": "func (c Cursor) String() string"
+  },
+  {
+    "id": "sdk:Cursor.UnmarshalJSON",
+    "kind": "method",
+    "source": "sdk/cursor.go",
+    "line": 154,
+    "declaration": "func (c *Cursor) UnmarshalJSON(data []byte) error"
+  },
+  {
+    "id": "sdk:Cursor.UnmarshalText",
+    "kind": "method",
+    "source": "sdk/cursor.go",
+    "line": 134,
+    "declaration": "func (c *Cursor) UnmarshalText(text []byte) error"
+  },
+  {
+    "id": "sdk:CursorEphemeral",
+    "kind": "function",
+    "source": "sdk/cursor.go",
+    "line": 238,
+    "declaration": "func CursorEphemeral(c Cursor) bool"
+  },
+  {
+    "id": "sdk:CursorIdentity",
+    "kind": "function",
+    "source": "sdk/cursor.go",
+    "line": 225,
+    "declaration": "func CursorIdentity(c Cursor) (identity string, ok bool)"
+  },
+  {
+    "id": "sdk:CursorOption",
+    "kind": "type",
+    "source": "sdk/cursor.go",
+    "line": 45,
+    "declaration": "CursorOption func(*cursorEnvelope)"
+  },
+  {
+    "id": "sdk:CursorPayload",
+    "kind": "function",
+    "source": "sdk/cursor.go",
+    "line": 212,
+    "declaration": "func CursorPayload(c Cursor) ([]byte, error)"
+  },
+  {
+    "id": "sdk:Error",
+    "kind": "type",
+    "source": "sdk/error.go",
+    "line": 68,
+    "declaration": "Error struct {\n\tProduct    string\n\tOperation  string\n\tReason     Reason\n\tDetail     string\n\tHTTPStatus int\n\tTransport  Transport\n\tRetry      RetryAdvice\n\n\tcause error\n}"
+  },
+  {
+    "id": "sdk:Error.Error",
+    "kind": "method",
+    "source": "sdk/error.go",
+    "line": 124,
+    "declaration": "func (e *Error) Error() string"
+  },
+  {
+    "id": "sdk:Error.Is",
+    "kind": "method",
+    "source": "sdk/error.go",
+    "line": 145,
+    "declaration": "func (e *Error) Is(target error) bool"
+  },
+  {
+    "id": "sdk:Error.Unwrap",
+    "kind": "method",
+    "source": "sdk/error.go",
+    "line": 141,
+    "declaration": "func (e *Error) Unwrap() error"
+  },
+  {
+    "id": "sdk:ErrorOption",
+    "kind": "type",
+    "source": "sdk/error.go",
+    "line": 81,
+    "declaration": "ErrorOption func(*Error)"
+  },
+  {
+    "id": "sdk:Forbidden",
+    "kind": "const",
+    "source": "sdk/error.go",
+    "line": 21,
+    "declaration": "Forbidden Reason = \"forbidden\""
+  },
+  {
+    "id": "sdk:InvalidArgument",
+    "kind": "const",
+    "source": "sdk/error.go",
+    "line": 17,
+    "declaration": "InvalidArgument Reason = \"invalid_argument\""
+  },
+  {
+    "id": "sdk:InvalidCursor",
+    "kind": "const",
+    "source": "sdk/error.go",
+    "line": 18,
+    "declaration": "InvalidCursor Reason = \"invalid_cursor\""
+  },
+  {
+    "id": "sdk:IsReason",
+    "kind": "function",
+    "source": "sdk/error.go",
+    "line": 164,
+    "declaration": "func IsReason(err error, reason Reason) bool"
+  },
+  {
+    "id": "sdk:LocalStateError",
+    "kind": "const",
+    "source": "sdk/error.go",
+    "line": 33,
+    "declaration": "LocalStateError Reason = \"local_state_error\""
+  },
+  {
+    "id": "sdk:MalformedUpstreamResponse",
+    "kind": "const",
+    "source": "sdk/error.go",
+    "line": 28,
+    "declaration": "MalformedUpstreamResponse Reason = \"malformed_upstream_response\""
+  },
+  {
+    "id": "sdk:NewCursor",
+    "kind": "function",
+    "source": "sdk/cursor.go",
+    "line": 79,
+    "declaration": "func NewCursor(product, operation string, bindingVersion int, queryHash string, payload []byte, opts ...CursorOption) (Cursor, error)"
+  },
+  {
+    "id": "sdk:NewError",
+    "kind": "function",
+    "source": "sdk/error.go",
+    "line": 114,
+    "declaration": "func NewError(product, operation string, reason Reason, opts ...ErrorOption) *Error"
+  },
+  {
+    "id": "sdk:NewResourceRef",
+    "kind": "function",
+    "source": "sdk/ref.go",
+    "line": 40,
+    "declaration": "func NewResourceRef(product string, payload []byte) (ResourceRef, error)"
+  },
+  {
+    "id": "sdk:NewResourceResponse",
+    "kind": "function",
+    "source": "sdk/resource.go",
+    "line": 132,
+    "declaration": "func NewResourceResponse(statusCode int, src http.Header, body io.ReadCloser) *ResourceResponse"
+  },
+  {
+    "id": "sdk:NotFound",
+    "kind": "const",
+    "source": "sdk/error.go",
+    "line": 22,
+    "declaration": "NotFound Reason = \"not_found\""
+  },
+  {
+    "id": "sdk:NotUgoira",
+    "kind": "const",
+    "source": "sdk/error.go",
+    "line": 30,
+    "declaration": "NotUgoira Reason = \"not_ugoira\""
+  },
+  {
+    "id": "sdk:OpenResourceRequest",
+    "kind": "type",
+    "source": "sdk/resource.go",
+    "line": 63,
+    "declaration": "OpenResourceRequest struct {\n\tRef             ResourceRef\n\tMethod          ResourceMethod\n\tRange           string\n\tIfNoneMatch     string\n\tIfModifiedSince string\n\tIfRange         string\n}"
+  },
+  {
+    "id": "sdk:OpenResourceRequest.Validate",
+    "kind": "method",
+    "source": "sdk/resource.go",
+    "line": 74,
+    "declaration": "func (r OpenResourceRequest) Validate() error"
+  },
+  {
+    "id": "sdk:Page",
+    "kind": "type",
+    "source": "sdk/page.go",
+    "line": 12,
+    "declaration": "Page[T any] struct {\n\tItems []T\n\tNext  Cursor\n}"
+  },
+  {
+    "id": "sdk:PageDTO",
+    "kind": "type",
+    "source": "sdk/page_dto.go",
+    "line": 6,
+    "declaration": "PageDTO[T any] struct {\n\tItems []T    `json:\"items\"`\n\tNext  string `json:\"next\"`\n}"
+  },
+  {
+    "id": "sdk:ParseCursor",
+    "kind": "function",
+    "source": "sdk/cursor.go",
+    "line": 169,
+    "declaration": "func ParseCursor(text string) (Cursor, error)"
+  },
+  {
+    "id": "sdk:ParseResourceRef",
+    "kind": "function",
+    "source": "sdk/ref.go",
+    "line": 104,
+    "declaration": "func ParseResourceRef(text string) (ResourceRef, error)"
+  },
+  {
+    "id": "sdk:RateLimited",
+    "kind": "const",
+    "source": "sdk/error.go",
+    "line": 25,
+    "declaration": "RateLimited Reason = \"rate_limited\""
+  },
+  {
+    "id": "sdk:Reason",
+    "kind": "type",
+    "source": "sdk/error.go",
+    "line": 12,
+    "declaration": "Reason string"
+  },
+  {
+    "id": "sdk:ReasonOf",
+    "kind": "function",
+    "source": "sdk/error.go",
+    "line": 155,
+    "declaration": "func ReasonOf(err error) Reason"
+  },
+  {
+    "id": "sdk:RemovedSetting",
+    "kind": "const",
+    "source": "sdk/error.go",
+    "line": 34,
+    "declaration": "RemovedSetting Reason = \"removed_setting\""
+  },
+  {
+    "id": "sdk:Resource",
+    "kind": "type",
+    "source": "sdk/resource.go",
+    "line": 34,
+    "declaration": "Resource struct {\n\tRef                 ResourceRef       `json:\"ref\"`\n\tURL                 string            `json:\"url\"`\n\tRequestHeaders      map[string]string `json:\"request_headers,omitempty\"`\n\tExpiresAt           *time.Time        `json:\"expires_at,omitempty\"`\n\tRequiresCredentials bool              `json:\"requires_credentials,omitempty\"`\n}"
+  },
+  {
+    "id": "sdk:Resource.Copy",
+    "kind": "method",
+    "source": "sdk/resource.go",
+    "line": 45,
+    "declaration": "func (r *Resource) Copy() Resource"
+  },
+  {
+    "id": "sdk:ResourceDTO",
+    "kind": "type",
+    "source": "sdk/resource_dto.go",
+    "line": 7,
+    "declaration": "ResourceDTO struct {\n\tRef                 string `json:\"ref\"`\n\tRequiresCredentials bool   `json:\"requires_credentials,omitempty\"`\n}"
+  },
+  {
+    "id": "sdk:ResourceForbidden",
+    "kind": "const",
+    "source": "sdk/error.go",
+    "line": 29,
+    "declaration": "ResourceForbidden Reason = \"resource_forbidden\""
+  },
+  {
+    "id": "sdk:ResourceMethod",
+    "kind": "type",
+    "source": "sdk/resource.go",
+    "line": 12,
+    "declaration": "ResourceMethod string"
+  },
+  {
+    "id": "sdk:ResourceMethodGet",
+    "kind": "const",
+    "source": "sdk/resource.go",
+    "line": 16,
+    "declaration": "ResourceMethodGet ResourceMethod = \"GET\""
+  },
+  {
+    "id": "sdk:ResourceMethodHead",
+    "kind": "const",
+    "source": "sdk/resource.go",
+    "line": 17,
+    "declaration": "ResourceMethodHead ResourceMethod = \"HEAD\""
+  },
+  {
+    "id": "sdk:ResourceRef",
+    "kind": "type",
+    "source": "sdk/ref.go",
+    "line": 32,
+    "declaration": "ResourceRef struct {\n\ttext string\n}"
+  },
+  {
+    "id": "sdk:ResourceRef.IsZero",
+    "kind": "method",
+    "source": "sdk/ref.go",
+    "line": 56,
+    "declaration": "func (r ResourceRef) IsZero() bool"
+  },
+  {
+    "id": "sdk:ResourceRef.MarshalJSON",
+    "kind": "method",
+    "source": "sdk/ref.go",
+    "line": 85,
+    "declaration": "func (r ResourceRef) MarshalJSON() ([]byte, error)"
+  },
+  {
+    "id": "sdk:ResourceRef.MarshalText",
+    "kind": "method",
+    "source": "sdk/ref.go",
+    "line": 63,
+    "declaration": "func (r ResourceRef) MarshalText() ([]byte, error)"
+  },
+  {
+    "id": "sdk:ResourceRef.String",
+    "kind": "method",
+    "source": "sdk/ref.go",
+    "line": 59,
+    "declaration": "func (r ResourceRef) String() string"
+  },
+  {
+    "id": "sdk:ResourceRef.UnmarshalJSON",
+    "kind": "method",
+    "source": "sdk/ref.go",
+    "line": 94,
+    "declaration": "func (r *ResourceRef) UnmarshalJSON(data []byte) error"
+  },
+  {
+    "id": "sdk:ResourceRef.UnmarshalText",
+    "kind": "method",
+    "source": "sdk/ref.go",
+    "line": 72,
+    "declaration": "func (r *ResourceRef) UnmarshalText(text []byte) error"
+  },
+  {
+    "id": "sdk:ResourceRefPayload",
+    "kind": "function",
+    "source": "sdk/ref.go",
+    "line": 123,
+    "declaration": "func ResourceRefPayload(r ResourceRef) ([]byte, error)"
+  },
+  {
+    "id": "sdk:ResourceRefProduct",
+    "kind": "function",
+    "source": "sdk/ref.go",
+    "line": 113,
+    "declaration": "func ResourceRefProduct(r ResourceRef) (string, error)"
+  },
+  {
+    "id": "sdk:ResourceResponse",
+    "kind": "type",
+    "source": "sdk/resource.go",
+    "line": 123,
+    "declaration": "ResourceResponse struct {\n\tStatusCode int\n\tBody       io.ReadCloser\n\theader     http.Header\n}"
+  },
+  {
+    "id": "sdk:ResourceResponse.AcceptRanges",
+    "kind": "method",
+    "source": "sdk/resource.go",
+    "line": 174,
+    "declaration": "func (r *ResourceResponse) AcceptRanges() string"
+  },
+  {
+    "id": "sdk:ResourceResponse.CacheControl",
+    "kind": "method",
+    "source": "sdk/resource.go",
+    "line": 183,
+    "declaration": "func (r *ResourceResponse) CacheControl() string"
+  },
+  {
+    "id": "sdk:ResourceResponse.ContentLength",
+    "kind": "method",
+    "source": "sdk/resource.go",
+    "line": 158,
+    "declaration": "func (r *ResourceResponse) ContentLength() int64"
+  },
+  {
+    "id": "sdk:ResourceResponse.ContentRange",
+    "kind": "method",
+    "source": "sdk/resource.go",
+    "line": 171,
+    "declaration": "func (r *ResourceResponse) ContentRange() string"
+  },
+  {
+    "id": "sdk:ResourceResponse.ContentType",
+    "kind": "method",
+    "source": "sdk/resource.go",
+    "line": 154,
+    "declaration": "func (r *ResourceResponse) ContentType() string"
+  },
+  {
+    "id": "sdk:ResourceResponse.ETag",
+    "kind": "method",
+    "source": "sdk/resource.go",
+    "line": 177,
+    "declaration": "func (r *ResourceResponse) ETag() string"
+  },
+  {
+    "id": "sdk:ResourceResponse.Header",
+    "kind": "method",
+    "source": "sdk/resource.go",
+    "line": 145,
+    "declaration": "func (r *ResourceResponse) Header() http.Header"
+  },
+  {
+    "id": "sdk:ResourceResponse.LastModified",
+    "kind": "method",
+    "source": "sdk/resource.go",
+    "line": 180,
+    "declaration": "func (r *ResourceResponse) LastModified() string"
+  },
+  {
+    "id": "sdk:RetryAdvice",
+    "kind": "type",
+    "source": "sdk/error.go",
+    "line": 54,
+    "declaration": "RetryAdvice struct {\n\tSafe     bool\n\tAfter    time.Time\n\tHasAfter bool\n}"
+  },
+  {
+    "id": "sdk:SaveOptions",
+    "kind": "type",
+    "source": "sdk/save.go",
+    "line": 15,
+    "declaration": "SaveOptions struct {\n\tPath     string\n\tProgress func(SaveProgress)\n}"
+  },
+  {
+    "id": "sdk:SaveProgress",
+    "kind": "type",
+    "source": "sdk/save.go",
+    "line": 6,
+    "declaration": "SaveProgress struct {\n\tTotal int64\n\tDone  int64\n}"
+  },
+  {
+    "id": "sdk:SavedResource",
+    "kind": "type",
+    "source": "sdk/save.go",
+    "line": 22,
+    "declaration": "SavedResource struct {\n\tPath        string\n\tSize        int64\n\tContentType string\n}"
+  },
+  {
+    "id": "sdk:ToResourceDTO",
+    "kind": "function",
+    "source": "sdk/resource_dto.go",
+    "line": 15,
+    "declaration": "func ToResourceDTO(value Resource) *ResourceDTO"
+  },
+  {
+    "id": "sdk:Transport",
+    "kind": "type",
+    "source": "sdk/error.go",
+    "line": 39,
+    "declaration": "Transport string"
+  },
+  {
+    "id": "sdk:TransportDNS",
+    "kind": "const",
+    "source": "sdk/error.go",
+    "line": 45,
+    "declaration": "TransportDNS Transport = \"dns\""
+  },
+  {
+    "id": "sdk:TransportHTTP",
+    "kind": "const",
+    "source": "sdk/error.go",
+    "line": 43,
+    "declaration": "TransportHTTP Transport = \"http\""
+  },
+  {
+    "id": "sdk:TransportLocal",
+    "kind": "const",
+    "source": "sdk/error.go",
+    "line": 46,
+    "declaration": "TransportLocal Transport = \"local\""
+  },
+  {
+    "id": "sdk:TransportTLS",
+    "kind": "const",
+    "source": "sdk/error.go",
+    "line": 44,
+    "declaration": "TransportTLS Transport = \"tls\""
+  },
+  {
+    "id": "sdk:UgoiraArchiveMissing",
+    "kind": "const",
+    "source": "sdk/error.go",
+    "line": 31,
+    "declaration": "UgoiraArchiveMissing Reason = \"ugoira_archive_missing\""
+  },
+  {
+    "id": "sdk:UgoiraFrameMismatch",
+    "kind": "const",
+    "source": "sdk/error.go",
+    "line": 32,
+    "declaration": "UgoiraFrameMismatch Reason = \"ugoira_frame_mismatch\""
+  },
+  {
+    "id": "sdk:Unauthorized",
+    "kind": "const",
+    "source": "sdk/error.go",
+    "line": 19,
+    "declaration": "Unauthorized Reason = \"unauthorized\""
+  },
+  {
+    "id": "sdk:UpstreamError",
+    "kind": "const",
+    "source": "sdk/error.go",
+    "line": 26,
+    "declaration": "UpstreamError Reason = \"upstream_error\""
+  },
+  {
+    "id": "sdk:UpstreamUnavailable",
+    "kind": "const",
+    "source": "sdk/error.go",
+    "line": 27,
+    "declaration": "UpstreamUnavailable Reason = \"upstream_unavailable\""
+  },
+  {
+    "id": "sdk:ValidateCursor",
+    "kind": "function",
+    "source": "sdk/cursor.go",
+    "line": 180,
+    "declaration": "func ValidateCursor(c Cursor, product, operation string, bindingVersion int, queryHash string) error"
+  },
+  {
+    "id": "sdk:ValidateCursorInstance",
+    "kind": "function",
+    "source": "sdk/cursor.go",
+    "line": 198,
+    "declaration": "func ValidateCursorInstance(c Cursor, instance string) error"
+  },
+  {
+    "id": "sdk:WithCause",
+    "kind": "function",
+    "source": "sdk/error.go",
+    "line": 86,
+    "declaration": "func WithCause(cause error) ErrorOption"
+  },
+  {
+    "id": "sdk:WithCursorEphemeral",
+    "kind": "function",
+    "source": "sdk/cursor.go",
+    "line": 57,
+    "declaration": "func WithCursorEphemeral() CursorOption"
+  },
+  {
+    "id": "sdk:WithCursorEphemeralInstance",
+    "kind": "function",
+    "source": "sdk/cursor.go",
+    "line": 65,
+    "declaration": "func WithCursorEphemeralInstance(instance string) CursorOption"
+  },
+  {
+    "id": "sdk:WithCursorIdentity",
+    "kind": "function",
+    "source": "sdk/cursor.go",
+    "line": 50,
+    "declaration": "func WithCursorIdentity(identity string) CursorOption"
+  },
+  {
+    "id": "sdk:WithDetail",
+    "kind": "function",
+    "source": "sdk/error.go",
+    "line": 108,
+    "declaration": "func WithDetail(detail string) ErrorOption"
+  },
+  {
+    "id": "sdk:WithHTTPStatus",
+    "kind": "function",
+    "source": "sdk/error.go",
+    "line": 92,
+    "declaration": "func WithHTTPStatus(status int) ErrorOption"
+  },
+  {
+    "id": "sdk:WithRetry",
+    "kind": "function",
+    "source": "sdk/error.go",
+    "line": 102,
+    "declaration": "func WithRetry(retry RetryAdvice) ErrorOption"
+  },
+  {
+    "id": "sdk:WithTransport",
+    "kind": "function",
+    "source": "sdk/error.go",
+    "line": 97,
+    "declaration": "func WithTransport(transport Transport) ErrorOption"
+  }
+]

@@ -1,0 +1,6105 @@
+[
+  {
+    "description": "Add an artwork to bookmarks.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "illust_id": {
+          "description": "artwork ID",
+          "type": "integer"
+        },
+        "restrict": {
+          "description": "public or private",
+          "type": "string"
+        },
+        "tags": {
+          "description": "bookmark tags",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "illust_id"
+      ],
+      "type": "object"
+    },
+    "name": "add_bookmark",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "comment_id": {
+          "type": "integer"
+        },
+        "illust_id": {
+          "type": "integer"
+        },
+        "novel_id": {
+          "type": "integer"
+        },
+        "success": {
+          "type": "boolean"
+        },
+        "text": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "success",
+        "action",
+        "text"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Add a novel to bookmarks.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "novel_id": {
+          "description": "novel ID",
+          "type": "integer"
+        },
+        "restrict": {
+          "description": "public or private",
+          "type": "string"
+        },
+        "tags": {
+          "description": "bookmark tags",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "novel_id"
+      ],
+      "type": "object"
+    },
+    "name": "add_novel_bookmark",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "comment_id": {
+          "type": "integer"
+        },
+        "illust_id": {
+          "type": "integer"
+        },
+        "novel_id": {
+          "type": "integer"
+        },
+        "success": {
+          "type": "boolean"
+        },
+        "text": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "success",
+        "action",
+        "text"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "View users blocked by the authenticated account through the App API.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Maximum logical results; 0 returns all; omit for one logical batch.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "restrict": {
+          "description": "Compatibility visibility field.",
+          "enum": [
+            "public",
+            "private"
+          ],
+          "type": "string"
+        },
+        "user_id": {
+          "description": "Optional positive Pixiv user ID; defaults to the authenticated user.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": null,
+      "type": "object"
+    },
+    "name": "blocked_users",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "access_control": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "bookmark_tags": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "bookmarked": {
+          "type": "boolean"
+        },
+        "comments": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "content": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "filter": {
+          "additionalProperties": false,
+          "properties": {
+            "completeness": {
+              "type": "string"
+            },
+            "max": {
+              "type": "integer"
+            },
+            "membership": {
+              "type": "string"
+            },
+            "min": {
+              "type": "integer"
+            },
+            "strategy": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "pagination": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "restrict": {
+          "type": "string"
+        },
+        "series": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Get the current user's bookmark state for one artwork.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "illust_id": {
+          "description": "positive artwork ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "illust_id"
+      ],
+      "type": "object"
+    },
+    "name": "bookmark_detail",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "bookmarked": {
+          "type": "boolean"
+        },
+        "restrict": {
+          "type": "string"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "bookmarked",
+        "tags"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Browse artwork bookmarks followed by novel bookmarks with one logical budget.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Maximum logical results; 0 returns all; omit for one logical batch.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "restrict": {
+          "description": "Bookmark visibility.",
+          "enum": [
+            "public",
+            "private"
+          ],
+          "type": "string"
+        },
+        "tag": {
+          "description": "Optional bookmark tag.",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "Optional positive Pixiv user ID; defaults to the authenticated user.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": null,
+      "type": "object"
+    },
+    "name": "bookmark_list_all",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "access_control": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "bookmark_tags": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "bookmarked": {
+          "type": "boolean"
+        },
+        "comments": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "content": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "filter": {
+          "additionalProperties": false,
+          "properties": {
+            "completeness": {
+              "type": "string"
+            },
+            "max": {
+              "type": "integer"
+            },
+            "membership": {
+              "type": "string"
+            },
+            "min": {
+              "type": "integer"
+            },
+            "strategy": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "pagination": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "restrict": {
+          "type": "string"
+        },
+        "series": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "List artwork bookmark tags.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "maximum items; 0 returns all items",
+          "type": [
+            "null",
+            "integer"
+          ]
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit",
+          "type": [
+            "null",
+            "integer"
+          ]
+        },
+        "restrict": {
+          "description": "public or private",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "optional user ID; defaults to authenticated user",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "name": "bookmark_tags",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "bookmark_tags": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "pagination": {
+          "additionalProperties": true,
+          "type": "object"
+        }
+      },
+      "required": [
+        "bookmark_tags",
+        "pagination"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "List artwork bookmark tags followed by novel bookmark tags without merging names.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Maximum logical results; 0 returns all; omit for one logical batch.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "restrict": {
+          "description": "Bookmark visibility.",
+          "enum": [
+            "public",
+            "private"
+          ],
+          "type": "string"
+        },
+        "user_id": {
+          "description": "Optional positive Pixiv user ID; defaults to the authenticated user.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": null,
+      "type": "object"
+    },
+    "name": "bookmark_tags_all",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "bookmark_tags": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "content_type": {
+                "enum": [
+                  "artwork",
+                  "novel"
+                ],
+                "type": "string"
+              },
+              "count": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "count",
+              "content_type"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "pagination": {
+          "additionalProperties": true,
+          "type": "object"
+        }
+      },
+      "required": [
+        "bookmark_tags",
+        "pagination"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Create a top-level comment on a Pixiv artwork.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "comment": {
+          "description": "Non-empty comment body.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "illust_id": {
+          "description": "Positive Pixiv artwork ID.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "illust_id",
+        "comment"
+      ],
+      "type": "object"
+    },
+    "name": "create_artwork_comment",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "comment_id": {
+          "type": "integer"
+        },
+        "illust_id": {
+          "type": "integer"
+        },
+        "novel_id": {
+          "type": "integer"
+        },
+        "success": {
+          "type": "boolean"
+        },
+        "text": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "success",
+        "action",
+        "text"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Create a top-level comment on a Pixiv novel.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "comment": {
+          "description": "Non-empty comment body.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "novel_id": {
+          "description": "Positive Pixiv novel ID.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "novel_id",
+        "comment"
+      ],
+      "type": "object"
+    },
+    "name": "create_novel_comment",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "comment_id": {
+          "type": "integer"
+        },
+        "illust_id": {
+          "type": "integer"
+        },
+        "novel_id": {
+          "type": "integer"
+        },
+        "success": {
+          "type": "boolean"
+        },
+        "text": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "success",
+        "action",
+        "text"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Delete a Pixiv artwork comment by comment ID.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "comment_id": {
+          "description": "Positive Pixiv comment ID.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "comment_id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_artwork_comment",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "comment_id": {
+          "type": "integer"
+        },
+        "illust_id": {
+          "type": "integer"
+        },
+        "novel_id": {
+          "type": "integer"
+        },
+        "success": {
+          "type": "boolean"
+        },
+        "text": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "success",
+        "action",
+        "text"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Delete a Pixiv novel comment by comment ID.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "comment_id": {
+          "description": "Positive Pixiv comment ID.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "comment_id"
+      ],
+      "type": "object"
+    },
+    "name": "delete_novel_comment",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "comment_id": {
+          "type": "integer"
+        },
+        "illust_id": {
+          "type": "integer"
+        },
+        "novel_id": {
+          "type": "integer"
+        },
+        "success": {
+          "type": "boolean"
+        },
+        "text": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "success",
+        "action",
+        "text"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Download artwork IDs or supported Pixiv artwork/user URLs with intelligent storage rules.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "delivery": {
+          "description": "delivery mode: local_path only",
+          "type": "string"
+        },
+        "pages": {
+          "description": "1-based page selection, e.g. 1,3-5; default all pages",
+          "type": "string"
+        },
+        "quality": {
+          "description": "static image quality: original, regular, small, thumb, mini",
+          "type": "string"
+        },
+        "src": {
+          "description": "PID, Pixiv artwork/user URL, or allowed CDN resource URL",
+          "type": "string"
+        },
+        "srcs": {
+          "description": "multiple PID, Pixiv artwork/user URL, or allowed CDN resource URLs",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "ugoira_mode": {
+          "description": "ugoira output mode: gif, apng, zip, or raw; default gif",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "download",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "delivery": {
+          "type": "string"
+        },
+        "failures": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "illust_id": {
+                "type": "integer"
+              },
+              "message": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "url",
+              "illust_id",
+              "type",
+              "message"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "files": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "author": {
+                "type": "string"
+              },
+              "file_uri": {
+                "type": "string"
+              },
+              "frames": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "delay_milliseconds": {
+                      "type": "integer"
+                    },
+                    "filename": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "filename",
+                    "delay_milliseconds"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "illust_id": {
+                "type": "integer"
+              },
+              "mime_type": {
+                "type": "string"
+              },
+              "page": {
+                "type": "integer"
+              },
+              "path": {
+                "type": "string"
+              },
+              "quality": {
+                "type": "string"
+              },
+              "size_bytes": {
+                "type": "integer"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "illust_id",
+              "title",
+              "author",
+              "path",
+              "file_uri",
+              "mime_type",
+              "size_bytes"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "items": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "author": {
+                "type": "string"
+              },
+              "files": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "author": {
+                      "type": "string"
+                    },
+                    "file_uri": {
+                      "type": "string"
+                    },
+                    "frames": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "delay_milliseconds": {
+                            "type": "integer"
+                          },
+                          "filename": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "filename",
+                          "delay_milliseconds"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "illust_id": {
+                      "type": "integer"
+                    },
+                    "mime_type": {
+                      "type": "string"
+                    },
+                    "page": {
+                      "type": "integer"
+                    },
+                    "path": {
+                      "type": "string"
+                    },
+                    "quality": {
+                      "type": "string"
+                    },
+                    "size_bytes": {
+                      "type": "integer"
+                    },
+                    "title": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "illust_id",
+                    "title",
+                    "author",
+                    "path",
+                    "file_uri",
+                    "mime_type",
+                    "size_bytes"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "illust_id": {
+                "type": "integer"
+              },
+              "title": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "url",
+              "illust_id",
+              "title",
+              "author",
+              "type",
+              "files"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "text": {
+          "type": "string"
+        },
+        "warnings": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "illust_id": {
+                "type": "integer"
+              },
+              "message": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "illust_id",
+              "type",
+              "message"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "delivery",
+        "items",
+        "failures",
+        "warnings",
+        "files",
+        "text"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Download random artworks from recommendations.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "description": "optional artwork count; defaults to 5; explicit value must be from 1 to 20",
+          "type": [
+            "null",
+            "integer"
+          ]
+        },
+        "delivery": {
+          "description": "delivery mode: local_path only",
+          "type": "string"
+        },
+        "pages": {
+          "description": "1-based page selection, e.g. 1,3-5; default all pages",
+          "type": "string"
+        },
+        "quality": {
+          "description": "static image quality: original, regular, small, thumb, mini",
+          "type": "string"
+        },
+        "ugoira_mode": {
+          "description": "ugoira output mode: gif, apng, zip, or raw; default gif",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "download_random_from_recommendation",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "delivery": {
+          "type": "string"
+        },
+        "failures": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "illust_id": {
+                "type": "integer"
+              },
+              "message": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "url",
+              "illust_id",
+              "type",
+              "message"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "files": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "author": {
+                "type": "string"
+              },
+              "file_uri": {
+                "type": "string"
+              },
+              "frames": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "delay_milliseconds": {
+                      "type": "integer"
+                    },
+                    "filename": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "filename",
+                    "delay_milliseconds"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "illust_id": {
+                "type": "integer"
+              },
+              "mime_type": {
+                "type": "string"
+              },
+              "page": {
+                "type": "integer"
+              },
+              "path": {
+                "type": "string"
+              },
+              "quality": {
+                "type": "string"
+              },
+              "size_bytes": {
+                "type": "integer"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "illust_id",
+              "title",
+              "author",
+              "path",
+              "file_uri",
+              "mime_type",
+              "size_bytes"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "items": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "author": {
+                "type": "string"
+              },
+              "files": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "author": {
+                      "type": "string"
+                    },
+                    "file_uri": {
+                      "type": "string"
+                    },
+                    "frames": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "delay_milliseconds": {
+                            "type": "integer"
+                          },
+                          "filename": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "filename",
+                          "delay_milliseconds"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "illust_id": {
+                      "type": "integer"
+                    },
+                    "mime_type": {
+                      "type": "string"
+                    },
+                    "page": {
+                      "type": "integer"
+                    },
+                    "path": {
+                      "type": "string"
+                    },
+                    "quality": {
+                      "type": "string"
+                    },
+                    "size_bytes": {
+                      "type": "integer"
+                    },
+                    "title": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "illust_id",
+                    "title",
+                    "author",
+                    "path",
+                    "file_uri",
+                    "mime_type",
+                    "size_bytes"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "illust_id": {
+                "type": "integer"
+              },
+              "title": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "url",
+              "illust_id",
+              "title",
+              "author",
+              "type",
+              "files"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "text": {
+          "type": "string"
+        },
+        "warnings": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "illust_id": {
+                "type": "integer"
+              },
+              "message": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "illust_id",
+              "type",
+              "message"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "delivery",
+        "items",
+        "failures",
+        "warnings",
+        "files",
+        "text"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Follow a Pixiv user.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "restrict": {
+          "description": "public or private",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "user ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "type": "object"
+    },
+    "name": "follow_user",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "comment_id": {
+          "type": "integer"
+        },
+        "illust_id": {
+          "type": "integer"
+        },
+        "novel_id": {
+          "type": "integer"
+        },
+        "success": {
+          "type": "boolean"
+        },
+        "text": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "success",
+        "action",
+        "text"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Read comments for a Pixiv artwork.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Positive artwork or novel ID.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "limit": {
+          "description": "Maximum comments; 0 returns all; omitted reads one upstream batch.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "illust_comments",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "access_control": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "comments": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "pagination": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "comments",
+        "pagination"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Get detailed information from exactly one artwork ID or supported Pixiv URL.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "illust_id": {
+          "description": "artwork ID; provide exactly one of illust_id or url",
+          "type": "integer"
+        },
+        "url": {
+          "description": "supported Pixiv artwork URL; provide exactly one of illust_id or url",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "illust_detail",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Browse Pixiv rankings.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "date": {
+          "description": "Ranking date in YYYY-MM-DD.",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "type": "string"
+        },
+        "illust_filter": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "min_pages": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "min_views": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "tags": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "type": {
+              "enum": [
+                "illust",
+                "manga",
+                "ugoira"
+              ],
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "limit": {
+          "description": "Maximum logical results; 0 returns all; omitted reads one upstream batch.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "mode": {
+          "description": "Pixiv ranking mode; omitted defaults to day.",
+          "enum": [
+            "day",
+            "day_male",
+            "day_female",
+            "week",
+            "week_original",
+            "week_rookie",
+            "month",
+            "day_manga",
+            "week_manga",
+            "month_manga",
+            "week_rookie_manga",
+            "day_r18",
+            "day_male_r18",
+            "day_female_r18",
+            "week_r18",
+            "week_r18g"
+          ],
+          "type": "string"
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "name": "illust_ranking",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "access_control": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "bookmark_tags": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "bookmarked": {
+          "type": "boolean"
+        },
+        "comments": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "content": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "filter": {
+          "additionalProperties": false,
+          "properties": {
+            "completeness": {
+              "type": "string"
+            },
+            "max": {
+              "type": "integer"
+            },
+            "membership": {
+              "type": "string"
+            },
+            "min": {
+              "type": "integer"
+            },
+            "strategy": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "pagination": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "restrict": {
+          "type": "string"
+        },
+        "series": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Get personalized artwork recommendations.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "illust_filter": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "min_pages": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "min_views": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "tags": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "type": {
+              "enum": [
+                "illust",
+                "manga",
+                "ugoira"
+              ],
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "limit": {
+          "description": "Maximum logical results; 0 returns all; omitted reads one upstream batch.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "name": "illust_recommended",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "access_control": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "bookmark_tags": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "bookmarked": {
+          "type": "boolean"
+        },
+        "comments": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "content": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "filter": {
+          "additionalProperties": false,
+          "properties": {
+            "completeness": {
+              "type": "string"
+            },
+            "max": {
+              "type": "integer"
+            },
+            "membership": {
+              "type": "string"
+            },
+            "min": {
+              "type": "integer"
+            },
+            "strategy": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "pagination": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "restrict": {
+          "type": "string"
+        },
+        "series": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Find artworks related to a specific illustration.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "illust_filter": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "description": "optional positive illustration ID",
+              "type": [
+                "null",
+                "integer"
+              ]
+            },
+            "min_pages": {
+              "description": "minimum page count",
+              "type": [
+                "null",
+                "integer"
+              ]
+            },
+            "min_views": {
+              "description": "minimum public view count",
+              "type": [
+                "null",
+                "integer"
+              ]
+            },
+            "tags": {
+              "description": "all exact tags required",
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "type": {
+              "description": "illust, manga, or ugoira",
+              "type": "string"
+            }
+          },
+          "type": [
+            "null",
+            "object"
+          ]
+        },
+        "illust_id": {
+          "type": "integer"
+        },
+        "limit": {
+          "description": "maximum items; 0 returns all items",
+          "type": [
+            "null",
+            "integer"
+          ]
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit",
+          "type": [
+            "null",
+            "integer"
+          ]
+        }
+      },
+      "required": [
+        "illust_id"
+      ],
+      "type": "object"
+    },
+    "name": "illust_related",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "access_control": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "bookmark_tags": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "bookmarked": {
+          "type": "boolean"
+        },
+        "comments": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "content": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "filter": {
+          "additionalProperties": false,
+          "properties": {
+            "completeness": {
+              "type": "string"
+            },
+            "max": {
+              "type": "integer"
+            },
+            "membership": {
+              "type": "string"
+            },
+            "min": {
+              "type": "integer"
+            },
+            "strategy": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "pagination": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "restrict": {
+          "type": "string"
+        },
+        "series": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Browse artworks in a Pixiv series.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "maximum items; 0 returns all items",
+          "type": [
+            "null",
+            "integer"
+          ]
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit",
+          "type": [
+            "null",
+            "integer"
+          ]
+        },
+        "series_id": {
+          "description": "positive Pixiv series ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "series_id"
+      ],
+      "type": "object"
+    },
+    "name": "illust_series",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "access_control": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "bookmark_tags": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "bookmarked": {
+          "type": "boolean"
+        },
+        "comments": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "content": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "filter": {
+          "additionalProperties": false,
+          "properties": {
+            "completeness": {
+              "type": "string"
+            },
+            "max": {
+              "type": "integer"
+            },
+            "membership": {
+              "type": "string"
+            },
+            "min": {
+              "type": "integer"
+            },
+            "strategy": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "pagination": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "restrict": {
+          "type": "string"
+        },
+        "series": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Browse aggregated MyPixiv artworks through the App API.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "illust_filter": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "min_pages": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "min_views": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "tags": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "type": {
+              "enum": [
+                "illust",
+                "manga",
+                "ugoira"
+              ],
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "limit": {
+          "description": "Maximum logical results; 0 returns all; omit for one logical batch.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": null,
+      "type": "object"
+    },
+    "name": "mypixiv_illusts",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "access_control": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "bookmark_tags": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "bookmarked": {
+          "type": "boolean"
+        },
+        "comments": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "content": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "filter": {
+          "additionalProperties": false,
+          "properties": {
+            "completeness": {
+              "type": "string"
+            },
+            "max": {
+              "type": "integer"
+            },
+            "membership": {
+              "type": "string"
+            },
+            "min": {
+              "type": "integer"
+            },
+            "strategy": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "pagination": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "restrict": {
+          "type": "string"
+        },
+        "series": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Browse aggregated MyPixiv novels through the App API.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Maximum logical results; 0 returns all; omit for one logical batch.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "novel_filter": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "min_views": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "tags": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": null,
+      "type": "object"
+    },
+    "name": "mypixiv_novels",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "access_control": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "bookmark_tags": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "bookmarked": {
+          "type": "boolean"
+        },
+        "comments": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "content": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "filter": {
+          "additionalProperties": false,
+          "properties": {
+            "completeness": {
+              "type": "string"
+            },
+            "max": {
+              "type": "integer"
+            },
+            "membership": {
+              "type": "string"
+            },
+            "min": {
+              "type": "integer"
+            },
+            "strategy": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "pagination": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "restrict": {
+          "type": "string"
+        },
+        "series": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Browse MyPixiv users for the authenticated account through the App API.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Maximum logical results; 0 returns all; omit for one logical batch.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "user_filter": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "required": null,
+      "type": "object"
+    },
+    "name": "mypixiv_users",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "access_control": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "bookmark_tags": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "bookmarked": {
+          "type": "boolean"
+        },
+        "comments": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "content": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "filter": {
+          "additionalProperties": false,
+          "properties": {
+            "completeness": {
+              "type": "string"
+            },
+            "max": {
+              "type": "integer"
+            },
+            "membership": {
+              "type": "string"
+            },
+            "min": {
+              "type": "integer"
+            },
+            "strategy": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "pagination": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "restrict": {
+          "type": "string"
+        },
+        "series": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Get the current user's bookmark state for one novel.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "novel_id": {
+          "description": "positive novel ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "novel_id"
+      ],
+      "type": "object"
+    },
+    "name": "novel_bookmark_detail",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "bookmarked": {
+          "type": "boolean"
+        },
+        "restrict": {
+          "type": "string"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "bookmarked",
+        "tags"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "List novel bookmark tags.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "maximum items; 0 returns all items",
+          "type": [
+            "null",
+            "integer"
+          ]
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit",
+          "type": [
+            "null",
+            "integer"
+          ]
+        },
+        "restrict": {
+          "description": "public or private",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "optional user ID; defaults to the authenticated user",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "name": "novel_bookmark_tags",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "bookmark_tags": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "pagination": {
+          "additionalProperties": true,
+          "type": "object"
+        }
+      },
+      "required": [
+        "bookmark_tags",
+        "pagination"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Read comments for a Pixiv novel.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Positive artwork or novel ID.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "limit": {
+          "description": "Maximum comments; 0 returns all; omitted reads one upstream batch.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "name": "novel_comments",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "access_control": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "comments": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "pagination": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "comments",
+        "pagination"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Read the complete structured content of one Pixiv novel.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "novel_id": {
+          "description": "positive Pixiv novel ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "novel_id"
+      ],
+      "type": "object"
+    },
+    "name": "novel_content",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "content": {
+          "additionalProperties": true,
+          "type": "object"
+        }
+      },
+      "required": [
+        "content"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Get detailed information for one Pixiv novel.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "novel_id": {
+          "description": "positive Pixiv novel ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "novel_id"
+      ],
+      "type": "object"
+    },
+    "name": "novel_detail",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Browse novels in a Pixiv series.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "maximum items; 0 returns all items",
+          "type": [
+            "null",
+            "integer"
+          ]
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit",
+          "type": [
+            "null",
+            "integer"
+          ]
+        },
+        "series_id": {
+          "description": "positive Pixiv series ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "series_id"
+      ],
+      "type": "object"
+    },
+    "name": "novel_series",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "pagination": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "series": {
+          "additionalProperties": true,
+          "type": "object"
+        }
+      },
+      "required": [
+        "series",
+        "records",
+        "pagination"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Get typed personalized recommendations through the Pixiv SDK.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "illust_filter": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "min_pages": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "min_views": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "tags": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "type": {
+              "enum": [
+                "illust",
+                "manga",
+                "ugoira"
+              ],
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "kind": {
+          "enum": [
+            "all",
+            "illust",
+            "manga",
+            "novel",
+            "user"
+          ],
+          "type": "string"
+        },
+        "limit": {
+          "description": "Maximum logical results; 0 returns all; omitted reads one upstream batch. Artwork recommendation filters are applied after selecting this upstream window.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "novel_filter": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "min_views": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "tags": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit. Artwork recommendation filters are applied after selecting this upstream window.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "user_filter": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "type": "object"
+    },
+    "name": "recommended",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "pagination": {
+          "additionalProperties": false,
+          "properties": {
+            "illust": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "manga": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "novel": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "user": {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "records",
+        "pagination"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Find users related to a Pixiv user.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Maximum logical results; 0 returns all; omit for one logical batch.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "restrict": {
+          "description": "Compatibility visibility field.",
+          "enum": [
+            "public",
+            "private"
+          ],
+          "type": "string"
+        },
+        "user_filter": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "type": "object"
+        },
+        "user_id": {
+          "description": "Optional positive Pixiv user ID; defaults to the authenticated user.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": null,
+      "type": "object"
+    },
+    "name": "related_users",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "access_control": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "bookmark_tags": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "bookmarked": {
+          "type": "boolean"
+        },
+        "comments": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "content": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "filter": {
+          "additionalProperties": false,
+          "properties": {
+            "completeness": {
+              "type": "string"
+            },
+            "max": {
+              "type": "integer"
+            },
+            "membership": {
+              "type": "string"
+            },
+            "min": {
+              "type": "integer"
+            },
+            "strategy": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "pagination": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "restrict": {
+          "type": "string"
+        },
+        "series": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Remove an artwork from bookmarks.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "illust_id": {
+          "description": "artwork ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "illust_id"
+      ],
+      "type": "object"
+    },
+    "name": "remove_bookmark",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "comment_id": {
+          "type": "integer"
+        },
+        "illust_id": {
+          "type": "integer"
+        },
+        "novel_id": {
+          "type": "integer"
+        },
+        "success": {
+          "type": "boolean"
+        },
+        "text": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "success",
+        "action",
+        "text"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Remove a novel from bookmarks.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "novel_id": {
+          "description": "novel ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "novel_id"
+      ],
+      "type": "object"
+    },
+    "name": "remove_novel_bookmark",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "comment_id": {
+          "type": "integer"
+        },
+        "illust_id": {
+          "type": "integer"
+        },
+        "novel_id": {
+          "type": "integer"
+        },
+        "success": {
+          "type": "boolean"
+        },
+        "text": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "success",
+        "action",
+        "text"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Reply to a comment on a Pixiv artwork.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "comment": {
+          "description": "Non-empty comment body.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "illust_id": {
+          "description": "Positive Pixiv artwork ID.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "parent_comment_id": {
+          "description": "Positive parent comment ID.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "illust_id",
+        "comment",
+        "parent_comment_id"
+      ],
+      "type": "object"
+    },
+    "name": "reply_artwork_comment",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "comment_id": {
+          "type": "integer"
+        },
+        "illust_id": {
+          "type": "integer"
+        },
+        "novel_id": {
+          "type": "integer"
+        },
+        "success": {
+          "type": "boolean"
+        },
+        "text": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "success",
+        "action",
+        "text"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Reply to a comment on a Pixiv novel.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "comment": {
+          "description": "Non-empty comment body.",
+          "minLength": 1,
+          "type": "string"
+        },
+        "novel_id": {
+          "description": "Positive Pixiv novel ID.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "parent_comment_id": {
+          "description": "Positive parent comment ID.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "novel_id",
+        "comment",
+        "parent_comment_id"
+      ],
+      "type": "object"
+    },
+    "name": "reply_novel_comment",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "comment_id": {
+          "type": "integer"
+        },
+        "illust_id": {
+          "type": "integer"
+        },
+        "novel_id": {
+          "type": "integer"
+        },
+        "success": {
+          "type": "boolean"
+        },
+        "text": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "success",
+        "action",
+        "text"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Search an image source with SauceNAO or ascii2d and return Pixiv matches.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "provider": {
+          "description": "Optional provider override; omit to use the server startup configuration.",
+          "enum": [
+            "saucenao",
+            "ascii2d-color",
+            "ascii2d-bovw",
+            "all"
+          ],
+          "type": "string"
+        },
+        "source": {
+          "description": "Readable regular file path or HTTP(S) image URL. The source is fetched/uploaded by the trusted local MCP server and is never returned.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "type": "object"
+    },
+    "name": "reverse_search",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "input": {
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "type": "string"
+            },
+            "sha256": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "sha256"
+          ],
+          "type": "object"
+        },
+        "partial": {
+          "type": "boolean"
+        },
+        "provider_errors": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "provider": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "provider",
+              "code",
+              "message"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "providers": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "quota": {
+                "additionalProperties": false,
+                "properties": {
+                  "long_limit": {
+                    "type": "integer"
+                  },
+                  "long_remaining": {
+                    "type": "integer"
+                  },
+                  "short_limit": {
+                    "type": "integer"
+                  },
+                  "short_remaining": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "short_remaining",
+                  "long_remaining",
+                  "short_limit",
+                  "long_limit"
+                ],
+                "type": "object"
+              },
+              "result_count": {
+                "type": "integer"
+              },
+              "status": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "status",
+              "result_count"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "records": {
+          "items": {
+            "additionalProperties": {},
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "id",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "results": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "author": {
+                "type": "string"
+              },
+              "evidence": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "author": {
+                      "type": "string"
+                    },
+                    "external_urls": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "index_id": {
+                      "type": "integer"
+                    },
+                    "index_name": {
+                      "type": "string"
+                    },
+                    "provider": {
+                      "type": "string"
+                    },
+                    "rank": {
+                      "type": "integer"
+                    },
+                    "similarity": {
+                      "type": "number"
+                    },
+                    "title": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "provider",
+                    "rank",
+                    "similarity",
+                    "index_id",
+                    "index_name"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "pixiv": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "type": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type",
+                  "id"
+                ],
+                "type": "object"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "evidence"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "input",
+        "providers",
+        "results",
+        "records",
+        "provider_errors",
+        "partial"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Search for illustrations using keywords with filters.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "ai_mode": {
+          "description": "AI-generated artwork filter.",
+          "enum": [
+            "all",
+            "exclude",
+            "only"
+          ],
+          "type": "string"
+        },
+        "aspect_ratio": {
+          "description": "Artwork aspect ratio filter.",
+          "enum": [
+            "all",
+            "landscape",
+            "portrait",
+            "square"
+          ],
+          "type": "string"
+        },
+        "bookmark_max": {
+          "description": "Inclusive maximum public bookmark count; requires App OAuth.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "bookmark_min": {
+          "description": "Inclusive minimum public bookmark count; requires App OAuth.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "bookmark_strategy": {
+          "description": "Bookmark count strategy; server requires verified evidence and otherwise fails explicitly.",
+          "enum": [
+            "auto",
+            "local",
+            "best_effort",
+            "server"
+          ],
+          "type": "string"
+        },
+        "content_type": {
+          "description": "Artwork content type filter.",
+          "enum": [
+            "all",
+            "illust-and-ugoira",
+            "illust",
+            "manga",
+            "ugoira"
+          ],
+          "type": "string"
+        },
+        "duration": {
+          "description": "Pixiv quick date range; cannot be combined with start_date or end_date.",
+          "enum": [
+            "within_last_day",
+            "within_last_week",
+            "within_last_month",
+            "within_half_year",
+            "within_year"
+          ],
+          "type": "string"
+        },
+        "end_date": {
+          "description": "Inclusive end date in YYYY-MM-DD; may be used with start_date.",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "type": "string"
+        },
+        "illust_filter": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "min_pages": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "min_views": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "tags": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "type": {
+              "enum": [
+                "illust",
+                "manga",
+                "ugoira"
+              ],
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "limit": {
+          "description": "Maximum logical results; 0 returns all; omit for one logical batch.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit.",
+          "type": "integer"
+        },
+        "resolution": {
+          "description": "Artwork resolution tier filter.",
+          "enum": [
+            "all",
+            "high",
+            "medium",
+            "low"
+          ],
+          "type": "string"
+        },
+        "search_target": {
+          "description": "Pixiv search target.",
+          "enum": [
+            "partial_match_for_tags",
+            "exact_match_for_tags",
+            "title_and_caption",
+            "keyword"
+          ],
+          "type": "string"
+        },
+        "sort": {
+          "description": "Pixiv result order.",
+          "type": "string"
+        },
+        "start_date": {
+          "description": "Inclusive start date in YYYY-MM-DD; may be used with end_date.",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "type": "string"
+        },
+        "tool": {
+          "description": "Exact drawing tool name from the versioned pixiv-cli drawing-tool catalog.",
+          "type": "string"
+        },
+        "word": {
+          "description": "Illustration search keyword.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "word"
+      ],
+      "type": "object"
+    },
+    "name": "search_illust",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "access_control": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "bookmark_tags": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "bookmarked": {
+          "type": "boolean"
+        },
+        "comments": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "content": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "filter": {
+          "additionalProperties": false,
+          "properties": {
+            "completeness": {
+              "type": "string"
+            },
+            "max": {
+              "type": "integer"
+            },
+            "membership": {
+              "type": "string"
+            },
+            "min": {
+              "type": "integer"
+            },
+            "strategy": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "pagination": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "restrict": {
+          "type": "string"
+        },
+        "series": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Search for novels using keywords with supported filters.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "duration": {
+          "description": "Pixiv novel search duration.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Maximum logical results; 0 returns all; omit for one logical batch.",
+          "type": "integer"
+        },
+        "novel_filter": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "min_views": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "tags": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit.",
+          "type": "integer"
+        },
+        "search_target": {
+          "description": "Pixiv novel search target.",
+          "type": "string"
+        },
+        "sort": {
+          "description": "Pixiv novel result order.",
+          "type": "string"
+        },
+        "word": {
+          "description": "Novel search keyword.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "word"
+      ],
+      "type": "object"
+    },
+    "name": "search_novel",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "access_control": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "bookmark_tags": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "bookmarked": {
+          "type": "boolean"
+        },
+        "comments": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "content": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "filter": {
+          "additionalProperties": false,
+          "properties": {
+            "completeness": {
+              "type": "string"
+            },
+            "max": {
+              "type": "integer"
+            },
+            "membership": {
+              "type": "string"
+            },
+            "min": {
+              "type": "integer"
+            },
+            "strategy": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "pagination": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "restrict": {
+          "type": "string"
+        },
+        "series": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Search for users/artists on Pixiv.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Maximum logical results; 0 returns all; omit for one logical batch.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "user_filter": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "type": "object"
+        },
+        "word": {
+          "description": "User search keyword.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "word"
+      ],
+      "type": "object"
+    },
+    "name": "search_user",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "access_control": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "bookmark_tags": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "bookmarked": {
+          "type": "boolean"
+        },
+        "comments": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "content": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "filter": {
+          "additionalProperties": false,
+          "properties": {
+            "completeness": {
+              "type": "string"
+            },
+            "max": {
+              "type": "integer"
+            },
+            "membership": {
+              "type": "string"
+            },
+            "min": {
+              "type": "integer"
+            },
+            "strategy": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "pagination": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "restrict": {
+          "type": "string"
+        },
+        "series": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Add a stamp comment to a Pixiv artwork.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "comment": {
+          "description": "Optional comment body; empty is the sticker-only wire form.",
+          "type": "string"
+        },
+        "illust_id": {
+          "description": "Positive Pixiv artwork ID.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "stamp_id": {
+          "description": "Positive Pixiv stamp ID.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "illust_id",
+        "stamp_id"
+      ],
+      "type": "object"
+    },
+    "name": "stamp_artwork_comment",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "comment_id": {
+          "type": "integer"
+        },
+        "illust_id": {
+          "type": "integer"
+        },
+        "novel_id": {
+          "type": "integer"
+        },
+        "success": {
+          "type": "boolean"
+        },
+        "text": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "success",
+        "action",
+        "text"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Add a stamp comment to a Pixiv novel.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "comment": {
+          "description": "Optional comment body; empty is the sticker-only wire form.",
+          "type": "string"
+        },
+        "novel_id": {
+          "description": "Positive Pixiv novel ID.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "stamp_id": {
+          "description": "Positive Pixiv stamp ID.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "novel_id",
+        "stamp_id"
+      ],
+      "type": "object"
+    },
+    "name": "stamp_novel_comment",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "comment_id": {
+          "type": "integer"
+        },
+        "illust_id": {
+          "type": "integer"
+        },
+        "novel_id": {
+          "type": "integer"
+        },
+        "success": {
+          "type": "boolean"
+        },
+        "text": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "success",
+        "action",
+        "text"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Browse artworks from followed artists.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "illust_filter": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "min_pages": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "min_views": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "tags": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "type": {
+              "enum": [
+                "illust",
+                "manga",
+                "ugoira"
+              ],
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "limit": {
+          "description": "Maximum logical results; 0 returns all; omitted reads one upstream batch.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "restrict": {
+          "description": "Visibility scope; omitted defaults to public.",
+          "enum": [
+            "public",
+            "private"
+          ],
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "timeline_illust_following",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "access_control": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "bookmark_tags": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "bookmarked": {
+          "type": "boolean"
+        },
+        "comments": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "content": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "filter": {
+          "additionalProperties": false,
+          "properties": {
+            "completeness": {
+              "type": "string"
+            },
+            "max": {
+              "type": "integer"
+            },
+            "membership": {
+              "type": "string"
+            },
+            "min": {
+              "type": "integer"
+            },
+            "strategy": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "pagination": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "restrict": {
+          "type": "string"
+        },
+        "series": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Browse latest illustrations or manga through the App API.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "content_type": {
+          "enum": [
+            "illust",
+            "manga"
+          ],
+          "type": "string"
+        },
+        "illust_filter": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "min_pages": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "min_views": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "tags": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "type": {
+              "enum": [
+                "illust",
+                "manga",
+                "ugoira"
+              ],
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "limit": {
+          "description": "Maximum logical results; 0 returns all; omitted reads one upstream batch.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "content_type"
+      ],
+      "type": "object"
+    },
+    "name": "timeline_illust_latest",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "access_control": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "bookmark_tags": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "bookmarked": {
+          "type": "boolean"
+        },
+        "comments": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "content": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "filter": {
+          "additionalProperties": false,
+          "properties": {
+            "completeness": {
+              "type": "string"
+            },
+            "max": {
+              "type": "integer"
+            },
+            "membership": {
+              "type": "string"
+            },
+            "min": {
+              "type": "integer"
+            },
+            "strategy": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "pagination": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "restrict": {
+          "type": "string"
+        },
+        "series": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Browse new novels from followed users through the App API.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Maximum logical results; 0 returns all; omitted reads one upstream batch.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "novel_filter": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "min_views": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "tags": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "restrict": {
+          "description": "Visibility scope; omitted defaults to public.",
+          "enum": [
+            "public",
+            "private"
+          ],
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "name": "timeline_novel_following",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "access_control": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "bookmark_tags": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "bookmarked": {
+          "type": "boolean"
+        },
+        "comments": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "content": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "filter": {
+          "additionalProperties": false,
+          "properties": {
+            "completeness": {
+              "type": "string"
+            },
+            "max": {
+              "type": "integer"
+            },
+            "membership": {
+              "type": "string"
+            },
+            "min": {
+              "type": "integer"
+            },
+            "strategy": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "pagination": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "restrict": {
+          "type": "string"
+        },
+        "series": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Browse latest novels through the App API.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Maximum logical results; 0 returns all; omitted reads one upstream batch.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "novel_filter": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "min_views": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "tags": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "name": "timeline_novel_latest",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "access_control": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "bookmark_tags": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "bookmarked": {
+          "type": "boolean"
+        },
+        "comments": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "content": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "filter": {
+          "additionalProperties": false,
+          "properties": {
+            "completeness": {
+              "type": "string"
+            },
+            "max": {
+              "type": "integer"
+            },
+            "membership": {
+              "type": "string"
+            },
+            "min": {
+              "type": "integer"
+            },
+            "strategy": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "pagination": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "restrict": {
+          "type": "string"
+        },
+        "series": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Get currently trending illustration tags.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "trending_tags_illust",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "tags": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "artwork": {
+                "additionalProperties": false,
+                "properties": {
+                  "ai_type": {
+                    "type": "integer"
+                  },
+                  "caption": {
+                    "type": "string"
+                  },
+                  "cover": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "height": {
+                        "type": "integer"
+                      },
+                      "resource": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "ref": {
+                            "type": "string"
+                          },
+                          "requires_credentials": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "ref"
+                        ],
+                        "type": [
+                          "null",
+                          "object"
+                        ]
+                      },
+                      "variant": {
+                        "type": "string"
+                      },
+                      "width": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "resource",
+                      "variant",
+                      "width",
+                      "height"
+                    ],
+                    "type": "object"
+                  },
+                  "height": {
+                    "type": "integer"
+                  },
+                  "id": {
+                    "type": "integer"
+                  },
+                  "kind": {
+                    "type": "string"
+                  },
+                  "page_count": {
+                    "type": "integer"
+                  },
+                  "pages": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "height": {
+                          "type": "integer"
+                        },
+                        "image": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "height": {
+                              "type": "integer"
+                            },
+                            "resource": {
+                              "additionalProperties": false,
+                              "properties": {
+                                "ref": {
+                                  "type": "string"
+                                },
+                                "requires_credentials": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "required": [
+                                "ref"
+                              ],
+                              "type": [
+                                "null",
+                                "object"
+                              ]
+                            },
+                            "variant": {
+                              "type": "string"
+                            },
+                            "width": {
+                              "type": "integer"
+                            }
+                          },
+                          "required": [
+                            "resource",
+                            "variant",
+                            "width",
+                            "height"
+                          ],
+                          "type": "object"
+                        },
+                        "page_index": {
+                          "type": "integer"
+                        },
+                        "width": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "page_index",
+                        "image",
+                        "width",
+                        "height"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "published_at": {
+                    "type": "string"
+                  },
+                  "raw_kind": {
+                    "type": "string"
+                  },
+                  "tags": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "translated_name": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "translated_name"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "tools": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "total_bookmarks": {
+                    "type": "integer"
+                  },
+                  "total_views": {
+                    "type": "integer"
+                  },
+                  "updated_at": {
+                    "type": "string"
+                  },
+                  "user": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "account": {
+                        "type": "string"
+                      },
+                      "comment": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "is_followed": {
+                        "type": "boolean"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "profile_image": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "height": {
+                            "type": "integer"
+                          },
+                          "resource": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "ref": {
+                                "type": "string"
+                              },
+                              "requires_credentials": {
+                                "type": "boolean"
+                              }
+                            },
+                            "required": [
+                              "ref"
+                            ],
+                            "type": [
+                              "null",
+                              "object"
+                            ]
+                          },
+                          "variant": {
+                            "type": "string"
+                          },
+                          "width": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "resource",
+                          "variant",
+                          "width",
+                          "height"
+                        ],
+                        "type": "object"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "name",
+                      "account",
+                      "comment",
+                      "is_followed",
+                      "profile_image"
+                    ],
+                    "type": "object"
+                  },
+                  "width": {
+                    "type": "integer"
+                  },
+                  "x_restrict": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "id",
+                  "title",
+                  "caption",
+                  "kind",
+                  "raw_kind",
+                  "tags",
+                  "user",
+                  "published_at",
+                  "total_bookmarks",
+                  "total_views",
+                  "width",
+                  "height",
+                  "page_count",
+                  "x_restrict",
+                  "ai_type",
+                  "cover"
+                ],
+                "type": "object"
+              },
+              "tag": {
+                "type": "string"
+              },
+              "translated_name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "tag",
+              "translated_name",
+              "artwork"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "tags",
+        "text"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Unfollow a Pixiv user.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "user_id": {
+          "description": "user ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "type": "object"
+    },
+    "name": "unfollow_user",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "comment_id": {
+          "type": "integer"
+        },
+        "illust_id": {
+          "type": "integer"
+        },
+        "novel_id": {
+          "type": "integer"
+        },
+        "success": {
+          "type": "boolean"
+        },
+        "text": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "success",
+        "action",
+        "text"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Browse a user's artworks.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "illust_filter": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "min_pages": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "min_views": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "tags": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "type": {
+              "enum": [
+                "illust",
+                "manga",
+                "ugoira"
+              ],
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "limit": {
+          "description": "Maximum logical results; 0 returns all; omit for one logical batch.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "type": {
+          "description": "Artwork type.",
+          "enum": [
+            "illust",
+            "manga",
+            "ugoira"
+          ],
+          "type": "string"
+        },
+        "user_id": {
+          "description": "Optional positive Pixiv user ID; defaults to the authenticated user.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": null,
+      "type": "object"
+    },
+    "name": "user_artworks",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "access_control": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "bookmark_tags": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "bookmarked": {
+          "type": "boolean"
+        },
+        "comments": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "content": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "filter": {
+          "additionalProperties": false,
+          "properties": {
+            "completeness": {
+              "type": "string"
+            },
+            "max": {
+              "type": "integer"
+            },
+            "membership": {
+              "type": "string"
+            },
+            "min": {
+              "type": "integer"
+            },
+            "strategy": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "pagination": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "restrict": {
+          "type": "string"
+        },
+        "series": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Browse user's bookmarked artworks.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "illust_filter": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "description": "optional positive illustration ID",
+              "type": [
+                "null",
+                "integer"
+              ]
+            },
+            "min_pages": {
+              "description": "minimum page count",
+              "type": [
+                "null",
+                "integer"
+              ]
+            },
+            "min_views": {
+              "description": "minimum public view count",
+              "type": [
+                "null",
+                "integer"
+              ]
+            },
+            "tags": {
+              "description": "all exact tags required",
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "type": {
+              "description": "illust, manga, or ugoira",
+              "type": "string"
+            }
+          },
+          "type": [
+            "null",
+            "object"
+          ]
+        },
+        "limit": {
+          "description": "maximum items; 0 returns all items",
+          "type": [
+            "null",
+            "integer"
+          ]
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit",
+          "type": [
+            "null",
+            "integer"
+          ]
+        },
+        "restrict": {
+          "description": "public or private",
+          "type": "string"
+        },
+        "tag": {
+          "type": "string"
+        },
+        "user_id": {
+          "description": "optional user ID; defaults to the authenticated user",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "name": "user_bookmarks",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "access_control": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "bookmark_tags": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "bookmarked": {
+          "type": "boolean"
+        },
+        "comments": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "content": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "filter": {
+          "additionalProperties": false,
+          "properties": {
+            "completeness": {
+              "type": "string"
+            },
+            "max": {
+              "type": "integer"
+            },
+            "membership": {
+              "type": "string"
+            },
+            "min": {
+              "type": "integer"
+            },
+            "strategy": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "pagination": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "restrict": {
+          "type": "string"
+        },
+        "series": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Get a user's complete profile through the authenticated Pixiv SDK.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "user_id": {
+          "description": "Positive Pixiv user ID.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "type": "object"
+    },
+    "name": "user_detail",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "View user's followers list.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Maximum logical results; 0 returns all; omit for one logical batch.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "restrict": {
+          "description": "Follower visibility.",
+          "enum": [
+            "public",
+            "private"
+          ],
+          "type": "string"
+        },
+        "user_id": {
+          "description": "Optional positive Pixiv user ID; defaults to the authenticated user.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": null,
+      "type": "object"
+    },
+    "name": "user_followers",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "access_control": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "bookmark_tags": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "bookmarked": {
+          "type": "boolean"
+        },
+        "comments": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "content": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "filter": {
+          "additionalProperties": false,
+          "properties": {
+            "completeness": {
+              "type": "string"
+            },
+            "max": {
+              "type": "integer"
+            },
+            "membership": {
+              "type": "string"
+            },
+            "min": {
+              "type": "integer"
+            },
+            "strategy": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "pagination": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "restrict": {
+          "type": "string"
+        },
+        "series": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "View user's following list.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Maximum logical results; 0 returns all; omit for one logical batch.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "restrict": {
+          "description": "Following visibility.",
+          "enum": [
+            "public",
+            "private"
+          ],
+          "type": "string"
+        },
+        "user_filter": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "type": "object"
+        },
+        "user_id": {
+          "description": "Optional positive Pixiv user ID; defaults to the authenticated user.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": null,
+      "type": "object"
+    },
+    "name": "user_following",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "access_control": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "bookmark_tags": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "bookmarked": {
+          "type": "boolean"
+        },
+        "comments": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "content": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "filter": {
+          "additionalProperties": false,
+          "properties": {
+            "completeness": {
+              "type": "string"
+            },
+            "max": {
+              "type": "integer"
+            },
+            "membership": {
+              "type": "string"
+            },
+            "min": {
+              "type": "integer"
+            },
+            "strategy": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "pagination": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "restrict": {
+          "type": "string"
+        },
+        "series": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Browse user's bookmarked novels.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "maximum items; 0 returns all items",
+          "type": [
+            "null",
+            "integer"
+          ]
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit",
+          "type": [
+            "null",
+            "integer"
+          ]
+        },
+        "restrict": {
+          "description": "public or private",
+          "type": "string"
+        },
+        "tag": {
+          "type": "string"
+        },
+        "user_id": {
+          "description": "optional user ID; defaults to authenticated user",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "name": "user_novel_bookmarks",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "access_control": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "bookmark_tags": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "bookmarked": {
+          "type": "boolean"
+        },
+        "comments": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "content": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "filter": {
+          "additionalProperties": false,
+          "properties": {
+            "completeness": {
+              "type": "string"
+            },
+            "max": {
+              "type": "integer"
+            },
+            "membership": {
+              "type": "string"
+            },
+            "min": {
+              "type": "integer"
+            },
+            "strategy": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "pagination": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "restrict": {
+          "type": "string"
+        },
+        "series": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Browse a user's novels through the App API.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "Maximum logical results; 0 returns all; omit for one logical batch.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "novel_filter": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "min_views": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "tags": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "user_id": {
+          "description": "Optional positive Pixiv user ID; defaults to the authenticated user.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": null,
+      "type": "object"
+    },
+    "name": "user_novels",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "access_control": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "bookmark_tags": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "bookmarked": {
+          "type": "boolean"
+        },
+        "comments": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "content": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "filter": {
+          "additionalProperties": false,
+          "properties": {
+            "completeness": {
+              "type": "string"
+            },
+            "max": {
+              "type": "integer"
+            },
+            "membership": {
+              "type": "string"
+            },
+            "min": {
+              "type": "integer"
+            },
+            "strategy": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "pagination": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "restrict": {
+          "type": "string"
+        },
+        "series": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "type": "object"
+    }
+  }
+]

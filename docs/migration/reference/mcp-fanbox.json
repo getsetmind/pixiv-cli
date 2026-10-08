@@ -1,0 +1,1167 @@
+[
+  {
+    "description": "Get one FANBOX creator profile.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "creator_id": {
+          "description": "required FANBOX creator id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "creator_id"
+      ],
+      "type": "object"
+    },
+    "name": "fanbox_creator",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "cover": {
+          "additionalProperties": false,
+          "properties": {
+            "ref": {
+              "type": "string"
+            },
+            "requires_credentials": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "ref"
+          ],
+          "type": [
+            "null",
+            "object"
+          ]
+        },
+        "has_adult_content": {
+          "type": "boolean"
+        },
+        "has_supporting_plan": {
+          "type": "boolean"
+        },
+        "icon": {
+          "additionalProperties": false,
+          "properties": {
+            "ref": {
+              "type": "string"
+            },
+            "requires_credentials": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "ref"
+          ],
+          "type": [
+            "null",
+            "object"
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "is_following": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "plan_fee": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "List posts from a FANBOX creator.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "creator_id": {
+          "description": "required FANBOX creator id",
+          "type": "string"
+        },
+        "limit": {
+          "description": "maximum items; 0 returns all items",
+          "type": [
+            "null",
+            "integer"
+          ]
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit",
+          "type": [
+            "null",
+            "integer"
+          ]
+        }
+      },
+      "required": [
+        "creator_id"
+      ],
+      "type": "object"
+    },
+    "name": "fanbox_creator_posts",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "pagination": {
+          "additionalProperties": false,
+          "properties": {
+            "has_more": {
+              "type": "boolean"
+            },
+            "limit": {
+              "type": [
+                "null",
+                "integer"
+              ]
+            },
+            "next_page": {
+              "type": [
+                "null",
+                "integer"
+              ]
+            },
+            "page": {
+              "type": "integer"
+            },
+            "returned": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "page",
+            "limit",
+            "returned",
+            "has_more",
+            "next_page"
+          ],
+          "type": "object"
+        },
+        "posts": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "assets": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "resource": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "ref": {
+                          "type": "string"
+                        },
+                        "requires_credentials": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "ref"
+                      ],
+                      "type": [
+                        "null",
+                        "object"
+                      ]
+                    },
+                    "thumbnail": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "ref": {
+                          "type": "string"
+                        },
+                        "requires_credentials": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "ref"
+                      ],
+                      "type": [
+                        "null",
+                        "object"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "comment_count": {
+                "type": "integer"
+              },
+              "creator_id": {
+                "type": "string"
+              },
+              "fee_required": {
+                "type": "integer"
+              },
+              "id": {
+                "type": "string"
+              },
+              "is_pinned": {
+                "type": "boolean"
+              },
+              "is_restricted": {
+                "type": "boolean"
+              },
+              "published_at": {
+                "type": "string"
+              },
+              "restricted_for": {
+                "type": "integer"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "published_at",
+              "creator_id",
+              "is_restricted",
+              "assets"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "posts",
+        "pagination"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "List tags used by a FANBOX creator.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "creator_id": {
+          "description": "required FANBOX creator id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "creator_id"
+      ],
+      "type": "object"
+    },
+    "name": "fanbox_creator_tags",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "tags": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "tags"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "List supporting or following FANBOX creators.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "description": "supporting or following",
+          "type": "string"
+        },
+        "limit": {
+          "description": "maximum items; 0 returns all items",
+          "type": [
+            "null",
+            "integer"
+          ]
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit",
+          "type": [
+            "null",
+            "integer"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "name": "fanbox_creators",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "creators": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "icon": {
+                "additionalProperties": false,
+                "properties": {
+                  "ref": {
+                    "type": "string"
+                  },
+                  "requires_credentials": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "ref"
+                ],
+                "type": [
+                  "null",
+                  "object"
+                ]
+              },
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "pagination": {
+          "additionalProperties": false,
+          "properties": {
+            "has_more": {
+              "type": "boolean"
+            },
+            "limit": {
+              "type": [
+                "null",
+                "integer"
+              ]
+            },
+            "next_page": {
+              "type": [
+                "null",
+                "integer"
+              ]
+            },
+            "page": {
+              "type": "integer"
+            },
+            "returned": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "page",
+            "limit",
+            "returned",
+            "has_more",
+            "next_page"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "creators",
+        "pagination"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Show the current authenticated FANBOX user.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "name": "fanbox_current_user",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "creator_id": {
+          "type": "string"
+        },
+        "creator_status": {
+          "type": "string"
+        },
+        "display_name": {
+          "type": "string"
+        },
+        "is_creator": {
+          "type": "boolean"
+        },
+        "user_id": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "user_id",
+        "display_name",
+        "creator_id",
+        "creator_status",
+        "is_creator"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Browse the FANBOX home feed.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "maximum items; 0 returns all items",
+          "type": [
+            "null",
+            "integer"
+          ]
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit",
+          "type": [
+            "null",
+            "integer"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "name": "fanbox_home",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "pagination": {
+          "additionalProperties": false,
+          "properties": {
+            "has_more": {
+              "type": "boolean"
+            },
+            "limit": {
+              "type": [
+                "null",
+                "integer"
+              ]
+            },
+            "next_page": {
+              "type": [
+                "null",
+                "integer"
+              ]
+            },
+            "page": {
+              "type": "integer"
+            },
+            "returned": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "page",
+            "limit",
+            "returned",
+            "has_more",
+            "next_page"
+          ],
+          "type": "object"
+        },
+        "posts": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "assets": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "resource": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "ref": {
+                          "type": "string"
+                        },
+                        "requires_credentials": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "ref"
+                      ],
+                      "type": [
+                        "null",
+                        "object"
+                      ]
+                    },
+                    "thumbnail": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "ref": {
+                          "type": "string"
+                        },
+                        "requires_credentials": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "ref"
+                      ],
+                      "type": [
+                        "null",
+                        "object"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "comment_count": {
+                "type": "integer"
+              },
+              "creator_id": {
+                "type": "string"
+              },
+              "fee_required": {
+                "type": "integer"
+              },
+              "id": {
+                "type": "string"
+              },
+              "is_pinned": {
+                "type": "boolean"
+              },
+              "is_restricted": {
+                "type": "boolean"
+              },
+              "published_at": {
+                "type": "string"
+              },
+              "restricted_for": {
+                "type": "integer"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "published_at",
+              "creator_id",
+              "is_restricted",
+              "assets"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "posts",
+        "pagination"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Open a FANBOX media resource by ref and return its safe metadata and status without the bytes.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "method": {
+          "description": "GET or HEAD; default GET",
+          "type": "string"
+        },
+        "ref": {
+          "description": "opaque FANBOX media resource reference",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ref"
+      ],
+      "type": "object"
+    },
+    "name": "fanbox_open_resource",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "content_length": {
+          "type": "integer"
+        },
+        "content_type": {
+          "type": "string"
+        },
+        "ref": {
+          "type": "string"
+        },
+        "status_code": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "ref",
+        "status_code"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Get one FANBOX post.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "post_id": {
+          "description": "required FANBOX post id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "post_id"
+      ],
+      "type": "object"
+    },
+    "name": "fanbox_post",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "assets": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "kind": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "resource": {
+                "additionalProperties": false,
+                "properties": {
+                  "ref": {
+                    "type": "string"
+                  },
+                  "requires_credentials": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "ref"
+                ],
+                "type": [
+                  "null",
+                  "object"
+                ]
+              },
+              "thumbnail": {
+                "additionalProperties": false,
+                "properties": {
+                  "ref": {
+                    "type": "string"
+                  },
+                  "requires_credentials": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "ref"
+                ],
+                "type": [
+                  "null",
+                  "object"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "kind"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "comment_count": {
+          "type": "integer"
+        },
+        "creator_id": {
+          "type": "string"
+        },
+        "fee_required": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        },
+        "is_pinned": {
+          "type": "boolean"
+        },
+        "is_restricted": {
+          "type": "boolean"
+        },
+        "published_at": {
+          "type": "string"
+        },
+        "restricted_for": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "published_at",
+        "creator_id",
+        "is_restricted",
+        "assets"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Resolve a FANBOX page URL into a typed reference.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "description": "required FANBOX page URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "type": "object"
+    },
+    "name": "fanbox_resolve_url",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "creator_id": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "post_id": {
+          "type": "string"
+        },
+        "tag": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Browse posts from supporting creators.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "description": "maximum items; 0 returns all items",
+          "type": [
+            "null",
+            "integer"
+          ]
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit",
+          "type": [
+            "null",
+            "integer"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "name": "fanbox_supporting",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "pagination": {
+          "additionalProperties": false,
+          "properties": {
+            "has_more": {
+              "type": "boolean"
+            },
+            "limit": {
+              "type": [
+                "null",
+                "integer"
+              ]
+            },
+            "next_page": {
+              "type": [
+                "null",
+                "integer"
+              ]
+            },
+            "page": {
+              "type": "integer"
+            },
+            "returned": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "page",
+            "limit",
+            "returned",
+            "has_more",
+            "next_page"
+          ],
+          "type": "object"
+        },
+        "posts": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "assets": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "resource": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "ref": {
+                          "type": "string"
+                        },
+                        "requires_credentials": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "ref"
+                      ],
+                      "type": [
+                        "null",
+                        "object"
+                      ]
+                    },
+                    "thumbnail": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "ref": {
+                          "type": "string"
+                        },
+                        "requires_credentials": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "ref"
+                      ],
+                      "type": [
+                        "null",
+                        "object"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "comment_count": {
+                "type": "integer"
+              },
+              "creator_id": {
+                "type": "string"
+              },
+              "fee_required": {
+                "type": "integer"
+              },
+              "id": {
+                "type": "string"
+              },
+              "is_pinned": {
+                "type": "boolean"
+              },
+              "is_restricted": {
+                "type": "boolean"
+              },
+              "published_at": {
+                "type": "string"
+              },
+              "restricted_for": {
+                "type": "integer"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "published_at",
+              "creator_id",
+              "is_restricted",
+              "assets"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "posts",
+        "pagination"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "List posts from a creator for one tag.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "creator_id": {
+          "description": "required FANBOX creator id",
+          "type": "string"
+        },
+        "limit": {
+          "description": "maximum items; 0 returns all items",
+          "type": [
+            "null",
+            "integer"
+          ]
+        },
+        "page": {
+          "description": "1-based logical page; requires a positive limit",
+          "type": [
+            "null",
+            "integer"
+          ]
+        },
+        "tag": {
+          "description": "required tag name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "creator_id",
+        "tag"
+      ],
+      "type": "object"
+    },
+    "name": "fanbox_tagged_posts",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "pagination": {
+          "additionalProperties": false,
+          "properties": {
+            "has_more": {
+              "type": "boolean"
+            },
+            "limit": {
+              "type": [
+                "null",
+                "integer"
+              ]
+            },
+            "next_page": {
+              "type": [
+                "null",
+                "integer"
+              ]
+            },
+            "page": {
+              "type": "integer"
+            },
+            "returned": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "page",
+            "limit",
+            "returned",
+            "has_more",
+            "next_page"
+          ],
+          "type": "object"
+        },
+        "posts": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "assets": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "resource": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "ref": {
+                          "type": "string"
+                        },
+                        "requires_credentials": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "ref"
+                      ],
+                      "type": [
+                        "null",
+                        "object"
+                      ]
+                    },
+                    "thumbnail": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "ref": {
+                          "type": "string"
+                        },
+                        "requires_credentials": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "ref"
+                      ],
+                      "type": [
+                        "null",
+                        "object"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "comment_count": {
+                "type": "integer"
+              },
+              "creator_id": {
+                "type": "string"
+              },
+              "fee_required": {
+                "type": "integer"
+              },
+              "id": {
+                "type": "string"
+              },
+              "is_pinned": {
+                "type": "boolean"
+              },
+              "is_restricted": {
+                "type": "boolean"
+              },
+              "published_at": {
+                "type": "string"
+              },
+              "restricted_for": {
+                "type": "integer"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "published_at",
+              "creator_id",
+              "is_restricted",
+              "assets"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "posts",
+        "pagination"
+      ],
+      "type": "object"
+    }
+  }
+]
