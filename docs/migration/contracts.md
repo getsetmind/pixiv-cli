@@ -342,7 +342,7 @@ Rust の `stdio::serve` は改行区切り JSON-RPC を読み、応答の ID を
 
 前節の33ケースも stdio から比較し、ハンドラー前の int64 最大値の拒否を含めて確認する。CLI バイナリの `mcp` コマンドはこの runtime を使う。子プロセスで初期化・tools/list・入力エラー・認証エラー・EOF を実行し、stdout が JSON-RPC のみであること、stderr と終了コードを確認する。
 
-tools/list の Rust 登録は現在 illust_detail だけであり、全54 tools の登録比較は未完了。全 JSON-RPC 構文・不正 UTF-8・重複 key・params/schema の全型と境界・複数の不正 field の診断順、全 ID 型と重複・再利用、開始前の cancel・deadline・disconnect・SIGINT、ログ通知・progress・全並行処理、認証保存/pool lease/credential 更新、CLI の proxy flags と設定・起動エラー、他 OS は未移植または未検証。前節の「stdio/initialize と数値 ID 拒否は未検証」は、ここに示すケースの範囲で解消した。
+tools/list の Rust 登録は現在 illust_detail と search_illust であり、全54 tools の登録比較は未完了。全 JSON-RPC 構文・不正 UTF-8・重複 key・params/schema の全型と境界・複数の不正 field の診断順、全 ID 型と重複・再利用、開始前の cancel・deadline・disconnect・SIGINT、ログ通知・progress・全並行処理、認証保存/pool lease/credential 更新、CLI の proxy flags と設定・起動エラー、他 OS は未移植または未検証。前節の「stdio/initialize と数値 ID 拒否は未検証」は、ここに示すケースの範囲で解消した。
 
 ```text
 go test ./internal/mcpserver/pixiv -run '^TestMigrationMCPRPC' -count=1
@@ -370,3 +370,22 @@ cargo test -p pixiv-sdk --test search_artworks --locked
 ```
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-search` を指定する。
+
+## MCP search_illust の schema・論理ページ・ローカルフィルター
+
+[mcp-search.json](contracts/mcp-search.json) は Go の実 MCP セッションを144ケースで実行する。tool metadata、必須 word、enum・date pattern・minimum・未知 field・入力型・大きな数値の拒否、ハンドラーの検証順、全 SDK 検索条件、論理 page/limit、作品フィルターと bookmark strategy を固定する。SDK には複数ページの fixture を返す HTTP transport を渡し、pool の実行回数・HTTP query・JSON-RPC の生の tool result を記録する。
+
+Rust の外部テストは同じ144ケースを stdio から実行し、schema、検索前の JSON-RPC error、tool result、全 HTTP query を比較する。検索は SDK の型付き request を使い、通常の経路では作品の kind と ID で重複を除き、id・type・全タグ・view/page 件数の条件を論理 skip/limit より前に適用する。limit 省略は最初の非空の論理バッチ、0 は全件を表す。先頭ページが空、または AI フィルターで空になった場合も次ページを取得する。後続ページの失敗では途中までの records を返さず、既定のエラー用 pagination を返す。
+
+bookmark 範囲の auto は local として扱い、App query の bookmark bounds を外して候補を取得し、各作品の公開 bookmark 件数で判定する。best_effort は上流 bounds を残してローカルでも確認する。範囲と採用 strategy を cursor context の digest に含め、バッチ内の limit 到達では SDK checkpoint を作る。filter metadata は範囲・membership unknown・実際の strategy・partial/complete_for_source を返す。server は根拠のない fallback をせず、Go と同じ upstream_unavailable を返す。
+
+範囲なしでも bookmark_strategy を明示すると、Go は通常経路の作品重複除去と illust_filter を適用しない。この経路も比較し、通常検索の処理へ置き換えて挙動を変えない。records の canonical identity と DTO は共有 crate を使い、MCP の structured numbers の float64 変換を pagination と filter にも適用する。
+
+stdio と CLI 子プロセスの tools/list には illust_detail と search_illust を登録する。他52 tools、検索中の cancellation/deadline・pool の再実行と credential 更新・全 account 状態、全 JSON wire 境界と複数不正 field の診断順、cursor 循環の診断、長期 duration の半年/一年と日付境界、他 OS は未移植または未検証。長期 duration の展開は実装しているが、この固定 fixture は実時刻に依存する正常系を含まない。Rust の HTTP query 比較から Go の pool 実行回数の互換まで検証済みとは扱わない。
+
+```text
+go test -race ./internal/mcpserver/pixiv -run '^TestMigrationMCPSearch' -count=1
+cargo test -p pixiv-mcp --test search_illust --locked
+```
+
+基準を意図して更新する場合だけ Go テストの `-args -migration-update-mcp-search` を指定する。

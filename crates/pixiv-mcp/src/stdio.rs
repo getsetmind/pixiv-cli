@@ -11,6 +11,11 @@ use tokio::io::{AsyncBufReadExt, AsyncRead, AsyncWrite, AsyncWriteExt, BufReader
 
 type ResponseFuture<'a> = Pin<Box<dyn Future<Output = Value> + 'a>>;
 
+enum ToolInput {
+    Detail(IllustReference),
+    Search(Box<crate::SearchIllustInput>),
+}
+
 #[derive(Default)]
 struct Session {
     initialized: bool,
@@ -58,7 +63,7 @@ pub async fn serve<T: Transport, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
                     }
                     "ping" => success(id, json!({})),
                     _ if !session.initialized => protocol_error(id,0,format!("method {method:?} is invalid during session initialization")),
-                    "tools/list" => success(id,json!({"tools":[illust_detail_tool()]})),
+                    "tools/list" => success(id,json!({"tools":[illust_detail_tool(),crate::search_illust_tool()]})),
                     "logging/setLevel" => {
                         if params.is_none() || params.is_some_and(Value::is_null) {
                             protocol_error(id,-32600,"invalid request: missing required \"params\"".into())
@@ -70,17 +75,28 @@ pub async fn serve<T: Transport, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
                     "tools/call" => {
                         if let Some(params) = params.filter(|value| !value.is_null()) {
                             let name = params["name"].as_str().unwrap_or_default();
-                            if name != "illust_detail" {
+                            if !matches!(name, "illust_detail" | "search_illust") {
                                 protocol_error(id,-32602,format!("unknown tool {name:?}"))
                             } else {
-                                match decode_reference(params.get("arguments")) {
+                                let input = if name == "search_illust" {
+                                    crate::search::decode(params.get("arguments")).map(|input| ToolInput::Search(Box::new(input)))
+                                } else { decode_reference(params.get("arguments")).map(ToolInput::Detail) };
+                                match input {
                                     Ok(input) => {
                                         let (handle, registration) = AbortHandle::new_pair();
                                         inflight.insert(id.to_string(), handle);
                                         pending.push(Box::pin(async move {
-                                            let result = match Abortable::new(illust_detail(client,input), registration).await {
+                                            let is_search = matches!(&input, ToolInput::Search(_));
+                                            let invoke = async move { match input {
+                                                ToolInput::Detail(input) => illust_detail(client,input).await,
+                                                ToolInput::Search(input) => crate::search_illust(client,*input).await,
+                                            }};
+                                            let result = match Abortable::new(invoke, registration).await {
                                                 Ok(result) => result,
-                                                Err(_) => crate::failure(pixiv_sdk::Error::new(pixiv_sdk::Reason::UpstreamUnavailable,"Artwork").with_detail("pixiv upstream transport failed").to_string()),
+                                                Err(_) => {
+                                                    let message = pixiv_sdk::Error::new(pixiv_sdk::Reason::UpstreamUnavailable,if is_search { "SearchArtworks" } else { "Artwork" }).with_detail("pixiv upstream transport failed").to_string();
+                                                    if is_search { crate::search::failure(message) } else { crate::failure(message) }
+                                                },
                                             };
                                             success(id,serde_json::to_value(result).expect("tool result is serializable"))
                                         }));
@@ -165,7 +181,7 @@ fn decode_reference(arguments: Option<&Value>) -> Result<IllustReference, String
     }
     Ok(input)
 }
-fn value_type(value: &Value) -> &'static str {
+pub(crate) fn value_type(value: &Value) -> &'static str {
     match value {
         Value::Null => "null",
         Value::Bool(_) => "boolean",

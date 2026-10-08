@@ -5,7 +5,9 @@ use pixiv_sdk::{
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
+mod search;
 pub mod stdio;
+pub use search::{IllustFilter, SearchIllustInput, search_illust, search_illust_tool};
 
 #[derive(Clone, Debug, Default, Deserialize)]
 pub struct IllustReference {
@@ -32,6 +34,10 @@ pub struct TextContent {
 #[derive(Debug, Serialize)]
 pub struct Records {
     pub records: Vec<Value>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub pagination: Option<Value>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub filter: Option<Value>,
 }
 
 pub fn illust_detail_tool() -> Value {
@@ -72,6 +78,8 @@ pub async fn illust_detail<T: Transport>(
                 }],
                 structured_content: Records {
                     records: vec![record],
+                    pagination: None,
+                    filter: None,
                 },
                 is_error: false,
             }
@@ -118,7 +126,11 @@ fn failure(error: String) -> CallToolResult {
             kind: "text",
             text: format!("Error: {error}"),
         }],
-        structured_content: Records { records: vec![] },
+        structured_content: Records {
+            records: vec![],
+            pagination: None,
+            filter: None,
+        },
         is_error: true,
     }
 }

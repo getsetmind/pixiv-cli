@@ -714,7 +714,7 @@
       ],
       "differences": [
         "Rust mcp invokes the async stdio runtime. Child-process tests cover initialize/list/detail input and authentication errors, JSON-RPC-only stdout, empty stderr and normal EOF. Thirty Go protocol cases and 33 detail calls are compared through the runtime.",
-        "Only illust_detail is registered. CLI aliases/proxy flags/configuration/startup failures, stored accounts/pool/credential lifetime, all tools, full protocol/transport cancellation/disconnect behavior and other OS remain unverified."
+        "illust_detail and search_illust are registered. CLI aliases/proxy flags/configuration/startup failures, stored accounts/pool/credential lifetime, all tools, full protocol/transport cancellation/disconnect behavior and other OS remain unverified."
       ]
     },
     {
@@ -1381,7 +1381,7 @@
       ],
       "differences": [
         "33 Go session contracts fix actual tool schema, 17 artwork responses and 16 reference inputs, pool/HTTP calls and raw JSON-RPC response results. Rust compares metadata and 32 handler cases with the real SDK. Shared canonical records serve CLI and MCP; MCP structured numbers match the Go wrapper float64 conversion. All 33 calls now compare through stdio including int64-max rejection. A further 30 direct Go JSON-RPC contracts compare negotiation, ping, logging, protocol argument errors and in-flight cancellation; a duplex test checks concurrent ping and transport future release. The CLI mcp process exchanges protocol-only stdout with clean EOF.",
-        "Rust registers only illust_detail; complete 54-tool registration remains pending. Full JSON-RPC syntax/UTF-8/duplicate keys/params/schema types and diagnostic ordering, all ID types/reuse, early cancellation/deadline/disconnect/SIGINT, logging/progress notifications and full concurrency, pool leases/authentication/configuration/proxy flags, other tools and other platforms remain unimplemented or unverified."
+        "Rust registers illust_detail and search_illust; complete 54-tool registration remains pending. Full JSON-RPC syntax/UTF-8/duplicate keys/params/schema types and diagnostic ordering, all ID types/reuse, early cancellation/deadline/disconnect/SIGINT, logging/progress notifications and full concurrency, pool leases/authentication/configuration/proxy flags, other tools and other platforms remain unimplemented or unverified."
       ]
     },
     {
@@ -1626,15 +1626,28 @@
     },
     {
       "id": "mcp:pixiv:search_illust",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "search_illust"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/search.rs",
+        "crates/pixiv-mcp/src/stdio.rs",
+        "crates/pixiv-sdk/src/search.rs",
+        "crates/pixiv-record/src/lib.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_search_test.go#TestMigrationMCPSearchMatchesFrozenFiltersLogicalPagesAndBookmarkStrategies",
+        "crates/pixiv-mcp/tests/search_illust.rs#search_tool_matches_go_schema_logical_pages_filters_and_bookmark_strategies"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "Go MCP の144ケースで schema、検証、論理 page/limit、全 SDK 検索条件、空ページ補充、重複除去・作品フィルター、bookmark strategy/bounds/checkpoint/filter metadata、部分結果の破棄を固定し、Rust stdio の結果と全 HTTP query を比較した。範囲なしで strategy を指定した場合の重複・illust_filter の非適用も保持した。",
+        "半年/一年の長期 duration・日付境界、全 JSON wire 境界と複数不正 field の診断順、cursor 循環、検索 cancellation/deadline、pool 再実行・credential/account 状態、他 OS は未移植または未検証。Go の pool 実行回数も記録するが、Rust の pool 互換は未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:search_novel",
@@ -5730,7 +5743,7 @@
         "windows-amd64"
       ],
       "differences": [
-        "型付き検索 request、全検索条件・AI only のローカルフィルター・全ページ・checkpoint・アカウント/client instance の cursor binding を118ケースで Go/Rust 比較した。CLI は先頭ページの試作。CLI/MCP の全条件・出力・ページ上限、全 JSON wire 境界・cursor payload の大文字小文字/重複 key、複数不正値の全検証順、constructor の乱数生成失敗、通信・認証保存、他 OS は未実装または未検証。"
+        "型付き検索 request、全検索条件・AI only のローカルフィルター・全ページ・checkpoint・アカウント/client instance の cursor binding を118ケースで Go/Rust 比較した。CLI は先頭ページの試作。CLI の全条件・出力・ページ上限、MCP の残る境界、全 JSON wire 境界・cursor payload の大文字小文字/重複 key、複数不正値の全検証順、constructor の乱数生成失敗、通信・認証保存、他 OS は未実装または未検証。"
       ]
     },
     {
@@ -6247,7 +6260,7 @@
         "windows-amd64"
       ],
       "differences": [
-        "型付き検索 request、全検索条件・AI only のローカルフィルター・全ページ・checkpoint・アカウント/client instance の cursor binding を118ケースで Go/Rust 比較した。CLI は先頭ページの試作。CLI/MCP の全条件・出力・ページ上限、全 JSON wire 境界・cursor payload の大文字小文字/重複 key、複数不正値の全検証順、constructor の乱数生成失敗、通信・認証保存、他 OS は未実装または未検証。"
+        "型付き検索 request、全検索条件・AI only のローカルフィルター・全ページ・checkpoint・アカウント/client instance の cursor binding を118ケースで Go/Rust 比較した。CLI は先頭ページの試作。CLI の全条件・出力・ページ上限、MCP の残る境界、全 JSON wire 境界・cursor payload の大文字小文字/重複 key、複数不正値の全検証順、constructor の乱数生成失敗、通信・認証保存、他 OS は未実装または未検証。"
       ]
     },
     {
@@ -8547,7 +8560,7 @@
         "windows-amd64"
       ],
       "differences": [
-        "型付き検索 request、全検索条件・AI only のローカルフィルター・全ページ・checkpoint・アカウント/client instance の cursor binding を118ケースで Go/Rust 比較した。CLI は先頭ページの試作。CLI/MCP の全条件・出力・ページ上限、全 JSON wire 境界・cursor payload の大文字小文字/重複 key、複数不正値の全検証順、constructor の乱数生成失敗、通信・認証保存、他 OS は未実装または未検証。"
+        "型付き検索 request、全検索条件・AI only のローカルフィルター・全ページ・checkpoint・アカウント/client instance の cursor binding を118ケースで Go/Rust 比較した。CLI は先頭ページの試作。CLI の全条件・出力・ページ上限、MCP の残る境界、全 JSON wire 境界・cursor payload の大文字小文字/重複 key、複数不正値の全検証順、constructor の乱数生成失敗、通信・認証保存、他 OS は未実装または未検証。"
       ]
     },
     {

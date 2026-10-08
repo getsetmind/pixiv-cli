@@ -250,6 +250,9 @@ async fn stdio_publishes_implemented_tool_metadata_and_preserves_request_ids() {
     assert_eq!(responses[1]["id"], "list");
     assert_eq!(
         responses[1]["result"]["tools"],
-        json!([pixiv_mcp::illust_detail_tool()])
+        json!([
+            pixiv_mcp::illust_detail_tool(),
+            pixiv_mcp::search_illust_tool()
+        ])
     );
 }

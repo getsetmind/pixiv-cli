@@ -48,6 +48,11 @@ fn mcp_process_exchanges_jsonrpc_without_stdout_diagnostics_or_credentials() {
             .unwrap()
     };
     assert_eq!(by_id("list")["result"]["tools"][0]["name"], "illust_detail");
+    assert_eq!(by_id("list")["result"]["tools"][1]["name"], "search_illust");
+    assert_eq!(
+        by_id("list")["result"]["tools"].as_array().unwrap().len(),
+        2
+    );
     assert_eq!(
         by_id("invalid")["result"]["content"][0]["text"],
         "Error: provide exactly one of illust_id or url"
