@@ -1,16 +1,18 @@
 <div align="center">
 
-# pixiv-cli
+# pixiv-cli-rs
 
-**Pixiv CLI · MCP stdio server · Go SDK**
+**pixiv-cli の Rust 移植 · CLI / MCP / SDK**
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md)
 
-<p><a href="https://github.com/FlanChanXwO/pixiv-cli/actions/workflows/ci.yml"><img alt="Quality gate" src="https://github.com/FlanChanXwO/pixiv-cli/actions/workflows/ci.yml/badge.svg?event=push"></a> <a href="https://github.com/FlanChanXwO/pixiv-cli/releases/latest"><img alt="Release" src="https://img.shields.io/github/v/release/FlanChanXwO/pixiv-cli?style=flat-square"></a> <a href="go.mod"><img alt="Go" src="https://img.shields.io/github/go-mod/go-version/FlanChanXwO/pixiv-cli?style=flat-square"></a> <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/FlanChanXwO/pixiv-cli?style=flat-square"></a> <img alt="Views" src="https://hits.sh/github.com/FlanChanXwO/pixiv-cli.svg?style=flat-square&amp;label=views"></p>
+<p><a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue.svg"></a></p>
 
 [インストール](#インストール) · [クイックスタート](#60秒クイックスタート) · [インターフェース](#インターフェースの選択) · [ドキュメント](#ドキュメント)
 
 </div>
+
+`pixiv-cli-rs` は [FlanChanXwO/pixiv-cli](https://github.com/FlanChanXwO/pixiv-cli) を派生元とし、[getsetmind](https://github.com/getsetmind) が開発するプロジェクトです。Rust への移植は進行中で、全機能の互換性はまだ揃っていません。以下は、引き継いだ Go 実装と派生元の配布方法についての説明です。
 
 `pixiv-cli` は Pixiv のエコシステムをターミナルに持ち込みます。作品と作者の探索、アカウントとコレクションの管理、作者のフォロー、作品のブックマーク、ビジュアル作品のダウンロードに対応します。独立した非公式のサードパーティ製 CLI・MCP サーバー・公開 Go SDK であり、Pixiv 株式会社との提携や承認関係はありません。CLI と MCP サーバーは同じ公開 Go SDK を呼び出し、認証済みの情報源として Pixiv App API を使用します。Pixiv の規約と適用法に従って使用してください。
 
@@ -295,4 +297,6 @@ pixiv auth check
 
 ## ライセンス
 
-[MIT](LICENSE) © FlanChanXwO
+[MIT License](LICENSE) で公開しています。
+
+[FlanChanXwO/pixiv-cli](https://github.com/FlanChanXwO/pixiv-cli) を基に開発しています。

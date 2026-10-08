@@ -1,16 +1,18 @@
 <div align="center">
 
-# pixiv-cli
+# pixiv-cli-rs
 
-**Pixiv CLI · MCP stdio server · Go SDK**
+**Rust migration of pixiv-cli · CLI / MCP / SDK**
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md)
 
-<p><a href="https://github.com/FlanChanXwO/pixiv-cli/actions/workflows/ci.yml"><img alt="Quality gate" src="https://github.com/FlanChanXwO/pixiv-cli/actions/workflows/ci.yml/badge.svg?event=push"></a> <a href="https://github.com/FlanChanXwO/pixiv-cli/releases/latest"><img alt="Release" src="https://img.shields.io/github/v/release/FlanChanXwO/pixiv-cli?style=flat-square"></a> <a href="go.mod"><img alt="Go" src="https://img.shields.io/github/go-mod/go-version/FlanChanXwO/pixiv-cli?style=flat-square"></a> <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/FlanChanXwO/pixiv-cli?style=flat-square"></a> <img alt="Views" src="https://hits.sh/github.com/FlanChanXwO/pixiv-cli.svg?style=flat-square&amp;label=views"> <a href="https://t.me/+UJIKKEnYt1VjYmM9"><img alt="Telegram" src="https://img.shields.io/badge/Telegram-2CA5E0?style=flat-square&amp;logo=telegram&amp;logoColor=white"></a></p>
+<p><a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue.svg"></a></p>
 
 [Install](#install) · [Quick start](#60-second-quick-start) · [Interfaces](#choose-your-interface) · [Documentation](#documentation)
 
 </div>
+
+`pixiv-cli-rs` is a derivative of [FlanChanXwO/pixiv-cli](https://github.com/FlanChanXwO/pixiv-cli), maintained by [getsetmind](https://github.com/getsetmind). The Rust implementation is in progress; full feature parity has not been reached. The following sections document the retained Go implementation and upstream distribution channels.
 
 `pixiv-cli` brings the Pixiv ecosystem to the terminal: discover works and creators, manage accounts and collections, follow artists, bookmark artworks, and download visual works. It is an independent, unofficial third-party CLI, MCP server, and public Go SDK; it is not affiliated with or endorsed by Pixiv Inc. The CLI and MCP server both call the same public Go SDK, with the Pixiv App API as the authenticated source of truth. Use it in accordance with Pixiv's terms and applicable law.
 
@@ -307,4 +309,6 @@ pixiv auth check
 
 ## License
 
-[MIT](LICENSE) © FlanChanXwO
+Licensed under the [MIT License](LICENSE).
+
+Based on [FlanChanXwO/pixiv-cli](https://github.com/FlanChanXwO/pixiv-cli).

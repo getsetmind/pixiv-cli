@@ -1,16 +1,18 @@
 <div align="center">
 
-# pixiv-cli
+# pixiv-cli-rs
 
-**Pixiv CLI · MCP stdio server · Go SDK**
+**pixiv-cli 的 Rust 移植 · CLI / MCP / SDK**
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md)
 
-<p><a href="https://github.com/FlanChanXwO/pixiv-cli/actions/workflows/ci.yml"><img alt="Quality gate" src="https://github.com/FlanChanXwO/pixiv-cli/actions/workflows/ci.yml/badge.svg?event=push"></a> <a href="https://github.com/FlanChanXwO/pixiv-cli/releases/latest"><img alt="Release" src="https://img.shields.io/github/v/release/FlanChanXwO/pixiv-cli?style=flat-square"></a> <a href="go.mod"><img alt="Go" src="https://img.shields.io/github/go-mod/go-version/FlanChanXwO/pixiv-cli?style=flat-square"></a> <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/FlanChanXwO/pixiv-cli?style=flat-square"></a> <img alt="Views" src="https://hits.sh/github.com/FlanChanXwO/pixiv-cli.svg?style=flat-square&amp;label=views"> <a href="https://t.me/+UJIKKEnYt1VjYmM9"><img alt="Telegram" src="https://img.shields.io/badge/Telegram-2CA5E0?style=flat-square&amp;logo=telegram&amp;logoColor=white"></a></p>
+<p><a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue.svg"></a></p>
 
 [安装](#安装) · [快速开始](#60-秒快速开始) · [使用入口](#选择使用入口) · [文档](#文档)
 
 </div>
+
+`pixiv-cli-rs` 派生自 [FlanChanXwO/pixiv-cli](https://github.com/FlanChanXwO/pixiv-cli)，由 [getsetmind](https://github.com/getsetmind) 开发。Rust 移植仍在进行中，尚未实现完整的功能兼容。以下内容介绍保留的 Go 实现和原项目的发行方式。
 
 `pixiv-cli` 把 Pixiv 生态带到终端：发现作品与创作者、管理账号和作品收藏、关注创作者，并下载视觉作品。它提供独立的非官方 CLI、MCP server 和 public Go SDK，与 Pixiv Inc. 无隶属或背书关系。CLI 与 MCP server 共同调用 public Go SDK，并以 Pixiv App API 作为已认证能力的数据源；使用时请遵守 Pixiv 条款与适用法律。
 
@@ -306,4 +308,6 @@ pixiv auth check
 
 ## 许可证
 
-[MIT](LICENSE) © FlanChanXwO
+本项目采用 [MIT License](LICENSE)。
+
+基于 [FlanChanXwO/pixiv-cli](https://github.com/FlanChanXwO/pixiv-cli) 开发。

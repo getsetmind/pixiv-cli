@@ -1,0 +1,23 @@
+[workspace]
+resolver = "3"
+members = ["crates/pixiv-sdk", "crates/pixiv-cli"]
+exclude = ["internal/media/ugoira/rust", "third_party/rust/quantette-0.6.0"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+authors = ["getsetmind"]
+repository = "https://github.com/getsetmind/pixiv-cli-rs"
+
+[workspace.dependencies]
+base64 = "0.22"
+chrono = { version = "0.4", features = ["serde"] }
+clap = { version = "4.6", features = ["derive"] }
+getrandom = "0.3"
+reqwest = { version = "0.13", default-features = false, features = ["rustls", "json", "query", "form", "gzip", "socks"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "time", "io-std", "io-util", "signal", "sync"] }
+url = "2"
