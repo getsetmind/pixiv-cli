@@ -351,3 +351,17 @@ cargo test -p pixiv-cli-rs --test mcp_stdio --locked
 ```
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-mcp-rpc` を指定する。
+
+## SearchArtworks の検索条件・ページ送り・checkpoint 基準
+
+[search-artworks.json](contracts/search-artworks.json) は固定 Go SDK の114ケースを記録する。検索語、target、sort、期間、日付、content type、AI mode、縦横比、解像度、tool、bookmark 範囲、cursor context の既定値・有効値・不正値を含む。実際の HTTP query、完全な Artwork DTO、次ページの cursor、エラー理由とメッセージを保存する。既存の作品詳細 fixture も検索応答に使い、返却項目の欠落を確認できるようにする。
+
+AI の only は取得後のローカルフィルターであり、checkpoint の消費位置はフィルター後の件数に対して適用する。途中ページがフィルターで空になっても次ページは残る。checkpoint の加算・超過・整数 overflow、検索語と cursor context の変更、旧 binding と別 continuation kind を含む。OAuth で確認したアカウントと未確認の client instance の双方で、同一・別 client による cursor 再利用を検証する。ランダムな instance ID だけを固定文字列へ正規化し、再利用の成否は実際の異なる client で確認する。
+
+この追加は Go 基準の固定であり、Rust の比較テストと型付き検索 request、全条件、ページ送り、checkpoint は未実装。既存の Rust 検索は先頭ページの試作であり、SDK の検索互換を検証済みとは扱わない。CLI/MCP の検索条件・出力・ページ上限、全 JSON wire 境界と複数不正値の検証順、通信・認証保存・他 OS も未検証。
+
+```text
+go test -race ./sdk/pixiv -run '^TestMigrationSearchArtworks' -count=1
+```
+
+基準を意図して更新する場合だけ Go テストの `-args -migration-update-search` を指定する。

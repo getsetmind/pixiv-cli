@@ -5711,15 +5711,19 @@
     },
     {
       "id": "sdk/pixiv:Client.CheckpointSearchArtworks",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.CheckpointSearchArtworks"
       },
       "rust_sources": [],
-      "tests": [],
+      "tests": [
+        "sdk/pixiv/migration_search_test.go#TestMigrationSearchArtworksMatchesFrozenFiltersPagesAndCheckpoints"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Go の検索条件・AI only のローカルフィルター・全ページ・checkpoint・アカウント/client instance の cursor binding を114ケースで固定した。Rust の比較テスト、型付き request、条件・ページ送り・checkpoint は未実装。既存の Rust search は先頭ページの試作。CLI/MCP、全 JSON wire 境界・検証順、通信・認証保存、他 OS は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.CloseIdleConnections",
@@ -6216,15 +6220,21 @@
     },
     {
       "id": "sdk/pixiv:Client.SearchArtworks",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.SearchArtworks"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_search_test.go#TestMigrationSearchArtworksMatchesFrozenFiltersPagesAndCheckpoints"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Go の検索条件・AI only のローカルフィルター・全ページ・checkpoint・アカウント/client instance の cursor binding を114ケースで固定した。Rust の比較テスト、型付き request、条件・ページ送り・checkpoint は未実装。既存の Rust search は先頭ページの試作。CLI/MCP、全 JSON wire 境界・検証順、通信・認証保存、他 OS は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.SearchNovels",
@@ -8504,15 +8514,19 @@
     },
     {
       "id": "sdk/pixiv:SearchArtworksRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:SearchArtworksRequest"
       },
       "rust_sources": [],
-      "tests": [],
+      "tests": [
+        "sdk/pixiv/migration_search_test.go#TestMigrationSearchArtworksMatchesFrozenFiltersPagesAndCheckpoints"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Go の検索条件・AI only のローカルフィルター・全ページ・checkpoint・アカウント/client instance の cursor binding を114ケースで固定した。Rust の比較テスト、型付き request、条件・ページ送り・checkpoint は未実装。既存の Rust search は先頭ページの試作。CLI/MCP、全 JSON wire 境界・検証順、通信・認証保存、他 OS は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:SearchAspectRatio",
