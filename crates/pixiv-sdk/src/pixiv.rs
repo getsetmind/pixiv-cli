@@ -1,6 +1,7 @@
 pub use crate::artwork::{ResourcePolicy, artwork_variant_resource};
 pub use crate::bookmark::{
-    ArtworkBookmarkRequest, NovelBookmarkRequest, UserNovelBookmarkTagsRequest,
+    ArtworkBookmarkRequest, NovelBookmarkRequest, UserArtworkBookmarkTagsRequest,
+    UserNovelBookmarkTagsRequest,
 };
 pub use crate::mutation::*;
 use crate::{

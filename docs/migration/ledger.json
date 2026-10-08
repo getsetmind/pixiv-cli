@@ -5423,14 +5423,17 @@
       ],
       "tests": [
         "sdk/pixiv/migration_bookmark_tags_test.go#TestMigrationNovelBookmarkTagsMatchFrozenValidationAndDTOs",
-        "crates/pixiv-sdk/tests/novel_bookmark_tags.rs#novel_bookmark_tags_preserve_required_arrays_counts_and_reject_continuation_before_io"
+        "crates/pixiv-sdk/tests/novel_bookmark_tags.rs#novel_bookmark_tags_preserve_required_arrays_counts_and_reject_continuation_before_io",
+        "sdk/pixiv/migration_artwork_tags_test.go#TestMigrationArtworkBookmarkTagsMatchFrozenPagesAndCursors",
+        "crates/pixiv-sdk/tests/artwork_bookmark_tags.rs#artwork_bookmark_tag_pages_and_bound_cursors_match_go_without_replaying_next_urls"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
         "38 fixed Go fixture cases compare novel bookmark tag validation order, pre-network cursor rejection, path/query, HTTP errors, required arrays, name/count mapping and DTOs; Go int on supported 64-bit targets maps to Rust i64.",
-        "Artwork bookmark tag pagination, JSON key case/duplicates/invalid UTF-8, real transport integration, full authentication/cancellation/deadline, CLI/MCP, live service and other platforms remain unverified."
+        "JSON key case/duplicates/invalid UTF-8, real transport integration, full authentication/cancellation/deadline, CLI/MCP, live service and other platforms remain unverified.",
+        "61 fixed Go artwork bookmark tag cases compare required arrays, DTOs, next URL offset extraction, bound cursor strings/payload validation and a three-page sequence with an empty middle page. Artwork request uses the novel request type alias. Full JSON key case/duplicates/invalid UTF-8, URL syntax edges, real transport/full HTTP and retry conditions, authentication/cancellation/deadline, CLI/MCP, live service and other platforms remain unverified."
       ]
     },
     {
@@ -5448,14 +5451,17 @@
       ],
       "tests": [
         "sdk/pixiv/migration_bookmark_tags_test.go#TestMigrationNovelBookmarkTagsMatchFrozenValidationAndDTOs",
-        "crates/pixiv-sdk/tests/novel_bookmark_tags.rs#novel_bookmark_tags_preserve_required_arrays_counts_and_reject_continuation_before_io"
+        "crates/pixiv-sdk/tests/novel_bookmark_tags.rs#novel_bookmark_tags_preserve_required_arrays_counts_and_reject_continuation_before_io",
+        "sdk/pixiv/migration_artwork_tags_test.go#TestMigrationArtworkBookmarkTagsMatchFrozenPagesAndCursors",
+        "crates/pixiv-sdk/tests/artwork_bookmark_tags.rs#artwork_bookmark_tag_pages_and_bound_cursors_match_go_without_replaying_next_urls"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
         "38 fixed Go fixture cases compare novel bookmark tag validation order, pre-network cursor rejection, path/query, HTTP errors, required arrays, name/count mapping and DTOs; Go int on supported 64-bit targets maps to Rust i64.",
-        "Artwork bookmark tag pagination, JSON key case/duplicates/invalid UTF-8, real transport integration, full authentication/cancellation/deadline, CLI/MCP, live service and other platforms remain unverified."
+        "JSON key case/duplicates/invalid UTF-8, real transport integration, full authentication/cancellation/deadline, CLI/MCP, live service and other platforms remain unverified.",
+        "61 fixed Go artwork bookmark tag cases compare required arrays, DTOs, next URL offset extraction, bound cursor strings/payload validation and a three-page sequence with an empty middle page. Artwork request uses the novel request type alias. Full JSON key case/duplicates/invalid UTF-8, URL syntax edges, real transport/full HTTP and retry conditions, authentication/cancellation/deadline, CLI/MCP, live service and other platforms remain unverified."
       ]
     },
     {
@@ -6340,15 +6346,26 @@
     },
     {
       "id": "sdk/pixiv:Client.UserArtworkBookmarkTags",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.UserArtworkBookmarkTags"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/bookmark.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/cursor.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_artwork_tags_test.go#TestMigrationArtworkBookmarkTagsMatchFrozenPagesAndCursors",
+        "crates/pixiv-sdk/tests/artwork_bookmark_tags.rs#artwork_bookmark_tag_pages_and_bound_cursors_match_go_without_replaying_next_urls"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "61 fixed Go artwork bookmark tag cases compare required arrays, DTOs, next URL offset extraction, bound cursor strings/payload validation and a three-page sequence with an empty middle page. Artwork request uses the novel request type alias. Full JSON key case/duplicates/invalid UTF-8, URL syntax edges, real transport/full HTTP and retry conditions, authentication/cancellation/deadline, CLI/MCP, live service and other platforms remain unverified."
+      ]
     },
     {
       "id": "sdk/pixiv:Client.UserArtworks",
@@ -8899,14 +8916,17 @@
       ],
       "tests": [
         "sdk/pixiv/migration_bookmark_tags_test.go#TestMigrationNovelBookmarkTagsMatchFrozenValidationAndDTOs",
-        "crates/pixiv-sdk/tests/novel_bookmark_tags.rs#novel_bookmark_tags_preserve_required_arrays_counts_and_reject_continuation_before_io"
+        "crates/pixiv-sdk/tests/novel_bookmark_tags.rs#novel_bookmark_tags_preserve_required_arrays_counts_and_reject_continuation_before_io",
+        "sdk/pixiv/migration_artwork_tags_test.go#TestMigrationArtworkBookmarkTagsMatchFrozenPagesAndCursors",
+        "crates/pixiv-sdk/tests/artwork_bookmark_tags.rs#artwork_bookmark_tag_pages_and_bound_cursors_match_go_without_replaying_next_urls"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
         "38 fixed Go fixture cases compare novel bookmark tag validation order, pre-network cursor rejection, path/query, HTTP errors, required arrays, name/count mapping and DTOs; Go int on supported 64-bit targets maps to Rust i64.",
-        "Artwork bookmark tag pagination, JSON key case/duplicates/invalid UTF-8, real transport integration, full authentication/cancellation/deadline, CLI/MCP, live service and other platforms remain unverified."
+        "JSON key case/duplicates/invalid UTF-8, real transport integration, full authentication/cancellation/deadline, CLI/MCP, live service and other platforms remain unverified.",
+        "61 fixed Go artwork bookmark tag cases compare required arrays, DTOs, next URL offset extraction, bound cursor strings/payload validation and a three-page sequence with an empty middle page. Artwork request uses the novel request type alias. Full JSON key case/duplicates/invalid UTF-8, URL syntax edges, real transport/full HTTP and retry conditions, authentication/cancellation/deadline, CLI/MCP, live service and other platforms remain unverified."
       ]
     },
     {
@@ -9624,15 +9644,26 @@
     },
     {
       "id": "sdk/pixiv:UserArtworkBookmarkTagsRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:UserArtworkBookmarkTagsRequest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/bookmark.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/cursor.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_artwork_tags_test.go#TestMigrationArtworkBookmarkTagsMatchFrozenPagesAndCursors",
+        "crates/pixiv-sdk/tests/artwork_bookmark_tags.rs#artwork_bookmark_tag_pages_and_bound_cursors_match_go_without_replaying_next_urls"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "61 fixed Go artwork bookmark tag cases compare required arrays, DTOs, next URL offset extraction, bound cursor strings/payload validation and a three-page sequence with an empty middle page. Artwork request uses the novel request type alias. Full JSON key case/duplicates/invalid UTF-8, URL syntax edges, real transport/full HTTP and retry conditions, authentication/cancellation/deadline, CLI/MCP, live service and other platforms remain unverified."
+      ]
     },
     {
       "id": "sdk/pixiv:UserArtworksRequest",

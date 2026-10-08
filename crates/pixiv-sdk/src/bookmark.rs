@@ -1,5 +1,6 @@
 use crate::{Client, Error, Reason, Result, models::ArtworkBookmarkDetail, transport::Transport};
 use serde::Deserialize;
+use sha2::{Digest, Sha256};
 
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct ArtworkBookmarkRequest {
@@ -32,6 +33,99 @@ pub struct UserNovelBookmarkTagsRequest {
     pub restrict: crate::mutation::Restrict,
     pub cursor: crate::cursor::Cursor,
 }
+pub type UserArtworkBookmarkTagsRequest = UserNovelBookmarkTagsRequest;
+
+#[derive(Default, Deserialize)]
+struct Continuation {
+    k: Option<String>,
+    v: Option<i64>,
+    s: Option<i64>,
+    p: Option<std::collections::BTreeMap<String, Option<Vec<String>>>>,
+}
+
+fn tag_query_digest(user_id: i64, restrict: &str) -> String {
+    let query = url::form_urlencoded::Serializer::new(String::new())
+        .extend_pairs([("restrict", restrict), ("user_id", &user_id.to_string())])
+        .finish();
+    format!("{:x}", Sha256::digest(format!("{query}&").as_bytes()))
+}
+
+fn tag_offset(
+    cursor: &crate::cursor::Cursor,
+    operation: &'static str,
+    digest: &str,
+) -> Result<i64> {
+    if cursor.is_zero() {
+        return Ok(0);
+    }
+    let invalid = |detail| Error::new(Reason::InvalidCursor, operation).with_detail(detail);
+    cursor
+        .validate("pixiv", operation, 1, digest)
+        .map_err(|_| invalid("cursor does not match this operation and query"))?;
+    let payload = cursor
+        .payload()
+        .map_err(|_| invalid("cursor payload is unavailable"))?;
+    let state: Option<Continuation> =
+        serde_json::from_slice(&payload).map_err(|_| invalid("cursor payload is malformed"))?;
+    let state = state.unwrap_or_default();
+    let key = state.k.unwrap_or_default();
+    let value = state.v.unwrap_or_default();
+    let params = state.p.unwrap_or_default();
+    if value < 0
+        || state.s.unwrap_or_default() < 0
+        || (key.is_empty() && params.is_empty())
+        || (!key.is_empty() && !params.is_empty())
+    {
+        return Err(invalid("cursor payload is malformed"));
+    }
+    if key != "offset" {
+        return Err(invalid("cursor continuation kind mismatch"));
+    }
+    if value <= 0 {
+        return Err(invalid("cursor continuation offset must be positive"));
+    }
+    Ok(value)
+}
+
+fn next_tag_offset(raw: &str) -> Option<i64> {
+    let (scheme, remainder) = raw.split_once("://")?;
+    if scheme != "https" || raw.bytes().any(|byte| byte < 32 || byte == 127) {
+        return None;
+    }
+    let (authority, path) = remainder.split_once('/')?;
+    if !matches!(authority, "app-api.pixiv.net" | "app-api.pixiv.net:") {
+        return None;
+    }
+    let (path, fragment) = path.split_once('#').map_or((path, ""), |(p, f)| (p, f));
+    if !fragment.is_empty() {
+        return None;
+    }
+    let (path, query) = path.split_once('?')?;
+    if path != "v1/user/bookmark-tags/illust" || query.contains(';') {
+        return None;
+    }
+    let bytes = query.as_bytes();
+    for (index, byte) in bytes.iter().enumerate() {
+        if *byte == b'%'
+            && (bytes.get(index + 1).is_none_or(|b| !b.is_ascii_hexdigit())
+                || bytes.get(index + 2).is_none_or(|b| !b.is_ascii_hexdigit()))
+        {
+            return None;
+        }
+    }
+    let mut entries = std::collections::BTreeMap::new();
+    for (key, value) in url::form_urlencoded::parse(bytes) {
+        if !matches!(key.as_ref(), "offset" | "user_id" | "restrict")
+            || entries
+                .insert(key.into_owned(), value.into_owned())
+                .is_some()
+        {
+            return None;
+        }
+    }
+    let value = entries.get("offset")?.parse::<i64>().ok()?;
+    (value > 0).then_some(value)
+}
 
 #[derive(Deserialize)]
 struct TagsEnvelope {
@@ -45,6 +139,68 @@ struct CountedTag {
 }
 
 impl<T: Transport> Client<T> {
+    pub async fn user_artwork_bookmark_tags(
+        &self,
+        request: UserArtworkBookmarkTagsRequest,
+    ) -> Result<crate::cursor::Page<crate::models::BookmarkTag>> {
+        let operation = "UserArtworkBookmarkTags";
+        if request.user_id <= 0 {
+            return Err(Error::new(Reason::InvalidArgument, operation)
+                .with_detail("user ID must be positive"));
+        }
+        if !matches!(request.restrict.as_str(), "" | "public" | "private") {
+            return Err(Error::new(Reason::InvalidArgument, operation)
+                .with_detail("restrict is unsupported"));
+        }
+        let digest = tag_query_digest(request.user_id, &request.restrict);
+        let offset = tag_offset(&request.cursor, operation, &digest)?;
+        let mut query = vec![
+            ("user_id".into(), request.user_id.to_string()),
+            ("restrict".into(), request.restrict),
+        ];
+        if offset > 0 {
+            query.push(("offset".into(), offset.to_string()));
+        }
+        let body = self
+            .get("/v1/user/bookmark-tags/illust", query, operation)
+            .await?;
+        let malformed = || Error::new(Reason::MalformedUpstreamResponse, operation);
+        let envelope: Option<TagsEnvelope> =
+            serde_json::from_value(body).map_err(|_| malformed())?;
+        let envelope = envelope.ok_or_else(malformed)?;
+        let items = envelope
+            .bookmark_tags
+            .ok_or_else(malformed)?
+            .into_iter()
+            .map(|tag| {
+                let tag = tag.unwrap_or_default();
+                let name = tag.name.unwrap_or_default();
+                if name.is_empty() {
+                    return Err(malformed());
+                }
+                Ok(crate::models::BookmarkTag {
+                    name,
+                    count: tag.count.unwrap_or_default(),
+                })
+            })
+            .collect::<Result<Vec<_>>>()?;
+        let next = match envelope.next_url {
+            None => crate::cursor::Cursor::default(),
+            Some(raw) => {
+                let offset = next_tag_offset(&raw).ok_or_else(malformed)?;
+                let payload = format!("{{\"k\":\"offset\",\"v\":{offset}}}");
+                crate::cursor::Cursor::new(
+                    "pixiv",
+                    operation,
+                    1,
+                    &digest,
+                    payload.as_bytes(),
+                    Default::default(),
+                )?
+            }
+        };
+        Ok(crate::cursor::Page { items, next })
+    }
     pub async fn user_novel_bookmark_tags(
         &self,
         request: UserNovelBookmarkTagsRequest,

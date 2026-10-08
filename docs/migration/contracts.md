@@ -251,3 +251,18 @@ cargo test -p pixiv-sdk --test novel_bookmark_tags --locked
 ```
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-bookmark-tags` を指定する。
+
+## 作品のブックマークタグ一覧とページ送り
+
+[artwork-bookmark-tags.json](contracts/artwork-bookmark-tags.json) は Go の61ケースを固定する。必須配列・名前・件数、next_url の host/path/query と正の offset、cursor の product/operation/binding/query digest・payload と検証順序、送信 query、各ページの DTO と cursor 文字列を比較する。先頭→空の中間→最終の3ページも同じ client で取得する。
+
+Rust の `user_artwork_bookmark_tags` は `UserArtworkBookmarkTagsRequest`（小説用 request の type alias）を受け取る。next_url は継続 offset だけを取り出し、元の user_id・restrict を保持して次の要求を組み立てる。次の URL に書かれた異なる user_id・restrict は採用しない。cursor は Go と同じ query digest と payload 形式を使い、保存済みの文字列を受け入れる。binding の不一致や不正 payload、0 以下の offset は通信前に拒否する。
+
+Windows amd64 の fixture 比較であり、全 JSON キーの大小文字・重複・不正 UTF-8、URL の全構文境界、実 transport・全 HTTP/retry 条件、全認証・取消/deadline、CLI/MCP、実サービス、他 OS は未検証。
+
+```text
+go test ./sdk/pixiv -run '^TestMigrationArtworkBookmarkTags' -count=1
+cargo test -p pixiv-sdk --test artwork_bookmark_tags --locked
+```
+
+基準を意図して更新する場合だけ Go テストの `-args -migration-update-artwork-tags` を指定する。
