@@ -655,12 +655,10 @@
         "windows-amd64"
       ],
       "differences": [
-        "122 fixed Go detail input/error-exit cases and 72 SDK-to-detail output cases compare source parsing before client construction, plain/JSON errors and exit 1, human output and HTML captions, JSON DTOs and canonical NDJSON records. Rust production artwork_detail receives a real SDK client and output writer; fixture transports remain in tests. A further 27 writer contracts preserve partial output, command_failed diagnostics and exit status; only NDJSON BrokenPipe succeeds silently. Production finish_command retains io::Error causes and is shared by the binary.",
-        "Successful CLI process/network integration, TTY/configuration, record/text pipelines and aggregate JSON, OS/process BrokenPipe and stderr failures, all HTML and Unicode version differences, all flags/aliases and conflict errors, novel/user/content, account/authentication/transport, MCP and other platforms remain unverified.",
-        "CommandConnectionの25ケースでproxy/interval/errorと実HTTP transport構築可否を比較し、選択したintervalをtransportへ渡す。共有HTTP pacingをGoのOpenWith後のcontent/resource redirect/mutation 5通信とRust実socketで比較（観測差5ms）。clone間でlast startを共有する。Goのdefault SDK HTTP timeout=0を再現しRust試作の60秒制限を削除。仮想61秒で保留responseが存続し、pacing待機task abort後も残り時間で次requestが再開することを確認。SDK Options全体/client再構築/pool replayの寿命/context取消/deadline/全競合/App API redirect/TLS/SOCKS wire/pool/idle cleanup/CLI/MCP bootstrap/他OSは未完了または未検証。",
-        "作品詳細 CLI を既存 .pixiv-cli の設定・DB・実 Execution へ接続。実 Go detailDeps の12ケースで隔離ホームの Rust 子プロセスの認証/設定エラーを比較。既存72出力/27writerケースは refresh CAS・実 DB・CLI presenter でも同じ期待値を検証。正常系 CLI 子プロセス HTTPS、初回設定生成、startup、proxy flags、全entity/record入力、MCP、content Context取消と通信/OS差は未実装または未検証。",
-        "作品詳細の初回設定作成と Runtime 検証を入力より先へ接続。Go 実 DefaultStore 4ケースと実 Run/root 10ケースで bytes・既存設定保持・エラー順序・DB有無を比較。Unix mode テストは Windows では未実行。Close エラーの報告は未移植、filesystem 失敗/並行/symlink・startup hooks・他OSは未検証。config コマンドの CLI 実行は依然未接続。",
-        "detailのproxy/no-proxyをExecutionへ接続。実Go Run/rootと実Rust子プロセスの22ケースで明示空/設定上書き/no-proxy false/falseを含む併用/重複last値/入力・設定エラー順、設定保持、DB有無を比較。Go detailにuser IDフラグはなく既存default選択を維持。実proxy通信、全flag構文/help、MCP・他CLI、全entity/record入力、他OSは未完了。"
+        "正常系の実 CLI 子プロセスから HTTPS までの接続、実 HTTP/SOCKS proxy wire、TLS と通常 App API redirect・通信エラーの互換性は未検証または未実装。HTTP transport constructor が Go の facade 呼び出し前に対して Rust では Gate 取得後となる順序差、HTTP idle cleanup の差が残る。",
+        "全 flag 構文・alias・help・競合診断、novel/user/content、全 entity/record/text 入力パイプと aggregate JSON、全 TTY/configuration 条件は未完了。作品詳細の保存済み account 実行・初回設定・proxy 指定の比較は既存 tests と contracts.md に記録済み。",
+        "OS/process BrokenPipe・stderr 失敗、全 HTML/Unicode・JSON 重複 key/不正 UTF-8/null・日時変種、取消/deadline/並行競合の全条件、全 SDK Options の再構築と所有期間は未検証。既存の writer・DTO・pacing 比較を全条件の証明とはしない。",
+        "設定の Close エラー報告は未移植。filesystem の失敗・symlink・並行初期化、startup hooks、URL handler、他 OS/arch は未検証または未実行。auth 管理や config コマンド全体は別の未完了操作として追跡する。"
       ]
     },
     {
@@ -1709,11 +1707,10 @@
         "windows-amd64"
       ],
       "differences": [
-        "33 Go session contracts fix actual tool schema, 17 artwork responses and 16 reference inputs, pool/HTTP calls and raw JSON-RPC response results. Rust compares metadata and 32 handler cases with the real SDK. Shared canonical records serve CLI and MCP; MCP structured numbers match the Go wrapper float64 conversion. All 33 calls now compare through stdio including int64-max rejection. A further 30 direct Go JSON-RPC contracts compare negotiation, ping, logging, protocol argument errors and in-flight cancellation; a duplex test checks concurrent ping and transport future release. The CLI mcp process exchanges protocol-only stdout with clean EOF.",
-        "Rust registers illust_detail and search_illust; complete 54-tool registration remains pending. Full JSON-RPC syntax/UTF-8/duplicate keys/params/schema types and diagnostic ordering, all ID types/reuse, early cancellation/deadline/disconnect/SIGINT, logging/progress notifications and full concurrency, pool leases/authentication/configuration/proxy flags, other tools and other platforms remain unimplemented or unverified.",
-        "MCP起動を既存設定・DBとExecutionへ接続。Go実SDKPorts/MCPの認証エラー8ケースを隔離homeの実Rustバイナリで比較。詳細33ケースと検索144ケースは実DB・refresh CAS保存後のstdioでも一致。非poolの内容取得取消後にGate再取得・保存済みtokenでrefreshを確認。MCP pool replay/lease取消、検索途中page継続、EOF/disconnect全取消、全tools、通信/他OSは未完了。検索replayは収集全体を再実行する差が残る。",
-        "実Go AccountService/DB/Facade/Scheduler/SDK/MCPの4ケースをRust Execution/stdioで比較。SDK内429一回retry後のpool切替、成功/応答不正/全rate limit/401、同一session二回のresult、OAuth/content順、token/revision/freeze/last-selectedが一致。Go Close callback数とRust所有transport Drop数を比較。pool有効でも内容取得取消後のGate再利用・非freezeを確認。HTTP idle cleanup、OAuth/Gate/切替中取消、全並行状態、検索途中継続、disconnect/EOF、他OSは未検証。",
-        "MCPのproxy/no-proxyを本番stdioの各Executionへ接続。Go実Run/root/MCP組立て（stdioのみin-memory）10ケースと実Rust子プロセスで明示proxy事前検証・DB有無・false/空/併用/重複/設定エラー順と詳細・検索結果を比較。正常Go fixtureでも両toolの接続選択値・refresh保存後のresultを確認。実proxy wire/TLS/redirect、全flag構文/help、reverse search/全tools、他OSは未検証または未移植。"
+        "OAuth 中・Gate 待機中・account 切替中の取消、early cancellation/deadline、EOF/disconnect/SIGINT、全 scheduler/並行状態と HTTP idle cleanup は未検証または未移植。内容取得中の取消・保存 token 再利用と4ケースの pool 再実行は既存 tests と contracts.md に記録済み。",
+        "実 HTTP/SOCKS proxy wire、TLS、通常 App API redirect・通信エラー、全 flag 構文/help、HTTP constructor の取得前検証順序と他 OS/arch は未完了。proxy 選択値・startup/認証診断と実 account 接続は比較済みだが、実ネットワーク通信の証明とはしない。",
+        "全 JSON-RPC syntax/UTF-8/duplicate keys/params/schema types・診断順序、全 ID types/reuse、logging/progress notifications と全 concurrency は未検証。既存 schema・作品結果・JSON-RPC 契約の比較を全 protocol 条件の証明とはしない。",
+        "登録済み Rust ツールは illust_detail と search_illust の2つ。全54ツール・reverse search・他 entity の実装と登録は未完了。検索の pool replay は収集全体を再実行し、Go checkpoint による途中ページ継続と差が残る。検索の差は検索の工程へ対応付ける。"
       ]
     },
     {
