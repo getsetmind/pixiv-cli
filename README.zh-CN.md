@@ -14,6 +14,8 @@
 
 `pixiv-cli-rs` 派生自 [FlanChanXwO/pixiv-cli](https://github.com/FlanChanXwO/pixiv-cli)，由 [getsetmind](https://github.com/getsetmind) 开发。Rust 移植仍在进行中，尚未实现完整的功能兼容。以下内容介绍保留的 Go 实现和原项目的发行方式。
 
+[Rust 移植方针（日语）](docs/migration/strategy.md) 规定了兼容性与测试要求。
+
 `pixiv-cli` 把 Pixiv 生态带到终端：发现作品与创作者、管理账号和作品收藏、关注创作者，并下载视觉作品。它提供独立的非官方 CLI、MCP server 和 public Go SDK，与 Pixiv Inc. 无隶属或背书关系。CLI 与 MCP server 共同调用 public Go SDK，并以 Pixiv App API 作为已认证能力的数据源；使用时请遵守 Pixiv 条款与适用法律。
 
 ## 为什么选择 pixiv-cli？

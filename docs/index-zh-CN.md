@@ -16,3 +16,7 @@
 | 查看已发布变化 | [Changelog](../changelog/README.zh-CN.md) |
 
 英文文档记录公开接口的准确定义。中文可以换一种更自然的说法，但命令、参数、schema、输出和安全规则要一致。
+
+## Rust 移植
+
+[移植方针（日语）](migration/strategy.md) 规定了 pixiv-cli-rs 的兼容性范围、测试顺序、代码分离规则与必需检查。

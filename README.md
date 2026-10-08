@@ -14,6 +14,8 @@
 
 `pixiv-cli-rs` is a derivative of [FlanChanXwO/pixiv-cli](https://github.com/FlanChanXwO/pixiv-cli), maintained by [getsetmind](https://github.com/getsetmind). The Rust implementation is in progress; full feature parity has not been reached. The following sections document the retained Go implementation and upstream distribution channels.
 
+The [Rust migration strategy (Japanese)](docs/migration/strategy.md) defines the compatibility and testing requirements.
+
 `pixiv-cli` brings the Pixiv ecosystem to the terminal: discover works and creators, manage accounts and collections, follow artists, bookmark artworks, and download visual works. It is an independent, unofficial third-party CLI, MCP server, and public Go SDK; it is not affiliated with or endorsed by Pixiv Inc. The CLI and MCP server both call the same public Go SDK, with the Pixiv App API as the authenticated source of truth. Use it in accordance with Pixiv's terms and applicable law.
 
 ## Why pixiv-cli?

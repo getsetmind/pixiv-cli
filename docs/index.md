@@ -16,3 +16,7 @@ Looking for commands, the SDK, or MCP tools? Start with the user docs.
 | Released changes | [Changelog](../changelog/README.md) | [更新日志](../changelog/README.zh-CN.md) |
 
 English docs define the canonical public interface. Simplified Chinese may rephrase for natural flow, but commands, parameters, schemas, output, and security rules stay consistent.
+
+## Rust migration
+
+[Migration strategy (Japanese)](migration/strategy.md) defines the preserved Go contracts, test sequence, code separation, and required checks for pixiv-cli-rs.

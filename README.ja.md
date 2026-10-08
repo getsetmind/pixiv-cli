@@ -14,6 +14,8 @@
 
 `pixiv-cli-rs` は [FlanChanXwO/pixiv-cli](https://github.com/FlanChanXwO/pixiv-cli) を派生元とし、[getsetmind](https://github.com/getsetmind) が開発するプロジェクトです。Rust への移植は進行中で、全機能の互換性はまだ揃っていません。以下は、引き継いだ Go 実装と派生元の配布方法についての説明です。
 
+移植は [移植方針](docs/migration/strategy.md) に従い、Go 版の契約をテストで固定して進めます。
+
 `pixiv-cli` は Pixiv のエコシステムをターミナルに持ち込みます。作品と作者の探索、アカウントとコレクションの管理、作者のフォロー、作品のブックマーク、ビジュアル作品のダウンロードに対応します。独立した非公式のサードパーティ製 CLI・MCP サーバー・公開 Go SDK であり、Pixiv 株式会社との提携や承認関係はありません。CLI と MCP サーバーは同じ公開 Go SDK を呼び出し、認証済みの情報源として Pixiv App API を使用します。Pixiv の規約と適用法に従って使用してください。
 
 ## なぜ pixiv-cli か
