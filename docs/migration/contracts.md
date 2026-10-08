@@ -211,7 +211,7 @@ Rust の `pixiv` は各request型と操作に対応し、旧名wrapperも固有�
 
 更新は `transport::Transport::post_form` を通し、2xxの本文をJSONとして解釈しない。空本文・不正JSON・エラーらしい本文でもHTTP成功を保持する。429のRetry-Afterを読み取り用GETと同じ自動再送には使わず、retryのSafeだけを既存SDK分類に従って返す。ローカル実HTTPの6ケースはform encodingと空/不正JSON・204・429を検証する。追加テストはvirtual timeで設定した送信間隔を確認する。OAuthのJSON応答処理は既存契約テストで引き続き検証する。
 
-この比較はWindows amd64のみ。CLI/MCPの操作・出力、bookmark/followのread-back、全認証状態・取消/deadline・TLS/DNS・redirect・実サービスの状態変更・他OSは未検証。HTTP成功だけで実サービスの状態変更を証明したとは扱わない。
+この比較はWindows amd64のみ。bookmarkのオフラインread-backは次節で検証する。CLI/MCPの操作・出力、followのread-back、全認証状態・取消/deadline・TLS/DNS・redirect・実サービスの状態変更・他OSは未検証。HTTP成功だけで実サービスの状態変更を証明したとは扱わない。
 
 ```text
 go test ./sdk/pixiv -run '^TestMigrationFormMutations' -count=1
@@ -219,3 +219,20 @@ cargo test -p pixiv-sdk --test form_mutations --locked
 ```
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-mutation` を指定する。
+
+## Bookmark 詳細とオフライン read-back
+
+[bookmark-detail.json](contracts/bookmark-detail.json) は Go 版の作品・小説bookmark詳細の60ケースを固定する。ID、404、その他のHTTP失敗、JSON型・null・欠落、登録済みtagの選択と順序、重複・空tag、未知restrictを比較する。未bookmarkの応答では作品自身のtagを返さず、restrictも空にする。404・欠落またはnullのbookmark_detailも空状態になる。未bookmarkを示す応答でも、既知フィールドの型が不正ならマッピング前に拒否する。
+
+Rust の `artwork_bookmark`・`novel_bookmark` は対応するrequestとdetailを返す。小説detailとDTOは作品用のRust type aliasで表現する。DTOはtagsをコピーし、空tagsをGo版と同じnullで出力する。追加のRustテストはDTO側のtags変更が元のmodelに影響しないことを確認する。
+
+各製品のオフラインread-backは、追加→詳細取得→削除→詳細取得の4要求と2つのDTOを比較する。fixture内の状態を更新するため、更新直後の状態と削除後の空状態を同じclientで確認できる。実サービスに更新要求を送るテストではない。
+
+この比較はWindows amd64のみ。全JSONキーの大小文字・重複・不正UTF-8、実transportとの接続、全認証・取消/deadline、CLI/MCP、followのread-back、実サービスの状態と他OSは未検証である。
+
+```text
+go test ./sdk/pixiv -run '^TestMigrationBookmarkDetails' -count=1
+cargo test -p pixiv-sdk --test bookmark_detail --locked
+```
+
+基準を意図して更新する場合だけ Go テストの `-args -migration-update-bookmark` を指定する。

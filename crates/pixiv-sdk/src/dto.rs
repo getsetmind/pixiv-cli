@@ -8,6 +8,21 @@ use crate::{
 use chrono::{DateTime, Utc};
 use serde::Serialize;
 
+#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
+pub struct ArtworkBookmarkDetailDto {
+    pub restrict: String,
+    pub tags: Option<Vec<String>>,
+}
+impl From<&crate::models::ArtworkBookmarkDetail> for ArtworkBookmarkDetailDto {
+    fn from(value: &crate::models::ArtworkBookmarkDetail) -> Self {
+        Self {
+            restrict: value.restrict.clone(),
+            tags: (!value.tags.is_empty()).then(|| value.tags.clone()),
+        }
+    }
+}
+pub type NovelBookmarkDetailDto = ArtworkBookmarkDetailDto;
+
 #[derive(Serialize)]
 pub struct UgoiraArchiveDto<'a> {
     pub quality: &'a str,

@@ -85,3 +85,9 @@ pub struct UgoiraMetadata {
     pub archives: Vec<UgoiraArchive>,
     pub frames: Vec<UgoiraFrame>,
 }
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
+pub struct ArtworkBookmarkDetail {
+    pub restrict: String,
+    pub tags: Vec<String>,
+}
+pub type NovelBookmarkDetail = ArtworkBookmarkDetail;

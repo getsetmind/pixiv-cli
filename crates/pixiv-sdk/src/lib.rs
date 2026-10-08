@@ -1,4 +1,5 @@
 mod artwork;
+mod bookmark;
 mod codec;
 pub mod cursor;
 pub mod dto;

@@ -4967,7 +4967,7 @@
         "windows-amd64"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。CLI/MCP、read-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
       ]
     },
     {
@@ -4990,7 +4990,7 @@
         "windows-amd64"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。CLI/MCP、read-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
       ]
     },
     {
@@ -5013,7 +5013,7 @@
         "windows-amd64"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。CLI/MCP、read-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
       ]
     },
     {
@@ -5042,39 +5042,75 @@
     },
     {
       "id": "sdk/pixiv:ArtworkBookmarkDetail",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ArtworkBookmarkDetail"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/bookmark.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_bookmark_test.go#TestMigrationBookmarkDetailsMatchFrozenStateDTOAndReadback",
+        "crates/pixiv-sdk/tests/bookmark_detail.rs"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "作品/小説bookmark詳細の60ケースでID・HTTP・JSON型/null/欠落・登録済みtags・空状態・DTO・追加/取得/削除/取得のオフラインread-backを比較。小説detail/DTOはRust type alias、DTOはtagsをコピーし空tagsをnull化。全JSONキー大小文字/重複/不正UTF-8、実transport接続、全認証/取消/deadline、CLI/MCP、実サービス状態、他OSは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:ArtworkBookmarkDetailDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ArtworkBookmarkDetailDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/bookmark.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_bookmark_test.go#TestMigrationBookmarkDetailsMatchFrozenStateDTOAndReadback",
+        "crates/pixiv-sdk/tests/bookmark_detail.rs"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "作品/小説bookmark詳細の60ケースでID・HTTP・JSON型/null/欠落・登録済みtags・空状態・DTO・追加/取得/削除/取得のオフラインread-backを比較。小説detail/DTOはRust type alias、DTOはtagsをコピーし空tagsをnull化。全JSONキー大小文字/重複/不正UTF-8、実transport接続、全認証/取消/deadline、CLI/MCP、実サービス状態、他OSは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:ArtworkBookmarkRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ArtworkBookmarkRequest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/bookmark.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_bookmark_test.go#TestMigrationBookmarkDetailsMatchFrozenStateDTOAndReadback",
+        "crates/pixiv-sdk/tests/bookmark_detail.rs"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "作品/小説bookmark詳細の60ケースでID・HTTP・JSON型/null/欠落・登録済みtags・空状態・DTO・追加/取得/削除/取得のオフラインread-backを比較。小説detail/DTOはRust type alias、DTOはtagsをコピーし空tagsをnull化。全JSONキー大小文字/重複/不正UTF-8、実transport接続、全認証/取消/deadline、CLI/MCP、実サービス状態、他OSは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:ArtworkCommentsRequest",
@@ -5428,7 +5464,7 @@
         "windows-amd64"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。CLI/MCP、read-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
       ]
     },
     {
@@ -5451,7 +5487,7 @@
         "windows-amd64"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。CLI/MCP、read-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
       ]
     },
     {
@@ -5474,7 +5510,7 @@
         "windows-amd64"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。CLI/MCP、read-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
       ]
     },
     {
@@ -5511,15 +5547,27 @@
     },
     {
       "id": "sdk/pixiv:Client.ArtworkBookmark",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.ArtworkBookmark"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/bookmark.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_bookmark_test.go#TestMigrationBookmarkDetailsMatchFrozenStateDTOAndReadback",
+        "crates/pixiv-sdk/tests/bookmark_detail.rs"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "作品/小説bookmark詳細の60ケースでID・HTTP・JSON型/null/欠落・登録済みtags・空状態・DTO・追加/取得/削除/取得のオフラインread-backを比較。小説detail/DTOはRust type alias、DTOはtagsをコピーし空tagsをnull化。全JSONキー大小文字/重複/不正UTF-8、実transport接続、全認証/取消/deadline、CLI/MCP、実サービス状態、他OSは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.ArtworkComments",
@@ -5683,7 +5731,7 @@
         "windows-amd64"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。CLI/MCP、read-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
       ]
     },
     {
@@ -5760,15 +5808,27 @@
     },
     {
       "id": "sdk/pixiv:Client.NovelBookmark",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.NovelBookmark"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/bookmark.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_bookmark_test.go#TestMigrationBookmarkDetailsMatchFrozenStateDTOAndReadback",
+        "crates/pixiv-sdk/tests/bookmark_detail.rs"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "作品/小説bookmark詳細の60ケースでID・HTTP・JSON型/null/欠落・登録済みtags・空状態・DTO・追加/取得/削除/取得のオフラインread-backを比較。小説detail/DTOはRust type alias、DTOはtagsをコピーし空tagsをnull化。全JSONキー大小文字/重複/不正UTF-8、実transport接続、全認証/取消/deadline、CLI/MCP、実サービス状態、他OSは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.NovelComments",
@@ -5947,7 +6007,7 @@
         "windows-amd64"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。CLI/MCP、read-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
       ]
     },
     {
@@ -5970,7 +6030,7 @@
         "windows-amd64"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。CLI/MCP、read-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
       ]
     },
     {
@@ -5993,7 +6053,7 @@
         "windows-amd64"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。CLI/MCP、read-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
       ]
     },
     {
@@ -6128,7 +6188,7 @@
         "windows-amd64"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。CLI/MCP、read-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
       ]
     },
     {
@@ -6225,7 +6285,7 @@
         "windows-amd64"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。CLI/MCP、read-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
       ]
     },
     {
@@ -6704,7 +6764,7 @@
         "windows-amd64"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。CLI/MCP、read-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
       ]
     },
     {
@@ -7081,39 +7141,75 @@
     },
     {
       "id": "sdk/pixiv:NovelBookmarkDetail",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelBookmarkDetail"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/bookmark.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_bookmark_test.go#TestMigrationBookmarkDetailsMatchFrozenStateDTOAndReadback",
+        "crates/pixiv-sdk/tests/bookmark_detail.rs"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "作品/小説bookmark詳細の60ケースでID・HTTP・JSON型/null/欠落・登録済みtags・空状態・DTO・追加/取得/削除/取得のオフラインread-backを比較。小説detail/DTOはRust type alias、DTOはtagsをコピーし空tagsをnull化。全JSONキー大小文字/重複/不正UTF-8、実transport接続、全認証/取消/deadline、CLI/MCP、実サービス状態、他OSは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelBookmarkDetailDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelBookmarkDetailDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/bookmark.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_bookmark_test.go#TestMigrationBookmarkDetailsMatchFrozenStateDTOAndReadback",
+        "crates/pixiv-sdk/tests/bookmark_detail.rs"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "作品/小説bookmark詳細の60ケースでID・HTTP・JSON型/null/欠落・登録済みtags・空状態・DTO・追加/取得/削除/取得のオフラインread-backを比較。小説detail/DTOはRust type alias、DTOはtagsをコピーし空tagsをnull化。全JSONキー大小文字/重複/不正UTF-8、実transport接続、全認証/取消/deadline、CLI/MCP、実サービス状態、他OSは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelBookmarkRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelBookmarkRequest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/bookmark.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_bookmark_test.go#TestMigrationBookmarkDetailsMatchFrozenStateDTOAndReadback",
+        "crates/pixiv-sdk/tests/bookmark_detail.rs"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "作品/小説bookmark詳細の60ケースでID・HTTP・JSON型/null/欠落・登録済みtags・空状態・DTO・追加/取得/削除/取得のオフラインread-backを比較。小説detail/DTOはRust type alias、DTOはtagsをコピーし空tagsをnull化。全JSONキー大小文字/重複/不正UTF-8、実transport接続、全認証/取消/deadline、CLI/MCP、実サービス状態、他OSは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelCommentsRequest",
@@ -7998,7 +8094,7 @@
         "windows-amd64"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。CLI/MCP、read-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
       ]
     },
     {
@@ -8021,7 +8117,7 @@
         "windows-amd64"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。CLI/MCP、read-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
       ]
     },
     {
@@ -8044,7 +8140,7 @@
         "windows-amd64"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。CLI/MCP、read-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
       ]
     },
     {
@@ -8113,7 +8209,7 @@
         "windows-amd64"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。CLI/MCP、read-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
       ]
     },
     {
@@ -8136,7 +8232,7 @@
         "windows-amd64"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。CLI/MCP、read-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
       ]
     },
     {
@@ -8159,7 +8255,7 @@
         "windows-amd64"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。CLI/MCP、read-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
       ]
     },
     {
@@ -8518,7 +8614,7 @@
         "windows-amd64"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。CLI/MCP、read-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
       ]
     },
     {
@@ -8679,15 +8775,27 @@
     },
     {
       "id": "sdk/pixiv:ToArtworkBookmarkDetailDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ToArtworkBookmarkDetailDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/bookmark.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_bookmark_test.go#TestMigrationBookmarkDetailsMatchFrozenStateDTOAndReadback",
+        "crates/pixiv-sdk/tests/bookmark_detail.rs"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "作品/小説bookmark詳細の60ケースでID・HTTP・JSON型/null/欠落・登録済みtags・空状態・DTO・追加/取得/削除/取得のオフラインread-backを比較。小説detail/DTOはRust type alias、DTOはtagsをコピーし空tagsをnull化。全JSONキー大小文字/重複/不正UTF-8、実transport接続、全認証/取消/deadline、CLI/MCP、実サービス状態、他OSは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:ToArtworkDTO",
@@ -8823,15 +8931,27 @@
     },
     {
       "id": "sdk/pixiv:ToNovelBookmarkDetailDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ToNovelBookmarkDetailDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/bookmark.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_bookmark_test.go#TestMigrationBookmarkDetailsMatchFrozenStateDTOAndReadback",
+        "crates/pixiv-sdk/tests/bookmark_detail.rs"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "作品/小説bookmark詳細の60ケースでID・HTTP・JSON型/null/欠落・登録済みtags・空状態・DTO・追加/取得/削除/取得のオフラインread-backを比較。小説detail/DTOはRust type alias、DTOはtagsをコピーし空tagsをnull化。全JSONキー大小文字/重複/不正UTF-8、実transport接続、全認証/取消/deadline、CLI/MCP、実サービス状態、他OSは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:ToNovelContentDTO",
@@ -9411,7 +9531,7 @@
         "windows-amd64"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。CLI/MCP、read-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
       ]
     },
     {

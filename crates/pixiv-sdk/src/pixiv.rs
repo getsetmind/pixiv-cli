@@ -1,4 +1,5 @@
 pub use crate::artwork::{ResourcePolicy, artwork_variant_resource};
+pub use crate::bookmark::{ArtworkBookmarkRequest, NovelBookmarkRequest};
 pub use crate::mutation::*;
 use crate::{
     Error, Reason, Result,
@@ -67,7 +68,7 @@ impl<T: Transport> Client<T> {
         self
     }
 
-    async fn get(
+    pub(crate) async fn get(
         &self,
         path: &str,
         parameters: Vec<(String, String)>,
