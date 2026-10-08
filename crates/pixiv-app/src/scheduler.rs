@@ -1,4 +1,5 @@
 use crate::{
+    config::ConfigError,
     database::{
         AccountError, Database, PixivAccount, PoolChooser, PoolError, PoolSelectionKind,
         PoolSnapshot, choose_pool_account,
@@ -25,6 +26,7 @@ pub enum SchedulerError {
     Sdk(Box<Error>),
     Pool(PoolError),
     Account(AccountError),
+    Config(ConfigError),
     Joined(Vec<SchedulerError>),
     Shared(Arc<SchedulerError>),
     Message(String),
@@ -42,6 +44,7 @@ impl fmt::Display for SchedulerError {
             Self::Sdk(error) | Self::Exhausted(Some(error)) => fmt::Display::fmt(error, f),
             Self::Pool(error) => fmt::Display::fmt(error, f),
             Self::Account(error) => fmt::Display::fmt(error, f),
+            Self::Config(error) => fmt::Display::fmt(error, f),
             Self::Shared(error) => fmt::Display::fmt(error, f),
             Self::Joined(errors) => {
                 for (index, error) in errors.iter().enumerate() {
@@ -66,6 +69,7 @@ impl StdError for SchedulerError {
             Self::Sdk(error) | Self::Exhausted(Some(error)) => Some(error.as_ref()),
             Self::Pool(error) => Some(error),
             Self::Account(error) => Some(error),
+            Self::Config(error) => Some(error),
             Self::Shared(error) => Some(error.as_ref()),
             Self::Joined(errors) => errors.first().map(|error| error as &dyn StdError),
             Self::Wrapped { source, .. } => Some(source.as_ref()),
@@ -89,6 +93,12 @@ impl From<ContextError> for SchedulerError {
             ContextError::Canceled => Self::Canceled,
             ContextError::DeadlineExceeded => Self::DeadlineExceeded,
         }
+    }
+}
+
+impl From<ConfigError> for SchedulerError {
+    fn from(error: ConfigError) -> Self {
+        Self::Config(error)
     }
 }
 

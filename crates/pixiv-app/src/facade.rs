@@ -6,6 +6,7 @@ use crate::{
 use chrono::{DateTime, Utc};
 use std::{future::Future, pin::Pin, sync::Arc};
 
+#[derive(Clone)]
 pub struct PoolConfig {
     pub enabled: bool,
     pub strategy: String,

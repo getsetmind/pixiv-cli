@@ -34,7 +34,9 @@
         "crates/pixiv-sdk/src/transport.rs",
         "crates/pixiv-app/src/account_service.rs",
         "crates/pixiv-app/src/facade.rs",
-        "crates/pixiv-sdk/src/error.rs"
+        "crates/pixiv-sdk/src/error.rs",
+        "crates/pixiv-app/src/config.rs",
+        "crates/pixiv-app/src/config/duration.rs"
       ],
       "tests": [
         "internal/storage/database/migration_contract_test.go#TestMigrationDatabasePreservesSchemaAndRejectsDrift",
@@ -69,7 +71,13 @@
         "internal/services/pixiv/migration_use_test.go#TestMigrationUsePreservesCommitCloseAndPoolReplay",
         "crates/pixiv-app/tests/client_use.rs#client_use_matches_go_commit_close_joined_errors_and_pool_replay",
         "crates/pixiv-app/tests/pool_session.rs#pool_replay_refreshes_and_persists_each_selected_account_before_sdk_content",
-        "crates/pixiv-app/tests/pool_session.rs#aborting_a_pending_client_callback_closes_its_lease_and_releases_the_gate"
+        "crates/pixiv-app/tests/pool_session.rs#aborting_a_pending_client_callback_closes_its_lease_and_releases_the_gate",
+        "internal/config/settings/migration_snapshot_test.go#TestMigrationConfigSnapshotPreservesRuntimePrecedenceAndDefaultAccounts",
+        "internal/config/settings/migration_snapshot_test.go#TestMigrationConfigSnapshotRetainsCapturedFileAndEnvironment",
+        "internal/config/settings/migration_snapshot_test.go#TestMigrationConfigSnapshotUsesOneReadAndPropagatesFileFailures",
+        "crates/pixiv-app/tests/config_snapshot.rs#config_snapshot_matches_go_runtime_precedence_and_default_accounts",
+        "crates/pixiv-app/tests/config_snapshot.rs#captured_configuration_retains_file_and_environment_while_new_reads_observe_changes",
+        "crates/pixiv-app/tests/config_snapshot.rs#configuration_failures_stop_client_acquisition_and_retain_the_typed_cause"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -83,7 +91,8 @@
         "Leaseの7ケースでValue/反復/8並行Close/同じerror instance/panic後の再実行防止をGo/Rustで比較。Facade.Openの明示opener/closerとGate/Leaseを17ケースで接続し、UID/options受渡し、取得後CloseまでのGate保持、部分client失敗のcloseと複数原因、panic後の再取得を検証。Rust取得待機task abortでもGateを解放。SessionErrorの全原因はerrors()/分類/取消APIで検索しstd sourceは先頭のみ。既定SDK CloseIdleConnections、Facade.Use/pool replay、全connection options、CLI/MCP/bootstrap、親子context/全競合/他OSは未移植または未検証。",
         "固定Goの公開OpenWithを経由した30ケースでopaque token/cookie拒否・refresh token欠落時の維持・nested/root選択・ID/expiry/null/型違いを比較。HTTP分類のOAuth fixtureも実OpenWithへ修正し、adapterがRetry-Afterを取り込まない契約を保持した。保存済みUIDとrevision CASへの接続は下記11ケースで比較。全JSON wire/Unicode・取消の全競合・code交換・CLI/MCP認証・他OSは未検証または未実装。",
         "固定Goの実account Service/SQLite/公開SDKの11ケースを採取し、Rust AccountServiceをsessionのaccount openerと実Databaseへ接続。明示/default/fallback、欠落、identity不一致、refresh中のrevision競合、refresh token維持、零expiry、context取消とcancel cause、保存前content禁止、session解放を比較。default設定file adapter・CLI/MCP composition・pool Use・SDK自前HTTP cleanup/options・全認証操作・SQL中断/全wire/OSは未実装または未検証。",
-        "固定GoのFacade.Use/実Schedulerの20ケースでconfig/factory、pool無効/有効、UID/options、commit、callback/closeの全原因とSDK reason/cancel検索、safe replay/凍結、panic後closeを比較。Rustの実DB/account OAuth/SDK/session/poolを接続し、各選択UIDの保存前content禁止・freeze/marker・closeを確認。callback待機task abortでもclose/Gateを解放。CLI/MCP/config file、自前HTTP cleanup/options、実HTTP retry、連続runtime変更・全枯渇/joined/SQL取消/親子context/二重panic/他OSは未移植または未検証。"
+        "固定GoのFacade.Use/実Schedulerの20ケースでconfig/factory、pool無効/有効、UID/options、commit、callback/closeの全原因とSDK reason/cancel検索、safe replay/凍結、panic後closeを比較。Rustの実DB/account OAuth/SDK/session/poolを接続し、各選択UIDの保存前content禁止・freeze/marker・closeを確認。callback待機task abortでもclose/Gateを解放。CLI/MCP/config file、自前HTTP cleanup/options、実HTTP retry、連続runtime変更・全枯渇/joined/SQL取消/親子context/二重panic/他OSは未移植または未検証。",
+        "設定 snapshot・runtime・default UID の98ケースをGo/Rustで比較。file/env捕捉、explicit empty、型変換とdomain検証、removed_settingとエラー順序、日時・数値・duration境界、読み込み後のfile不変を確認。実StoreをAccountServiceのdefault UID readerとFacadeのpool config readerに接続してDB/refresh/pool replayをRustで検証し、設定失敗がclient取得前に止まることとtyped ConfigError/IO causeを確認。CLI/MCP/bootstrapの接続、config getの出力・秘匿性、設定パス・書き込み・コメント保存・権限、全TOML/型変換/診断/非UTF8入力、他OSは未完了。"
       ]
     },
     {
@@ -189,7 +198,9 @@
         "crates/pixiv-app/src/account_service.rs",
         "crates/pixiv-sdk/src/oauth.rs",
         "crates/pixiv-app/src/facade.rs",
-        "crates/pixiv-sdk/src/error.rs"
+        "crates/pixiv-sdk/src/error.rs",
+        "crates/pixiv-app/src/config.rs",
+        "crates/pixiv-app/src/config/duration.rs"
       ],
       "tests": [
         "internal/storage/database/migration_pool_test.go#TestMigrationPoolPreservesSelectionFreezeMembershipAndRollback",
@@ -216,7 +227,13 @@
         "internal/services/pixiv/migration_use_test.go#TestMigrationUsePreservesCommitCloseAndPoolReplay",
         "crates/pixiv-app/tests/client_use.rs#client_use_matches_go_commit_close_joined_errors_and_pool_replay",
         "crates/pixiv-app/tests/pool_session.rs#pool_replay_refreshes_and_persists_each_selected_account_before_sdk_content",
-        "crates/pixiv-app/tests/pool_session.rs#aborting_a_pending_client_callback_closes_its_lease_and_releases_the_gate"
+        "crates/pixiv-app/tests/pool_session.rs#aborting_a_pending_client_callback_closes_its_lease_and_releases_the_gate",
+        "crates/pixiv-app/tests/config_snapshot.rs#config_snapshot_matches_go_runtime_precedence_and_default_accounts",
+        "crates/pixiv-app/tests/config_snapshot.rs#captured_configuration_retains_file_and_environment_while_new_reads_observe_changes",
+        "crates/pixiv-app/tests/config_snapshot.rs#configuration_failures_stop_client_acquisition_and_retain_the_typed_cause",
+        "internal/config/settings/migration_snapshot_test.go#TestMigrationConfigSnapshotPreservesRuntimePrecedenceAndDefaultAccounts",
+        "internal/config/settings/migration_snapshot_test.go#TestMigrationConfigSnapshotRetainsCapturedFileAndEnvironment",
+        "internal/config/settings/migration_snapshot_test.go#TestMigrationConfigSnapshotUsesOneReadAndPropagatesFileFailures"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -228,7 +245,8 @@
         "refresh rotation Gateの12ケースで未設定/callback不在/成功/失敗/取消/deadline/panic後の解放をGo/Rustで比較。Rustの共有Permitによりclone間を直列化し、task abort後の解放も検証。GoのAcquire/ReleaseはRustの所有guard/dropに対応。取消済みかつ空き枠のselectは両結果が許容される。CLI/MCP/bootstrap、別process/全競合/負荷/公平性、他OSは未移植または未検証。",
         "Leaseの7ケースでValue/反復/8並行Close/同じerror instance/panic後の再実行防止をGo/Rustで比較。Facade.Openの明示opener/closerとGate/Leaseを17ケースで接続し、UID/options受渡し、取得後CloseまでのGate保持、部分client失敗のcloseと複数原因、panic後の再取得を検証。Rust取得待機task abortでもGateを解放。SessionErrorの全原因はerrors()/分類/取消APIで検索しstd sourceは先頭のみ。既定SDK CloseIdleConnections、Facade.Use/pool replay、全connection options、CLI/MCP/bootstrap、親子context/全競合/他OSは未移植または未検証。",
         "固定Goの実account Service/SQLite/公開SDKの11ケースを採取し、Rust AccountServiceをsessionのaccount openerと実Databaseへ接続。明示/default/fallback、欠落、identity不一致、refresh中のrevision競合、refresh token維持、零expiry、context取消とcancel cause、保存前content禁止、session解放を比較。default設定file adapter・CLI/MCP composition・pool Use・SDK自前HTTP cleanup/options・全認証操作・SQL中断/全wire/OSは未実装または未検証。",
-        "固定GoのFacade.Use/実Schedulerの20ケースでconfig/factory、pool無効/有効、UID/options、commit、callback/closeの全原因とSDK reason/cancel検索、safe replay/凍結、panic後closeを比較。Rustの実DB/account OAuth/SDK/session/poolを接続し、各選択UIDの保存前content禁止・freeze/marker・closeを確認。callback待機task abortでもclose/Gateを解放。CLI/MCP/config file、自前HTTP cleanup/options、実HTTP retry、連続runtime変更・全枯渇/joined/SQL取消/親子context/二重panic/他OSは未移植または未検証。"
+        "固定GoのFacade.Use/実Schedulerの20ケースでconfig/factory、pool無効/有効、UID/options、commit、callback/closeの全原因とSDK reason/cancel検索、safe replay/凍結、panic後closeを比較。Rustの実DB/account OAuth/SDK/session/poolを接続し、各選択UIDの保存前content禁止・freeze/marker・closeを確認。callback待機task abortでもclose/Gateを解放。CLI/MCP/config file、自前HTTP cleanup/options、実HTTP retry、連続runtime変更・全枯渇/joined/SQL取消/親子context/二重panic/他OSは未移植または未検証。",
+        "設定 snapshot・runtime・default UID の98ケースをGo/Rustで比較。file/env捕捉、explicit empty、型変換とdomain検証、removed_settingとエラー順序、日時・数値・duration境界、読み込み後のfile不変を確認。実StoreをAccountServiceのdefault UID readerとFacadeのpool config readerに接続してDB/refresh/pool replayをRustで検証し、設定失敗がclient取得前に止まることとtyped ConfigError/IO causeを確認。CLI/MCP/bootstrapの接続、config getの出力・秘匿性、設定パス・書き込み・コメント保存・権限、全TOML/型変換/診断/非UTF8入力、他OSは未完了。"
       ]
     },
     {
@@ -449,27 +467,53 @@
     },
     {
       "id": "cli:pixiv config",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv config"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-app/src/config.rs",
+        "crates/pixiv-app/src/config/duration.rs"
+      ],
+      "tests": [
+        "internal/config/settings/migration_snapshot_test.go#TestMigrationConfigSnapshotPreservesRuntimePrecedenceAndDefaultAccounts",
+        "internal/config/settings/migration_snapshot_test.go#TestMigrationConfigSnapshotRetainsCapturedFileAndEnvironment",
+        "internal/config/settings/migration_snapshot_test.go#TestMigrationConfigSnapshotUsesOneReadAndPropagatesFileFailures",
+        "crates/pixiv-app/tests/config_snapshot.rs#config_snapshot_matches_go_runtime_precedence_and_default_accounts",
+        "crates/pixiv-app/tests/config_snapshot.rs#captured_configuration_retains_file_and_environment_while_new_reads_observe_changes",
+        "crates/pixiv-app/tests/config_snapshot.rs#configuration_failures_stop_client_acquisition_and_retain_the_typed_cause",
+        "crates/pixiv-app/tests/pool_session.rs#pool_replay_refreshes_and_persists_each_selected_account_before_sdk_content"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "設定 snapshot・runtime・default UID の98ケースをGo/Rustで比較。file/env捕捉、explicit empty、型変換とdomain検証、removed_settingとエラー順序、日時・数値・duration境界、読み込み後のfile不変を確認。実StoreをAccountServiceのdefault UID readerとFacadeのpool config readerに接続してDB/refresh/pool replayをRustで検証し、設定失敗がclient取得前に止まることとtyped ConfigError/IO causeを確認。CLI/MCP/bootstrapの接続、config getの出力・秘匿性、設定パス・書き込み・コメント保存・権限、全TOML/型変換/診断/非UTF8入力、他OSは未完了。"
+      ]
     },
     {
       "id": "cli:pixiv config get",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv config get"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-app/src/config.rs",
+        "crates/pixiv-app/src/config/duration.rs"
+      ],
+      "tests": [
+        "internal/config/settings/migration_snapshot_test.go#TestMigrationConfigSnapshotPreservesRuntimePrecedenceAndDefaultAccounts",
+        "internal/config/settings/migration_snapshot_test.go#TestMigrationConfigSnapshotRetainsCapturedFileAndEnvironment",
+        "internal/config/settings/migration_snapshot_test.go#TestMigrationConfigSnapshotUsesOneReadAndPropagatesFileFailures",
+        "crates/pixiv-app/tests/config_snapshot.rs#config_snapshot_matches_go_runtime_precedence_and_default_accounts",
+        "crates/pixiv-app/tests/config_snapshot.rs#captured_configuration_retains_file_and_environment_while_new_reads_observe_changes",
+        "crates/pixiv-app/tests/config_snapshot.rs#configuration_failures_stop_client_acquisition_and_retain_the_typed_cause",
+        "crates/pixiv-app/tests/pool_session.rs#pool_replay_refreshes_and_persists_each_selected_account_before_sdk_content"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "設定 snapshot・runtime・default UID の98ケースをGo/Rustで比較。file/env捕捉、explicit empty、型変換とdomain検証、removed_settingとエラー順序、日時・数値・duration境界、読み込み後のfile不変を確認。実StoreをAccountServiceのdefault UID readerとFacadeのpool config readerに接続してDB/refresh/pool replayをRustで検証し、設定失敗がclient取得前に止まることとtyped ConfigError/IO causeを確認。CLI/MCP/bootstrapの接続、config getの出力・秘匿性、設定パス・書き込み・コメント保存・権限、全TOML/型変換/診断/非UTF8入力、他OSは未完了。"
+      ]
     },
     {
       "id": "cli:pixiv config path",

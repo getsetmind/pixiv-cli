@@ -732,3 +732,23 @@ cargo test -p pixiv-app --test lease --test sessions --locked
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-lease` または `-args -migration-update-sessions` をそれぞれの package に指定する。
 
 Go/Rust DB 相互テストは、Go 用 native 環境と通常 Cargo のキャッシュを混在させないため `target/go-interop` を使う。CARGO_TARGET_DIR が指定されている場合は、その下の go-interop を使う。初回は独立したビルドが必要だが、以後は同じ場所を再利用する。対象テスト・実行回数・結果の照合は変えない。
+
+## 設定 snapshot と default account の読み込み基準
+
+[config-snapshot.json](contracts/config-snapshot.json) は固定 Go の公開 Store／Snapshot API から取得した98ケースを Rust の設定読み込みと比較する。全 runtime フィールド、指定した alias の Value／Text／Source／HasValue、Pixiv／FANBOX の default UID、読み込み・runtime・UID 各段階のエラー全文と removed_setting の分類を記録する。入力 TOML と環境変数は合成値で、各ケースは一時ディレクトリだけを使う。読み込み後にファイルの byte 一致を確認し、欠損ファイルが作成されないことも検証する。
+
+通常の文字列設定は Go の文字列化を許し、bool は文字列の ParseBool を許す。一方、account_pool とサービス別 proxy／user agent／solver は型を厳密に検証する。空文字列は欠損とは区別し、明示した環境変数が空でも file へ戻らない。Pixiv のサービス別 user agent と未知キーは runtime に読み込まない。solver の空表は無効だが、proxy を明示して URL がない場合はエラーになる。
+
+default UID は通常 runtime と別の入口で検証する。正の整数と整数値の float を受け入れるが、文字列 UID は拒否する。不正 UID を含むファイルでも通常 runtime の読み込みは成功する。複数の不正設定を同時に置き、普通設定・web の墓碑・残りの普通設定・pool・サービス別通信・solver のエラー優先順位を記録する。TOML の構文エラーと重複キーも基準に含む。duration の i64 境界・長い小数・単位、数値の指数表記・非有限値、ローカル日時と offset 付き日時の文字列化も比較する。
+
+追加の Go テストでは、取得済み snapshot の file／env の不変性と次回 Current の再取得、snapshot のファイル読み込み1回、default UID の都度読み込み、path／read エラーの同一 instance の伝播、file port 不在を確認する。書き込み・初期化 port は呼ばれると失敗する。比較 fixture の生成は成功した subtest だけを保存しないよう、失敗時は更新を中止する。
+
+Windows amd64 で基準を取得した。Windows の環境変数名は大文字小文字を区別しないため、https_proxy／HTTPS_PROXY を同時指定するケースには同じ合成値を使う。両者に異なる値を置いた場合の優先順位は、この fixture では検証しない。Rust の Store は明示された実ファイルを読み込み、Snapshot は捕捉した file／env を保持する。runtime の PoolConfig と default UID reader を実 AccountService／Facade／DB／refresh／pool replay に接続した Rust テストでも確認する。不正設定は account opener／pool factory を呼ぶ前に止まり、SchedulerError が型付き ConfigError と I/O cause を保持する。CLI／MCP の bootstrap への接続、設定パス・書き込み・コメント保存・権限、全 TOML／型変換の値域・構文エラー診断、非 UTF-8 入力、別 OS は未完了である。設定 parser は [toml 0.9.8](https://docs.rs/toml/0.9.8/toml/) の Table を使用する。構文エラーの Go 形式への変換は fixture の重複キーと閉じ角括弧の欠損を比較した範囲に限り、すべての診断が一致するとは扱わない。設定読み込みの比較を Rust の設定コマンドの互換性検証とは扱わない。
+
+```text
+go test ./internal/config/settings -count=1
+go vet ./internal/config/settings
+cargo test -p pixiv-app --test config_snapshot --test pool_session --locked
+```
+
+基準を意図して更新する場合だけ `go test ./internal/config/settings -run TestMigrationConfigSnapshot -count=1 -args -migration-update-config-snapshot` を実行する。取得後の通常テストは更新フラグを付けずに比較する。

@@ -1,5 +1,6 @@
 use pixiv_app::{
     account_service::AccountService,
+    config::Store,
     database::{Database, PixivAccount},
     facade::{Facade, PoolConfig, UseOutcome, pool_executor},
     gate::Gate,
@@ -77,6 +78,9 @@ impl Transport for Connection {
 #[tokio::test]
 async fn pool_replay_refreshes_and_persists_each_selected_account_before_sdk_content() {
     let directory = tempfile::tempdir().unwrap();
+    let config_path = directory.path().join("config.toml");
+    std::fs::write(&config_path, "[pixiv.auth]\ndefault_user_id = 43\n[account_pool]\nenabled = true\nstrategy = 'round_robin'\n").unwrap();
+    let config = Store::new(config_path);
     let mut database = Database::open(directory.path()).unwrap();
     for id in [42, 43] {
         database
@@ -89,10 +93,16 @@ async fn pool_replay_refreshes_and_persists_each_selected_account_before_sdk_con
     }
     database.set_all_pixiv_schedulable(true).unwrap();
     let database = Arc::new(Mutex::new(database));
+    let default_config = config.clone();
     let service = Arc::new(AccountService {
         repository: database.clone(),
-        defaults: Some(Arc::new(|| Ok(None))),
+        defaults: Some(Arc::new(move || {
+            default_config
+                .read_pixiv_default_user_id()
+                .map_err(Into::into)
+        })),
     });
+    assert_eq!(service.selected_user_id(&Context::new()).unwrap(), 43);
     let gate = Gate::new();
     let closes = Arc::new(AtomicUsize::new(0));
     let close_count = closes.clone();
@@ -121,11 +131,12 @@ async fn pool_replay_refreshes_and_persists_each_selected_account_before_sdk_con
     let pooled_database = database.clone();
     let facade = Facade {
         sessions,
-        load_pool_config: Some(Arc::new(|| {
-            Ok(PoolConfig {
-                enabled: true,
-                strategy: "round_robin".to_owned(),
-            })
+        load_pool_config: Some(Arc::new(move || {
+            config
+                .current()?
+                .runtime()
+                .map(|runtime| runtime.account_pool)
+                .map_err(Into::into)
         })),
         pool_factory: Some(Arc::new(move |config| {
             Ok(Some(pool_executor(
