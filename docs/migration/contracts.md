@@ -858,3 +858,13 @@ rate limit の最初の応答には Retry-After=0、SDK の再試行後には120
 本番 stdio の `serve_saved_with_proxy` は上書き値を各ツールの共通 Execution に渡す。上書きなしの `serve_saved` は既存の API と既定値を維持する。`saved_proxy_override_reaches_detail_and_search_account_connections` は既存の正常 Go fixture を再利用し、両ツールで設定値・空値・明示値が実アカウント接続へ届くこと、OAuth refresh と保存後の content result を比較する。
 
 これは選択値と起動・アカウント経路の比較であり、実 HTTP/SOCKS proxy wire、TLS、redirect、全 flag 構文/help、reverse search・他ツールの接続、他 OS の証拠ではない。
+
+## 通常 HTTP transport の redirect
+
+[http-redirect.json](contracts/http-redirect.json) は `sdk/pixiv/migration_redirect_test.go` が SDK の実 HTTPClient と Go の標準 redirect 処理を通して採取する23ケースである。応答の境界は fixture RoundTripper に置き換え、HTTP 以外の scheme は本物の DefaultTransport で拒否する。GET/POST の301・302・303・307・308、相対 query、明示 Referer、同一ホストの別 port・subdomain、別ホストと元ホストへの復帰、Location 欠落・不正 escape・非 HTTP scheme、10要求の上限、各 hop の pacing を固定する。
+
+`crates/pixiv-sdk/tests/http_redirect.rs` は隔離ローカル HTTP proxy と実 reqwest を使い、23ケースを JSON 読取と `post_form` の両経路で比較する。method・絶対 URL・body・必要ヘッダー・要求数・最終 status・失敗の有無を照合する。pacing は既存の比較と同様に仮想 Tokio clock で観測し、ソケットの read timeout は実時計で制限する。外部 DNS や実サービスへアクセスしない。
+
+通常 API は Go と同じ method 変換と body/header 除去を行う。一度 body を除去したら後続の307でも復元しない。資格情報関連の6ヘッダーは、初期ホストから信頼しない宛先へ移った時点で除去し、その後も復元しない。共有 reqwest の自動 redirect は無効のままとし、画像 resource は既存の URL validator と手動追従を維持する。
+
+この比較は HTTP transport の境界を検証する。SDK の固定 HTTPS URL を使う実 CLI/MCP 正常系、HTTPS downgrade、TLS/SOCKS、user-info/IDN/IPv6/全 URL 構文、独自 Host・CookieJar・CheckRedirect、redirect body の drain と connection reuse、通信失敗の型付き分類・原因・診断、他 OS は未検証または未移植である。redirect の失敗 boolean が一致しても、エラー表示全体の互換性を証明したとはしない。

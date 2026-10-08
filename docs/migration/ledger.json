@@ -655,7 +655,7 @@
         "windows-amd64"
       ],
       "differences": [
-        "正常系の実 CLI 子プロセスから HTTPS までの接続、実 HTTP/SOCKS proxy wire、TLS と通常 App API redirect・通信エラーの互換性は未検証または未実装。HTTP transport constructor が Go の facade 呼び出し前に対して Rust では Gate 取得後となる順序差、HTTP idle cleanup の差が残る。",
+        "正常系の実 CLI 子プロセスから HTTPS までの接続、実 HTTP/SOCKS proxy wire、TLS と通常 App API redirect の残る HTTPS/URL 条件・通信エラーの互換性は未検証または未実装。HTTP transport constructor が Go の facade 呼び出し前に対して Rust では Gate 取得後となる順序差、HTTP idle cleanup の差が残る。",
         "全 flag 構文・alias・help・競合診断、novel/user/content、全 entity/record/text 入力パイプと aggregate JSON、全 TTY/configuration 条件は未完了。作品詳細の保存済み account 実行・初回設定・proxy 指定の比較は既存 tests と contracts.md に記録済み。",
         "OS/process BrokenPipe・stderr 失敗、全 HTML/Unicode・JSON 重複 key/不正 UTF-8/null・日時変種、取消/deadline/並行競合の全条件、全 SDK Options の再構築と所有期間は未検証。既存の writer・DTO・pacing 比較を全条件の証明とはしない。",
         "設定の Close エラー報告は未移植。filesystem の失敗・symlink・並行初期化、startup hooks、URL handler、他 OS/arch は未検証または未実行。auth 管理や config コマンド全体は別の未完了操作として追跡する。"
@@ -1708,7 +1708,7 @@
       ],
       "differences": [
         "OAuth 中・Gate 待機中・account 切替中の取消、early cancellation/deadline、EOF/disconnect/SIGINT、全 scheduler/並行状態と HTTP idle cleanup は未検証または未移植。内容取得中の取消・保存 token 再利用と4ケースの pool 再実行は既存 tests と contracts.md に記録済み。",
-        "実 HTTP/SOCKS proxy wire、TLS、通常 App API redirect・通信エラー、全 flag 構文/help、HTTP constructor の取得前検証順序と他 OS/arch は未完了。proxy 選択値・startup/認証診断と実 account 接続は比較済みだが、実ネットワーク通信の証明とはしない。",
+        "実 HTTP/SOCKS proxy wire、TLS、通常 App API redirect の残る HTTPS/URL 条件・通信エラー、全 flag 構文/help、HTTP constructor の取得前検証順序と他 OS/arch は未完了。proxy 選択値・startup/認証診断と実 account 接続は比較済みだが、実ネットワーク通信の証明とはしない。",
         "全 JSON-RPC syntax/UTF-8/duplicate keys/params/schema types・診断順序、全 ID types/reuse、logging/progress notifications と全 concurrency は未検証。既存 schema・作品結果・JSON-RPC 契約の比較を全 protocol 条件の証明とはしない。",
         "登録済み Rust ツールは illust_detail と search_illust の2つ。全54ツール・reverse search・他 entity の実装と登録は未完了。検索の pool replay は収集全体を再実行し、Go checkpoint による途中ページ継続と差が残る。検索の差は検索の工程へ対応付ける。"
       ]
@@ -7571,11 +7571,16 @@
         "sdk/pixiv/migration_pacing_test.go#TestMigrationPacingCanceledWaitDoesNotReachTransportOrAdvanceItsLastStart",
         "crates/pixiv-sdk/tests/pacing.rs#http_transport_matches_go_spacing_across_oauth_content_redirects_and_mutations",
         "crates/pixiv-sdk/tests/pacing.rs#default_http_transport_keeps_a_pending_response_after_the_prototype_sixty_second_limit",
-        "crates/pixiv-sdk/tests/pacing.rs#aborting_a_resource_pacing_wait_releases_the_queue_without_consuming_a_request_start"
+        "crates/pixiv-sdk/tests/pacing.rs#aborting_a_resource_pacing_wait_releases_the_queue_without_consuming_a_request_start",
+        "sdk/pixiv/migration_redirect_test.go#TestMigrationSDKHTTPRedirectPreservesMethodsHeadersAndOriginalBody",
+        "crates/pixiv-sdk/tests/http_redirect.rs#sdk_http_redirect_matches_go_methods_headers_body_and_limit"
       ],
-      "verified_platforms": [],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
       "differences": [
-        "CommandConnectionの25ケースでproxy/interval/errorと実HTTP transport構築可否を比較し、選択したintervalをtransportへ渡す。共有HTTP pacingをGoのOpenWith後のcontent/resource redirect/mutation 5通信とRust実socketで比較（観測差5ms）。clone間でlast startを共有する。Goのdefault SDK HTTP timeout=0を再現しRust試作の60秒制限を削除。仮想61秒で保留responseが存続し、pacing待機task abort後も残り時間で次requestが再開することを確認。SDK Options全体/client再構築/pool replayの寿命/context取消/deadline/全競合/App API redirect/TLS/SOCKS wire/pool/idle cleanup/CLI/MCP bootstrap/他OSは未完了または未検証。"
+        "全 SDK Options、client 再構築、pool replay の所有期間、Context 取消/deadline/全競合、pool と HTTP idle cleanup、CLI/MCP bootstrap との接続全条件、TLS/SOCKS wire、他 OS/arch は未完了または未検証。",
+        "redirect の HTTPS downgrade、user-info/IDN/IPv6/全 URL 構文、独自 Host/CookieJar/CheckRedirect、body drain/connection reuse、型付き通信エラーと診断、SDK/CLI/MCP の固定 HTTPS endpoint を通す正常系は未完了または未検証。"
       ]
     },
     {
@@ -7596,11 +7601,16 @@
         "sdk/pixiv/migration_pacing_test.go#TestMigrationPacingCanceledWaitDoesNotReachTransportOrAdvanceItsLastStart",
         "crates/pixiv-sdk/tests/pacing.rs#http_transport_matches_go_spacing_across_oauth_content_redirects_and_mutations",
         "crates/pixiv-sdk/tests/pacing.rs#default_http_transport_keeps_a_pending_response_after_the_prototype_sixty_second_limit",
-        "crates/pixiv-sdk/tests/pacing.rs#aborting_a_resource_pacing_wait_releases_the_queue_without_consuming_a_request_start"
+        "crates/pixiv-sdk/tests/pacing.rs#aborting_a_resource_pacing_wait_releases_the_queue_without_consuming_a_request_start",
+        "sdk/pixiv/migration_redirect_test.go#TestMigrationSDKHTTPRedirectPreservesMethodsHeadersAndOriginalBody",
+        "crates/pixiv-sdk/tests/http_redirect.rs#sdk_http_redirect_matches_go_methods_headers_body_and_limit"
       ],
-      "verified_platforms": [],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
       "differences": [
-        "CommandConnectionの25ケースでproxy/interval/errorと実HTTP transport構築可否を比較し、選択したintervalをtransportへ渡す。共有HTTP pacingをGoのOpenWith後のcontent/resource redirect/mutation 5通信とRust実socketで比較（観測差5ms）。clone間でlast startを共有する。Goのdefault SDK HTTP timeout=0を再現しRust試作の60秒制限を削除。仮想61秒で保留responseが存続し、pacing待機task abort後も残り時間で次requestが再開することを確認。SDK Options全体/client再構築/pool replayの寿命/context取消/deadline/全競合/App API redirect/TLS/SOCKS wire/pool/idle cleanup/CLI/MCP bootstrap/他OSは未完了または未検証。"
+        "全 SDK Options、client 再構築、pool replay の所有期間、Context 取消/deadline/全競合、pool と HTTP idle cleanup、CLI/MCP bootstrap との接続全条件、TLS/SOCKS wire、他 OS/arch は未完了または未検証。",
+        "redirect の HTTPS downgrade、user-info/IDN/IPv6/全 URL 構文、独自 Host/CookieJar/CheckRedirect、body drain/connection reuse、型付き通信エラーと診断、SDK/CLI/MCP の固定 HTTPS endpoint を通す正常系は未完了または未検証。"
       ]
     },
     {
@@ -8175,17 +8185,16 @@
         "crates/pixiv-sdk/tests/pacing.rs#aborting_a_resource_pacing_wait_releases_the_queue_without_consuming_a_request_start",
         "crates/pixiv-app/tests/pool_session.rs#execution_reads_current_connection_and_default_account_before_refreshing_and_persisting",
         "crates/pixiv-app/tests/pool_session.rs#execution_pool_overrides_the_requested_account_and_persists_replay_state",
-        "crates/pixiv-app/tests/pool_session.rs#execution_rejects_configuration_and_proxy_errors_before_acquiring_an_account"
+        "crates/pixiv-app/tests/pool_session.rs#execution_rejects_configuration_and_proxy_errors_before_acquiring_an_account",
+        "sdk/pixiv/migration_redirect_test.go#TestMigrationSDKHTTPRedirectPreservesMethodsHeadersAndOriginalBody",
+        "crates/pixiv-sdk/tests/http_redirect.rs#sdk_http_redirect_matches_go_methods_headers_body_and_limit"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "HTTP status分類とrefresh/account sessionの下記契約を比較済み。正常応答・入力・認証・DTO・resource・実通信・再試行・保存の全契約は未移植または未検証。",
-        "固定Goの公開OpenWithを経由した30ケースでopaque token/cookie拒否・refresh token欠落時の維持・nested/root選択・ID/expiry/null/型違いを比較。HTTP分類のOAuth fixtureも実OpenWithへ修正し、adapterがRetry-Afterを取り込まない契約を保持した。保存済みUIDとrevision CASへの接続は下記11ケースで比較。全JSON wire/Unicode・取消の全競合・code交換・CLI/MCP認証・他OSは未検証または未実装。",
-        "固定Goの実account Service/SQLite/公開SDKの11ケースを採取し、Rust AccountServiceをsessionのaccount openerと実Databaseへ接続。明示/default/fallback、欠落、identity不一致、refresh中のrevision競合、refresh token維持、零expiry、context取消とcancel cause、保存前content禁止、session解放を比較。default設定file adapter・CLI/MCP composition・pool Use・SDK自前HTTP cleanup/options・全認証操作・SQL中断/全wire/OSは未実装または未検証。",
-        "CommandConnectionの25ケースでproxy/interval/errorと実HTTP transport構築可否を比較し、選択したintervalをtransportへ渡す。共有HTTP pacingをGoのOpenWith後のcontent/resource redirect/mutation 5通信とRust実socketで比較（観測差5ms）。clone間でlast startを共有する。Goのdefault SDK HTTP timeout=0を再現しRust試作の60秒制限を削除。仮想61秒で保留responseが存続し、pacing待機task abort後も残り時間で次requestが再開することを確認。SDK Options全体/client再構築/pool replayの寿命/context取消/deadline/全競合/App API redirect/TLS/SOCKS wire/pool/idle cleanup/CLI/MCP bootstrap/他OSは未完了または未検証。",
-        "本番 Execution で Store・DB・refresh CAS・Gate・pool を接続し設定の fresh read と replay を検証。CLI/MCP 呼び出し元・ホームパス・初回設定作成は未接続。transport constructor 失敗の Gate 前後の順序差は未解消。"
+        "全 SDK Options、client 再構築、pool replay の所有期間、Context 取消/deadline/全競合、pool と HTTP idle cleanup、CLI/MCP bootstrap との接続全条件、TLS/SOCKS wire、他 OS/arch は未完了または未検証。",
+        "redirect の HTTPS downgrade、user-info/IDN/IPv6/全 URL 構文、独自 Host/CookieJar/CheckRedirect、body drain/connection reuse、型付き通信エラーと診断、SDK/CLI/MCP の固定 HTTPS endpoint を通す正常系は未完了または未検証。"
       ]
     },
     {
@@ -8206,11 +8215,16 @@
         "sdk/pixiv/migration_pacing_test.go#TestMigrationPacingCanceledWaitDoesNotReachTransportOrAdvanceItsLastStart",
         "crates/pixiv-sdk/tests/pacing.rs#http_transport_matches_go_spacing_across_oauth_content_redirects_and_mutations",
         "crates/pixiv-sdk/tests/pacing.rs#default_http_transport_keeps_a_pending_response_after_the_prototype_sixty_second_limit",
-        "crates/pixiv-sdk/tests/pacing.rs#aborting_a_resource_pacing_wait_releases_the_queue_without_consuming_a_request_start"
+        "crates/pixiv-sdk/tests/pacing.rs#aborting_a_resource_pacing_wait_releases_the_queue_without_consuming_a_request_start",
+        "sdk/pixiv/migration_redirect_test.go#TestMigrationSDKHTTPRedirectPreservesMethodsHeadersAndOriginalBody",
+        "crates/pixiv-sdk/tests/http_redirect.rs#sdk_http_redirect_matches_go_methods_headers_body_and_limit"
       ],
-      "verified_platforms": [],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
       "differences": [
-        "CommandConnectionの25ケースでproxy/interval/errorと実HTTP transport構築可否を比較し、選択したintervalをtransportへ渡す。共有HTTP pacingをGoのOpenWith後のcontent/resource redirect/mutation 5通信とRust実socketで比較（観測差5ms）。clone間でlast startを共有する。Goのdefault SDK HTTP timeout=0を再現しRust試作の60秒制限を削除。仮想61秒で保留responseが存続し、pacing待機task abort後も残り時間で次requestが再開することを確認。SDK Options全体/client再構築/pool replayの寿命/context取消/deadline/全競合/App API redirect/TLS/SOCKS wire/pool/idle cleanup/CLI/MCP bootstrap/他OSは未完了または未検証。"
+        "全 SDK Options、client 再構築、pool replay の所有期間、Context 取消/deadline/全競合、pool と HTTP idle cleanup、CLI/MCP bootstrap との接続全条件、TLS/SOCKS wire、他 OS/arch は未完了または未検証。",
+        "redirect の HTTPS downgrade、user-info/IDN/IPv6/全 URL 構文、独自 Host/CookieJar/CheckRedirect、body drain/connection reuse、型付き通信エラーと診断、SDK/CLI/MCP の固定 HTTPS endpoint を通す正常系は未完了または未検証。"
       ]
     },
     {

@@ -113,11 +113,10 @@ impl HttpTransport {
         } else {
             builder.form(&request.parameters)
         };
-        self.pacing.wait().await;
-        let response = builder
-            .send()
-            .await
+        let original = builder
+            .build()
             .map_err(|_| Error::new(Reason::UpstreamUnavailable, request.operation))?;
+        let response = self.follow_redirects(original, request.operation).await?;
         let status = response.status().as_u16();
         if !decode_json {
             response
@@ -152,6 +151,100 @@ impl HttpTransport {
             body,
         })
     }
+
+    async fn follow_redirects(
+        &self,
+        original: reqwest::Request,
+        operation: &'static str,
+    ) -> Result<reqwest::Response> {
+        let failure = || Error::new(Reason::UpstreamUnavailable, operation);
+        let mut current = original.try_clone().ok_or_else(failure)?;
+        let mut strip_sensitive = false;
+        let mut include_body = true;
+        for sent in 1..=10 {
+            let previous_url = current.url().clone();
+            let previous_method = current.method().clone();
+            self.pacing.wait().await;
+            let response = self.client.execute(current).await.map_err(|_| failure())?;
+            let status = response.status().as_u16();
+            if !matches!(status, 301 | 302 | 303 | 307 | 308) {
+                return Ok(response);
+            }
+            let Some(location) = response.headers().get(reqwest::header::LOCATION) else {
+                return Ok(response);
+            };
+            let location = location.to_str().map_err(|_| failure())?;
+            if location.is_empty() {
+                return Ok(response);
+            }
+            if sent == 10 || !valid_location_escapes(location) {
+                return Err(failure());
+            }
+            let next_url = previous_url.join(location).map_err(|_| failure())?;
+            strip_sensitive |= !crate::resource_transport::trusted_redirect_host(
+                original.url().host_str().unwrap_or_default(),
+                next_url.host_str().unwrap_or_default(),
+            );
+            let preserve_method = matches!(status, 307 | 308);
+            include_body &= preserve_method;
+            let method =
+                if !preserve_method && !matches!(previous_method, Method::GET | Method::HEAD) {
+                    Method::GET
+                } else {
+                    previous_method
+                };
+            let mut next = original.try_clone().ok_or_else(failure)?;
+            *next.method_mut() = method;
+            *next.url_mut() = next_url.clone();
+            if !include_body {
+                *next.body_mut() = None;
+                for name in [
+                    "content-encoding",
+                    "content-language",
+                    "content-location",
+                    "content-type",
+                ] {
+                    next.headers_mut().remove(name);
+                }
+            }
+            if strip_sensitive {
+                for name in [
+                    "authorization",
+                    "www-authenticate",
+                    "cookie",
+                    "cookie2",
+                    "proxy-authorization",
+                    "proxy-authenticate",
+                ] {
+                    next.headers_mut().remove(name);
+                }
+            }
+            if previous_url.scheme() == "https" && next_url.scheme() == "http" {
+                next.headers_mut().remove(reqwest::header::REFERER);
+            } else if !next.headers().contains_key(reqwest::header::REFERER) {
+                let mut referer = previous_url;
+                let _ = referer.set_username("");
+                let _ = referer.set_password(None);
+                next.headers_mut().insert(
+                    reqwest::header::REFERER,
+                    reqwest::header::HeaderValue::from_str(referer.as_str())
+                        .map_err(|_| failure())?,
+                );
+            }
+            current = next;
+        }
+        Err(failure())
+    }
+}
+
+fn valid_location_escapes(location: &str) -> bool {
+    let bytes = location.as_bytes();
+    bytes.iter().enumerate().all(|(index, byte)| {
+        *byte != b'%'
+            || bytes
+                .get(index + 1..index + 3)
+                .is_some_and(|digits| digits.iter().all(u8::is_ascii_hexdigit))
+    })
 }
 
 impl ResourceTransport for HttpTransport {

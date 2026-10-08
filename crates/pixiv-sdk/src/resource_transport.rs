@@ -142,7 +142,7 @@ pub(crate) async fn open(
     Err(failure())
 }
 
-fn trusted_redirect_host(initial: &str, destination: &str) -> bool {
+pub(crate) fn trusted_redirect_host(initial: &str, destination: &str) -> bool {
     let initial = initial.to_ascii_lowercase();
     let destination = destination.to_ascii_lowercase();
     destination == initial

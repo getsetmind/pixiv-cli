@@ -77,7 +77,7 @@ cursor と resource reference は不透明なデータでも外部契約であ�
 | 1 | 既存 `.pixiv-cli` の設定・DB を使う CLI 起動 | 隔離ホームの実子プロセスで初回設定、入力・設定・認証・proxy エラーを比較済み。正常系の HTTPS 接続、全入力・flag/help、startup hooks は未完了 |
 | 2 | account 取得、refresh CAS、SDK fetch、出力、lease 解放 | 実 DB と本番 Execution を通した正常・失敗出力を比較済み。HTTP constructor の順序、通信失敗、idle cleanup などは未完了 |
 | 3 | MCP の作品詳細 | 実子プロセスの起動診断と stdio の結果、pool 再実行、内容取得中の取消を比較済み。OAuth/Gate 待機中の取消、EOF/disconnect、全並行状態などは未完了 |
-| 4 | 作品詳細の通信と残る入力・出力契約 | 次は通常 API の redirect と通信エラーを Go で固定する。resource の URL 制限を維持し、実 transport を比較する。その後、正常系 CLI の HTTPS 接続と残る契約へ進む |
+| 4 | 作品詳細の通信と残る入力・出力契約 | 通常 HTTP redirect の23ケースを実 transport の読取・form で比較。次は通信失敗の型付き分類・診断と、残る HTTPS/URL 条件を固定する。その後、正常系 CLI の HTTPS 接続と残る契約へ進む |
 
 作品詳細の Windows 上の機能比較、共通通信の検証、他 OS/arch と配布の検証を別の工程として追跡する。各工程の未完了項目と依存を明示し、他 OS の未実行だけを理由に検索などの機能実装を止めない。作品詳細の入力・取得・出力・状態変更・取消の比較と必要な通信検証が揃ったら、確認した環境と範囲を記録して検索へ進む。全対象の契約を満たすまでは台帳の `verified` と最終切替の条件を緩めない。
 
