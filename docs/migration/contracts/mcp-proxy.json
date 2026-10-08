@@ -1,0 +1,316 @@
+[
+  {
+    "name": "configured_invalid",
+    "config": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "flags": [],
+    "results": [
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration"
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 0
+          },
+          "records": []
+        },
+        "isError": true
+      }
+    ],
+    "stdout": "",
+    "stderr": "",
+    "exit": 0,
+    "database": true
+  },
+  {
+    "name": "clear_configured",
+    "config": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "flags": [
+      "--no-proxy"
+    ],
+    "results": [
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:auth: unauthorized: no pixiv account is authenticated"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:auth: unauthorized: no pixiv account is authenticated"
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 0
+          },
+          "records": []
+        },
+        "isError": true
+      }
+    ],
+    "stdout": "",
+    "stderr": "",
+    "exit": 0,
+    "database": true
+  },
+  {
+    "name": "explicit_empty",
+    "config": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "flags": [
+      "--proxy="
+    ],
+    "results": [
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:auth: unauthorized: no pixiv account is authenticated"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:auth: unauthorized: no pixiv account is authenticated"
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 0
+          },
+          "records": []
+        },
+        "isError": true
+      }
+    ],
+    "stdout": "",
+    "stderr": "",
+    "exit": 0,
+    "database": true
+  },
+  {
+    "name": "explicit_override",
+    "config": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "flags": [
+      "--proxy=http://override.invalid"
+    ],
+    "results": [
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:auth: unauthorized: no pixiv account is authenticated"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:auth: unauthorized: no pixiv account is authenticated"
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 0
+          },
+          "records": []
+        },
+        "isError": true
+      }
+    ],
+    "stdout": "",
+    "stderr": "",
+    "exit": 0,
+    "database": true
+  },
+  {
+    "name": "no_proxy_false",
+    "config": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "flags": [
+      "--no-proxy=false"
+    ],
+    "results": [
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration"
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 0
+          },
+          "records": []
+        },
+        "isError": true
+      }
+    ],
+    "stdout": "",
+    "stderr": "",
+    "exit": 0,
+    "database": true
+  },
+  {
+    "name": "invalid_override",
+    "config": "",
+    "flags": [
+      "--proxy=ftp://fixture-user:fixture-secret@override.invalid"
+    ],
+    "results": [],
+    "stdout": "",
+    "stderr": "error: proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration\n",
+    "exit": 1,
+    "database": false
+  },
+  {
+    "name": "conflict",
+    "config": "",
+    "flags": [
+      "--proxy=",
+      "--no-proxy"
+    ],
+    "results": [],
+    "stdout": "",
+    "stderr": "error: use either --proxy or --no-proxy, not both\n",
+    "exit": 1,
+    "database": false
+  },
+  {
+    "name": "conflict_false",
+    "config": "",
+    "flags": [
+      "--proxy=",
+      "--no-proxy=false"
+    ],
+    "results": [],
+    "stdout": "",
+    "stderr": "error: use either --proxy or --no-proxy, not both\n",
+    "exit": 1,
+    "database": false
+  },
+  {
+    "name": "invalid_config_before_conflict",
+    "config": "[unfinished\n",
+    "flags": [
+      "--proxy=",
+      "--no-proxy"
+    ],
+    "results": [],
+    "stdout": "",
+    "stderr": "error: toml: expected character ]\n",
+    "exit": 1,
+    "database": false
+  },
+  {
+    "name": "last_proxy_wins",
+    "config": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "flags": [
+      "--proxy=ftp://override.invalid",
+      "--proxy="
+    ],
+    "results": [
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:auth: unauthorized: no pixiv account is authenticated"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:auth: unauthorized: no pixiv account is authenticated"
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 0
+          },
+          "records": []
+        },
+        "isError": true
+      }
+    ],
+    "stdout": "",
+    "stderr": "",
+    "exit": 0,
+    "database": true
+  }
+]

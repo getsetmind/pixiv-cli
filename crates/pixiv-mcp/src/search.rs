@@ -369,6 +369,7 @@ pub(crate) async fn saved_search_illust<T: Transport + 'static>(
     execution: &pixiv_app::execution::Execution<T>,
     context: &pixiv_app::lifecycle::Context,
     mut input: SearchIllustInput,
+    proxy: Option<&str>,
 ) -> CallToolResult {
     let plan = match validate(&mut input) {
         Ok(plan) => plan,
@@ -376,7 +377,7 @@ pub(crate) async fn saved_search_illust<T: Transport + 'static>(
     };
     let requested = input.clone();
     let result = execution
-        .read(context, 0, None, move |_, client| {
+        .read(context, 0, proxy, move |_, client| {
             let input = requested.clone();
             async move { collect(&client, &input, &plan).await }
         })

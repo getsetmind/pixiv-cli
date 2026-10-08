@@ -44,15 +44,28 @@ pub async fn serve_saved<T: Transport + 'static, R: AsyncRead + Unpin, W: AsyncW
     input: R,
     output: &mut W,
 ) -> io::Result<()> {
+    serve_saved_with_proxy(execution, None, input, output).await
+}
+
+pub async fn serve_saved_with_proxy<
+    T: Transport + 'static,
+    R: AsyncRead + Unpin,
+    W: AsyncWrite + Unpin,
+>(
+    execution: &pixiv_app::execution::Execution<T>,
+    proxy: Option<&str>,
+    input: R,
+    output: &mut W,
+) -> io::Result<()> {
     let invoke = |input| -> ToolFuture<'_> {
         Box::pin(async move {
             let context = pixiv_app::lifecycle::Context::new();
             match input {
                 ToolInput::Detail(input) => {
-                    crate::saved_illust_detail(execution, &context, input).await
+                    crate::saved_illust_detail_with_proxy(execution, &context, input, proxy).await
                 }
                 ToolInput::Search(input) => {
-                    crate::search::saved_search_illust(execution, &context, *input).await
+                    crate::search::saved_search_illust(execution, &context, *input, proxy).await
                 }
             }
         })

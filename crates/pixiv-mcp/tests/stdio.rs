@@ -195,6 +195,101 @@ async fn stdio_detail_calls_match_all_go_records_and_numeric_input_rejection() {
         assert_eq!(*requests.lock().unwrap(), case.requests, "{}", case.name);
     }
 }
+
+#[tokio::test]
+async fn saved_proxy_override_reaches_detail_and_search_account_connections() {
+    use pixiv_app::{
+        config::Store,
+        database::{Database, PixivAccount},
+        execution::Execution,
+    };
+    use std::sync::{
+        Arc,
+        atomic::{AtomicUsize, Ordering},
+    };
+    let detail: Value = serde_json::from_str(include_str!(
+        "../../../docs/migration/contracts/mcp-detail.json"
+    ))
+    .unwrap();
+    let search: Value = serde_json::from_str(include_str!(
+        "../../../docs/migration/contracts/mcp-search.json"
+    ))
+    .unwrap();
+    let detail = detail["cases"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|case| case["requests"] == 1 && case["result"]["isError"] != true)
+        .unwrap();
+    let search = search["cases"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|case| {
+            case["queries"].as_array().unwrap().len() == 1 && case["result"]["isError"] != true
+        })
+        .unwrap();
+    for (tool, case, body) in [
+        ("illust_detail", detail, &detail["body"]),
+        ("search_illust", search, &search["bodies"][0]),
+    ] {
+        for proxy in [None, Some(""), Some("http://override.invalid")] {
+            let directory = tempfile::tempdir().unwrap();
+            let path = directory.path().join("config.toml");
+            std::fs::write(
+                &path,
+                "[pixiv.network]\nproxy_url = 'http://configured.invalid'\n",
+            )
+            .unwrap();
+            let mut database = Database::open(directory.path()).unwrap();
+            database
+                .save_pixiv_credential(&PixivAccount::new(42, "fixture", b"fixture-refresh"))
+                .unwrap();
+            let database = Arc::new(Mutex::new(database));
+            let requests = Arc::new(Mutex::new(0));
+            let opens = Arc::new(AtomicUsize::new(0));
+            let fixture = SavedFixture {
+                body: body.clone(),
+                requests: requests.clone(),
+                opens: opens.clone(),
+                database: database.clone(),
+            };
+            let connections = Arc::new(Mutex::new(vec![]));
+            let selected = connections.clone();
+            let execution = Execution::new(Store::new(path), database, move |connection| {
+                selected.lock().unwrap().push(connection.proxy().to_owned());
+                Ok(fixture.clone())
+            });
+            let call = json!({"jsonrpc":"2.0","id":7,"method":"tools/call","params":{"name":tool,"arguments":case["arguments"]}});
+            let input = initialize(1.into()).to_string() + "\n" + &call.to_string() + "\n";
+            let mut output = Vec::new();
+            pixiv_mcp::stdio::serve_saved_with_proxy(
+                &execution,
+                proxy,
+                input.as_bytes(),
+                &mut output,
+            )
+            .await
+            .unwrap();
+            let responses: Vec<Value> = String::from_utf8(output)
+                .unwrap()
+                .lines()
+                .map(|line| serde_json::from_str(line).unwrap())
+                .collect();
+            let response = responses
+                .iter()
+                .find(|response| response["id"] == 7)
+                .unwrap();
+            assert_eq!(response["result"], case["result"], "{tool} {proxy:?}");
+            assert_eq!(
+                *connections.lock().unwrap(),
+                [proxy.unwrap_or("http://configured.invalid")]
+            );
+            assert_eq!(opens.load(Ordering::SeqCst), 1);
+            assert_eq!(*requests.lock().unwrap(), 1);
+        }
+    }
+}
 #[tokio::test]
 async fn stdio_matches_go_initialization_protocol_and_detail_argument_errors() {
     let cases: Vec<Case> = serde_json::from_str(include_str!(

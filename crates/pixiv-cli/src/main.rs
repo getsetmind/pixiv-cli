@@ -38,7 +38,11 @@ impl ProxyOptions {
 
 #[derive(Subcommand)]
 enum Command {
-    Mcp,
+    #[command(args_override_self = true)]
+    Mcp {
+        #[command(flatten)]
+        connection: ProxyOptions,
+    },
     #[command(args_override_self = true)]
     Detail {
         source: String,
@@ -69,13 +73,13 @@ enum Command {
 async fn main() {
     let args = Arguments::parse();
     let machine_output = match &args.command {
-        Command::Mcp => false,
+        Command::Mcp { .. } => false,
         Command::Detail { json, ndjson, .. } => *json || *ndjson,
         Command::Ugoira { json, .. } => *json,
         Command::Search { json, ndjson, .. } => *json || *ndjson,
     };
     let ndjson_output = match &args.command {
-        Command::Mcp => false,
+        Command::Mcp { .. } => false,
         Command::Detail { ndjson, .. } => *ndjson,
         Command::Search { json, ndjson, .. } => *ndjson || (!*json && !io::stdout().is_terminal()),
         Command::Ugoira { .. } => false,
@@ -92,7 +96,7 @@ async fn main() {
 }
 
 async fn execute(args: Arguments) -> Result<(), CommandError> {
-    let account_config = if matches!(&args.command, Command::Detail { .. } | Command::Mcp) {
+    let account_config = if matches!(&args.command, Command::Detail { .. } | Command::Mcp { .. }) {
         let home_name = if cfg!(windows) { "USERPROFILE" } else { "HOME" };
         let home = std::env::var_os(home_name)
             .filter(|home| !home.is_empty())
@@ -168,16 +172,30 @@ async fn execute(args: Arguments) -> Result<(), CommandError> {
         )
         .await;
     }
-    if matches!(&args.command, Command::Mcp) {
+    if let Command::Mcp { connection } = &args.command {
         let (directory, config) = account_config.expect("MCP startup was resolved");
+        let proxy = connection.override_value()?;
+        if proxy.is_some() {
+            let runtime = config
+                .current()
+                .and_then(|snapshot| snapshot.runtime())
+                .map_err(pixiv_app::scheduler::SchedulerError::from)?;
+            pixiv_app::connection::CommandConnection::resolve(&runtime, proxy)
+                .map_err(pixiv_app::scheduler::SchedulerError::Proxy)?;
+        }
         let database = pixiv_app::database::Database::open(&directory)
             .map_err(|error| CommandError::State(Box::new(error)))?;
         let execution = pixiv_app::execution::Execution::http(
             config,
             std::sync::Arc::new(std::sync::Mutex::new(database)),
         );
-        pixiv_mcp::stdio::serve_saved(&execution, tokio::io::stdin(), &mut tokio::io::stdout())
-            .await?;
+        pixiv_mcp::stdio::serve_saved_with_proxy(
+            &execution,
+            proxy,
+            tokio::io::stdin(),
+            &mut tokio::io::stdout(),
+        )
+        .await?;
         return Ok(());
     }
     let token = std::env::var("PIXIV_ACCESS_TOKEN").unwrap_or_default();
@@ -186,7 +204,7 @@ async fn execute(args: Arguments) -> Result<(), CommandError> {
         .ok();
     let client = Client::new(&token, proxy.as_deref())?;
     match args.command {
-        Command::Mcp => unreachable!("MCP uses saved account execution"),
+        Command::Mcp { .. } => unreachable!("MCP uses saved account execution"),
         Command::Detail { .. } => unreachable!("detail uses saved account execution"),
         Command::Search {
             options,

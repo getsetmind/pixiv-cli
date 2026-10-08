@@ -76,12 +76,21 @@ pub async fn saved_illust_detail<T: Transport + 'static>(
     context: &pixiv_app::lifecycle::Context,
     input: IllustReference,
 ) -> CallToolResult {
+    saved_illust_detail_with_proxy(execution, context, input, None).await
+}
+
+pub(crate) async fn saved_illust_detail_with_proxy<T: Transport + 'static>(
+    execution: &pixiv_app::execution::Execution<T>,
+    context: &pixiv_app::lifecycle::Context,
+    input: IllustReference,
+    proxy: Option<&str>,
+) -> CallToolResult {
     let id = match resolve_artwork(input) {
         Ok(id) => id,
         Err(error) => return failure(error),
     };
     match execution
-        .read(context, 0, None, move |_, client| async move {
+        .read(context, 0, proxy, move |_, client| async move {
             client.artwork(id).await.map_err(Into::into)
         })
         .await

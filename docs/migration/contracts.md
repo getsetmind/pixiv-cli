@@ -847,4 +847,14 @@ rate limit の最初の応答には Retry-After=0、SDK の再試行後には120
 
 `crates/pixiv-cli/tests/detail_proxy.rs` は隔離 HOME/USERPROFILE の実 Rust バイナリで stdout・stderr・終了コード、設定の保持と DB 作成の有無を比較する。実 Runtime/入力/DB の処理順序に沿って override を解決し、`Execution::read` に渡す。指定の有無は値と別に保持し、`--no-proxy=false` は設定を維持するが、`--proxy` との併用時には false でも Go と同じエラーを返す。重複 flag の上書きは detail コマンドに適用する。
 
-固定 Go の detail に user ID フラグはなく、既存設定によるアカウント選択を維持する。実 proxy を通す通信、全 flag 構文と help、MCP/他 CLI の proxy フラグ、novel/user/content、record 入力と他 OS は未検証または未移植である。この比較だけで detail 全体を検証済みとはしない。
+固定 Go の detail に user ID フラグはなく、既存設定によるアカウント選択を維持する。実 proxy を通す通信、全 flag 構文と help、他 CLI の proxy フラグ、novel/user/content、record 入力と他 OS は未検証または未移植である。MCP の proxy 指定は次節の範囲で比較する。この比較だけで detail 全体を検証済みとはしない。
+
+## MCP 起動とツール呼び出しの proxy 指定
+
+[mcp-proxy.json](contracts/mcp-proxy.json) は実 Go Run/root と MCP の組み立てを通す10ケースである。設定の不正 proxy、明示上書き・空値・no-proxy false、両フラグの併用、設定エラーの優先順位と重複 proxy を固定する。更新 cleanup と URL handler の既存 seam を使い、最後の `runMCPStdio` だけを in-memory transport へ置き換える。構築済みの実 server で作品詳細と検索を呼び、各 wire result、起動診断、終了コード、設定保持と DB 有無を採取する。
+
+`crates/pixiv-cli/tests/mcp_proxy.rs` は隔離ホームの実バイナリで同じ起動を行う。明示した不正 proxy と併用は DB 作成前に拒否する。設定内の Pixiv proxy はツール呼び出し時に解決するため、設定だけが不正な場合も MCP session は起動し、各 tool result にエラーを返す。stdout の CLI 診断と JSON-RPC を区別し、成功起動時は ID で両ツールの result を照合する。
+
+本番 stdio の `serve_saved_with_proxy` は上書き値を各ツールの共通 Execution に渡す。上書きなしの `serve_saved` は既存の API と既定値を維持する。`saved_proxy_override_reaches_detail_and_search_account_connections` は既存の正常 Go fixture を再利用し、両ツールで設定値・空値・明示値が実アカウント接続へ届くこと、OAuth refresh と保存後の content result を比較する。
+
+これは選択値と起動・アカウント経路の比較であり、実 HTTP/SOCKS proxy wire、TLS、redirect、全 flag 構文/help、reverse search・他ツールの接続、他 OS の証拠ではない。
