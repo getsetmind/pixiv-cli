@@ -68,8 +68,7 @@ impl<T: Transport> Client<T> {
     }
 
     pub fn from_credentials(credentials: &crate::oauth::Credentials, transport: T) -> Self {
-        let mut client = Self::with_transport(credentials.access_token(), transport)
-            .with_expiry(credentials.expires_at);
+        let mut client = Self::with_transport(credentials.access_token(), transport);
         client.user_id = credentials.user_id;
         client
     }

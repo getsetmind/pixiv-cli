@@ -62,9 +62,9 @@ cargo test -p pixiv-sdk --test cursors --test resource_ref --locked
 
 [http-status.json](contracts/http-status.json) は固定 Go 版の content API と OAuth の分類から採取した 64 ケースを持つ。16 種類の HTTP status と Retry-After の有無を組み合わせる。Rust は公開の `Client::artwork` と `oauth::refresh` を fixture transport 経由で呼び、reason、status、product、operation、表示、retry の有無と期限を比較する。有効な Retry-After を持つ content API の 429 は 2 回、その他は 1 回の要求となる。
 
-Content API の 400 は InvalidArgument、401 は CredentialsExpired、404 は NotFound、410 は ContentUnavailable となる。OAuth の 400・401 は CredentialsExpired、404・410 は UpstreamError となる。両方で HTTP の 5xx は UpstreamError であり、通信不能の UpstreamUnavailable と区別する。retry advice は 401・429 と OAuth の 400 にだけ付く。
+Content API の 400 は InvalidArgument、401 は CredentialsExpired、404 は NotFound、410 は ContentUnavailable となる。OAuth の 400・401 は CredentialsExpired、404・410 は UpstreamError となる。両方で HTTP の 5xx は UpstreamError であり、通信不能の UpstreamUnavailable と区別する。Content API の retry advice は有効な Retry-After を持つ401・429に付く。OAuth は公開 OpenWith の実際の HTTP 経路で比較し、Retry-After を取り込まず retry advice を返さない。
 
-この比較は分類済み HTTP 応答に対する契約である。通信原因の分類・取消、認証開始と成功応答の全契約は未移植・未検証として残す。OAuth の refresh 失敗には公開 SDK の Open、code 交換には Complete の operation 名を使う。
+Content API は分類関数から採取し、OAuth は公開 OpenWith の HTTP 経路から採取する。通信原因の分類・取消、認証開始と成功応答の全契約は未移植・未検証として残す。OAuth の refresh 失敗には公開 SDK の Open、code 交換には Complete の operation 名を使う。
 
 ```text
 go test ./sdk/pixiv -run '^TestMigrationHTTPStatus' -count=1
@@ -72,6 +72,36 @@ cargo test -p pixiv-sdk --test http_status --locked
 ```
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-http-status` を指定する。
+
+## 保存済みアカウントの refresh・identity・revision と session
+
+[account-open.json](contracts/account-open.json) は固定Goの実account Service・公開SDK・SQLiteで採取した11ケースを持つ。明示UID、設定済みdefaultとsort順のfallback、空DB・存在しないUID・設定defaultの欠落、OAuth identity不一致、refresh中の別writerによるrevision競合、rotated token欠落、零expiry、refresh中のcontext取消を比較する。成功時にだけcontent要求を呼び、その時点で保存済みrevisionが2かつAuthorizationが新access tokenであることを確認する。OAuthのusernameはrotationだけでは保存済みmetadataを更新しない。
+
+RustのAccountServiceは実Databaseのrepository adapterとOAuthを呼び、identity確認後にrevision CASでtokenを保存してからclientを返す。外部テストではClientSessionsのaccount openerへ接続し、同じ11ケースの通信回数・エラー表示と取消cause・DB token/revision/usernameを比較する。成功・失敗・取消後にGateを再取得して解放を確認する。HTTP transportは呼出側が渡す依存境界で、Goの明示HTTPClientと同じケースを比較する。
+
+零expiryのGo clientはcontentを要求できる。Rustのfrom_credentialsが零時刻を期限切れとして拒否していた差を比較テストで検出し、Goに合わせてconstructorで自動expiryを設定しないよう修正した。固定GoのexpiresAtはOpen後に設定されず利用もされない。credentials metadataのexpiryは保持する。refresh中の取消はUpstreamUnavailable・HTTP transport・非公開causeのcontext.Canceledを保持し、表示は `pixiv upstream transport failed` にする。
+
+```text
+go test -race ./internal/storage/database -run '^TestMigrationAccountOpenPersistsRotationBeforeContent$' -count=1
+cargo test -p pixiv-app --test account_service --locked
+```
+
+比較はWindows amd64のみ。default設定ファイルの実adapter、CLI/MCP composition root、poolのUseへの接続、SDK自前HTTPのCloseIdleConnectionsと全connection options、import/login/check/export、SQL実行中の取消、全Unicode/非UTF8 token、HTTP成功と取消の競合・deadline、他OSは未実装または未検証。既存のgeneric session closerは明示portのままで、SDKの自前HTTP cleanupを検証済みとは扱わない。fixture更新は `-migration-update-account-open` を明示する。
+
+## OAuth refresh の不透明 token と応答選択
+
+[oauth-refresh.json](contracts/oauth-refresh.json) は固定 Go 版の公開 OpenWith を通した30ケースを持つ。空入力・cookie名・複数cookie pairを拒否し、単独の `opaque=value`、token内部の空白、cookie pairにならないsemicolonを受け入れる。成功応答のrefresh token欠落は入力tokenを維持する。nested responseはaccess token・refresh token・user IDのいずれかが非零なら選択し、空のnested objectではrootを使う。文字列・整数のID、欠落・null・型違い、非正のexpiry、identity欠落を比較する。
+
+要求のmethod・URL・5つのform field・Content-Type・Authorization不在を確認する。tokenはすべて合成値で、client ID/secretはGo側で非空を確認しfixtureへ保存しない。有効期限はGo/Rust双方で実行前後の時刻に3600秒を加えた区間を確認して3600へ正規化する。Goの零時刻は `0001-01-01T00:00:00Z` として保持する。
+
+従来のHTTP分類fixtureのOAuth部分は分類関数へ人工的なRetry-Afterを渡していたため、実際のadapterが取り込まない値を比較していた。公開OpenWithを経由した採取に修正し、400・401・429のRetry-Afterあり3ケースについてsafe/has_afterをfalseへ修正した。Goの本番実装は変更していない。
+
+```text
+go test ./sdk/pixiv -run '^TestMigration(OAuthRefresh|HTTPStatus)' -count=1
+cargo test -p pixiv-sdk --test oauth_refresh --test http_status --locked
+```
+
+保存済みUIDの確認とrevision CASへの接続は前節の11ケースで比較する。比較はWindows amd64のみ。全JSON wire境界・duplicate key・全Unicode trim・通信原因と取消の全競合・code交換・CLI/MCP認証・他OSは未検証または未実装。認証機能全体の完了とは扱わない。fixture更新は入力や比較対象の変更時に `-migration-update-oauth-refresh` を明示する。
 
 ## Retry-After と読み取りの再試行
 
@@ -360,7 +390,7 @@ AI の only は取得後のローカルフィルターであり、checkpoint の
 
 Rust の外部テストは同じ118ケースで、query・DTO・cursor envelope と payload・エラーを比較する。`SearchArtworksRequest` と `search_artworks` は検索条件を受け取り、items と next を含む Page を返す。`checkpoint_search_artworks` は元の query と現在の cursor から消費位置を加算する。HTTP query と cursor の digest は別に組み立て、ローカルフィルター・解像度・context を検索条件の binding に含める。上流の next_url は許可した検索 endpoint と query key を検証して offset だけを取り出し、URL 自体は再実行しない。
 
-`Client::from_credentials` は OAuth credentials のアカウント ID と期限を設定する。OAuth 応答の ID は文字列と整数の双方を受け入れる。access token だけから作る client はアカウントを推測せず、ランダムな非秘密の instance ID に cursor を結び付ける。Rust テストでも正規化前の instance ID の形式を確認し、別 client での再利用の拒否を比較する。
+`Client::from_credentials` は OAuth credentials のアカウント ID を設定する。有効期限は credentials の metadata に保持し、固定 Go 版と同様に client の自動期限判定へ設定しない。OAuth 応答の ID は文字列と整数の双方を受け入れる。access token だけから作る client はアカウントを推測せず、ランダムな非秘密の instance ID に cursor を結び付ける。Rust テストでも正規化前の instance ID の形式を確認し、別 client での再利用の拒否を比較する。
 
 CLI の試作検索も型付き request を使うように更新したが、現在は先頭ページを表示する。CLI/MCP の全検索条件・出力・ページ上限、全 JSON wire 境界・cursor payload の大文字小文字や重複 key・複数不正値の全検証順、乱数生成失敗時の constructor の契約、通信・認証保存・他 OS は未実装または未検証。SDK の検索互換全体を検証済みとは扱わない。
 

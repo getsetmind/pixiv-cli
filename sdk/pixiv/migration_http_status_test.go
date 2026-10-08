@@ -2,10 +2,15 @@ package pixiv
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
+	"errors"
 	"flag"
+	"io"
+	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -31,7 +36,16 @@ func TestMigrationHTTPStatusMatchesFrozenClassification(t *testing.T) {
 				failure := protocol.HTTPStatusWithRetryAfter(status, 120*time.Second, retry)
 				err := classifyAppError(failure, "Artwork")
 				if oauth {
-					err = classifyOAuthError(failure, "Open")
+					header := http.Header{}
+					if retry {
+						header.Set("Retry-After", "120")
+					}
+					_, _, openErr := OpenWith(context.Background(), "fixture-refresh", Options{HTTPClient: &http.Client{Transport: migrationOAuthTransport(func(req *http.Request) (*http.Response, error) {
+						return &http.Response{StatusCode: status, Header: header, Body: io.NopCloser(strings.NewReader(`{"error":"fixture-http-secret"}`)), Request: req}, nil
+					})}})
+					if !errors.As(openErr, &err) {
+						t.Fatalf("OAuth status did not return a classified error: %v", openErr)
+					}
 				}
 				rows = append(rows, row{oauth, status, retry, string(err.Reason), err.Retry.Safe, err.Retry.HasAfter, err.Error()})
 				if err.HTTPStatus != status || err.Product != "pixiv" || err.Detail != "" || err.Transport != "" || err.Unwrap() != nil {

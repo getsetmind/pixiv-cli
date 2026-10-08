@@ -1,0 +1,147 @@
+use crate::{
+    database::{Database, PixivAccount},
+    lifecycle::Context,
+    scheduler::SchedulerError,
+};
+use pixiv_sdk::{
+    Client, Error, Reason,
+    error::{Cause, TransportKind},
+    oauth,
+    transport::Transport,
+};
+use std::sync::{Arc, Mutex};
+
+pub trait AccountRepository: Send + Sync {
+    fn get(&self, context: &Context, user_id: i64) -> Result<PixivAccount, SchedulerError>;
+    fn list(&self, context: &Context) -> Result<Vec<PixivAccount>, SchedulerError>;
+    fn rotate(
+        &self,
+        context: &Context,
+        user_id: i64,
+        revision: i64,
+        refresh_token: &[u8],
+    ) -> Result<(), SchedulerError>;
+}
+
+impl AccountRepository for Mutex<Database> {
+    fn get(&self, context: &Context, user_id: i64) -> Result<PixivAccount, SchedulerError> {
+        if let Some(error) = context.error() {
+            return Err(error.into());
+        }
+        self.lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner())
+            .get_pixiv(user_id)
+            .map_err(SchedulerError::Account)
+    }
+    fn list(&self, context: &Context) -> Result<Vec<PixivAccount>, SchedulerError> {
+        if let Some(error) = context.error() {
+            return Err(error.into());
+        }
+        self.lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner())
+            .list_pixiv()
+            .map_err(SchedulerError::Account)
+    }
+    fn rotate(
+        &self,
+        context: &Context,
+        user_id: i64,
+        revision: i64,
+        refresh_token: &[u8],
+    ) -> Result<(), SchedulerError> {
+        if let Some(error) = context.error() {
+            return Err(error.into());
+        }
+        self.lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner())
+            .rotate_pixiv_credentials(user_id, revision, refresh_token)
+            .map_err(SchedulerError::Account)
+    }
+}
+
+pub type DefaultAccountReader = dyn Fn() -> Result<Option<i64>, SchedulerError> + Send + Sync;
+
+pub struct AccountService {
+    pub repository: Arc<dyn AccountRepository>,
+    pub defaults: Option<Arc<DefaultAccountReader>>,
+}
+
+fn wrapped(message: &str, source: SchedulerError) -> SchedulerError {
+    SchedulerError::Wrapped {
+        message: message.to_owned(),
+        source: Box::new(source),
+    }
+}
+
+impl AccountService {
+    pub fn selected_user_id(&self, context: &Context) -> Result<i64, SchedulerError> {
+        let defaults = self.defaults.as_ref().ok_or_else(|| {
+            SchedulerError::Message("pixiv default account store is not configured".to_owned())
+        })?;
+        if let Some(id) = defaults()? {
+            self.repository.get(context, id).map_err(|_| {
+                SchedulerError::Message(format!("configured default pixiv account {id} is missing"))
+            })?;
+            return Ok(id);
+        }
+        self.repository
+            .list(context)?
+            .first()
+            .map(|account| account.user_id)
+            .ok_or_else(|| {
+                Error::new(Reason::Unauthorized, "auth")
+                    .with_detail("no pixiv account is authenticated")
+                    .into()
+            })
+    }
+
+    pub async fn open<T: Transport>(
+        &self,
+        context: &Context,
+        user_id: i64,
+        transport: T,
+    ) -> Result<Client<T>, SchedulerError> {
+        let user_id = if user_id == 0 {
+            self.selected_user_id(context)?
+        } else {
+            user_id
+        };
+        self.open_account(context, user_id, transport).await
+    }
+
+    pub async fn open_account<T: Transport>(
+        &self,
+        context: &Context,
+        user_id: i64,
+        transport: T,
+    ) -> Result<Client<T>, SchedulerError> {
+        let account = self
+            .repository
+            .get(context, user_id)
+            .map_err(|error| wrapped("select pixiv account", error))?;
+        let token = account.refresh_token_copy();
+        let token = String::from_utf8_lossy(&token);
+        let credentials = tokio::select! {
+            result=oauth::refresh(&transport,&token)=>result?,
+            error=context.cancelled()=>{
+                let cause=match error {crate::lifecycle::ContextError::Canceled=>Cause::Canceled,crate::lifecycle::ContextError::DeadlineExceeded=>Cause::DeadlineExceeded};
+                return Err(Error::new(Reason::UpstreamUnavailable,"Open").with_transport(TransportKind::Http).with_cause(Cause::TransportFailure(Box::new(cause))).into());
+            }
+        };
+        let persisted =
+            if user_id <= 0 || credentials.user_id <= 0 || user_id != credentials.user_id {
+                Err(Error::new(Reason::LocalStateError, "OpenAccountClient")
+                    .with_detail("credential identity does not match selected account")
+                    .into())
+            } else {
+                self.repository.rotate(
+                    context,
+                    user_id,
+                    account.credential_revision,
+                    credentials.refresh_token().as_bytes(),
+                )
+            };
+        persisted.map_err(|error| wrapped("persist rotated pixiv credentials", error))?;
+        Ok(Client::from_credentials(&credentials, transport))
+    }
+}

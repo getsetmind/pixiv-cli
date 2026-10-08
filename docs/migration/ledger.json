@@ -29,7 +29,10 @@
         "crates/pixiv-app/src/diagnostics.rs",
         "crates/pixiv-app/src/gate.rs",
         "crates/pixiv-app/src/lease.rs",
-        "crates/pixiv-app/src/sessions.rs"
+        "crates/pixiv-app/src/sessions.rs",
+        "crates/pixiv-sdk/src/oauth.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-app/src/account_service.rs"
       ],
       "tests": [
         "internal/storage/database/migration_contract_test.go#TestMigrationDatabasePreservesSchemaAndRejectsDrift",
@@ -56,7 +59,11 @@
         "internal/services/pixiv/migration_session_test.go#TestMigrationSessionsPreserveClientGateOwnershipAndPartialFailure",
         "crates/pixiv-app/tests/lease.rs#leases_match_go_values_cached_close_results_concurrent_release_and_panic",
         "crates/pixiv-app/tests/sessions.rs#client_sessions_match_go_open_close_errors_and_gate_ownership",
-        "crates/pixiv-app/tests/sessions.rs#aborting_a_pending_client_opener_releases_the_rotation_gate"
+        "crates/pixiv-app/tests/sessions.rs#aborting_a_pending_client_opener_releases_the_rotation_gate",
+        "sdk/pixiv/migration_oauth_refresh_test.go#TestMigrationOAuthRefreshPreservesOpaqueInputAndResponseFallback",
+        "crates/pixiv-sdk/tests/oauth_refresh.rs#refresh_preserves_go_opaque_tokens_nested_fallback_and_zero_expiry",
+        "internal/storage/database/migration_account_open_test.go#TestMigrationAccountOpenPersistsRotationBeforeContent",
+        "crates/pixiv-app/tests/account_service.rs#account_session_refreshes_checks_identity_and_persists_before_content"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -66,8 +73,10 @@
         "Pixiv repositoryのsave/batch/list/get/remove/metadata/rotation CASを31操作で比較。token copy/Debug秘匿、8件の共有connection更新で成功1件/conflict7件、Go→Rust→Go→Rustの実ファイル状態を検証。時刻は操作前に11/22へ制御し実際の更新時刻が操作window内であることを確認して-1化。SQLite固有診断は制約種別と対象列のみ比較。CLI auth自体、FANBOX、refresh UID照合/app接続、pool session Use/refresh、別connection/process競合、取消/強制停止、全境界/障害、config・MCP、他OSは未実装または未検証。",
         "Schedulerの再試行・commit・取消・枯渇・clock・保存状態をGoの97ケースで比較し、待機中の試行への外部commit/取消もGo/Rustで検証。wrapped SDK causeの分類と全文を保持。CLI/MCP/configと認証sessionのUse/refresh・実通信への接続は未移植。SQL実行中の取消、親子context、全競合・clock極値・全Unicode診断、他OSは未検証。",
         "Schedulerの97ケースにselected/frozeイベント全13フィールドと順序の比較を追加。重複UID拒否前のselectedとFreeze成功後だけのfrozeを維持。診断scopeの有無/nil sink/child/明示module/直接通知/取消の64ケースをGo/Rustで比較し、module補完・request ID上書き・取消後の通知・scope不在の無通知を検証。CLI/MCP bootstrap/presenterと他subsystemの診断、並行sink/障害・全値域、他OSは未移植または未検証。",
-        "refresh rotation Gateの12ケースで未設定/callback不在/成功/失敗/取消/deadline/panic後の解放をGo/Rustで比較。Rustの共有Permitによりclone間を直列化し、task abort後の解放も検証。GoのAcquire/ReleaseはRustの所有guard/dropに対応。取消済みかつ空き枠のselectは両結果が許容される。実account refresh成果とCASのapp接続、CLI/MCP/bootstrap、別process/全競合/負荷/公平性、他OSは未移植または未検証。",
-        "Leaseの7ケースでValue/反復/8並行Close/同じerror instance/panic後の再実行防止をGo/Rustで比較。Facade.Openの明示opener/closerとGate/Leaseを17ケースで接続し、UID/options受渡し、取得後CloseまでのGate保持、部分client失敗のcloseと複数原因、panic後の再取得を検証。Rust取得待機task abortでもGateを解放。SessionErrorの全原因はerrors()/分類/取消APIで検索しstd sourceは先頭のみ。既定SDK CloseIdleConnections、Facade.Use/pool replay、実account選択/refresh/UID/CASと全options、CLI/MCP/bootstrap、親子context/全競合/他OSは未移植または未検証。"
+        "refresh rotation Gateの12ケースで未設定/callback不在/成功/失敗/取消/deadline/panic後の解放をGo/Rustで比較。Rustの共有Permitによりclone間を直列化し、task abort後の解放も検証。GoのAcquire/ReleaseはRustの所有guard/dropに対応。取消済みかつ空き枠のselectは両結果が許容される。CLI/MCP/bootstrap、別process/全競合/負荷/公平性、他OSは未移植または未検証。",
+        "Leaseの7ケースでValue/反復/8並行Close/同じerror instance/panic後の再実行防止をGo/Rustで比較。Facade.Openの明示opener/closerとGate/Leaseを17ケースで接続し、UID/options受渡し、取得後CloseまでのGate保持、部分client失敗のcloseと複数原因、panic後の再取得を検証。Rust取得待機task abortでもGateを解放。SessionErrorの全原因はerrors()/分類/取消APIで検索しstd sourceは先頭のみ。既定SDK CloseIdleConnections、Facade.Use/pool replay、全connection options、CLI/MCP/bootstrap、親子context/全競合/他OSは未移植または未検証。",
+        "固定Goの公開OpenWithを経由した30ケースでopaque token/cookie拒否・refresh token欠落時の維持・nested/root選択・ID/expiry/null/型違いを比較。HTTP分類のOAuth fixtureも実OpenWithへ修正し、adapterがRetry-Afterを取り込まない契約を保持した。保存済みUIDとrevision CASへの接続は下記11ケースで比較。全JSON wire/Unicode・取消の全競合・code交換・CLI/MCP認証・他OSは未検証または未実装。",
+        "固定Goの実account Service/SQLite/公開SDKの11ケースを採取し、Rust AccountServiceをsessionのaccount openerと実Databaseへ接続。明示/default/fallback、欠落、identity不一致、refresh中のrevision競合、refresh token維持、零expiry、context取消とcancel cause、保存前content禁止、session解放を比較。default設定file adapter・CLI/MCP composition・pool Use・SDK自前HTTP cleanup/options・全認証操作・SQL中断/全wire/OSは未実装または未検証。"
       ]
     },
     {
@@ -169,7 +178,9 @@
         "crates/pixiv-app/src/diagnostics.rs",
         "crates/pixiv-app/src/gate.rs",
         "crates/pixiv-app/src/lease.rs",
-        "crates/pixiv-app/src/sessions.rs"
+        "crates/pixiv-app/src/sessions.rs",
+        "crates/pixiv-app/src/account_service.rs",
+        "crates/pixiv-sdk/src/oauth.rs"
       ],
       "tests": [
         "internal/storage/database/migration_pool_test.go#TestMigrationPoolPreservesSelectionFreezeMembershipAndRollback",
@@ -190,7 +201,9 @@
         "internal/services/pixiv/migration_session_test.go#TestMigrationSessionsPreserveClientGateOwnershipAndPartialFailure",
         "crates/pixiv-app/tests/lease.rs#leases_match_go_values_cached_close_results_concurrent_release_and_panic",
         "crates/pixiv-app/tests/sessions.rs#client_sessions_match_go_open_close_errors_and_gate_ownership",
-        "crates/pixiv-app/tests/sessions.rs#aborting_a_pending_client_opener_releases_the_rotation_gate"
+        "crates/pixiv-app/tests/sessions.rs#aborting_a_pending_client_opener_releases_the_rotation_gate",
+        "internal/storage/database/migration_account_open_test.go#TestMigrationAccountOpenPersistsRotationBeforeContent",
+        "crates/pixiv-app/tests/account_service.rs#account_session_refreshes_checks_identity_and_persists_before_content"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -199,8 +212,9 @@
         "pool保存層とchooserの検証。Goの51操作でround_robin/random、候補snapshot/marker/attempt除外、4原因とearliest、参加設定/凍結/期限解除、失敗時transaction rollback、返却accountと保存時刻を比較。default randomの候補1件とempty snapshotも両実装で確認。CLIコマンド自体、session Use/refresh、SQL取消/並行/別process/DB障害、巨大UIDと全境界・不正strategy文字列、乱数分布/entropy障害、config/MCP、他OSは未移植または未検証。",
         "Schedulerの再試行・commit・取消・枯渇・clock・保存状態をGoの97ケースで比較し、待機中の試行への外部commit/取消もGo/Rustで検証。wrapped SDK causeの分類と全文を保持。CLI/MCP/configと認証sessionのUse/refresh・実通信への接続は未移植。SQL実行中の取消、親子context、全競合・clock極値・全Unicode診断、他OSは未検証。",
         "Schedulerの97ケースにselected/frozeイベント全13フィールドと順序の比較を追加。重複UID拒否前のselectedとFreeze成功後だけのfrozeを維持。診断scopeの有無/nil sink/child/明示module/直接通知/取消の64ケースをGo/Rustで比較し、module補完・request ID上書き・取消後の通知・scope不在の無通知を検証。CLI/MCP bootstrap/presenterと他subsystemの診断、並行sink/障害・全値域、他OSは未移植または未検証。",
-        "refresh rotation Gateの12ケースで未設定/callback不在/成功/失敗/取消/deadline/panic後の解放をGo/Rustで比較。Rustの共有Permitによりclone間を直列化し、task abort後の解放も検証。GoのAcquire/ReleaseはRustの所有guard/dropに対応。取消済みかつ空き枠のselectは両結果が許容される。実account refresh成果とCASのapp接続、CLI/MCP/bootstrap、別process/全競合/負荷/公平性、他OSは未移植または未検証。",
-        "Leaseの7ケースでValue/反復/8並行Close/同じerror instance/panic後の再実行防止をGo/Rustで比較。Facade.Openの明示opener/closerとGate/Leaseを17ケースで接続し、UID/options受渡し、取得後CloseまでのGate保持、部分client失敗のcloseと複数原因、panic後の再取得を検証。Rust取得待機task abortでもGateを解放。SessionErrorの全原因はerrors()/分類/取消APIで検索しstd sourceは先頭のみ。既定SDK CloseIdleConnections、Facade.Use/pool replay、実account選択/refresh/UID/CASと全options、CLI/MCP/bootstrap、親子context/全競合/他OSは未移植または未検証。"
+        "refresh rotation Gateの12ケースで未設定/callback不在/成功/失敗/取消/deadline/panic後の解放をGo/Rustで比較。Rustの共有Permitによりclone間を直列化し、task abort後の解放も検証。GoのAcquire/ReleaseはRustの所有guard/dropに対応。取消済みかつ空き枠のselectは両結果が許容される。CLI/MCP/bootstrap、別process/全競合/負荷/公平性、他OSは未移植または未検証。",
+        "Leaseの7ケースでValue/反復/8並行Close/同じerror instance/panic後の再実行防止をGo/Rustで比較。Facade.Openの明示opener/closerとGate/Leaseを17ケースで接続し、UID/options受渡し、取得後CloseまでのGate保持、部分client失敗のcloseと複数原因、panic後の再取得を検証。Rust取得待機task abortでもGateを解放。SessionErrorの全原因はerrors()/分類/取消APIで検索しstd sourceは先頭のみ。既定SDK CloseIdleConnections、Facade.Use/pool replay、全connection options、CLI/MCP/bootstrap、親子context/全競合/他OSは未移植または未検証。",
+        "固定Goの実account Service/SQLite/公開SDKの11ケースを採取し、Rust AccountServiceをsessionのaccount openerと実Databaseへ接続。明示/default/fallback、欠落、identity不一致、refresh中のrevision競合、refresh token維持、零expiry、context取消とcancel cause、保存前content禁止、session解放を比較。default設定file adapter・CLI/MCP composition・pool Use・SDK自前HTTP cleanup/options・全認証操作・SQL中断/全wire/OSは未実装または未検証。"
       ]
     },
     {
@@ -7912,17 +7926,25 @@
       "rust_sources": [
         "crates/pixiv-sdk/src/transport.rs",
         "crates/pixiv-sdk/src/oauth.rs",
-        "crates/pixiv-sdk/src/pixiv.rs"
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-app/src/account_service.rs",
+        "crates/pixiv-app/src/sessions.rs"
       ],
       "tests": [
         "sdk/pixiv/migration_http_status_test.go#TestMigrationHTTPStatusMatchesFrozenClassification",
-        "crates/pixiv-sdk/tests/http_status.rs"
+        "crates/pixiv-sdk/tests/http_status.rs",
+        "sdk/pixiv/migration_oauth_refresh_test.go#TestMigrationOAuthRefreshPreservesOpaqueInputAndResponseFallback",
+        "crates/pixiv-sdk/tests/oauth_refresh.rs#refresh_preserves_go_opaque_tokens_nested_fallback_and_zero_expiry",
+        "internal/storage/database/migration_account_open_test.go#TestMigrationAccountOpenPersistsRotationBeforeContent",
+        "crates/pixiv-app/tests/account_service.rs#account_session_refreshes_checks_identity_and_persists_before_content"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "HTTP status 分類だけを比較済み。正常応答・入力・認証・DTO・resource・実通信・再試行・保存の全契約は未移植または未検証。"
+        "HTTP status分類とrefresh/account sessionの下記契約を比較済み。正常応答・入力・認証・DTO・resource・実通信・再試行・保存の全契約は未移植または未検証。",
+        "固定Goの公開OpenWithを経由した30ケースでopaque token/cookie拒否・refresh token欠落時の維持・nested/root選択・ID/expiry/null/型違いを比較。HTTP分類のOAuth fixtureも実OpenWithへ修正し、adapterがRetry-Afterを取り込まない契約を保持した。保存済みUIDとrevision CASへの接続は下記11ケースで比較。全JSON wire/Unicode・取消の全競合・code交換・CLI/MCP認証・他OSは未検証または未実装。",
+        "固定Goの実account Service/SQLite/公開SDKの11ケースを採取し、Rust AccountServiceをsessionのaccount openerと実Databaseへ接続。明示/default/fallback、欠落、identity不一致、refresh中のrevision競合、refresh token維持、零expiry、context取消とcancel cause、保存前content禁止、session解放を比較。default設定file adapter・CLI/MCP composition・pool Use・SDK自前HTTP cleanup/options・全認証操作・SQL中断/全wire/OSは未実装または未検証。"
       ]
     },
     {

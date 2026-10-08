@@ -1,5 +1,6 @@
 use crate::{
     Error, Reason, Result,
+    error::Cause,
     transport::{Request, Transport, checked_oauth},
 };
 use base64::{Engine, engine::general_purpose::URL_SAFE_NO_PAD};
@@ -134,14 +135,16 @@ impl LoginSession {
 
 pub async fn refresh<T: Transport>(transport: &T, refresh_token: &str) -> Result<Credentials> {
     let token = refresh_token.trim();
-    if token.is_empty()
-        || token.chars().any(char::is_whitespace)
-        || token.contains('=')
-        || token.contains(';')
-    {
-        return Err(Error::new(Reason::InvalidArgument, "refresh"));
+    if token.is_empty() {
+        return Err(
+            Error::new(Reason::CredentialsExpired, "Open").with_detail("refresh token is required")
+        );
     }
-    exchange(
+    if looks_like_cookie(token) {
+        return Err(Error::new(Reason::CredentialsExpired, "Open")
+            .with_cause(Cause::Redacted("pixiv upstream request failed".to_owned())));
+    }
+    let body = request_exchange(
         transport,
         "Open",
         vec![
@@ -149,7 +152,133 @@ pub async fn refresh<T: Transport>(transport: &T, refresh_token: &str) -> Result
             ("refresh_token", token.to_owned()),
         ],
     )
-    .await
+    .await?;
+    let decoded: RefreshResponse = if body.is_null() {
+        RefreshResponse::default()
+    } else {
+        serde_json::from_value(body)
+            .map_err(|_| Error::new(Reason::MalformedUpstreamResponse, "Open"))?
+    };
+    let payload = if !decoded.response.access_token.is_empty()
+        || !decoded.response.refresh_token.is_empty()
+        || decoded.response.user.id.0 != 0
+    {
+        decoded.response
+    } else {
+        decoded.root
+    };
+    if payload.access_token.is_empty() {
+        return Err(Error::new(Reason::MalformedUpstreamResponse, "Open"));
+    }
+    if payload.user.id.0 <= 0 {
+        return Err(Error::new(Reason::MalformedUpstreamResponse, "Open")
+            .with_detail("oauth response did not include account identity"));
+    }
+    let expires_at = if payload.expires_in <= 0 {
+        DateTime::from_timestamp(-62_135_596_800, 0)
+            .ok_or_else(|| Error::new(Reason::LocalStateError, "Open"))?
+    } else {
+        Utc::now() + TimeDelta::nanoseconds(payload.expires_in.wrapping_mul(1_000_000_000))
+    };
+    Ok(Credentials {
+        access_token: payload.access_token,
+        refresh_token: if payload.refresh_token.is_empty() {
+            token.to_owned()
+        } else {
+            payload.refresh_token
+        },
+        user_id: payload.user.id.0,
+        username: payload.user.name,
+        expires_at,
+    })
+}
+
+fn looks_like_cookie(value: &str) -> bool {
+    if value.to_ascii_lowercase().starts_with("cookie:") {
+        return true;
+    }
+    let mut pairs = 0;
+    for part in value.split(';') {
+        let Some((name, token)) = part.trim().split_once('=') else {
+            continue;
+        };
+        let name = name.trim();
+        if name.is_empty() || token.trim().is_empty() {
+            continue;
+        }
+        if matches!(
+            name.to_ascii_lowercase().as_str(),
+            "refresh_token"
+                | "phpsessid"
+                | "session"
+                | "sessionid"
+                | "session_id"
+                | "csrftoken"
+                | "csrf_token"
+                | "device_token"
+                | "yuid_b"
+                | "p_ab_id"
+                | "p_ab_id_2"
+                | "privacy_policy_agreement"
+                | "privacy_policy_notification"
+        ) {
+            return true;
+        }
+        pairs += 1;
+    }
+    pairs > 1
+}
+
+fn nullable<'de, D: serde::Deserializer<'de>, T: Deserialize<'de> + Default>(
+    deserializer: D,
+) -> std::result::Result<T, D::Error> {
+    Ok(Option::<T>::deserialize(deserializer)?.unwrap_or_default())
+}
+
+#[derive(Default, Deserialize)]
+struct RefreshResponse {
+    #[serde(flatten)]
+    root: RefreshPayload,
+    #[serde(default, deserialize_with = "nullable")]
+    response: RefreshPayload,
+}
+
+#[derive(Default, Deserialize)]
+struct RefreshPayload {
+    #[serde(default, deserialize_with = "nullable")]
+    access_token: String,
+    #[serde(default, deserialize_with = "nullable")]
+    refresh_token: String,
+    #[serde(default, deserialize_with = "nullable")]
+    expires_in: i64,
+    #[serde(default, deserialize_with = "nullable")]
+    user: RefreshUser,
+}
+
+#[derive(Default, Deserialize)]
+struct RefreshUser {
+    #[serde(default, deserialize_with = "nullable")]
+    id: RefreshUserId,
+    #[serde(default, deserialize_with = "nullable")]
+    name: String,
+}
+
+#[derive(Default)]
+struct RefreshUserId(i64);
+
+impl<'de> Deserialize<'de> for RefreshUserId {
+    fn deserialize<D: serde::Deserializer<'de>>(
+        deserializer: D,
+    ) -> std::result::Result<Self, D::Error> {
+        let value = serde_json::Value::deserialize(deserializer)?;
+        let id = match value {
+            serde_json::Value::Number(value) => value.as_i64(),
+            serde_json::Value::String(value) => value.parse().ok(),
+            _ => None,
+        }
+        .ok_or_else(|| serde::de::Error::custom("invalid OAuth identity"))?;
+        Ok(Self(id))
+    }
 }
 
 async fn exchange<T: Transport>(
@@ -157,6 +286,15 @@ async fn exchange<T: Transport>(
     operation: &'static str,
     extra: Vec<(&str, String)>,
 ) -> Result<Credentials> {
+    let body = request_exchange(transport, operation, extra).await?;
+    decode_login(body, operation)
+}
+
+async fn request_exchange<T: Transport>(
+    transport: &T,
+    operation: &'static str,
+    extra: Vec<(&str, String)>,
+) -> Result<serde_json::Value> {
     let mut parameters = vec![
         ("client_id".to_owned(), CLIENT_ID.to_owned()),
         ("client_secret".to_owned(), CLIENT_SECRET.to_owned()),
@@ -167,18 +305,26 @@ async fn exchange<T: Transport>(
             .into_iter()
             .map(|(key, value)| (key.to_owned(), value)),
     );
-    let body = checked_oauth(
+    let mut headers = super::pixiv::headers(None);
+    headers.push((
+        "Content-Type".to_owned(),
+        "application/x-www-form-urlencoded".to_owned(),
+    ));
+    checked_oauth(
         transport
             .send(Request {
                 method: Method::POST,
                 url: "https://oauth.secure.pixiv.net/auth/token".to_owned(),
-                headers: super::pixiv::headers(None),
+                headers,
                 parameters,
                 operation,
             })
             .await?,
         operation,
-    )?;
+    )
+}
+
+fn decode_login(body: serde_json::Value, operation: &'static str) -> Result<Credentials> {
     #[derive(Deserialize)]
     struct Payload {
         access_token: String,

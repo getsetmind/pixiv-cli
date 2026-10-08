@@ -1,7 +1,7 @@
 use crate::{
     database::{
-        Database, PixivAccount, PoolChooser, PoolError, PoolSelectionKind, PoolSnapshot,
-        choose_pool_account,
+        AccountError, Database, PixivAccount, PoolChooser, PoolError, PoolSelectionKind,
+        PoolSnapshot, choose_pool_account,
     },
     diagnostics::Event,
     lifecycle::{Attempt, Context, ContextError},
@@ -19,6 +19,7 @@ use std::{
 pub enum SchedulerError {
     Sdk(Box<Error>),
     Pool(PoolError),
+    Account(AccountError),
     Message(String),
     Canceled,
     DeadlineExceeded,
@@ -33,6 +34,7 @@ impl fmt::Display for SchedulerError {
         match self {
             Self::Sdk(error) | Self::Exhausted(Some(error)) => fmt::Display::fmt(error, f),
             Self::Pool(error) => fmt::Display::fmt(error, f),
+            Self::Account(error) => fmt::Display::fmt(error, f),
             Self::Message(message) => f.write_str(message),
             Self::Canceled => f.write_str("context canceled"),
             Self::DeadlineExceeded => f.write_str("context deadline exceeded"),
@@ -46,6 +48,7 @@ impl StdError for SchedulerError {
         match self {
             Self::Sdk(error) | Self::Exhausted(Some(error)) => Some(error.as_ref()),
             Self::Pool(error) => Some(error),
+            Self::Account(error) => Some(error),
             Self::Wrapped { source, .. } => Some(source.as_ref()),
             _ => None,
         }

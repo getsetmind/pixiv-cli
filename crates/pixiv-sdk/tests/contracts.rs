@@ -111,7 +111,7 @@ async fn credential_debug_and_json_never_expose_tokens() {
 }
 
 #[tokio::test]
-async fn upstream_errors_preserve_retry_advice_without_exposing_response_bodies() {
+async fn oauth_errors_ignore_retry_headers_without_exposing_response_bodies() {
     let transport = Fixture::new(Response {
         status: 429,
         retry_after: Some(chrono::TimeDelta::seconds(120)),
@@ -121,7 +121,8 @@ async fn upstream_errors_preserve_retry_advice_without_exposing_response_bodies(
         .await
         .unwrap_err();
     assert_eq!(error.code, Reason::RateLimited);
-    assert_eq!(error.retry_after_seconds_at(chrono::Utc::now()), Some(120));
+    assert_eq!(error.retry_after_seconds_at(chrono::Utc::now()), None);
+    assert!(!error.retry.safe);
     assert!(!error.to_string().contains("fixture-upstream-secret"));
     assert!(
         !serde_json::to_string(&error)

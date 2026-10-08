@@ -158,7 +158,8 @@ pub(crate) fn checked(response: Response, operation: &'static str) -> Result<Val
     checked_status(response, operation, false)
 }
 
-pub(crate) fn checked_oauth(response: Response, operation: &'static str) -> Result<Value> {
+pub(crate) fn checked_oauth(mut response: Response, operation: &'static str) -> Result<Value> {
+    response.retry_after = None;
     checked_status(response, operation, true)
 }
 
