@@ -1,10 +1,57 @@
 use crate::{Error, Reason, Result, pixiv::ResourcePolicy};
 use serde_json::Value;
+use std::collections::BTreeSet;
 
 pub(crate) fn resolve(kind: &str, id: i64, variant: &str, body: &Value) -> Result<String> {
     let malformed = || Error::new(Reason::MalformedUpstreamResponse, "OpenResource");
     let unavailable = || malformed().with_detail("resource metadata has no usable URL");
     match kind {
+        "ugoira_archive" => {
+            let metadata = body
+                .get("ugoira_metadata")
+                .filter(|value| value.is_object())
+                .ok_or_else(malformed)?;
+            let urls = metadata
+                .get("zip_urls")
+                .filter(|value| value.is_object())
+                .ok_or_else(malformed)?;
+            let frames = metadata
+                .get("frames")
+                .and_then(Value::as_array)
+                .ok_or_else(malformed)?;
+            if !fields(Some(urls), &["original", "medium"], &[], &[])
+                || (text(Some(urls), "original").is_none() && text(Some(urls), "medium").is_none())
+                || frames.is_empty()
+            {
+                return Err(malformed());
+            }
+            let mut names = BTreeSet::new();
+            for frame in frames {
+                if !fields(Some(frame), &["file"], &[], &["delay"]) {
+                    return Err(malformed());
+                }
+                let file = text(Some(frame), "file").ok_or_else(malformed)?;
+                let normalized = file.replace('\\', "/");
+                if file.contains('\0')
+                    || normalized.starts_with('/')
+                    || normalized.as_bytes().get(1) == Some(&b':')
+                    || normalized
+                        .split('/')
+                        .any(|part| matches!(part, "" | "." | ".."))
+                    || !names.insert(normalized)
+                {
+                    return Err(malformed());
+                }
+            }
+            let selected = if variant.is_empty() {
+                text(Some(urls), "original").or_else(|| text(Some(urls), "medium"))
+            } else if matches!(variant, "original" | "medium") {
+                text(Some(urls), variant)
+            } else {
+                None
+            };
+            selected.map(str::to_owned).ok_or_else(unavailable)
+        }
         "novel_cover" => {
             let novel = body
                 .get("novel")

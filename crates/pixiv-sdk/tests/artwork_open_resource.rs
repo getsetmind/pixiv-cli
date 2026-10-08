@@ -85,7 +85,7 @@ async fn resource_open_revalidates_identity_resolves_metadata_and_reuses_cached_
         "../../../docs/migration/contracts/artwork-open-resource.json"
     ))
     .unwrap();
-    assert_eq!(cases.len(), 124);
+    assert_eq!(cases.len(), 162);
     for case in cases {
         let seen = Arc::new(Mutex::new(Seen::default()));
         let client = Client::with_transport(

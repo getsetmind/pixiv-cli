@@ -15,7 +15,7 @@ import (
 	"github.com/FlanChanXwO/pixiv-cli/sdk/pixiv"
 )
 
-var migrationUpdateOpenResource = flag.Bool("migration-update-open-resource", false, "capture artwork resource open contracts from the fixed Go reference")
+var migrationUpdateOpenResource = flag.Bool("migration-update-open-resource", false, "capture resource open contracts from the fixed Go reference")
 
 func TestMigrationOpenResourceMatchesFrozenMetadataResolution(t *testing.T) {
 	type row struct {
@@ -98,6 +98,40 @@ func TestMigrationOpenResourceMatchesFrozenMetadataResolution(t *testing.T) {
 			t.Fatal(err)
 		}
 		rows = append(rows, row{Name: metadata.kind + "-invalid", Product: "pixiv", Payload: string(payload), Body: json.RawMessage(metadata.body)})
+	}
+	for _, variant := range []string{"", "original", "medium", "large", "unsupported"} {
+		payload, err := json.Marshal(map[string]any{"k": "ugoira_archive", "id": 42, "p": 123, "v": variant})
+		if err != nil {
+			t.Fatal(err)
+		}
+		rows = append(rows, row{Name: "ugoira-variant", Product: "pixiv", Payload: string(payload), Body: json.RawMessage(`{"ugoira_metadata":{"zip_urls":{"original":"https://i.pximg.net/original.zip","medium":"https://i.pximg.net/medium.zip"},"frames":[{"file":"000000.jpg","delay":100}]}}`)})
+	}
+	for _, frames := range []string{
+		`[{"file":"000000.jpg","delay":0}]`, `[{"file":"000000.jpg","delay":-1}]`,
+		`[{"file":"000000.jpg"}]`, `[{"file":"000000.jpg","delay":null}]`,
+		`[{"file":"000000.jpg","delay":9223372036854775807}]`,
+		`[{"file":"000000.jpg","delay":"100"}]`, `[{"file":"000000.jpg","delay":1.5}]`,
+		`[{"file":"000000.jpg","delay":9223372036854775808}]`,
+		`[]`, `null`, `[null]`, `[{}]`,
+		`[{"file":"../000000.jpg"}]`, `[{"file":"/000000.jpg"}]`, `[{"file":"C:000000.jpg"}]`,
+		`[{"file":"dir//000000.jpg"}]`, `[{"file":"dir/./000000.jpg"}]`, `[{"file":"dir/../000000.jpg"}]`,
+		`[{"file":"dir/"}]`, `[{"file":"000\u000000.jpg"}]`,
+		`[{"file":"dir/000000.jpg"},{"file":"dir\\000000.jpg"}]`,
+		`[{"file":"000000.jpg"},{"file":"000000.jpg"}]`,
+		`[{"file":"A.jpg"},{"file":"a.jpg"}]`, `[{"file":"dir\\000000.jpg"}]`,
+		`[{"file":"日本語/000000.jpg"}]`, `[{"file":"%2e%2e/000000.jpg"}]`,
+	} {
+		body := `{"ugoira_metadata":{"zip_urls":{"medium":"https://i.pximg.net/medium.zip"},"frames":` + frames + `}}`
+		rows = append(rows, row{Name: "ugoira-frames", Product: "pixiv", Payload: `{"k":"ugoira_archive","id":42}`, Body: json.RawMessage(body)})
+	}
+	for _, body := range []string{
+		`{}`, `{"ugoira_metadata":null}`, `{"ugoira_metadata":{"zip_urls":{},"frames":[{"file":"0.jpg"}]}}`,
+		`{"ugoira_metadata":{"zip_urls":null,"frames":[{"file":"0.jpg"}]}}`,
+		`{"ugoira_metadata":{"zip_urls":{"medium":42},"frames":[{"file":"0.jpg"}]}}`,
+		`{"ugoira_metadata":{"zip_urls":{"medium":"https://i.pximg.net/medium.zip"}}}`,
+		`{"ugoira_metadata":{"zip_urls":{"original":"http://i.pximg.net/original.zip","medium":"https://i.pximg.net/medium.zip"},"frames":[{"file":"0.jpg"}]}}`,
+	} {
+		rows = append(rows, row{Name: "ugoira-envelope", Product: "pixiv", Payload: `{"k":"ugoira_archive","id":42}`, Body: json.RawMessage(body)})
 	}
 	for index := range rows {
 		input := &rows[index]

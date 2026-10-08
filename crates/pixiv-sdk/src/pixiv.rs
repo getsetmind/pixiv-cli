@@ -303,6 +303,10 @@ impl<T: Transport + ResourceTransport> Client<T> {
                 ),
                 "user_profile" => ("/v1/user/detail", vec![("user_id".into(), id.to_string())]),
                 "stamp" => ("/v1/stamps", vec![]),
+                "ugoira_archive" => (
+                    "/v1/ugoira/metadata",
+                    vec![("illust_id".into(), id.to_string())],
+                ),
                 _ => {
                     return Err(Error::new(Reason::InvalidArgument, "OpenResource")
                         .with_detail("resource kind is unsupported"));
