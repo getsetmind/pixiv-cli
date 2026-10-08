@@ -810,17 +810,21 @@
       },
       "rust_sources": [
         "crates/pixiv-cli/src/main.rs",
-        "crates/pixiv-app/src/dates.rs"
+        "crates/pixiv-app/src/dates.rs",
+        "crates/pixiv-cli/src/search.rs"
       ],
       "tests": [
         "internal/cli/commands/pixiv/search/migration_dates_test.go#TestMigrationQuickDateRangesMatchFrozenTokyoBoundaries",
-        "crates/pixiv-app/tests/search_dates.rs#search_ranges_match_both_go_adapters_at_tokyo_midnight_month_ends_and_leap_days"
+        "crates/pixiv-app/tests/search_dates.rs#search_ranges_match_both_go_adapters_at_tokyo_midnight_month_ends_and_leap_days",
+        "internal/cli/migration_search_dates_test.go#TestMigrationSearchDateFlagsValidateBeforeAccountAndMatchQueries",
+        "crates/pixiv-cli/tests/search_dates.rs#search_date_flags_match_go_queries_and_process_errors_before_client_configuration",
+        "crates/pixiv-cli/tests/search_dates.rs#long_period_flags_use_the_shared_go_date_contract"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "CLI/MCP の半年・一年の日付計算 helper を固定時刻の168ケースで比較し、共通 pixiv-app crate に実装した。Rust CLI の検索は現在も先頭ページの試作であり、flags・入力検証・共通 helper への接続、全検索条件・entity・ページ送り・出力・終了コード・account/pool、他 OS は未実装または未検証。"
+        "CLI/MCP の日付計算 helper は固定時刻168ケースで比較。CLI の period/start-date/end-date flags を共通 helper と型付き SDK request に接続し、Go の実コマンド213ケースで日付入力の検証順を比較した。33ケースの SDK query、174ケースの子プロセス stderr・終了コード・クライアント設定前の拒否、半年/一年の42ケースを確認。NUL を含む6ケースは OS argv に渡せないため adapter のみ比較。検索は現在も先頭ページの試作であり、成功時の CLI 出力・実 HTTP までの接続、残りの flags・全検索条件・entity・ページ送り・account/pool・clock の極端な範囲・他 OS は未実装または未検証。"
       ]
     },
     {

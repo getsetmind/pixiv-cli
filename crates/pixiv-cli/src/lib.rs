@@ -1,3 +1,5 @@
+pub mod search;
+
 use pixiv_sdk::{Client, Error, Reason, transport::Transport};
 use std::{
     fmt,

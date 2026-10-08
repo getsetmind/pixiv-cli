@@ -1,4 +1,5 @@
 use clap::{Parser, Subcommand};
+use pixiv_cli_rs::search::SearchDateOptions;
 use pixiv_cli_rs::{CommandError, DetailOutput, artwork_detail, finish_command};
 use pixiv_sdk::{Client, Error, Reason, reference::artwork_id};
 use std::io::{self, IsTerminal, Write};
@@ -22,6 +23,8 @@ enum Command {
     },
     Search {
         query: String,
+        #[command(flatten)]
+        dates: SearchDateOptions,
         #[arg(long, conflicts_with = "ndjson")]
         json: bool,
         #[arg(long)]
@@ -65,6 +68,17 @@ async fn execute(args: Arguments) -> Result<(), CommandError> {
         Command::Detail { source, .. } => Some(detail_artwork_id(source)?),
         _ => None,
     };
+    let search_request = match &args.command {
+        Command::Search { query, dates, .. } => {
+            let mut request = pixiv_sdk::pixiv::SearchArtworksRequest {
+                word: query.clone(),
+                ..Default::default()
+            };
+            dates.apply(&mut request, chrono::Utc::now().fixed_offset())?;
+            Some(request)
+        }
+        _ => None,
+    };
     let token = std::env::var("PIXIV_ACCESS_TOKEN").unwrap_or_default();
     let proxy = std::env::var("https_proxy")
         .or_else(|_| std::env::var("HTTPS_PROXY"))
@@ -90,16 +104,9 @@ async fn execute(args: Arguments) -> Result<(), CommandError> {
             )
             .await?;
         }
-        Command::Search {
-            query,
-            json,
-            ndjson,
-        } => {
+        Command::Search { json, ndjson, .. } => {
             let artworks = client
-                .search_artworks(pixiv_sdk::pixiv::SearchArtworksRequest {
-                    word: query,
-                    ..Default::default()
-                })
+                .search_artworks(search_request.expect("search date options were resolved"))
                 .await?
                 .items;
             if json {

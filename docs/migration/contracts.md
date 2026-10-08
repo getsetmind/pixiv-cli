@@ -396,7 +396,7 @@ cargo test -p pixiv-mcp --test search_illust --locked
 
 共通のアプリケーション処理用 `pixiv-app` crate を追加し、`dates::quick_date_range` を Rust の外部テストで双方の Go 結果と比較する。半年・一年では東京の日付へ変換し、同じ日号が対象月にない場合は月末へ丸める。それ以外の duration は明示日付へ展開しない。年の表記は Go と揃え、負の年は符号の後に最低4桁、10000年は余分な `+` を付けずに表す。元の MCP の `%Y` に任せる実装では、この10000年の表記が異なる。
 
-MCP の実行処理は現在時刻を共通 helper に渡し、日時計算の重複を除いた。前節の「半年/一年と日付境界が未検証」は、この168ケースの日付計算について解消した。CLI の検索 flags・日付入力検証から共通 helper への接続、長期 duration の実 MCP セッションから SDK HTTP query までの比較、clock の極端な範囲・全 timezone・他 OS は未実装または未検証。Go の汎用 AddMonthsClamped の全範囲を移植済みとは扱わない。
+MCP の実行処理は現在時刻を共通 helper に渡し、日時計算の重複を除いた。前節の「半年/一年と日付境界が未検証」は、この168ケースの日付計算について解消した。CLI の検索 flags への接続は次節で検証する。長期 duration の実 MCP セッションから SDK HTTP query までの比較、clock の極端な範囲・全 timezone・他 OS は未実装または未検証。Go の汎用 AddMonthsClamped の全範囲を移植済みとは扱わない。
 
 ```text
 go test -race ./internal/cli/commands/pixiv/search ./internal/mcpserver/pixiv/tools/search_illust -run '^TestMigrationQuickDateRanges' -count=1
@@ -404,3 +404,22 @@ cargo test -p pixiv-app --test search_dates --locked
 ```
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-search-dates` を指定する。Go の CLI と MCP の package は別々の出力ファイルを更新する。
+
+## CLI の検索日付 flags
+
+[search-date-options.json](contracts/search-date-options.json) は固定 Go 版の実際の `search` コマンドを Cobra root に登録して取得した213ケース。日・週・月の period、片側・両側の日付、うるう日、年0/9999、空白除去、不正な書式・日付・順序、period と日付の併用、複数の不正値に対する検証順を human/JSON/NDJSON の3モードで記録する。Pooled 実行回数、fixture HTTP の GET・path・全 query、stdout/stderr、終了コードを保存する。Go の本番コードと時計は変更しない。応答は作品0件・継続なしを表す `{"illusts":[]}` とする。
+
+Rust CLI に `--period`、`--start-date`、`--end-date` を追加し、クライアント設定前に解決する。半年・一年は前節の共通 helper を使い、その他の期間は SDK の duration に渡す。`SearchDateOptions` は本番の Clap 引数と SDK request 作成に使い、テスト用の API は追加しない。
+
+外部テストは213ケースの adapter 検証結果を比較し、正常33ケースでは実際の Rust SDK を fixture transport へ接続して Go の全 query と比較する。異常174ケースは Rust CLI の子プロセスで、stdout・stderr・終了コードを比較する。無効な proxy を設定し、日付検証がクライアント設定より先に行われることも確認する。NUL を含む6ケースは OS の argv で表現できないため adapter の検証だけを比較する。負の年の入力では Clap の既定の flag 解釈が Go と異なったため、日付 flags はハイフンで始まる値も受け取り、日付検証エラーを返す。
+
+半年・一年の42ケースは固定時刻を渡し、共通 helper の Go 基準結果と SDK request の日付・空 duration を比較する。CLI の本番時計をテスト専用に差し替えない。
+
+この比較は Windows amd64 のみ。正常時の CLI 表示・出力形状、実 CLI 子プロセスから HTTP までの正常系、全 flags と entity、複数ページ、設定・account/pool、入力パイプ、時計と SDK の全境界、他 OS は未実装または未検証。fixture に保存した Go の正常 stdout を Rust との比較済みとは扱わない。
+
+```text
+go test -race ./internal/cli -run '^TestMigrationSearchDateFlagsValidateBeforeAccountAndMatchQueries$' -count=1
+cargo test -p pixiv-cli-rs --test search_dates --locked
+```
+
+基準を意図して更新する場合だけ Go テストの `-args -migration-update-search-date-options` を指定する。
