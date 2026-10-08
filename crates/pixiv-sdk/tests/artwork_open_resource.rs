@@ -38,11 +38,16 @@ struct Fixture {
 impl Transport for Fixture {
     async fn send(&self, input: Request) -> Result<Response> {
         assert_eq!(input.method, reqwest::Method::GET);
-        assert_eq!(input.parameters, vec![("illust_id".into(), "42".into())]);
-        self.seen.lock().unwrap().api.push(format!(
-            "{}?illust_id=42",
-            url::Url::parse(&input.url).unwrap().path()
-        ));
+        let mut url = url::Url::parse(&input.url).unwrap();
+        assert_eq!(url.host_str(), Some("app-api.pixiv.net"));
+        if !input.parameters.is_empty() {
+            url.query_pairs_mut().extend_pairs(input.parameters);
+        }
+        let uri = match url.query() {
+            Some(query) => format!("{}?{query}", url.path()),
+            None => url.path().into(),
+        };
+        self.seen.lock().unwrap().api.push(uri);
         Ok(Response {
             status: 200,
             retry_after: None,
@@ -75,12 +80,12 @@ impl ResourceTransport for Fixture {
 }
 
 #[tokio::test]
-async fn artwork_open_revalidates_identity_resolves_variants_and_reuses_cached_urls() {
+async fn resource_open_revalidates_identity_resolves_metadata_and_reuses_cached_urls() {
     let cases: Vec<Case> = serde_json::from_str(include_str!(
         "../../../docs/migration/contracts/artwork-open-resource.json"
     ))
     .unwrap();
-    assert_eq!(cases.len(), 82);
+    assert_eq!(cases.len(), 124);
     for case in cases {
         let seen = Arc::new(Mutex::new(Seen::default()));
         let client = Client::with_transport(

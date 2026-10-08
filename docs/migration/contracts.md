@@ -150,16 +150,18 @@ cargo test -p pixiv-sdk --test resource_stream --locked
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-stream` または `-args -migration-update-redirect-headers` を指定する。
 
-## 作品画像の OpenResource
+## OpenResource の metadata 再解決
 
-[artwork-open-resource.json](contracts/artwork-open-resource.json) は Go 版の82ケースを固定する。single/multi page、カバー、8種類の variant、ページの範囲外、不正 identity、別 product、method の検証優先順位、HEAD、禁止URL、欠落ID、事前の ArtworkPages 取得を含む。成功時は同じ reference を2回開き、metadata の要求回数・query、解決URL、4種類の条件付きヘッダーと認証ヘッダーの不在を比較する。
+[artwork-open-resource.json](contracts/artwork-open-resource.json) は Go 版の124ケースを固定する。作品画像の82ケースに加え、小説カバー・ユーザー画像・stamp の42ケースを含む。single/multi page、カバー、8種類の variant、ページの範囲外、不正 identity、別 product、method の検証優先順位、HEAD、禁止URL、欠落ID、事前の ArtworkPages 取得を比較する。成功時は同じ reference を2回開き、metadata の要求回数・query、解決URL、4種類の条件付きヘッダーと認証ヘッダーの不在を比較する。
 
 Rust の `Client::open_resource` は共有要求の検証、identity の再検証、registry の参照、metadata による再解決、URL policy の再検証を順に行う。metadata から解決したURLと、Artwork/ArtworkPages/search で返した resource のURLをクライアントのregistryに保持する。regular・small・thumb・mini は Go と同じ img-master のパスへ導出し、元の query と fragment を除く。APIエラーはJSON表現の違いを吸収するため、Reason・Product・Operation・Detail・HTTPStatus・Transport・Retry の各SDKフィールドを比較する。
 
-この段階で未登録 reference の再解決を実装した kind は artwork のみ。novel_cover・user_profile・ugoira_archive・novel_image・novel_file・stamp の再解決、save、キャンセルは未移植。マッピング途中の失敗時に残るregistry、並行取得、全JSONキー・重複/nullの組合せ、percent-encoded URLの画質導出、認証の全状態、SDKから実TLS通信までの接続、他OSは未検証。共有transportの既存実HTTPテストとSDKのfixture transportテストは別の証拠として扱う。
+未登録 reference の再解決を実装した kind は artwork・novel_cover・user_profile・stamp。小説カバーは選択した画質または既定の優先順を使い、ユーザー画像とstampは variant・page によってURLを変えない。ユーザー画像は4種類の必須objectと公開設定の値を検証し、stampは全項目のID・URLとページ継続の不在を検証する。選択対象が存在していても他の不正stamp項目を無視しない。
+
+ugoira_archive・novel_image・novel_file の再解決、save、キャンセルは未移植。マッピング途中の失敗時に残るregistry、並行取得、全JSONキー・重複/nullの組合せ、percent-encoded URLの画質導出、認証の全状態、SDKから実TLS通信までの接続、他OSは未検証。共有transportの既存実HTTPテストとSDKのfixture transportテストは別の証拠として扱う。
 
 ```text
-go test ./sdk/pixiv -run '^TestMigrationArtworkOpenResource' -count=1
+go test ./sdk/pixiv -run '^TestMigrationOpenResource' -count=1
 cargo test -p pixiv-sdk --test artwork_open_resource --locked
 ```
 

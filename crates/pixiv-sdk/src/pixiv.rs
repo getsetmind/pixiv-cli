@@ -292,24 +292,34 @@ impl<T: Transport + ResourceTransport> Client<T> {
         let url = if let Some(url) = cached {
             url
         } else {
-            if kind != "artwork" {
-                return Err(Error::new(Reason::InvalidArgument, "OpenResource")
-                    .with_detail("resource kind is unsupported"));
-            }
-            let body = self
-                .get(
+            let (endpoint, parameters) = match kind.as_str() {
+                "artwork" => (
                     "/v1/illust/detail",
                     vec![("illust_id".into(), id.to_string())],
-                    "OpenResource",
-                )
-                .await?;
-            let url = crate::artwork::resource_url(
-                body.get("illust")
-                    .cloned()
-                    .ok_or_else(|| malformed("OpenResource"))?,
-                page,
-                &variant,
-            )?;
+                ),
+                "novel_cover" => (
+                    "/v2/novel/detail",
+                    vec![("novel_id".into(), id.to_string())],
+                ),
+                "user_profile" => ("/v1/user/detail", vec![("user_id".into(), id.to_string())]),
+                "stamp" => ("/v1/stamps", vec![]),
+                _ => {
+                    return Err(Error::new(Reason::InvalidArgument, "OpenResource")
+                        .with_detail("resource kind is unsupported"));
+                }
+            };
+            let body = self.get(endpoint, parameters, "OpenResource").await?;
+            let url = if kind == "artwork" {
+                crate::artwork::resource_url(
+                    body.get("illust")
+                        .cloned()
+                        .ok_or_else(|| malformed("OpenResource"))?,
+                    page,
+                    &variant,
+                )?
+            } else {
+                crate::resource_resolution::resolve(&kind, id, &variant, &body)?
+            };
             self.resource_policy.validate(&url).map_err(|_| {
                 Error::new(Reason::ResourceForbidden, "OpenResource")
                     .with_detail("resolved resource URL is not allowed")

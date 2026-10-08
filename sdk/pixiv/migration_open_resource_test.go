@@ -17,7 +17,7 @@ import (
 
 var migrationUpdateOpenResource = flag.Bool("migration-update-open-resource", false, "capture artwork resource open contracts from the fixed Go reference")
 
-func TestMigrationArtworkOpenResourceMatchesFrozenResolution(t *testing.T) {
+func TestMigrationOpenResourceMatchesFrozenMetadataResolution(t *testing.T) {
 	type row struct {
 		Name        string          `json:"name"`
 		Payload     string          `json:"payload"`
@@ -57,6 +57,48 @@ func TestMigrationArtworkOpenResourceMatchesFrozenResolution(t *testing.T) {
 		row{Name: "forbidden-url", Product: "pixiv", Payload: `{"k":"artwork","id":42}`, Body: json.RawMessage(`{"illust":{"id":42,"meta_single_page":{"original_image_url":"http://i.pximg.net/forbidden.png"}}}`)},
 		row{Name: "missing-id", Product: "pixiv", Payload: `{"k":"artwork","id":42}`, Body: json.RawMessage(`{"illust":{"meta_single_page":{"original_image_url":"https://i.pximg.net/first.png"}}}`)},
 	)
+	for _, metadata := range []struct{ kind, body string }{
+		{"novel_cover", `{"novel":{"id":42,"user":{"id":7},"image_urls":{"original":"https://i.pximg.net/novel.png","large":"https://i.pximg.net/novel-large.jpg","medium":"https://i.pximg.net/novel-medium.jpg","square_medium":"https://i.pximg.net/novel-square.jpg"}}}`},
+		{"user_profile", `{"user":{"id":42,"profile_image_urls":{"medium":"https://i.pximg.net/profile.jpg"}},"profile":{},"profile_publicity":{"gender":"public","region":false},"workspace":{}}`},
+		{"stamp", `{"stamps":[{"stamp_id":1,"stamp_url":"https://i.pximg.net/other.png"},{"stamp_id":42,"stamp_url":"https://s.pximg.net/stamp.png"}]}`},
+	} {
+		for _, variant := range []string{"", "original", "large", "medium", "square_medium", "regular", "unsupported"} {
+			payload, err := json.Marshal(map[string]any{"k": metadata.kind, "id": 42, "p": 123, "v": variant})
+			if err != nil {
+				t.Fatal(err)
+			}
+			rows = append(rows, row{Name: metadata.kind, Product: "pixiv", Payload: string(payload), Body: json.RawMessage(metadata.body)})
+		}
+	}
+	for _, metadata := range []struct{ kind, body string }{
+		{"novel_cover", `{}`},
+		{"novel_cover", `{"novel":{"id":42,"user":{"id":7}}}`},
+		{"novel_cover", `{"novel":{"id":42,"user":{"id":0},"image_urls":{"original":"https://i.pximg.net/novel.png"}}}`},
+		{"novel_cover", `{"novel":{"id":42,"user":{"id":7},"image_urls":{"large":"https://i.pximg.net/novel.jpg"}}}`},
+		{"novel_cover", `{"novel":{"id":42,"user":{"id":7},"image_urls":{"original":"http://i.pximg.net/novel.png"}}}`},
+		{"novel_cover", `{"novel":{"id":42,"user":{"id":7},"image_urls":{"original":"https://i.pximg.net/novel.png"}},"series_next":{"id":0}}`},
+		{"novel_cover", `{"novel":{"id":42,"user":{"id":7},"image_urls":{"original":"https://i.pximg.net/novel.png"},"tags":[{"name":5}]}}`},
+		{"user_profile", `{}`},
+		{"user_profile", `{"user":{"id":42},"profile":{},"profile_publicity":{},"workspace":{}}`},
+		{"user_profile", `{"user":{"id":42,"profile_image_urls":{"medium":"https://i.pximg.net/profile.jpg"}},"profile":null,"profile_publicity":{},"workspace":{}}`},
+		{"user_profile", `{"user":{"id":42,"profile_image_urls":{"medium":"https://i.pximg.net/profile.jpg"}},"profile":{},"profile_publicity":{"gender":null},"workspace":{}}`},
+		{"user_profile", `{"user":{"id":42,"profile_image_urls":{"medium":"https://i.pximg.net/profile.jpg"}},"profile":{},"profile_publicity":{"gender":"hidden"},"workspace":{}}`},
+		{"user_profile", `{"user":{"id":42,"profile_image_urls":{"medium":"https://i.pximg.net/profile.jpg"}},"profile":{"birth_year":"2026"},"profile_publicity":{},"workspace":{}}`},
+		{"user_profile", `{"user":{"id":42,"profile_image_urls":{"medium":"https://i.pximg.net/profile.jpg"}},"profile":{},"profile_publicity":{},"workspace":{"pc":1}}`},
+		{"stamp", `{}`},
+		{"stamp", `{"stamps":null}`},
+		{"stamp", `{"stamps":[]}`},
+		{"stamp", `{"stamps":[{"stamp_id":42,"stamp_url":"https://s.pximg.net/stamp.png"}],"next_url":"https://app-api.pixiv.net/next"}`},
+		{"stamp", `{"stamps":[{"stamp_id":42,"stamp_url":"https://s.pximg.net/stamp.png"},{"stamp_id":0,"stamp_url":"https://s.pximg.net/other.png"}]}`},
+		{"stamp", `{"stamps":[{"stamp_id":42,"stamp_url":"http://s.pximg.net/stamp.png"}]}`},
+		{"stamp", `{"stamps":[{"stamp_id":42,"stamp_url":"https://media.fixture.invalid/stamp.png"}]}`},
+	} {
+		payload, err := json.Marshal(map[string]any{"k": metadata.kind, "id": 42})
+		if err != nil {
+			t.Fatal(err)
+		}
+		rows = append(rows, row{Name: metadata.kind + "-invalid", Product: "pixiv", Payload: string(payload), Body: json.RawMessage(metadata.body)})
+	}
 	for index := range rows {
 		input := &rows[index]
 		input.APIRequests = []string{}
