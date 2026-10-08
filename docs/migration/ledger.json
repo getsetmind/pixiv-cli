@@ -22,19 +22,27 @@
         "key": "pixiv auth"
       },
       "rust_sources": [
-        "crates/pixiv-app/src/database.rs"
+        "crates/pixiv-app/src/database.rs",
+        "crates/pixiv-app/src/database/accounts.rs"
       ],
       "tests": [
         "internal/storage/database/migration_contract_test.go#TestMigrationDatabasePreservesSchemaAndRejectsDrift",
         "internal/storage/database/migration_contract_test.go#TestMigrationDatabaseGoRustFileInteroperability",
         "crates/pixiv-app/tests/database.rs#database_matches_go_schema_upgrade_reopen_and_drift_rejection",
-        "crates/pixiv-app/tests/database.rs#database_rejects_empty_directory_and_creates_private_files"
+        "crates/pixiv-app/tests/database.rs#database_rejects_empty_directory_and_creates_private_files",
+        "internal/storage/database/migration_accounts_test.go#TestMigrationAccountsPreserveCredentialsMetadataAndAtomicChanges",
+        "internal/storage/database/migration_accounts_test.go#TestMigrationAccountsConcurrentRevisionConflict",
+        "internal/storage/database/migration_accounts_test.go#TestMigrationAccountsGoRustCredentialInteroperability",
+        "crates/pixiv-app/tests/accounts.rs#accounts_match_go_atomic_import_metadata_removal_and_revision_conflicts",
+        "crates/pixiv-app/tests/accounts.rs#account_credentials_are_copied_and_debug_output_is_redacted",
+        "crates/pixiv-app/tests/accounts.rs#stale_parallel_refreshes_commit_exactly_one_rotation"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "認証DBの基盤のみ着手。Go Openの19ケースでschema/index/台帳、v1→v3、checksum、application_id、版/名前の拒否と失敗後状態、合成アカウントのtoken/revisionを比較。Rust作成・Go v3・Go v1の3ファイルをRust子プロセス経由でGoが再開。CLI auth自体、account repository/refresh CAS/pool/config/取消・強制終了復旧・全障害・Windows ACL・Unix mode・他OSは未移植または未検証。接続内pragma/lockは未比較。user_version=3に未知第4台帳行がある場合も固定Goが受け入れる挙動を維持。SQLite driver固有のempty-ledgerエラーは失敗箇所まで比較。"
+        "認証DBの基盤のみ着手。Go Openの19ケースでschema/index/台帳、v1→v3、checksum、application_id、版/名前の拒否と失敗後状態、合成アカウントのtoken/revisionを比較。Rust作成・Go v3・Go v1の3ファイルをRust子プロセス経由でGoが再開。CLI auth自体、FANBOX repository・refresh application・pool/config/取消・強制終了復旧・全障害・Windows ACL・Unix mode・他OSは未移植または未検証。接続内pragma/lockは未比較。user_version=3に未知第4台帳行がある場合も固定Goが受け入れる挙動を維持。SQLite driver固有のempty-ledgerエラーは失敗箇所まで比較。",
+        "Pixiv repositoryのsave/batch/list/get/remove/metadata/rotation CASを31操作で比較。token copy/Debug秘匿、8件の共有connection更新で成功1件/conflict7件、Go→Rust→Go→Rustの実ファイル状態を検証。時刻は操作前に11/22へ制御し実際の更新時刻が操作window内であることを確認して-1化。SQLite固有診断は制約種別と対象列のみ比較。CLI auth自体、FANBOX、refresh UID照合/app接続、pool/lease、別connection/process競合、取消/強制停止、全境界/障害、config・MCP、他OSは未実装または未検証。"
       ]
     },
     {

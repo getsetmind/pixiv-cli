@@ -8,7 +8,7 @@ Rust 版は、Go 版の機能と利用者から見える契約を維持して移
 
 既存の Go 実装、[CLI リファレンス](../en/cli-reference.md)、[SDK リファレンス](../en/sdk.md)、[MCP リファレンス](../en/mcp-tools.md)、既存テストを契約の資料とする。資料同士に差がある場合は、固定した実装の再現テストで確認し、判断を記録する。
 
-現在の Rust 版は試作段階にある。作品詳細、検索、うごイラの一部と OAuth の基礎があり、検索は先頭ページだけ、作品 DTO も一部の項目に限られる。アカウント保存、CLI の大半、MCP などは未移植である。既存の Rust 契約テスト 5 件は限定的な入力検証や秘匿性を確認するもので、機能互換の証明ではない。
+方針を追加した時点の Rust 版は試作段階で、作品詳細、先頭ページの検索、うごイラの一部と OAuth の基礎に限られていた。その時点の Rust 契約テスト 5 件は限定的な入力検証や秘匿性を確認するもので、機能互換の証明ではなかった。現在の実装と検証範囲は [公開契約の台帳](ledger.json) と [比較テスト](contracts.md) に記録する。初期状態の記述やテスト件数を現在の移植範囲・完了の根拠に使わない。
 
 ## 維持する契約
 
@@ -31,7 +31,7 @@ cursor と resource reference は不透明なデータでも外部契約であ�
 
 以下は移植範囲の分類であり、完了件数ではない。最初の工程で CLI のコマンド・別名・フラグ、登録済み MCP ツールと schema、公開 SDK 操作・DTO を列挙し、各操作に固有 ID を付ける。静的検索だけでなく、help と MCP の tools/list など実際の公開面も確認する。1 操作ごとに、参照ソース・既存テスト・Rust 実装・互換テスト・対象 OS・状態・未解決差分を記録する。行が未作成の範囲も未完了として扱う。
 
-| 分類 | 必須範囲 | 参照ソース・テストの入口 | Rust の現状 |
+| 分類 | 必須範囲 | 参照ソース・テストの入口 | 方針追加時の Rust |
 | --- | --- | --- | --- |
 | 共通契約 | エラー、retry、cursor、resource reference、入力 URL、出力と終了コード | `sdk/error.go`、`sdk/cursor.go`、`sdk/ref.go`、`internal/cli/envelope_test.go` | 一部の試作、互換未確認 |
 | 認証・設定 | PKCE、callback/relay、複数アカウント、選択・削除、import/export、refresh 永続化、pool、proxy、設定の読み書き | `internal/cli/commands/pixiv/auth/`、`internal/config/`、`internal/storage/database/` | OAuth の一部、保存系未移植 |

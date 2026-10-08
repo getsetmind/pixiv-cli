@@ -567,3 +567,25 @@ cargo test -p pixiv-app --test database --locked
 ```
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-database` を指定する。Rust/Go のファイル相互検証には両 toolchain が必要であり、`-migration-rust-database` を省略した実行をその証拠には使わない。
+
+## Pixiv アカウント repository と credential revision
+
+[accounts.json](contracts/accounts.json) は固定 Go の repository を実行した31操作の連続した契約。空一覧・未登録 UID、新規保存・再インポート、明示/自動 sort_order、nullable metadata の更新・解除、refresh rotation と古い revision、削除・再保存、空 batch・不正入力・重複 UID・SQL unique 制約による全件 rollback を比較する。再インポートは token と username と revision のみを更新し、metadata・pool 状態・並び順を保持する。新規保存の revision は入力にかかわらず1で、schedulable は true になる。
+
+各操作前に合成 DB の既存 created_at/updated_at を11/22へ制御する。操作後は、それらの保持と操作の開始・終了の Unix 秒内にある更新時刻を区別して検証する。実行時刻だけを -1 に置き換え、他の列・token・null・配列順は正規化しない。既存アカウントの作成時刻の保持もこの比較に含める。一般の時刻/clock 障害は未検証である。
+
+Rust では公開の storage 境界に PixivAccount と repository 操作を追加した。token は private に保持し、入力と返却の copy、Debug の秘匿性を検証する。NotFound/CredentialConflict は型で区別する。明示的な入力・不在・revision 診断は Go と全文一致し、SQLite driver 固有の診断は制約種別と対象列を比較する。driver のエラー文そのものの差は残る。
+
+Go と Rust の8件同時更新試験は、共有する1 connection で成功1件・revision conflict 7件・最終 revision 2 を検証する。Rust は Database が Sync ではないため呼び出し側の Mutex で共有する。これは別 connection/別 process の lock や取消の検証ではない。
+
+実ファイルの相互試験では Go が保存したアカウントを Rust で rotate/metadata 更新/追加し、Go が token・revision・metadata・作成時刻を読み直す。Go がさらに rotate/削除した結果を Rust で確認する。ignored Rust helper は Go の明示フラグから2回実行する。
+
+Windows amd64 の合成 DB に限る。FANBOX repository、pool selection/lease、SQLite の別接続・別プロセス競合、取消・強制停止、refresh 応答の UID 照合と CAS のアプリケーション接続、全境界/障害、config・CLI/MCP、他 OS は未移植または未検証である。
+
+```text
+go test -race ./internal/storage/database -migration-rust-database -count=1
+go vet ./internal/storage/database
+cargo test -p pixiv-app --test accounts --locked
+```
+
+基準を意図して更新する場合だけ Go テストの `-args -migration-update-accounts` を指定する。
