@@ -330,44 +330,91 @@ async fn saved_account_cancellation_releases_gate_and_reuses_persisted_refresh()
                 && case.rpc_error.is_empty()
         })
         .unwrap();
-    let directory = tempfile::tempdir().unwrap();
-    let path = directory.path().join("config.toml");
-    std::fs::write(&path, "").unwrap();
-    let mut database = Database::open(directory.path()).unwrap();
-    database
-        .save_pixiv_credential(&PixivAccount::new(42, "fixture", b"fixture-refresh"))
+    for pooled in [false, true] {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("config.toml");
+        std::fs::write(
+            &path,
+            if pooled {
+                "[account_pool]\nenabled = true\nstrategy = 'round_robin'\n"
+            } else {
+                ""
+            },
+        )
         .unwrap();
-    let database = Arc::new(Mutex::new(database));
-    let blocked = Arc::new(Blocked {
-        started: tokio::sync::Notify::new(),
-        dropped: AtomicUsize::new(0),
-    });
-    let fixture = SavedCancellation {
-        blocked: blocked.clone(),
-        requests: Arc::new(AtomicUsize::new(0)),
-        opens: Arc::new(AtomicUsize::new(0)),
-        body: detail.body,
-    };
-    let transport = fixture.clone();
-    let execution = Execution::new(Store::new(path), database.clone(), move |_| {
-        Ok(transport.clone())
-    });
-    let (server, peer) = tokio::io::duplex(4096);
-    let (server_read, mut server_write) = tokio::io::split(server);
-    let (peer_read, mut peer_write) = tokio::io::split(peer);
-    let server = pixiv_mcp::stdio::serve_saved(&execution, server_read, &mut server_write);
-    let peer = async {
-        let mut lines = BufReader::new(peer_read).lines();
-        peer_write
-            .write_all((initialize(1.into()).to_string() + "\n").as_bytes())
-            .await
+        let mut database = Database::open(directory.path()).unwrap();
+        database
+            .save_pixiv_credential(&PixivAccount::new(42, "fixture", b"fixture-refresh"))
             .unwrap();
-        let _ = lines.next_line().await.unwrap().unwrap();
-        peer_write
-            .write_all((cancelled.request.to_string() + "\n").as_bytes())
-            .await
-            .unwrap();
-        blocked.started.notified().await;
+        if pooled {
+            database.set_all_pixiv_schedulable(true).unwrap();
+        }
+        let database = Arc::new(Mutex::new(database));
+        let blocked = Arc::new(Blocked {
+            started: tokio::sync::Notify::new(),
+            dropped: AtomicUsize::new(0),
+        });
+        let fixture = SavedCancellation {
+            blocked: blocked.clone(),
+            requests: Arc::new(AtomicUsize::new(0)),
+            opens: Arc::new(AtomicUsize::new(0)),
+            body: detail.body.clone(),
+        };
+        let transport = fixture.clone();
+        let execution = Execution::new(Store::new(path), database.clone(), move |_| {
+            Ok(transport.clone())
+        });
+        let (server, peer) = tokio::io::duplex(4096);
+        let (server_read, mut server_write) = tokio::io::split(server);
+        let (peer_read, mut peer_write) = tokio::io::split(peer);
+        let server = pixiv_mcp::stdio::serve_saved(&execution, server_read, &mut server_write);
+        let peer = async {
+            let mut lines = BufReader::new(peer_read).lines();
+            peer_write
+                .write_all((initialize(1.into()).to_string() + "\n").as_bytes())
+                .await
+                .unwrap();
+            let _ = lines.next_line().await.unwrap().unwrap();
+            peer_write
+                .write_all((cancelled.request.to_string() + "\n").as_bytes())
+                .await
+                .unwrap();
+            blocked.started.notified().await;
+            assert_eq!(
+                database
+                    .lock()
+                    .unwrap()
+                    .get_pixiv(42)
+                    .unwrap()
+                    .credential_revision,
+                2
+            );
+            peer_write.write_all(b"{\"jsonrpc\":\"2.0\",\"method\":\"notifications/cancelled\",\"params\":{\"requestId\":7}}\n").await.unwrap();
+            let response: Value =
+                serde_json::from_str(&lines.next_line().await.unwrap().unwrap()).unwrap();
+            assert_eq!(response, cancelled.response);
+            assert_eq!(blocked.dropped.load(Ordering::SeqCst), 1);
+            let account = database.lock().unwrap().get_pixiv(42).unwrap();
+            assert_eq!(account.pool_frozen_until, None);
+            assert_eq!(account.pool_last_selected, pooled);
+            let call = json!({"jsonrpc":"2.0","id":8,"method":"tools/call","params":{"name":"illust_detail","arguments":detail.arguments}});
+            peer_write
+                .write_all((call.to_string() + "\n").as_bytes())
+                .await
+                .unwrap();
+            let response: Value =
+                serde_json::from_str(&lines.next_line().await.unwrap().unwrap()).unwrap();
+            assert_eq!(response["result"], detail.result);
+            peer_write.shutdown().await.unwrap();
+        };
+        let (result, ()) = tokio::time::timeout(std::time::Duration::from_secs(3), async {
+            tokio::join!(server, peer)
+        })
+        .await
+        .unwrap();
+        result.unwrap();
+        assert_eq!(fixture.opens.load(Ordering::SeqCst), 2);
+        assert_eq!(fixture.requests.load(Ordering::SeqCst), 2);
         assert_eq!(
             database
                 .lock()
@@ -375,40 +422,9 @@ async fn saved_account_cancellation_releases_gate_and_reuses_persisted_refresh()
                 .get_pixiv(42)
                 .unwrap()
                 .credential_revision,
-            2
+            3
         );
-        peer_write.write_all(b"{\"jsonrpc\":\"2.0\",\"method\":\"notifications/cancelled\",\"params\":{\"requestId\":7}}\n").await.unwrap();
-        let response: Value =
-            serde_json::from_str(&lines.next_line().await.unwrap().unwrap()).unwrap();
-        assert_eq!(response, cancelled.response);
-        assert_eq!(blocked.dropped.load(Ordering::SeqCst), 1);
-        let call = json!({"jsonrpc":"2.0","id":8,"method":"tools/call","params":{"name":"illust_detail","arguments":detail.arguments}});
-        peer_write
-            .write_all((call.to_string() + "\n").as_bytes())
-            .await
-            .unwrap();
-        let response: Value =
-            serde_json::from_str(&lines.next_line().await.unwrap().unwrap()).unwrap();
-        assert_eq!(response["result"], detail.result);
-        peer_write.shutdown().await.unwrap();
-    };
-    let (result, ()) = tokio::time::timeout(std::time::Duration::from_secs(3), async {
-        tokio::join!(server, peer)
-    })
-    .await
-    .unwrap();
-    result.unwrap();
-    assert_eq!(fixture.opens.load(Ordering::SeqCst), 2);
-    assert_eq!(fixture.requests.load(Ordering::SeqCst), 2);
-    assert_eq!(
-        database
-            .lock()
-            .unwrap()
-            .get_pixiv(42)
-            .unwrap()
-            .credential_revision,
-        3
-    );
+    }
 }
 struct RequestGuard<'a>(&'a std::sync::atomic::AtomicUsize);
 impl Drop for RequestGuard<'_> {

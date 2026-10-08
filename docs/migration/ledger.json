@@ -957,7 +957,9 @@
         "internal/cli/migration_mcp_accounts_test.go#TestMigrationMCPUsesSavedAccountErrorsThroughRealComposition",
         "crates/pixiv-cli/tests/mcp_stdio.rs#mcp_process_preserves_go_saved_account_errors_for_detail_and_search",
         "crates/pixiv-mcp/tests/stdio.rs#saved_account_stdio_detail_preserves_go_results_and_persists_refresh_before_content",
-        "crates/pixiv-mcp/tests/stdio.rs#saved_account_cancellation_releases_gate_and_reuses_persisted_refresh"
+        "crates/pixiv-mcp/tests/stdio.rs#saved_account_cancellation_releases_gate_and_reuses_persisted_refresh",
+        "internal/cli/migration_mcp_pool_test.go#TestMigrationMCPPoolReplaysTypedReadErrorsAndRetainsState",
+        "crates/pixiv-mcp/tests/pool.rs#saved_account_pool_matches_go_replay_results_rotation_and_release"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -966,7 +968,8 @@
         "Rust mcp invokes the async stdio runtime. Child-process tests cover initialize/list/detail input and authentication errors, JSON-RPC-only stdout, empty stderr and normal EOF. Thirty Go protocol cases and 33 detail calls are compared through the runtime.",
         "illust_detail and search_illust are registered. CLI aliases/proxy flags/configuration/startup failures, stored accounts/pool/credential lifetime, all tools, full protocol/transport cancellation/disconnect behavior and other OS remain unverified.",
         "CommandConnectionの25ケースでproxy/interval/errorと実HTTP transport構築可否を比較し、選択したintervalをtransportへ渡す。共有HTTP pacingをGoのOpenWith後のcontent/resource redirect/mutation 5通信とRust実socketで比較（観測差5ms）。clone間でlast startを共有する。Goのdefault SDK HTTP timeout=0を再現しRust試作の60秒制限を削除。仮想61秒で保留responseが存続し、pacing待機task abort後も残り時間で次requestが再開することを確認。SDK Options全体/client再構築/pool replayの寿命/context取消/deadline/全競合/App API redirect/TLS/SOCKS wire/pool/idle cleanup/CLI/MCP bootstrap/他OSは未完了または未検証。",
-        "MCP起動を既存設定・DBとExecutionへ接続。Go実SDKPorts/MCPの認証エラー8ケースを隔離homeの実Rustバイナリで比較。詳細33ケースと検索144ケースは実DB・refresh CAS保存後のstdioでも一致。非poolの内容取得取消後にGate再取得・保存済みtokenでrefreshを確認。MCP pool replay/lease取消、検索途中page継続、EOF/disconnect全取消、全tools、通信/他OSは未完了。検索replayは収集全体を再実行する差が残る。"
+        "MCP起動を既存設定・DBとExecutionへ接続。Go実SDKPorts/MCPの認証エラー8ケースを隔離homeの実Rustバイナリで比較。詳細33ケースと検索144ケースは実DB・refresh CAS保存後のstdioでも一致。非poolの内容取得取消後にGate再取得・保存済みtokenでrefreshを確認。MCP pool replay/lease取消、検索途中page継続、EOF/disconnect全取消、全tools、通信/他OSは未完了。検索replayは収集全体を再実行する差が残る。",
+        "実Go AccountService/DB/Facade/Scheduler/SDK/MCPの4ケースをRust Execution/stdioで比較。SDK内429一回retry後のpool切替、成功/応答不正/全rate limit/401、同一session二回のresult、OAuth/content順、token/revision/freeze/last-selectedが一致。Go Close callback数とRust所有transport Drop数を比較。pool有効でも内容取得取消後のGate再利用・非freezeを確認。HTTP idle cleanup、OAuth/Gate/切替中取消、全並行状態、検索途中継続、disconnect/EOF、他OSは未検証。"
       ]
     },
     {
@@ -1688,7 +1691,9 @@
         "internal/cli/migration_mcp_accounts_test.go#TestMigrationMCPUsesSavedAccountErrorsThroughRealComposition",
         "crates/pixiv-cli/tests/mcp_stdio.rs#mcp_process_preserves_go_saved_account_errors_for_detail_and_search",
         "crates/pixiv-mcp/tests/stdio.rs#saved_account_stdio_detail_preserves_go_results_and_persists_refresh_before_content",
-        "crates/pixiv-mcp/tests/stdio.rs#saved_account_cancellation_releases_gate_and_reuses_persisted_refresh"
+        "crates/pixiv-mcp/tests/stdio.rs#saved_account_cancellation_releases_gate_and_reuses_persisted_refresh",
+        "internal/cli/migration_mcp_pool_test.go#TestMigrationMCPPoolReplaysTypedReadErrorsAndRetainsState",
+        "crates/pixiv-mcp/tests/pool.rs#saved_account_pool_matches_go_replay_results_rotation_and_release"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -1696,7 +1701,8 @@
       "differences": [
         "33 Go session contracts fix actual tool schema, 17 artwork responses and 16 reference inputs, pool/HTTP calls and raw JSON-RPC response results. Rust compares metadata and 32 handler cases with the real SDK. Shared canonical records serve CLI and MCP; MCP structured numbers match the Go wrapper float64 conversion. All 33 calls now compare through stdio including int64-max rejection. A further 30 direct Go JSON-RPC contracts compare negotiation, ping, logging, protocol argument errors and in-flight cancellation; a duplex test checks concurrent ping and transport future release. The CLI mcp process exchanges protocol-only stdout with clean EOF.",
         "Rust registers illust_detail and search_illust; complete 54-tool registration remains pending. Full JSON-RPC syntax/UTF-8/duplicate keys/params/schema types and diagnostic ordering, all ID types/reuse, early cancellation/deadline/disconnect/SIGINT, logging/progress notifications and full concurrency, pool leases/authentication/configuration/proxy flags, other tools and other platforms remain unimplemented or unverified.",
-        "MCP起動を既存設定・DBとExecutionへ接続。Go実SDKPorts/MCPの認証エラー8ケースを隔離homeの実Rustバイナリで比較。詳細33ケースと検索144ケースは実DB・refresh CAS保存後のstdioでも一致。非poolの内容取得取消後にGate再取得・保存済みtokenでrefreshを確認。MCP pool replay/lease取消、検索途中page継続、EOF/disconnect全取消、全tools、通信/他OSは未完了。検索replayは収集全体を再実行する差が残る。"
+        "MCP起動を既存設定・DBとExecutionへ接続。Go実SDKPorts/MCPの認証エラー8ケースを隔離homeの実Rustバイナリで比較。詳細33ケースと検索144ケースは実DB・refresh CAS保存後のstdioでも一致。非poolの内容取得取消後にGate再取得・保存済みtokenでrefreshを確認。MCP pool replay/lease取消、検索途中page継続、EOF/disconnect全取消、全tools、通信/他OSは未完了。検索replayは収集全体を再実行する差が残る。",
+        "実Go AccountService/DB/Facade/Scheduler/SDK/MCPの4ケースをRust Execution/stdioで比較。SDK内429一回retry後のpool切替、成功/応答不正/全rate limit/401、同一session二回のresult、OAuth/content順、token/revision/freeze/last-selectedが一致。Go Close callback数とRust所有transport Drop数を比較。pool有効でも内容取得取消後のGate再利用・非freezeを確認。HTTP idle cleanup、OAuth/Gate/切替中取消、全並行状態、検索途中継続、disconnect/EOF、他OSは未検証。"
       ]
     },
     {

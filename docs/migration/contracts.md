@@ -771,7 +771,7 @@ cargo test -p pixiv-app --test connection --locked
 
 [pacing.json](contracts/pacing.json) は interval=0／125ms の2ケース。Go の公開 OpenWith で OAuth refresh を行った後、同じ SDK client の HTTP transport に content GET・resource GET と redirect・mutation POST を流す。method／path の5通信と、開始間隔の下限を比較する。Go の resource request／content model の契約をこのテストで再検証するものではない。
 
-Rust は HttpTransport::with_pacing により、通常 send・post_form・resource の各 redirect hop に同じ RequestPacing を使う。transport の clone も待機状態を共有する。Rust 側はローカル TCP サーバーを使い、各通信の method／path と開始間隔を比較する。Go は RoundTripper の呼び出し時刻、Rust はサーバーへの到着時刻を測るため、間隔判定に5msの観測許容幅を置く。実時刻を fixture に保存せず、下限判定を boolean に正規化する。125ms は移植した実装の定数ではなくテストで与える interval である。
+Rust は HttpTransport::with_pacing により、通常 send・post_form・resource の各 redirect hop に同じ RequestPacing を使う。transport の clone も待機状態を共有する。Rust 側はローカル TCP サーバーを使い、各通信の method／path と開始間隔を比較する。最初の比較では Go の RoundTripper 呼び出しと Rust の実時計によるサーバー到着時刻を使ったが、全体検証中に Rust 側の間隔判定が失敗した。現在は Tokio の時計を停止し、受信スレッドも同じ runtime の時計で観測する。実ソケット通信と Go の期待値、既存の5msの許容幅は維持する。pacing を一時的に外すと125msのケースが失敗することも確認した。時計の値を fixture に保存せず、下限判定を boolean に正規化する。125ms は移植した実装の定数ではなくテストで与える interval である。
 
 Go の既定 SDK New の全体 timeout=0 を再現テストで確認し、Rust の試作で設定していた60秒の全体 timeout を削除した。Rust テストは応答を保留したローカルサーバーに対し、Tokio の仮想時計を61秒進めても通信が完了しないことと、応答を再開すると成功することを確認する。reqwest 0.13.5 の既定 timeout/read_timeout が None であることも採用版のソースで確認した。
 
@@ -827,6 +827,16 @@ Rust の MCP 起動は設定作成・Runtime 検証・既存 DB の読み込み�
 
 `saved_account_stdio_detail_preserves_go_results_and_persists_refresh_before_content` は既存の33ケースを実 DB・OAuth refresh・CAS 保存・MCP セッション経由でも比較する。内容取得の前に rotated token と revision が保存済みであること、入力/schema エラー時の認証・取得回数も確認する。検索の既存144ケースも直接 Client と保存済みアカウントの両経路で同じ結果・query を比較する。
 
-`saved_account_cancellation_releases_gate_and_reuses_persisted_refresh` は既存 Go の JSON-RPC 取消結果と詳細 result を再利用する。内容取得中の取消で通信 future が破棄され、次の呼び出しで Gate を再取得し、保存済み rotated token で再度 refresh が成功することを確認する。これは非 pool の取消後再利用の証拠であり、pool lease の取消・解放全体の証拠ではない。
+`saved_account_cancellation_releases_gate_and_reuses_persisted_refresh` は既存 Go の JSON-RPC 取消結果と詳細 result を再利用する。pool 無効・有効の両方で、内容取得中の取消による通信 future の破棄、freeze が追加されないこと、次の呼び出しの Gate 再取得と保存済み rotated token の refresh を確認する。pool 全状態・全取消タイミングの証拠ではない。
 
-実 MCP での pool replay/lease 解放、検索の途中ページ継続、EOF/disconnect による全通信取消、startup hooks、全 MCP ツール、TLS と他 OS は未検証または未移植である。現在の検索は replay ごとに収集全体を再実行し、Go の checkpoint を使う途中継続との互換性は未完了である。SDK/App の pool 単体比較だけで MCP の検証済みとはしない。
+作品詳細の MCP pool replay と lease 解放は次節の範囲で比較した。検索の途中ページ継続、EOF/disconnect による全通信取消、startup hooks、全 MCP ツール、TLS と他 OS は未検証または未移植である。現在の検索は replay ごとに収集全体を再実行し、Go の checkpoint を使う途中継続との互換性は未完了である。SDK/App の pool 単体比較だけで MCP の検証済みとはしない。
+
+## MCP 作品詳細の pool 再実行
+
+[mcp-pool.json](contracts/mcp-pool.json) は実 Go AccountService・SQLite・Gate・Facade・Scheduler・SDK と MCP session を組み合わせた4ケースである。別アカウントでの成功、切替先の応答不正、全アカウントの rate limit、再試行できない401を同じセッションで2回呼ぶ。wire result、OAuth/content の account 順序、Close callback 回数、保存 token/revision、freeze と last-selected、終了後の Gate 再取得を固定する。組み立ての HTTPClient 境界だけを fixture transport に置き換え、CLI startup は通さない。
+
+rate limit の最初の応答には Retry-After=0、SDK の再試行後には120を与える。Go/Rust の既定 SDK が同じアカウントで1回再試行してから pool へ返すことと、後続 account の切替を待機なしで比較する。絶対時刻は両実装の実時計で決まるため、保存された freeze が未来にあるかだけを boolean にする。freeze の正確な時刻計算は既存の scheduler 比較で別途確認する。
+
+`crates/pixiv-mcp/tests/pool.rs` は同じ body・条件を実 Rust Execution と duplex stdio に与え、2回の result と実 DB 状態を比較する。各 SDK client が所有する transport の Drop 回数を Go の Close callback 回数と比較し、account attempt ごとに所有物が解放されることを確認する。HTTP idle connection の cleanup API 自体の互換性は、この回数比較では証明しない。
+
+作品詳細の上記 pool replay と、pool 有効時の内容取得取消後の再利用は Windows amd64 で確認した。OAuth 中・Gate 待機中・切替中の MCP 取消、全 scheduler 状態、並行呼び出し、idle cleanup、検索の途中ページ継続、disconnect/EOF と他 OS は未検証である。

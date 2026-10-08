@@ -11,7 +11,7 @@ use std::{
 };
 use tokio::io::AsyncReadExt;
 
-#[tokio::test]
+#[tokio::test(start_paused = true)]
 async fn http_transport_matches_go_spacing_across_oauth_content_redirects_and_mutations() {
     let rows: Vec<Value> = serde_json::from_str(include_str!(
         "../../../docs/migration/contracts/pacing.json"
@@ -21,7 +21,9 @@ async fn http_transport_matches_go_spacing_across_oauth_content_redirects_and_mu
         let interval = Duration::from_millis(expected["interval_ms"].as_u64().unwrap());
         let listener = TcpListener::bind("127.0.0.1:0").unwrap();
         let address = listener.local_addr().unwrap();
+        let runtime = tokio::runtime::Handle::current();
         let server = thread::spawn(move || {
+            let _runtime = runtime.enter();
             listener.set_nonblocking(true).unwrap();
             let mut calls = Vec::new();
             let mut last = None;
@@ -51,7 +53,7 @@ async fn http_transport_matches_go_spacing_across_oauth_content_redirects_and_mu
                     head.push(byte[0]);
                     assert!(head.len() < 65536);
                 }
-                let now = Instant::now();
+                let now = tokio::time::Instant::now();
                 if let Some(previous) = last
                     && now.duration_since(previous) + Duration::from_millis(5) < interval
                 {
