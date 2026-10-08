@@ -6,8 +6,11 @@ use std::{
 
 #[test]
 fn mcp_process_exchanges_jsonrpc_without_stdout_diagnostics_or_credentials() {
+    let home = tempfile::tempdir().unwrap();
     let mut child = Command::new(env!("CARGO_BIN_EXE_pixiv"))
         .arg("mcp")
+        .env("HOME", home.path())
+        .env("USERPROFILE", home.path())
         .env("PIXIV_ACCESS_TOKEN", "")
         .env_remove("https_proxy")
         .env_remove("HTTPS_PROXY")
@@ -59,10 +62,71 @@ fn mcp_process_exchanges_jsonrpc_without_stdout_diagnostics_or_credentials() {
     );
     assert_eq!(
         by_id("auth")["result"]["content"][0]["text"],
-        "Error: pixiv:Artwork: unauthorized"
+        "Error: pixiv:auth: unauthorized: no pixiv account is authenticated"
     );
     assert_eq!(
         by_id("auth")["result"]["structuredContent"],
         json!({"records":[]})
     );
+}
+
+#[test]
+fn mcp_process_preserves_go_saved_account_errors_for_detail_and_search() {
+    let cases: Vec<Value> = serde_json::from_str(include_str!(
+        "../../../docs/migration/contracts/mcp-accounts.json"
+    ))
+    .unwrap();
+    for case in cases {
+        let home = tempfile::tempdir().unwrap();
+        let directory = home.path().join(".pixiv-cli");
+        std::fs::create_dir(&directory).unwrap();
+        std::fs::write(
+            directory.join("config.toml"),
+            case["config"].as_str().unwrap(),
+        )
+        .unwrap();
+        let mut child = Command::new(env!("CARGO_BIN_EXE_pixiv"))
+            .arg("mcp")
+            .env("HOME", home.path())
+            .env("USERPROFILE", home.path())
+            .env("PIXIV_ACCESS_TOKEN", "")
+            .env_remove("https_proxy")
+            .env_remove("HTTPS_PROXY")
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()
+            .unwrap();
+        let mut input = child.stdin.take().unwrap();
+        for message in [
+            json!({"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"process-test","version":"0"}}}),
+            json!({"jsonrpc":"2.0","method":"notifications/initialized"}),
+            json!({"jsonrpc":"2.0","id":7,"method":"tools/call","params":{"name":case["tool"],"arguments":case["arguments"]}}),
+        ] {
+            writeln!(input, "{message}").unwrap();
+        }
+        drop(input);
+        let output = child.wait_with_output().unwrap();
+        assert!(output.status.success(), "{case}");
+        assert!(
+            output.stderr.is_empty(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        let responses: Vec<Value> = String::from_utf8(output.stdout)
+            .unwrap()
+            .lines()
+            .map(|line| serde_json::from_str(line).unwrap())
+            .collect();
+        let response = responses
+            .iter()
+            .find(|response| response["id"] == 7)
+            .unwrap();
+        assert_eq!(
+            response["result"], case["result"],
+            "{} / {}",
+            case["name"], case["tool"]
+        );
+        assert!(directory.join("pixiv-cli.db").exists(), "{case}");
+    }
 }

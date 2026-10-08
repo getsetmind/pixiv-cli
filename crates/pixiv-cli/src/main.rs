@@ -66,7 +66,7 @@ async fn main() {
 }
 
 async fn execute(args: Arguments) -> Result<(), CommandError> {
-    let detail_config = if matches!(&args.command, Command::Detail { .. }) {
+    let account_config = if matches!(&args.command, Command::Detail { .. } | Command::Mcp) {
         let home_name = if cfg!(windows) { "USERPROFILE" } else { "HOME" };
         let home = std::env::var_os(home_name)
             .filter(|home| !home.is_empty())
@@ -102,7 +102,7 @@ async fn execute(args: Arguments) -> Result<(), CommandError> {
         _ => None,
     };
     if let Command::Detail { json, ndjson, .. } = &args.command {
-        let (directory, config) = detail_config.expect("detail startup was resolved");
+        let (directory, config) = account_config.expect("detail startup was resolved");
         let json_output = if *json {
             true
         } else {
@@ -136,15 +136,25 @@ async fn execute(args: Arguments) -> Result<(), CommandError> {
         )
         .await;
     }
+    if matches!(&args.command, Command::Mcp) {
+        let (directory, config) = account_config.expect("MCP startup was resolved");
+        let database = pixiv_app::database::Database::open(&directory)
+            .map_err(|error| CommandError::State(Box::new(error)))?;
+        let execution = pixiv_app::execution::Execution::http(
+            config,
+            std::sync::Arc::new(std::sync::Mutex::new(database)),
+        );
+        pixiv_mcp::stdio::serve_saved(&execution, tokio::io::stdin(), &mut tokio::io::stdout())
+            .await?;
+        return Ok(());
+    }
     let token = std::env::var("PIXIV_ACCESS_TOKEN").unwrap_or_default();
     let proxy = std::env::var("https_proxy")
         .or_else(|_| std::env::var("HTTPS_PROXY"))
         .ok();
     let client = Client::new(&token, proxy.as_deref())?;
     match args.command {
-        Command::Mcp => {
-            pixiv_mcp::stdio::serve(&client, tokio::io::stdin(), &mut tokio::io::stdout()).await?;
-        }
+        Command::Mcp => unreachable!("MCP uses saved account execution"),
         Command::Detail { .. } => unreachable!("detail uses saved account execution"),
         Command::Search {
             options,

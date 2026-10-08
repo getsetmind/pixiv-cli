@@ -10,6 +10,7 @@ use std::{collections::BTreeMap, future::Future, io, pin::Pin};
 use tokio::io::{AsyncBufReadExt, AsyncRead, AsyncWrite, AsyncWriteExt, BufReader};
 
 type ResponseFuture<'a> = Pin<Box<dyn Future<Output = Value> + 'a>>;
+type ToolFuture<'a> = Pin<Box<dyn Future<Output = crate::CallToolResult> + 'a>>;
 
 enum ToolInput {
     Detail(IllustReference),
@@ -24,6 +25,43 @@ struct Session {
 
 pub async fn serve<T: Transport, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
     client: &Client<T>,
+    input: R,
+    output: &mut W,
+) -> io::Result<()> {
+    let invoke = |input| -> ToolFuture<'_> {
+        Box::pin(async move {
+            match input {
+                ToolInput::Detail(input) => illust_detail(client, input).await,
+                ToolInput::Search(input) => crate::search_illust(client, *input).await,
+            }
+        })
+    };
+    serve_with(&invoke, input, output).await
+}
+
+pub async fn serve_saved<T: Transport + 'static, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
+    execution: &pixiv_app::execution::Execution<T>,
+    input: R,
+    output: &mut W,
+) -> io::Result<()> {
+    let invoke = |input| -> ToolFuture<'_> {
+        Box::pin(async move {
+            let context = pixiv_app::lifecycle::Context::new();
+            match input {
+                ToolInput::Detail(input) => {
+                    crate::saved_illust_detail(execution, &context, input).await
+                }
+                ToolInput::Search(input) => {
+                    crate::search::saved_search_illust(execution, &context, *input).await
+                }
+            }
+        })
+    };
+    serve_with(&invoke, input, output).await
+}
+
+async fn serve_with<'a, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
+    invoke: &impl Fn(ToolInput) -> ToolFuture<'a>,
     input: R,
     output: &mut W,
 ) -> io::Result<()> {
@@ -87,11 +125,7 @@ pub async fn serve<T: Transport, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
                                         inflight.insert(id.to_string(), handle);
                                         pending.push(Box::pin(async move {
                                             let is_search = matches!(&input, ToolInput::Search(_));
-                                            let invoke = async move { match input {
-                                                ToolInput::Detail(input) => illust_detail(client,input).await,
-                                                ToolInput::Search(input) => crate::search_illust(client,*input).await,
-                                            }};
-                                            let result = match Abortable::new(invoke, registration).await {
+                                            let result = match Abortable::new(invoke(input), registration).await {
                                                 Ok(result) => result,
                                                 Err(_) => {
                                                     let message = pixiv_sdk::Error::new(pixiv_sdk::Reason::UpstreamUnavailable,if is_search { "SearchArtworks" } else { "Artwork" }).with_detail("pixiv upstream transport failed").to_string();

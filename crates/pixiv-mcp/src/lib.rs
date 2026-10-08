@@ -68,7 +68,31 @@ pub async fn illust_detail<T: Transport>(
         Ok(artwork) => artwork,
         Err(error) => return failure(error.to_string()),
     };
-    match pixiv_record::from_artwork(&artwork) {
+    artwork_result(&artwork)
+}
+
+pub async fn saved_illust_detail<T: Transport + 'static>(
+    execution: &pixiv_app::execution::Execution<T>,
+    context: &pixiv_app::lifecycle::Context,
+    input: IllustReference,
+) -> CallToolResult {
+    let id = match resolve_artwork(input) {
+        Ok(id) => id,
+        Err(error) => return failure(error),
+    };
+    match execution
+        .read(context, 0, None, move |_, client| async move {
+            client.artwork(id).await.map_err(Into::into)
+        })
+        .await
+    {
+        Ok(artwork) => artwork_result(&artwork),
+        Err(error) => failure(error.to_string()),
+    }
+}
+
+fn artwork_result(artwork: &pixiv_sdk::models::Artwork) -> CallToolResult {
+    match pixiv_record::from_artwork(artwork) {
         Ok(mut record) => {
             structured_wire_numbers(&mut record);
             CallToolResult {

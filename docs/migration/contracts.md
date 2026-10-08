@@ -789,7 +789,7 @@ cargo test -p pixiv-sdk --test pacing --locked
 
 ## 保存済みアカウントの実行経路
 
-`crates/pixiv-app/src/execution.rs` は設定 Store、実 DB、AccountService、Gate、Facade、pool Scheduler を本番の組み立てとして接続する。`Execution::http` は account attempt ごとに transport を作成し、pacing の状態を account 間で共有しない。CLI の作品詳細はこの経路と既存 `.pixiv-cli` のパスを使い、初回設定作成も行う。MCP・他の CLI の接続はまだ未実装である。
+`crates/pixiv-app/src/execution.rs` は設定 Store、実 DB、AccountService、Gate、Facade、pool Scheduler を本番の組み立てとして接続する。`Execution::http` は account attempt ごとに transport を作成し、pacing の状態を account 間で共有しない。CLI の作品詳細と MCP の作品詳細・既存検索はこの経路と既存 `.pixiv-cli` のパスを使い、初回設定作成も行う。他の CLI と MCP ツールの接続は未実装である。
 
 `crates/pixiv-app/tests/pool_session.rs` の `execution_reads_current_connection_and_default_account_before_refreshing_and_persisting` は、この組み立てを使い、実設定ファイルの変更が次の実行の default account・proxy・間隔に反映され、refresh の CAS 保存が SDK content request より先に完了することを確認する。`execution_pool_overrides_the_requested_account_and_persists_replay_state` は実 DB の pool 選択、未確定の rate limit から別 account への replay、credential revision と last selected を確認する。retry の応答時刻だけは実時計の120秒後を fixture に与える。固定時刻を使う既存テストも維持する。
 
@@ -818,3 +818,15 @@ startup hooks・proxy flags・全 entity/record input・MCP のアカウント�
 Rust の作品詳細起動は設定作成と Runtime 検証を入力解決の前へ接続する。初回生成と読み込みは同じ Store を使う。設定はその後の JSON output resolver と SDK options/pool で Go と同様に fresh read する。未知キー・コメント・改行を含む既存設定は変更しない。
 
 Unix 向けのテストは、ディレクトリ 0700・新規ファイル 0600・既存ファイルの mode 保持を確認する。Windows 実行ではそのテストは実行対象外で、他 OS の証拠とはしない。close エラーの報告、write/sync/cleanup 失敗の比較、全 filesystem error の表示・symlink・並行初期化・他 OS と startup hooks は未検証である。Rust の close は File の drop に依存し、Go の Close エラーを返す契約は未移植である。
+
+## 保存済みアカウントを使う MCP 起動
+
+`internal/cli/migration_mcp_accounts_test.go` は Go の実 SDKPorts、設定 Store、Facade、アカウント Service、SQLite と MCP server を組み合わせる。未認証・既定アカウント欠落・既定 UID 不正・空 pool を作品詳細と検索で呼び、8ケースの wire result を [mcp-accounts.json](contracts/mcp-accounts.json) に固定する。Rust の `crates/pixiv-cli/tests/mcp_stdio.rs` は隔離 HOME/USERPROFILE の実バイナリで全 result、stderr、終了状態と DB 作成を比較する。
+
+Rust の MCP 起動は設定作成・Runtime 検証・既存 DB の読み込みを経て `Execution::http` と `stdio::serve_saved` を呼ぶ。作品詳細と検索は共通 `Execution::read` を使い、SDK の型付きエラーを Facade に返してから MCP のエラー結果へ変換する。エラーを callback 内で正常な tool result に変えて pool の判断を妨げない。
+
+`saved_account_stdio_detail_preserves_go_results_and_persists_refresh_before_content` は既存の33ケースを実 DB・OAuth refresh・CAS 保存・MCP セッション経由でも比較する。内容取得の前に rotated token と revision が保存済みであること、入力/schema エラー時の認証・取得回数も確認する。検索の既存144ケースも直接 Client と保存済みアカウントの両経路で同じ結果・query を比較する。
+
+`saved_account_cancellation_releases_gate_and_reuses_persisted_refresh` は既存 Go の JSON-RPC 取消結果と詳細 result を再利用する。内容取得中の取消で通信 future が破棄され、次の呼び出しで Gate を再取得し、保存済み rotated token で再度 refresh が成功することを確認する。これは非 pool の取消後再利用の証拠であり、pool lease の取消・解放全体の証拠ではない。
+
+実 MCP での pool replay/lease 解放、検索の途中ページ継続、EOF/disconnect による全通信取消、startup hooks、全 MCP ツール、TLS と他 OS は未検証または未移植である。現在の検索は replay ごとに収集全体を再実行し、Go の checkpoint を使う途中継続との互換性は未完了である。SDK/App の pool 単体比較だけで MCP の検証済みとはしない。

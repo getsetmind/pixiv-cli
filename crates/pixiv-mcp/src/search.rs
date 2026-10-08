@@ -1,5 +1,6 @@
 use crate::{CallToolResult, Records, TextContent};
 use chrono::{NaiveDate, Utc};
+use pixiv_app::scheduler::SchedulerError;
 use pixiv_sdk::{
     Client, Error, Reason,
     models::{Artwork, ArtworkKind},
@@ -227,6 +228,7 @@ fn validate_schema(
     Ok(())
 }
 
+#[derive(Clone, Copy)]
 struct Plan {
     page: i64,
     limit: i64,
@@ -360,7 +362,34 @@ pub async fn search_illust<T: Transport>(
         Ok(plan) => plan,
         Err(error) => return failure(error),
     };
-    match collect(client, &input, &plan).await {
+    search_result(collect(client, &input, &plan).await, &input, &plan)
+}
+
+pub(crate) async fn saved_search_illust<T: Transport + 'static>(
+    execution: &pixiv_app::execution::Execution<T>,
+    context: &pixiv_app::lifecycle::Context,
+    mut input: SearchIllustInput,
+) -> CallToolResult {
+    let plan = match validate(&mut input) {
+        Ok(plan) => plan,
+        Err(error) => return failure(error),
+    };
+    let requested = input.clone();
+    let result = execution
+        .read(context, 0, None, move |_, client| {
+            let input = requested.clone();
+            async move { collect(&client, &input, &plan).await }
+        })
+        .await;
+    search_result(result, &input, &plan)
+}
+
+fn search_result(
+    result: Result<(Vec<Artwork>, bool, Option<Value>), SchedulerError>,
+    input: &SearchIllustInput,
+    plan: &Plan,
+) -> CallToolResult {
+    match result {
         Ok((items, more, filter)) => {
             let mut records = vec![];
             for item in &items {
@@ -372,7 +401,7 @@ pub async fn search_illust<T: Transport>(
                     Err(error) => return failure(error.to_string()),
                 }
             }
-            let mut pagination = pagination(&plan, input.limit, records.len(), more);
+            let mut pagination = pagination(plan, input.limit, records.len(), more);
             crate::structured_wire_numbers(&mut pagination);
             CallToolResult {
                 content: vec![TextContent {
@@ -387,14 +416,14 @@ pub async fn search_illust<T: Transport>(
                 is_error: false,
             }
         }
-        Err(error) => failure(error),
+        Err(error) => failure(error.to_string()),
     }
 }
 async fn collect<T: Transport>(
     client: &Client<T>,
     input: &SearchIllustInput,
     plan: &Plan,
-) -> Result<(Vec<Artwork>, bool, Option<Value>), String> {
+) -> Result<(Vec<Artwork>, bool, Option<Value>), SchedulerError> {
     let local_type = pixiv_app::search_filter::normalize_filter(
         "",
         input
@@ -403,7 +432,7 @@ async fn collect<T: Transport>(
             .map(|filter| filter.r#type.as_str())
             .unwrap_or_default(),
     )
-    .map_err(|error| error.to_string())?;
+    .map_err(|error| SchedulerError::Message(error.to_string()))?;
     let has_range = input.bookmark_min.is_some() || input.bookmark_max.is_some();
     let bookmark_branch = has_range || !input.bookmark_strategy.is_empty();
     for (value, detail) in [
@@ -419,7 +448,7 @@ async fn collect<T: Transport>(
         if value.is_some_and(|value| value < 0) {
             return Err(Error::new(Reason::InvalidArgument, "SearchArtworks")
                 .with_detail(detail)
-                .to_string());
+                .into());
         }
     }
     let strategy =
@@ -432,11 +461,11 @@ async fn collect<T: Transport>(
                 .with_detail(
                     "server bookmark strategy requires verified premium membership and evidence",
                 )
-                .to_string()),
+                .into()),
             _ => {
                 return Err(Error::new(Reason::InvalidArgument, "SearchArtworks")
                     .with_detail("unknown bookmark filter strategy")
-                    .to_string());
+                    .into());
             }
         };
     let mut request = SearchArtworksRequest {
@@ -472,7 +501,7 @@ async fn collect<T: Transport>(
         query.cursor = cursor;
         client
             .checkpoint_search_artworks(query, consumed as i64)
-            .map_err(|error| error.to_string())
+            .map_err(SchedulerError::from)
     });
     let page = pixiv_app::pagination::collect_pages(
         pixiv_app::pagination::Plan {
@@ -488,7 +517,7 @@ async fn collect<T: Transport>(
                 let page = client
                     .search_artworks(query)
                     .await
-                    .map_err(|error| error.to_string())?;
+                    .map_err(SchedulerError::from)?;
                 Ok((page.items, page.next))
             }
         },
@@ -498,7 +527,7 @@ async fn collect<T: Transport>(
                     return Err(
                         Error::new(Reason::MalformedUpstreamResponse, "SearchArtworks")
                             .with_detail("artwork bookmark count is negative")
-                            .to_string(),
+                            .into(),
                     );
                 }
                 Ok(!input
@@ -520,7 +549,10 @@ async fn collect<T: Transport>(
         checkpoint,
     )
     .await
-    .map_err(|error| error.to_string())?;
+    .map_err(|error| match error.cause {
+        pixiv_app::pagination::Cause::Source(error) => error,
+        pixiv_app::pagination::Cause::Message(message) => SchedulerError::Message(message),
+    })?;
     let items = page.items;
     let more = page.result.has_more;
     let filter = if has_range {

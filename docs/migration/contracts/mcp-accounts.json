@@ -1,0 +1,190 @@
+[
+  {
+    "name": "no_account",
+    "config": "",
+    "tool": "illust_detail",
+    "arguments": {
+      "illust_id": 42
+    },
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Error: pixiv:auth: unauthorized: no pixiv account is authenticated"
+        }
+      ],
+      "structuredContent": {
+        "records": []
+      },
+      "isError": true
+    }
+  },
+  {
+    "name": "no_account",
+    "config": "",
+    "tool": "search_illust",
+    "arguments": {
+      "word": "fixture"
+    },
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Error: pixiv:auth: unauthorized: no pixiv account is authenticated"
+        }
+      ],
+      "structuredContent": {
+        "pagination": {
+          "has_more": false,
+          "limit": null,
+          "next_page": null,
+          "page": 1,
+          "returned": 0
+        },
+        "records": []
+      },
+      "isError": true
+    }
+  },
+  {
+    "name": "missing_default",
+    "config": "[pixiv.auth]\ndefault_user_id = 43\n",
+    "tool": "illust_detail",
+    "arguments": {
+      "illust_id": 42
+    },
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Error: configured default pixiv account 43 is missing"
+        }
+      ],
+      "structuredContent": {
+        "records": []
+      },
+      "isError": true
+    }
+  },
+  {
+    "name": "missing_default",
+    "config": "[pixiv.auth]\ndefault_user_id = 43\n",
+    "tool": "search_illust",
+    "arguments": {
+      "word": "fixture"
+    },
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Error: configured default pixiv account 43 is missing"
+        }
+      ],
+      "structuredContent": {
+        "pagination": {
+          "has_more": false,
+          "limit": null,
+          "next_page": null,
+          "page": 1,
+          "returned": 0
+        },
+        "records": []
+      },
+      "isError": true
+    }
+  },
+  {
+    "name": "invalid_default",
+    "config": "[pixiv.auth]\ndefault_user_id = 0\n",
+    "tool": "illust_detail",
+    "arguments": {
+      "illust_id": 42
+    },
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Error: config: pixiv.auth.default_user_id must be a positive integer"
+        }
+      ],
+      "structuredContent": {
+        "records": []
+      },
+      "isError": true
+    }
+  },
+  {
+    "name": "invalid_default",
+    "config": "[pixiv.auth]\ndefault_user_id = 0\n",
+    "tool": "search_illust",
+    "arguments": {
+      "word": "fixture"
+    },
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Error: config: pixiv.auth.default_user_id must be a positive integer"
+        }
+      ],
+      "structuredContent": {
+        "pagination": {
+          "has_more": false,
+          "limit": null,
+          "next_page": null,
+          "page": 1,
+          "returned": 0
+        },
+        "records": []
+      },
+      "isError": true
+    }
+  },
+  {
+    "name": "empty_pool",
+    "config": "[account_pool]\nenabled = true\nstrategy = 'round_robin'\n",
+    "tool": "illust_detail",
+    "arguments": {
+      "illust_id": 42
+    },
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Error: pixiv:account_pool: unauthorized: account_pool_no_local_account"
+        }
+      ],
+      "structuredContent": {
+        "records": []
+      },
+      "isError": true
+    }
+  },
+  {
+    "name": "empty_pool",
+    "config": "[account_pool]\nenabled = true\nstrategy = 'round_robin'\n",
+    "tool": "search_illust",
+    "arguments": {
+      "word": "fixture"
+    },
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Error: pixiv:account_pool: unauthorized: account_pool_no_local_account"
+        }
+      ],
+      "structuredContent": {
+        "pagination": {
+          "has_more": false,
+          "limit": null,
+          "next_page": null,
+          "page": 1,
+          "returned": 0
+        },
+        "records": []
+      },
+      "isError": true
+    }
+  }
+]

@@ -3,7 +3,7 @@ use crate::{
     config::Store,
     connection::CommandConnection,
     database::Database,
-    facade::{Facade, UseCallback, pool_executor},
+    facade::{Facade, UseCallback, UseOutcome, pool_executor},
     gate::Gate,
     lifecycle::Context,
     scheduler::SchedulerError,
@@ -29,6 +29,56 @@ impl Execution<HttpTransport> {
 }
 
 impl<T: Transport + 'static> Execution<T> {
+    pub async fn read<V, F, U>(
+        &self,
+        context: &Context,
+        user_id: i64,
+        proxy: Option<&str>,
+        invoke: F,
+    ) -> Result<V, SchedulerError>
+    where
+        V: Send + 'static,
+        F: Fn(Context, Arc<Client<T>>) -> U + Send + Sync + 'static,
+        U: std::future::Future<Output = Result<V, SchedulerError>> + Send + 'static,
+    {
+        let result = Arc::new(Mutex::new(None));
+        let fetched = result.clone();
+        self.use_client(
+            Some(context),
+            user_id,
+            proxy,
+            Some(Arc::new(move |context, client| {
+                let future = invoke(context, client);
+                let fetched = fetched.clone();
+                Box::pin(async move {
+                    match future.await {
+                        Ok(value) => {
+                            *fetched
+                                .lock()
+                                .unwrap_or_else(|poisoned| poisoned.into_inner()) = Some(value);
+                            UseOutcome {
+                                committed: false,
+                                error: None,
+                            }
+                        }
+                        Err(error) => UseOutcome {
+                            committed: false,
+                            error: Some(error),
+                        },
+                    }
+                })
+            })),
+        )
+        .await?;
+        result
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner())
+            .take()
+            .ok_or_else(|| {
+                SchedulerError::Message("pixiv read operation returned no result".into())
+            })
+    }
+
     pub fn new(
         config: Store,
         database: Arc<Mutex<Database>>,

@@ -1,9 +1,7 @@
 mod json_spool;
 pub mod search;
 
-use pixiv_app::{
-    execution::Execution, facade::UseOutcome, lifecycle::Context, scheduler::SchedulerError,
-};
+use pixiv_app::{execution::Execution, lifecycle::Context, scheduler::SchedulerError};
 use pixiv_sdk::{Client, Error, Reason, transport::Transport};
 use std::{
     fmt,
@@ -130,42 +128,11 @@ pub async fn saved_artwork_detail<T: Transport + 'static, W: Write>(
     mode: DetailOutput,
     out: &mut W,
 ) -> Result<(), CommandError> {
-    let result = std::sync::Arc::new(std::sync::Mutex::new(None));
-    let fetched = result.clone();
-    execution
-        .use_client(
-            Some(context),
-            user_id,
-            proxy,
-            Some(std::sync::Arc::new(move |_, client| {
-                let fetched = fetched.clone();
-                Box::pin(async move {
-                    match client.artwork(id).await {
-                        Ok(artwork) => {
-                            *fetched
-                                .lock()
-                                .unwrap_or_else(|poisoned| poisoned.into_inner()) = Some(artwork);
-                            UseOutcome {
-                                committed: false,
-                                error: None,
-                            }
-                        }
-                        Err(error) => UseOutcome {
-                            committed: false,
-                            error: Some(error.into()),
-                        },
-                    }
-                })
-            })),
-        )
+    let artwork = execution
+        .read(context, user_id, proxy, move |_, client| async move {
+            client.artwork(id).await.map_err(Into::into)
+        })
         .await?;
-    let artwork = result
-        .lock()
-        .unwrap_or_else(|poisoned| poisoned.into_inner())
-        .take()
-        .ok_or(CommandError::Message(
-            "pixiv artwork detail fetch returned no result",
-        ))?;
     write_artwork_detail(&artwork, mode, out)
 }
 
