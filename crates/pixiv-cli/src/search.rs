@@ -178,14 +178,19 @@ pub async fn artwork_search<T: Transport, W: Write>(
     out: &mut W,
 ) -> Result<(), CommandError> {
     let word = request.word.clone();
-    if mode == crate::DetailOutput::Json {
-        let items = collect_search(client, request, options).await?;
-        return write_search_json(&items, out);
-    }
     let local = pixiv_app::search_filter::normalize_filter(&options.rating, &options.content_type)
         .map_err(|error| CommandError::Message(error.message()))?
         .rating
         != "all";
+    if mode == crate::DetailOutput::Json {
+        if local {
+            let items = collect_search(client, request, options).await?;
+            return write_search_json(&items, out);
+        }
+        let mut spool = crate::json_spool::JsonSpool::new()?;
+        visit_search(client, request, options, |batch| spool.append(&batch)).await?;
+        return spool.commit(out);
+    }
     let mut heading_written = false;
     let mut present = |items: Vec<Artwork>| -> Result<(), CommandError> {
         if mode == crate::DetailOutput::Human && !heading_written {

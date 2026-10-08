@@ -468,7 +468,7 @@ Rust CLI に `--rating`、`--limit/-l`、`--page/-p` を追加した。rating �
 
 90ケースの adapter 検証結果・全 GET/path/query と、成功76ケースの実際の JSON presenter 出力を Go と比較する。後続ページの malformed 応答4ケースでは収集結果を返さず、JSON の部分結果も公開しない。入力不正10ケースは無効な proxy を設定した CLI 子プロセスで stderr・終了コードを比較し、クライアント設定前に拒否することを確認する。JSON は `{"illusts":[...]}` envelope とし、HTML 文字を Go と同じく escape する。比較は JSON の構造・値・配列順を維持して行う。
 
-Windows amd64 の fixture 比較であり、正常 CLI 子プロセスから実 HTTP までの接続、cursor context の resume・循環検出、checkpoint の副作用、全境界・取消/deadline、account/pool 再実行、bookmark との組合せ、他 OS は未検証。収集処理は現時点で CLI adapter 内にあり、MCP との共通 traversal 化は残っている。human/NDJSON の検証範囲は次節に記録する。非ローカル JSON は Go のファイル spool に対して現在はメモリ収集であり、bounded output commit とメモリ使用量の互換は残っている。
+Windows amd64 の fixture 比較であり、正常 CLI 子プロセスから実 HTTP までの接続、cursor context の resume・循環検出、checkpoint の副作用、全境界・取消/deadline、account/pool 再実行、bookmark との組合せ、他 OS は未検証。収集処理は現時点で CLI adapter 内にあり、MCP との共通 traversal 化は残っている。出力と非ローカル JSON spool の検証範囲は次節に記録する。
 
 ```text
 go test -race ./internal/cli -run '^TestMigrationSearchRatingAndPages' -count=1
@@ -477,17 +477,20 @@ cargo test -p pixiv-cli-rs --test search_pages --locked
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-search-pages` を指定する。
 
-## CLI 検索の human/NDJSON と出力失敗
+## CLI 検索の出力・JSON spool と出力失敗
 
-[search-output.json](contracts/search-output.json) は前節の fixture 12種類を参照し、human/NDJSON と正常 writer・通常の書き込み失敗・BrokenPipe を組み合わせた固定 Go 版の72ケース。全 HTTP query、stdout/stderr、エラー、終了コードを比較する。human は見出し・URL・引用された title・作者・bookmarks/views/tags を byte 一致で確認し、NDJSON は既存の共通 record 変換を使い、各行の構造と値・行順を比較する。
+[search-output.json](contracts/search-output.json) は前節の fixture 12種類を参照し、human/NDJSON の72ケースと JSON の48ケースを合わせた固定 Go 版の120ケース。正常 writer・通常の書き込み失敗・BrokenPipe、JSON では10バイトだけ書き込んで失敗する writer を組み合わせ、全 HTTP query、stdout/stderr、エラー、終了コードを比較する。human は見出し・URL・引用された title・作者・bookmarks/views/tags を byte 一致で確認し、NDJSON は既存の共通 record 変換を使い、各行の構造と値・行順を比較する。JSON は構造・値・配列順、途中書き込み時は既知の envelope の10バイト prefix を比較する。
 
 非ローカル検索はページを取得するたびに出力し、後続の malformed 応答があっても先行出力を保持する。rating によるローカル検索は収集の成功後に出力し、後続ページの失敗時には stdout が空のままとなる。先頭の空ページの補充、論理 page、重複保持、ローカル結果が空の場合の human 見出しも確認する。書き込み失敗後の追加要求停止、human の BrokenPipe が失敗・明示 NDJSON の BrokenPipe が成功となる終了コードと診断も比較した。
 
-検証は Windows amd64 の CLI adapter と実際の終了処理に限定する。正常の CLI 子プロセス・TTY/pipe の自動切替、全 Unicode の引用、途中まで書き込む writer、未知の kind/不正 ID による record 変換失敗、取消/deadline、pool の replay/commit 境界、bookmark、他 OS は未検証。JSON のファイル spool と MCP との共通 traversal 化も残る。
+非ローカル JSON は取得前にランダム名・排他的作成の一時ファイルを開き、各ページの DTO を逐次書き込む。ページをまたぐ DTO の配列は保持せず、全取得成功後に固定サイズの copy buffer で stdout に転送する。Go 側は隔離した temp directory で取得中の spool と終了後の削除を確認した。Rust 側も隔離した子プロセスで、取得前の spool・後続要求時に先行ページが既にディスク上にあること・成功/後続エラー/出力失敗/future の取消後の削除を確認する。ローカル rating 検索は Go と同じくメモリ収集を維持する。Unix では作成 mode を0600にしているが、Unix 実行と Windows ACL は未検証。
+
+検証は Windows amd64 の CLI adapter と実際の終了処理に限定する。正常の CLI 子プロセス・TTY/pipe の自動切替、全 Unicode の引用、human/NDJSON の partial writer、未知の kind/不正 ID による record 変換失敗、SDK の取消/deadline、pool の replay/commit 境界、bookmark、他 OS は未検証。temp directory 不正・容量不足・seek/read/delete 失敗、プロセス強制停止後の回収、長時間・大容量時の実測も未検証。MCP との共通 traversal 化は残る。
 
 ```text
 go test -race ./internal/cli -run '^TestMigrationSearchOutput' -count=1
 cargo test -p pixiv-cli-rs --test search_output --locked
+cargo test -p pixiv-cli-rs --test search_spool --locked
 ```
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-search-output` を指定する。

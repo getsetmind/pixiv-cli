@@ -1,3 +1,4 @@
+mod json_spool;
 pub mod search;
 
 use pixiv_sdk::{Client, Error, Reason, transport::Transport};

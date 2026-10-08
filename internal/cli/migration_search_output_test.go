@@ -29,6 +29,11 @@ type migrationSearchOutputWriter struct {
 }
 
 func (w *migrationSearchOutputWriter) Write(p []byte) (int, error) {
+	if w.failure == "short" {
+		n := min(len(p), max(0, 10-w.out.Len()))
+		w.out.Write(p[:n])
+		return n, io.ErrShortWrite
+	}
 	if w.failure == "broken" {
 		return 0, syscall.EPIPE
 	}
@@ -39,6 +44,10 @@ func (w *migrationSearchOutputWriter) Write(p []byte) (int, error) {
 }
 
 func TestMigrationSearchOutputPreservesStreamingAndWriterFailures(t *testing.T) {
+	temporary := t.TempDir()
+	t.Setenv("TEMP", temporary)
+	t.Setenv("TMP", temporary)
+	t.Setenv("TMPDIR", temporary)
 	path := filepath.Join("..", "..", "docs", "migration", "contracts")
 	data, err := os.ReadFile(filepath.Join(path, "search-pages.json"))
 	if err != nil {
@@ -64,13 +73,36 @@ func TestMigrationSearchOutputPreservesStreamingAndWriterFailures(t *testing.T) 
 	rows := []row{}
 	for _, index := range []int{0, 1, 3, 24, 25, 27, 40, 72, 73, 75, 77, 79} {
 		source := sources[index]
-		for _, mode := range []string{"human", "ndjson"} {
-			for _, failure := range []string{"", "other", "broken"} {
+		for _, mode := range []string{"human", "ndjson", "json"} {
+			failures := []string{"", "other", "broken"}
+			if mode == "json" {
+				failures = append(failures, "short")
+			}
+			for _, failure := range failures {
 				current := row{Source: index, Mode: mode, Failure: failure, Queries: []url.Values{}}
 				out := &migrationSearchOutputWriter{failure: failure}
 				var diagnostics bytes.Buffer
-				command := searchcmd.New(searchcmd.Dependencies{Input: strings.NewReader(""), Output: out, ErrorOutput: &diagnostics, JSONOut: func(_ *bool) (bool, error) { return false, nil }, Pooled: func(ctx context.Context, _ searchcmd.Request, invoke func(context.Context, *pixiv.Client) (bool, error)) error {
+				command := searchcmd.New(searchcmd.Dependencies{Input: strings.NewReader(""), Output: out, ErrorOutput: &diagnostics, JSONOut: func(_ *bool) (bool, error) { return mode == "json", nil }, Pooled: func(ctx context.Context, _ searchcmd.Request, invoke func(context.Context, *pixiv.Client) (bool, error)) error {
 					client, err := pixiv.NewWith("fixture-access", pixiv.Options{HTTPClient: &http.Client{Transport: migrationDateTransport(func(request *http.Request) (*http.Response, error) {
+						if mode == "json" {
+							files, err := os.ReadDir(temporary)
+							if err != nil {
+								t.Fatal(err)
+							}
+							local := source.Flags["rating"] != "" && source.Flags["rating"] != "all"
+							if !local {
+								if len(files) != 1 {
+									t.Fatalf("expected spool before fetch, got %d files", len(files))
+								}
+								body, err := os.ReadFile(filepath.Join(temporary, files[0].Name()))
+								if err != nil {
+									t.Fatal(err)
+								}
+								if !bytes.HasPrefix(body, []byte("{\n  \"illusts\": [")) {
+									t.Fatal("spool envelope missing")
+								}
+							}
+						}
 						if request.Method != "GET" || request.URL.Path != "/v1/search/illust" {
 							t.Fatal("unexpected request")
 						}
@@ -98,6 +130,9 @@ func TestMigrationSearchOutputPreservesStreamingAndWriterFailures(t *testing.T) 
 				if mode == "ndjson" {
 					args = append(args, "--ndjson")
 				}
+				if mode == "json" {
+					args = append(args, "--json")
+				}
 				keys := []string{}
 				for key := range source.Flags {
 					keys = append(keys, key)
@@ -108,10 +143,17 @@ func TestMigrationSearchOutputPreservesStreamingAndWriterFailures(t *testing.T) 
 				}
 				root.SetArgs(args)
 				err = root.Execute()
+				files, cleanupErr := os.ReadDir(temporary)
+				if cleanupErr != nil {
+					t.Fatal(cleanupErr)
+				}
+				if len(files) != 0 {
+					t.Fatal("search left temporary files behind")
+				}
 				if err != nil {
 					current.Error = err.Error()
 				}
-				current.Exit = (app{out: out, errOut: &diagnostics}).exitWithNDJSONScope(err, mode == "ndjson", mode == "ndjson")
+				current.Exit = (app{out: out, errOut: &diagnostics}).exitWithNDJSONScope(err, mode == "ndjson", mode != "human")
 				current.Stdout, current.Stderr = out.out.String(), diagnostics.String()
 				rows = append(rows, current)
 			}

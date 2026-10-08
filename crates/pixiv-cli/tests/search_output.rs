@@ -70,6 +70,11 @@ impl Write for Output {
         match self.failure.as_str() {
             "other" => Err(io::Error::other("fixture write failed")),
             "broken" => Err(io::Error::new(io::ErrorKind::BrokenPipe, "broken pipe")),
+            "short" => {
+                let count = bytes.len().min(10_usize.saturating_sub(self.bytes.len()));
+                self.bytes.extend_from_slice(&bytes[..count]);
+                Err(io::Error::other("short write"))
+            }
             _ => {
                 self.bytes.extend_from_slice(bytes);
                 Ok(bytes.len())
@@ -90,7 +95,7 @@ async fn search_output_matches_go_records_streaming_partial_results_and_writer_f
         "../../../docs/migration/contracts/search-output.json"
     ))
     .unwrap();
-    assert_eq!(cases.len(), 72);
+    assert_eq!(cases.len(), 120);
     for case in cases {
         let source = &sources[case.source];
         let mut options = SearchOptions::default();
@@ -118,7 +123,9 @@ async fn search_output_matches_go_records_streaming_partial_results_and_writer_f
             )
             .unwrap();
         let ndjson = case.mode == "ndjson";
-        let mode = if ndjson {
+        let mode = if case.mode == "json" {
+            DetailOutput::Json
+        } else if ndjson {
             DetailOutput::Ndjson
         } else {
             DetailOutput::Human
@@ -142,12 +149,17 @@ async fn search_output_matches_go_records_streaming_partial_results_and_writer_f
         );
         let mut diagnostics = vec![];
         assert_eq!(
-            finish_command(result, ndjson, ndjson, &mut diagnostics),
+            finish_command(result, ndjson, case.mode != "human", &mut diagnostics),
             case.exit
         );
         assert_eq!(*queries.lock().unwrap(), case.queries);
         let actual = String::from_utf8(out.bytes).unwrap();
-        if ndjson {
+        if case.mode == "json" && !actual.is_empty() && case.failure != "short" {
+            assert_eq!(
+                serde_json::from_str::<Value>(&actual).unwrap(),
+                serde_json::from_str::<Value>(&case.stdout).unwrap()
+            );
+        } else if ndjson {
             let parse = |value: &str| {
                 value
                     .lines()
@@ -158,7 +170,7 @@ async fn search_output_matches_go_records_streaming_partial_results_and_writer_f
         } else {
             assert_eq!(actual, case.stdout);
         }
-        if ndjson && !diagnostics.is_empty() {
+        if case.mode != "human" && !diagnostics.is_empty() {
             assert_eq!(
                 serde_json::from_slice::<Value>(&diagnostics).unwrap(),
                 serde_json::from_str::<Value>(&case.stderr).unwrap()
