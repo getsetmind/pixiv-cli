@@ -53,24 +53,26 @@ async fn main() {
             } else {
                 eprintln!("error: {error}");
             }
-            std::process::exit(if error.code == Reason::InvalidArgument {
-                2
-            } else {
-                1
-            });
+            std::process::exit(1);
         }
     }
 }
 
 async fn execute(args: Arguments) -> pixiv_sdk::Result<()> {
+    let detail_id = match &args.command {
+        Command::Detail { source, .. } => Some(detail_artwork_id(source)?),
+        _ => None,
+    };
     let token = std::env::var("PIXIV_ACCESS_TOKEN").unwrap_or_default();
     let proxy = std::env::var("https_proxy")
         .or_else(|_| std::env::var("HTTPS_PROXY"))
         .ok();
     let client = Client::new(&token, proxy.as_deref())?;
     match args.command {
-        Command::Detail { source, json } => {
-            let artwork = client.artwork(artwork_id(&source)?).await?;
+        Command::Detail { json, .. } => {
+            let artwork = client
+                .artwork(detail_id.expect("detail input was resolved"))
+                .await?;
             if json {
                 output(
                     &serde_json::to_string_pretty(&pixiv_sdk::dto::ArtworkDto::from(&artwork))
@@ -132,6 +134,23 @@ async fn execute(args: Arguments) -> pixiv_sdk::Result<()> {
         }
     }
     Ok(())
+}
+
+fn detail_artwork_id(source: &str) -> pixiv_sdk::Result<i64> {
+    if let Ok(id) = source.trim().parse::<i64>()
+        && id > 0
+    {
+        return Ok(id);
+    }
+    let reference = pixiv_sdk::reference::parse_url(source).map_err(|_| {
+        Error::new(Reason::InvalidArgument, "detail")
+            .with_detail("argument must be an entity ID or a supported Pixiv URL")
+    })?;
+    if reference.kind != pixiv_sdk::reference::REFERENCE_KIND_ARTWORK {
+        return Err(Error::new(Reason::InvalidArgument, "detail")
+            .with_detail("URL does not name a supported Pixiv artwork"));
+    }
+    Ok(reference.id)
 }
 
 fn local() -> Error {

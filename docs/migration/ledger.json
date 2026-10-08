@@ -400,15 +400,25 @@
     },
     {
       "id": "cli:pixiv detail",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv detail"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-sdk/src/reference.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_detail_input_test.go#TestMigrationDetailInputMatchesFrozenErrorsBeforeAccountAccess",
+        "crates/pixiv-cli/tests/detail_input.rs#detail_inputs_match_go_process_errors_and_validate_before_client_configuration"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "122 fixed Go detail command/error-exit cases compare source parsing, validation-before-factory order, empty stdout, plain/JSON stderr and exit 1; Rust runs a child process with missing credentials and invalid proxy for malformed inputs. Successful output, TTY/record/text pipelines, NDJSON/JSON/BrokenPipe, all flags/aliases, novel/user/content, configuration/account/authentication/transport, MCP and other platforms remain unverified."
+      ]
     },
     {
       "id": "cli:pixiv dic",
@@ -7712,15 +7722,24 @@
     },
     {
       "id": "sdk/pixiv:ParseURL",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ParseURL"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/reference.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_reference_test.go#TestMigrationPageReferencesMatchFrozenParsingAndCanonicalURLs",
+        "crates/pixiv-sdk/tests/page_references.rs#page_reference_kinds_ids_owners_canonical_urls_and_errors_match_go"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "68 fixed Go cases compare all six page kinds, IDs/owners, locale/host/path/query, canonical URLs and classified errors. Rust ReferenceKind is String; constants use REFERENCE_KIND names. Full URL syntax differences, Unicode whitespace/invalid UTF-8, all command integrations and other platforms remain unverified."
+      ]
     },
     {
       "id": "sdk/pixiv:PostArtworkCommentRequest",
@@ -8000,111 +8019,192 @@
     },
     {
       "id": "sdk/pixiv:Reference",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Reference"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/reference.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_reference_test.go#TestMigrationPageReferencesMatchFrozenParsingAndCanonicalURLs",
+        "crates/pixiv-sdk/tests/page_references.rs#page_reference_kinds_ids_owners_canonical_urls_and_errors_match_go"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "68 fixed Go cases compare all six page kinds, IDs/owners, locale/host/path/query, canonical URLs and classified errors. Rust ReferenceKind is String; constants use REFERENCE_KIND names. Full URL syntax differences, Unicode whitespace/invalid UTF-8, all command integrations and other platforms remain unverified."
+      ]
     },
     {
       "id": "sdk/pixiv:Reference.CanonicalURL",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Reference.CanonicalURL"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/reference.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_reference_test.go#TestMigrationPageReferencesMatchFrozenParsingAndCanonicalURLs",
+        "crates/pixiv-sdk/tests/page_references.rs#page_reference_kinds_ids_owners_canonical_urls_and_errors_match_go"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "68 fixed Go cases compare all six page kinds, IDs/owners, locale/host/path/query, canonical URLs and classified errors. Rust ReferenceKind is String; constants use REFERENCE_KIND names. Full URL syntax differences, Unicode whitespace/invalid UTF-8, all command integrations and other platforms remain unverified."
+      ]
     },
     {
       "id": "sdk/pixiv:ReferenceKind",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ReferenceKind"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/reference.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_reference_test.go#TestMigrationPageReferencesMatchFrozenParsingAndCanonicalURLs",
+        "crates/pixiv-sdk/tests/page_references.rs#page_reference_kinds_ids_owners_canonical_urls_and_errors_match_go"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "68 fixed Go cases compare all six page kinds, IDs/owners, locale/host/path/query, canonical URLs and classified errors. Rust ReferenceKind is String; constants use REFERENCE_KIND names. Full URL syntax differences, Unicode whitespace/invalid UTF-8, all command integrations and other platforms remain unverified."
+      ]
     },
     {
       "id": "sdk/pixiv:ReferenceKindArtwork",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ReferenceKindArtwork"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/reference.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_reference_test.go#TestMigrationPageReferencesMatchFrozenParsingAndCanonicalURLs",
+        "crates/pixiv-sdk/tests/page_references.rs#page_reference_kinds_ids_owners_canonical_urls_and_errors_match_go"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "68 fixed Go cases compare all six page kinds, IDs/owners, locale/host/path/query, canonical URLs and classified errors. Rust ReferenceKind is String; constants use REFERENCE_KIND names. Full URL syntax differences, Unicode whitespace/invalid UTF-8, all command integrations and other platforms remain unverified."
+      ]
     },
     {
       "id": "sdk/pixiv:ReferenceKindArtworkSeries",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ReferenceKindArtworkSeries"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/reference.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_reference_test.go#TestMigrationPageReferencesMatchFrozenParsingAndCanonicalURLs",
+        "crates/pixiv-sdk/tests/page_references.rs#page_reference_kinds_ids_owners_canonical_urls_and_errors_match_go"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "68 fixed Go cases compare all six page kinds, IDs/owners, locale/host/path/query, canonical URLs and classified errors. Rust ReferenceKind is String; constants use REFERENCE_KIND names. Full URL syntax differences, Unicode whitespace/invalid UTF-8, all command integrations and other platforms remain unverified."
+      ]
     },
     {
       "id": "sdk/pixiv:ReferenceKindNovel",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ReferenceKindNovel"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/reference.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_reference_test.go#TestMigrationPageReferencesMatchFrozenParsingAndCanonicalURLs",
+        "crates/pixiv-sdk/tests/page_references.rs#page_reference_kinds_ids_owners_canonical_urls_and_errors_match_go"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "68 fixed Go cases compare all six page kinds, IDs/owners, locale/host/path/query, canonical URLs and classified errors. Rust ReferenceKind is String; constants use REFERENCE_KIND names. Full URL syntax differences, Unicode whitespace/invalid UTF-8, all command integrations and other platforms remain unverified."
+      ]
     },
     {
       "id": "sdk/pixiv:ReferenceKindNovelSeries",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ReferenceKindNovelSeries"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/reference.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_reference_test.go#TestMigrationPageReferencesMatchFrozenParsingAndCanonicalURLs",
+        "crates/pixiv-sdk/tests/page_references.rs#page_reference_kinds_ids_owners_canonical_urls_and_errors_match_go"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "68 fixed Go cases compare all six page kinds, IDs/owners, locale/host/path/query, canonical URLs and classified errors. Rust ReferenceKind is String; constants use REFERENCE_KIND names. Full URL syntax differences, Unicode whitespace/invalid UTF-8, all command integrations and other platforms remain unverified."
+      ]
     },
     {
       "id": "sdk/pixiv:ReferenceKindUser",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ReferenceKindUser"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/reference.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_reference_test.go#TestMigrationPageReferencesMatchFrozenParsingAndCanonicalURLs",
+        "crates/pixiv-sdk/tests/page_references.rs#page_reference_kinds_ids_owners_canonical_urls_and_errors_match_go"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "68 fixed Go cases compare all six page kinds, IDs/owners, locale/host/path/query, canonical URLs and classified errors. Rust ReferenceKind is String; constants use REFERENCE_KIND names. Full URL syntax differences, Unicode whitespace/invalid UTF-8, all command integrations and other platforms remain unverified."
+      ]
     },
     {
       "id": "sdk/pixiv:ReferenceKindUserBookmarks",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ReferenceKindUserBookmarks"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/reference.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_reference_test.go#TestMigrationPageReferencesMatchFrozenParsingAndCanonicalURLs",
+        "crates/pixiv-sdk/tests/page_references.rs#page_reference_kinds_ids_owners_canonical_urls_and_errors_match_go"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "68 fixed Go cases compare all six page kinds, IDs/owners, locale/host/path/query, canonical URLs and classified errors. Rust ReferenceKind is String; constants use REFERENCE_KIND names. Full URL syntax differences, Unicode whitespace/invalid UTF-8, all command integrations and other platforms remain unverified."
+      ]
     },
     {
       "id": "sdk/pixiv:RelatedArtworksRequest",

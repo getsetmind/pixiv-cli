@@ -266,3 +266,22 @@ cargo test -p pixiv-sdk --test artwork_bookmark_tags --locked
 ```
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-artwork-tags` を指定する。
+
+## ページ URL と detail の入力・エラー
+
+[page-references.json](contracts/page-references.json) は Go の `ParseURL` と `Reference.CanonicalURL` の68ケースを固定する。6種の reference、所有ユーザー ID、locale、前後空白、host・userinfo・port、percent encoding、query の ID 重複、整数境界、未知 kind と canonical URL を比較する。Rust は `reference::parse_url`・`Reference::canonical_url` に対応し、`ReferenceKind` は未知値を表現できる String。URL の元文字列・query・fragment は reference に保持しない。パスを正規化して別のリソースとして解釈しない。
+
+[detail-input.json](contracts/detail-input.json) は、Go の detail command と本番の exit/error 出力処理で122ケースを固定する。client factory と artwork fetch はテスト側の実行ポートへ差し替え、解析後の ID・factory 呼び出し回数を記録する。有効な作品入力は認証エラー、不正な入力は factory を呼ぶ前の入力エラーを返す。これは実認証・アカウント保存の比較ではない。
+
+Rust は CLI バイナリを子プロセスとして実行し、stdout・stderr・終了コードを比較する。明示 JSON は object key 順だけを正規化し、通常出力は文字列を比較する。無効な入力には無効な proxy 設定も与え、入力エラーが client 構築より先に返ることを確認する。SDK の invalid_argument は Go と同じ終了コード 1。引数・flag の usage error は別の契約として未検証。
+
+この比較は Windows amd64。Go と URL ライブラリの全構文差、Unicode 空白・不正 UTF-8、detail の成功出力・TTY・JSON/NDJSON・record/text pipeline・BrokenPipe、flags/aliases、novel/user と content、全設定・認証・通信、MCP と他 OS は未検証。既存の試作 `reference::artwork_id` は ugoira で引き続き使われており、この入口の URL 互換も未検証。
+
+```text
+go test ./sdk/pixiv -run '^TestMigrationPageReferences' -count=1
+go test ./internal/cli -run '^TestMigrationDetailInput' -count=1
+cargo test -p pixiv-sdk --test page_references --locked
+cargo test -p pixiv-cli-rs --test detail_input --locked
+```
+
+基準を意図して更新する場合だけ対応する Go テストの `-args -migration-update-reference` または `-args -migration-update-detail-input` を指定する。
