@@ -468,7 +468,7 @@ Rust CLI に `--rating`、`--limit/-l`、`--page/-p` を追加した。rating �
 
 90ケースの adapter 検証結果・全 GET/path/query と、成功76ケースの実際の JSON presenter 出力を Go と比較する。後続ページの malformed 応答4ケースでは収集結果を返さず、JSON の部分結果も公開しない。入力不正10ケースは無効な proxy を設定した CLI 子プロセスで stderr・終了コードを比較し、クライアント設定前に拒否することを確認する。JSON は `{"illusts":[...]}` envelope とし、HTML 文字を Go と同じく escape する。比較は JSON の構造・値・配列順を維持して行う。
 
-Windows amd64 の fixture 比較であり、正常 CLI 子プロセスから実 HTTP までの接続、cursor context の resume・循環検出、checkpoint の副作用、全境界・取消/deadline、account/pool 再実行、bookmark との組合せ、他 OS は未検証。収集処理は現時点で CLI adapter 内にあり、MCP との共通 traversal 化は残っている。出力と非ローカル JSON spool の検証範囲は次節に記録する。
+Windows amd64 の fixture 比較であり、正常 CLI 子プロセスから実 HTTP までの接続、実 cursor の resume・循環検出、checkpoint の副作用、全境界・取消/deadline、account/pool 再実行、bookmark の全組合せ、他 OS は未検証。CLI/MCP の単一流 traversal は末尾の共通 pagination に移した。出力と非ローカル JSON spool の検証範囲は次節に記録する。
 
 ```text
 go test -race ./internal/cli -run '^TestMigrationSearchRatingAndPages' -count=1
@@ -485,7 +485,7 @@ cargo test -p pixiv-cli-rs --test search_pages --locked
 
 非ローカル JSON は取得前にランダム名・排他的作成の一時ファイルを開き、各ページの DTO を逐次書き込む。ページをまたぐ DTO の配列は保持せず、全取得成功後に固定サイズの copy buffer で stdout に転送する。Go 側は隔離した temp directory で取得中の spool と終了後の削除を確認した。Rust 側も隔離した子プロセスで、取得前の spool・後続要求時に先行ページが既にディスク上にあること・成功/後続エラー/出力失敗/future の取消後の削除を確認する。ローカル rating 検索は Go と同じくメモリ収集を維持する。Unix では作成 mode を0600にしているが、Unix 実行と Windows ACL は未検証。
 
-検証は Windows amd64 の CLI adapter と実際の終了処理に限定する。正常の CLI 子プロセス・TTY/pipe の自動切替、全 Unicode の引用、human/NDJSON の partial writer、未知の kind/不正 ID による record 変換失敗、SDK の取消/deadline、pool の replay/commit 境界、bookmark、他 OS は未検証。temp directory 不正・容量不足・seek/read/delete 失敗、プロセス強制停止後の回収、長時間・大容量時の実測も未検証。MCP との共通 traversal 化は残る。
+検証は Windows amd64 の CLI adapter と実際の終了処理に限定する。正常の CLI 子プロセス・TTY/pipe の自動切替、全 Unicode の引用、human/NDJSON の partial writer、未知の kind/不正 ID による record 変換失敗、SDK の取消/deadline、pool の replay/commit 境界、bookmark の全組合せ、他 OS は未検証。temp directory 不正・容量不足・seek/read/delete 失敗、プロセス強制停止後の回収、長時間・大容量時の実測も未検証。
 
 ```text
 go test -race ./internal/cli -run '^TestMigrationSearchOutput' -count=1
@@ -505,7 +505,7 @@ Rust CLI に `--bookmark-min`、`--bookmark-max`、`--bookmark-strategy` を追�
 
 [bookmark-context.json](contracts/bookmark-context.json) の192ケースで、Go の BookmarkContext と CLI の context 結合を比較する。nil/0/10/64bit最大値、strategy、先行の rating context を固定し、結合順を維持する。共通 helper を CLI と MCP から使い、MCP の既存144ケースも全 Rust チェックで再検証する。
 
-Windows amd64 の fixture 検証であり、正常 CLI 子プロセスから実 HTTP、checkpoint の失敗・実 cursor の resume/別query拒否・循環、全入力組合せ、bookmark と全 content-type/他 selector の組合せ、writer の途中失敗、取消/deadline、pool/account/premium 状態、巨大な結果、他 OS は未検証。収集 traversal と strategy 解決の MCP/CLI 共通化も残っている。JSON の object key 順だけ正規化し、フィールドの省略と値・配列順・metadata は維持する。
+Windows amd64 の fixture 検証であり、正常 CLI 子プロセスから実 HTTP、SDK checkpoint の失敗・実 cursor の resume/別query拒否・循環、全入力組合せ、bookmark と全 content-type/他 selector の組合せ、writer の途中失敗、取消/deadline、pool/account/premium 状態、巨大な結果、他 OS は未検証。単一流 traversal は共通化したが、strategy 解決の MCP/CLI 共通化は残る。JSON の object key 順だけ正規化し、フィールドの省略と値・配列順・metadata は維持する。
 
 ```text
 go test -race ./internal/cli -run '^TestMigrationSearchBookmark' -count=1
@@ -515,3 +515,18 @@ cargo test -p pixiv-app --test bookmark_context --locked
 ```
 
 基準を意図して更新する場合だけ Go テストにそれぞれ `-args -migration-update-search-bookmark`、`-args -migration-update-bookmark-context` を指定する。
+
+## 共通の単一流 pagination
+
+[traversal.json](contracts/traversal.json) は固定 Go の TraversePages と CollectFilteredPagesFrom を直接実行した840ケース。負数/0/正数の skip/limit、one-batch、通常/奇数 predicate、後続 fetch・predicate・checkpoint・consume の失敗、零 checkpoint、空の循環 batch を組み合わせる。結果と順序、全 cursor 要求、checkpoint の消費位置・next cursor、returned/has_more、エラーを比較する。失敗時の nil と成功時の空配列を区別し、通常 traversal の出力済み部分と進捗を filtered collection の破棄結果と混同しない。
+
+Rust の [pagination.rs](../../crates/pixiv-app/src/pagination.rs) を CLI の通常/rating/bookmark 検索と MCP 検索から呼ぶ。SDK cursor は decode・再生成せず cursor trait で扱い、切り詰め時だけ入口の SDK checkpoint を呼ぶ。CLI の streaming/spool とローカル結果の出力、MCP の重複除去と strategy の特殊条件は adapter に保持する。MCP の limit 省略の内部値は上限0と one-batch に変換する。CLI の90/120/393ケースと MCP の144ケースを期待値を変更せず再検証した。
+
+単一流・zero initial cursor の Windows amd64 fixture 検証である。複数流の連結・StreamState と再開、nonzero initial cursor、実 SDK cursor の循環/checkpoint失敗、取消/deadline、pool replay/commit、他 OS は未検証または未実装。Rust では callback は型で必須とするため Go の nil callback 診断との対応はまだ記録していない。
+
+```text
+go test -race ./internal/shared/pagination -run '^TestMigrationTraversal' -count=1
+cargo test -p pixiv-app --test traversal --locked
+```
+
+基準を意図して更新する場合だけ Go テストの `-args -migration-update-traversal` を指定する。

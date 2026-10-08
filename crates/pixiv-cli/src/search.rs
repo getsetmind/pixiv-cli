@@ -7,7 +7,6 @@ use pixiv_sdk::{
     models::{Artwork, ArtworkKind},
     transport::Transport,
 };
-use std::collections::BTreeSet;
 use std::io::Write;
 
 #[derive(Args, Clone, Debug)]
@@ -329,19 +328,26 @@ async fn bookmark_search<T: Transport, W: Write>(
     let filter = pixiv_app::search_filter::normalize_filter(&options.rating, &options.content_type)
         .map_err(|error| CommandError::Message(error.message()))?;
     let plan = options.plan()?;
-    let mut skip = plan.skip;
-    let mut items = vec![];
-    let mut cursors = BTreeSet::new();
-    let more = loop {
-        if !cursors.insert(request.cursor.as_str().to_owned()) {
-            return Err(CommandError::MessageText(format!(
-                "pagination stream 0 cursor repeated: {}",
-                request.cursor.as_str()
-            )));
-        }
-        let page = client.search_artworks(request.clone()).await?;
-        let mut batch = vec![];
-        for (index, item) in page.items.into_iter().enumerate() {
+    let initial = request.cursor.clone();
+    let page = pixiv_app::pagination::collect_pages(
+        pixiv_app::pagination::Plan {
+            skip: plan.skip as i64,
+            limit: plan.limit as i64,
+            one_batch: plan.one_batch,
+        },
+        initial,
+        |cursor| {
+            let mut query = request.clone();
+            query.cursor = cursor;
+            async move {
+                let page = client
+                    .search_artworks(query)
+                    .await
+                    .map_err(CommandError::from)?;
+                Ok((page.items, page.next))
+            }
+        },
+        |item: &Artwork| {
             if item.total_bookmarks < 0 {
                 return Err(pixiv_sdk::Error::new(
                     pixiv_sdk::Reason::MalformedUpstreamResponse,
@@ -357,7 +363,7 @@ async fn bookmark_search<T: Transport, W: Write>(
                     .bookmark_max
                     .is_some_and(|max| item.total_bookmarks > max)
             {
-                continue;
+                return Ok(false);
             }
             let kind = match item.kind {
                 ArtworkKind::Illust => "illust",
@@ -365,30 +371,20 @@ async fn bookmark_search<T: Transport, W: Write>(
                 ArtworkKind::Ugoira => "ugoira",
                 ArtworkKind::Unknown => "unknown",
             };
-            if filter.rating != "all" && !filter.matches(item.x_restrict, kind) {
-                continue;
-            }
-            batch.push((index + 1, item));
-        }
-        let consumed = skip.min(batch.len());
-        skip -= consumed;
-        batch.drain(..consumed);
-        if plan.limit > 0 && batch.len() > plan.limit - items.len() {
-            let remaining = plan.limit - items.len();
-            client.checkpoint_search_artworks(request.clone(), batch[remaining - 1].0 as i64)?;
-            items.extend(batch.into_iter().take(remaining).map(|(_, item)| item));
-            break true;
-        }
-        let returned = !batch.is_empty();
-        items.extend(batch.into_iter().map(|(_, item)| item));
-        if (plan.limit > 0 && items.len() >= plan.limit)
-            || (plan.one_batch && skip == 0 && returned)
-            || page.next.is_zero()
-        {
-            break !page.next.is_zero();
-        }
-        request.cursor = page.next;
-    };
+            Ok(filter.rating == "all" || filter.matches(item.x_restrict, kind))
+        },
+        Some(|cursor, consumed| {
+            let mut query = request.clone();
+            query.cursor = cursor;
+            client
+                .checkpoint_search_artworks(query, consumed as i64)
+                .map_err(CommandError::from)
+        }),
+    )
+    .await
+    .map_err(traversal_error)?;
+    let items = page.items;
+    let more = page.result.has_more;
     if mode == crate::DetailOutput::Json {
         let mut metadata = serde_json::json!({"membership":"unknown","strategy":strategy,"completeness":if more{"partial"}else{"complete_for_source"}});
         if let Some(min) = options.bookmark_min {
@@ -427,67 +423,63 @@ fn quote(value: &str) -> String {
     out
 }
 
+fn traversal_error(error: pixiv_app::pagination::Failure<CommandError>) -> CommandError {
+    match error.cause {
+        pixiv_app::pagination::Cause::Source(error) => error,
+        pixiv_app::pagination::Cause::Message(message) => CommandError::MessageText(message),
+    }
+}
+
 async fn visit_search<T: Transport>(
     client: &Client<T>,
-    mut request: SearchArtworksRequest,
+    request: SearchArtworksRequest,
     options: &SearchOptions,
-    mut consume: impl FnMut(Vec<Artwork>) -> Result<(), CommandError>,
+    consume: impl FnMut(Vec<Artwork>) -> Result<(), CommandError>,
 ) -> Result<(), CommandError> {
     let filter = pixiv_app::search_filter::normalize_filter(&options.rating, &options.content_type)
         .map_err(|error| CommandError::Message(error.message()))?;
-    let local_filter = filter.rating != "all";
+    let local = filter.rating != "all";
     let plan = options.plan()?;
-    let mut skip = plan.skip;
-    let mut returned_count = 0;
-    let mut cursors = BTreeSet::new();
-    loop {
-        if !cursors.insert(request.cursor.as_str().to_owned()) {
-            let prefix = if local_filter {
-                "pagination stream 0 cursor repeated"
-            } else {
-                "pagination cursor repeated"
+    let checkpoint = local.then_some(|cursor, consumed| {
+        let mut query = request.clone();
+        query.cursor = cursor;
+        client
+            .checkpoint_search_artworks(query, consumed as i64)
+            .map_err(CommandError::from)
+    });
+    pixiv_app::pagination::traverse_pages(
+        pixiv_app::pagination::Plan {
+            skip: plan.skip as i64,
+            limit: plan.limit as i64,
+            one_batch: plan.one_batch,
+        },
+        request.cursor.clone(),
+        |cursor| {
+            let mut query = request.clone();
+            query.cursor = cursor;
+            async move {
+                let page = client
+                    .search_artworks(query)
+                    .await
+                    .map_err(CommandError::from)?;
+                Ok((page.items, page.next))
+            }
+        },
+        |item: &Artwork| {
+            let kind = match item.kind {
+                ArtworkKind::Illust => "illust",
+                ArtworkKind::Manga => "manga",
+                ArtworkKind::Ugoira => "ugoira",
+                ArtworkKind::Unknown => "unknown",
             };
-            return Err(CommandError::MessageText(format!(
-                "{prefix}: {}",
-                request.cursor.as_str()
-            )));
-        }
-        let page = client.search_artworks(request.clone()).await?;
-        let mut batch: Vec<_> = page
-            .items
-            .into_iter()
-            .filter(|artwork| {
-                if !local_filter {
-                    return true;
-                }
-                let kind = match artwork.kind {
-                    ArtworkKind::Illust => "illust",
-                    ArtworkKind::Manga => "manga",
-                    ArtworkKind::Ugoira => "ugoira",
-                    ArtworkKind::Unknown => "unknown",
-                };
-                filter.matches(artwork.x_restrict, kind)
-            })
-            .collect();
-        let consumed = skip.min(batch.len());
-        skip -= consumed;
-        batch.drain(..consumed);
-        if plan.limit > 0 {
-            batch.truncate(plan.limit - returned_count);
-        }
-        let returned = !batch.is_empty();
-        returned_count += batch.len();
-        if returned {
-            consume(batch)?;
-        }
-        if (plan.limit > 0 && returned_count >= plan.limit)
-            || (plan.one_batch && skip == 0 && returned)
-            || page.next.is_zero()
-        {
-            return Ok(());
-        }
-        request.cursor = page.next;
-    }
+            Ok(!local || filter.matches(item.x_restrict, kind))
+        },
+        checkpoint,
+        consume,
+    )
+    .await
+    .map_err(traversal_error)?;
+    Ok(())
 }
 
 #[derive(Args, Clone, Debug, Default)]

@@ -466,24 +466,33 @@ async fn collect<T: Transport>(
             request.bookmark_max = None;
         }
     }
-    let mut items = vec![];
     let mut seen = BTreeSet::new();
-    let mut cursors = BTreeSet::new();
-    let mut skip = plan.skip;
-    let more = loop {
-        if !cursors.insert(request.cursor.as_str().to_owned()) {
-            return Err(format!(
-                "pagination {}cursor repeated: {}",
-                if bookmark_branch { "stream 0 " } else { "" },
-                request.cursor.as_str()
-            ));
-        }
-        let page = client
-            .search_artworks(request.clone())
-            .await
-            .map_err(|error| error.to_string())?;
-        let mut batch = vec![];
-        for (index, artwork) in page.items.into_iter().enumerate() {
+    let checkpoint = bookmark_branch.then_some(|cursor, consumed| {
+        let mut query = request.clone();
+        query.cursor = cursor;
+        client
+            .checkpoint_search_artworks(query, consumed as i64)
+            .map_err(|error| error.to_string())
+    });
+    let page = pixiv_app::pagination::collect_pages(
+        pixiv_app::pagination::Plan {
+            skip: plan.skip,
+            limit: plan.limit.max(0),
+            one_batch: plan.one_batch,
+        },
+        request.cursor.clone(),
+        |cursor| {
+            let mut query = request.clone();
+            query.cursor = cursor;
+            async move {
+                let page = client
+                    .search_artworks(query)
+                    .await
+                    .map_err(|error| error.to_string())?;
+                Ok((page.items, page.next))
+            }
+        },
+        |artwork: &Artwork| {
             if has_range {
                 if artwork.total_bookmarks < 0 {
                     return Err(
@@ -492,54 +501,28 @@ async fn collect<T: Transport>(
                             .to_string(),
                     );
                 }
-                if input
+                Ok(!input
                     .bookmark_min
                     .is_some_and(|min| artwork.total_bookmarks < min)
-                    || input
+                    && !input
                         .bookmark_max
-                        .is_some_and(|max| artwork.total_bookmarks > max)
-                {
-                    continue;
-                }
-            } else if !bookmark_branch
-                && (input
+                        .is_some_and(|max| artwork.total_bookmarks > max))
+            } else if !bookmark_branch {
+                Ok(!input
                     .illust_filter
                     .as_ref()
-                    .is_some_and(|filter| !matches(&artwork, filter, &local_type))
-                    || !seen.insert(format!("{}:{}", kind(&artwork), artwork.id)))
-            {
-                continue;
+                    .is_some_and(|filter| !matches(artwork, filter, &local_type))
+                    && seen.insert(format!("{}:{}", kind(artwork), artwork.id)))
+            } else {
+                Ok(true)
             }
-            batch.push((index + 1, artwork));
-        }
-        let removed = usize::try_from(skip).unwrap_or(usize::MAX).min(batch.len());
-        skip -= removed as i64;
-        batch.drain(..removed);
-        if plan.limit > 0 && batch.len() > (plan.limit as usize).saturating_sub(items.len()) {
-            let remaining = plan.limit as usize - items.len();
-            if bookmark_branch {
-                client
-                    .checkpoint_search_artworks(request.clone(), batch[remaining - 1].0 as i64)
-                    .map_err(|error| error.to_string())?;
-            }
-            items.extend(
-                batch
-                    .into_iter()
-                    .take(remaining)
-                    .map(|(_, artwork)| artwork),
-            );
-            break true;
-        }
-        let returned = !batch.is_empty();
-        items.extend(batch.into_iter().map(|(_, artwork)| artwork));
-        if (plan.limit > 0 && items.len() as i64 >= plan.limit)
-            || (plan.one_batch && skip == 0 && returned)
-            || page.next.is_zero()
-        {
-            break !page.next.is_zero();
-        }
-        request.cursor = page.next;
-    };
+        },
+        checkpoint,
+    )
+    .await
+    .map_err(|error| error.to_string())?;
+    let items = page.items;
+    let more = page.result.has_more;
     let filter = if has_range {
         let mut filter = json!({"membership":"unknown","strategy":strategy,"completeness":if more { "partial" } else { "complete_for_source" }});
         if let Some(min) = input.bookmark_min {
