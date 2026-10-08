@@ -100,6 +100,7 @@ pub enum Cause {
     Redacted(String),
     Classified(Box<Error>),
     TransportFailure(Box<Cause>),
+    Joined(Vec<Cause>),
     Wrapped { message: String, source: Box<Cause> },
 }
 
@@ -111,6 +112,15 @@ impl fmt::Display for Cause {
             Self::Redacted(message) => f.write_str(message),
             Self::Classified(error) => fmt::Display::fmt(error, f),
             Self::TransportFailure(_) => f.write_str("pixiv upstream transport failed"),
+            Self::Joined(causes) => {
+                for (index, cause) in causes.iter().enumerate() {
+                    if index > 0 {
+                        f.write_str("\n")?;
+                    }
+                    fmt::Display::fmt(cause, f)?;
+                }
+                Ok(())
+            }
             Self::Wrapped { message, source } => write!(f, "{message}: {source}"),
         }
     }
@@ -121,6 +131,7 @@ impl StdError for Cause {
         match self {
             Self::Classified(error) => Some(error.as_ref()),
             Self::TransportFailure(source) => Some(source.as_ref()),
+            Self::Joined(causes) => causes.first().map(|cause| cause as &dyn StdError),
             Self::Wrapped { source, .. } => Some(source.as_ref()),
             _ => None,
         }
@@ -234,6 +245,9 @@ impl StdError for Error {
 
 pub fn reason_of(mut error: &(dyn StdError + 'static)) -> Option<Reason> {
     loop {
+        if let Some(Cause::Joined(causes)) = error.downcast_ref::<Cause>() {
+            return causes.iter().find_map(|cause| reason_of(cause));
+        }
         if let Some(classified) = error.downcast_ref::<Error>() {
             return Some(classified.code);
         }
@@ -247,6 +261,9 @@ pub fn is_reason(error: &(dyn StdError + 'static), reason: Reason) -> bool {
 
 pub fn matches_reason(mut error: &(dyn StdError + 'static), reason: Reason) -> bool {
     loop {
+        if let Some(Cause::Joined(causes)) = error.downcast_ref::<Cause>() {
+            return causes.iter().any(|cause| matches_reason(cause, reason));
+        }
         if error
             .downcast_ref::<Error>()
             .is_some_and(|classified| classified.code == reason)
@@ -262,6 +279,9 @@ pub fn matches_reason(mut error: &(dyn StdError + 'static), reason: Reason) -> b
 
 fn contains_cause(mut error: &(dyn StdError + 'static), expected: &Cause) -> bool {
     loop {
+        if let Some(Cause::Joined(causes)) = error.downcast_ref::<Cause>() {
+            return causes.iter().any(|cause| contains_cause(cause, expected));
+        }
         if error.downcast_ref::<Cause>() == Some(expected) {
             return true;
         }

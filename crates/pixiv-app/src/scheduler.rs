@@ -12,7 +12,12 @@ use pixiv_sdk::{
     error::{Cause, RetryAdvice},
 };
 use std::{
-    collections::BTreeSet, error::Error as StdError, fmt, future::Future, pin::Pin, sync::Arc,
+    collections::BTreeSet,
+    error::Error as StdError,
+    fmt,
+    future::Future,
+    pin::Pin,
+    sync::{Arc, Mutex},
 };
 
 #[derive(Debug)]
@@ -20,6 +25,8 @@ pub enum SchedulerError {
     Sdk(Box<Error>),
     Pool(PoolError),
     Account(AccountError),
+    Joined(Vec<SchedulerError>),
+    Shared(Arc<SchedulerError>),
     Message(String),
     Canceled,
     DeadlineExceeded,
@@ -35,6 +42,16 @@ impl fmt::Display for SchedulerError {
             Self::Sdk(error) | Self::Exhausted(Some(error)) => fmt::Display::fmt(error, f),
             Self::Pool(error) => fmt::Display::fmt(error, f),
             Self::Account(error) => fmt::Display::fmt(error, f),
+            Self::Shared(error) => fmt::Display::fmt(error, f),
+            Self::Joined(errors) => {
+                for (index, error) in errors.iter().enumerate() {
+                    if index > 0 {
+                        f.write_str("\n")?;
+                    }
+                    fmt::Display::fmt(error, f)?;
+                }
+                Ok(())
+            }
             Self::Message(message) => f.write_str(message),
             Self::Canceled => f.write_str("context canceled"),
             Self::DeadlineExceeded => f.write_str("context deadline exceeded"),
@@ -49,6 +66,8 @@ impl StdError for SchedulerError {
             Self::Sdk(error) | Self::Exhausted(Some(error)) => Some(error.as_ref()),
             Self::Pool(error) => Some(error),
             Self::Account(error) => Some(error),
+            Self::Shared(error) => Some(error.as_ref()),
+            Self::Joined(errors) => errors.first().map(|error| error as &dyn StdError),
             Self::Wrapped { source, .. } => Some(source.as_ref()),
             _ => None,
         }
@@ -84,7 +103,12 @@ impl SchedulerError {
         }
     }
     pub fn classified(&self) -> Option<&Error> {
-        self.find()
+        match self {
+            Self::Joined(errors) => errors.iter().find_map(Self::classified),
+            Self::Shared(error) => error.classified(),
+            Self::Wrapped { source: error, .. } => error.classified(),
+            _ => self.find(),
+        }
     }
     pub fn is_exhausted(&self) -> bool {
         match self {
@@ -95,6 +119,8 @@ impl SchedulerError {
     }
     pub fn is_canceled(&self) -> bool {
         match self {
+            Self::Joined(errors) => errors.iter().any(Self::is_canceled),
+            Self::Shared(error) => error.is_canceled(),
             Self::Canceled => true,
             Self::Wrapped { source, .. } => source.is_canceled(),
             _ => pixiv_sdk::error::is_canceled(self),
@@ -102,6 +128,8 @@ impl SchedulerError {
     }
     pub fn is_deadline_exceeded(&self) -> bool {
         match self {
+            Self::Joined(errors) => errors.iter().any(Self::is_deadline_exceeded),
+            Self::Shared(error) => error.is_deadline_exceeded(),
             Self::DeadlineExceeded => true,
             Self::Wrapped { source, .. } => source.is_deadline_exceeded(),
             _ => pixiv_sdk::error::is_deadline_exceeded(self),
@@ -109,6 +137,10 @@ impl SchedulerError {
     }
     fn into_cause(self) -> Cause {
         match self {
+            Self::Joined(errors) => {
+                Cause::Joined(errors.into_iter().map(Self::into_cause).collect())
+            }
+            Self::Shared(error) => error.snapshot_cause(),
             Self::Sdk(error) | Self::Exhausted(Some(error)) => Cause::Classified(error),
             Self::Canceled => Cause::Canceled,
             Self::DeadlineExceeded => Cause::DeadlineExceeded,
@@ -116,6 +148,22 @@ impl SchedulerError {
                 message,
                 source: Box::new(source.into_cause()),
             },
+            other => Cause::Redacted(other.to_string()),
+        }
+    }
+    fn snapshot_cause(&self) -> Cause {
+        match self {
+            Self::Sdk(error) | Self::Exhausted(Some(error)) => Cause::Classified(error.clone()),
+            Self::Canceled => Cause::Canceled,
+            Self::DeadlineExceeded => Cause::DeadlineExceeded,
+            Self::Wrapped { message, source } => Cause::Wrapped {
+                message: message.clone(),
+                source: Box::new(source.snapshot_cause()),
+            },
+            Self::Shared(error) => error.snapshot_cause(),
+            Self::Joined(errors) => {
+                Cause::Joined(errors.iter().map(Self::snapshot_cause).collect())
+            }
             other => Cause::Redacted(other.to_string()),
         }
     }
@@ -130,6 +178,32 @@ pub trait PoolState: Send {
         chooser: Option<&mut PoolChooser<'_>>,
     ) -> Result<PixivAccount, SchedulerError>;
     fn freeze(&mut self, context: &Context, id: i64, until: i64) -> Result<(), SchedulerError>;
+}
+impl PoolState for Arc<Mutex<Database>> {
+    fn select(
+        &mut self,
+        context: &Context,
+        now: i64,
+        attempted: &[i64],
+        chooser: Option<&mut PoolChooser<'_>>,
+    ) -> Result<PixivAccount, SchedulerError> {
+        if let Some(error) = context.error() {
+            return Err(error.into());
+        }
+        self.lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner())
+            .select_pixiv(now, attempted, chooser)
+            .map_err(Into::into)
+    }
+    fn freeze(&mut self, context: &Context, id: i64, until: i64) -> Result<(), SchedulerError> {
+        if let Some(error) = context.error() {
+            return Err(error.into());
+        }
+        self.lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner())
+            .freeze_pixiv(id, until)
+            .map_err(Into::into)
+    }
 }
 impl PoolState for Database {
     fn select(

@@ -73,6 +73,21 @@ cargo test -p pixiv-sdk --test http_status --locked
 
 基準を意図して更新する場合だけ Go テストの `-args -migration-update-http-status` を指定する。
 
+## Client Use と pool の試行・commit・解放
+
+[use.json](contracts/use.json) は固定GoのFacade.Useと実Schedulerを接続した20ケースを持つ。nil context/callback、config loader・factoryの欠落/失敗/nil executor、pool無効時の明示UID、pool有効時の要求UID置換、未commitの安全なrate-limit replay、commit後の停止、callback/closeの単独・同時失敗、close側のSDK retry/cancel cause、callback panic後のcloseを比較する。loader/factory/callback/closeの回数、各attemptのUID/options、凍結UID/期限、全文・SDK reason・取消検索・Gate再取得を保持する。時刻は1000秒、retryは1120秒へ制御する。
+
+RustのFacade.use_clientはUseごとにconfigを読み、必要ならexecutorを生成する。各attemptでClientSessionsを取得し、callbackのcommitをAttemptへ反映してからcloseする。ActiveLeaseはfuture破棄やpanicでもcloseを呼び、Leaseのcached resultで重複解放を防ぐ。callbackとcloseの両方の原因をJoinedへ保持し、SDK reason/取消検索は先頭以外も調べる。std Errorのsourceは単一のため先頭だけを返し、SDK CauseのJoinedと明示検索で複数原因を扱う。
+
+実Databaseを共有するPoolState adapterは選択/凍結のSQLごとにMutexを解放し、OAuthやcontent通信中は保持しない。追加のRustテストは実Database・AccountService・OAuth・SDK clientとFacadeを接続する。42のcontentが合成SDK rate-limit errorを返すと43へ切り替え、両UIDともcontent呼出時点のtoken/revision保存を確認し、42の凍結・43のmarker・2回のcloseを検証する。これは実HTTP retryの比較ではなく、SDKの分類済みerrorをtransport portから返す接続テストである。callback待機taskのabortでも1回のcloseとGate解放を確認する。
+
+```text
+go test -race ./internal/services/pixiv ./internal/services/pixiv/pool ./internal/shared/lifecycle -count=1
+cargo test -p pixiv-app --test client_use --test pool_session --locked
+```
+
+比較はWindows amd64のみ。CLI/MCP composition rootとconfig file、SDK自前HTTP cleanup/options、runtime設定変更の連続Use、実HTTP rate limitとpoolの再試行設定、全選択失敗/枯渇とjoined cause、親子context、SQL実行中の取消、panicとclose panicの同時発生、他OSは未移植または未検証。Generic lifecycle.Run自体のchild context等の契約を、このFacade比較で検証済みとは扱わない。fixture更新は `-migration-update-use` を明示する。
+
 ## 保存済みアカウントの refresh・identity・revision と session
 
 [account-open.json](contracts/account-open.json) は固定Goの実account Service・公開SDK・SQLiteで採取した11ケースを持つ。明示UID、設定済みdefaultとsort順のfallback、空DB・存在しないUID・設定defaultの欠落、OAuth identity不一致、refresh中の別writerによるrevision競合、rotated token欠落、零expiry、refresh中のcontext取消を比較する。成功時にだけcontent要求を呼び、その時点で保存済みrevisionが2かつAuthorizationが新access tokenであることを確認する。OAuthのusernameはrotationだけでは保存済みmetadataを更新しない。

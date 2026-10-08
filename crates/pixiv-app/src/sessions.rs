@@ -47,6 +47,9 @@ impl StdError for SessionError {
     }
 }
 impl SessionError {
+    pub fn into_errors(self) -> Vec<SchedulerError> {
+        self.errors
+    }
     pub fn errors(&self) -> &[SchedulerError] {
         &self.errors
     }

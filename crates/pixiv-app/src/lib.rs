@@ -2,6 +2,7 @@ pub mod account_service;
 pub mod database;
 pub mod dates;
 pub mod diagnostics;
+pub mod facade;
 pub mod gate;
 mod lease;
 pub mod lifecycle;
