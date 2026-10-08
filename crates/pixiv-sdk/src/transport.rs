@@ -1,6 +1,9 @@
 use crate::error::RetryAdvice;
 use crate::{Error, Reason, Result};
-use chrono::{TimeDelta, Utc};
+use chrono::{
+    DateTime, TimeDelta, Utc,
+    format::{Parsed, StrftimeItems, parse},
+};
 use reqwest::{Method, redirect::Policy};
 use serde_json::Value;
 use std::{fmt, time::Duration};
@@ -25,7 +28,7 @@ impl fmt::Debug for Request {
 
 pub struct Response {
     pub status: u16,
-    pub retry_after_seconds: Option<u64>,
+    pub retry_after: Option<TimeDelta>,
     pub body: Value,
 }
 
@@ -33,7 +36,7 @@ impl fmt::Debug for Response {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("Response")
             .field("status", &self.status)
-            .field("retry_after_seconds", &self.retry_after_seconds)
+            .field("retry_after", &self.retry_after)
             .finish_non_exhaustive()
     }
 }
@@ -84,15 +87,15 @@ impl Transport for HttpTransport {
             .await
             .map_err(|_| Error::new(Reason::UpstreamUnavailable, request.operation))?;
         let status = response.status().as_u16();
-        let retry_after_seconds = response
+        let retry_after = response
             .headers()
             .get("retry-after")
             .and_then(|value| value.to_str().ok())
-            .and_then(|value| value.parse().ok());
+            .and_then(|value| parse_retry_after(value, Utc::now()));
         if !(200..300).contains(&status) {
             return Ok(Response {
                 status,
-                retry_after_seconds,
+                retry_after,
                 body: Value::Null,
             });
         }
@@ -102,7 +105,7 @@ impl Transport for HttpTransport {
             .map_err(|_| Error::new(Reason::MalformedUpstreamResponse, request.operation))?;
         Ok(Response {
             status,
-            retry_after_seconds,
+            retry_after,
             body,
         })
     }
@@ -129,19 +132,44 @@ fn checked_status(response: Response, operation: &'static str, oauth: bool) -> R
         _ => Reason::UpstreamError,
     };
     let retry = matches!(response.status, 401 | 429) || (oauth && response.status == 400);
-    let seconds = if retry {
-        response.retry_after_seconds
-    } else {
-        None
-    };
-    let after = seconds
-        .and_then(|seconds| i64::try_from(seconds).ok())
-        .and_then(TimeDelta::try_seconds)
-        .and_then(|delta| Utc::now().checked_add_signed(delta));
+    let delay = if retry { response.retry_after } else { None };
+    let after = delay.and_then(|delta| Utc::now().checked_add_signed(delta));
     Err(Error::new(code, operation)
         .with_http_status(response.status)
         .with_retry(RetryAdvice {
             safe: after.is_some(),
             after,
         }))
+}
+
+fn parse_retry_after(value: &str, now: DateTime<Utc>) -> Option<TimeDelta> {
+    let value = value.trim();
+    if let Ok(seconds) = value.parse::<i64>() {
+        return (0..=i64::MAX / 1_000_000_000)
+            .contains(&seconds)
+            .then(|| TimeDelta::seconds(seconds));
+    }
+    for format in [
+        "%a, %d %b %Y %H:%M:%S GMT",
+        "%A, %d-%b-%y %H:%M:%S GMT",
+        "%a %b %e %H:%M:%S %Y",
+    ] {
+        let mut parsed = Parsed::new();
+        if parse(&mut parsed, value, StrftimeItems::new(format)).is_err()
+            || parsed.second == Some(60)
+        {
+            continue;
+        }
+        // Go accepts a weekday that disagrees with the calendar date.
+        parsed.weekday = None;
+        if let Ok(date) = parsed.to_naive_datetime_with_offset(0) {
+            let duration = date.and_utc() - now;
+            return Some(
+                duration
+                    .max(TimeDelta::zero())
+                    .min(TimeDelta::nanoseconds(i64::MAX)),
+            );
+        }
+    }
+    None
 }

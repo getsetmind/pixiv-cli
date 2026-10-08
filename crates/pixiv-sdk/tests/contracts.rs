@@ -16,7 +16,7 @@ struct Fixture {
 fn transport_response_debug_never_exposes_upstream_artifacts() {
     let response = Response {
         status: 403,
-        retry_after_seconds: None,
+        retry_after: None,
         body: json!({"cookie":"fixture-upstream-cookie","token":"fixture-upstream-token"}),
     };
     let debug = format!("{response:?}");
@@ -84,7 +84,7 @@ async fn missing_credentials_fail_before_content_requests() {
 async fn credential_debug_and_json_never_expose_tokens() {
     let transport = Fixture::new(Response {
         status: 200,
-        retry_after_seconds: None,
+        retry_after: None,
         body: json!({
             "access_token": "fixture-access-secret",
             "refresh_token": "fixture-rotated-secret",
@@ -114,7 +114,7 @@ async fn credential_debug_and_json_never_expose_tokens() {
 async fn upstream_errors_preserve_retry_advice_without_exposing_response_bodies() {
     let transport = Fixture::new(Response {
         status: 429,
-        retry_after_seconds: Some(120),
+        retry_after: Some(chrono::TimeDelta::seconds(120)),
         body: json!({"error": "fixture-upstream-secret"}),
     });
     let error = oauth::refresh(&transport, "fixture-refresh")
@@ -134,7 +134,7 @@ async fn upstream_errors_preserve_retry_advice_without_exposing_response_bodies(
 async fn login_rejects_callbacks_from_other_hosts_before_exchanging_codes() {
     let transport = Fixture::new(Response {
         status: 200,
-        retry_after_seconds: None,
+        retry_after: None,
         body: json!(null),
     });
     let session = LoginSession::begin().unwrap();

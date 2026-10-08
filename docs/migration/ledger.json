@@ -5065,13 +5065,16 @@
       ],
       "tests": [
         "sdk/pixiv/migration_http_status_test.go#TestMigrationHTTPStatusMatchesFrozenClassification",
-        "crates/pixiv-sdk/tests/http_status.rs"
+        "crates/pixiv-sdk/tests/http_status.rs",
+        "internal/services/pixiv/appapi/migration_retry_test.go#TestMigrationRetryAfterMatchesFrozenHeaderParsing",
+        "internal/services/pixiv/appapi/appapi_test.go",
+        "crates/pixiv-sdk/tests/retry_after.rs"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "HTTP status 分類だけを比較済み。正常応答・入力・認証・DTO・resource・実通信・再試行・保存の全契約は未移植または未検証。"
+        "HTTP status と Retry-After の24ケース、GET の一度の再試行を比較済み。正常 DTO の全項目・入力・resource・認証・通信原因と取消・pool・保存の契約は未移植または未検証。"
       ]
     },
     {

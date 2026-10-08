@@ -31,13 +31,16 @@ impl Transport for StatusTransport<'_> {
         );
         Ok(Response {
             status: self.case.status,
-            retry_after_seconds: self.case.retry_after.then_some(120),
+            retry_after: self
+                .case
+                .retry_after
+                .then_some(chrono::TimeDelta::seconds(120)),
             body: json!({"error":"fixture-http-secret"}),
         })
     }
 }
 
-#[tokio::test]
+#[tokio::test(start_paused = true)]
 async fn http_status_and_retry_advice_match_go_for_content_and_oauth() {
     let cases: Vec<Case> = serde_json::from_str(include_str!(
         "../../../docs/migration/contracts/http-status.json"
@@ -87,6 +90,11 @@ async fn http_status_and_retry_advice_match_go_for_content_and_oauth() {
             "{label}"
         );
         assert!(!format!("{error:?}").contains("fixture-http-secret"));
-        assert_eq!(calls.load(Ordering::SeqCst), 1, "{label}");
+        let expected_calls = if !case.oauth && case.status == 429 && case.retry_after {
+            2
+        } else {
+            1
+        };
+        assert_eq!(calls.load(Ordering::SeqCst), expected_calls, "{label}");
     }
 }

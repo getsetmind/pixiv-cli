@@ -1,7 +1,7 @@
 use crate::{
     Error, Reason, Result,
     models::{Artwork, ArtworkKind, Tag, UgoiraFrame, UgoiraMetadata, User},
-    transport::{HttpTransport, Request, Transport, checked},
+    transport::{HttpTransport, Request, Response, Transport, checked},
 };
 use chrono::{DateTime, Utc};
 use reqwest::Method;
@@ -65,25 +65,32 @@ impl<T: Transport> Client<T> {
         if self.expires_at.is_some_and(|expiry| expiry <= Utc::now()) {
             return Err(Error::new(Reason::CredentialsExpired, operation));
         }
+        parameters.push(("filter".to_owned(), "for_android".to_owned()));
+        let request = Request {
+            method: Method::GET,
+            url: format!("https://app-api.pixiv.net{path}"),
+            headers: headers(Some(&self.access_token)),
+            parameters,
+            operation,
+        };
+        let response = self.send(request.clone()).await?;
+        if response.status == 429
+            && let Some(delay) = response.retry_after
+        {
+            tokio::time::sleep(delay.to_std().unwrap_or_default()).await;
+            return checked(self.send(request).await?, operation);
+        }
+        checked(response, operation)
+    }
+
+    async fn send(&self, request: Request) -> Result<Response> {
         let mut last = self.last_request.lock().await;
         if let Some(previous) = *last {
             tokio::time::sleep_until(previous + self.interval).await;
         }
         *last = Some(Instant::now());
         drop(last);
-        parameters.push(("filter".to_owned(), "for_android".to_owned()));
-        checked(
-            self.transport
-                .send(Request {
-                    method: Method::GET,
-                    url: format!("https://app-api.pixiv.net{path}"),
-                    headers: headers(Some(&self.access_token)),
-                    parameters,
-                    operation,
-                })
-                .await?,
-            operation,
-        )
+        self.transport.send(request).await
     }
 
     pub async fn artwork(&self, id: i64) -> Result<Artwork> {
