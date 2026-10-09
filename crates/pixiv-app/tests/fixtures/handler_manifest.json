@@ -1,0 +1,117 @@
+[
+  {
+    "name": "compact-html-snapshot",
+    "input": "{\"version\":1,\"executable_path\":\"<&>\\u2028\",\"home_directory\":\"home\",\"previous_handler\":\"old\",\"linux_mime_snapshots\":[{\"path\":\"mime\",\"exists\":true,\"mode\":4294967295,\"content\":\"AAH/\"}]}",
+    "output": "{\"version\":1,\"executable_path\":\"\\u003c\\u0026\\u003e\\u2028\",\"home_directory\":\"home\",\"previous_handler\":\"old\",\"linux_mime_snapshots\":[{\"path\":\"mime\",\"exists\":true,\"mode\":4294967295,\"content\":\"AAH/\"}]}"
+  },
+  {
+    "name": "ordered-fold-null",
+    "input": "{\"version\":0,\"VERſION\":1,\"executable_path\":\"old\",\"EXECUTABLE_PATH\":\" \",\"executable_path\":null,\"linux_mime_snapshots\":[]}",
+    "output": "{\"version\":1,\"executable_path\":\" \"}"
+  },
+  {
+    "name": "snapshot-fold-content-newlines",
+    "input": "{\"version\":1,\"executable_path\":\"p\",\"linux_mime_snapshots\":[{\"PATH\":\"p\",\"EXIſTſ\":true,\"MODE\":384,\"CONTENT\":\"Y\\r\\nQ==\"},null]}",
+    "output": "{\"version\":1,\"executable_path\":\"p\",\"linux_mime_snapshots\":[{\"path\":\"p\",\"exists\":true,\"mode\":384,\"content\":\"YQ==\"},{\"path\":\"\",\"exists\":false,\"mode\":0}]}"
+  },
+  {
+    "name": "duplicate-slice-reuse",
+    "input": "{\"version\":1,\"executable_path\":\"p\",\"linux_mime_snapshots\":[{\"path\":\"old\",\"exists\":true,\"mode\":7,\"content\":\"YQ==\"}],\"linux_mime_snapshots\":[{\"mode\":8}]}",
+    "output": "{\"version\":1,\"executable_path\":\"p\",\"linux_mime_snapshots\":[{\"path\":\"old\",\"exists\":true,\"mode\":8,\"content\":\"YQ==\"}]}"
+  },
+  {
+    "name": "numeric-byte-array",
+    "input": "{\"version\":1,\"executable_path\":\"p\",\"linux_mime_snapshots\":[{\"content\":[0,255,null]}]}",
+    "output": "{\"version\":1,\"executable_path\":\"p\",\"linux_mime_snapshots\":[{\"path\":\"\",\"exists\":false,\"mode\":0,\"content\":\"AP8A\"}]}"
+  },
+  {
+    "name": "unknown-and-surrogate",
+    "input": "{\"version\":1,\"executable_path\":\"\\ud800\",\"future\":{\"x\":1e999}}",
+    "output": "{\"version\":1,\"executable_path\":\"�\"}"
+  },
+  {
+    "name": "root-null",
+    "input": "null",
+    "output": null
+  },
+  {
+    "name": "root-array",
+    "input": "[]",
+    "output": null
+  },
+  {
+    "name": "missing-required",
+    "input": "{\"version\":1}",
+    "output": null
+  },
+  {
+    "name": "version-two",
+    "input": "{\"version\":2,\"executable_path\":\"p\"}",
+    "output": null
+  },
+  {
+    "name": "version-fraction",
+    "input": "{\"version\":1.0,\"executable_path\":\"p\"}",
+    "output": null
+  },
+  {
+    "name": "version-overflow",
+    "input": "{\"version\":9223372036854775808,\"executable_path\":\"p\"}",
+    "output": null
+  },
+  {
+    "name": "sticky-version-error",
+    "input": "{\"version\":false,\"version\":1,\"executable_path\":\"p\"}",
+    "output": null
+  },
+  {
+    "name": "sticky-snapshot-error",
+    "input": "{\"version\":1,\"executable_path\":\"p\",\"linux_mime_snapshots\":[{\"mode\":-1,\"mode\":1}]}",
+    "output": null
+  },
+  {
+    "name": "mode-overflow",
+    "input": "{\"version\":1,\"executable_path\":\"p\",\"linux_mime_snapshots\":[{\"mode\":4294967296}]}",
+    "output": null
+  },
+  {
+    "name": "content-space",
+    "input": "{\"version\":1,\"executable_path\":\"p\",\"linux_mime_snapshots\":[{\"content\":\"Y Q==\"}]}",
+    "output": null
+  },
+  {
+    "name": "content-unpadded",
+    "input": "{\"version\":1,\"executable_path\":\"p\",\"linux_mime_snapshots\":[{\"content\":\"YQ\"}]}",
+    "output": null
+  },
+  {
+    "name": "byte-overflow",
+    "input": "{\"version\":1,\"executable_path\":\"p\",\"linux_mime_snapshots\":[{\"content\":[256]}]}",
+    "output": null
+  },
+  {
+    "name": "trailing",
+    "input": "{\"version\":1,\"executable_path\":\"p\"} {}",
+    "output": null
+  },
+  {
+    "name": "snapshot-shrink-grow-backing",
+    "input": "{\"version\":1,\"executable_path\":\"p\",\"linux_mime_snapshots\":[{\"path\":\"a\"},{\"path\":\"b\",\"content\":[7,8]}],\"linux_mime_snapshots\":[{}],\"linux_mime_snapshots\":[null,{\"content\":[null]}]}",
+    "output": "{\"version\":1,\"executable_path\":\"p\",\"linux_mime_snapshots\":[{\"path\":\"a\",\"exists\":false,\"mode\":0},{\"path\":\"b\",\"exists\":false,\"mode\":0,\"content\":\"Bw==\"}]}"
+  },
+  {
+    "name": "content-shrink-grow-null-reuse",
+    "input": "{\"version\":1,\"executable_path\":\"p\",\"linux_mime_snapshots\":[{\"content\":[7,8],\"content\":[null],\"content\":[null,null]}]}",
+    "output": "{\"version\":1,\"executable_path\":\"p\",\"linux_mime_snapshots\":[{\"path\":\"\",\"exists\":false,\"mode\":0,\"content\":\"Bwg=\"}]}"
+  },
+  {
+    "name": "empty-and-null-resets",
+    "input": "{\"version\":1,\"executable_path\":\"p\",\"linux_mime_snapshots\":[{\"path\":\"old\"}],\"linux_mime_snapshots\":[],\"linux_mime_snapshots\":[{}],\"linux_mime_snapshots\":null,\"linux_mime_snapshots\":[{\"content\":[7],\"content\":[],\"content\":[null],\"content\":null}]}",
+    "output": "{\"version\":1,\"executable_path\":\"p\",\"linux_mime_snapshots\":[{\"path\":\"\",\"exists\":false,\"mode\":0}]}"
+  },
+  {
+    "name": "nonzero-base64-padding",
+    "input": "{\"version\":1,\"executable_path\":\"p\",\"linux_mime_snapshots\":[{\"content\":\"YR==\"}]}",
+    "output": "{\"version\":1,\"executable_path\":\"p\",\"linux_mime_snapshots\":[{\"path\":\"\",\"exists\":false,\"mode\":0,\"content\":\"YQ==\"}]}"
+  }
+]

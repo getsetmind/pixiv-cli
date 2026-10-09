@@ -1,0 +1,53 @@
+{
+  "url": "pixiv://account/login?code=synthetic&space=a b;$HOME`ignored`#合成",
+  "linux": [
+    {
+      "name": "first provider",
+      "providers": [
+        "xdg-open",
+        "x-www-browser",
+        "www-browser"
+      ],
+      "selected": "xdg-open",
+      "exit": 0
+    },
+    {
+      "name": "second provider",
+      "providers": [
+        "x-www-browser",
+        "www-browser"
+      ],
+      "selected": "x-www-browser",
+      "exit": 0
+    },
+    {
+      "name": "third provider",
+      "providers": [
+        "www-browser"
+      ],
+      "selected": "www-browser",
+      "exit": 0
+    },
+    {
+      "name": "first exit failure does not fall through",
+      "providers": [
+        "xdg-open",
+        "x-www-browser"
+      ],
+      "selected": "xdg-open",
+      "exit": 19
+    },
+    {
+      "name": "no provider",
+      "providers": [],
+      "selected": "",
+      "exit": 0
+    }
+  ],
+  "windows_nul": {
+    "go": "panic",
+    "rust": "panic",
+    "message": "windows: string with NUL passed to StringToUTF16",
+    "native_call": false
+  }
+}
