@@ -1,5 +1,14 @@
+mod document;
 mod duration;
 mod initialization;
+mod mutations;
+mod private_file;
+#[cfg(windows)]
+mod private_replace_windows;
+
+pub use mutations::{
+    ConfigMutationResult, cli_setting_aliases, public_setting_text, valid_setting_aliases,
+};
 
 use crate::facade::PoolConfig;
 use std::collections::BTreeMap;
@@ -8,17 +17,42 @@ use std::path::{Path, PathBuf};
 use std::time::Duration;
 use toml::Value;
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum PrivateWriteOutcome {
+    Unknown,
+    NotCommitted,
+    Committed,
+}
+
 pub enum ConfigError {
     Io(std::io::Error),
     Syntax(toml::de::Error),
     Invalid(String),
     Removed(&'static str),
     Joined(Vec<ConfigError>),
+    Context(Box<ConfigError>, String),
+    PrivateWrite(PrivateWriteOutcome, Box<ConfigError>),
+    Operation(&'static str, Box<ConfigError>),
 }
 
 impl ConfigError {
+    pub fn private_write_outcome(&self) -> Option<PrivateWriteOutcome> {
+        match self {
+            Self::PrivateWrite(outcome, _) => Some(*outcome),
+            Self::Context(error, _) | Self::Operation(_, error) => error.private_write_outcome(),
+            Self::Joined(errors) => errors.iter().find_map(Self::private_write_outcome),
+            _ => None,
+        }
+    }
+
     pub fn is_removed(&self) -> bool {
-        matches!(self, Self::Removed(_))
+        match self {
+            Self::Removed(_) => true,
+            Self::Context(error, _) | Self::PrivateWrite(_, error) | Self::Operation(_, error) => {
+                error.is_removed()
+            }
+            _ => false,
+        }
     }
 }
 
@@ -43,6 +77,9 @@ impl fmt::Display for ConfigError {
                 }
             }
             Self::Invalid(message) => formatter.write_str(message),
+            Self::Context(error, suffix) => write!(formatter, "{error}{suffix}"),
+            Self::PrivateWrite(_, error) => fmt::Display::fmt(error, formatter),
+            Self::Operation(operation, error) => write!(formatter, "{operation}: {error}"),
             Self::Joined(errors) => {
                 for (index, error) in errors.iter().enumerate() {
                     if index > 0 {
@@ -65,6 +102,9 @@ impl std::error::Error for ConfigError {
         match self {
             Self::Io(error) => Some(error),
             Self::Syntax(error) => Some(error),
+            Self::Context(error, _) | Self::PrivateWrite(_, error) | Self::Operation(_, error) => {
+                Some(error.as_ref())
+            }
             Self::Joined(errors) => errors.first().map(|error| error as &dyn std::error::Error),
             _ => None,
         }
@@ -200,6 +240,8 @@ struct Spec {
     kind: Kind,
     environment: &'static [&'static str],
     default: Option<&'static str>,
+    cli_managed: bool,
+    sensitive: bool,
 }
 
 const SPECS: &[Spec] = &[
@@ -209,6 +251,8 @@ const SPECS: &[Spec] = &[
         kind: Kind::String,
         environment: &["DOWNLOAD_PATH"],
         default: Some("./downloads"),
+        cli_managed: true,
+        sensitive: false,
     },
     Spec {
         alias: "filename_template",
@@ -216,6 +260,8 @@ const SPECS: &[Spec] = &[
         kind: Kind::String,
         environment: &["FILENAME_TEMPLATE"],
         default: Some("{author} - {title}_{id}"),
+        cli_managed: true,
+        sensitive: false,
     },
     Spec {
         alias: "directory_template",
@@ -223,6 +269,8 @@ const SPECS: &[Spec] = &[
         kind: Kind::String,
         environment: &["DIRECTORY_TEMPLATE"],
         default: None,
+        cli_managed: true,
+        sensitive: false,
     },
     Spec {
         alias: "https_proxy",
@@ -230,6 +278,8 @@ const SPECS: &[Spec] = &[
         kind: Kind::String,
         environment: &["https_proxy", "HTTPS_PROXY"],
         default: None,
+        cli_managed: true,
+        sensitive: false,
     },
     Spec {
         alias: "request_interval",
@@ -237,6 +287,8 @@ const SPECS: &[Spec] = &[
         kind: Kind::Duration,
         environment: &["PIXIV_REQUEST_INTERVAL"],
         default: Some("0s"),
+        cli_managed: true,
+        sensitive: false,
     },
     Spec {
         alias: "log_level",
@@ -244,6 +296,8 @@ const SPECS: &[Spec] = &[
         kind: Kind::String,
         environment: &["PIXIV_LOG_LEVEL"],
         default: Some("info"),
+        cli_managed: true,
+        sensitive: false,
     },
     Spec {
         alias: "log_format",
@@ -251,6 +305,8 @@ const SPECS: &[Spec] = &[
         kind: Kind::String,
         environment: &["PIXIV_LOG_FORMAT"],
         default: Some("text"),
+        cli_managed: true,
+        sensitive: false,
     },
     Spec {
         alias: "output_json",
@@ -258,6 +314,8 @@ const SPECS: &[Spec] = &[
         kind: Kind::Bool,
         environment: &[],
         default: Some("false"),
+        cli_managed: false,
+        sensitive: false,
     },
     Spec {
         alias: "web_fallback_enabled",
@@ -265,6 +323,8 @@ const SPECS: &[Spec] = &[
         kind: Kind::Removed,
         environment: &[],
         default: None,
+        cli_managed: false,
+        sensitive: false,
     },
     Spec {
         alias: "update_check_enabled",
@@ -272,6 +332,8 @@ const SPECS: &[Spec] = &[
         kind: Kind::Bool,
         environment: &[],
         default: Some("true"),
+        cli_managed: false,
+        sensitive: false,
     },
     Spec {
         alias: "login_open_browser",
@@ -279,6 +341,8 @@ const SPECS: &[Spec] = &[
         kind: Kind::Bool,
         environment: &[],
         default: Some("true"),
+        cli_managed: false,
+        sensitive: false,
     },
     Spec {
         alias: "login_use_after_login",
@@ -286,6 +350,8 @@ const SPECS: &[Spec] = &[
         kind: Kind::Bool,
         environment: &[],
         default: Some("false"),
+        cli_managed: false,
+        sensitive: false,
     },
     Spec {
         alias: "reverse_search_provider",
@@ -293,6 +359,8 @@ const SPECS: &[Spec] = &[
         kind: Kind::String,
         environment: &[],
         default: Some("saucenao"),
+        cli_managed: true,
+        sensitive: false,
     },
     Spec {
         alias: "reverse_search_pixiv_only",
@@ -300,6 +368,8 @@ const SPECS: &[Spec] = &[
         kind: Kind::Bool,
         environment: &[],
         default: Some("true"),
+        cli_managed: true,
+        sensitive: false,
     },
     Spec {
         alias: "saucenao_api_key",
@@ -307,6 +377,8 @@ const SPECS: &[Spec] = &[
         kind: Kind::String,
         environment: &["SAUCENAO_API_KEY"],
         default: None,
+        cli_managed: true,
+        sensitive: true,
     },
     Spec {
         alias: "login_relay_public_url",
@@ -314,6 +386,8 @@ const SPECS: &[Spec] = &[
         kind: Kind::String,
         environment: &[],
         default: None,
+        cli_managed: false,
+        sensitive: false,
     },
     Spec {
         alias: "login_relay_listen_addr",
@@ -321,6 +395,8 @@ const SPECS: &[Spec] = &[
         kind: Kind::String,
         environment: &[],
         default: None,
+        cli_managed: false,
+        sensitive: false,
     },
     Spec {
         alias: "login_relay_tls_cert_file",
@@ -328,6 +404,8 @@ const SPECS: &[Spec] = &[
         kind: Kind::String,
         environment: &[],
         default: None,
+        cli_managed: false,
+        sensitive: false,
     },
     Spec {
         alias: "login_relay_tls_key_file",
@@ -335,6 +413,8 @@ const SPECS: &[Spec] = &[
         kind: Kind::String,
         environment: &[],
         default: None,
+        cli_managed: false,
+        sensitive: false,
     },
     Spec {
         alias: "account_pool_enabled",
@@ -342,6 +422,8 @@ const SPECS: &[Spec] = &[
         kind: Kind::Bool,
         environment: &[],
         default: Some("false"),
+        cli_managed: true,
+        sensitive: false,
     },
     Spec {
         alias: "account_pool_strategy",
@@ -349,6 +431,8 @@ const SPECS: &[Spec] = &[
         kind: Kind::String,
         environment: &[],
         default: Some("round_robin"),
+        cli_managed: true,
+        sensitive: false,
     },
     Spec {
         alias: "account_pool_accounts",
@@ -356,6 +440,8 @@ const SPECS: &[Spec] = &[
         kind: Kind::Removed,
         environment: &[],
         default: None,
+        cli_managed: false,
+        sensitive: false,
     },
 ];
 

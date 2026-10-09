@@ -203,6 +203,8 @@ enum CommentCommand {
 
 #[derive(Subcommand)]
 enum Command {
+    #[command(about = "Manage global Pixiv CLI settings")]
+    Config,
     #[command(args_override_self = true)]
     Comment {
         #[command(flatten)]
@@ -294,6 +296,14 @@ enum Command {
 
 #[tokio::main]
 async fn main() {
+    if std::env::args().nth(1).as_deref() == Some("config") {
+        let result = execute_config();
+        let exit = finish_command(result, false, false, &mut io::stderr().lock());
+        if exit != 0 {
+            std::process::exit(exit);
+        }
+        return;
+    }
     let matches = Arguments::command()
         .mut_subcommand("mypixiv", |command| {
             command
@@ -429,7 +439,8 @@ async fn main() {
             command: UserCommand::Related { options, .. } | UserCommand::Blocked { options, .. },
         } => options.json.is_some() || options.ndjson,
         Command::Novel { .. } => unreachable!("novel commands were resolved"),
-        Command::Mcp { .. }
+        Command::Config
+        | Command::Mcp { .. }
         | Command::Bookmark { .. }
         | Command::Follow { .. }
         | Command::User { .. } => false,
@@ -501,7 +512,8 @@ async fn main() {
             command: UserCommand::Related { options, .. } | UserCommand::Blocked { options, .. },
         } => options.ndjson || (options.json.is_none() && !io::stdout().is_terminal()),
         Command::Novel { .. } => unreachable!("novel commands were resolved"),
-        Command::Mcp { .. }
+        Command::Config
+        | Command::Mcp { .. }
         | Command::Bookmark { .. }
         | Command::Follow { .. }
         | Command::User { .. } => false,
@@ -1534,6 +1546,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
         .ok();
     let client = Client::new(&token, proxy.as_deref())?;
     match args.command {
+        Command::Config => unreachable!("config uses its own local execution"),
         Command::Timeline { .. } => unreachable!("timeline uses saved account execution"),
         Command::Mypixiv { .. } => unreachable!("mypixiv uses saved account execution"),
         Command::Novel { .. } => unreachable!("novel commands were resolved"),
@@ -1576,4 +1589,40 @@ fn local() -> Error {
 
 fn output(value: &str) -> Result<(), CommandError> {
     writeln!(io::stdout().lock(), "{value}").map_err(CommandError::from)
+}
+
+fn execute_config() -> Result<(), CommandError> {
+    let args: Vec<String> = std::env::args().skip(2).collect();
+    let mut input = io::stdin().lock();
+    let command = pixiv_cli_rs::config_commands::ConfigCommand::parse(
+        &args,
+        &mut input,
+        io::stdin().is_terminal(),
+    )?;
+    let path = if command.requires_config() {
+        let name = if cfg!(windows) { "USERPROFILE" } else { "HOME" };
+        let home = std::env::var_os(name)
+            .filter(|value| !value.is_empty())
+            .ok_or_else(|| {
+                CommandError::MessageText(format!(
+                    "{} is not defined",
+                    if cfg!(windows) {
+                        "%USERPROFILE%"
+                    } else {
+                        "$HOME"
+                    }
+                ))
+            })?;
+        std::path::PathBuf::from(home)
+            .join(".pixiv-cli")
+            .join("config.toml")
+    } else {
+        std::path::PathBuf::new()
+    };
+    command.execute(
+        &pixiv_app::config::Store::new(path),
+        &mut input,
+        &mut io::stdout().lock(),
+        &mut io::stderr().lock(),
+    )
 }

@@ -1351,3 +1351,25 @@ SDK全97test、CLI focused3test（main0.29秒・pool0.05秒・startup0.95秒）�
 full Rust gateはunused追加DTOを除いた後のtrailing blankのFormatter差分で一度停止し、cargo fmt適用後に同じscripts/check-rust.ps1を再実行した。POWERSHELL_TELEMETRY_OPTOUT=1をpwsh起動前に設定し、Cargo offlineと既存network restrictionを維持した。終了sentinel0、331秒、Formatter/Clippy・workspace280passed/0failed/既存3ignored・release36.00秒の完了を確認した。元Formatter失敗logと終了1を別に保持する。
 
 read checkpoint時点のmutation未実装という記録は、この新しい比較範囲で更新する。残るwire/UTF8/precision/depth、other DTO時刻/URL normalization、6standalone renderer/root parser/Linux snapshot、全flag/help/TTY/OS、Options/auth/TLS/取消/deadline/concurrency/disconnect、実HTTPS/resource、他OS/arch・配布信頼は保持し、whole migration完了や最終切替を宣言しない。
+
+## Config group/path/get/set/unset
+
+固定Goのroot config groupと4leafを接続する。auth/login/import/exportはこのscopeへ混ぜず、実credential・ユーザー設定は操作しない。全testはisolated child/temp directory・synthetic secretを使い、外部サービスへの要求はない。CLIは12managed aliasだけを公開し、Storeの20live aliasと2removed tombstoneのschemaとは区別する。get/setはremoved aliasを即拒否し、unsetはcleanupを許す。root helpにもgroupを追加して発見できるようにするが、root全help/flagのexact比較へ外挿しない。
+
+Go [113 targeted CLI行](contracts/cli-config-commands.json)は100actual Rust executable comparisonと13isolated production ConfigCommand reader/writer boundaryを比較する。12keyのget/set/unset、2tombstone、sensitive key、environment precedence/override notes、group/leafhelp、ordinary stdin-fill/reader error、sensitive stdin、writer errorをtargetedで固定する。3個のhelp writer error例はGoが無視するため成功のままとし、success leafのwrite errorとは区別する。standalone parserのexpected診断を実rootへ変換せず、この新fixtureにrejection-only行はない。
+
+config quiet startupはensure_defaultsだけを使い、Runtime検証やDBを要求しない。malformed既存TOMLでもpathは成功し、getはrequested settingだけを解決してunrelated runtime violationに妨げられない。group/helpは設定を作らない。unknown get/unsetはensure後のhandler拒否、unknown setは事前validation拒否となる。ordinary pipeline errorはensure前だが、sensitive bodyはRunE相当のensure後に読む。このstage順をfile bytes/config existence/DB absence/stdio/exitで固定する。
+
+SauceNAO keyはargvでのvalueを許さずnon-TTY stdinだけを受け付け、getはunsetでも<redacted>を返す。first existing envは空文字でもoverrideとして扱い、proxy/secret override noteは値を表示しない。override note errorとgetの<unset> write errorはGo同様無視し、後者はconfig value is unsetを返す。ordinary key/valueのwhole stdinと1LF/CRLF removal、help bool/shorthand cluster/lone '-'、arity/key/read/write precedenceを維持する。
+
+Store [35 targeted行](contracts/config-mutations.json)はget/set/unsetのfresh read、全12managed key成功、Store-only alias、removed、domain/input validation、environment notesとsparse document bytesを固定する。既存Snapshot/setting normalizationを再利用し、CLI membershipだけを別に判定する。cached official toml_editのlossless items/decorとGo tomledit formatting adapterでcomment/unknown value・空白/CRLF/quoting/absent unsetの対象例を比較する。全quoted/dotted/inline/duplicate/invalid syntax variantの互換宣言ではない。formatter diagnosticsからraw source excerptを出さず、synthetic credentialのmalformed document regressionで秘匿性を確認する。
+
+private writerはsame-directory create_new staging、private mode、single Write/exact-count/sync/explicit close、replaceとparent/new-ancestor durabilityを実装する。precommit失敗でold targetを保持し、close/cleanup errorをjoinしてNotCommitted/Committed/Unknownを保持する。initializerもexplicit closeし、complete fileはclose-only errorで消さず、incomplete fileはcleanupする。Go frozen sourceとのread-only reviewを行い、Unix成功/private permissions・read failure・failed validation bytes保持を合成FSで確認する。read failure testはreplacement failureの証拠として数えない。
+
+Windows backendはexisting targetへflags0 ReplaceFileWとdisposable recovery backup、absent target/recoveryへflags0 MoveFileExWを使う。1177restore失敗ではsource/backupを保持しUnknown、commit後backup cleanup errorでもCommittedを維持する。cached windows-sys signatureとGo recovery sourceをreviewしただけで、Windows compile/run/ACLやforced syscall/short-write/postcommit failuresは未検証。source実装と実行済み証拠を区別し、単純renameでこれらを置き換えない。
+
+新fixture2filesは148行・97,351bytes。schema/value/parser/quiet stage/writer/FSの独立境界をtargetedで固定し、existing snapshot/initializer、search input reader、private directory logicを共有する。app focused11test（new mutation/privacy6、initializer2、snapshot3）とCLI4test（boundaries0.02秒、startup0.33秒）が成功した。Go settings全suite/vetとCLI113 replay/vet、broad CLI43.367秒が成功した。Linux公開面snapshot不在の既存1testを除外し、strict全Go passとは扱わない。
+
+full Rust gateはprivate cleanupのcollapsible-if lintで一度停止し、意味を変えない条件連結へ修正した。その後のrunは終了0になったが、test実行後にsingle Write/count-checkのGo差分をsourceで補正したため最終treeの証明とは数えない。元失敗log/終了1とこの中間runを保持し、最終sourceで同じscripts/check-rust.ps1を全stage再実行し、終了sentinel0・254秒、Formatter/Clippy・workspace290passed/0failed/既存3ignored・release cached0.13秒の完了を確認した。POWERSHELL_TELEMETRY_OPTOUT=1、Cargo offline、既存network restrictionを維持し、この最終runだけをfinal-tree full gate成功として数える。
+
+残る全TOML/非UTF8、FS read/write/close/cleanup/commit fault、platform ACL/Windows/macOS、symlink/concurrency/OS startup、root全flag/help、auth/config他入口・配布信頼を保持する。下位Store/commandのscoped比較をwhole migration完了としない。

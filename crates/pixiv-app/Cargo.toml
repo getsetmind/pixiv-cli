@@ -16,7 +16,14 @@ rusqlite = { version = "0.40", features = ["bundled"] }
 tokio.workspace = true
 tokio-util = { workspace = true, features = ["rt"] }
 toml = "=0.9.8"
+toml_edit = "=0.25.5"
 url.workspace = true
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Storage_FileSystem"] }
 
 [dev-dependencies]
 tokio.workspace = true

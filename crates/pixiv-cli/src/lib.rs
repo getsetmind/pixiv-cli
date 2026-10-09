@@ -3,6 +3,7 @@ pub mod bookmark_lists;
 pub mod bookmark_reads;
 pub mod comment_mutations;
 pub mod comment_reads;
+pub mod config_commands;
 mod json_spool;
 pub mod mutation;
 pub mod mypixiv;
