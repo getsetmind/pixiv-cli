@@ -1078,7 +1078,9 @@
         "crates/pixiv-app/src/connection.rs",
         "crates/pixiv-sdk/src/pacing.rs",
         "crates/pixiv-sdk/src/transport.rs",
-        "crates/pixiv-sdk/src/resource_transport.rs"
+        "crates/pixiv-sdk/src/resource_transport.rs",
+        "crates/pixiv-app/src/execution.rs",
+        "crates/pixiv-app/src/account_service.rs"
       ],
       "tests": [
         "internal/cli/commands/pixiv/search/migration_dates_test.go#TestMigrationQuickDateRangesMatchFrozenTokyoBoundaries",
@@ -1111,7 +1113,9 @@
         "sdk/pixiv/migration_pacing_test.go#TestMigrationPacingCanceledWaitDoesNotReachTransportOrAdvanceItsLastStart",
         "crates/pixiv-sdk/tests/pacing.rs#http_transport_matches_go_spacing_across_oauth_content_redirects_and_mutations",
         "crates/pixiv-sdk/tests/pacing.rs#default_http_transport_keeps_a_pending_response_after_the_prototype_sixty_second_limit",
-        "crates/pixiv-sdk/tests/pacing.rs#aborting_a_resource_pacing_wait_releases_the_queue_without_consuming_a_request_start"
+        "crates/pixiv-sdk/tests/pacing.rs#aborting_a_resource_pacing_wait_releases_the_queue_without_consuming_a_request_start",
+        "internal/cli/migration_search_accounts_test.go#TestMigrationSearchStartupAndSavedAccountErrors",
+        "crates/pixiv-cli/tests/search_accounts.rs#search_startup_preserves_go_account_errors_settings_and_validation_order"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -1126,7 +1130,8 @@
         "bookmark min/max/strategy をGo CLIの393ケースで比較。nil/0、auto→local、local/best_effort/serverエラー、rating/論理page/重複/JSON filter completeness、全queryと後続失敗時の部分結果破棄を確認。入力不正18ケースは子プロセスでも比較。共通bookmark/context結合helperは192ケースでGoと一致しCLI/MCPから使用。正常CLI実HTTP、checkpoint失敗/実cursor resume/cycle、全selector組合せ、writer部分失敗、取消、pool/account/premium、大容量、他OSは未検証。strategy共通化は未実装。",
         "共通単一流paginationをGoの840ケースで比較。skip/limit/one-batch、循環、predicate/checkpoint/consume/fetch失敗、zero checkpoint、通常streamの部分結果/進捗とfiltered collectionの破棄を確認。CLI通常/rating/bookmarkとMCPに接続し既存90/120/393/144ケースを変更なしで再検証。2流の合成StreamState/nonzero initialと再開は別途3072ケースで比較。実SDK cursorの循環/checkpoint失敗/再開、取消/pool、他OSは未検証。",
         "複数流engineをGoの3072ケースで比較。2流順序/重複/global skip/limit/one-batch、8初期state、非零ページ内cursor、checkpoint、初回返却stateからの2回目収集、後続流失敗時の全破棄を確認。checkpointのある単一流もengineへ接続しCLI rating/bookmarkとMCPの既存比較を維持。実SDK複数操作の公開コマンド接続/保存再開/binding、0流/3流以上、全境界、callback不在対応、取消/pool/account、他OSは未検証または未実装。",
-        "CommandConnectionの25ケースでproxy/interval/errorと実HTTP transport構築可否を比較し、選択したintervalをtransportへ渡す。共有HTTP pacingをGoのOpenWith後のcontent/resource redirect/mutation 5通信とRust実socketで比較（観測差5ms）。clone間でlast startを共有する。Goのdefault SDK HTTP timeout=0を再現しRust試作の60秒制限を削除。仮想61秒で保留responseが存続し、pacing待機task abort後も残り時間で次requestが再開することを確認。SDK Options全体/client再構築/pool replayの寿命/context取消/deadline/全競合/App API redirect/TLS/SOCKS wire/pool/idle cleanup/CLI/MCP bootstrap/他OSは未完了または未検証。"
+        "CommandConnectionの25ケースでproxy/interval/errorと実HTTP transport構築可否を比較し、選択したintervalをtransportへ渡す。共有HTTP pacingをGoのOpenWith後のcontent/resource redirect/mutation 5通信とRust実socketで比較（観測差5ms）。clone間でlast startを共有する。Goのdefault SDK HTTP timeout=0を再現しRust試作の60秒制限を削除。仮想61秒で保留responseが存続し、pacing待機task abort後も残り時間で次requestが再開することを確認。SDK Options全体/client再構築/pool replayの寿命/context取消/deadline/全競合/App API redirect/TLS/SOCKS wire/pool/idle cleanup/CLI/MCP bootstrap/他OSは未完了または未検証。",
+        "検索CLIを保存済みアカウントのExecutionへ接続。起動48ケースで設定初期化・保持、DB作成順、未認証・既定アカウント・空pool・proxyと入力のエラーをGoと比較。既存の出力120ケースを直接SDKと保存済みアカウント経路の双方で検証し、refresh結果の永続化とBearerの使用も確認。正常CLI子プロセスの実HTTPS、JSON/local出力とlease解放の順序、複数アカウントの429切替・checkpoint再開、取消、明示json=false/複数語/entity等の残りflags、他OSは未検証または未実装。"
       ]
     },
     {

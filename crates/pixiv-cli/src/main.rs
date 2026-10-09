@@ -53,8 +53,11 @@ enum Command {
         #[arg(long)]
         ndjson: bool,
     },
+    #[command(args_override_self = true)]
     Search {
         query: String,
+        #[command(flatten)]
+        connection: ProxyOptions,
         #[command(flatten)]
         options: Box<SearchOptions>,
         #[arg(long, conflicts_with = "ndjson")]
@@ -96,7 +99,10 @@ async fn main() {
 }
 
 async fn execute(args: Arguments) -> Result<(), CommandError> {
-    let account_config = if matches!(&args.command, Command::Detail { .. } | Command::Mcp { .. }) {
+    let account_config = if matches!(
+        &args.command,
+        Command::Detail { .. } | Command::Mcp { .. } | Command::Search { .. }
+    ) {
         let home_name = if cfg!(windows) { "USERPROFILE" } else { "HOME" };
         let home = std::env::var_os(home_name)
             .filter(|home| !home.is_empty())
@@ -131,6 +137,49 @@ async fn execute(args: Arguments) -> Result<(), CommandError> {
         }
         _ => None,
     };
+    if let Command::Search {
+        options,
+        connection,
+        json,
+        ndjson,
+        ..
+    } = &args.command
+    {
+        let (directory, config) = account_config.expect("search startup was resolved");
+        let proxy = connection.override_value()?;
+        options.validate_bookmark_strategy()?;
+        let json_output = *json
+            || config
+                .current()
+                .and_then(|snapshot| snapshot.runtime())
+                .map_err(pixiv_app::scheduler::SchedulerError::from)?
+                .output_json;
+        let database = pixiv_app::database::Database::open(&directory)
+            .map_err(|error| CommandError::State(Box::new(error)))?;
+        let execution = pixiv_app::execution::Execution::http(
+            config,
+            std::sync::Arc::new(std::sync::Mutex::new(database)),
+        );
+        let mode = if *ndjson {
+            DetailOutput::Ndjson
+        } else if json_output {
+            DetailOutput::Json
+        } else if !io::stdout().is_terminal() {
+            DetailOutput::Ndjson
+        } else {
+            DetailOutput::Human
+        };
+        return pixiv_cli_rs::search::saved_artwork_search(
+            &execution,
+            &pixiv_app::lifecycle::Context::new(),
+            search_request.expect("search options were resolved"),
+            options.as_ref().clone(),
+            proxy,
+            mode,
+            io::stdout(),
+        )
+        .await;
+    }
     if let Command::Detail {
         json,
         ndjson,
@@ -206,28 +255,7 @@ async fn execute(args: Arguments) -> Result<(), CommandError> {
     match args.command {
         Command::Mcp { .. } => unreachable!("MCP uses saved account execution"),
         Command::Detail { .. } => unreachable!("detail uses saved account execution"),
-        Command::Search {
-            options,
-            json,
-            ndjson,
-            ..
-        } => {
-            let mode = if json {
-                DetailOutput::Json
-            } else if ndjson || !io::stdout().is_terminal() {
-                DetailOutput::Ndjson
-            } else {
-                DetailOutput::Human
-            };
-            pixiv_cli_rs::search::artwork_search(
-                &client,
-                search_request.expect("search options were resolved"),
-                &options,
-                mode,
-                &mut io::stdout().lock(),
-            )
-            .await?;
-        }
+        Command::Search { .. } => unreachable!("search uses saved account execution"),
         Command::Ugoira { source, json } => {
             let metadata = client.ugoira_metadata(artwork_id(&source)?).await?;
             if json {

@@ -1,0 +1,655 @@
+[
+  {
+    "name": "missing/default",
+    "args": [
+      "cat"
+    ],
+    "before": null,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": true,
+    "stdout": "",
+    "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+    "exit": 1
+  },
+  {
+    "name": "missing/json",
+    "args": [
+      "cat",
+      "--json"
+    ],
+    "before": null,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:auth: unauthorized: no pixiv account is authenticated\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "missing/ndjson",
+    "args": [
+      "cat",
+      "--ndjson"
+    ],
+    "before": null,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:auth: unauthorized: no pixiv account is authenticated\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "custom/default",
+    "args": [
+      "cat"
+    ],
+    "before": "# mine\r\n[unknown]\r\nkeep = true\r\n",
+    "after": "# mine\r\n[unknown]\r\nkeep = true\r\n",
+    "database": true,
+    "stdout": "",
+    "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+    "exit": 1
+  },
+  {
+    "name": "custom/json",
+    "args": [
+      "cat",
+      "--json"
+    ],
+    "before": "# mine\r\n[unknown]\r\nkeep = true\r\n",
+    "after": "# mine\r\n[unknown]\r\nkeep = true\r\n",
+    "database": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:auth: unauthorized: no pixiv account is authenticated\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "custom/ndjson",
+    "args": [
+      "cat",
+      "--ndjson"
+    ],
+    "before": "# mine\r\n[unknown]\r\nkeep = true\r\n",
+    "after": "# mine\r\n[unknown]\r\nkeep = true\r\n",
+    "database": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:auth: unauthorized: no pixiv account is authenticated\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "malformed/default",
+    "args": [
+      "cat"
+    ],
+    "before": "[unfinished\n",
+    "after": "[unfinished\n",
+    "database": false,
+    "stdout": "",
+    "stderr": "error: toml: expected character ]\n",
+    "exit": 1
+  },
+  {
+    "name": "malformed/json",
+    "args": [
+      "cat",
+      "--json"
+    ],
+    "before": "[unfinished\n",
+    "after": "[unfinished\n",
+    "database": false,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"toml: expected character ]\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "malformed/ndjson",
+    "args": [
+      "cat",
+      "--ndjson"
+    ],
+    "before": "[unfinished\n",
+    "after": "[unfinished\n",
+    "database": false,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"toml: expected character ]\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "missing_default/default",
+    "args": [
+      "cat"
+    ],
+    "before": "[pixiv.auth]\ndefault_user_id = 43\n",
+    "after": "[pixiv.auth]\ndefault_user_id = 43\n",
+    "database": true,
+    "stdout": "",
+    "stderr": "error: configured default pixiv account 43 is missing\n",
+    "exit": 1
+  },
+  {
+    "name": "missing_default/json",
+    "args": [
+      "cat",
+      "--json"
+    ],
+    "before": "[pixiv.auth]\ndefault_user_id = 43\n",
+    "after": "[pixiv.auth]\ndefault_user_id = 43\n",
+    "database": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"configured default pixiv account 43 is missing\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "missing_default/ndjson",
+    "args": [
+      "cat",
+      "--ndjson"
+    ],
+    "before": "[pixiv.auth]\ndefault_user_id = 43\n",
+    "after": "[pixiv.auth]\ndefault_user_id = 43\n",
+    "database": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"configured default pixiv account 43 is missing\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "invalid_default/default",
+    "args": [
+      "cat"
+    ],
+    "before": "[pixiv.auth]\ndefault_user_id = 0\n",
+    "after": "[pixiv.auth]\ndefault_user_id = 0\n",
+    "database": true,
+    "stdout": "",
+    "stderr": "error: config: pixiv.auth.default_user_id must be a positive integer\n",
+    "exit": 1
+  },
+  {
+    "name": "invalid_default/json",
+    "args": [
+      "cat",
+      "--json"
+    ],
+    "before": "[pixiv.auth]\ndefault_user_id = 0\n",
+    "after": "[pixiv.auth]\ndefault_user_id = 0\n",
+    "database": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"config: pixiv.auth.default_user_id must be a positive integer\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "invalid_default/ndjson",
+    "args": [
+      "cat",
+      "--ndjson"
+    ],
+    "before": "[pixiv.auth]\ndefault_user_id = 0\n",
+    "after": "[pixiv.auth]\ndefault_user_id = 0\n",
+    "database": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"config: pixiv.auth.default_user_id must be a positive integer\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "empty_pool/default",
+    "args": [
+      "cat"
+    ],
+    "before": "[account_pool]\nenabled = true\nstrategy = 'round_robin'\n",
+    "after": "[account_pool]\nenabled = true\nstrategy = 'round_robin'\n",
+    "database": true,
+    "stdout": "",
+    "stderr": "error: pixiv:account_pool: unauthorized: account_pool_no_local_account\n",
+    "exit": 1
+  },
+  {
+    "name": "empty_pool/json",
+    "args": [
+      "cat",
+      "--json"
+    ],
+    "before": "[account_pool]\nenabled = true\nstrategy = 'round_robin'\n",
+    "after": "[account_pool]\nenabled = true\nstrategy = 'round_robin'\n",
+    "database": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:account_pool: unauthorized: account_pool_no_local_account\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "empty_pool/ndjson",
+    "args": [
+      "cat",
+      "--ndjson"
+    ],
+    "before": "[account_pool]\nenabled = true\nstrategy = 'round_robin'\n",
+    "after": "[account_pool]\nenabled = true\nstrategy = 'round_robin'\n",
+    "database": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:account_pool: unauthorized: account_pool_no_local_account\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "invalid_pool/default",
+    "args": [
+      "cat"
+    ],
+    "before": "[account_pool]\nenabled = 'true'\n",
+    "after": "[account_pool]\nenabled = 'true'\n",
+    "database": false,
+    "stdout": "",
+    "stderr": "error: account_pool.enabled must be a boolean\n",
+    "exit": 1
+  },
+  {
+    "name": "invalid_pool/json",
+    "args": [
+      "cat",
+      "--json"
+    ],
+    "before": "[account_pool]\nenabled = 'true'\n",
+    "after": "[account_pool]\nenabled = 'true'\n",
+    "database": false,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"account_pool.enabled must be a boolean\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "invalid_pool/ndjson",
+    "args": [
+      "cat",
+      "--ndjson"
+    ],
+    "before": "[account_pool]\nenabled = 'true'\n",
+    "after": "[account_pool]\nenabled = 'true'\n",
+    "database": false,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"account_pool.enabled must be a boolean\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "invalid_proxy/default",
+    "args": [
+      "cat"
+    ],
+    "before": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "after": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "database": true,
+    "stdout": "",
+    "stderr": "error: proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration\n",
+    "exit": 1
+  },
+  {
+    "name": "invalid_proxy/json",
+    "args": [
+      "cat",
+      "--json"
+    ],
+    "before": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "after": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "database": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "invalid_proxy/ndjson",
+    "args": [
+      "cat",
+      "--ndjson"
+    ],
+    "before": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "after": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "database": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "clear_proxy/default",
+    "args": [
+      "cat",
+      "--no-proxy"
+    ],
+    "before": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "after": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "database": true,
+    "stdout": "",
+    "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+    "exit": 1
+  },
+  {
+    "name": "clear_proxy/json",
+    "args": [
+      "cat",
+      "--no-proxy",
+      "--json"
+    ],
+    "before": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "after": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "database": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:auth: unauthorized: no pixiv account is authenticated\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "clear_proxy/ndjson",
+    "args": [
+      "cat",
+      "--no-proxy",
+      "--ndjson"
+    ],
+    "before": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "after": "[pixiv.network]\nproxy_url = 'ftp://fixture-user:fixture-secret@proxy.invalid'\n",
+    "database": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:auth: unauthorized: no pixiv account is authenticated\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "proxy_conflict/default",
+    "args": [
+      "cat",
+      "--proxy",
+      "",
+      "--no-proxy=false"
+    ],
+    "before": null,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": false,
+    "stdout": "",
+    "stderr": "error: use either --proxy or --no-proxy, not both\n",
+    "exit": 1
+  },
+  {
+    "name": "proxy_conflict/json",
+    "args": [
+      "cat",
+      "--proxy",
+      "",
+      "--no-proxy=false",
+      "--json"
+    ],
+    "before": null,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": false,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"use either --proxy or --no-proxy, not both\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "proxy_conflict/ndjson",
+    "args": [
+      "cat",
+      "--proxy",
+      "",
+      "--no-proxy=false",
+      "--ndjson"
+    ],
+    "before": null,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": false,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"use either --proxy or --no-proxy, not both\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "invalid_search_by/default",
+    "args": [
+      "cat",
+      "--search-by",
+      "invalid"
+    ],
+    "before": null,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": false,
+    "stdout": "",
+    "stderr": "error: search-by must be one of tag-partial, tag-exact, title-caption, tag-title-caption\n",
+    "exit": 1
+  },
+  {
+    "name": "invalid_search_by/json",
+    "args": [
+      "cat",
+      "--search-by",
+      "invalid",
+      "--json"
+    ],
+    "before": null,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": false,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"search-by must be one of tag-partial, tag-exact, title-caption, tag-title-caption\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "invalid_search_by/ndjson",
+    "args": [
+      "cat",
+      "--search-by",
+      "invalid",
+      "--ndjson"
+    ],
+    "before": null,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": false,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"search-by must be one of tag-partial, tag-exact, title-caption, tag-title-caption\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "invalid_sort/default",
+    "args": [
+      "cat",
+      "--sort",
+      "invalid"
+    ],
+    "before": null,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": true,
+    "stdout": "",
+    "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+    "exit": 1
+  },
+  {
+    "name": "invalid_sort/json",
+    "args": [
+      "cat",
+      "--sort",
+      "invalid",
+      "--json"
+    ],
+    "before": null,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:auth: unauthorized: no pixiv account is authenticated\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "invalid_sort/ndjson",
+    "args": [
+      "cat",
+      "--sort",
+      "invalid",
+      "--ndjson"
+    ],
+    "before": null,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": true,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:auth: unauthorized: no pixiv account is authenticated\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "invalid_limit/default",
+    "args": [
+      "cat",
+      "--limit=-1"
+    ],
+    "before": null,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": false,
+    "stdout": "",
+    "stderr": "error: limit must be zero or a positive integer\n",
+    "exit": 1
+  },
+  {
+    "name": "invalid_limit/json",
+    "args": [
+      "cat",
+      "--limit=-1",
+      "--json"
+    ],
+    "before": null,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": false,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"limit must be zero or a positive integer\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "invalid_limit/ndjson",
+    "args": [
+      "cat",
+      "--limit=-1",
+      "--ndjson"
+    ],
+    "before": null,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": false,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"limit must be zero or a positive integer\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "invalid_rating/default",
+    "args": [
+      "cat",
+      "--rating",
+      "invalid"
+    ],
+    "before": null,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": false,
+    "stdout": "",
+    "stderr": "error: rating must be one of sfw, r18, r18g, mature, all\n",
+    "exit": 1
+  },
+  {
+    "name": "invalid_rating/json",
+    "args": [
+      "cat",
+      "--rating",
+      "invalid",
+      "--json"
+    ],
+    "before": null,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": false,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"rating must be one of sfw, r18, r18g, mature, all\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "invalid_rating/ndjson",
+    "args": [
+      "cat",
+      "--rating",
+      "invalid",
+      "--ndjson"
+    ],
+    "before": null,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": false,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"rating must be one of sfw, r18, r18g, mature, all\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "config_before_options/default",
+    "args": [
+      "cat",
+      "--search-by",
+      "invalid"
+    ],
+    "before": "[unfinished\n",
+    "after": "[unfinished\n",
+    "database": false,
+    "stdout": "",
+    "stderr": "error: toml: expected character ]\n",
+    "exit": 1
+  },
+  {
+    "name": "config_before_options/json",
+    "args": [
+      "cat",
+      "--search-by",
+      "invalid",
+      "--json"
+    ],
+    "before": "[unfinished\n",
+    "after": "[unfinished\n",
+    "database": false,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"toml: expected character ]\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "config_before_options/ndjson",
+    "args": [
+      "cat",
+      "--search-by",
+      "invalid",
+      "--ndjson"
+    ],
+    "before": "[unfinished\n",
+    "after": "[unfinished\n",
+    "database": false,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"toml: expected character ]\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "bookmark_without_range/default",
+    "args": [
+      "cat",
+      "--bookmark-strategy",
+      "local"
+    ],
+    "before": null,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": false,
+    "stdout": "",
+    "stderr": "error: --bookmark-strategy requires --bookmark-min or --bookmark-max\n",
+    "exit": 1
+  },
+  {
+    "name": "bookmark_without_range/json",
+    "args": [
+      "cat",
+      "--bookmark-strategy",
+      "local",
+      "--json"
+    ],
+    "before": null,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": false,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"--bookmark-strategy requires --bookmark-min or --bookmark-max\"}}\n",
+    "exit": 1
+  },
+  {
+    "name": "bookmark_without_range/ndjson",
+    "args": [
+      "cat",
+      "--bookmark-strategy",
+      "local",
+      "--ndjson"
+    ],
+    "before": null,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": false,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"--bookmark-strategy requires --bookmark-min or --bookmark-max\"}}\n",
+    "exit": 1
+  }
+]

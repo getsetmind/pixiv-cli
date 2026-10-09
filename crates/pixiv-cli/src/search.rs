@@ -1,6 +1,9 @@
 use crate::CommandError;
 use chrono::{DateTime, FixedOffset, NaiveDate};
 use clap::Args;
+use pixiv_app::{
+    execution::Execution, facade::UseOutcome, lifecycle::Context, scheduler::SchedulerError,
+};
 use pixiv_sdk::pixiv::SearchArtworksRequest;
 use pixiv_sdk::{
     Client,
@@ -8,6 +11,90 @@ use pixiv_sdk::{
     transport::Transport,
 };
 use std::io::Write;
+use std::sync::{
+    Arc, Mutex,
+    atomic::{AtomicBool, Ordering},
+};
+
+struct SearchWriter<W> {
+    output: Arc<Mutex<W>>,
+    committed: Arc<AtomicBool>,
+}
+
+impl<W: Write> Write for SearchWriter<W> {
+    fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
+        self.committed.store(true, Ordering::Release);
+        self.output
+            .lock()
+            .unwrap_or_else(|error| error.into_inner())
+            .write(bytes)
+    }
+
+    fn flush(&mut self) -> std::io::Result<()> {
+        self.output
+            .lock()
+            .unwrap_or_else(|error| error.into_inner())
+            .flush()
+    }
+}
+
+pub async fn saved_artwork_search<T: Transport + 'static, W: Write + Send + 'static>(
+    execution: &Execution<T>,
+    context: &Context,
+    request: SearchArtworksRequest,
+    options: SearchOptions,
+    proxy: Option<&str>,
+    mode: crate::DetailOutput,
+    output: W,
+) -> Result<(), CommandError> {
+    options.validate_bookmark_strategy()?;
+    let output = Arc::new(Mutex::new(output));
+    let terminal_error = Arc::new(Mutex::new(None));
+    let retained = terminal_error.clone();
+    let result = execution
+        .use_client(
+            Some(context),
+            0,
+            proxy,
+            Some(Arc::new(move |_, client| {
+                let request = request.clone();
+                let options = options.clone();
+                let committed = Arc::new(AtomicBool::new(false));
+                let mut writer = SearchWriter {
+                    output: output.clone(),
+                    committed: committed.clone(),
+                };
+                let retained = retained.clone();
+                Box::pin(async move {
+                    let error =
+                        match artwork_search(&client, request, &options, mode, &mut writer).await {
+                            Ok(()) => None,
+                            Err(CommandError::Sdk(error)) => Some(SchedulerError::from(error)),
+                            Err(CommandError::App(error)) => Some(error),
+                            Err(error) => {
+                                let message = error.to_string();
+                                *retained.lock().unwrap_or_else(|error| error.into_inner()) =
+                                    Some(error);
+                                Some(SchedulerError::Message(message))
+                            }
+                        };
+                    UseOutcome {
+                        committed: committed.load(Ordering::Acquire),
+                        error,
+                    }
+                })
+            })),
+        )
+        .await;
+    if let Some(error) = terminal_error
+        .lock()
+        .unwrap_or_else(|error| error.into_inner())
+        .take()
+    {
+        return Err(error);
+    }
+    result.map_err(Into::into)
+}
 
 #[derive(Args, Clone, Debug)]
 pub struct SearchOptions {
@@ -63,6 +150,25 @@ impl Default for SearchOptions {
 }
 
 impl SearchOptions {
+    pub fn validate_bookmark_strategy(&self) -> Result<(), CommandError> {
+        if let Some(strategy) = &self.bookmark_strategy {
+            if self.bookmark_min.is_none() && self.bookmark_max.is_none() {
+                return Err(CommandError::Message(
+                    "--bookmark-strategy requires --bookmark-min or --bookmark-max",
+                ));
+            }
+            if !matches!(
+                strategy.as_str(),
+                "auto" | "local" | "best_effort" | "server"
+            ) {
+                return Err(CommandError::Message(
+                    "bookmark-strategy must be one of auto, local, best_effort, server",
+                ));
+            }
+        }
+        Ok(())
+    }
+
     pub fn request(
         &self,
         word: &str,
