@@ -1,4 +1,7 @@
-use crate::codec::{Payload, PayloadSeed, decode_base64, engine, normalize_json};
+use crate::codec::{
+    Payload, PayloadSeed, base64_diagnostic, decode_base64, engine, normalize_json,
+};
+use crate::error::Cause;
 pub use crate::resource_io::{
     OpenResourceRequest, RESOURCE_METHOD_GET, RESOURCE_METHOD_HEAD, ResourceHeaders,
     ResourceResponse,
@@ -66,7 +69,9 @@ impl ResourceRef {
 
     pub fn parse(text: &str) -> Result<Self> {
         if text.is_empty() {
-            return Err(reference_error("ResourceRef.UnmarshalText"));
+            return Err(
+                reference_error("ResourceRef.UnmarshalText").with_detail("empty reference text")
+            );
         }
         let reference = Self {
             text: text.to_owned(),
@@ -118,14 +123,28 @@ impl ResourceRef {
     }
 
     fn decode(&self) -> Result<Envelope> {
-        let raw =
-            decode_base64(&self.text, true).map_err(|_| reference_error("decodeResourceRef"))?;
-        let envelope: Envelope = serde_json::from_str(
-            &normalize_json(&raw).map_err(|_| reference_error("decodeResourceRef"))?,
-        )
-        .map_err(|_| reference_error("decodeResourceRef"))?;
-        if envelope.version != 1 || envelope.product.is_empty() || envelope.payload.length == 0 {
-            return Err(reference_error("decodeResourceRef"));
+        let raw = decode_base64(&self.text, true).map_err(|error| {
+            reference_error("decodeResourceRef")
+                .with_cause(Cause::Redacted(base64_diagnostic(&self.text, true, error)))
+        })?;
+        let normalized = normalize_json(&raw).map_err(|error| {
+            reference_error("decodeResourceRef").with_cause(Cause::Redacted(error.to_string()))
+        })?;
+        let envelope: Envelope = serde_json::from_str(&normalized).map_err(|error| {
+            reference_error("decodeResourceRef")
+                .with_cause(Cause::Redacted(envelope_json_diagnostic(&raw, error)))
+        })?;
+        if envelope.version != 1 {
+            return Err(
+                reference_error("decodeResourceRef").with_cause(Cause::Redacted(format!(
+                    "unsupported reference format version {}",
+                    envelope.version
+                ))),
+            );
+        }
+        if envelope.product.is_empty() || envelope.payload.length == 0 {
+            return Err(reference_error("decodeResourceRef")
+                .with_detail("reference missing product or payload"));
         }
         Ok(envelope)
     }
@@ -190,7 +209,15 @@ impl<'de> Deserialize<'de> for Envelope {
                                 envelope.product = product;
                             }
                         }
-                        "d" => map.next_value_seed(PayloadSeed(&mut envelope.payload))?,
+                        "d" => map.next_value_seed(PayloadSeed(&mut envelope.payload)).map_err(|error| {
+                            let message = error.to_string();
+                            let message = message.rsplit_once(" at line ").map_or(message.as_str(), |(message, _)| message);
+                            if message.starts_with("illegal base64 data at input byte ") {
+                                de::Error::custom(format!("json: cannot unmarshal string into Go struct field resourceRefEnvelope.d of type []uint8: {message}"))
+                            } else {
+                                error
+                            }
+                        })?,
                         _ => {
                             map.next_value::<IgnoredAny>()?;
                         }
@@ -201,4 +228,32 @@ impl<'de> Deserialize<'de> for Envelope {
         }
         deserializer.deserialize_map(EnvelopeVisitor)
     }
+}
+
+fn envelope_json_diagnostic(raw: &[u8], error: serde_json::Error) -> String {
+    if error.is_eof() {
+        return "unexpected end of JSON input".into();
+    }
+    if let Some(&byte) = raw
+        .iter()
+        .find(|byte| !matches!(byte, b' ' | b'\t' | b'\r' | b'\n'))
+        && !matches!(
+            byte,
+            b'{' | b'[' | b'"' | b'-' | b'0'..=b'9' | b't' | b'f' | b'n'
+        )
+    {
+        let character = match byte {
+            b'\'' => "\"'\"".into(),
+            b'\\' => "'\\\\'".into(),
+            0x20..=0x7e => format!("'{}'", char::from(byte)),
+            _ => format!("'\\x{byte:02x}'"),
+        };
+        return format!("invalid character {character} looking for beginning of value");
+    }
+    let message = error.to_string();
+    if message.starts_with("json: cannot unmarshal string into Go struct field resourceRefEnvelope.d of type []uint8: illegal base64 data at input byte ") {
+        return message.rsplit_once(" at line ").map_or_else(|| message.clone(), |(message, _)| message.to_owned());
+    }
+    // Other JSON syntax and type diagnostics still follow serde's parser.
+    message
 }

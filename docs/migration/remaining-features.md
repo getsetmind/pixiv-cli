@@ -6,7 +6,7 @@
 
 | 操作群 | 既存 Rust の部品 | 残る範囲 |
 | --- | --- | --- |
-| download・媒体処理 | SDK resource open/save、ugoira metadata、CLI metadata 試作 | Go の download 計画・進捗・record 入力・失敗/取消、MCP download/random recommendation、ugoira 取得/変換等の全 workflow |
+| download・媒体処理 | direct URL/opaque ResourceRefのshared report・CLI/MCP・保存済みExecution・SDK atomic save、ugoira metadata | 作品/PID/user/bookmark展開、record実行、ページ/quality/template計画、ugoira取得/変換、random recommendation。直リンクの対象比較だけでdownload全体を完了としない |
 | auth の残る契約 | CLI login/local/remote・hidden callback/install-handler・通常startup、SDK/app保存、default endpoint/handoff state、Linux XDG/Darwin/Windows backendへのadapterは接続済み | 全flag/help/TTY/raw-wire/取消・実browser/association/native OS検証、公開SDK HTTPClient ownership/idle-close。3つの新CLI入口はin_progressで、比較範囲は下記とcontracts.mdに分ける |
 | relay HTTP/2 transport | HTTP/1 relay listener・synthetic trustによるnative TLS | Go TLS serverのHTTP/2 negotiation/servingはactual Go testで確認したが、Rust relayはHTTP/1のみ。HTTP/2 capabilityは未移植であり、単なる検証不足としない |
 | OS URL-handler association | shared manifest・native browser/process、Linux XDG/Darwin/Windows ensure/disable/temp restore/delegate・ShellExecuteExW、CLI hooks/automatic startup policy | native OS/arch compile/link/runと実desktop integration・ACL・全IO/privilege/race |
@@ -50,3 +50,15 @@ auth check/refresh（full gate354passed・既存3ignored、対象fixture42root�
 各 checkpoint の scoped 比較成功と、操作全体の verified・最終切替を区別する。次の操作を終えたらこの一覧と台帳を更新し、未検証を削除して成功扱いにしない。
 
 - Windows associationは固定Go sourceのSHAを確認したmock比較。persistent first/repeat・failure residue・full registry treeのcopy/export/import・private backup・endpoint-first cleanup・wrapped exit-only absence・ownership substring・previous ProgID delegationを対象例で比較する。ShellExecuteExWはfull ABI/mask/null fields/showとcontext/UTF16/error orderingをmock検査する。native Windows compile/run・live HKCU・実Shell/registry loader・ACL・全IO/random/privilege/raceは未検証。temporary cleanupはGo同様2回目が復元済みtreeを消し、削除済みbackupのimport failureを無視する破壊的挙動があり、明示的な繰り返しを安全・idempotentとは扱わない。所有されたDropはexplicit cleanup後に再実行しない。CLIのowned installation adapterも自動cleanupを1回に限定する
+
+## 直リンク・opaque ResourceRef download の接続中
+
+app26行、CLI63行、MCP25行、root27行を固定Goで先に採取し、shared reportから実CLI/MCP stdio・保存済みclient・SDK atomic saveへ接続する。root実Linux子プロセスは安全な23行を選択し、native hook/read-error4行は実行しない。MCP通知取消はpublished prefixを残した通常RPC結果とし、downloadだけcooperative Contextで処理する。CLI writerはclient callback内で書き、保存後のwriter failureでファイルやcommitを戻さない。最終gateは終了0・226秒、contract555/raw556/ignored10・release42.91秒で成功し、scoped reviewと具体差分をcontracts.mdへ記録する。全downloadのverifiedとはしない。
+
+Go productionにはpersisted resume/job schemaがなく、download保存へのprogress callback注入もない。別のprogress rendererの存在をdownloadの新挙動へ読み替えない。作品/user/bookmark/record/ugoiraの受理済み入力をinvalid source・空成功へ隠さず、未移植errorとして残す。HTTP2 serving・余分なAccept header・公開SDK ownership/idle-close/direct Contextと全native OS/parser/wireの既存負債も引き続き残る。
+
+次の縦断候補はstatic illustration/mangaのPID・artwork URLであり、全5quality・pages・filename/directory templates・MIME publication・partial cancel/commitを一緒に固定する。MCP現在のstartup adapterはdownload_pathだけを渡すため、visual移植時はconfig templateも同じruntime境界から接続する。direct resourceはGoもtemplateを使わないので、その対象比較をvisual namingへ外挿しない。user/bookmarkの全visual kindとugoira・record・randomは別の残るworkflowとして保持する。
+
+実CLIのOS interrupt→Context配線は未移植。Go cmd/pixiv/main.goのNotifyContext(os.Interrupt)と、Rustの手動Context/MCP通知取消を区別する。実Ctrl-C時のatomic temp cleanup・終了動作を今回の取消testだけで成功扱いしない。
+
+次の優先checkpointは実CLI os.Interrupt→Contextとowned subprocess/synthetic IOによるcleanup/終了の比較であり、static download拡張より先に行う。loginのGo detached Background contextとMCP graceful closeをroot取消のbroadcastへ変えない。

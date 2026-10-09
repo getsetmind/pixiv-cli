@@ -13,6 +13,7 @@ type ResponseFuture<'a> = Pin<Box<dyn Future<Output = Value> + 'a>>;
 type ToolFuture<'a> = Pin<Box<dyn Future<Output = Value> + 'a>>;
 
 enum ToolInput {
+    Download(crate::download::DownloadInput),
     CommentRead(crate::CommentRead, crate::CommentReadInput),
     CommentMutation(crate::CommentMutation, crate::CommentMutationInput),
     MyPixiv(crate::MyPixiv, crate::MyPixivInput),
@@ -45,14 +46,46 @@ struct Session {
     log_level: String,
 }
 
+enum InflightRequest {
+    Abort(AbortHandle),
+    Download(pixiv_app::lifecycle::Context),
+}
+impl InflightRequest {
+    fn cancel(&self) {
+        match self {
+            Self::Abort(handle) => handle.abort(),
+            Self::Download(context) => context.cancel(),
+        }
+    }
+}
+
 pub async fn serve<T: Transport, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
     client: &Client<T>,
+    input: R,
+    output: &mut W,
+) -> io::Result<()> {
+    serve_client_inner(client, None, input, output).await
+}
+
+pub async fn serve_with_download<T: Transport, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
+    client: &Client<T>,
+    download: &crate::download::DownloadExecutor,
+    input: R,
+    output: &mut W,
+) -> io::Result<()> {
+    serve_client_inner(client, Some(download), input, output).await
+}
+
+async fn serve_client_inner<T: Transport, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
+    client: &Client<T>,
+    download: Option<&crate::download::DownloadExecutor>,
     input: R,
     output: &mut W,
 ) -> io::Result<()> {
     let invoke = |input| -> ToolFuture<'_> {
         Box::pin(async move {
             match input {
+                ToolInput::Download(_) => missing_download_executor(),
                 ToolInput::CommentRead(kind, input) => {
                     serde_json::to_value(crate::comment_read(client, kind, input).await)
                         .expect("tool result is serializable")
@@ -152,7 +185,7 @@ pub async fn serve<T: Transport, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
             }
         })
     };
-    serve_with(&invoke, input, output).await
+    serve_with(&invoke, download, input, output).await
 }
 
 pub async fn serve_saved<T: Transport + 'static, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
@@ -173,10 +206,35 @@ pub async fn serve_saved_with_proxy<
     input: R,
     output: &mut W,
 ) -> io::Result<()> {
+    serve_saved_inner(execution, proxy, None, input, output).await
+}
+
+pub async fn serve_saved_with_download<
+    T: Transport + 'static,
+    R: AsyncRead + Unpin,
+    W: AsyncWrite + Unpin,
+>(
+    execution: &pixiv_app::execution::Execution<T>,
+    proxy: Option<&str>,
+    download: &crate::download::DownloadExecutor,
+    input: R,
+    output: &mut W,
+) -> io::Result<()> {
+    serve_saved_inner(execution, proxy, Some(download), input, output).await
+}
+
+async fn serve_saved_inner<T: Transport + 'static, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
+    execution: &pixiv_app::execution::Execution<T>,
+    proxy: Option<&str>,
+    download: Option<&crate::download::DownloadExecutor>,
+    input: R,
+    output: &mut W,
+) -> io::Result<()> {
     let invoke = |input| -> ToolFuture<'_> {
         Box::pin(async move {
             let context = pixiv_app::lifecycle::Context::new();
             match input {
+                ToolInput::Download(_) => missing_download_executor(),
                 ToolInput::CommentRead(kind, input) => serde_json::to_value(
                     crate::comment_reads::saved_read(execution, &context, kind, input, proxy).await,
                 )
@@ -288,11 +346,12 @@ pub async fn serve_saved_with_proxy<
             }
         })
     };
-    serve_with(&invoke, input, output).await
+    serve_with(&invoke, download, input, output).await
 }
 
 async fn serve_with<'a, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
     invoke: &impl Fn(ToolInput) -> ToolFuture<'a>,
+    download: Option<&crate::download::DownloadExecutor>,
     input: R,
     output: &mut W,
 ) -> io::Result<()> {
@@ -300,7 +359,7 @@ async fn serve_with<'a, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
     let mut session = Session::default();
     let mut pending: FuturesUnordered<ResponseFuture<'_>> = FuturesUnordered::new();
     let mut eof = false;
-    let mut inflight = BTreeMap::new();
+    let mut inflight: BTreeMap<String, InflightRequest> = BTreeMap::new();
     loop {
         tokio::select! {
                    line = lines.next_line(), if !eof => {
@@ -312,7 +371,7 @@ async fn serve_with<'a, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
                                && let Some(id) = message["params"].get("requestId")
                                && let Some(handle) = inflight.get(&id.to_string())
                            {
-                               AbortHandle::abort(handle);
+                               handle.cancel();
                            }
                            continue;
                        }
@@ -332,7 +391,7 @@ async fn serve_with<'a, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
                            }
                            "ping" => success(id, json!({})),
                            _ if !session.initialized => protocol_error(id,0,format!("method {method:?} is invalid during session initialization")),
-                           "tools/list" => success(id,json!({"tools":[illust_detail_tool(),crate::search_illust_tool(),crate::trending_tags_illust_tool(),crate::illust_ranking_tool(),crate::novel_detail_tool(),crate::search_novel_tool(),crate::user_detail_tool(),crate::search_user_tool(),crate::mutation_tool(crate::MutationAction::AddBookmark),crate::mutation_tool(crate::MutationAction::RemoveBookmark),crate::mutation_tool(crate::MutationAction::AddNovelBookmark),crate::mutation_tool(crate::MutationAction::RemoveNovelBookmark),crate::mutation_tool(crate::MutationAction::FollowUser),crate::mutation_tool(crate::MutationAction::UnfollowUser),crate::novel_series_tool(),crate::novel_content_tool(),crate::illust_series_tool(),crate::illust_related_tool(),crate::illust_recommended_tool(),crate::recommended_tool(),crate::user_artworks_tool(),crate::user_novels_tool(),crate::user_relationship_tool(crate::UserRelationship::Following),crate::user_relationship_tool(crate::UserRelationship::Followers),crate::user_relationship_tool(crate::UserRelationship::Related),crate::user_relationship_tool(crate::UserRelationship::Blocked),crate::bookmark_list_tool(crate::BookmarkList::Artwork),crate::bookmark_list_tool(crate::BookmarkList::Novel),crate::bookmark_list_tool(crate::BookmarkList::All),crate::bookmark_read_tool(crate::BookmarkRead::ArtworkDetail),crate::bookmark_read_tool(crate::BookmarkRead::NovelDetail),crate::bookmark_read_tool(crate::BookmarkRead::ArtworkTags),crate::bookmark_read_tool(crate::BookmarkRead::NovelTags),crate::bookmark_read_tool(crate::BookmarkRead::AllTags),crate::timeline_tool(crate::Timeline::IllustFollowing),crate::timeline_tool(crate::Timeline::NovelFollowing),crate::timeline_tool(crate::Timeline::IllustLatest),crate::timeline_tool(crate::Timeline::NovelLatest),crate::my_pixiv_tool(crate::MyPixiv::Artworks),crate::my_pixiv_tool(crate::MyPixiv::Novels),crate::my_pixiv_tool(crate::MyPixiv::Users),crate::comment_read_tool(crate::CommentRead::Artwork),crate::comment_read_tool(crate::CommentRead::Novel),crate::comment_mutation_tool(crate::CommentMutation::CreateArtwork),crate::comment_mutation_tool(crate::CommentMutation::ReplyArtwork),crate::comment_mutation_tool(crate::CommentMutation::DeleteArtwork),crate::comment_mutation_tool(crate::CommentMutation::StampArtwork),crate::comment_mutation_tool(crate::CommentMutation::CreateNovel),crate::comment_mutation_tool(crate::CommentMutation::ReplyNovel),crate::comment_mutation_tool(crate::CommentMutation::DeleteNovel),crate::comment_mutation_tool(crate::CommentMutation::StampNovel)]})),
+                           "tools/list" => success(id,json!({"tools":[illust_detail_tool(),crate::search_illust_tool(),crate::trending_tags_illust_tool(),crate::illust_ranking_tool(),crate::novel_detail_tool(),crate::search_novel_tool(),crate::user_detail_tool(),crate::search_user_tool(),crate::mutation_tool(crate::MutationAction::AddBookmark),crate::mutation_tool(crate::MutationAction::RemoveBookmark),crate::mutation_tool(crate::MutationAction::AddNovelBookmark),crate::mutation_tool(crate::MutationAction::RemoveNovelBookmark),crate::mutation_tool(crate::MutationAction::FollowUser),crate::mutation_tool(crate::MutationAction::UnfollowUser),crate::novel_series_tool(),crate::novel_content_tool(),crate::illust_series_tool(),crate::illust_related_tool(),crate::illust_recommended_tool(),crate::recommended_tool(),crate::user_artworks_tool(),crate::user_novels_tool(),crate::user_relationship_tool(crate::UserRelationship::Following),crate::user_relationship_tool(crate::UserRelationship::Followers),crate::user_relationship_tool(crate::UserRelationship::Related),crate::user_relationship_tool(crate::UserRelationship::Blocked),crate::bookmark_list_tool(crate::BookmarkList::Artwork),crate::bookmark_list_tool(crate::BookmarkList::Novel),crate::bookmark_list_tool(crate::BookmarkList::All),crate::bookmark_read_tool(crate::BookmarkRead::ArtworkDetail),crate::bookmark_read_tool(crate::BookmarkRead::NovelDetail),crate::bookmark_read_tool(crate::BookmarkRead::ArtworkTags),crate::bookmark_read_tool(crate::BookmarkRead::NovelTags),crate::bookmark_read_tool(crate::BookmarkRead::AllTags),crate::timeline_tool(crate::Timeline::IllustFollowing),crate::timeline_tool(crate::Timeline::NovelFollowing),crate::timeline_tool(crate::Timeline::IllustLatest),crate::timeline_tool(crate::Timeline::NovelLatest),crate::my_pixiv_tool(crate::MyPixiv::Artworks),crate::my_pixiv_tool(crate::MyPixiv::Novels),crate::my_pixiv_tool(crate::MyPixiv::Users),crate::comment_read_tool(crate::CommentRead::Artwork),crate::comment_read_tool(crate::CommentRead::Novel),crate::comment_mutation_tool(crate::CommentMutation::CreateArtwork),crate::comment_mutation_tool(crate::CommentMutation::ReplyArtwork),crate::comment_mutation_tool(crate::CommentMutation::DeleteArtwork),crate::comment_mutation_tool(crate::CommentMutation::StampArtwork),crate::comment_mutation_tool(crate::CommentMutation::CreateNovel),crate::comment_mutation_tool(crate::CommentMutation::ReplyNovel),crate::comment_mutation_tool(crate::CommentMutation::DeleteNovel),crate::comment_mutation_tool(crate::CommentMutation::StampNovel),crate::download::download_tool()]})),
                            "logging/setLevel" => {
                                if params.is_none() || params.is_some_and(Value::is_null) {
                                    protocol_error(id,-32600,"invalid request: missing required \"params\"".into())
@@ -344,16 +403,27 @@ async fn serve_with<'a, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
                            "tools/call" => {
                                if let Some(params) = params.filter(|value| !value.is_null()) {
                                    let name = params["name"].as_str().unwrap_or_default();
-                                   if crate::CommentMutation::from_name(name).is_none() && crate::CommentRead::from_name(name).is_none() && crate::MyPixiv::from_name(name).is_none() && crate::Timeline::from_name(name).is_none() && crate::BookmarkRead::from_name(name).is_none() && crate::BookmarkList::from_name(name).is_none() && crate::UserRelationship::from_name(name).is_none() && crate::MutationAction::from_name(name).is_none() && !matches!(name, "user_artworks" | "user_novels" | "recommended" | "illust_related" | "illust_recommended" | "illust_detail" | "search_illust" | "trending_tags_illust" | "illust_ranking" | "novel_detail" | "illust_series" | "novel_series" | "novel_content" | "search_novel" | "user_detail" | "search_user") {
+                                   if crate::CommentMutation::from_name(name).is_none() && crate::CommentRead::from_name(name).is_none() && crate::MyPixiv::from_name(name).is_none() && crate::Timeline::from_name(name).is_none() && crate::BookmarkRead::from_name(name).is_none() && crate::BookmarkList::from_name(name).is_none() && crate::UserRelationship::from_name(name).is_none() && crate::MutationAction::from_name(name).is_none() && !matches!(name, "download" | "user_artworks" | "user_novels" | "recommended" | "illust_related" | "illust_recommended" | "illust_detail" | "search_illust" | "trending_tags_illust" | "illust_ranking" | "novel_detail" | "illust_series" | "novel_series" | "novel_content" | "search_novel" | "user_detail" | "search_user") {
                                        protocol_error(id,-32602,format!("unknown tool {name:?}"))
                                    } else {
-                                       let input = if let Some(action)=crate::CommentMutation::from_name(name) {crate::comment_mutations::decode(action,params.get("arguments")).map(|input|ToolInput::CommentMutation(action,input))} else if let Some(kind)=crate::CommentRead::from_name(name) {crate::comment_reads::decode(kind,params.get("arguments")).map(|input|ToolInput::CommentRead(kind,input))} else if let Some(kind)=crate::MyPixiv::from_name(name) {crate::mypixiv::decode(kind,params.get("arguments")).map(|input|ToolInput::MyPixiv(kind,input))} else if let Some(kind)=crate::Timeline::from_name(name) {crate::timeline::decode(kind,params.get("arguments")).map(|input|ToolInput::Timeline(kind,input))} else if let Some(kind)=crate::BookmarkRead::from_name(name) {crate::bookmark_reads::decode(kind,params.get("arguments")).map(|input|ToolInput::BookmarkRead(kind,input))} else if let Some(kind)=crate::BookmarkList::from_name(name) {crate::bookmark_lists::decode(kind,params.get("arguments")).map(|input|ToolInput::BookmarkList(kind,input))} else if let Some(kind)=crate::UserRelationship::from_name(name) {crate::user_relationships::decode(kind,params.get("arguments")).map(|input|ToolInput::UserRelationship(kind,input))} else if let Some(action) = crate::MutationAction::from_name(name) {crate::mutation::decode(action,params.get("arguments")).map(|input|ToolInput::Mutation(action,input))} else if name=="user_artworks" {crate::user_works::decode_artworks(params.get("arguments")).map(ToolInput::UserArtworks)} else if name=="user_novels" {crate::user_works::decode_novels(params.get("arguments")).map(ToolInput::UserNovels)} else if name=="recommended" {crate::recommended::decode(params.get("arguments")).map(ToolInput::MixedRecommended)} else if name=="illust_related" {crate::artwork_feed::decode_related(params.get("arguments")).map(ToolInput::Related)} else if name=="illust_recommended" {crate::artwork_feed::decode_recommended(params.get("arguments")).map(ToolInput::Recommended)} else if name=="search_user" {crate::user_search::decode(params.get("arguments")).map(ToolInput::UserSearch)} else if name=="user_detail" {crate::user::decode(params.get("arguments")).map(ToolInput::User)} else if name=="search_novel" {crate::novel_search::decode(params.get("arguments")).map(ToolInput::NovelSearch)} else if name == "illust_series" {crate::illust_series::decode(params.get("arguments")).map(ToolInput::IllustSeries)} else if name == "novel_series" {crate::novel_series::decode(params.get("arguments")).map(ToolInput::NovelSeries)} else if name == "novel_content" {crate::novel_content::decode(params.get("arguments")).map(ToolInput::NovelContent)} else if name == "novel_detail" { crate::novel::decode(params.get("arguments")).map(ToolInput::Novel) } else if name == "search_illust" {
+                                       let input = if name == "download" { crate::download::decode_download(params.get("arguments")).map(ToolInput::Download) } else if let Some(action)=crate::CommentMutation::from_name(name) {crate::comment_mutations::decode(action,params.get("arguments")).map(|input|ToolInput::CommentMutation(action,input))} else if let Some(kind)=crate::CommentRead::from_name(name) {crate::comment_reads::decode(kind,params.get("arguments")).map(|input|ToolInput::CommentRead(kind,input))} else if let Some(kind)=crate::MyPixiv::from_name(name) {crate::mypixiv::decode(kind,params.get("arguments")).map(|input|ToolInput::MyPixiv(kind,input))} else if let Some(kind)=crate::Timeline::from_name(name) {crate::timeline::decode(kind,params.get("arguments")).map(|input|ToolInput::Timeline(kind,input))} else if let Some(kind)=crate::BookmarkRead::from_name(name) {crate::bookmark_reads::decode(kind,params.get("arguments")).map(|input|ToolInput::BookmarkRead(kind,input))} else if let Some(kind)=crate::BookmarkList::from_name(name) {crate::bookmark_lists::decode(kind,params.get("arguments")).map(|input|ToolInput::BookmarkList(kind,input))} else if let Some(kind)=crate::UserRelationship::from_name(name) {crate::user_relationships::decode(kind,params.get("arguments")).map(|input|ToolInput::UserRelationship(kind,input))} else if let Some(action) = crate::MutationAction::from_name(name) {crate::mutation::decode(action,params.get("arguments")).map(|input|ToolInput::Mutation(action,input))} else if name=="user_artworks" {crate::user_works::decode_artworks(params.get("arguments")).map(ToolInput::UserArtworks)} else if name=="user_novels" {crate::user_works::decode_novels(params.get("arguments")).map(ToolInput::UserNovels)} else if name=="recommended" {crate::recommended::decode(params.get("arguments")).map(ToolInput::MixedRecommended)} else if name=="illust_related" {crate::artwork_feed::decode_related(params.get("arguments")).map(ToolInput::Related)} else if name=="illust_recommended" {crate::artwork_feed::decode_recommended(params.get("arguments")).map(ToolInput::Recommended)} else if name=="search_user" {crate::user_search::decode(params.get("arguments")).map(ToolInput::UserSearch)} else if name=="user_detail" {crate::user::decode(params.get("arguments")).map(ToolInput::User)} else if name=="search_novel" {crate::novel_search::decode(params.get("arguments")).map(ToolInput::NovelSearch)} else if name == "illust_series" {crate::illust_series::decode(params.get("arguments")).map(ToolInput::IllustSeries)} else if name == "novel_series" {crate::novel_series::decode(params.get("arguments")).map(ToolInput::NovelSeries)} else if name == "novel_content" {crate::novel_content::decode(params.get("arguments")).map(ToolInput::NovelContent)} else if name == "novel_detail" { crate::novel::decode(params.get("arguments")).map(ToolInput::Novel) } else if name == "search_illust" {
                                            crate::search::decode(params.get("arguments")).map(|input| ToolInput::Search(Box::new(input)))
                                        } else if name == "illust_ranking" { crate::ranking::decode(params.get("arguments")).map(|input|ToolInput::Ranking(Box::new(input))) } else if name == "trending_tags_illust" { crate::trending::decode(params.get("arguments")).map(|()|ToolInput::Trending) } else { decode_reference(params.get("arguments")).map(ToolInput::Detail) };
                                        match input {
                                            Ok(input) => {
+                                               if let ToolInput::Download(download_input) = &input
+                                                   && let Some(execute) = download
+                                               {
+                                                   let context = pixiv_app::lifecycle::Context::new();
+                                                   inflight.insert(id.to_string(), InflightRequest::Download(context.clone()));
+                                                   let future = execute(context, download_input.clone());
+                                                   pending.push(Box::pin(async move {
+                                                       success(id, serde_json::to_value(future.await).expect("tool result is serializable"))
+                                                   }));
+                                                   continue;
+                                               }
                                                let (handle, registration) = AbortHandle::new_pair();
-                                               inflight.insert(id.to_string(), handle);
+                                               inflight.insert(id.to_string(), InflightRequest::Abort(handle));
                                                pending.push(Box::pin(async move {
                                                    let comment_mutation = match &input {ToolInput::CommentMutation(action,input)=>Some((*action,input.clone())),_=>None};
                                                    let mutation = match &input {ToolInput::Mutation(action,input)=>Some((*action,input.clone())),_=>None};
@@ -409,6 +479,11 @@ async fn serve_with<'a, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
                }
     }
     output.flush().await
+}
+
+fn missing_download_executor() -> Value {
+    let text = "Could not download sources: download resource client is not configured";
+    json!({"content":[{"type":"text","text":text}],"structuredContent":{"delivery":"local_path","items":[],"failures":[],"warnings":[],"files":[],"text":text},"isError":true})
 }
 
 async fn write_response<W: AsyncWrite + Unpin>(output: &mut W, response: Value) -> io::Result<()> {

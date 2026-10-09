@@ -1,0 +1,1159 @@
+{
+  "reference": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "source_sha256": "2ea84cf1ab3eaf8bec1b3dc5b2f5162ba48071b0a7ae5e2a950043dcc4867979",
+  "evidence": "Genuine Go DownloadService.DownloadSources using the existing narrowed DownloadTargetClient stub and synthetic local file writes. No network, auth, media conversion, progress injection or resume state. Paths normalize only isolated absolute/relative temporary roots.",
+  "deferred": [
+    "Positive numeric PID and valid Pixiv artwork URLs dispatch to the configured artwork manager, deduplicate IDs, and execute before direct resources; they are valid sources, not invalid direct sources.",
+    "Valid Pixiv user URLs expand illustration/manga/ugoira pages; bookmark URLs traverse public bookmark pages. Preserve cancellation and per-kind failures in that later vertical checkpoint.",
+    "SDK direct URL resource policy, transport, atomic publication, credentials and real media are outside this application orchestration fixture.",
+    "Native Windows filesystem behavior and full CLI/MCP download wiring remain unverified."
+  ],
+  "cases": [
+    {
+      "capture_diagnostics": true,
+      "name": "empty_sources",
+      "sources": [],
+      "download_path": "${ROOT}",
+      "expected": {
+        "diagnostics": [
+          {
+            "module": "Pixiv download",
+            "kind": "started",
+            "operation": "download 0 sources",
+            "count": 0,
+            "reason": ""
+          },
+          {
+            "module": "Pixiv download",
+            "kind": "failed",
+            "operation": "download sources",
+            "count": 0,
+            "reason": "command failed"
+          }
+        ],
+        "calls": [],
+        "items": [],
+        "failures": [],
+        "warning_count": 0,
+        "committed": false,
+        "error": "at least one download source is required",
+        "error_kind": "plain"
+      }
+    },
+    {
+      "name": "direct_signed_sanitized",
+      "sources": [
+        "  https://i.pximg.net/a/photo%3A%7C.png?signature=secret  "
+      ],
+      "download_path": "${ROOT}",
+      "ignore_artwork_options": true,
+      "expected": {
+        "calls": [
+          {
+            "kind": "url",
+            "source": "https://i.pximg.net/a/photo%3A%7C.png?signature=secret",
+            "path": "${ROOT}/photo__-e463faa07f83.png"
+          }
+        ],
+        "items": [
+          {
+            "illust_id": 0,
+            "title": "",
+            "author": "",
+            "type": "resource",
+            "path": "${ROOT}/photo__-e463faa07f83.png",
+            "page": 1,
+            "bytes": 15,
+            "body": "synthetic-image"
+          }
+        ],
+        "failures": [],
+        "warning_count": 0,
+        "committed": true,
+        "error": "",
+        "error_kind": ""
+      }
+    },
+    {
+      "name": "opaque_ref",
+      "sources": [
+        "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9"
+      ],
+      "download_path": "${ROOT}",
+      "expected": {
+        "calls": [
+          {
+            "kind": "ref",
+            "source": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9",
+            "path": "${ROOT}/resource-c420535574e25a7dd450a6c26ee5afc1b3baeed4d8c8955b942e934c52da6a8d"
+          }
+        ],
+        "items": [
+          {
+            "illust_id": 0,
+            "title": "",
+            "author": "",
+            "type": "resource",
+            "path": "${ROOT}/resource-c420535574e25a7dd450a6c26ee5afc1b3baeed4d8c8955b942e934c52da6a8d",
+            "page": 1,
+            "bytes": 15,
+            "body": "synthetic-image"
+          }
+        ],
+        "failures": [],
+        "warning_count": 0,
+        "committed": true,
+        "error": "",
+        "error_kind": ""
+      }
+    },
+    {
+      "capture_diagnostics": true,
+      "name": "refs_before_urls_duplicates",
+      "sources": [
+        "https://i.pximg.net/a/photo.png?signature=secret\u0026token=hidden",
+        "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9",
+        "https://i.pximg.net/a/photo.png?signature=secret\u0026token=hidden",
+        "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TVgwPSJ9",
+        "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9"
+      ],
+      "download_path": "${ROOT}",
+      "expected": {
+        "diagnostics": [
+          {
+            "module": "Pixiv download",
+            "kind": "started",
+            "operation": "download 5 sources",
+            "count": 0,
+            "reason": ""
+          },
+          {
+            "module": "Pixiv download",
+            "kind": "completed",
+            "operation": "download sources",
+            "count": 5,
+            "reason": ""
+          }
+        ],
+        "calls": [
+          {
+            "kind": "ref",
+            "source": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9",
+            "path": "${ROOT}/resource-c420535574e25a7dd450a6c26ee5afc1b3baeed4d8c8955b942e934c52da6a8d"
+          },
+          {
+            "kind": "ref",
+            "source": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TVgwPSJ9",
+            "path": "${ROOT}/resource-a11390b87bb1da80c79f558562cdd4d2d63616199c1a369f39c874243b51b70a"
+          },
+          {
+            "kind": "ref",
+            "source": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9",
+            "path": "${ROOT}/resource-c420535574e25a7dd450a6c26ee5afc1b3baeed4d8c8955b942e934c52da6a8d"
+          },
+          {
+            "kind": "url",
+            "source": "https://i.pximg.net/a/photo.png?signature=secret\u0026token=hidden",
+            "path": "${ROOT}/photo-206a55e861e5.png"
+          },
+          {
+            "kind": "url",
+            "source": "https://i.pximg.net/a/photo.png?signature=secret\u0026token=hidden",
+            "path": "${ROOT}/photo-206a55e861e5.png"
+          }
+        ],
+        "items": [
+          {
+            "illust_id": 0,
+            "title": "",
+            "author": "",
+            "type": "resource",
+            "path": "${ROOT}/resource-c420535574e25a7dd450a6c26ee5afc1b3baeed4d8c8955b942e934c52da6a8d",
+            "page": 1,
+            "bytes": 15,
+            "body": "synthetic-image"
+          },
+          {
+            "illust_id": 0,
+            "title": "",
+            "author": "",
+            "type": "resource",
+            "path": "${ROOT}/resource-a11390b87bb1da80c79f558562cdd4d2d63616199c1a369f39c874243b51b70a",
+            "page": 1,
+            "bytes": 15,
+            "body": "synthetic-image"
+          },
+          {
+            "illust_id": 0,
+            "title": "",
+            "author": "",
+            "type": "resource",
+            "path": "${ROOT}/resource-c420535574e25a7dd450a6c26ee5afc1b3baeed4d8c8955b942e934c52da6a8d",
+            "page": 1,
+            "bytes": 15,
+            "body": "synthetic-image"
+          },
+          {
+            "illust_id": 0,
+            "title": "",
+            "author": "",
+            "type": "resource",
+            "path": "${ROOT}/photo-206a55e861e5.png",
+            "page": 1,
+            "bytes": 15,
+            "body": "synthetic-image"
+          },
+          {
+            "illust_id": 0,
+            "title": "",
+            "author": "",
+            "type": "resource",
+            "path": "${ROOT}/photo-206a55e861e5.png",
+            "page": 1,
+            "bytes": 15,
+            "body": "synthetic-image"
+          }
+        ],
+        "failures": [],
+        "warning_count": 0,
+        "committed": true,
+        "error": "",
+        "error_kind": ""
+      }
+    },
+    {
+      "name": "same_basename_distinct_paths",
+      "sources": [
+        "https://i.pximg.net/a/photo.png",
+        "https://i.pximg.net/b/photo.png"
+      ],
+      "download_path": "${ROOT}",
+      "expected": {
+        "calls": [
+          {
+            "kind": "url",
+            "source": "https://i.pximg.net/a/photo.png",
+            "path": "${ROOT}/photo-68f8abd7751d.png"
+          },
+          {
+            "kind": "url",
+            "source": "https://i.pximg.net/b/photo.png",
+            "path": "${ROOT}/photo-1678737f9f48.png"
+          }
+        ],
+        "items": [
+          {
+            "illust_id": 0,
+            "title": "",
+            "author": "",
+            "type": "resource",
+            "path": "${ROOT}/photo-68f8abd7751d.png",
+            "page": 1,
+            "bytes": 15,
+            "body": "synthetic-image"
+          },
+          {
+            "illust_id": 0,
+            "title": "",
+            "author": "",
+            "type": "resource",
+            "path": "${ROOT}/photo-1678737f9f48.png",
+            "page": 1,
+            "bytes": 15,
+            "body": "synthetic-image"
+          }
+        ],
+        "failures": [],
+        "warning_count": 0,
+        "committed": true,
+        "error": "",
+        "error_kind": ""
+      }
+    },
+    {
+      "name": "same_basename_distinct_queries",
+      "sources": [
+        "https://i.pximg.net/a/photo.png?signature=secret\u0026token=hidden",
+        "https://i.pximg.net/a/photo.png?signature=second\u0026token=hidden"
+      ],
+      "download_path": "${ROOT}",
+      "expected": {
+        "calls": [
+          {
+            "kind": "url",
+            "source": "https://i.pximg.net/a/photo.png?signature=secret\u0026token=hidden",
+            "path": "${ROOT}/photo-206a55e861e5.png"
+          },
+          {
+            "kind": "url",
+            "source": "https://i.pximg.net/a/photo.png?signature=second\u0026token=hidden",
+            "path": "${ROOT}/photo-88b5a9bc6156.png"
+          }
+        ],
+        "items": [
+          {
+            "illust_id": 0,
+            "title": "",
+            "author": "",
+            "type": "resource",
+            "path": "${ROOT}/photo-206a55e861e5.png",
+            "page": 1,
+            "bytes": 15,
+            "body": "synthetic-image"
+          },
+          {
+            "illust_id": 0,
+            "title": "",
+            "author": "",
+            "type": "resource",
+            "path": "${ROOT}/photo-88b5a9bc6156.png",
+            "page": 1,
+            "bytes": 15,
+            "body": "synthetic-image"
+          }
+        ],
+        "failures": [],
+        "warning_count": 0,
+        "committed": true,
+        "error": "",
+        "error_kind": ""
+      }
+    },
+    {
+      "name": "relative_download_root",
+      "sources": [
+        "https://i.pximg.net/a/photo.png?signature=secret\u0026token=hidden",
+        "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9"
+      ],
+      "download_path": "${REL}/nested",
+      "expected": {
+        "calls": [
+          {
+            "kind": "ref",
+            "source": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9",
+            "path": "${REL}/nested/resource-c420535574e25a7dd450a6c26ee5afc1b3baeed4d8c8955b942e934c52da6a8d"
+          },
+          {
+            "kind": "url",
+            "source": "https://i.pximg.net/a/photo.png?signature=secret\u0026token=hidden",
+            "path": "${REL}/nested/photo-206a55e861e5.png"
+          }
+        ],
+        "items": [
+          {
+            "illust_id": 0,
+            "title": "",
+            "author": "",
+            "type": "resource",
+            "path": "${REL}/nested/resource-c420535574e25a7dd450a6c26ee5afc1b3baeed4d8c8955b942e934c52da6a8d",
+            "page": 1,
+            "bytes": 15,
+            "body": "synthetic-image"
+          },
+          {
+            "illust_id": 0,
+            "title": "",
+            "author": "",
+            "type": "resource",
+            "path": "${REL}/nested/photo-206a55e861e5.png",
+            "page": 1,
+            "bytes": 15,
+            "body": "synthetic-image"
+          }
+        ],
+        "failures": [],
+        "warning_count": 0,
+        "committed": true,
+        "error": "",
+        "error_kind": ""
+      }
+    },
+    {
+      "name": "path_cleaning",
+      "sources": [
+        "https://i.pximg.net/a/photo.png?signature=secret\u0026token=hidden"
+      ],
+      "download_path": "${ROOT}/nested/../images",
+      "expected": {
+        "calls": [
+          {
+            "kind": "url",
+            "source": "https://i.pximg.net/a/photo.png?signature=secret\u0026token=hidden",
+            "path": "${ROOT}/images/photo-206a55e861e5.png"
+          }
+        ],
+        "items": [
+          {
+            "illust_id": 0,
+            "title": "",
+            "author": "",
+            "type": "resource",
+            "path": "${ROOT}/images/photo-206a55e861e5.png",
+            "page": 1,
+            "bytes": 15,
+            "body": "synthetic-image"
+          }
+        ],
+        "failures": [],
+        "warning_count": 0,
+        "committed": true,
+        "error": "",
+        "error_kind": ""
+      }
+    },
+    {
+      "name": "empty_download_root",
+      "sources": [
+        "https://i.pximg.net/a/photo.png?signature=secret\u0026token=hidden",
+        "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9"
+      ],
+      "download_path": "",
+      "expected": {
+        "calls": [],
+        "items": [],
+        "failures": [
+          {
+            "url": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9",
+            "type": "",
+            "message": "download path is required for direct resource sources",
+            "cause_message": "download path is required for direct resource sources",
+            "cause_kind": "plain",
+            "cause_reason": "",
+            "code": ""
+          },
+          {
+            "url": "[redacted source]",
+            "type": "resource",
+            "message": "download path is required for direct resource sources",
+            "cause_message": "download path is required for direct resource sources",
+            "cause_kind": "plain",
+            "cause_reason": "",
+            "code": ""
+          }
+        ],
+        "warning_count": 0,
+        "committed": false,
+        "error": "",
+        "error_kind": ""
+      }
+    },
+    {
+      "name": "blank_download_root",
+      "sources": [
+        "https://i.pximg.net/a/photo.png?signature=secret\u0026token=hidden",
+        "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9"
+      ],
+      "download_path": "  ",
+      "expected": {
+        "calls": [],
+        "items": [],
+        "failures": [
+          {
+            "url": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9",
+            "type": "",
+            "message": "download path is required for direct resource sources",
+            "cause_message": "download path is required for direct resource sources",
+            "cause_kind": "plain",
+            "cause_reason": "",
+            "code": ""
+          },
+          {
+            "url": "[redacted source]",
+            "type": "resource",
+            "message": "download path is required for direct resource sources",
+            "cause_message": "download path is required for direct resource sources",
+            "cause_kind": "plain",
+            "cause_reason": "",
+            "code": ""
+          }
+        ],
+        "warning_count": 0,
+        "committed": false,
+        "error": "",
+        "error_kind": ""
+      }
+    },
+    {
+      "name": "invalid_source_redacted",
+      "sources": [
+        "not-a-source?signature=secret",
+        "ftp://i.pximg.net/a/photo.png",
+        "0",
+        "-1"
+      ],
+      "download_path": "${ROOT}",
+      "expected": {
+        "calls": [],
+        "items": [],
+        "failures": [
+          {
+            "url": "[redacted source]",
+            "type": "",
+            "message": "download source is invalid",
+            "cause_message": "sdk:decodeResourceRef: invalid_argument: illegal base64 data at input byte 12",
+            "cause_kind": "sdk",
+            "cause_reason": "invalid_argument",
+            "code": ""
+          },
+          {
+            "url": "[redacted source]",
+            "type": "",
+            "message": "download source is invalid",
+            "cause_message": "sdk:decodeResourceRef: invalid_argument: illegal base64 data at input byte 3",
+            "cause_kind": "sdk",
+            "cause_reason": "invalid_argument",
+            "code": ""
+          },
+          {
+            "url": "[redacted source]",
+            "type": "",
+            "message": "download source is invalid",
+            "cause_message": "sdk:decodeResourceRef: invalid_argument: illegal base64 data at input byte 0",
+            "cause_kind": "sdk",
+            "cause_reason": "invalid_argument",
+            "code": ""
+          },
+          {
+            "url": "[redacted source]",
+            "type": "",
+            "message": "download source is invalid",
+            "cause_message": "sdk:decodeResourceRef: invalid_argument: invalid character '\\xfb' looking for beginning of value",
+            "cause_kind": "sdk",
+            "cause_reason": "invalid_argument",
+            "code": ""
+          }
+        ],
+        "warning_count": 0,
+        "committed": false,
+        "error": "",
+        "error_kind": ""
+      }
+    },
+    {
+      "name": "invalid_direct_url",
+      "sources": [
+        "https://i.pximg.net/a/%zz.png"
+      ],
+      "download_path": "${ROOT}",
+      "expected": {
+        "calls": [],
+        "items": [],
+        "failures": [
+          {
+            "url": "[redacted source]",
+            "type": "resource",
+            "message": "direct resource URL is invalid",
+            "cause_message": "direct resource URL is invalid",
+            "cause_kind": "plain",
+            "cause_reason": "",
+            "code": ""
+          }
+        ],
+        "warning_count": 0,
+        "committed": false,
+        "error": "",
+        "error_kind": ""
+      }
+    },
+    {
+      "name": "no_usable_basename",
+      "sources": [
+        "https://i.pximg.net",
+        "https://i.pximg.net/",
+        "https://i.pximg.net/a/",
+        "https://i.pximg.net/a/%2E%2E",
+        "https://i.pximg.net/a/%20%2E"
+      ],
+      "download_path": "${ROOT}",
+      "expected": {
+        "calls": [],
+        "items": [],
+        "failures": [
+          {
+            "url": "[redacted source]",
+            "type": "resource",
+            "message": "direct resource URL has no usable basename",
+            "cause_message": "direct resource URL has no usable basename",
+            "cause_kind": "plain",
+            "cause_reason": "",
+            "code": ""
+          },
+          {
+            "url": "[redacted source]",
+            "type": "resource",
+            "message": "direct resource URL has no usable basename",
+            "cause_message": "direct resource URL has no usable basename",
+            "cause_kind": "plain",
+            "cause_reason": "",
+            "code": ""
+          },
+          {
+            "url": "[redacted source]",
+            "type": "resource",
+            "message": "direct resource URL has no usable basename",
+            "cause_message": "direct resource URL has no usable basename",
+            "cause_kind": "plain",
+            "cause_reason": "",
+            "code": ""
+          },
+          {
+            "url": "[redacted source]",
+            "type": "resource",
+            "message": "direct resource URL has no usable basename",
+            "cause_message": "direct resource URL has no usable basename",
+            "cause_kind": "plain",
+            "cause_reason": "",
+            "code": ""
+          },
+          {
+            "url": "[redacted source]",
+            "type": "resource",
+            "message": "direct resource URL has no usable basename",
+            "cause_message": "direct resource URL has no usable basename",
+            "cause_kind": "plain",
+            "cause_reason": "",
+            "code": ""
+          }
+        ],
+        "warning_count": 0,
+        "committed": false,
+        "error": "",
+        "error_kind": ""
+      }
+    },
+    {
+      "name": "escaped_separator_control_tail",
+      "sources": [
+        "https://i.pximg.net/a/a%2Fb%5Cc%00%7F%3A%20.png%20%2E"
+      ],
+      "download_path": "${ROOT}",
+      "expected": {
+        "calls": [
+          {
+            "kind": "url",
+            "source": "https://i.pximg.net/a/a%2Fb%5Cc%00%7F%3A%20.png%20%2E",
+            "path": "${ROOT}/a_b_c___ -0465f2f85a9e.png"
+          }
+        ],
+        "items": [
+          {
+            "illust_id": 0,
+            "title": "",
+            "author": "",
+            "type": "resource",
+            "path": "${ROOT}/a_b_c___ -0465f2f85a9e.png",
+            "page": 1,
+            "bytes": 15,
+            "body": "synthetic-image"
+          }
+        ],
+        "failures": [],
+        "warning_count": 0,
+        "committed": true,
+        "error": "",
+        "error_kind": ""
+      }
+    },
+    {
+      "name": "hidden_file",
+      "sources": [
+        "https://i.pximg.net/a/.png"
+      ],
+      "download_path": "${ROOT}",
+      "expected": {
+        "calls": [
+          {
+            "kind": "url",
+            "source": "https://i.pximg.net/a/.png",
+            "path": "${ROOT}/.png-49a91719ddf2"
+          }
+        ],
+        "items": [
+          {
+            "illust_id": 0,
+            "title": "",
+            "author": "",
+            "type": "resource",
+            "path": "${ROOT}/.png-49a91719ddf2",
+            "page": 1,
+            "bytes": 15,
+            "body": "synthetic-image"
+          }
+        ],
+        "failures": [],
+        "warning_count": 0,
+        "committed": true,
+        "error": "",
+        "error_kind": ""
+      }
+    },
+    {
+      "name": "uppercase_scheme_and_host",
+      "sources": [
+        "HTTPS://I.PXIMG.NET/a/photo.png"
+      ],
+      "download_path": "${ROOT}",
+      "expected": {
+        "calls": [
+          {
+            "kind": "url",
+            "source": "HTTPS://I.PXIMG.NET/a/photo.png",
+            "path": "${ROOT}/photo-700bd53109fa.png"
+          }
+        ],
+        "items": [
+          {
+            "illust_id": 0,
+            "title": "",
+            "author": "",
+            "type": "resource",
+            "path": "${ROOT}/photo-700bd53109fa.png",
+            "page": 1,
+            "bytes": 15,
+            "body": "synthetic-image"
+          }
+        ],
+        "failures": [],
+        "warning_count": 0,
+        "committed": true,
+        "error": "",
+        "error_kind": ""
+      }
+    },
+    {
+      "name": "fragment_hash",
+      "sources": [
+        "https://i.pximg.net/a/photo.png#fragment"
+      ],
+      "download_path": "${ROOT}",
+      "expected": {
+        "calls": [
+          {
+            "kind": "url",
+            "source": "https://i.pximg.net/a/photo.png#fragment",
+            "path": "${ROOT}/photo-9cb5202d5851.png"
+          }
+        ],
+        "items": [
+          {
+            "illust_id": 0,
+            "title": "",
+            "author": "",
+            "type": "resource",
+            "path": "${ROOT}/photo-9cb5202d5851.png",
+            "page": 1,
+            "bytes": 15,
+            "body": "synthetic-image"
+          }
+        ],
+        "failures": [],
+        "warning_count": 0,
+        "committed": true,
+        "error": "",
+        "error_kind": ""
+      }
+    },
+    {
+      "name": "unsupported_direct_client",
+      "sources": [
+        "https://i.pximg.net/a/photo.png?signature=secret\u0026token=hidden",
+        "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9"
+      ],
+      "download_path": "${ROOT}",
+      "unsupported_url_client": true,
+      "expected": {
+        "calls": [
+          {
+            "kind": "ref",
+            "source": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9",
+            "path": "${ROOT}/resource-c420535574e25a7dd450a6c26ee5afc1b3baeed4d8c8955b942e934c52da6a8d"
+          }
+        ],
+        "items": [
+          {
+            "illust_id": 0,
+            "title": "",
+            "author": "",
+            "type": "resource",
+            "path": "${ROOT}/resource-c420535574e25a7dd450a6c26ee5afc1b3baeed4d8c8955b942e934c52da6a8d",
+            "page": 1,
+            "bytes": 15,
+            "body": "synthetic-image"
+          }
+        ],
+        "failures": [
+          {
+            "url": "[redacted source]",
+            "type": "resource",
+            "message": "download client does not support direct resource URLs",
+            "cause_message": "download client does not support direct resource URLs",
+            "cause_kind": "plain",
+            "cause_reason": "",
+            "code": ""
+          }
+        ],
+        "warning_count": 0,
+        "committed": true,
+        "error": "",
+        "error_kind": ""
+      }
+    },
+    {
+      "name": "partial_typed_failures",
+      "sources": [
+        "https://i.pximg.net/a/photo.png?signature=secret\u0026token=hidden",
+        "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9",
+        "https://i.pximg.net/b/ok.png"
+      ],
+      "download_path": "${ROOT}",
+      "outcomes": [
+        "typed",
+        "typed",
+        "ok"
+      ],
+      "expected": {
+        "calls": [
+          {
+            "kind": "ref",
+            "source": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9",
+            "path": "${ROOT}/resource-c420535574e25a7dd450a6c26ee5afc1b3baeed4d8c8955b942e934c52da6a8d"
+          },
+          {
+            "kind": "url",
+            "source": "https://i.pximg.net/a/photo.png?signature=secret\u0026token=hidden",
+            "path": "${ROOT}/photo-206a55e861e5.png"
+          },
+          {
+            "kind": "url",
+            "source": "https://i.pximg.net/b/ok.png",
+            "path": "${ROOT}/ok-83841d0d1bd5.png"
+          }
+        ],
+        "items": [
+          {
+            "illust_id": 0,
+            "title": "",
+            "author": "",
+            "type": "resource",
+            "path": "${ROOT}/ok-83841d0d1bd5.png",
+            "page": 1,
+            "bytes": 15,
+            "body": "synthetic-image"
+          }
+        ],
+        "failures": [
+          {
+            "url": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9",
+            "type": "",
+            "message": "pixiv:SaveResource: resource_forbidden",
+            "cause_message": "pixiv:SaveResource: resource_forbidden",
+            "cause_kind": "sdk",
+            "cause_reason": "resource_forbidden",
+            "code": ""
+          },
+          {
+            "url": "[redacted source]",
+            "type": "resource",
+            "message": "pixiv:SaveResource: resource_forbidden",
+            "cause_message": "pixiv:SaveResource: resource_forbidden",
+            "cause_kind": "sdk",
+            "cause_reason": "resource_forbidden",
+            "code": ""
+          }
+        ],
+        "warning_count": 0,
+        "committed": true,
+        "error": "",
+        "error_kind": ""
+      }
+    },
+    {
+      "name": "signed_error_redaction",
+      "sources": [
+        "https://i.pximg.net/a/photo.png?signature=secret\u0026token=hidden"
+      ],
+      "download_path": "${ROOT}",
+      "outcomes": [
+        "signed_error"
+      ],
+      "expected": {
+        "calls": [
+          {
+            "kind": "url",
+            "source": "https://i.pximg.net/a/photo.png?signature=secret\u0026token=hidden",
+            "path": "${ROOT}/photo-206a55e861e5.png"
+          }
+        ],
+        "items": [],
+        "failures": [
+          {
+            "url": "[redacted source]",
+            "type": "resource",
+            "message": "GET [redacted source] failed: signature=[redacted] token=[redacted] HTTP/1.1 attempt 1",
+            "cause_message": "GET [redacted source] failed: signature=[redacted] token=[redacted] HTTP/1.1 attempt 1",
+            "cause_kind": "plain",
+            "cause_reason": "",
+            "code": ""
+          }
+        ],
+        "warning_count": 0,
+        "committed": false,
+        "error": "",
+        "error_kind": ""
+      }
+    },
+    {
+      "capture_diagnostics": true,
+      "name": "all_failed_not_committed",
+      "sources": [
+        "https://i.pximg.net/a/photo.png?signature=secret\u0026token=hidden",
+        "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9"
+      ],
+      "download_path": "${ROOT}",
+      "outcomes": [
+        "typed",
+        "typed"
+      ],
+      "expected": {
+        "diagnostics": [
+          {
+            "module": "Pixiv download",
+            "kind": "started",
+            "operation": "download 2 sources",
+            "count": 0,
+            "reason": ""
+          },
+          {
+            "module": "Pixiv download",
+            "kind": "completed",
+            "operation": "download sources",
+            "count": 0,
+            "reason": ""
+          }
+        ],
+        "calls": [
+          {
+            "kind": "ref",
+            "source": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9",
+            "path": "${ROOT}/resource-c420535574e25a7dd450a6c26ee5afc1b3baeed4d8c8955b942e934c52da6a8d"
+          },
+          {
+            "kind": "url",
+            "source": "https://i.pximg.net/a/photo.png?signature=secret\u0026token=hidden",
+            "path": "${ROOT}/photo-206a55e861e5.png"
+          }
+        ],
+        "items": [],
+        "failures": [
+          {
+            "url": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9",
+            "type": "",
+            "message": "pixiv:SaveResource: resource_forbidden",
+            "cause_message": "pixiv:SaveResource: resource_forbidden",
+            "cause_kind": "sdk",
+            "cause_reason": "resource_forbidden",
+            "code": ""
+          },
+          {
+            "url": "[redacted source]",
+            "type": "resource",
+            "message": "pixiv:SaveResource: resource_forbidden",
+            "cause_message": "pixiv:SaveResource: resource_forbidden",
+            "cause_kind": "sdk",
+            "cause_reason": "resource_forbidden",
+            "code": ""
+          }
+        ],
+        "warning_count": 0,
+        "committed": false,
+        "error": "",
+        "error_kind": ""
+      }
+    },
+    {
+      "name": "cancel_before_classification",
+      "sources": [
+        "https://i.pximg.net/a/photo.png?signature=secret\u0026token=hidden",
+        "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9"
+      ],
+      "download_path": "${ROOT}",
+      "cancel_before": true,
+      "expected": {
+        "calls": [],
+        "items": [],
+        "failures": [],
+        "warning_count": 0,
+        "committed": false,
+        "error": "context canceled",
+        "error_kind": "canceled"
+      }
+    },
+    {
+      "capture_diagnostics": true,
+      "name": "cancel_after_commit",
+      "sources": [
+        "https://i.pximg.net/a/photo.png?signature=secret\u0026token=hidden",
+        "https://i.pximg.net/b/second.png",
+        "https://i.pximg.net/c/third.png"
+      ],
+      "download_path": "${ROOT}",
+      "outcomes": [
+        "ok",
+        "cancel",
+        "ok"
+      ],
+      "expected": {
+        "diagnostics": [
+          {
+            "module": "Pixiv download",
+            "kind": "started",
+            "operation": "download 3 sources",
+            "count": 0,
+            "reason": ""
+          },
+          {
+            "module": "Pixiv download",
+            "kind": "failed",
+            "operation": "download sources",
+            "count": 1,
+            "reason": "command failed"
+          }
+        ],
+        "calls": [
+          {
+            "kind": "url",
+            "source": "https://i.pximg.net/a/photo.png?signature=secret\u0026token=hidden",
+            "path": "${ROOT}/photo-206a55e861e5.png"
+          },
+          {
+            "kind": "url",
+            "source": "https://i.pximg.net/b/second.png",
+            "path": "${ROOT}/second-a63f3d1e0362.png"
+          }
+        ],
+        "items": [
+          {
+            "illust_id": 0,
+            "title": "",
+            "author": "",
+            "type": "resource",
+            "path": "${ROOT}/photo-206a55e861e5.png",
+            "page": 1,
+            "bytes": 15,
+            "body": "synthetic-image"
+          }
+        ],
+        "failures": [],
+        "warning_count": 0,
+        "committed": true,
+        "error": "context canceled",
+        "error_kind": "canceled"
+      }
+    },
+    {
+      "name": "deadline_after_commit",
+      "sources": [
+        "https://i.pximg.net/a/photo.png?signature=secret\u0026token=hidden",
+        "https://i.pximg.net/b/second.png"
+      ],
+      "download_path": "${ROOT}",
+      "outcomes": [
+        "ok",
+        "deadline"
+      ],
+      "expected": {
+        "calls": [
+          {
+            "kind": "url",
+            "source": "https://i.pximg.net/a/photo.png?signature=secret\u0026token=hidden",
+            "path": "${ROOT}/photo-206a55e861e5.png"
+          },
+          {
+            "kind": "url",
+            "source": "https://i.pximg.net/b/second.png",
+            "path": "${ROOT}/second-a63f3d1e0362.png"
+          }
+        ],
+        "items": [
+          {
+            "illust_id": 0,
+            "title": "",
+            "author": "",
+            "type": "resource",
+            "path": "${ROOT}/photo-206a55e861e5.png",
+            "page": 1,
+            "bytes": 15,
+            "body": "synthetic-image"
+          }
+        ],
+        "failures": [],
+        "warning_count": 0,
+        "committed": true,
+        "error": "context deadline exceeded",
+        "error_kind": "deadline"
+      }
+    },
+    {
+      "name": "opaque_cancel",
+      "sources": [
+        "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9",
+        "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TVgwPSJ9"
+      ],
+      "download_path": "${ROOT}",
+      "outcomes": [
+        "cancel",
+        "ok"
+      ],
+      "expected": {
+        "calls": [
+          {
+            "kind": "ref",
+            "source": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9",
+            "path": "${ROOT}/resource-c420535574e25a7dd450a6c26ee5afc1b3baeed4d8c8955b942e934c52da6a8d"
+          }
+        ],
+        "items": [],
+        "failures": [],
+        "warning_count": 0,
+        "committed": false,
+        "error": "context canceled",
+        "error_kind": "canceled"
+      }
+    },
+    {
+      "name": "context_error_without_canceled_context",
+      "sources": [
+        "https://i.pximg.net/a/photo.png?signature=secret\u0026token=hidden"
+      ],
+      "download_path": "${ROOT}",
+      "outcomes": [
+        "context_error_only"
+      ],
+      "expected": {
+        "calls": [
+          {
+            "kind": "url",
+            "source": "https://i.pximg.net/a/photo.png?signature=secret\u0026token=hidden",
+            "path": "${ROOT}/photo-206a55e861e5.png"
+          }
+        ],
+        "items": [],
+        "failures": [
+          {
+            "url": "[redacted source]",
+            "type": "resource",
+            "message": "context canceled",
+            "cause_message": "context canceled",
+            "cause_kind": "canceled",
+            "cause_reason": "",
+            "code": ""
+          }
+        ],
+        "warning_count": 0,
+        "committed": false,
+        "error": "",
+        "error_kind": ""
+      }
+    }
+  ]
+}

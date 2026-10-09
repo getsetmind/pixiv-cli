@@ -1,0 +1,1424 @@
+{
+  "source": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "source_hashes": {
+    "internal/mcpserver/pixiv/tools/download/download.go": "60cd7f8fcecfe27c185a9df4469dd8eaa0117e87586c047dfdf911e3400a11e5",
+    "internal/media/downloader/downloader.go": "2ea84cf1ab3eaf8bec1b3dc5b2f5162ba48071b0a7ae5e2a950043dcc4867979",
+    "internal/media/downloader/mime.go": "aa7e39c8d974c81214b0d61d2f0264803f68db1c9c9f50b14c34eecd2ce3eb64",
+    "sdk/pixiv/resource.go": "e94cdf3b2d7f67e159bd2481a1c419e887d842c903107767c4004e4f6a529ed8"
+  },
+  "pending": [
+    "artwork PID/URL and visual record success",
+    "user/bookmark expansion",
+    "static page/quality/naming/publication",
+    "ugoira archive/conversion",
+    "random recommendations",
+    "native platform paths and IO"
+  ],
+  "tool": {
+    "description": "Download artwork IDs or supported Pixiv artwork/user URLs with intelligent storage rules.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "delivery": {
+          "type": "string",
+          "description": "delivery mode: local_path only"
+        },
+        "pages": {
+          "type": "string",
+          "description": "1-based page selection, e.g. 1,3-5; default all pages"
+        },
+        "quality": {
+          "type": "string",
+          "description": "static image quality: original, regular, small, thumb, mini"
+        },
+        "src": {
+          "type": "string",
+          "description": "PID, Pixiv artwork/user URL, or allowed CDN resource URL"
+        },
+        "srcs": {
+          "type": "array",
+          "description": "multiple PID, Pixiv artwork/user URL, or allowed CDN resource URLs",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ugoira_mode": {
+          "type": "string",
+          "description": "ugoira output mode: gif, apng, zip, or raw; default gif"
+        }
+      },
+      "additionalProperties": false
+    },
+    "name": "download",
+    "outputSchema": {
+      "type": "object",
+      "required": [
+        "delivery",
+        "items",
+        "failures",
+        "warnings",
+        "files",
+        "text"
+      ],
+      "properties": {
+        "delivery": {
+          "type": "string"
+        },
+        "failures": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "url",
+              "illust_id",
+              "type",
+              "message"
+            ],
+            "properties": {
+              "illust_id": {
+                "type": "integer"
+              },
+              "message": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "illust_id",
+              "title",
+              "author",
+              "path",
+              "file_uri",
+              "mime_type",
+              "size_bytes"
+            ],
+            "properties": {
+              "author": {
+                "type": "string"
+              },
+              "file_uri": {
+                "type": "string"
+              },
+              "frames": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "filename",
+                    "delay_milliseconds"
+                  ],
+                  "properties": {
+                    "delay_milliseconds": {
+                      "type": "integer"
+                    },
+                    "filename": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "illust_id": {
+                "type": "integer"
+              },
+              "mime_type": {
+                "type": "string"
+              },
+              "page": {
+                "type": "integer"
+              },
+              "path": {
+                "type": "string"
+              },
+              "quality": {
+                "type": "string"
+              },
+              "size_bytes": {
+                "type": "integer"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "url",
+              "illust_id",
+              "title",
+              "author",
+              "type",
+              "files"
+            ],
+            "properties": {
+              "author": {
+                "type": "string"
+              },
+              "files": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "illust_id",
+                    "title",
+                    "author",
+                    "path",
+                    "file_uri",
+                    "mime_type",
+                    "size_bytes"
+                  ],
+                  "properties": {
+                    "author": {
+                      "type": "string"
+                    },
+                    "file_uri": {
+                      "type": "string"
+                    },
+                    "frames": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "filename",
+                          "delay_milliseconds"
+                        ],
+                        "properties": {
+                          "delay_milliseconds": {
+                            "type": "integer"
+                          },
+                          "filename": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": false
+                      }
+                    },
+                    "illust_id": {
+                      "type": "integer"
+                    },
+                    "mime_type": {
+                      "type": "string"
+                    },
+                    "page": {
+                      "type": "integer"
+                    },
+                    "path": {
+                      "type": "string"
+                    },
+                    "quality": {
+                      "type": "string"
+                    },
+                    "size_bytes": {
+                      "type": "integer"
+                    },
+                    "title": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "illust_id": {
+                "type": "integer"
+              },
+              "title": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "text": {
+          "type": "string"
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "illust_id",
+              "type",
+              "message"
+            ],
+            "properties": {
+              "illust_id": {
+                "type": "integer"
+              },
+              "message": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "cases": [
+    {
+      "name": "default-success",
+      "arguments": {
+        "src": "https://i.pximg.net/img/asset.png?signature=private"
+      },
+      "response": {
+        "id": 7,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "Download completed; delivery: local_path.\nResource download / Type: resource\n- \u003cROOT\u003e/asset-a0bc9fdc3c14.png\n  URI: file://\u003cROOT\u003e/asset-a0bc9fdc3c14.png\n  MIME: image/png\n  Size: 15 bytes",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [
+              {
+                "author": "",
+                "file_uri": "file://\u003cROOT\u003e/asset-a0bc9fdc3c14.png",
+                "illust_id": 0,
+                "mime_type": "image/png",
+                "page": 1,
+                "path": "\u003cROOT\u003e/asset-a0bc9fdc3c14.png",
+                "size_bytes": 15,
+                "title": ""
+              }
+            ],
+            "items": [
+              {
+                "author": "",
+                "files": [
+                  {
+                    "author": "",
+                    "file_uri": "file://\u003cROOT\u003e/asset-a0bc9fdc3c14.png",
+                    "illust_id": 0,
+                    "mime_type": "image/png",
+                    "page": 1,
+                    "path": "\u003cROOT\u003e/asset-a0bc9fdc3c14.png",
+                    "size_bytes": 15,
+                    "title": ""
+                  }
+                ],
+                "illust_id": 0,
+                "title": "",
+                "type": "resource",
+                "url": ""
+              }
+            ],
+            "text": "Download completed; delivery: local_path.\nResource download / Type: resource\n- \u003cROOT\u003e/asset-a0bc9fdc3c14.png\n  URI: file://\u003cROOT\u003e/asset-a0bc9fdc3c14.png\n  MIME: image/png\n  Size: 15 bytes",
+            "warnings": []
+          }
+        }
+      },
+      "requests": [
+        {
+          "url": "https://i.pximg.net/img/asset.png?signature=private",
+          "method": "GET",
+          "referer": "https://app-api.pixiv.net/",
+          "authorization": "",
+          "cookie": ""
+        }
+      ],
+      "files": [
+        {
+          "name": "asset-a0bc9fdc3c14.png",
+          "hex": "89504e470d0a1a0a66697874757265"
+        }
+      ],
+      "opens": 1
+    },
+    {
+      "name": "srcs-duplicate-query",
+      "arguments": {
+        "srcs": [
+          "https://i.pximg.net/img/asset.png?signature=private",
+          "https://i.pximg.net/img/asset.png?signature=private",
+          "https://i.pximg.net/img/asset.png?signature=private\u0026v=2"
+        ]
+      },
+      "response": {
+        "id": 7,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "Download completed; delivery: local_path.\nResource download / Type: resource\n- \u003cROOT\u003e/asset-a0bc9fdc3c14.png\n  URI: file://\u003cROOT\u003e/asset-a0bc9fdc3c14.png\n  MIME: image/png\n  Size: 15 bytes\nResource download / Type: resource\n- \u003cROOT\u003e/asset-a0bc9fdc3c14.png\n  URI: file://\u003cROOT\u003e/asset-a0bc9fdc3c14.png\n  MIME: image/png\n  Size: 15 bytes\nResource download / Type: resource\n- \u003cROOT\u003e/asset-7f9f81b070ab.png\n  URI: file://\u003cROOT\u003e/asset-7f9f81b070ab.png\n  MIME: image/png\n  Size: 15 bytes",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [
+              {
+                "author": "",
+                "file_uri": "file://\u003cROOT\u003e/asset-a0bc9fdc3c14.png",
+                "illust_id": 0,
+                "mime_type": "image/png",
+                "page": 1,
+                "path": "\u003cROOT\u003e/asset-a0bc9fdc3c14.png",
+                "size_bytes": 15,
+                "title": ""
+              },
+              {
+                "author": "",
+                "file_uri": "file://\u003cROOT\u003e/asset-a0bc9fdc3c14.png",
+                "illust_id": 0,
+                "mime_type": "image/png",
+                "page": 1,
+                "path": "\u003cROOT\u003e/asset-a0bc9fdc3c14.png",
+                "size_bytes": 15,
+                "title": ""
+              },
+              {
+                "author": "",
+                "file_uri": "file://\u003cROOT\u003e/asset-7f9f81b070ab.png",
+                "illust_id": 0,
+                "mime_type": "image/png",
+                "page": 1,
+                "path": "\u003cROOT\u003e/asset-7f9f81b070ab.png",
+                "size_bytes": 15,
+                "title": ""
+              }
+            ],
+            "items": [
+              {
+                "author": "",
+                "files": [
+                  {
+                    "author": "",
+                    "file_uri": "file://\u003cROOT\u003e/asset-a0bc9fdc3c14.png",
+                    "illust_id": 0,
+                    "mime_type": "image/png",
+                    "page": 1,
+                    "path": "\u003cROOT\u003e/asset-a0bc9fdc3c14.png",
+                    "size_bytes": 15,
+                    "title": ""
+                  }
+                ],
+                "illust_id": 0,
+                "title": "",
+                "type": "resource",
+                "url": ""
+              },
+              {
+                "author": "",
+                "files": [
+                  {
+                    "author": "",
+                    "file_uri": "file://\u003cROOT\u003e/asset-a0bc9fdc3c14.png",
+                    "illust_id": 0,
+                    "mime_type": "image/png",
+                    "page": 1,
+                    "path": "\u003cROOT\u003e/asset-a0bc9fdc3c14.png",
+                    "size_bytes": 15,
+                    "title": ""
+                  }
+                ],
+                "illust_id": 0,
+                "title": "",
+                "type": "resource",
+                "url": ""
+              },
+              {
+                "author": "",
+                "files": [
+                  {
+                    "author": "",
+                    "file_uri": "file://\u003cROOT\u003e/asset-7f9f81b070ab.png",
+                    "illust_id": 0,
+                    "mime_type": "image/png",
+                    "page": 1,
+                    "path": "\u003cROOT\u003e/asset-7f9f81b070ab.png",
+                    "size_bytes": 15,
+                    "title": ""
+                  }
+                ],
+                "illust_id": 0,
+                "title": "",
+                "type": "resource",
+                "url": ""
+              }
+            ],
+            "text": "Download completed; delivery: local_path.\nResource download / Type: resource\n- \u003cROOT\u003e/asset-a0bc9fdc3c14.png\n  URI: file://\u003cROOT\u003e/asset-a0bc9fdc3c14.png\n  MIME: image/png\n  Size: 15 bytes\nResource download / Type: resource\n- \u003cROOT\u003e/asset-a0bc9fdc3c14.png\n  URI: file://\u003cROOT\u003e/asset-a0bc9fdc3c14.png\n  MIME: image/png\n  Size: 15 bytes\nResource download / Type: resource\n- \u003cROOT\u003e/asset-7f9f81b070ab.png\n  URI: file://\u003cROOT\u003e/asset-7f9f81b070ab.png\n  MIME: image/png\n  Size: 15 bytes",
+            "warnings": []
+          }
+        }
+      },
+      "requests": [
+        {
+          "url": "https://i.pximg.net/img/asset.png?signature=private",
+          "method": "GET",
+          "referer": "https://app-api.pixiv.net/",
+          "authorization": "",
+          "cookie": ""
+        },
+        {
+          "url": "https://i.pximg.net/img/asset.png?signature=private",
+          "method": "GET",
+          "referer": "https://app-api.pixiv.net/",
+          "authorization": "",
+          "cookie": ""
+        },
+        {
+          "url": "https://i.pximg.net/img/asset.png?signature=private\u0026v=2",
+          "method": "GET",
+          "referer": "https://app-api.pixiv.net/",
+          "authorization": "",
+          "cookie": ""
+        }
+      ],
+      "files": [
+        {
+          "name": "asset-7f9f81b070ab.png",
+          "hex": "89504e470d0a1a0a66697874757265"
+        },
+        {
+          "name": "asset-a0bc9fdc3c14.png",
+          "hex": "89504e470d0a1a0a66697874757265"
+        }
+      ],
+      "opens": 1
+    },
+    {
+      "name": "trimmed-source-and-options",
+      "arguments": {
+        "delivery": " local_path ",
+        "pages": "3,1-2,2",
+        "quality": " mini ",
+        "src": "  https://i.pximg.net/img/asset.png?signature=private  ",
+        "ugoira_mode": " raw "
+      },
+      "response": {
+        "id": 7,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "Download completed; delivery: local_path.\nResource download / Type: resource\n- \u003cROOT\u003e/asset-a0bc9fdc3c14.png\n  URI: file://\u003cROOT\u003e/asset-a0bc9fdc3c14.png\n  MIME: image/png\n  Size: 15 bytes",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [
+              {
+                "author": "",
+                "file_uri": "file://\u003cROOT\u003e/asset-a0bc9fdc3c14.png",
+                "illust_id": 0,
+                "mime_type": "image/png",
+                "page": 1,
+                "path": "\u003cROOT\u003e/asset-a0bc9fdc3c14.png",
+                "size_bytes": 15,
+                "title": ""
+              }
+            ],
+            "items": [
+              {
+                "author": "",
+                "files": [
+                  {
+                    "author": "",
+                    "file_uri": "file://\u003cROOT\u003e/asset-a0bc9fdc3c14.png",
+                    "illust_id": 0,
+                    "mime_type": "image/png",
+                    "page": 1,
+                    "path": "\u003cROOT\u003e/asset-a0bc9fdc3c14.png",
+                    "size_bytes": 15,
+                    "title": ""
+                  }
+                ],
+                "illust_id": 0,
+                "title": "",
+                "type": "resource",
+                "url": ""
+              }
+            ],
+            "text": "Download completed; delivery: local_path.\nResource download / Type: resource\n- \u003cROOT\u003e/asset-a0bc9fdc3c14.png\n  URI: file://\u003cROOT\u003e/asset-a0bc9fdc3c14.png\n  MIME: image/png\n  Size: 15 bytes",
+            "warnings": []
+          }
+        }
+      },
+      "requests": [
+        {
+          "url": "https://i.pximg.net/img/asset.png?signature=private",
+          "method": "GET",
+          "referer": "https://app-api.pixiv.net/",
+          "authorization": "",
+          "cookie": ""
+        }
+      ],
+      "files": [
+        {
+          "name": "asset-a0bc9fdc3c14.png",
+          "hex": "89504e470d0a1a0a66697874757265"
+        }
+      ],
+      "opens": 1
+    },
+    {
+      "name": "partial-read-failure",
+      "arguments": {
+        "srcs": [
+          "https://i.pximg.net/img/asset.png?signature=private",
+          "https://i.pximg.net/read.png?signature=private"
+        ]
+      },
+      "response": {
+        "id": 7,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "Download completed; delivery: local_path.\nResource download / Type: resource\n- \u003cROOT\u003e/asset-a0bc9fdc3c14.png\n  URI: file://\u003cROOT\u003e/asset-a0bc9fdc3c14.png\n  MIME: image/png\n  Size: 15 bytes\nFailed [redacted source]: pixiv:SaveResourceURL: local_state_error: cannot write resource",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [
+              {
+                "illust_id": 0,
+                "message": "pixiv:SaveResourceURL: local_state_error: cannot write resource",
+                "type": "resource",
+                "url": "[redacted source]"
+              }
+            ],
+            "files": [
+              {
+                "author": "",
+                "file_uri": "file://\u003cROOT\u003e/asset-a0bc9fdc3c14.png",
+                "illust_id": 0,
+                "mime_type": "image/png",
+                "page": 1,
+                "path": "\u003cROOT\u003e/asset-a0bc9fdc3c14.png",
+                "size_bytes": 15,
+                "title": ""
+              }
+            ],
+            "items": [
+              {
+                "author": "",
+                "files": [
+                  {
+                    "author": "",
+                    "file_uri": "file://\u003cROOT\u003e/asset-a0bc9fdc3c14.png",
+                    "illust_id": 0,
+                    "mime_type": "image/png",
+                    "page": 1,
+                    "path": "\u003cROOT\u003e/asset-a0bc9fdc3c14.png",
+                    "size_bytes": 15,
+                    "title": ""
+                  }
+                ],
+                "illust_id": 0,
+                "title": "",
+                "type": "resource",
+                "url": ""
+              }
+            ],
+            "text": "Download completed; delivery: local_path.\nResource download / Type: resource\n- \u003cROOT\u003e/asset-a0bc9fdc3c14.png\n  URI: file://\u003cROOT\u003e/asset-a0bc9fdc3c14.png\n  MIME: image/png\n  Size: 15 bytes\nFailed [redacted source]: pixiv:SaveResourceURL: local_state_error: cannot write resource",
+            "warnings": []
+          }
+        }
+      },
+      "requests": [
+        {
+          "url": "https://i.pximg.net/img/asset.png?signature=private",
+          "method": "GET",
+          "referer": "https://app-api.pixiv.net/",
+          "authorization": "",
+          "cookie": ""
+        },
+        {
+          "url": "https://i.pximg.net/read.png?signature=private",
+          "method": "GET",
+          "referer": "https://app-api.pixiv.net/",
+          "authorization": "",
+          "cookie": ""
+        }
+      ],
+      "files": [
+        {
+          "name": "asset-a0bc9fdc3c14.png",
+          "hex": "89504e470d0a1a0a66697874757265"
+        }
+      ],
+      "opens": 1
+    },
+    {
+      "name": "partial-cancel",
+      "arguments": {
+        "srcs": [
+          "https://i.pximg.net/img/asset.png?signature=private",
+          "https://i.pximg.net/cancel.png?signature=private"
+        ]
+      },
+      "cancel": true,
+      "response": {
+        "id": 7,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "Download completed; delivery: local_path.\nResource download / Type: resource\n- \u003cROOT\u003e/asset-a0bc9fdc3c14.png\n  URI: file://\u003cROOT\u003e/asset-a0bc9fdc3c14.png\n  MIME: image/png\n  Size: 15 bytes\nDownload failed: context canceled",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [
+              {
+                "author": "",
+                "file_uri": "file://\u003cROOT\u003e/asset-a0bc9fdc3c14.png",
+                "illust_id": 0,
+                "mime_type": "image/png",
+                "page": 1,
+                "path": "\u003cROOT\u003e/asset-a0bc9fdc3c14.png",
+                "size_bytes": 15,
+                "title": ""
+              }
+            ],
+            "items": [
+              {
+                "author": "",
+                "files": [
+                  {
+                    "author": "",
+                    "file_uri": "file://\u003cROOT\u003e/asset-a0bc9fdc3c14.png",
+                    "illust_id": 0,
+                    "mime_type": "image/png",
+                    "page": 1,
+                    "path": "\u003cROOT\u003e/asset-a0bc9fdc3c14.png",
+                    "size_bytes": 15,
+                    "title": ""
+                  }
+                ],
+                "illust_id": 0,
+                "title": "",
+                "type": "resource",
+                "url": ""
+              }
+            ],
+            "text": "Download completed; delivery: local_path.\nResource download / Type: resource\n- \u003cROOT\u003e/asset-a0bc9fdc3c14.png\n  URI: file://\u003cROOT\u003e/asset-a0bc9fdc3c14.png\n  MIME: image/png\n  Size: 15 bytes\nDownload failed: context canceled",
+            "warnings": []
+          }
+        }
+      },
+      "requests": [
+        {
+          "url": "https://i.pximg.net/img/asset.png?signature=private",
+          "method": "GET",
+          "referer": "https://app-api.pixiv.net/",
+          "authorization": "",
+          "cookie": ""
+        },
+        {
+          "url": "https://i.pximg.net/cancel.png?signature=private",
+          "method": "GET",
+          "referer": "https://app-api.pixiv.net/",
+          "authorization": "",
+          "cookie": ""
+        }
+      ],
+      "files": [
+        {
+          "name": "asset-a0bc9fdc3c14.png",
+          "hex": "89504e470d0a1a0a66697874757265"
+        }
+      ],
+      "opens": 1
+    },
+    {
+      "name": "cancel-before-publication",
+      "arguments": {
+        "src": "https://i.pximg.net/cancel.png?signature=private"
+      },
+      "cancel": true,
+      "response": {
+        "id": 7,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "Download completed; delivery: local_path.\nDownload failed: context canceled",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Download completed; delivery: local_path.\nDownload failed: context canceled",
+            "warnings": []
+          }
+        }
+      },
+      "requests": [
+        {
+          "url": "https://i.pximg.net/cancel.png?signature=private",
+          "method": "GET",
+          "referer": "https://app-api.pixiv.net/",
+          "authorization": "",
+          "cookie": ""
+        }
+      ],
+      "files": [],
+      "opens": 1
+    },
+    {
+      "name": "forbidden-host",
+      "arguments": {
+        "src": "https://example.invalid/asset.png?signature=private"
+      },
+      "response": {
+        "id": 7,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "Download completed; delivery: local_path.\nFailed [redacted source]: pixiv:SaveResourceURL: resource_forbidden: resource URL is not allowed",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [
+              {
+                "illust_id": 0,
+                "message": "pixiv:SaveResourceURL: resource_forbidden: resource URL is not allowed",
+                "type": "resource",
+                "url": "[redacted source]"
+              }
+            ],
+            "files": [],
+            "items": [],
+            "text": "Download completed; delivery: local_path.\nFailed [redacted source]: pixiv:SaveResourceURL: resource_forbidden: resource URL is not allowed",
+            "warnings": []
+          }
+        }
+      },
+      "requests": [],
+      "files": [],
+      "opens": 1
+    },
+    {
+      "name": "missing-basename",
+      "arguments": {
+        "src": "https://i.pximg.net/"
+      },
+      "response": {
+        "id": 7,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "Download completed; delivery: local_path.\nFailed [redacted source]: direct resource URL has no usable basename",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [
+              {
+                "illust_id": 0,
+                "message": "direct resource URL has no usable basename",
+                "type": "resource",
+                "url": "[redacted source]"
+              }
+            ],
+            "files": [],
+            "items": [],
+            "text": "Download completed; delivery: local_path.\nFailed [redacted source]: direct resource URL has no usable basename",
+            "warnings": []
+          }
+        }
+      },
+      "requests": [],
+      "files": [],
+      "opens": 1
+    },
+    {
+      "name": "unsafe-basename",
+      "arguments": {
+        "src": "https://i.pximg.net/a%2Fb%3F.png?signature=private"
+      },
+      "response": {
+        "id": 7,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "Download completed; delivery: local_path.\nResource download / Type: resource\n- \u003cROOT\u003e/a_b_-a170f2703812.png\n  URI: file://\u003cROOT\u003e/a_b_-a170f2703812.png\n  MIME: image/png\n  Size: 15 bytes",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [
+              {
+                "author": "",
+                "file_uri": "file://\u003cROOT\u003e/a_b_-a170f2703812.png",
+                "illust_id": 0,
+                "mime_type": "image/png",
+                "page": 1,
+                "path": "\u003cROOT\u003e/a_b_-a170f2703812.png",
+                "size_bytes": 15,
+                "title": ""
+              }
+            ],
+            "items": [
+              {
+                "author": "",
+                "files": [
+                  {
+                    "author": "",
+                    "file_uri": "file://\u003cROOT\u003e/a_b_-a170f2703812.png",
+                    "illust_id": 0,
+                    "mime_type": "image/png",
+                    "page": 1,
+                    "path": "\u003cROOT\u003e/a_b_-a170f2703812.png",
+                    "size_bytes": 15,
+                    "title": ""
+                  }
+                ],
+                "illust_id": 0,
+                "title": "",
+                "type": "resource",
+                "url": ""
+              }
+            ],
+            "text": "Download completed; delivery: local_path.\nResource download / Type: resource\n- \u003cROOT\u003e/a_b_-a170f2703812.png\n  URI: file://\u003cROOT\u003e/a_b_-a170f2703812.png\n  MIME: image/png\n  Size: 15 bytes",
+            "warnings": []
+          }
+        }
+      },
+      "requests": [
+        {
+          "url": "https://i.pximg.net/a%2Fb%3F.png?signature=private",
+          "method": "GET",
+          "referer": "https://app-api.pixiv.net/",
+          "authorization": "",
+          "cookie": ""
+        }
+      ],
+      "files": [
+        {
+          "name": "a_b_-a170f2703812.png",
+          "hex": "89504e470d0a1a0a66697874757265"
+        }
+      ],
+      "opens": 1
+    },
+    {
+      "name": "signature-mime",
+      "arguments": {
+        "src": "https://i.pximg.net/asset.jpg?signature=private"
+      },
+      "response": {
+        "id": 7,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "Download completed; delivery: local_path.\nResource download / Type: resource\n- \u003cROOT\u003e/asset-89fed04c5b52.jpg\n  URI: file://\u003cROOT\u003e/asset-89fed04c5b52.jpg\n  MIME: image/png\n  Size: 15 bytes",
+              "type": "text"
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [
+              {
+                "author": "",
+                "file_uri": "file://\u003cROOT\u003e/asset-89fed04c5b52.jpg",
+                "illust_id": 0,
+                "mime_type": "image/png",
+                "page": 1,
+                "path": "\u003cROOT\u003e/asset-89fed04c5b52.jpg",
+                "size_bytes": 15,
+                "title": ""
+              }
+            ],
+            "items": [
+              {
+                "author": "",
+                "files": [
+                  {
+                    "author": "",
+                    "file_uri": "file://\u003cROOT\u003e/asset-89fed04c5b52.jpg",
+                    "illust_id": 0,
+                    "mime_type": "image/png",
+                    "page": 1,
+                    "path": "\u003cROOT\u003e/asset-89fed04c5b52.jpg",
+                    "size_bytes": 15,
+                    "title": ""
+                  }
+                ],
+                "illust_id": 0,
+                "title": "",
+                "type": "resource",
+                "url": ""
+              }
+            ],
+            "text": "Download completed; delivery: local_path.\nResource download / Type: resource\n- \u003cROOT\u003e/asset-89fed04c5b52.jpg\n  URI: file://\u003cROOT\u003e/asset-89fed04c5b52.jpg\n  MIME: image/png\n  Size: 15 bytes",
+            "warnings": []
+          }
+        }
+      },
+      "requests": [
+        {
+          "url": "https://i.pximg.net/asset.jpg?signature=private",
+          "method": "GET",
+          "referer": "https://app-api.pixiv.net/",
+          "authorization": "",
+          "cookie": ""
+        }
+      ],
+      "files": [
+        {
+          "name": "asset-89fed04c5b52.jpg",
+          "hex": "89504e470d0a1a0a66697874757265"
+        }
+      ],
+      "opens": 1
+    },
+    {
+      "name": "invalid-source",
+      "arguments": {
+        "src": "private-invalid-source"
+      },
+      "response": {
+        "id": 7,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "Download completed; delivery: local_path.\nFailed [redacted source]: download source is invalid",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [
+              {
+                "illust_id": 0,
+                "message": "download source is invalid",
+                "type": "",
+                "url": "[redacted source]"
+              }
+            ],
+            "files": [],
+            "items": [],
+            "text": "Download completed; delivery: local_path.\nFailed [redacted source]: download source is invalid",
+            "warnings": []
+          }
+        }
+      },
+      "requests": [],
+      "files": [],
+      "opens": 1
+    },
+    {
+      "name": "empty-source-list",
+      "arguments": {
+        "srcs": []
+      },
+      "response": {
+        "id": 7,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "Error: provide src (one source) or srcs (a source list)",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Error: provide src (one source) or srcs (a source list)",
+            "warnings": []
+          }
+        }
+      },
+      "requests": [],
+      "files": [],
+      "opens": 0
+    },
+    {
+      "name": "null-source-list",
+      "arguments": {
+        "srcs": null
+      },
+      "response": {
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: validating /properties/srcs: type: \u003cinvalid reflect.Value\u003e has type \"null\", want \"array\""
+        },
+        "id": 7,
+        "jsonrpc": "2.0"
+      },
+      "requests": [],
+      "files": [],
+      "opens": 0
+    },
+    {
+      "name": "wrong-source-list-element",
+      "arguments": {
+        "srcs": [
+          42
+        ]
+      },
+      "response": {
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: validating /properties/srcs: validating /properties/srcs/items: type: 42 has type \"integer\", want \"string\""
+        },
+        "id": 7,
+        "jsonrpc": "2.0"
+      },
+      "requests": [],
+      "files": [],
+      "opens": 0
+    },
+    {
+      "name": "array-arguments",
+      "arguments": [],
+      "response": {
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": unmarshaling arguments: json: cannot unmarshal array into Go value of type map[string]interface {}"
+        },
+        "id": 7,
+        "jsonrpc": "2.0"
+      },
+      "requests": [],
+      "files": [],
+      "opens": 0
+    },
+    {
+      "name": "http-error",
+      "arguments": {
+        "src": "https://i.pximg.net/status.png?signature=private"
+      },
+      "response": {
+        "id": 7,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "Download completed; delivery: local_path.\nFailed [redacted source]: pixiv:SaveResourceURL: upstream_error: resource returned a non-success status",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [
+              {
+                "illust_id": 0,
+                "message": "pixiv:SaveResourceURL: upstream_error: resource returned a non-success status",
+                "type": "resource",
+                "url": "[redacted source]"
+              }
+            ],
+            "files": [],
+            "items": [],
+            "text": "Download completed; delivery: local_path.\nFailed [redacted source]: pixiv:SaveResourceURL: upstream_error: resource returned a non-success status",
+            "warnings": []
+          }
+        }
+      },
+      "requests": [
+        {
+          "url": "https://i.pximg.net/status.png?signature=private",
+          "method": "GET",
+          "referer": "https://app-api.pixiv.net/",
+          "authorization": "",
+          "cookie": ""
+        }
+      ],
+      "files": [],
+      "opens": 1
+    },
+    {
+      "name": "missing-source",
+      "arguments": {},
+      "response": {
+        "id": 7,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "Error: provide src (one source) or srcs (a source list)",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Error: provide src (one source) or srcs (a source list)",
+            "warnings": []
+          }
+        }
+      },
+      "requests": [],
+      "files": [],
+      "opens": 0
+    },
+    {
+      "name": "both-sources",
+      "arguments": {
+        "src": "https://i.pximg.net/img/asset.png?signature=private",
+        "srcs": [
+          "https://i.pximg.net/img/asset.png?signature=private"
+        ]
+      },
+      "response": {
+        "id": 7,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "Error: provide src or srcs, not both",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Error: provide src or srcs, not both",
+            "warnings": []
+          }
+        }
+      },
+      "requests": [],
+      "files": [],
+      "opens": 0
+    },
+    {
+      "name": "unsupported-delivery",
+      "arguments": {
+        "delivery": "image_content",
+        "src": "https://i.pximg.net/img/asset.png?signature=private"
+      },
+      "response": {
+        "id": 7,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "Error: delivery supports only \"local_path\".",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Error: delivery supports only \"local_path\".",
+            "warnings": []
+          }
+        }
+      },
+      "requests": [],
+      "files": [],
+      "opens": 0
+    },
+    {
+      "name": "invalid-pages",
+      "arguments": {
+        "pages": "1,,2",
+        "src": "https://i.pximg.net/img/asset.png?signature=private"
+      },
+      "response": {
+        "id": 7,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "Error: page selection contains an empty entry",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Error: page selection contains an empty entry",
+            "warnings": []
+          }
+        }
+      },
+      "requests": [],
+      "files": [],
+      "opens": 0
+    },
+    {
+      "name": "invalid-quality",
+      "arguments": {
+        "quality": "large",
+        "src": "https://i.pximg.net/img/asset.png?signature=private"
+      },
+      "response": {
+        "id": 7,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "Error: quality must be one of original, regular, small, thumb, mini",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Error: quality must be one of original, regular, small, thumb, mini",
+            "warnings": []
+          }
+        }
+      },
+      "requests": [],
+      "files": [],
+      "opens": 0
+    },
+    {
+      "name": "invalid-ugoira-mode",
+      "arguments": {
+        "src": "https://i.pximg.net/img/asset.png?signature=private",
+        "ugoira_mode": "webm"
+      },
+      "response": {
+        "id": 7,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "Error: ugoira format must be one of gif, apng, zip, raw",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Error: ugoira format must be one of gif, apng, zip, raw",
+            "warnings": []
+          }
+        }
+      },
+      "requests": [],
+      "files": [],
+      "opens": 0
+    },
+    {
+      "name": "unknown-field",
+      "arguments": {
+        "concurrency": 1,
+        "src": "https://i.pximg.net/img/asset.png?signature=private"
+      },
+      "response": {
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: unexpected additional properties [\"concurrency\"]"
+        },
+        "id": 7,
+        "jsonrpc": "2.0"
+      },
+      "requests": [],
+      "files": [],
+      "opens": 0
+    },
+    {
+      "name": "wrong-source-type",
+      "arguments": {
+        "src": 42
+      },
+      "response": {
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: validating /properties/src: type: 42 has type \"integer\", want \"string\""
+        },
+        "id": 7,
+        "jsonrpc": "2.0"
+      },
+      "requests": [],
+      "files": [],
+      "opens": 0
+    },
+    {
+      "name": "null-source",
+      "arguments": {
+        "src": null
+      },
+      "response": {
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: validating /properties/src: type: \u003cinvalid reflect.Value\u003e has type \"null\", want \"string\""
+        },
+        "id": 7,
+        "jsonrpc": "2.0"
+      },
+      "requests": [],
+      "files": [],
+      "opens": 0
+    }
+  ]
+}

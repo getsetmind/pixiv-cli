@@ -1702,3 +1702,32 @@ native Darwin/Windowsのcompile/link/run、実LaunchServices/HKCU/ShellExecuteEx
 最終Go gateは関連auth/loginhelper/installer package tests、actual-root81行、環境proxy16行、関連5package vetと台帳validatorが終了0・9秒。auth1.078秒/helper3.492秒/installer.658秒/root.528秒/SDK.067秒、台帳.095秒。native Windows HKCU restore・Darwin swiftc/LaunchServices testsは実行せず、既存interop opt-in/child helper skipとLinux実行範囲をstrict全Go/native passへ読み替えない。docs更新後の台帳validatorも終了0。独立read-only reviewでexport startup除外、root/leaf preflight順序、unknown proxy scheme routingをGo-first追加fixtureで補正し、最終sourceにscoped blocker無し。blocked directoryのnative診断差分は明示的な未解消として保持する。
 
 今回はCLI入口を接続したcheckpointであり、3入口は`in_progress`、native platformの`verified`追加は無し。上記のnative/公開SDK lifecycle/HTTP2/Accept/全parser・TTY・wire・IO・並行scheduleの残りを成功扱いしない。
+
+## direct URL・opaque ResourceRef download の縦断接続（2026-10-09）
+
+このcheckpointはdirect URLとopaque ResourceRefをshared app reportから実CLI/MCP・保存済みExecution・既存SDK atomic saveへ接続する。作品/PID/user/bookmark展開、record実行、ページ/quality/template計画、ugoira取得/変換、random recommendationまで完了とはしない。accepted visual入力をinvalid sourceや空成功へ読み替えず、未移植errorを明示する。Go productionにはpersisted resume/job schemaとdownload保存へのprogress callback注入がなく、別progress rendererの存在から新挙動を追加しない。
+
+| 固定Go境界 | 同じfixtureを使うRust比較 |
+| --- | --- |
+| `internal/media/downloader/migration_direct_sources_test.go`・app26行 | `pixiv-app/tests/download_direct.rs`：refs→direct URLs、重複保持、filename/path、保存結果、failure/redaction/typed cause、operation cancellation/commit |
+| `internal/cli/commands/pixiv/download/migration_direct_download_test.go`・CLI63行 | `pixiv-cli/tests/download_direct.rs`：validation/runtime/flags/入力順・stdout/stderr・JSON/NDJSON・SDK request/file bytes・commit/typed error。`download_owned_output.rs`は保存済みSDK clientが生存中に実writerへ書き、保存後writer failureを戻さない境界 |
+| `internal/cli/migration_download_startup_test.go`・root27行 | `pixiv-cli/tests/download_startup.rs`：安全な23行を実Linux子プロセスで比較する。native cleanup/ensure failure・supported true・stdin read failureの4行は同じnative条件として実行しない |
+| `internal/mcpserver/pixiv/tools/download/migration_direct_test.go`・MCP25行/full schema | `pixiv-mcp/tests/download_direct.rs`：入力schema、local_path report・signature優先MIME/ext fallback・file URI・partial failure。`download_stdio.rs`はinitialize後の実resource-enabled tools/call全25行と実notifications/cancelledを比較する |
+| `sdk/migration_resource_ref_diagnostics_test.go`・追加15診断行 | `pixiv-sdk/tests/resource_ref_diagnostics.rs`：base64 offset/CRLF/padding、nested payload field cause/details、bounded JSON EOF/version/missing/empty。全JSON syntax/type grammarの証明ではない |
+
+URL filenameはGo parsed URL.String（queryを含む）のSHA256先頭6bytesをhex12で付け、sanitized percent-decoded basenameのextension前へ挿入する。opaque refは全ref文字列のSHA256hex64を使う。relative rootを勝手にabsoluteへ変えない。direct source失敗はlocatorを`[redacted source]`、kindをresourceとし、source全体/raw query/query valuesをdiagnosticから除く。opaque failureはopaque locatorとempty kindを保持する。URL/refはdeduplicateしない。any published regular fileがcommitであり、operation context取消はreport failureと別に返す。clientがContextCanceledを返してもoperation contextが未取消ならper-source failureである。
+
+plain successはstdoutを出さず、runtime JSONとexplicit presence/valueを分ける。JSON/NDJSONはsuccess artifacts→failuresの順、machine skip failureはstdout後PipelineDiagnosticでrootの追加envelopeを抑止する。fail-fastはmachine reportを抑止するが独立sourceの次の保存を停止しない。rootはstdin source classification→startup/default config/runtime preflight→leaf validationとし、JSONfalseのpresenceもroot machine error policyへ使う。empty piped inputはconfigだけ作成してDBを開かない。recordはvisual ID typesだけ受理し、explicit sourceのJSON/NDJSON conflict検査とは別経路である。
+
+MCP mainはnative HttpTransportにresource executorを接続する。既存Transport-only `serve`/`serve_saved_with_proxy`のpublic signatureをresource-capable traitへ勝手に拡大せず、resource executorなしのdownloadは明示errorを返す。tools/listの既存順序を保持してdownloadを末尾へ追加する。downloadのinflightはContextを所有し、notifications/cancelledで取消し、通常JSON-RPC結果に`isError: true`とpublished prefixを残す。他toolsの既存Abortable policyは変えない。Go MCPはOpenClient single-default lease経路であり、CLI textのReportErrorによるpool retryとは分ける。追加 `migration_single_lease_test.go`/`download_single_lease.json` の3行は、pool candidate42がいてもdefault43だけを開くこと、retryable OAuth open失敗でも再試行しないこと、deferred close errorを無視することを実Go service/isolated SQLiteで固定する。Rustは前2行のopens/resources/result/account stateを実Execution/SDKで比較する。pool loader/factory/Execute・close・gate countersはGo-onlyであり、Rust Drop cleanup countの別assertionをGo close callbackと同一視しない。close callback errorを注入するtest-only APIを足さず、第3行のnative close-error実行は未比較と明示する。
+
+全Go URL grammar、percent-encoded非UTF8 filename、JSON syntax/type diagnostics、native filesystem error/OS permissions、全writer/disconnect/cancel/race、全public SDK Context/lifecycleのparityは未確立である。Go `cmd/pixiv/main.go` はos.InterruptをNotifyContextへ接続するが、Rust実CLIのOS interrupt→Context配線は未移植である。今回の注入したContext取消/MCP通知取消を、実CLI Ctrl-Cのcleanup/終了動作へ読み替えない。MCP EOF/disconnectの全pending download cleanup scheduleも本checkpointの通知取消へ外挿しない。HTTP2 serving未移植、handoffの余分なAccept header、公開SDK ownership/idle-close等の既存負債は保持する。実accounts・外部media・authenticated network・host registry/association/browserは使わず、合成transport/local sinkに限定する。
+
+<!-- DIRECT_DOWNLOAD_CHECKPOINT_FINAL_EVIDENCE -->
+最終unchanged `scripts/check-rust.ps1` は終了sentinel0・226秒。Formatter/Clippy・workspace contract555passed/0failed・release42.91秒が成功した。raw556には既存terminal_prompt_childのno-env early-return scaffold1が含まれ、追加contract passへ数えない。ignored10は既存3interop/spoolとparentから明示実行するchild-only scaffold7で、新しいdownloadにignoredは追加しない。offline/telemetry optout/dev-test debug情報0/incremental0を維持し、script stages・optimization・既存期待値を削除/緩和しない。
+
+初回gateはClippy large enumで終了1・14秒、optionsをBoxへ変更して再実行した。次のgate2回は既存MCP catalogの51-entry期待値で終了1・115/166秒となり、downloadを末尾へ追加して全旧51names/order/schema比較を保持した。新entryも不変の固定Go metadataへexact比較する。失敗logを保持し、最終gateだけを全成功へ数える。独立read-only reviewはreal saved CLI factory/Output identity・4pool combinations・MCP single-default lease/close-before-report・cooperative取消と最後のBox/catalog追加まで確認し、scoped blocker無し。
+
+最終Go gateはSDK ResourceRef、downloader direct/resource、CLI/MCP download全package、root DownloadStartup/LoginHiddenStartup、5package vetと台帳validatorで終了0・6秒。SDK.010秒/downloader.010秒/CLI.015秒/MCP.086秒/root.659秒/台帳.091秒。gofmt差分無し、固定Go production/go.mod/go.sumとの差分0。Rust fullgate後は結果文書だけを更新し、tested Rust treeを変更しない。
+
+app26・CLI63・MCP25・root27（実Rust子プロセス23）・SDK追加15診断、MCP singlelease3（Rust2行のobservable fieldsのみ）を対象比較として維持する。全download・native platform・一般grammar・公開SDK lifecycleのverifiedではなく、CLI/MCP downloadはin_progressに留める。実OS interrupt→Contextは次の縦断移植で閉じる未移植capabilityである。

@@ -1630,15 +1630,34 @@
     },
     {
       "id": "cli:pixiv download",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv download"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-app/src/download.rs",
+        "crates/pixiv-cli/src/download.rs",
+        "crates/pixiv-cli/src/main.rs"
+      ],
+      "tests": [
+        "internal/media/downloader/migration_direct_sources_test.go",
+        "internal/cli/commands/pixiv/download/migration_direct_download_test.go",
+        "internal/cli/migration_download_startup_test.go",
+        "crates/pixiv-app/tests/download_direct.rs",
+        "crates/pixiv-cli/tests/download_direct.rs",
+        "crates/pixiv-cli/tests/download_owned_output.rs",
+        "crates/pixiv-cli/tests/download_startup.rs",
+        "crates/pixiv-cli/tests/download_pool.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "直リンクとopaque ResourceRefの実CLI・保存済みclient・SDK atomic saveへ接続した限定比較。作品/PID/user/bookmark展開・record実行・ページ/quality/template計画・ugoira取得/変換は未移植。",
+        "Go fixtureはapp26行、CLI63行、root27行。rootの実Linux子プロセス比較は安全な23行に限定し、native hooks/read-error4行を実行しない。",
+        "全URL grammar/非UTF8、native IO/OS、全writer/cancel/race/TTY/public SDK lifecycleは未検証。Go productionにpersisted resume/job schemaやdownload progress callback注入はなく、Rustに新契約として追加しない。",
+        "CLI text/JSONとpublication前後4組を実Execution/SDK/account poolで比較し、Output(BrokenPipe)をcallbackからroot終了0へ保持する。",
+        "Go mainのos.Interrupt→NotifyContextに対応する実Rust CLI signal→Context配線は未移植。注入したContext取消を実Ctrl-C cleanup/終了動作の証拠にしない。"
+      ]
     },
     {
       "id": "cli:pixiv fanbox",
@@ -3205,15 +3224,32 @@
     },
     {
       "id": "mcp:pixiv:download",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "download"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-app/src/execution.rs",
+        "crates/pixiv-app/src/download.rs",
+        "crates/pixiv-mcp/src/download.rs",
+        "crates/pixiv-mcp/src/stdio.rs",
+        "crates/pixiv-cli/src/main.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/tools/download/migration_direct_test.go",
+        "crates/pixiv-mcp/tests/download_direct.rs",
+        "crates/pixiv-mcp/tests/download_stdio.rs",
+        "internal/mcpserver/pixiv/tools/download/migration_single_lease_test.go",
+        "crates/pixiv-mcp/tests/download_pool.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "全入力schemaとdirect URL/opaque ref local_path報告25行を固定し、実resource-enabled stdioと保存済みExecutionへ接続する。作品/user/record/ugoira計画とrandom recommendationは未移植。",
+        "downloadのnotifications/cancelledはcooperative Context取消で通常JSON-RPC結果とpublished prefixを保持する。既存Transport-only serve APIはresource executorを持たず明示errorを返す。",
+        "全disconnect/cancel/並行schedule・URL/JSON/native IO/public SDK lifecycleは未検証。",
+        "Go single-default lease3行を追加固定し、Rustはaccount selectionとretryable open failureの2行を実SDK/stateで比較する。deferred close callback errorの第3行はsource-driven契約に留め、native close-error実行へ数えない。"
+      ]
     },
     {
       "id": "mcp:pixiv:download_random_from_recommendation",
@@ -4962,13 +4998,15 @@
       ],
       "tests": [
         "sdk/migration_resource_ref_test.go#TestMigrationResourceRefMatchesFrozenWireContract",
-        "crates/pixiv-sdk/tests/resource_ref.rs"
+        "crates/pixiv-sdk/tests/resource_ref.rs",
+        "sdk/migration_resource_ref_diagnostics_test.go",
+        "crates/pixiv-sdk/tests/resource_ref_diagnostics.rs"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "参照解析失敗時の詳細・原因、および製品 SDK による参照の再検証と resource 取得は未移植。"
+        "resource取得/再検証は既存SDK saveへ接続済み。解析失敗のcause/detailsは追加15対象例で固定するが、全JSON syntax/type診断・任意raw grammar/非UTF8は未検証。"
       ]
     },
     {
@@ -5153,13 +5191,15 @@
       ],
       "tests": [
         "sdk/migration_resource_ref_test.go#TestMigrationResourceRefMatchesFrozenWireContract",
-        "crates/pixiv-sdk/tests/resource_ref.rs"
+        "crates/pixiv-sdk/tests/resource_ref.rs",
+        "sdk/migration_resource_ref_diagnostics_test.go",
+        "crates/pixiv-sdk/tests/resource_ref_diagnostics.rs"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "参照解析失敗時の詳細・原因、および製品 SDK による参照の再検証と resource 取得は未移植。"
+        "resource取得/再検証は既存SDK saveへ接続済み。解析失敗のcause/detailsは追加15対象例で固定するが、全JSON syntax/type診断・任意raw grammar/非UTF8は未検証。"
       ]
     },
     {
@@ -5386,13 +5426,15 @@
       ],
       "tests": [
         "sdk/migration_resource_ref_test.go#TestMigrationResourceRefMatchesFrozenWireContract",
-        "crates/pixiv-sdk/tests/resource_ref.rs"
+        "crates/pixiv-sdk/tests/resource_ref.rs",
+        "sdk/migration_resource_ref_diagnostics_test.go",
+        "crates/pixiv-sdk/tests/resource_ref_diagnostics.rs"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "参照解析失敗時の詳細・原因、および製品 SDK による参照の再検証と resource 取得は未移植。"
+        "resource取得/再検証は既存SDK saveへ接続済み。解析失敗のcause/detailsは追加15対象例で固定するが、全JSON syntax/type診断・任意raw grammar/非UTF8は未検証。"
       ]
     },
     {
@@ -5407,13 +5449,15 @@
       ],
       "tests": [
         "sdk/migration_resource_ref_test.go#TestMigrationResourceRefMatchesFrozenWireContract",
-        "crates/pixiv-sdk/tests/resource_ref.rs"
+        "crates/pixiv-sdk/tests/resource_ref.rs",
+        "sdk/migration_resource_ref_diagnostics_test.go",
+        "crates/pixiv-sdk/tests/resource_ref_diagnostics.rs"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "参照解析失敗時の詳細・原因、および製品 SDK による参照の再検証と resource 取得は未移植。"
+        "resource取得/再検証は既存SDK saveへ接続済み。解析失敗のcause/detailsは追加15対象例で固定するが、全JSON syntax/type診断・任意raw grammar/非UTF8は未検証。"
       ]
     },
     {
@@ -5428,13 +5472,15 @@
       ],
       "tests": [
         "sdk/migration_resource_ref_test.go#TestMigrationResourceRefMatchesFrozenWireContract",
-        "crates/pixiv-sdk/tests/resource_ref.rs"
+        "crates/pixiv-sdk/tests/resource_ref.rs",
+        "sdk/migration_resource_ref_diagnostics_test.go",
+        "crates/pixiv-sdk/tests/resource_ref_diagnostics.rs"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "参照解析失敗時の詳細・原因、および製品 SDK による参照の再検証と resource 取得は未移植。"
+        "resource取得/再検証は既存SDK saveへ接続済み。解析失敗のcause/detailsは追加15対象例で固定するが、全JSON syntax/type診断・任意raw grammar/非UTF8は未検証。"
       ]
     },
     {
@@ -5449,13 +5495,15 @@
       ],
       "tests": [
         "sdk/migration_resource_ref_test.go#TestMigrationResourceRefMatchesFrozenWireContract",
-        "crates/pixiv-sdk/tests/resource_ref.rs"
+        "crates/pixiv-sdk/tests/resource_ref.rs",
+        "sdk/migration_resource_ref_diagnostics_test.go",
+        "crates/pixiv-sdk/tests/resource_ref_diagnostics.rs"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "参照解析失敗時の詳細・原因、および製品 SDK による参照の再検証と resource 取得は未移植。"
+        "resource取得/再検証は既存SDK saveへ接続済み。解析失敗のcause/detailsは追加15対象例で固定するが、全JSON syntax/type診断・任意raw grammar/非UTF8は未検証。"
       ]
     },
     {
@@ -5470,13 +5518,15 @@
       ],
       "tests": [
         "sdk/migration_resource_ref_test.go#TestMigrationResourceRefMatchesFrozenWireContract",
-        "crates/pixiv-sdk/tests/resource_ref.rs"
+        "crates/pixiv-sdk/tests/resource_ref.rs",
+        "sdk/migration_resource_ref_diagnostics_test.go",
+        "crates/pixiv-sdk/tests/resource_ref_diagnostics.rs"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "参照解析失敗時の詳細・原因、および製品 SDK による参照の再検証と resource 取得は未移植。"
+        "resource取得/再検証は既存SDK saveへ接続済み。解析失敗のcause/detailsは追加15対象例で固定するが、全JSON syntax/type診断・任意raw grammar/非UTF8は未検証。"
       ]
     },
     {
@@ -5491,13 +5541,15 @@
       ],
       "tests": [
         "sdk/migration_resource_ref_test.go#TestMigrationResourceRefMatchesFrozenWireContract",
-        "crates/pixiv-sdk/tests/resource_ref.rs"
+        "crates/pixiv-sdk/tests/resource_ref.rs",
+        "sdk/migration_resource_ref_diagnostics_test.go",
+        "crates/pixiv-sdk/tests/resource_ref_diagnostics.rs"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "参照解析失敗時の詳細・原因、および製品 SDK による参照の再検証と resource 取得は未移植。"
+        "resource取得/再検証は既存SDK saveへ接続済み。解析失敗のcause/detailsは追加15対象例で固定するが、全JSON syntax/type診断・任意raw grammar/非UTF8は未検証。"
       ]
     },
     {
@@ -5512,13 +5564,15 @@
       ],
       "tests": [
         "sdk/migration_resource_ref_test.go#TestMigrationResourceRefMatchesFrozenWireContract",
-        "crates/pixiv-sdk/tests/resource_ref.rs"
+        "crates/pixiv-sdk/tests/resource_ref.rs",
+        "sdk/migration_resource_ref_diagnostics_test.go",
+        "crates/pixiv-sdk/tests/resource_ref_diagnostics.rs"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "参照解析失敗時の詳細・原因、および製品 SDK による参照の再検証と resource 取得は未移植。"
+        "resource取得/再検証は既存SDK saveへ接続済み。解析失敗のcause/detailsは追加15対象例で固定するが、全JSON syntax/type診断・任意raw grammar/非UTF8は未検証。"
       ]
     },
     {
@@ -5533,13 +5587,15 @@
       ],
       "tests": [
         "sdk/migration_resource_ref_test.go#TestMigrationResourceRefMatchesFrozenWireContract",
-        "crates/pixiv-sdk/tests/resource_ref.rs"
+        "crates/pixiv-sdk/tests/resource_ref.rs",
+        "sdk/migration_resource_ref_diagnostics_test.go",
+        "crates/pixiv-sdk/tests/resource_ref_diagnostics.rs"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "参照解析失敗時の詳細・原因、および製品 SDK による参照の再検証と resource 取得は未移植。"
+        "resource取得/再検証は既存SDK saveへ接続済み。解析失敗のcause/detailsは追加15対象例で固定するが、全JSON syntax/type診断・任意raw grammar/非UTF8は未検証。"
       ]
     },
     {
@@ -5554,13 +5610,15 @@
       ],
       "tests": [
         "sdk/migration_resource_ref_test.go#TestMigrationResourceRefMatchesFrozenWireContract",
-        "crates/pixiv-sdk/tests/resource_ref.rs"
+        "crates/pixiv-sdk/tests/resource_ref.rs",
+        "sdk/migration_resource_ref_diagnostics_test.go",
+        "crates/pixiv-sdk/tests/resource_ref_diagnostics.rs"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "参照解析失敗時の詳細・原因、および製品 SDK による参照の再検証と resource 取得は未移植。"
+        "resource取得/再検証は既存SDK saveへ接続済み。解析失敗のcause/detailsは追加15対象例で固定するが、全JSON syntax/type診断・任意raw grammar/非UTF8は未検証。"
       ]
     },
     {

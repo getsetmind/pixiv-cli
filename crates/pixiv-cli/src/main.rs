@@ -207,6 +207,8 @@ enum Command {
     Auth,
     #[command(about = "Manage global Pixiv CLI settings")]
     Config,
+    #[command(about = "Download illustrations")]
+    Download,
     #[command(args_override_self = true)]
     Comment {
         #[command(flatten)]
@@ -298,6 +300,14 @@ enum Command {
 
 #[tokio::main]
 async fn main() {
+    if std::env::args().nth(1).as_deref() == Some("download") {
+        let (result, ndjson, machine) = execute_download().await;
+        let exit = finish_command(result, ndjson, machine, &mut io::stderr().lock());
+        if exit != 0 {
+            std::process::exit(exit);
+        }
+        return;
+    }
     if std::env::args().nth(1).as_deref() == Some("auth") {
         let (result, machine) = execute_auth().await;
         let exit = finish_command(result, false, machine, &mut io::stderr().lock());
@@ -327,6 +337,17 @@ async fn main() {
         })
         .try_get_matches()
         .unwrap_or_else(|error| {
+            if error.kind() == clap::error::ErrorKind::DisplayHelp
+                && matches!(std::env::args().nth(1).as_deref(), Some("--help" | "-h"))
+            {
+                let help = error.to_string().replacen(
+                    "\n  download     Download illustrations\n",
+                    "\n  download    Download illustrations\n",
+                    1,
+                );
+                print!("{help}");
+                std::process::exit(0);
+            }
             let mutation_route = matches!(
                 std::env::args().nth(1).as_deref(),
                 Some("bookmark" | "follow" | "user")
@@ -450,6 +471,7 @@ async fn main() {
         } => options.json.is_some() || options.ndjson,
         Command::Novel { .. } => unreachable!("novel commands were resolved"),
         Command::Auth
+        | Command::Download
         | Command::Config
         | Command::Mcp { .. }
         | Command::Bookmark { .. }
@@ -524,6 +546,7 @@ async fn main() {
         } => options.ndjson || (options.json.is_none() && !io::stdout().is_terminal()),
         Command::Novel { .. } => unreachable!("novel commands were resolved"),
         Command::Auth
+        | Command::Download
         | Command::Config
         | Command::Mcp { .. }
         | Command::Bookmark { .. }
@@ -1533,13 +1556,41 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
         }
         let database = pixiv_app::database::Database::open(&directory)
             .map_err(|error| CommandError::State(Box::new(error)))?;
-        let execution = pixiv_app::execution::Execution::http(
+        let download_path = config
+            .current()
+            .and_then(|snapshot| snapshot.runtime())
+            .map_err(pixiv_app::scheduler::SchedulerError::from)?
+            .download_path;
+        let execution = std::sync::Arc::new(pixiv_app::execution::Execution::http(
             config,
             std::sync::Arc::new(std::sync::Mutex::new(database)),
-        );
-        pixiv_mcp::stdio::serve_saved_with_proxy(
+        ));
+        let download_execution = execution.clone();
+        let download_proxy = proxy.map(str::to_owned);
+        let download = move |context, input| -> pixiv_mcp::download::DownloadFuture {
+            let execution = download_execution.clone();
+            let path = download_path.clone();
+            let proxy = download_proxy.clone();
+            Box::pin(async move {
+                pixiv_mcp::download::saved_download(
+                    &execution,
+                    &context,
+                    &path,
+                    input,
+                    proxy.as_deref(),
+                    std::sync::Arc::new(|client| {
+                        std::sync::Arc::new(pixiv_app::download::NativeDownloadSaveClient::new(
+                            client,
+                        ))
+                    }),
+                )
+                .await
+            })
+        };
+        pixiv_mcp::stdio::serve_saved_with_download(
             &execution,
             proxy,
+            &download,
             tokio::io::stdin(),
             &mut tokio::io::stdout(),
         )
@@ -1555,6 +1606,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
         Command::Auth => unreachable!("auth uses local execution"),
         Command::Config => unreachable!("config uses its own local execution"),
         Command::Timeline { .. } => unreachable!("timeline uses saved account execution"),
+        Command::Download => unreachable!("download uses dedicated saved resource execution"),
         Command::Mypixiv { .. } => unreachable!("mypixiv uses saved account execution"),
         Command::Novel { .. } => unreachable!("novel commands were resolved"),
         Command::Comment { .. } => unreachable!("comment command was handled"),
@@ -1625,6 +1677,55 @@ fn execute_config() -> Result<(), CommandError> {
         &mut io::stdout().lock(),
         &mut io::stderr().lock(),
     )
+}
+
+async fn execute_download() -> (Result<(), CommandError>, bool, bool) {
+    let args: Vec<String> = std::env::args().skip(2).collect();
+    let (ndjson, machine) = pixiv_cli_rs::download::DownloadCommand::output_policy_requested(&args);
+    let result = async {
+        let mut input = io::stdin().lock();
+        let command = pixiv_cli_rs::download::DownloadCommand::parse_root(
+            &args,
+            &mut input,
+            io::stdin().is_terminal(),
+        )?;
+        if let Some(help) = command.render_help("pixiv download") {
+            io::stdout().write_all(help.as_bytes())?;
+            return Ok(());
+        }
+        let context = pixiv_app::lifecycle::Context::new();
+        if command.requires_startup() {
+            pixiv_cli_rs::startup::run_system_startup(&context, &mut io::stderr())?;
+        }
+        let path = if command.requires_config() {
+            pixiv_app::callback_handler::app_data_directory()
+                .map_err(|error| CommandError::MessageText(error.to_string()))?
+                .join("config.toml")
+        } else {
+            std::path::PathBuf::new()
+        };
+        let store = pixiv_app::config::Store::new(path);
+        if command.requires_config() {
+            store
+                .ensure_defaults()
+                .map_err(pixiv_app::scheduler::SchedulerError::from)?;
+            store
+                .current()
+                .and_then(|snapshot| snapshot.runtime())
+                .map_err(pixiv_app::scheduler::SchedulerError::from)?;
+        }
+        command
+            .execute_http(
+                &store,
+                &context,
+                &mut input,
+                std::sync::Arc::new(std::sync::Mutex::new(io::stdout())),
+                std::sync::Arc::new(std::sync::Mutex::new(io::stderr())),
+            )
+            .await
+    }
+    .await;
+    (result, ndjson, machine)
 }
 
 async fn execute_auth() -> (Result<(), CommandError>, bool) {

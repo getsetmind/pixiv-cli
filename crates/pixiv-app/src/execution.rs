@@ -5,7 +5,7 @@ use crate::{
     database::Database,
     facade::{Facade, UseCallback, UseOutcome, pool_executor},
     gate::Gate,
-    lifecycle::Context,
+    lifecycle::{Context, Lease},
     scheduler::SchedulerError,
     sessions::{ClientOpen, ClientSessions},
 };
@@ -160,6 +160,22 @@ impl<T: Transport + 'static> Execution<T> {
             })),
         };
         Self { config, facade }
+    }
+
+    pub async fn open_client(
+        &self,
+        context: &Context,
+        user_id: i64,
+        proxy: Option<&str>,
+    ) -> Result<Lease<Arc<Client<T>>, SchedulerError>, SchedulerError> {
+        let runtime = self.config.current()?.runtime()?;
+        let connection =
+            CommandConnection::resolve(&runtime, proxy).map_err(SchedulerError::Proxy)?;
+        self.facade
+            .sessions
+            .open(Some(context), user_id, connection)
+            .await
+            .map_err(|error| SchedulerError::Joined(error.into_errors()))
     }
 
     pub async fn use_client(

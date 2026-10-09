@@ -37,6 +37,62 @@ pub(crate) fn decode_base64(
     engine(url).decode(bytes)
 }
 
+pub(crate) fn base64_diagnostic(text: &str, url: bool, error: base64::DecodeError) -> String {
+    base64_error_offset(text.as_bytes(), url).map_or_else(
+        || error.to_string(),
+        |offset| format!("illegal base64 data at input byte {offset}"),
+    )
+}
+
+fn base64_error_offset(bytes: &[u8], url: bool) -> Option<usize> {
+    let mut index = 0;
+    loop {
+        let mut symbols = 0;
+        while symbols < 4 {
+            let Some(&byte) = bytes.get(index) else {
+                return (symbols == 1 || (!url && symbols != 0)).then_some(index - symbols);
+            };
+            index += 1;
+            if matches!(byte, b'\r' | b'\n') {
+                continue;
+            }
+            if byte.is_ascii_alphanumeric()
+                || if url {
+                    matches!(byte, b'-' | b'_')
+                } else {
+                    matches!(byte, b'+' | b'/')
+                }
+            {
+                symbols += 1;
+                continue;
+            }
+            if url || byte != b'=' || symbols < 2 {
+                return Some(index - 1);
+            }
+            if symbols == 2 {
+                while bytes
+                    .get(index)
+                    .is_some_and(|byte| matches!(byte, b'\r' | b'\n'))
+                {
+                    index += 1;
+                }
+                match bytes.get(index) {
+                    None => return Some(bytes.len()),
+                    Some(b'=') => index += 1,
+                    Some(_) => return Some(index - 1),
+                }
+            }
+            while bytes
+                .get(index)
+                .is_some_and(|byte| matches!(byte, b'\r' | b'\n'))
+            {
+                index += 1;
+            }
+            return (index < bytes.len()).then_some(index);
+        }
+    }
+}
+
 #[derive(Default)]
 pub(crate) struct Payload {
     pub(crate) bytes: Vec<u8>,
@@ -61,7 +117,8 @@ impl<'de> DeserializeSeed<'de> for PayloadSeed<'_> {
             }
 
             fn visit_str<E: de::Error>(self, value: &str) -> std::result::Result<(), E> {
-                let decoded = decode_base64(value, false).map_err(E::custom)?;
+                let decoded = decode_base64(value, false)
+                    .map_err(|error| E::custom(base64_diagnostic(value, false, error)))?;
                 self.0.bytes = vec![0; value.len() / 4 * 3];
                 self.0.bytes[..decoded.len()].copy_from_slice(&decoded);
                 self.0.length = decoded.len();

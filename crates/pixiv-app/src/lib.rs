@@ -12,6 +12,7 @@ pub mod darwin_handler;
 pub mod database;
 pub mod dates;
 pub mod diagnostics;
+pub mod download;
 pub mod execution;
 pub mod facade;
 pub mod gate;
