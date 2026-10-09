@@ -12,6 +12,10 @@ pub use crate::resource_transport::{
     ResourceBody, ResourceReadRequest, ResourceTransport, ResourceUrlValidator,
 };
 
+pub fn encode_query_pairs(parameters: &[(String, String)]) -> String {
+    crate::continuation::encode_query(parameters)
+}
+
 #[derive(Clone)]
 pub struct Request {
     pub method: Method,
@@ -173,7 +177,7 @@ impl HttpTransport {
             if !query.is_empty() {
                 query.push('&');
             }
-            query.push_str(&crate::continuation::encode_query(&request.parameters));
+            query.push_str(&encode_query_pairs(&request.parameters));
             original.url_mut().set_query(Some(&query));
         }
         let response = self.follow_redirects(original, request.operation).await?;

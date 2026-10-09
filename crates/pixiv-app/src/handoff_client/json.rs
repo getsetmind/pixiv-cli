@@ -140,20 +140,30 @@ impl<'de> Deserialize<'de> for Fields {
     }
 }
 
-pub(super) fn authorization(raw: &str) -> Result<String, ()> {
+pub(crate) fn strings(raw: &str, names: &[&str]) -> Result<Vec<String>, ()> {
     let fields: Fields = serde_json::from_str(raw).map_err(|_| ())?;
-    let mut address = String::new();
+    let mut values = vec![String::new(); names.len()];
     let mut bad_type = false;
     for (name, value) in fields.0 {
-        if !crate::auth_bundle::folded(&name, "authorization_url") || value == "null" {
+        let Some(index) = names
+            .iter()
+            .position(|expected| crate::auth_bundle::folded(&name, expected))
+        else {
+            continue;
+        };
+        if value == "null" {
             continue;
         }
         match serde_json::from_str::<String>(&value) {
-            Ok(value) => address = value,
+            Ok(value) => values[index] = value,
             Err(_) => bad_type = true,
         }
     }
-    if bad_type { Err(()) } else { Ok(address) }
+    if bad_type { Err(()) } else { Ok(values) }
+}
+
+pub(super) fn authorization(raw: &str) -> Result<String, ()> {
+    strings(raw, &["authorization_url"]).map(|mut values| values.remove(0))
 }
 pub(super) fn completion(raw: &str) -> Result<bool, ()> {
     let fields: Fields = serde_json::from_str(raw).map_err(|_| ())?;

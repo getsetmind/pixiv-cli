@@ -23,6 +23,7 @@ pub mod login_input;
 pub mod login_page;
 pub mod pagination;
 pub mod private_lock;
+pub mod relay_server;
 pub mod scheduler;
 pub mod search_filter;
 pub mod secret_file;

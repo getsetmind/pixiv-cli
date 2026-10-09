@@ -77,7 +77,7 @@ pub fn login_code_from_input(
     }
 }
 
-fn equal_fold_ascii(input: &str, expected: &str) -> bool {
+pub(crate) fn equal_fold_ascii(input: &str, expected: &str) -> bool {
     let mut chars = input.chars();
     expected.chars().all(|expected| {
         chars.next().is_some_and(|actual| {
@@ -234,7 +234,7 @@ impl Error for LoginAddressError {
     }
 }
 
-fn split_host_port(addr: &str) -> Result<(&str, &str), LoginAddressParseError> {
+pub(crate) fn split_host_port(addr: &str) -> Result<(&str, &str), LoginAddressParseError> {
     let error = |reason| LoginAddressParseError {
         address: addr.to_owned(),
         reason,

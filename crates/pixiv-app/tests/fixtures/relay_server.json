@@ -1,0 +1,179 @@
+{
+  "rejected_start": [
+    {
+      "name": "null",
+      "body": "null"
+    },
+    {
+      "name": "empty",
+      "body": "{}"
+    },
+    {
+      "name": "null_proof",
+      "body": "{\"proof\":null}"
+    },
+    {
+      "name": "wrong_type",
+      "body": "{\"proof\":1}"
+    },
+    {
+      "name": "array",
+      "body": "[]"
+    },
+    {
+      "name": "trailing",
+      "body": "{\"proof\":\"$PROOF\"} {}"
+    },
+    {
+      "name": "malformed",
+      "body": "{\"proof\":"
+    },
+    {
+      "name": "duplicate",
+      "body": "{\"proof\":\"$PROOF\",\"PROOF\":\"wrong\"}"
+    }
+  ],
+  "accepted_start": "{\"proof\":\"wrong\",\"PrOoF\":\"  $PROOF \\t\",\"proof\":null,\"unknown\":true}",
+  "accepted_callback": "{\"CALLBACK_URL\":\"$CALLBACK\",\"callback_url\":null,\"PROOF\":\"$PROOF\",\"proof\":null}",
+  "options": [
+    {
+      "name": "disabled",
+      "public": "",
+      "listen": "",
+      "cert": "",
+      "key": "",
+      "enabled": false,
+      "error": ""
+    },
+    {
+      "name": "required",
+      "public": "https://relay.example",
+      "listen": "",
+      "cert": "",
+      "key": "",
+      "enabled": false,
+      "error": "remote login relay requires login_relay_public_url and login_relay_listen_addr"
+    },
+    {
+      "name": "pair_before_url",
+      "public": "invalid",
+      "listen": "invalid",
+      "cert": "cert",
+      "key": "",
+      "enabled": false,
+      "error": "remote login relay TLS requires both certificate and key files"
+    },
+    {
+      "name": "credentials",
+      "public": "http://user:pass@relay.example",
+      "listen": "127.0.0.1:0",
+      "cert": "",
+      "key": "",
+      "enabled": false,
+      "error": "invalid remote login relay public URL"
+    },
+    {
+      "name": "blank_host",
+      "public": "http://relay.example",
+      "listen": ":0",
+      "cert": "",
+      "key": "",
+      "enabled": false,
+      "error": "remote login relay listen address must include host and port"
+    },
+    {
+      "name": "https_nonloopback",
+      "public": "https://relay.example",
+      "listen": "0.0.0.0:0",
+      "cert": "",
+      "key": "",
+      "enabled": false,
+      "error": "HTTPS relay without TLS PEM must listen on loopback for a same-host reverse proxy"
+    },
+    {
+      "name": "localhost_service",
+      "public": "https://relay.example?",
+      "listen": "LOCALHOST:http",
+      "cert": "",
+      "key": "",
+      "enabled": true,
+      "error": ""
+    },
+    {
+      "name": "ipv6_loopback",
+      "public": "https://relay.example#",
+      "listen": "[::1]:",
+      "cert": "",
+      "key": "",
+      "enabled": true,
+      "error": ""
+    },
+    {
+      "name": "http_bracket_host",
+      "public": " HTTP://RELAY.EXAMPLE//relay/../login/// ",
+      "listen": "[not-an-ip]:nonnumeric",
+      "cert": "",
+      "key": "",
+      "enabled": true,
+      "error": ""
+    },
+    {
+      "name": "tls_any_host",
+      "public": "https://relay.example",
+      "listen": "0.0.0.0:0",
+      "cert": "synthetic-cert",
+      "key": "synthetic-key",
+      "enabled": true,
+      "error": ""
+    },
+    {
+      "name": "clear_public_override",
+      "public": "http://relay.example",
+      "listen": "127.0.0.1:0",
+      "cert": "",
+      "key": "",
+      "clear": [
+        "relay-public-url"
+      ],
+      "enabled": false,
+      "error": "remote login relay requires login_relay_public_url and login_relay_listen_addr"
+    },
+    {
+      "name": "clear_all_overrides",
+      "public": "http://relay.example",
+      "listen": "127.0.0.1:0",
+      "cert": "cert",
+      "key": "key",
+      "clear": [
+        "relay-public-url",
+        "relay-listen-addr",
+        "relay-tls-cert-file",
+        "relay-tls-key-file"
+      ],
+      "enabled": false,
+      "error": ""
+    }
+  ],
+  "deep_links": [
+    {
+      "origin": "https://relay.example/~/*/日本 語",
+      "session": "s~* /?&=+",
+      "proof": "p~* /?&=+",
+      "expected": "pixiv://account/remote-login?access=p~%2A+%2F%3F%26%3D%2B&origin=https%3A%2F%2Frelay.example%2F~%2F%2A%2F%E6%97%A5%E6%9C%AC+%E8%AA%9E&session=s~%2A+%2F%3F%26%3D%2B"
+    }
+  ],
+  "flag_priority": {
+    "config": {
+      "public": "https://configured.example",
+      "listen": "127.0.0.1:8",
+      "cert": "configured-cert",
+      "key": "configured-key"
+    },
+    "flags": {
+      "public": "http://flag.example",
+      "listen": "127.0.0.1:9",
+      "cert": "flag-cert",
+      "key": "flag-key"
+    }
+  }
+}

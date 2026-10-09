@@ -210,7 +210,9 @@
         "crates/pixiv-app/src/private_lock.rs",
         "crates/pixiv-app/src/handoff_client.rs",
         "crates/pixiv-app/src/handoff_client/http.rs",
-        "crates/pixiv-app/src/handoff_client/json.rs"
+        "crates/pixiv-app/src/handoff_client/json.rs",
+        "crates/pixiv-app/src/relay_server.rs",
+        "crates/pixiv-app/src/relay_server/http.rs"
       ],
       "tests": [
         "internal/cli/commands/pixiv/auth/loginhelper/migration_protocol_test.go",
@@ -220,11 +222,17 @@
         "crates/pixiv-app/tests/fixtures/handoff_protocol.json",
         "internal/cli/commands/pixiv/auth/loginhelper/migration_client_test.go",
         "crates/pixiv-app/tests/handoff_client.rs",
-        "crates/pixiv-app/tests/fixtures/handoff_client.json"
+        "crates/pixiv-app/tests/fixtures/handoff_client.json",
+        "internal/cli/commands/pixiv/auth/migration_relay_server_test.go",
+        "internal/cli/commands/pixiv/auth/migration_relay_server_internal_test.go",
+        "crates/pixiv-app/tests/relay_server.rs",
+        "crates/pixiv-app/tests/fixtures/relay_server.json",
+        "crates/pixiv-app/tests/fixtures/relay_server_cert.pem",
+        "crates/pixiv-app/tests/fixtures/relay_server_key.pem"
       ],
       "verified_platforms": [],
       "differences": [
-        "CLI login/hidden callback入口は未接続。input/pages/local bridge・remote pure protocol/private state/streaming Start/Forward/Complete/Abort依存は対象例で実装するが、relay server期限/context・default state path・full startup/options/TTY/browser/OS handler adapterは未移植。Go stateにTTLは無く追加しない。nonUTF8 URL/環境値対String、全URL/JSON/native header・Go native exact診断・TLS/proxy実通信/IDNA/IPv6zone/unknown proxy scheme・gzip/wire data+error chunking・全concurrency/cancel/clock/socket flush/backpressureとWindows/native platformは未検証または差分。HandoffReadの0None=EOFはarbitrary Go Readerの0nil/data+EOFを表せずsynthetic n+nonEOF read-error例を全native wireへ外挿しない。SDK owned HTTP/context/idle lifecycle・blocked prompt cleanup・全並行scheduleの既存debtも保持する。 native reqwest0.13.5がAccept: */*を追加する具体差分はGoのAccept不在と別々にcaptureし未解消とする。native header parityを宣言しない。"
+        "CLI login/hidden callback入口は未接続。input/pages/local bridge・remote pure protocol/private state/streaming Start/Forward/Complete/Abort依存は対象例で実装するが、relay serverのsession/capability/caller context/HTTP1/TLS依存も対象例で実装するが、default state path・full startup/options/TTY/browser/OS handler adapterは未移植。Go TLS serverはHTTP/2 negotiation/servingを持つがRust relayはHTTP/1のみで、HTTP/2は実際の未移植transport capability。synthetic local TLS trustはtest限定でhost trustを変更しない。Go stateにTTLは無く追加しない。nonUTF8 URL/環境値対String、全URL/JSON/native header・Go native exact診断・TLS/proxy実通信/IDNA/IPv6zone/unknown proxy scheme・gzip/wire data+error chunking・全concurrency/cancel/clock/socket flush/backpressureとWindows/native platformは未検証または差分。HandoffReadの0None=EOFはarbitrary Go Readerの0nil/data+EOFを表せずsynthetic n+nonEOF read-error例を全native wireへ外挿しない。SDK owned HTTP/context/idle lifecycle・blocked prompt cleanup・全並行scheduleの既存debtも保持する。 native reqwest0.13.5がAccept: */*を追加する具体差分はGoのAccept不在と別々にcaptureし未解消とする。native header parityを宣言しない。"
       ]
     },
     {
@@ -411,7 +419,9 @@
         "crates/pixiv-app/src/private_lock.rs",
         "crates/pixiv-app/src/handoff_client.rs",
         "crates/pixiv-app/src/handoff_client/http.rs",
-        "crates/pixiv-app/src/handoff_client/json.rs"
+        "crates/pixiv-app/src/handoff_client/json.rs",
+        "crates/pixiv-app/src/relay_server.rs",
+        "crates/pixiv-app/src/relay_server/http.rs"
       ],
       "tests": [
         "internal/cli/commands/pixiv/auth/migration_input_test.go",
@@ -430,11 +440,17 @@
         "crates/pixiv-app/tests/fixtures/handoff_protocol.json",
         "internal/cli/commands/pixiv/auth/loginhelper/migration_client_test.go",
         "crates/pixiv-app/tests/handoff_client.rs",
-        "crates/pixiv-app/tests/fixtures/handoff_client.json"
+        "crates/pixiv-app/tests/fixtures/handoff_client.json",
+        "internal/cli/commands/pixiv/auth/migration_relay_server_test.go",
+        "internal/cli/commands/pixiv/auth/migration_relay_server_internal_test.go",
+        "crates/pixiv-app/tests/relay_server.rs",
+        "crates/pixiv-app/tests/fixtures/relay_server.json",
+        "crates/pixiv-app/tests/fixtures/relay_server_cert.pem",
+        "crates/pixiv-app/tests/fixtures/relay_server_key.pem"
       ],
       "verified_platforms": [],
       "differences": [
-        "CLI login/hidden callback入口は未接続。input/pages/local bridge・remote pure protocol/private state/streaming Start/Forward/Complete/Abort依存は対象例で実装するが、relay server期限/context・default state path・full startup/options/TTY/browser/OS handler adapterは未移植。Go stateにTTLは無く追加しない。nonUTF8 URL/環境値対String、全URL/JSON/native header・Go native exact診断・TLS/proxy実通信/IDNA/IPv6zone/unknown proxy scheme・gzip/wire data+error chunking・全concurrency/cancel/clock/socket flush/backpressureとWindows/native platformは未検証または差分。HandoffReadの0None=EOFはarbitrary Go Readerの0nil/data+EOFを表せずsynthetic n+nonEOF read-error例を全native wireへ外挿しない。SDK owned HTTP/context/idle lifecycle・blocked prompt cleanup・全並行scheduleの既存debtも保持する。 native reqwest0.13.5がAccept: */*を追加する具体差分はGoのAccept不在と別々にcaptureし未解消とする。native header parityを宣言しない。"
+        "CLI login/hidden callback入口は未接続。input/pages/local bridge・remote pure protocol/private state/streaming Start/Forward/Complete/Abort依存は対象例で実装するが、relay serverのsession/capability/caller context/HTTP1/TLS依存も対象例で実装するが、default state path・full startup/options/TTY/browser/OS handler adapterは未移植。Go TLS serverはHTTP/2 negotiation/servingを持つがRust relayはHTTP/1のみで、HTTP/2は実際の未移植transport capability。synthetic local TLS trustはtest限定でhost trustを変更しない。Go stateにTTLは無く追加しない。nonUTF8 URL/環境値対String、全URL/JSON/native header・Go native exact診断・TLS/proxy実通信/IDNA/IPv6zone/unknown proxy scheme・gzip/wire data+error chunking・全concurrency/cancel/clock/socket flush/backpressureとWindows/native platformは未検証または差分。HandoffReadの0None=EOFはarbitrary Go Readerの0nil/data+EOFを表せずsynthetic n+nonEOF read-error例を全native wireへ外挿しない。SDK owned HTTP/context/idle lifecycle・blocked prompt cleanup・全並行scheduleの既存debtも保持する。 native reqwest0.13.5がAccept: */*を追加する具体差分はGoのAccept不在と別々にcaptureし未解消とする。native header parityを宣言しない。"
       ]
     },
     {

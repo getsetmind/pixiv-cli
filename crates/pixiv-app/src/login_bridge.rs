@@ -123,7 +123,7 @@ impl Drop for Waiter {
     }
 }
 
-struct BridgeBody {
+pub(crate) struct BridgeBody {
     inner: Full<Bytes>,
     waiter: Option<Waiter>,
     chunked: bool,
@@ -152,7 +152,11 @@ impl Body for BridgeBody {
         }
     }
 }
-fn response(status: StatusCode, content_type: Option<&str>, body: Vec<u8>) -> Response<BridgeBody> {
+pub(crate) fn response(
+    status: StatusCode,
+    content_type: Option<&str>,
+    body: Vec<u8>,
+) -> Response<BridgeBody> {
     let chunked = body.len() > 2048;
     let mut result = Response::new(BridgeBody {
         inner: Full::new(Bytes::from(body)),
@@ -168,7 +172,7 @@ fn response(status: StatusCode, content_type: Option<&str>, body: Vec<u8>) -> Re
     }
     result
 }
-fn html(
+pub(crate) fn html(
     status: StatusCode,
     render: impl FnOnce(&mut Vec<u8>) -> io::Result<()>,
 ) -> Response<BridgeBody> {
@@ -181,7 +185,7 @@ fn html(
     }
     response(status, Some("text/html; charset=utf-8"), body)
 }
-fn final_page(ok: bool) -> Response<BridgeBody> {
+pub(crate) fn final_page(ok: bool) -> Response<BridgeBody> {
     html(
         if ok {
             StatusCode::OK
@@ -191,7 +195,7 @@ fn final_page(ok: bool) -> Response<BridgeBody> {
         |body| login_page::write_result(body, ok),
     )
 }
-fn http_error(status: StatusCode, message: &str) -> Response<BridgeBody> {
+pub(crate) fn http_error(status: StatusCode, message: &str) -> Response<BridgeBody> {
     let mut result = response(
         status,
         Some("text/plain; charset=utf-8"),
@@ -334,7 +338,7 @@ fn form_content_type(value: &str) -> Result<bool, String> {
     Ok(media == "application/x-www-form-urlencoded")
 }
 
-fn clean_path(path: &str) -> String {
+pub(crate) fn clean_path(path: &str) -> String {
     let mut segments = Vec::new();
     for segment in path.split('/') {
         match segment {
@@ -351,7 +355,7 @@ fn clean_path(path: &str) -> String {
     }
     clean
 }
-fn escape_html(value: &str) -> String {
+pub(crate) fn escape_html(value: &str) -> String {
     value
         .replace('&', "&amp;")
         .replace('<', "&lt;")
@@ -543,6 +547,13 @@ pub struct LoginBridgeResult {
     pub server: LoginBridgeServer,
 }
 
+pub(crate) async fn bind_login_listener(address: &str) -> io::Result<TcpListener> {
+    let normalized = crate::login_input::split_host_port(address)
+        .is_ok_and(|(_, port)| port.is_empty())
+        .then(|| format!("{address}0"));
+    TcpListener::bind(normalized.as_deref().unwrap_or(address)).await
+}
+
 pub async fn wait_for_login_code(
     context: &Context,
     address: &str,
@@ -551,7 +562,7 @@ pub async fn wait_for_login_code(
     no_open: bool,
     hooks: Arc<dyn LoginBridgeHooks>,
 ) -> Result<LoginBridgeResult, BridgeError> {
-    let listener = TcpListener::bind(address).await?;
+    let listener = bind_login_listener(address).await?;
     let actual_address = listener.local_addr()?.to_string();
     let (result_tx, mut results) = mpsc::channel(1);
     let (final_tx, final_rx) = mpsc::channel(1);

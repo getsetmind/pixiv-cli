@@ -7,7 +7,8 @@
 | 操作群 | 既存 Rust の部品 | 残る範囲 |
 | --- | --- | --- |
 | download・媒体処理 | SDK resource open/save、ugoira metadata、CLI metadata 試作 | Go の download 計画・進捗・record 入力・失敗/取消、MCP download/random recommendation、ugoira 取得/変換等の全 workflow |
-| auth の操作入口 | 合成 DB/config/account、refresh CAS、pool/lease | Go の CLI auth login・callback/URL handler 等。入力/relay分類・embedded pageとlocal HTTP bridge依存は対象例で実装（local bridge full gate389passed・既存3ignored）するが、remote handoffのpure protocol/private capability state依存も対象例で実装（full gate398top-level passed・child1・既存3ignored）するが、streaming Start/Forward/Complete/Abortも対象例で実装（full gate412top-level passed・child1・既存3ignored）するが、relay server・default state pathとCLI full startup/flags/TTY/browser/OS登録は未接続。import/export/list/use/remove・pool status/enable/disableは下記scopeで接続。下位部品の存在を入口実装と数えない |
+| auth の操作入口 | 合成 DB/config/account、refresh CAS、pool/lease、login SDK/input/pages/local bridge、handoff protocol/private state/streaming client、relay server session/capability/context/HTTP1/TLS | Go の CLI auth login・callback/URL handler、default state path、full startup/flags/TTY/browser/OS登録は未接続。import/export/list/use/remove・check/refresh・pool操作は接続済み。依存の存在を入口実装と数えない |
+| relay HTTP/2 transport | HTTP/1 relay listener・synthetic trustによるnative TLS | Go TLS serverのHTTP/2 negotiation/servingはactual Go testで確認したが、Rust relayはHTTP/1のみ。HTTP/2 capabilityは未移植であり、単なる検証不足としない |
 | 公開 client lifecycle | OAuth/HTTP client・login one-shot 基盤 | Go の Client.CloseIdleConnections・LoginOptions Start時HTTPClient ownership・LoginSession.CloseIdleConnections 等の残る公開契約。通信テストだけの不足と区別する |
 | 追加サービス・OS・配布 | Pixiv 共通処理 | FANBOX、辞典、reverse search、update/install/browser/URL handler 等。各 Go 実装の実在範囲を確認してから小さな単位で固定する |
 
@@ -32,7 +33,8 @@ auth check/refresh（full gate354passed・既存3ignored、対象fixture42root�
 - auth terminalのCtrl-D/no-matchは固定Go panic対Rust bounded errorの具体差分。全cursor/redraw/width/color-env/malformed CSI/非UTF8・native Windows consoleは未検証
 - login SDK/appのone-shot/保存依存は対象例で比較（full gate365passed・既存3ignored）するが、CLI local/remote/browser/callback/handlerは未移植。nonUTF8 callback query/form、direct SDK Context、全URL/raw-wire、random failureとowned-client lifecycleは残る
 - remote handoff native transportはGoに無いAccept: */*をreqwest0.13.5が追加する具体差分が残る。Go不在/Rust実headerのcaptureを保持し、同じheadersとは扱わない
-- remote handoffの137URL fixture/private stateとstreaming clientの37JSON/21env-proxy・local native HTTP対象例は比較するが、nonUTF8 URL/env values・全Go URL grammar/JSON/native error・TLS/proxy実通信/IDNA/IPv6zone/unknown proxy scheme・gzip/wire read-error chunking・Windows sidecar lock compile/run/ACLと全並行scheduleは未検証。arbitrary Go Readerの0nil/data+EOFはRust HandoffReadに対応しない。state自体にはGo同様TTLを追加せず、期限は未移植のrelay server contextで扱う
+- remote handoffの137URL fixture/private stateとstreaming clientの37JSON/21env-proxy・local native HTTP対象例は比較するが、nonUTF8 URL/env values・全Go URL grammar/JSON/native error・TLS/proxy実通信/IDNA/IPv6zone/unknown proxy scheme・gzip/wire read-error chunking・Windows sidecar lock compile/run/ACLと全並行scheduleは未検証。arbitrary Go Readerの0nil/data+EOFはRust HandoffReadに対応しない。state自体にはGo同様TTLを追加せず、relay serverのcaller context期限は対象例で比較するが、全clock/cancel/並行scheduleは残る
+- relay serverのsession/proof/resultとfinal latchはHTTP1/local TLSの対象例を比較するが、HTTP/2は上記の未移植capability。全TLS configuration/handshake failure・乱数故障・JSON/HTTP wire・全cancel/disconnect/claim/notify schedule・native platformは未検証
 - local loginのnative hostname/service-port bind・Go net.OpError/AddrError exact診断、全HTTP/MIME/raw parser/wire/backpressure/flush・blocked prompt cleanup、duplicate waiter全scheduleは残る
 - auth localの実startup/update/diagnostic/DB close・SQL実行中取消/blocked mutex、service clock全境界/日時/flag/help/非UTF8
 - Windows/macOS/Linux の amd64/arm64、配布・更新の署名/信頼条件
