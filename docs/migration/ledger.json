@@ -61,7 +61,8 @@
         "crates/pixiv-sdk/src/reference.rs",
         "crates/pixiv-app/src/account_login.rs",
         "crates/pixiv-app/src/login_input.rs",
-        "crates/pixiv-app/src/login_page.rs"
+        "crates/pixiv-app/src/login_page.rs",
+        "crates/pixiv-app/src/login_bridge.rs"
       ],
       "tests": [
         "internal/storage/database/migration_contract_test.go#TestMigrationDatabasePreservesSchemaAndRejectsDrift",
@@ -166,7 +167,10 @@
         "crates/pixiv-app/tests/login_input.rs",
         "crates/pixiv-app/tests/login_page.rs",
         "crates/pixiv-app/tests/fixtures/login_page.json",
-        "crates/pixiv-app/tests/fixtures/login_page_writer_errors.json"
+        "crates/pixiv-app/tests/fixtures/login_page_writer_errors.json",
+        "internal/cli/commands/pixiv/auth/migration_local_login_test.go",
+        "crates/pixiv-app/tests/login_bridge.rs",
+        "crates/pixiv-app/tests/fixtures/local_login_http.json"
       ],
       "verified_platforms": [
         "windows-amd64",
@@ -190,7 +194,7 @@
         "auth import/exportのtoken/bundle/current/UID/all/stdout/output/force workflowを既存OAuth/DB/config/private primitiveへ接続。合成credentialのみでGo CLI61行（51actualroot/10injected IO、47,756bytes）、別8OAuth・分類/codec/domain/secretfile・masked terminal対象例を比較。DB batch atomicityとdefault write失敗後committed state、raw token export bytes対bundle GoJSON replacement、Go17全1,112,064 valid scalarのunknown/duplicate diagnostic2SHAを比較。最終full script終了0・369秒、Formatter/Clippy・342passed/既存3ignored・release36.84秒成功。Go related tests/vet終了0（既存Linux snapshot1test除外・未指定interop skipを保持）。Go-only nonUTF8 token stdin→OAuth formはRust String boundary差分を保持。generic malformed JSON診断・serde128対Go10000 depth・Go duplicate scanner panic対Rust safe reject、secret validation read-ahead packet差、全terminal redraw/width/color/CSI、Windows compile/run/ACL/recovery/durability failure injection、SDK-owned idle-close/sharedpool/context/platform/実HTTPS・残るauthは未検証または未実装。",
         "auth check/refresh/current/UID/stdin/--allを既存OAuth/DB/configへ接続。合成credentialsのみのGo root42行・33,291bytes、別12 OAuth/profile output-state組合せとdomain20対象例でrotation CAS、Check最小DTO、Refresh profile/metadata/fresh default、途中失敗のcommitted token/metadata、all逐次commitと全成功後output、proxy Changed/false/override時runtime reload省略、全commit後JSON日時拒否を比較。app3・CLI7・root42行とtransfer OAuth4 regression成功。full script終了0・298秒、Formatter/Clippy・354passed/既存3ignored・release39.10秒成功。Go関連suite/vet・台帳検査成功、既存Linux snapshot除外とinterop未指定skipを保持。task-local dev/test debug情報0を一貫使用しtest内容/optimization/script全stageは不変。既存nonUTF8 token String/form差分・SDK-owned idle-close/context/TLS/全wire・実startup/update/diagnostic/DB close・SQL取消/blocked mutex/全clock/flags/他platformとlogin/callbackは未検証または未実装。",
         "login依存SDK/appをGo-first synthetic OAuthで接続。shared clone one-shot・Default empty・invalid retry・PKCE64/state32・callback first query/state/URL predicates・response fallbackと欠落access/expiry、save→direct default read→write→fresh summary、途中失敗committed state/取消safe Displayとcauseを対象例で比較。最終freeze callback30行・official predicate10行・response12行、SDK7/app4test、Go関連suite/vet終了0、full gate終了0・291秒・365passed/既存3ignored・release42.45秒成功。CLI local/remote/browser/hidden callback/URL handlerは未移植。Go実装はofficial HTTPSとpixiv callbackのstate省略を許す（commentと異なる）。nonUTF8 callback bytes対Rust String/form、direct SDK Context API、Start時HTTPClient injection/owned idle-close、全raw wire/parser/randomfailure/concurrency/platformは未検証または未解消。SDK session/credential formattingのredactionをapp public AuthorizationURL/CallbackOrCodeのformatへ外挿しない。",
-        "login入力/relay分類・loopback/SSH hint・embedded page依存は実装するが、CLI login leaf全local HTTP waiter/cleanup/TTY・remote relay/handoff・hidden callback/OS handlerは未接続。inputのnonUTF8 byte string・全URL parser・HTML全context/非UTF8/全writer故障・HTTP status/header/final response/全platformは未検証。Go opener/AddrError cause・SimpleFoldは対象例で保持し、complete入口と呼ばない。"
+        "login入力/relay/pages/local HTTP bridge依存は実装するが、CLI login leafのstartup/options/TTY/browser実adapter・remote relay/handoff・hidden callback/OS handlerは未接続。native hostname/service-port resolutionとGo net.OpError/AddrError exact診断、全HTTP/MIME/parser/wire/Date clock/backpressure/socket flush・blocked native prompt cleanup・全platformは未検証。duplicate waiterの30ms registration/pending観測は全scheduleの証明ではない。nonUTF8 URL/query/form String差分・SDK owned HTTP/context/lifecycleも保持する。"
       ]
     },
     {
@@ -382,7 +386,8 @@
       "rust_sources": [
         "crates/pixiv-app/src/login_input.rs",
         "crates/pixiv-app/src/login_page.rs",
-        "crates/pixiv-sdk/src/oauth.rs"
+        "crates/pixiv-sdk/src/oauth.rs",
+        "crates/pixiv-app/src/login_bridge.rs"
       ],
       "tests": [
         "internal/cli/commands/pixiv/auth/migration_input_test.go",
@@ -390,11 +395,14 @@
         "crates/pixiv-app/tests/login_input.rs",
         "crates/pixiv-app/tests/login_page.rs",
         "crates/pixiv-app/tests/fixtures/login_page.json",
-        "crates/pixiv-app/tests/fixtures/login_page_writer_errors.json"
+        "crates/pixiv-app/tests/fixtures/login_page_writer_errors.json",
+        "internal/cli/commands/pixiv/auth/migration_local_login_test.go",
+        "crates/pixiv-app/tests/login_bridge.rs",
+        "crates/pixiv-app/tests/fixtures/local_login_http.json"
       ],
       "verified_platforms": [],
       "differences": [
-        "login入力/relay分類・loopback/SSH hint・embedded page依存は実装するが、CLI login leaf全local HTTP waiter/cleanup/TTY・remote relay/handoff・hidden callback/OS handlerは未接続。inputのnonUTF8 byte string・全URL parser・HTML全context/非UTF8/全writer故障・HTTP status/header/final response/全platformは未検証。Go opener/AddrError cause・SimpleFoldは対象例で保持し、complete入口と呼ばない。"
+        "login入力/relay/pages/local HTTP bridge依存は実装するが、CLI login leafのstartup/options/TTY/browser実adapter・remote relay/handoff・hidden callback/OS handlerは未接続。native hostname/service-port resolutionとGo net.OpError/AddrError exact診断、全HTTP/MIME/parser/wire/Date clock/backpressure/socket flush・blocked native prompt cleanup・全platformは未検証。duplicate waiterの30ms registration/pending観測は全scheduleの証明ではない。nonUTF8 URL/query/form String差分・SDK owned HTTP/context/lifecycleも保持する。"
       ]
     },
     {

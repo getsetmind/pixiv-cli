@@ -15,6 +15,7 @@ pub mod facade;
 pub mod gate;
 mod lease;
 pub mod lifecycle;
+pub mod login_bridge;
 pub mod login_input;
 pub mod login_page;
 pub mod pagination;

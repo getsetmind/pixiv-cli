@@ -1,0 +1,295 @@
+{
+  "routes": [
+    {
+      "name": "root GET",
+      "method": "GET",
+      "path": "/",
+      "body": "",
+      "status": 200,
+      "page": "manual",
+      "location": ""
+    },
+    {
+      "name": "root POST",
+      "method": "POST",
+      "path": "/",
+      "body": "",
+      "status": 200,
+      "page": "manual",
+      "location": ""
+    },
+    {
+      "name": "root DELETE",
+      "method": "DELETE",
+      "path": "/",
+      "body": "",
+      "status": 200,
+      "page": "manual",
+      "location": ""
+    },
+    {
+      "name": "manual GET",
+      "method": "GET",
+      "path": "/manual",
+      "body": "",
+      "status": 200,
+      "page": "manual",
+      "location": ""
+    },
+    {
+      "name": "manual HEAD",
+      "method": "HEAD",
+      "path": "/manual",
+      "body": "",
+      "status": 405,
+      "page": "empty",
+      "location": ""
+    },
+    {
+      "name": "manual PUT",
+      "method": "PUT",
+      "path": "/manual",
+      "body": "",
+      "status": 405,
+      "page": "method",
+      "location": ""
+    },
+    {
+      "name": "callback POST",
+      "method": "POST",
+      "path": "/callback",
+      "body": "",
+      "status": 405,
+      "page": "method",
+      "location": ""
+    },
+    {
+      "name": "callback empty",
+      "method": "GET",
+      "path": "/callback",
+      "body": "",
+      "status": 200,
+      "page": "callback",
+      "location": ""
+    },
+    {
+      "name": "callback empty question",
+      "method": "GET",
+      "path": "/callback?",
+      "body": "",
+      "status": 200,
+      "page": "callback",
+      "location": ""
+    },
+    {
+      "name": "callback fragment",
+      "method": "GET",
+      "path": "/callback#code=fake",
+      "body": "",
+      "status": 200,
+      "page": "callback",
+      "location": ""
+    },
+    {
+      "name": "callback rejected",
+      "method": "GET",
+      "path": "/callback?code=fake",
+      "body": "",
+      "status": 400,
+      "page": "failure",
+      "location": ""
+    },
+    {
+      "name": "unknown",
+      "method": "GET",
+      "path": "/missing",
+      "body": "",
+      "status": 404,
+      "page": "notfound",
+      "location": ""
+    },
+    {
+      "name": "manual suffix",
+      "method": "GET",
+      "path": "/manual/",
+      "body": "",
+      "status": 404,
+      "page": "notfound",
+      "location": ""
+    },
+    {
+      "name": "callback suffix",
+      "method": "GET",
+      "path": "/callback/",
+      "body": "",
+      "status": 404,
+      "page": "notfound",
+      "location": ""
+    },
+    {
+      "name": "canonical GET",
+      "method": "GET",
+      "path": "//manual?x=y",
+      "body": "",
+      "status": 307,
+      "page": "redirect",
+      "location": "/manual?x=y"
+    },
+    {
+      "name": "canonical POST",
+      "method": "POST",
+      "path": "/a/../manual",
+      "body": "",
+      "status": 307,
+      "page": "empty",
+      "location": "/manual"
+    }
+  ],
+  "forms": [
+    {
+      "name": "login_result first",
+      "path": "/manual",
+      "body": "login_result=first&code=second&callback_url=third",
+      "code": "first",
+      "diagnostic": ""
+    },
+    {
+      "name": "code fallback",
+      "path": "/manual",
+      "body": "login_result=&code=second&callback_url=third",
+      "code": "second",
+      "diagnostic": ""
+    },
+    {
+      "name": "callback fallback",
+      "path": "/manual",
+      "body": "callback_url=third",
+      "code": "third",
+      "diagnostic": ""
+    },
+    {
+      "name": "body beats query",
+      "path": "/manual?login_result=query",
+      "body": "login_result=body",
+      "code": "body",
+      "diagnostic": ""
+    },
+    {
+      "name": "query fills body absence",
+      "path": "/manual?login_result=query",
+      "body": "code=body",
+      "code": "query",
+      "diagnostic": ""
+    },
+    {
+      "name": "first repeated",
+      "path": "/manual",
+      "body": "login_result=first&login_result=second",
+      "code": "first",
+      "diagnostic": ""
+    },
+    {
+      "name": "empty first falls through",
+      "path": "/manual",
+      "body": "login_result=&login_result=second&code=legacy",
+      "code": "legacy",
+      "diagnostic": ""
+    },
+    {
+      "name": "query parse error rejects body",
+      "path": "/manual?login_result=%zz",
+      "body": "login_result=body",
+      "code": "",
+      "diagnostic": "invalid URL escape \"%zz\""
+    },
+    {
+      "name": "body bad escape",
+      "path": "/manual",
+      "body": "login_result=%zz&code=legacy",
+      "code": "",
+      "diagnostic": "invalid URL escape \"%zz\""
+    },
+    {
+      "name": "body semicolon",
+      "path": "/manual",
+      "body": "login_result=fake;code=legacy",
+      "code": "",
+      "diagnostic": "invalid semicolon separator in query"
+    },
+    {
+      "name": "empty input",
+      "path": "/manual",
+      "body": "",
+      "code": "",
+      "diagnostic": "sign-in result cannot be empty"
+    }
+  ],
+  "framing": [
+    {
+      "method": "GET",
+      "path": "/",
+      "content_type": "text/html; charset=utf-8",
+      "nosniff": "",
+      "content_length": -1,
+      "transfer_encoding": [
+        "chunked"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/manual",
+      "content_type": "text/plain; charset=utf-8",
+      "nosniff": "nosniff",
+      "content_length": 19,
+      "transfer_encoding": []
+    },
+    {
+      "method": "GET",
+      "path": "//manual?x=y",
+      "content_type": "text/html; charset=utf-8",
+      "nosniff": "",
+      "content_length": 47,
+      "transfer_encoding": []
+    },
+    {
+      "method": "HEAD",
+      "path": "/manual",
+      "content_type": "text/plain; charset=utf-8",
+      "nosniff": "nosniff",
+      "content_length": 19,
+      "transfer_encoding": []
+    }
+  ],
+  "mime": [
+    {
+      "name": "absent content type",
+      "content_type": null,
+      "code": "",
+      "diagnostic": "sign-in result cannot be empty"
+    },
+    {
+      "name": "quoted semicolon",
+      "content_type": "application/x-www-form-urlencoded; note=\"a;b\"",
+      "code": "fake",
+      "diagnostic": ""
+    },
+    {
+      "name": "quoted escaped quote semicolon",
+      "content_type": "application/x-www-form-urlencoded; note=\"a\\\";b\"",
+      "code": "fake",
+      "diagnostic": ""
+    },
+    {
+      "name": "conflicting duplicate parameter",
+      "content_type": "application/x-www-form-urlencoded;charset=a;charset=b",
+      "code": "",
+      "diagnostic": "mime: duplicate parameter name"
+    },
+    {
+      "name": "same duplicate parameter",
+      "content_type": "application/x-www-form-urlencoded;charset=a;charset=a",
+      "code": "fake",
+      "diagnostic": ""
+    }
+  ]
+}
