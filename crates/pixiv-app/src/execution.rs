@@ -29,6 +29,35 @@ impl Execution<HttpTransport> {
 }
 
 impl<T: Transport + 'static> Execution<T> {
+    pub async fn write<F, U>(
+        &self,
+        context: &Context,
+        user_id: i64,
+        proxy: Option<&str>,
+        invoke: F,
+    ) -> Result<(), SchedulerError>
+    where
+        F: Fn(Context, Arc<Client<T>>) -> U + Send + Sync + 'static,
+        U: std::future::Future<Output = Result<(), SchedulerError>> + Send + 'static,
+    {
+        self.use_client(
+            Some(context),
+            user_id,
+            proxy,
+            Some(Arc::new(move |context, client| {
+                let future = invoke(context, client);
+                Box::pin(async move {
+                    UseOutcome {
+                        // A failed mutation can already have reached the service, so replay is unsafe.
+                        committed: true,
+                        error: future.await.err(),
+                    }
+                })
+            })),
+        )
+        .await
+    }
+
     pub async fn read<V, F, U>(
         &self,
         context: &Context,

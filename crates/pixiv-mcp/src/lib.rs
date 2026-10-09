@@ -184,3 +184,6 @@ pub use user::{UserDetailInput, user_detail, user_detail_tool};
 
 mod user_search;
 pub use user_search::{SearchUserInput, UserFilter, search_user, search_user_tool};
+
+mod mutation;
+pub use mutation::{MutationAction, MutationInput, mutate, mutation_tool};

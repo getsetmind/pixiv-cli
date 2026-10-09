@@ -628,7 +628,13 @@ async fn stdio_publishes_implemented_tool_metadata_and_preserves_request_ids() {
             pixiv_mcp::novel_detail_tool(),
             pixiv_mcp::search_novel_tool(),
             pixiv_mcp::user_detail_tool(),
-            pixiv_mcp::search_user_tool()
+            pixiv_mcp::search_user_tool(),
+            pixiv_mcp::mutation_tool(pixiv_mcp::MutationAction::AddBookmark),
+            pixiv_mcp::mutation_tool(pixiv_mcp::MutationAction::RemoveBookmark),
+            pixiv_mcp::mutation_tool(pixiv_mcp::MutationAction::AddNovelBookmark),
+            pixiv_mcp::mutation_tool(pixiv_mcp::MutationAction::RemoveNovelBookmark),
+            pixiv_mcp::mutation_tool(pixiv_mcp::MutationAction::FollowUser),
+            pixiv_mcp::mutation_tool(pixiv_mcp::MutationAction::UnfollowUser),
         ])
     );
 }

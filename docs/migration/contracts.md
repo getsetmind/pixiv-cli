@@ -1001,3 +1001,23 @@ Linux amd64 の最終 scripts/check-rust.ps1 は終了0で、Formatter、workspa
 Go の対象契約と vet は成功し、detail/MCP の全体検証も通った。CLI の全体検証は、従来の command surface 検査が cli.linux-amd64.json 不在で失敗したことを記録する。同テスト以外は通ったが、Linux の公開面 snapshot の取得・検証を成功扱いにはしない。
 
 この変更の対象は User と SearchUsers の応答 decode である。作品・小説の detail/search/ranking/trending に埋め込まれた User、未キャッシュ user_profile resource の metadata 再取得は Value 処理を使い、大小文字・重複・順序の差が残る。全 JSON/通信/SDK Options、取消/deadline・pool replay・disconnect、live HTTPS・実 resource・TTY、他 OS/arch も未検証であり、台帳の in_progress と最終切替の条件を維持する。
+
+## bookmark・follow の CLI・MCP 更新操作
+
+[cli-bookmark-follow.json](../../crates/pixiv-cli/tests/fixtures/cli-bookmark-follow.json) は、固定 Go の実コマンドから取得した278ケース（260件の操作比較と18件の追加 startup 入力）である。bookmark add/remove の artwork/novel、follow add/remove と user follow の互換入口を対象に、正の ID、URL・不正入力、restrict・複数 tag、record NDJSON の type/ID/JSON 検証、skip/fail-fast、form、HTTP status、stdout/stderr と終了コードを固定した。text stdin と NDJSON を最初の JSON 非空白 byte で区別し、text の末尾 LF/CRLF を1つだけ除く。入力の read error で返された不完全な bytes を mutation として実行しない。取消時は次の record を読まず、失敗を skip 診断へ変換しない。Go の実 command は取消確認前に入力 mode を検出するため、raw pipeline の事前取消 no-read 比較と command の途中取消比較を区別する。
+
+[mcp-bookmark-follow.json](contracts/mcp-bookmark-follow.json) は、実 Go MCP の6 schema と172ケースである。add_bookmark/remove_bookmark、add_novel_bookmark/remove_novel_bookmark、follow_user/unfollow_user の validation・SDK 操作名・form・status・完全な mutation envelope を固定する。Rust では直接呼出し、stdio、保存済みアカウントの stdio を比較し、2 account の429でも各 mutation を1回だけ送ることを確認する。既存8 tool の登録と比較を残す。
+
+両入口は既存の SDK mutation と form 契約178ケースを使う。共有 Execution::write は read と分離し、public SDK を呼び出した後は失敗も committed とする。ネットワークエラーから実サービスの未受理を保証できないため、保存された account pool で失敗した mutation を換号再送しない。account を開く前の失敗の扱い、refresh CAS・Bearer・proxy・lease 解放は既存処理を使う。multi-record pipeline の各操作では、保存された refresh token と credential revision を次の account open に引き継ぐ。
+
+この変更は bookmark と follow の更新入口に限定する。bookmark detail/list/tags、follow の一覧と read-back、comment/reply/stamp その他の更新操作、実サービスの状態変更は別の工程である。全 input/flag/help・JSON 構文・TTY、実正常子プロセスの HTTPS、通信/取消/deadline/disconnect の全条件、他 OS/arch は未検証として残す。Linux CLI の command surface snapshot 不在も前の記録を維持する。
+
+
+Rust の実 CLI 子プロセスでは、278件の startup 入力のうち275件で stdout/stderr・終了コード・config/DB の作成順を Go と比較した。empty pipe・不正 target・拒否 record は config のみを作成し、最初の actionable ID まで proxy 検証と DB/Execution の作成を遅らせる。成功した Execution を cache し、各 record の write は個別に committed の境界を持つ。既存の proxy flag の範囲と shared argument_error は変更しない。
+
+残る3件は root の command 選択前に --no-proxy を置く入力である。bookmark/follow では Go が unknown command "add" の終了1、Rust が unknown option '--no-proxy' の終了2を返す。user follow では Go が usage の終了2、Rust が unknown option の終了2を返す。いずれも config/DB を作らない。Go の期待値は fixture に保持し、startup_unverified として Rust 比較の対象外であることを明示する。これらを互換性の成功件数に含めず、共有 root parser の未完了範囲へ残す。
+
+
+Linux amd64 の最終 scripts/check-rust.ps1 は終了0で、Formatter、workspace all-target Clippy、169 passed・0 failed・既存3 ignored、release build が成功した。Clippy build は約21秒、test build は約25秒、release build は約13秒で、全チェックは約150秒である。Go の CLI・pipeline・bookmark/follow command・MCP・SDK・services・migration 台帳検査も成功し、関連 vet と gofmt を確認した。CLI の全体テストは既知の cli.linux-amd64.json 不在の command surface 検査だけを除外し、この未実行項目を成功扱いにしない。実装・契約取得・入口比較・レビュー・検証は約19分であった。
+
+Go 本番コード・go.mod・go.sum は固定参照コミットから変更せず、実 Pixiv 資格情報とライブ mutation を使用していない。台帳は全体の verified へ変更せず、前述の3 parser差分と他の共有検証・OS/arch・実状態変更の未完了範囲を維持する。

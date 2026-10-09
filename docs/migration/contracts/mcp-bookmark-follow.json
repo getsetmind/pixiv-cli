@@ -1,0 +1,4291 @@
+{
+  "tools": {
+    "add_bookmark": {
+      "description": "Add an artwork to bookmarks.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "illust_id": {
+            "description": "artwork ID",
+            "type": "integer"
+          },
+          "restrict": {
+            "description": "public or private",
+            "type": "string"
+          },
+          "tags": {
+            "description": "bookmark tags",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "illust_id"
+        ],
+        "type": "object"
+      },
+      "name": "add_bookmark",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "comment_id": {
+            "type": "integer"
+          },
+          "illust_id": {
+            "type": "integer"
+          },
+          "novel_id": {
+            "type": "integer"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "text": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "success",
+          "action",
+          "text"
+        ],
+        "type": "object"
+      }
+    },
+    "add_novel_bookmark": {
+      "description": "Add a novel to bookmarks.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "novel_id": {
+            "description": "novel ID",
+            "type": "integer"
+          },
+          "restrict": {
+            "description": "public or private",
+            "type": "string"
+          },
+          "tags": {
+            "description": "bookmark tags",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "novel_id"
+        ],
+        "type": "object"
+      },
+      "name": "add_novel_bookmark",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "comment_id": {
+            "type": "integer"
+          },
+          "illust_id": {
+            "type": "integer"
+          },
+          "novel_id": {
+            "type": "integer"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "text": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "success",
+          "action",
+          "text"
+        ],
+        "type": "object"
+      }
+    },
+    "follow_user": {
+      "description": "Follow a Pixiv user.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "restrict": {
+            "description": "public or private",
+            "type": "string"
+          },
+          "user_id": {
+            "description": "user ID",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "user_id"
+        ],
+        "type": "object"
+      },
+      "name": "follow_user",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "comment_id": {
+            "type": "integer"
+          },
+          "illust_id": {
+            "type": "integer"
+          },
+          "novel_id": {
+            "type": "integer"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "text": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "success",
+          "action",
+          "text"
+        ],
+        "type": "object"
+      }
+    },
+    "remove_bookmark": {
+      "description": "Remove an artwork from bookmarks.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "illust_id": {
+            "description": "artwork ID",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "illust_id"
+        ],
+        "type": "object"
+      },
+      "name": "remove_bookmark",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "comment_id": {
+            "type": "integer"
+          },
+          "illust_id": {
+            "type": "integer"
+          },
+          "novel_id": {
+            "type": "integer"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "text": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "success",
+          "action",
+          "text"
+        ],
+        "type": "object"
+      }
+    },
+    "remove_novel_bookmark": {
+      "description": "Remove a novel from bookmarks.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "novel_id": {
+            "description": "novel ID",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "novel_id"
+        ],
+        "type": "object"
+      },
+      "name": "remove_novel_bookmark",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "comment_id": {
+            "type": "integer"
+          },
+          "illust_id": {
+            "type": "integer"
+          },
+          "novel_id": {
+            "type": "integer"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "text": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "success",
+          "action",
+          "text"
+        ],
+        "type": "object"
+      }
+    },
+    "unfollow_user": {
+      "description": "Unfollow a Pixiv user.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "user_id": {
+            "description": "user ID",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "user_id"
+        ],
+        "type": "object"
+      },
+      "name": "unfollow_user",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "comment_id": {
+            "type": "integer"
+          },
+          "illust_id": {
+            "type": "integer"
+          },
+          "novel_id": {
+            "type": "integer"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "text": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "success",
+          "action",
+          "text"
+        ],
+        "type": "object"
+      }
+    }
+  },
+  "cases": [
+    {
+      "name": "add_bookmark:a",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": 42
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Bookmarked artwork 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "add_bookmark",
+          "illust_id": 42,
+          "success": true,
+          "text": "Bookmarked artwork 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/illust/bookmark/add illust_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_bookmark:b",
+      "tool": "add_bookmark",
+      "arguments": {},
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: required: missing properties: [\"illust_id\"]"
+    },
+    {
+      "name": "add_bookmark:c",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": 0
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:AddBookmark: invalid_argument: artwork ID must be positive"
+          }
+        ],
+        "structuredContent": {
+          "action": "add_bookmark",
+          "success": false,
+          "text": "Error: pixiv:AddBookmark: invalid_argument: artwork ID must be positive"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_bookmark:d",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": -1
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:AddBookmark: invalid_argument: artwork ID must be positive"
+          }
+        ],
+        "structuredContent": {
+          "action": "add_bookmark",
+          "illust_id": -1,
+          "success": false,
+          "text": "Error: pixiv:AddBookmark: invalid_argument: artwork ID must be positive"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_bookmark:e",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": 9223372036854775807
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: json: cannot unmarshal number 9223372036854776000 into Go struct field In.illust_id of type int64"
+    },
+    {
+      "name": "add_bookmark:f",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": "42"
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/illust_id: type: 42 has type \"string\", want \"integer\""
+    },
+    {
+      "name": "add_bookmark:g",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": null
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/illust_id: type: \u003cinvalid reflect.Value\u003e has type \"null\", want \"integer\""
+    },
+    {
+      "name": "add_bookmark:h",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": 1.5
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/illust_id: type: 1.5 has type \"number\", want \"integer\""
+    },
+    {
+      "name": "add_bookmark:i",
+      "tool": "add_bookmark",
+      "arguments": {
+        "extra": true,
+        "illust_id": 42
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: unexpected additional properties [\"extra\"]"
+    },
+    {
+      "name": "add_bookmark:j",
+      "tool": "add_bookmark",
+      "arguments": [],
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": unmarshaling arguments: json: cannot unmarshal array into Go value of type map[string]interface {}"
+    },
+    {
+      "name": "add_bookmark:k",
+      "tool": "add_bookmark",
+      "arguments": null,
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: required: missing properties: [\"illust_id\"]"
+    },
+    {
+      "name": "add_bookmark:l",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": 42,
+        "restrict": ""
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Bookmarked artwork 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "add_bookmark",
+          "illust_id": 42,
+          "success": true,
+          "text": "Bookmarked artwork 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/illust/bookmark/add illust_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_bookmark:m",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": 42,
+        "restrict": "public"
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Bookmarked artwork 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "add_bookmark",
+          "illust_id": 42,
+          "success": true,
+          "text": "Bookmarked artwork 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/illust/bookmark/add illust_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_bookmark:n",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": 42,
+        "restrict": "private"
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Bookmarked artwork 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "add_bookmark",
+          "illust_id": 42,
+          "success": true,
+          "text": "Bookmarked artwork 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/illust/bookmark/add illust_id=42\u0026restrict=private"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_bookmark:o",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": 42,
+        "restrict": "friends"
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:AddBookmark: invalid_argument: restrict is unsupported"
+          }
+        ],
+        "structuredContent": {
+          "action": "add_bookmark",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:AddBookmark: invalid_argument: restrict is unsupported"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_bookmark:p",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": 42,
+        "restrict": "PUBLIC"
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:AddBookmark: invalid_argument: restrict is unsupported"
+          }
+        ],
+        "structuredContent": {
+          "action": "add_bookmark",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:AddBookmark: invalid_argument: restrict is unsupported"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_bookmark:q",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": 42,
+        "restrict": " public "
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:AddBookmark: invalid_argument: restrict is unsupported"
+          }
+        ],
+        "structuredContent": {
+          "action": "add_bookmark",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:AddBookmark: invalid_argument: restrict is unsupported"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_bookmark:r",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": 42,
+        "restrict": null
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/restrict: type: \u003cinvalid reflect.Value\u003e has type \"null\", want \"string\""
+    },
+    {
+      "name": "add_bookmark:s",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": 42,
+        "restrict": 1
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/restrict: type: 1 has type \"integer\", want \"string\""
+    },
+    {
+      "name": "add_bookmark:t",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": 42,
+        "tags": [
+          "tag",
+          "",
+          "日本語",
+          "tag",
+          "a\u0026b +",
+          "line\nfeed"
+        ]
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Bookmarked artwork 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "add_bookmark",
+          "illust_id": 42,
+          "success": true,
+          "text": "Bookmarked artwork 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/illust/bookmark/add illust_id=42\u0026restrict=public\u0026tags%5B%5D=tag\u0026tags%5B%5D=\u0026tags%5B%5D=%E6%97%A5%E6%9C%AC%E8%AA%9E\u0026tags%5B%5D=tag\u0026tags%5B%5D=a%26b+%2B\u0026tags%5B%5D=line%0Afeed"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_bookmark:u",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": 42,
+        "tags": []
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Bookmarked artwork 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "add_bookmark",
+          "illust_id": 42,
+          "success": true,
+          "text": "Bookmarked artwork 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/illust/bookmark/add illust_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_bookmark:v",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": 42,
+        "tags": null
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/tags: type: \u003cinvalid reflect.Value\u003e has type \"null\", want \"array\""
+    },
+    {
+      "name": "add_bookmark:w",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": 42,
+        "tags": [
+          1
+        ]
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/tags: validating /properties/tags/items: type: 1 has type \"integer\", want \"string\""
+    },
+    {
+      "name": "add_bookmark:x",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": 42,
+        "tags": "tag"
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/tags: type: tag has type \"string\", want \"array\""
+    },
+    {
+      "name": "add_bookmark:status",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": 42
+      },
+      "status": 201,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Bookmarked artwork 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "add_bookmark",
+          "illust_id": 42,
+          "success": true,
+          "text": "Bookmarked artwork 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/illust/bookmark/add illust_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_bookmark:status",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": 42
+      },
+      "status": 204,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Bookmarked artwork 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "add_bookmark",
+          "illust_id": 42,
+          "success": true,
+          "text": "Bookmarked artwork 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/illust/bookmark/add illust_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_bookmark:status",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": 42
+      },
+      "status": 299,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Bookmarked artwork 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "add_bookmark",
+          "illust_id": 42,
+          "success": true,
+          "text": "Bookmarked artwork 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/illust/bookmark/add illust_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_bookmark:status",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": 42
+      },
+      "status": 300,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:AddBookmark: upstream_error"
+          }
+        ],
+        "structuredContent": {
+          "action": "add_bookmark",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:AddBookmark: upstream_error"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/illust/bookmark/add illust_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_bookmark:status",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": 42
+      },
+      "status": 400,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:AddBookmark: invalid_argument"
+          }
+        ],
+        "structuredContent": {
+          "action": "add_bookmark",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:AddBookmark: invalid_argument"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/illust/bookmark/add illust_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_bookmark:status",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": 42
+      },
+      "status": 401,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:AddBookmark: credentials_expired"
+          }
+        ],
+        "structuredContent": {
+          "action": "add_bookmark",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:AddBookmark: credentials_expired"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/illust/bookmark/add illust_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_bookmark:status",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": 42
+      },
+      "status": 403,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:AddBookmark: forbidden"
+          }
+        ],
+        "structuredContent": {
+          "action": "add_bookmark",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:AddBookmark: forbidden"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/illust/bookmark/add illust_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_bookmark:status",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": 42
+      },
+      "status": 404,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:AddBookmark: not_found"
+          }
+        ],
+        "structuredContent": {
+          "action": "add_bookmark",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:AddBookmark: not_found"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/illust/bookmark/add illust_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_bookmark:status",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": 42
+      },
+      "status": 410,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:AddBookmark: content_unavailable"
+          }
+        ],
+        "structuredContent": {
+          "action": "add_bookmark",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:AddBookmark: content_unavailable"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/illust/bookmark/add illust_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_bookmark:status",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": 42
+      },
+      "status": 429,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:AddBookmark: rate_limited"
+          }
+        ],
+        "structuredContent": {
+          "action": "add_bookmark",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:AddBookmark: rate_limited"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/illust/bookmark/add illust_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_bookmark:status",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": 42
+      },
+      "status": 500,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:AddBookmark: upstream_error"
+          }
+        ],
+        "structuredContent": {
+          "action": "add_bookmark",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:AddBookmark: upstream_error"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/illust/bookmark/add illust_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_bookmark:status",
+      "tool": "add_bookmark",
+      "arguments": {
+        "illust_id": 42
+      },
+      "status": 503,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:AddBookmark: upstream_error"
+          }
+        ],
+        "structuredContent": {
+          "action": "add_bookmark",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:AddBookmark: upstream_error"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/illust/bookmark/add illust_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "remove_bookmark:a",
+      "tool": "remove_bookmark",
+      "arguments": {
+        "illust_id": 42
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Removed bookmark from artwork 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "remove_bookmark",
+          "illust_id": 42,
+          "success": true,
+          "text": "Removed bookmark from artwork 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/bookmark/delete illust_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "remove_bookmark:b",
+      "tool": "remove_bookmark",
+      "arguments": {},
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: required: missing properties: [\"illust_id\"]"
+    },
+    {
+      "name": "remove_bookmark:c",
+      "tool": "remove_bookmark",
+      "arguments": {
+        "illust_id": 0
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:RemoveBookmark: invalid_argument: artwork ID must be positive"
+          }
+        ],
+        "structuredContent": {
+          "action": "remove_bookmark",
+          "success": false,
+          "text": "Error: pixiv:RemoveBookmark: invalid_argument: artwork ID must be positive"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [],
+      "rpc_error": ""
+    },
+    {
+      "name": "remove_bookmark:d",
+      "tool": "remove_bookmark",
+      "arguments": {
+        "illust_id": -1
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:RemoveBookmark: invalid_argument: artwork ID must be positive"
+          }
+        ],
+        "structuredContent": {
+          "action": "remove_bookmark",
+          "illust_id": -1,
+          "success": false,
+          "text": "Error: pixiv:RemoveBookmark: invalid_argument: artwork ID must be positive"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [],
+      "rpc_error": ""
+    },
+    {
+      "name": "remove_bookmark:e",
+      "tool": "remove_bookmark",
+      "arguments": {
+        "illust_id": 9223372036854775807
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: json: cannot unmarshal number 9223372036854776000 into Go struct field In.illust_id of type int64"
+    },
+    {
+      "name": "remove_bookmark:f",
+      "tool": "remove_bookmark",
+      "arguments": {
+        "illust_id": "42"
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/illust_id: type: 42 has type \"string\", want \"integer\""
+    },
+    {
+      "name": "remove_bookmark:g",
+      "tool": "remove_bookmark",
+      "arguments": {
+        "illust_id": null
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/illust_id: type: \u003cinvalid reflect.Value\u003e has type \"null\", want \"integer\""
+    },
+    {
+      "name": "remove_bookmark:h",
+      "tool": "remove_bookmark",
+      "arguments": {
+        "illust_id": 1.5
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/illust_id: type: 1.5 has type \"number\", want \"integer\""
+    },
+    {
+      "name": "remove_bookmark:i",
+      "tool": "remove_bookmark",
+      "arguments": {
+        "extra": true,
+        "illust_id": 42
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: unexpected additional properties [\"extra\"]"
+    },
+    {
+      "name": "remove_bookmark:j",
+      "tool": "remove_bookmark",
+      "arguments": [],
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": unmarshaling arguments: json: cannot unmarshal array into Go value of type map[string]interface {}"
+    },
+    {
+      "name": "remove_bookmark:k",
+      "tool": "remove_bookmark",
+      "arguments": null,
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: required: missing properties: [\"illust_id\"]"
+    },
+    {
+      "name": "remove_bookmark:status",
+      "tool": "remove_bookmark",
+      "arguments": {
+        "illust_id": 42
+      },
+      "status": 201,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Removed bookmark from artwork 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "remove_bookmark",
+          "illust_id": 42,
+          "success": true,
+          "text": "Removed bookmark from artwork 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/bookmark/delete illust_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "remove_bookmark:status",
+      "tool": "remove_bookmark",
+      "arguments": {
+        "illust_id": 42
+      },
+      "status": 204,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Removed bookmark from artwork 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "remove_bookmark",
+          "illust_id": 42,
+          "success": true,
+          "text": "Removed bookmark from artwork 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/bookmark/delete illust_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "remove_bookmark:status",
+      "tool": "remove_bookmark",
+      "arguments": {
+        "illust_id": 42
+      },
+      "status": 299,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Removed bookmark from artwork 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "remove_bookmark",
+          "illust_id": 42,
+          "success": true,
+          "text": "Removed bookmark from artwork 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/bookmark/delete illust_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "remove_bookmark:status",
+      "tool": "remove_bookmark",
+      "arguments": {
+        "illust_id": 42
+      },
+      "status": 300,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:RemoveBookmark: upstream_error"
+          }
+        ],
+        "structuredContent": {
+          "action": "remove_bookmark",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:RemoveBookmark: upstream_error"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/bookmark/delete illust_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "remove_bookmark:status",
+      "tool": "remove_bookmark",
+      "arguments": {
+        "illust_id": 42
+      },
+      "status": 400,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:RemoveBookmark: invalid_argument"
+          }
+        ],
+        "structuredContent": {
+          "action": "remove_bookmark",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:RemoveBookmark: invalid_argument"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/bookmark/delete illust_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "remove_bookmark:status",
+      "tool": "remove_bookmark",
+      "arguments": {
+        "illust_id": 42
+      },
+      "status": 401,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:RemoveBookmark: credentials_expired"
+          }
+        ],
+        "structuredContent": {
+          "action": "remove_bookmark",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:RemoveBookmark: credentials_expired"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/bookmark/delete illust_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "remove_bookmark:status",
+      "tool": "remove_bookmark",
+      "arguments": {
+        "illust_id": 42
+      },
+      "status": 403,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:RemoveBookmark: forbidden"
+          }
+        ],
+        "structuredContent": {
+          "action": "remove_bookmark",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:RemoveBookmark: forbidden"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/bookmark/delete illust_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "remove_bookmark:status",
+      "tool": "remove_bookmark",
+      "arguments": {
+        "illust_id": 42
+      },
+      "status": 404,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:RemoveBookmark: not_found"
+          }
+        ],
+        "structuredContent": {
+          "action": "remove_bookmark",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:RemoveBookmark: not_found"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/bookmark/delete illust_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "remove_bookmark:status",
+      "tool": "remove_bookmark",
+      "arguments": {
+        "illust_id": 42
+      },
+      "status": 410,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:RemoveBookmark: content_unavailable"
+          }
+        ],
+        "structuredContent": {
+          "action": "remove_bookmark",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:RemoveBookmark: content_unavailable"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/bookmark/delete illust_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "remove_bookmark:status",
+      "tool": "remove_bookmark",
+      "arguments": {
+        "illust_id": 42
+      },
+      "status": 429,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:RemoveBookmark: rate_limited"
+          }
+        ],
+        "structuredContent": {
+          "action": "remove_bookmark",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:RemoveBookmark: rate_limited"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/bookmark/delete illust_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "remove_bookmark:status",
+      "tool": "remove_bookmark",
+      "arguments": {
+        "illust_id": 42
+      },
+      "status": 500,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:RemoveBookmark: upstream_error"
+          }
+        ],
+        "structuredContent": {
+          "action": "remove_bookmark",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:RemoveBookmark: upstream_error"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/bookmark/delete illust_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "remove_bookmark:status",
+      "tool": "remove_bookmark",
+      "arguments": {
+        "illust_id": 42
+      },
+      "status": 503,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:RemoveBookmark: upstream_error"
+          }
+        ],
+        "structuredContent": {
+          "action": "remove_bookmark",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:RemoveBookmark: upstream_error"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/bookmark/delete illust_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_novel_bookmark:a",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": 42
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Bookmarked novel 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "add_novel_bookmark",
+          "novel_id": 42,
+          "success": true,
+          "text": "Bookmarked novel 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/novel/bookmark/add novel_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_novel_bookmark:b",
+      "tool": "add_novel_bookmark",
+      "arguments": {},
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: required: missing properties: [\"novel_id\"]"
+    },
+    {
+      "name": "add_novel_bookmark:c",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": 0
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:AddNovelBookmark: invalid_argument: novel ID must be positive"
+          }
+        ],
+        "structuredContent": {
+          "action": "add_novel_bookmark",
+          "success": false,
+          "text": "Error: pixiv:AddNovelBookmark: invalid_argument: novel ID must be positive"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_novel_bookmark:d",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": -1
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:AddNovelBookmark: invalid_argument: novel ID must be positive"
+          }
+        ],
+        "structuredContent": {
+          "action": "add_novel_bookmark",
+          "novel_id": -1,
+          "success": false,
+          "text": "Error: pixiv:AddNovelBookmark: invalid_argument: novel ID must be positive"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_novel_bookmark:e",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": 9223372036854775807
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: json: cannot unmarshal number 9223372036854776000 into Go struct field In.novel_id of type int64"
+    },
+    {
+      "name": "add_novel_bookmark:f",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": "42"
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/novel_id: type: 42 has type \"string\", want \"integer\""
+    },
+    {
+      "name": "add_novel_bookmark:g",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": null
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/novel_id: type: \u003cinvalid reflect.Value\u003e has type \"null\", want \"integer\""
+    },
+    {
+      "name": "add_novel_bookmark:h",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": 1.5
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/novel_id: type: 1.5 has type \"number\", want \"integer\""
+    },
+    {
+      "name": "add_novel_bookmark:i",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "extra": true,
+        "novel_id": 42
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: unexpected additional properties [\"extra\"]"
+    },
+    {
+      "name": "add_novel_bookmark:j",
+      "tool": "add_novel_bookmark",
+      "arguments": [],
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": unmarshaling arguments: json: cannot unmarshal array into Go value of type map[string]interface {}"
+    },
+    {
+      "name": "add_novel_bookmark:k",
+      "tool": "add_novel_bookmark",
+      "arguments": null,
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: required: missing properties: [\"novel_id\"]"
+    },
+    {
+      "name": "add_novel_bookmark:l",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": 42,
+        "restrict": ""
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Bookmarked novel 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "add_novel_bookmark",
+          "novel_id": 42,
+          "success": true,
+          "text": "Bookmarked novel 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/novel/bookmark/add novel_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_novel_bookmark:m",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": 42,
+        "restrict": "public"
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Bookmarked novel 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "add_novel_bookmark",
+          "novel_id": 42,
+          "success": true,
+          "text": "Bookmarked novel 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/novel/bookmark/add novel_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_novel_bookmark:n",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": 42,
+        "restrict": "private"
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Bookmarked novel 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "add_novel_bookmark",
+          "novel_id": 42,
+          "success": true,
+          "text": "Bookmarked novel 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/novel/bookmark/add novel_id=42\u0026restrict=private"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_novel_bookmark:o",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": 42,
+        "restrict": "friends"
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:AddNovelBookmark: invalid_argument: restrict is unsupported"
+          }
+        ],
+        "structuredContent": {
+          "action": "add_novel_bookmark",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:AddNovelBookmark: invalid_argument: restrict is unsupported"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_novel_bookmark:p",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": 42,
+        "restrict": "PUBLIC"
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:AddNovelBookmark: invalid_argument: restrict is unsupported"
+          }
+        ],
+        "structuredContent": {
+          "action": "add_novel_bookmark",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:AddNovelBookmark: invalid_argument: restrict is unsupported"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_novel_bookmark:q",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": 42,
+        "restrict": " public "
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:AddNovelBookmark: invalid_argument: restrict is unsupported"
+          }
+        ],
+        "structuredContent": {
+          "action": "add_novel_bookmark",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:AddNovelBookmark: invalid_argument: restrict is unsupported"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_novel_bookmark:r",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": 42,
+        "restrict": null
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/restrict: type: \u003cinvalid reflect.Value\u003e has type \"null\", want \"string\""
+    },
+    {
+      "name": "add_novel_bookmark:s",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": 42,
+        "restrict": 1
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/restrict: type: 1 has type \"integer\", want \"string\""
+    },
+    {
+      "name": "add_novel_bookmark:t",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": 42,
+        "tags": [
+          "tag",
+          "",
+          "日本語",
+          "tag",
+          "a\u0026b +",
+          "line\nfeed"
+        ]
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Bookmarked novel 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "add_novel_bookmark",
+          "novel_id": 42,
+          "success": true,
+          "text": "Bookmarked novel 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/novel/bookmark/add novel_id=42\u0026restrict=public\u0026tags%5B%5D=tag\u0026tags%5B%5D=\u0026tags%5B%5D=%E6%97%A5%E6%9C%AC%E8%AA%9E\u0026tags%5B%5D=tag\u0026tags%5B%5D=a%26b+%2B\u0026tags%5B%5D=line%0Afeed"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_novel_bookmark:u",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": 42,
+        "tags": []
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Bookmarked novel 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "add_novel_bookmark",
+          "novel_id": 42,
+          "success": true,
+          "text": "Bookmarked novel 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/novel/bookmark/add novel_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_novel_bookmark:v",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": 42,
+        "tags": null
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/tags: type: \u003cinvalid reflect.Value\u003e has type \"null\", want \"array\""
+    },
+    {
+      "name": "add_novel_bookmark:w",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": 42,
+        "tags": [
+          1
+        ]
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/tags: validating /properties/tags/items: type: 1 has type \"integer\", want \"string\""
+    },
+    {
+      "name": "add_novel_bookmark:x",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": 42,
+        "tags": "tag"
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/tags: type: tag has type \"string\", want \"array\""
+    },
+    {
+      "name": "add_novel_bookmark:status",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": 42
+      },
+      "status": 201,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Bookmarked novel 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "add_novel_bookmark",
+          "novel_id": 42,
+          "success": true,
+          "text": "Bookmarked novel 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/novel/bookmark/add novel_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_novel_bookmark:status",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": 42
+      },
+      "status": 204,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Bookmarked novel 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "add_novel_bookmark",
+          "novel_id": 42,
+          "success": true,
+          "text": "Bookmarked novel 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/novel/bookmark/add novel_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_novel_bookmark:status",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": 42
+      },
+      "status": 299,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Bookmarked novel 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "add_novel_bookmark",
+          "novel_id": 42,
+          "success": true,
+          "text": "Bookmarked novel 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/novel/bookmark/add novel_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_novel_bookmark:status",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": 42
+      },
+      "status": 300,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:AddNovelBookmark: upstream_error"
+          }
+        ],
+        "structuredContent": {
+          "action": "add_novel_bookmark",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:AddNovelBookmark: upstream_error"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/novel/bookmark/add novel_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_novel_bookmark:status",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": 42
+      },
+      "status": 400,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:AddNovelBookmark: invalid_argument"
+          }
+        ],
+        "structuredContent": {
+          "action": "add_novel_bookmark",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:AddNovelBookmark: invalid_argument"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/novel/bookmark/add novel_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_novel_bookmark:status",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": 42
+      },
+      "status": 401,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:AddNovelBookmark: credentials_expired"
+          }
+        ],
+        "structuredContent": {
+          "action": "add_novel_bookmark",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:AddNovelBookmark: credentials_expired"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/novel/bookmark/add novel_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_novel_bookmark:status",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": 42
+      },
+      "status": 403,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:AddNovelBookmark: forbidden"
+          }
+        ],
+        "structuredContent": {
+          "action": "add_novel_bookmark",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:AddNovelBookmark: forbidden"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/novel/bookmark/add novel_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_novel_bookmark:status",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": 42
+      },
+      "status": 404,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:AddNovelBookmark: not_found"
+          }
+        ],
+        "structuredContent": {
+          "action": "add_novel_bookmark",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:AddNovelBookmark: not_found"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/novel/bookmark/add novel_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_novel_bookmark:status",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": 42
+      },
+      "status": 410,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:AddNovelBookmark: content_unavailable"
+          }
+        ],
+        "structuredContent": {
+          "action": "add_novel_bookmark",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:AddNovelBookmark: content_unavailable"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/novel/bookmark/add novel_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_novel_bookmark:status",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": 42
+      },
+      "status": 429,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:AddNovelBookmark: rate_limited"
+          }
+        ],
+        "structuredContent": {
+          "action": "add_novel_bookmark",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:AddNovelBookmark: rate_limited"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/novel/bookmark/add novel_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_novel_bookmark:status",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": 42
+      },
+      "status": 500,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:AddNovelBookmark: upstream_error"
+          }
+        ],
+        "structuredContent": {
+          "action": "add_novel_bookmark",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:AddNovelBookmark: upstream_error"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/novel/bookmark/add novel_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "add_novel_bookmark:status",
+      "tool": "add_novel_bookmark",
+      "arguments": {
+        "novel_id": 42
+      },
+      "status": 503,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:AddNovelBookmark: upstream_error"
+          }
+        ],
+        "structuredContent": {
+          "action": "add_novel_bookmark",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:AddNovelBookmark: upstream_error"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v2/novel/bookmark/add novel_id=42\u0026restrict=public"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "remove_novel_bookmark:a",
+      "tool": "remove_novel_bookmark",
+      "arguments": {
+        "novel_id": 42
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Removed bookmark from novel 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "remove_novel_bookmark",
+          "novel_id": 42,
+          "success": true,
+          "text": "Removed bookmark from novel 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/bookmark/delete novel_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "remove_novel_bookmark:b",
+      "tool": "remove_novel_bookmark",
+      "arguments": {},
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: required: missing properties: [\"novel_id\"]"
+    },
+    {
+      "name": "remove_novel_bookmark:c",
+      "tool": "remove_novel_bookmark",
+      "arguments": {
+        "novel_id": 0
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:RemoveNovelBookmark: invalid_argument: novel ID must be positive"
+          }
+        ],
+        "structuredContent": {
+          "action": "remove_novel_bookmark",
+          "success": false,
+          "text": "Error: pixiv:RemoveNovelBookmark: invalid_argument: novel ID must be positive"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [],
+      "rpc_error": ""
+    },
+    {
+      "name": "remove_novel_bookmark:d",
+      "tool": "remove_novel_bookmark",
+      "arguments": {
+        "novel_id": -1
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:RemoveNovelBookmark: invalid_argument: novel ID must be positive"
+          }
+        ],
+        "structuredContent": {
+          "action": "remove_novel_bookmark",
+          "novel_id": -1,
+          "success": false,
+          "text": "Error: pixiv:RemoveNovelBookmark: invalid_argument: novel ID must be positive"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [],
+      "rpc_error": ""
+    },
+    {
+      "name": "remove_novel_bookmark:e",
+      "tool": "remove_novel_bookmark",
+      "arguments": {
+        "novel_id": 9223372036854775807
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: json: cannot unmarshal number 9223372036854776000 into Go struct field In.novel_id of type int64"
+    },
+    {
+      "name": "remove_novel_bookmark:f",
+      "tool": "remove_novel_bookmark",
+      "arguments": {
+        "novel_id": "42"
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/novel_id: type: 42 has type \"string\", want \"integer\""
+    },
+    {
+      "name": "remove_novel_bookmark:g",
+      "tool": "remove_novel_bookmark",
+      "arguments": {
+        "novel_id": null
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/novel_id: type: \u003cinvalid reflect.Value\u003e has type \"null\", want \"integer\""
+    },
+    {
+      "name": "remove_novel_bookmark:h",
+      "tool": "remove_novel_bookmark",
+      "arguments": {
+        "novel_id": 1.5
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/novel_id: type: 1.5 has type \"number\", want \"integer\""
+    },
+    {
+      "name": "remove_novel_bookmark:i",
+      "tool": "remove_novel_bookmark",
+      "arguments": {
+        "extra": true,
+        "novel_id": 42
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: unexpected additional properties [\"extra\"]"
+    },
+    {
+      "name": "remove_novel_bookmark:j",
+      "tool": "remove_novel_bookmark",
+      "arguments": [],
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": unmarshaling arguments: json: cannot unmarshal array into Go value of type map[string]interface {}"
+    },
+    {
+      "name": "remove_novel_bookmark:k",
+      "tool": "remove_novel_bookmark",
+      "arguments": null,
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: required: missing properties: [\"novel_id\"]"
+    },
+    {
+      "name": "remove_novel_bookmark:status",
+      "tool": "remove_novel_bookmark",
+      "arguments": {
+        "novel_id": 42
+      },
+      "status": 201,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Removed bookmark from novel 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "remove_novel_bookmark",
+          "novel_id": 42,
+          "success": true,
+          "text": "Removed bookmark from novel 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/bookmark/delete novel_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "remove_novel_bookmark:status",
+      "tool": "remove_novel_bookmark",
+      "arguments": {
+        "novel_id": 42
+      },
+      "status": 204,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Removed bookmark from novel 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "remove_novel_bookmark",
+          "novel_id": 42,
+          "success": true,
+          "text": "Removed bookmark from novel 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/bookmark/delete novel_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "remove_novel_bookmark:status",
+      "tool": "remove_novel_bookmark",
+      "arguments": {
+        "novel_id": 42
+      },
+      "status": 299,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Removed bookmark from novel 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "remove_novel_bookmark",
+          "novel_id": 42,
+          "success": true,
+          "text": "Removed bookmark from novel 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/bookmark/delete novel_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "remove_novel_bookmark:status",
+      "tool": "remove_novel_bookmark",
+      "arguments": {
+        "novel_id": 42
+      },
+      "status": 300,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:RemoveNovelBookmark: upstream_error"
+          }
+        ],
+        "structuredContent": {
+          "action": "remove_novel_bookmark",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:RemoveNovelBookmark: upstream_error"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/bookmark/delete novel_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "remove_novel_bookmark:status",
+      "tool": "remove_novel_bookmark",
+      "arguments": {
+        "novel_id": 42
+      },
+      "status": 400,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:RemoveNovelBookmark: invalid_argument"
+          }
+        ],
+        "structuredContent": {
+          "action": "remove_novel_bookmark",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:RemoveNovelBookmark: invalid_argument"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/bookmark/delete novel_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "remove_novel_bookmark:status",
+      "tool": "remove_novel_bookmark",
+      "arguments": {
+        "novel_id": 42
+      },
+      "status": 401,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:RemoveNovelBookmark: credentials_expired"
+          }
+        ],
+        "structuredContent": {
+          "action": "remove_novel_bookmark",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:RemoveNovelBookmark: credentials_expired"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/bookmark/delete novel_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "remove_novel_bookmark:status",
+      "tool": "remove_novel_bookmark",
+      "arguments": {
+        "novel_id": 42
+      },
+      "status": 403,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:RemoveNovelBookmark: forbidden"
+          }
+        ],
+        "structuredContent": {
+          "action": "remove_novel_bookmark",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:RemoveNovelBookmark: forbidden"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/bookmark/delete novel_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "remove_novel_bookmark:status",
+      "tool": "remove_novel_bookmark",
+      "arguments": {
+        "novel_id": 42
+      },
+      "status": 404,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:RemoveNovelBookmark: not_found"
+          }
+        ],
+        "structuredContent": {
+          "action": "remove_novel_bookmark",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:RemoveNovelBookmark: not_found"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/bookmark/delete novel_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "remove_novel_bookmark:status",
+      "tool": "remove_novel_bookmark",
+      "arguments": {
+        "novel_id": 42
+      },
+      "status": 410,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:RemoveNovelBookmark: content_unavailable"
+          }
+        ],
+        "structuredContent": {
+          "action": "remove_novel_bookmark",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:RemoveNovelBookmark: content_unavailable"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/bookmark/delete novel_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "remove_novel_bookmark:status",
+      "tool": "remove_novel_bookmark",
+      "arguments": {
+        "novel_id": 42
+      },
+      "status": 429,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:RemoveNovelBookmark: rate_limited"
+          }
+        ],
+        "structuredContent": {
+          "action": "remove_novel_bookmark",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:RemoveNovelBookmark: rate_limited"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/bookmark/delete novel_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "remove_novel_bookmark:status",
+      "tool": "remove_novel_bookmark",
+      "arguments": {
+        "novel_id": 42
+      },
+      "status": 500,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:RemoveNovelBookmark: upstream_error"
+          }
+        ],
+        "structuredContent": {
+          "action": "remove_novel_bookmark",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:RemoveNovelBookmark: upstream_error"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/bookmark/delete novel_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "remove_novel_bookmark:status",
+      "tool": "remove_novel_bookmark",
+      "arguments": {
+        "novel_id": 42
+      },
+      "status": 503,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:RemoveNovelBookmark: upstream_error"
+          }
+        ],
+        "structuredContent": {
+          "action": "remove_novel_bookmark",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:RemoveNovelBookmark: upstream_error"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/bookmark/delete novel_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "follow_user:a",
+      "tool": "follow_user",
+      "arguments": {
+        "user_id": 42
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Followed user 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "follow_user",
+          "success": true,
+          "text": "Followed user 42.",
+          "user_id": 42
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/user/follow/add restrict=public\u0026user_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "follow_user:b",
+      "tool": "follow_user",
+      "arguments": {},
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: required: missing properties: [\"user_id\"]"
+    },
+    {
+      "name": "follow_user:c",
+      "tool": "follow_user",
+      "arguments": {
+        "user_id": 0
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:FollowUser: invalid_argument: user ID must be positive"
+          }
+        ],
+        "structuredContent": {
+          "action": "follow_user",
+          "success": false,
+          "text": "Error: pixiv:FollowUser: invalid_argument: user ID must be positive"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [],
+      "rpc_error": ""
+    },
+    {
+      "name": "follow_user:d",
+      "tool": "follow_user",
+      "arguments": {
+        "user_id": -1
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:FollowUser: invalid_argument: user ID must be positive"
+          }
+        ],
+        "structuredContent": {
+          "action": "follow_user",
+          "success": false,
+          "text": "Error: pixiv:FollowUser: invalid_argument: user ID must be positive",
+          "user_id": -1
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [],
+      "rpc_error": ""
+    },
+    {
+      "name": "follow_user:e",
+      "tool": "follow_user",
+      "arguments": {
+        "user_id": 9223372036854775807
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: json: cannot unmarshal number 9223372036854776000 into Go struct field In.user_id of type int64"
+    },
+    {
+      "name": "follow_user:f",
+      "tool": "follow_user",
+      "arguments": {
+        "user_id": "42"
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/user_id: type: 42 has type \"string\", want \"integer\""
+    },
+    {
+      "name": "follow_user:g",
+      "tool": "follow_user",
+      "arguments": {
+        "user_id": null
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/user_id: type: \u003cinvalid reflect.Value\u003e has type \"null\", want \"integer\""
+    },
+    {
+      "name": "follow_user:h",
+      "tool": "follow_user",
+      "arguments": {
+        "user_id": 1.5
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/user_id: type: 1.5 has type \"number\", want \"integer\""
+    },
+    {
+      "name": "follow_user:i",
+      "tool": "follow_user",
+      "arguments": {
+        "extra": true,
+        "user_id": 42
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: unexpected additional properties [\"extra\"]"
+    },
+    {
+      "name": "follow_user:j",
+      "tool": "follow_user",
+      "arguments": [],
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": unmarshaling arguments: json: cannot unmarshal array into Go value of type map[string]interface {}"
+    },
+    {
+      "name": "follow_user:k",
+      "tool": "follow_user",
+      "arguments": null,
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: required: missing properties: [\"user_id\"]"
+    },
+    {
+      "name": "follow_user:l",
+      "tool": "follow_user",
+      "arguments": {
+        "restrict": "",
+        "user_id": 42
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Followed user 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "follow_user",
+          "success": true,
+          "text": "Followed user 42.",
+          "user_id": 42
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/user/follow/add restrict=public\u0026user_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "follow_user:m",
+      "tool": "follow_user",
+      "arguments": {
+        "restrict": "public",
+        "user_id": 42
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Followed user 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "follow_user",
+          "success": true,
+          "text": "Followed user 42.",
+          "user_id": 42
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/user/follow/add restrict=public\u0026user_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "follow_user:n",
+      "tool": "follow_user",
+      "arguments": {
+        "restrict": "private",
+        "user_id": 42
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Followed user 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "follow_user",
+          "success": true,
+          "text": "Followed user 42.",
+          "user_id": 42
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/user/follow/add restrict=private\u0026user_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "follow_user:o",
+      "tool": "follow_user",
+      "arguments": {
+        "restrict": "friends",
+        "user_id": 42
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:FollowUser: invalid_argument: restrict is unsupported"
+          }
+        ],
+        "structuredContent": {
+          "action": "follow_user",
+          "success": false,
+          "text": "Error: pixiv:FollowUser: invalid_argument: restrict is unsupported",
+          "user_id": 42
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [],
+      "rpc_error": ""
+    },
+    {
+      "name": "follow_user:p",
+      "tool": "follow_user",
+      "arguments": {
+        "restrict": "PUBLIC",
+        "user_id": 42
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:FollowUser: invalid_argument: restrict is unsupported"
+          }
+        ],
+        "structuredContent": {
+          "action": "follow_user",
+          "success": false,
+          "text": "Error: pixiv:FollowUser: invalid_argument: restrict is unsupported",
+          "user_id": 42
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [],
+      "rpc_error": ""
+    },
+    {
+      "name": "follow_user:q",
+      "tool": "follow_user",
+      "arguments": {
+        "restrict": " public ",
+        "user_id": 42
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:FollowUser: invalid_argument: restrict is unsupported"
+          }
+        ],
+        "structuredContent": {
+          "action": "follow_user",
+          "success": false,
+          "text": "Error: pixiv:FollowUser: invalid_argument: restrict is unsupported",
+          "user_id": 42
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [],
+      "rpc_error": ""
+    },
+    {
+      "name": "follow_user:r",
+      "tool": "follow_user",
+      "arguments": {
+        "restrict": null,
+        "user_id": 42
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/restrict: type: \u003cinvalid reflect.Value\u003e has type \"null\", want \"string\""
+    },
+    {
+      "name": "follow_user:s",
+      "tool": "follow_user",
+      "arguments": {
+        "restrict": 1,
+        "user_id": 42
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/restrict: type: 1 has type \"integer\", want \"string\""
+    },
+    {
+      "name": "follow_user:status",
+      "tool": "follow_user",
+      "arguments": {
+        "user_id": 42
+      },
+      "status": 201,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Followed user 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "follow_user",
+          "success": true,
+          "text": "Followed user 42.",
+          "user_id": 42
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/user/follow/add restrict=public\u0026user_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "follow_user:status",
+      "tool": "follow_user",
+      "arguments": {
+        "user_id": 42
+      },
+      "status": 204,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Followed user 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "follow_user",
+          "success": true,
+          "text": "Followed user 42.",
+          "user_id": 42
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/user/follow/add restrict=public\u0026user_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "follow_user:status",
+      "tool": "follow_user",
+      "arguments": {
+        "user_id": 42
+      },
+      "status": 299,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Followed user 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "follow_user",
+          "success": true,
+          "text": "Followed user 42.",
+          "user_id": 42
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/user/follow/add restrict=public\u0026user_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "follow_user:status",
+      "tool": "follow_user",
+      "arguments": {
+        "user_id": 42
+      },
+      "status": 300,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:FollowUser: upstream_error"
+          }
+        ],
+        "structuredContent": {
+          "action": "follow_user",
+          "success": false,
+          "text": "Error: pixiv:FollowUser: upstream_error",
+          "user_id": 42
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/user/follow/add restrict=public\u0026user_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "follow_user:status",
+      "tool": "follow_user",
+      "arguments": {
+        "user_id": 42
+      },
+      "status": 400,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:FollowUser: invalid_argument"
+          }
+        ],
+        "structuredContent": {
+          "action": "follow_user",
+          "success": false,
+          "text": "Error: pixiv:FollowUser: invalid_argument",
+          "user_id": 42
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/user/follow/add restrict=public\u0026user_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "follow_user:status",
+      "tool": "follow_user",
+      "arguments": {
+        "user_id": 42
+      },
+      "status": 401,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:FollowUser: credentials_expired"
+          }
+        ],
+        "structuredContent": {
+          "action": "follow_user",
+          "success": false,
+          "text": "Error: pixiv:FollowUser: credentials_expired",
+          "user_id": 42
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/user/follow/add restrict=public\u0026user_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "follow_user:status",
+      "tool": "follow_user",
+      "arguments": {
+        "user_id": 42
+      },
+      "status": 403,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:FollowUser: forbidden"
+          }
+        ],
+        "structuredContent": {
+          "action": "follow_user",
+          "success": false,
+          "text": "Error: pixiv:FollowUser: forbidden",
+          "user_id": 42
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/user/follow/add restrict=public\u0026user_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "follow_user:status",
+      "tool": "follow_user",
+      "arguments": {
+        "user_id": 42
+      },
+      "status": 404,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:FollowUser: not_found"
+          }
+        ],
+        "structuredContent": {
+          "action": "follow_user",
+          "success": false,
+          "text": "Error: pixiv:FollowUser: not_found",
+          "user_id": 42
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/user/follow/add restrict=public\u0026user_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "follow_user:status",
+      "tool": "follow_user",
+      "arguments": {
+        "user_id": 42
+      },
+      "status": 410,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:FollowUser: content_unavailable"
+          }
+        ],
+        "structuredContent": {
+          "action": "follow_user",
+          "success": false,
+          "text": "Error: pixiv:FollowUser: content_unavailable",
+          "user_id": 42
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/user/follow/add restrict=public\u0026user_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "follow_user:status",
+      "tool": "follow_user",
+      "arguments": {
+        "user_id": 42
+      },
+      "status": 429,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:FollowUser: rate_limited"
+          }
+        ],
+        "structuredContent": {
+          "action": "follow_user",
+          "success": false,
+          "text": "Error: pixiv:FollowUser: rate_limited",
+          "user_id": 42
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/user/follow/add restrict=public\u0026user_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "follow_user:status",
+      "tool": "follow_user",
+      "arguments": {
+        "user_id": 42
+      },
+      "status": 500,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:FollowUser: upstream_error"
+          }
+        ],
+        "structuredContent": {
+          "action": "follow_user",
+          "success": false,
+          "text": "Error: pixiv:FollowUser: upstream_error",
+          "user_id": 42
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/user/follow/add restrict=public\u0026user_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "follow_user:status",
+      "tool": "follow_user",
+      "arguments": {
+        "user_id": 42
+      },
+      "status": 503,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:FollowUser: upstream_error"
+          }
+        ],
+        "structuredContent": {
+          "action": "follow_user",
+          "success": false,
+          "text": "Error: pixiv:FollowUser: upstream_error",
+          "user_id": 42
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/user/follow/add restrict=public\u0026user_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "unfollow_user:a",
+      "tool": "unfollow_user",
+      "arguments": {
+        "user_id": 42
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Unfollowed user 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "unfollow_user",
+          "success": true,
+          "text": "Unfollowed user 42.",
+          "user_id": 42
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/user/follow/delete user_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "unfollow_user:b",
+      "tool": "unfollow_user",
+      "arguments": {},
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: required: missing properties: [\"user_id\"]"
+    },
+    {
+      "name": "unfollow_user:c",
+      "tool": "unfollow_user",
+      "arguments": {
+        "user_id": 0
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:UnfollowUser: invalid_argument: user ID must be positive"
+          }
+        ],
+        "structuredContent": {
+          "action": "unfollow_user",
+          "success": false,
+          "text": "Error: pixiv:UnfollowUser: invalid_argument: user ID must be positive"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [],
+      "rpc_error": ""
+    },
+    {
+      "name": "unfollow_user:d",
+      "tool": "unfollow_user",
+      "arguments": {
+        "user_id": -1
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:UnfollowUser: invalid_argument: user ID must be positive"
+          }
+        ],
+        "structuredContent": {
+          "action": "unfollow_user",
+          "success": false,
+          "text": "Error: pixiv:UnfollowUser: invalid_argument: user ID must be positive",
+          "user_id": -1
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [],
+      "rpc_error": ""
+    },
+    {
+      "name": "unfollow_user:e",
+      "tool": "unfollow_user",
+      "arguments": {
+        "user_id": 9223372036854775807
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: json: cannot unmarshal number 9223372036854776000 into Go struct field In.user_id of type int64"
+    },
+    {
+      "name": "unfollow_user:f",
+      "tool": "unfollow_user",
+      "arguments": {
+        "user_id": "42"
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/user_id: type: 42 has type \"string\", want \"integer\""
+    },
+    {
+      "name": "unfollow_user:g",
+      "tool": "unfollow_user",
+      "arguments": {
+        "user_id": null
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/user_id: type: \u003cinvalid reflect.Value\u003e has type \"null\", want \"integer\""
+    },
+    {
+      "name": "unfollow_user:h",
+      "tool": "unfollow_user",
+      "arguments": {
+        "user_id": 1.5
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/user_id: type: 1.5 has type \"number\", want \"integer\""
+    },
+    {
+      "name": "unfollow_user:i",
+      "tool": "unfollow_user",
+      "arguments": {
+        "extra": true,
+        "user_id": 42
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: unexpected additional properties [\"extra\"]"
+    },
+    {
+      "name": "unfollow_user:j",
+      "tool": "unfollow_user",
+      "arguments": [],
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": unmarshaling arguments: json: cannot unmarshal array into Go value of type map[string]interface {}"
+    },
+    {
+      "name": "unfollow_user:k",
+      "tool": "unfollow_user",
+      "arguments": null,
+      "status": 200,
+      "body": "not JSON",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: required: missing properties: [\"user_id\"]"
+    },
+    {
+      "name": "unfollow_user:status",
+      "tool": "unfollow_user",
+      "arguments": {
+        "user_id": 42
+      },
+      "status": 201,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Unfollowed user 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "unfollow_user",
+          "success": true,
+          "text": "Unfollowed user 42.",
+          "user_id": 42
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/user/follow/delete user_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "unfollow_user:status",
+      "tool": "unfollow_user",
+      "arguments": {
+        "user_id": 42
+      },
+      "status": 204,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Unfollowed user 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "unfollow_user",
+          "success": true,
+          "text": "Unfollowed user 42.",
+          "user_id": 42
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/user/follow/delete user_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "unfollow_user:status",
+      "tool": "unfollow_user",
+      "arguments": {
+        "user_id": 42
+      },
+      "status": 299,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Unfollowed user 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "unfollow_user",
+          "success": true,
+          "text": "Unfollowed user 42.",
+          "user_id": 42
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/user/follow/delete user_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "unfollow_user:status",
+      "tool": "unfollow_user",
+      "arguments": {
+        "user_id": 42
+      },
+      "status": 300,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:UnfollowUser: upstream_error"
+          }
+        ],
+        "structuredContent": {
+          "action": "unfollow_user",
+          "success": false,
+          "text": "Error: pixiv:UnfollowUser: upstream_error",
+          "user_id": 42
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/user/follow/delete user_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "unfollow_user:status",
+      "tool": "unfollow_user",
+      "arguments": {
+        "user_id": 42
+      },
+      "status": 400,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:UnfollowUser: invalid_argument"
+          }
+        ],
+        "structuredContent": {
+          "action": "unfollow_user",
+          "success": false,
+          "text": "Error: pixiv:UnfollowUser: invalid_argument",
+          "user_id": 42
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/user/follow/delete user_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "unfollow_user:status",
+      "tool": "unfollow_user",
+      "arguments": {
+        "user_id": 42
+      },
+      "status": 401,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:UnfollowUser: credentials_expired"
+          }
+        ],
+        "structuredContent": {
+          "action": "unfollow_user",
+          "success": false,
+          "text": "Error: pixiv:UnfollowUser: credentials_expired",
+          "user_id": 42
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/user/follow/delete user_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "unfollow_user:status",
+      "tool": "unfollow_user",
+      "arguments": {
+        "user_id": 42
+      },
+      "status": 403,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:UnfollowUser: forbidden"
+          }
+        ],
+        "structuredContent": {
+          "action": "unfollow_user",
+          "success": false,
+          "text": "Error: pixiv:UnfollowUser: forbidden",
+          "user_id": 42
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/user/follow/delete user_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "unfollow_user:status",
+      "tool": "unfollow_user",
+      "arguments": {
+        "user_id": 42
+      },
+      "status": 404,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:UnfollowUser: not_found"
+          }
+        ],
+        "structuredContent": {
+          "action": "unfollow_user",
+          "success": false,
+          "text": "Error: pixiv:UnfollowUser: not_found",
+          "user_id": 42
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/user/follow/delete user_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "unfollow_user:status",
+      "tool": "unfollow_user",
+      "arguments": {
+        "user_id": 42
+      },
+      "status": 410,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:UnfollowUser: content_unavailable"
+          }
+        ],
+        "structuredContent": {
+          "action": "unfollow_user",
+          "success": false,
+          "text": "Error: pixiv:UnfollowUser: content_unavailable",
+          "user_id": 42
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/user/follow/delete user_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "unfollow_user:status",
+      "tool": "unfollow_user",
+      "arguments": {
+        "user_id": 42
+      },
+      "status": 429,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:UnfollowUser: rate_limited"
+          }
+        ],
+        "structuredContent": {
+          "action": "unfollow_user",
+          "success": false,
+          "text": "Error: pixiv:UnfollowUser: rate_limited",
+          "user_id": 42
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/user/follow/delete user_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "unfollow_user:status",
+      "tool": "unfollow_user",
+      "arguments": {
+        "user_id": 42
+      },
+      "status": 500,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:UnfollowUser: upstream_error"
+          }
+        ],
+        "structuredContent": {
+          "action": "unfollow_user",
+          "success": false,
+          "text": "Error: pixiv:UnfollowUser: upstream_error",
+          "user_id": 42
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/user/follow/delete user_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "unfollow_user:status",
+      "tool": "unfollow_user",
+      "arguments": {
+        "user_id": 42
+      },
+      "status": 503,
+      "body": "fixture private body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:UnfollowUser: upstream_error"
+          }
+        ],
+        "structuredContent": {
+          "action": "unfollow_user",
+          "success": false,
+          "text": "Error: pixiv:UnfollowUser: upstream_error",
+          "user_id": 42
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/user/follow/delete user_id=42"
+      ],
+      "rpc_error": ""
+    }
+  ]
+}

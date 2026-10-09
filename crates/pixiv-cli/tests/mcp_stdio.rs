@@ -78,8 +78,25 @@ fn mcp_process_exchanges_jsonrpc_without_stdout_diagnostics_or_credentials() {
     );
     assert_eq!(
         by_id("list")["result"]["tools"].as_array().unwrap().len(),
-        8
+        14
     );
+    for (index, name) in [
+        "add_bookmark",
+        "remove_bookmark",
+        "add_novel_bookmark",
+        "remove_novel_bookmark",
+        "follow_user",
+        "unfollow_user",
+    ]
+    .into_iter()
+    .enumerate()
+    {
+        assert_eq!(by_id("list")["result"]["tools"][index + 8]["name"], name);
+        assert_eq!(
+            by_id("list")["result"]["tools"][index + 8]["inputSchema"]["type"],
+            "object"
+        );
+    }
     assert_eq!(
         by_id("invalid")["result"]["content"][0]["text"],
         "Error: provide exactly one of illust_id or url"

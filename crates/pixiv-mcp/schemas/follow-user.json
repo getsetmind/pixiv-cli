@@ -1,0 +1,53 @@
+{
+  "description": "Follow a Pixiv user.",
+  "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "restrict": {
+        "description": "public or private",
+        "type": "string"
+      },
+      "user_id": {
+        "description": "user ID",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "user_id"
+    ],
+    "type": "object"
+  },
+  "name": "follow_user",
+  "outputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "action": {
+        "type": "string"
+      },
+      "comment_id": {
+        "type": "integer"
+      },
+      "illust_id": {
+        "type": "integer"
+      },
+      "novel_id": {
+        "type": "integer"
+      },
+      "success": {
+        "type": "boolean"
+      },
+      "text": {
+        "type": "string"
+      },
+      "user_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "success",
+      "action",
+      "text"
+    ],
+    "type": "object"
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "description": "Add a novel to bookmarks.",
+  "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "novel_id": {
+        "description": "novel ID",
+        "type": "integer"
+      },
+      "restrict": {
+        "description": "public or private",
+        "type": "string"
+      },
+      "tags": {
+        "description": "bookmark tags",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "novel_id"
+    ],
+    "type": "object"
+  },
+  "name": "add_novel_bookmark",
+  "outputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "action": {
+        "type": "string"
+      },
+      "comment_id": {
+        "type": "integer"
+      },
+      "illust_id": {
+        "type": "integer"
+      },
+      "novel_id": {
+        "type": "integer"
+      },
+      "success": {
+        "type": "boolean"
+      },
+      "text": {
+        "type": "string"
+      },
+      "user_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "success",
+      "action",
+      "text"
+    ],
+    "type": "object"
+  }
+}

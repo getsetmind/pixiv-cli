@@ -23,16 +23,22 @@ struct ProxyOptions {
 
 impl ProxyOptions {
     fn override_value(&self) -> Result<Option<&str>, CommandError> {
-        if self.proxy.is_some() && self.no_proxy.is_some() {
-            return Err(CommandError::Message(
-                "use either --proxy or --no-proxy, not both",
-            ));
-        }
-        if self.no_proxy == Some(true) {
-            Ok(Some(""))
-        } else {
-            Ok(self.proxy.as_deref())
-        }
+        proxy_override(self.proxy.as_deref(), self.no_proxy)
+    }
+}
+fn proxy_override(
+    proxy: Option<&str>,
+    no_proxy: Option<bool>,
+) -> Result<Option<&str>, CommandError> {
+    if proxy.is_some() && no_proxy.is_some() {
+        return Err(CommandError::Message(
+            "use either --proxy or --no-proxy, not both",
+        ));
+    }
+    if no_proxy == Some(true) {
+        Ok(Some(""))
+    } else {
+        Ok(proxy)
     }
 }
 
@@ -48,7 +54,27 @@ enum NovelCommand {
 }
 
 #[derive(Subcommand)]
+enum UserCommand {
+    Follow {
+        #[command(subcommand)]
+        command: pixiv_cli_rs::mutation::FollowCommand,
+    },
+}
+
+#[derive(Subcommand)]
 enum Command {
+    Bookmark {
+        #[command(subcommand)]
+        command: pixiv_cli_rs::mutation::BookmarkCommand,
+    },
+    Follow {
+        #[command(subcommand)]
+        command: pixiv_cli_rs::mutation::FollowCommand,
+    },
+    User {
+        #[command(subcommand)]
+        command: UserCommand,
+    },
     Novel {
         #[command(subcommand)]
         command: NovelCommand,
@@ -100,7 +126,16 @@ async fn main() {
     let matches = Arguments::command()
         .try_get_matches()
         .unwrap_or_else(|error| {
-            if let Some(error) = pixiv_cli_rs::argument_error(&error) {
+            let mutation_route = matches!(
+                std::env::args().nth(1).as_deref(),
+                Some("bookmark" | "follow" | "user")
+            );
+            let command_error = if mutation_route {
+                pixiv_cli_rs::mutation::argument_error(&error)
+            } else {
+                pixiv_cli_rs::argument_error(&error)
+            };
+            if let Some(error) = command_error {
                 std::process::exit(finish_command(
                     Err(error),
                     false,
@@ -137,7 +172,10 @@ async fn main() {
     };
     let machine_output = match &args.command {
         Command::Novel { .. } => unreachable!("novel commands were resolved"),
-        Command::Mcp { .. } => false,
+        Command::Mcp { .. }
+        | Command::Bookmark { .. }
+        | Command::Follow { .. }
+        | Command::User { .. } => false,
         Command::Detail { json, ndjson, .. } => *json || *ndjson,
         Command::Ugoira { json, .. } => *json,
         Command::Search { input, .. } => input.machine_output(),
@@ -145,7 +183,10 @@ async fn main() {
     };
     let mut ndjson_output = match &args.command {
         Command::Novel { .. } => unreachable!("novel commands were resolved"),
-        Command::Mcp { .. } => false,
+        Command::Mcp { .. }
+        | Command::Bookmark { .. }
+        | Command::Follow { .. }
+        | Command::User { .. } => false,
         Command::Detail { ndjson, .. } => *ndjson,
         Command::Search { input, .. } => {
             input.ndjson || (input.json.is_none() && !io::stdout().is_terminal())
@@ -187,6 +228,9 @@ async fn execute(args: Arguments, ndjson_output: &mut bool) -> Result<(), Comman
             | Command::Mcp { .. }
             | Command::Search { .. }
             | Command::Ranking { .. }
+            | Command::Bookmark { .. }
+            | Command::Follow { .. }
+            | Command::User { .. }
     ) {
         let home_name = if cfg!(windows) { "USERPROFILE" } else { "HOME" };
         let home = std::env::var_os(home_name)
@@ -212,6 +256,43 @@ async fn execute(args: Arguments, ndjson_output: &mut bool) -> Result<(), Comman
     } else {
         None
     };
+    let mutation = match &args.command {
+        Command::Bookmark { command } => {
+            Some(pixiv_cli_rs::mutation::Mutation::Bookmark(command.clone()))
+        }
+        Command::Follow { command }
+        | Command::User {
+            command: UserCommand::Follow { command },
+        } => Some(pixiv_cli_rs::mutation::Mutation::Follow(command.clone())),
+        _ => None,
+    };
+    if let Some(action) = mutation {
+        action.validate(io::stdin().is_terminal())?;
+        let (directory, config) = account_config.expect("mutation startup was resolved");
+        let mut execution = None;
+        return pixiv_cli_rs::mutation::saved_mutation_with_factory(
+            &pixiv_app::lifecycle::Context::new(),
+            action,
+            &mut io::stdin().lock(),
+            io::stdin().is_terminal(),
+            &mut io::stderr().lock(),
+            || {
+                if let Some(execution) = &execution {
+                    return Ok(std::sync::Arc::clone(execution));
+                }
+                let database = pixiv_app::database::Database::open(&directory)
+                    .map_err(|error| CommandError::State(Box::new(error)))?;
+                let opened = std::sync::Arc::new(pixiv_app::execution::Execution::http(
+                    config.clone(),
+                    std::sync::Arc::new(std::sync::Mutex::new(database)),
+                ));
+                execution = Some(opened.clone());
+                Ok(opened)
+            },
+        )
+        .await;
+    }
+
     let detail_id = match &args.command {
         Command::Detail {
             source,
@@ -511,6 +592,9 @@ async fn execute(args: Arguments, ndjson_output: &mut bool) -> Result<(), Comman
     match args.command {
         Command::Novel { .. } => unreachable!("novel commands were resolved"),
         Command::Mcp { .. } => unreachable!("MCP uses saved account execution"),
+        Command::Bookmark { .. } | Command::Follow { .. } | Command::User { .. } => {
+            unreachable!("mutations use saved account execution")
+        }
         Command::Detail { .. } => unreachable!("detail uses saved account execution"),
         Command::Search { .. } => unreachable!("search uses saved account execution"),
         Command::Ranking { .. } => unreachable!("ranking uses saved account execution"),

@@ -1,0 +1,49 @@
+{
+  "description": "Remove an artwork from bookmarks.",
+  "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "illust_id": {
+        "description": "artwork ID",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "illust_id"
+    ],
+    "type": "object"
+  },
+  "name": "remove_bookmark",
+  "outputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "action": {
+        "type": "string"
+      },
+      "comment_id": {
+        "type": "integer"
+      },
+      "illust_id": {
+        "type": "integer"
+      },
+      "novel_id": {
+        "type": "integer"
+      },
+      "success": {
+        "type": "boolean"
+      },
+      "text": {
+        "type": "string"
+      },
+      "user_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "success",
+      "action",
+      "text"
+    ],
+    "type": "object"
+  }
+}

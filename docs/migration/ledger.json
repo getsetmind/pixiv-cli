@@ -360,27 +360,57 @@
     },
     {
       "id": "cli:pixiv bookmark",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv bookmark"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/mutation.rs",
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-app/src/execution.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_mutation_cli_test.go#TestMigrationBookmarkFollowCLIContracts",
+        "crates/pixiv-cli/tests/mutations.rs#bookmark_follow_preserve_frozen_go_cli_and_saved_account_contracts",
+        "crates/pixiv-cli/tests/mutations.rs#read_error_discards_partial_record_before_mutation",
+        "internal/cli/migration_mutation_cli_test.go#TestMigrationMutationPipelineCancellationAndReadFailures",
+        "crates/pixiv-cli/tests/mutations.rs#saved_pipeline_cancellation_stops_before_read_and_after_first_failed_invoke",
+        "crates/pixiv-cli/tests/mutations.rs#real_mutation_cli_preserves_go_isolated_startup"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "bookmark add/remove の artwork/novel と follow add/remove・user follow alias を Go 260操作ケースで比較し、278 startup入力のうち275ケースの実 Rust子プロセス stdout/stderr/exit・config/DB作成順を比較。3件のroot選択前 --no-proxy 診断は Go契約のみ固定し、Rust比較は未検証。text/record pipeline・skip/fail-fast・取消/read error・formと保存accountを接続する。bookmark detail/list/tags と userの他操作は対象外。全 flag/help・TTY・正常子プロセスHTTPS・取消/deadline/通信の全条件・実状態変更・他OS/archは未検証。"
+      ]
     },
     {
       "id": "cli:pixiv bookmark add",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv bookmark add"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/mutation.rs",
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-app/src/execution.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_mutation_cli_test.go#TestMigrationBookmarkFollowCLIContracts",
+        "crates/pixiv-cli/tests/mutations.rs#bookmark_follow_preserve_frozen_go_cli_and_saved_account_contracts",
+        "crates/pixiv-cli/tests/mutations.rs#read_error_discards_partial_record_before_mutation",
+        "internal/cli/migration_mutation_cli_test.go#TestMigrationMutationPipelineCancellationAndReadFailures",
+        "crates/pixiv-cli/tests/mutations.rs#saved_pipeline_cancellation_stops_before_read_and_after_first_failed_invoke",
+        "crates/pixiv-cli/tests/mutations.rs#real_mutation_cli_preserves_go_isolated_startup"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "bookmark add/remove の artwork/novel と follow add/remove・user follow alias を Go 260操作ケースで比較し、278 startup入力のうち275ケースの実 Rust子プロセス stdout/stderr/exit・config/DB作成順を比較。3件のroot選択前 --no-proxy 診断は Go契約のみ固定し、Rust比較は未検証。text/record pipeline・skip/fail-fast・取消/read error・formと保存accountを接続する。bookmark detail/list/tags と userの他操作は対象外。全 flag/help・TTY・正常子プロセスHTTPS・取消/deadline/通信の全条件・実状態変更・他OS/archは未検証。"
+      ]
     },
     {
       "id": "cli:pixiv bookmark detail",
@@ -408,15 +438,30 @@
     },
     {
       "id": "cli:pixiv bookmark remove",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv bookmark remove"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/mutation.rs",
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-app/src/execution.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_mutation_cli_test.go#TestMigrationBookmarkFollowCLIContracts",
+        "crates/pixiv-cli/tests/mutations.rs#bookmark_follow_preserve_frozen_go_cli_and_saved_account_contracts",
+        "crates/pixiv-cli/tests/mutations.rs#read_error_discards_partial_record_before_mutation",
+        "internal/cli/migration_mutation_cli_test.go#TestMigrationMutationPipelineCancellationAndReadFailures",
+        "crates/pixiv-cli/tests/mutations.rs#saved_pipeline_cancellation_stops_before_read_and_after_first_failed_invoke",
+        "crates/pixiv-cli/tests/mutations.rs#real_mutation_cli_preserves_go_isolated_startup"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "bookmark add/remove の artwork/novel と follow add/remove・user follow alias を Go 260操作ケースで比較し、278 startup入力のうち275ケースの実 Rust子プロセス stdout/stderr/exit・config/DB作成順を比較。3件のroot選択前 --no-proxy 診断は Go契約のみ固定し、Rust比較は未検証。text/record pipeline・skip/fail-fast・取消/read error・formと保存accountを接続する。bookmark detail/list/tags と userの他操作は対象外。全 flag/help・TTY・正常子プロセスHTTPS・取消/deadline/通信の全条件・実状態変更・他OS/archは未検証。"
+      ]
     },
     {
       "id": "cli:pixiv bookmark tags",
@@ -913,39 +958,84 @@
     },
     {
       "id": "cli:pixiv follow",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv follow"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/mutation.rs",
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-app/src/execution.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_mutation_cli_test.go#TestMigrationBookmarkFollowCLIContracts",
+        "crates/pixiv-cli/tests/mutations.rs#bookmark_follow_preserve_frozen_go_cli_and_saved_account_contracts",
+        "crates/pixiv-cli/tests/mutations.rs#read_error_discards_partial_record_before_mutation",
+        "internal/cli/migration_mutation_cli_test.go#TestMigrationMutationPipelineCancellationAndReadFailures",
+        "crates/pixiv-cli/tests/mutations.rs#saved_pipeline_cancellation_stops_before_read_and_after_first_failed_invoke",
+        "crates/pixiv-cli/tests/mutations.rs#real_mutation_cli_preserves_go_isolated_startup"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "bookmark add/remove の artwork/novel と follow add/remove・user follow alias を Go 260操作ケースで比較し、278 startup入力のうち275ケースの実 Rust子プロセス stdout/stderr/exit・config/DB作成順を比較。3件のroot選択前 --no-proxy 診断は Go契約のみ固定し、Rust比較は未検証。text/record pipeline・skip/fail-fast・取消/read error・formと保存accountを接続する。bookmark detail/list/tags と userの他操作は対象外。全 flag/help・TTY・正常子プロセスHTTPS・取消/deadline/通信の全条件・実状態変更・他OS/archは未検証。"
+      ]
     },
     {
       "id": "cli:pixiv follow add",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv follow add"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/mutation.rs",
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-app/src/execution.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_mutation_cli_test.go#TestMigrationBookmarkFollowCLIContracts",
+        "crates/pixiv-cli/tests/mutations.rs#bookmark_follow_preserve_frozen_go_cli_and_saved_account_contracts",
+        "crates/pixiv-cli/tests/mutations.rs#read_error_discards_partial_record_before_mutation",
+        "internal/cli/migration_mutation_cli_test.go#TestMigrationMutationPipelineCancellationAndReadFailures",
+        "crates/pixiv-cli/tests/mutations.rs#saved_pipeline_cancellation_stops_before_read_and_after_first_failed_invoke",
+        "crates/pixiv-cli/tests/mutations.rs#real_mutation_cli_preserves_go_isolated_startup"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "bookmark add/remove の artwork/novel と follow add/remove・user follow alias を Go 260操作ケースで比較し、278 startup入力のうち275ケースの実 Rust子プロセス stdout/stderr/exit・config/DB作成順を比較。3件のroot選択前 --no-proxy 診断は Go契約のみ固定し、Rust比較は未検証。text/record pipeline・skip/fail-fast・取消/read error・formと保存accountを接続する。bookmark detail/list/tags と userの他操作は対象外。全 flag/help・TTY・正常子プロセスHTTPS・取消/deadline/通信の全条件・実状態変更・他OS/archは未検証。"
+      ]
     },
     {
       "id": "cli:pixiv follow remove",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv follow remove"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/mutation.rs",
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-app/src/execution.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_mutation_cli_test.go#TestMigrationBookmarkFollowCLIContracts",
+        "crates/pixiv-cli/tests/mutations.rs#bookmark_follow_preserve_frozen_go_cli_and_saved_account_contracts",
+        "crates/pixiv-cli/tests/mutations.rs#read_error_discards_partial_record_before_mutation",
+        "internal/cli/migration_mutation_cli_test.go#TestMigrationMutationPipelineCancellationAndReadFailures",
+        "crates/pixiv-cli/tests/mutations.rs#saved_pipeline_cancellation_stops_before_read_and_after_first_failed_invoke",
+        "crates/pixiv-cli/tests/mutations.rs#real_mutation_cli_preserves_go_isolated_startup"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "bookmark add/remove の artwork/novel と follow add/remove・user follow alias を Go 260操作ケースで比較し、278 startup入力のうち275ケースの実 Rust子プロセス stdout/stderr/exit・config/DB作成順を比較。3件のroot選択前 --no-proxy 診断は Go契約のみ固定し、Rust比較は未検証。text/record pipeline・skip/fail-fast・取消/read error・formと保存accountを接続する。bookmark detail/list/tags と userの他操作は対象外。全 flag/help・TTY・正常子プロセスHTTPS・取消/deadline/通信の全条件・実状態変更・他OS/archは未検証。"
+      ]
     },
     {
       "id": "cli:pixiv mcp",
@@ -1381,39 +1471,84 @@
     },
     {
       "id": "cli:pixiv user follow",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv user follow"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/mutation.rs",
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-app/src/execution.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_mutation_cli_test.go#TestMigrationBookmarkFollowCLIContracts",
+        "crates/pixiv-cli/tests/mutations.rs#bookmark_follow_preserve_frozen_go_cli_and_saved_account_contracts",
+        "crates/pixiv-cli/tests/mutations.rs#read_error_discards_partial_record_before_mutation",
+        "internal/cli/migration_mutation_cli_test.go#TestMigrationMutationPipelineCancellationAndReadFailures",
+        "crates/pixiv-cli/tests/mutations.rs#saved_pipeline_cancellation_stops_before_read_and_after_first_failed_invoke",
+        "crates/pixiv-cli/tests/mutations.rs#real_mutation_cli_preserves_go_isolated_startup"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "bookmark add/remove の artwork/novel と follow add/remove・user follow alias を Go 260操作ケースで比較し、278 startup入力のうち275ケースの実 Rust子プロセス stdout/stderr/exit・config/DB作成順を比較。3件のroot選択前 --no-proxy 診断は Go契約のみ固定し、Rust比較は未検証。text/record pipeline・skip/fail-fast・取消/read error・formと保存accountを接続する。bookmark detail/list/tags と userの他操作は対象外。全 flag/help・TTY・正常子プロセスHTTPS・取消/deadline/通信の全条件・実状態変更・他OS/archは未検証。"
+      ]
     },
     {
       "id": "cli:pixiv user follow add",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv user follow add"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/mutation.rs",
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-app/src/execution.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_mutation_cli_test.go#TestMigrationBookmarkFollowCLIContracts",
+        "crates/pixiv-cli/tests/mutations.rs#bookmark_follow_preserve_frozen_go_cli_and_saved_account_contracts",
+        "crates/pixiv-cli/tests/mutations.rs#read_error_discards_partial_record_before_mutation",
+        "internal/cli/migration_mutation_cli_test.go#TestMigrationMutationPipelineCancellationAndReadFailures",
+        "crates/pixiv-cli/tests/mutations.rs#saved_pipeline_cancellation_stops_before_read_and_after_first_failed_invoke",
+        "crates/pixiv-cli/tests/mutations.rs#real_mutation_cli_preserves_go_isolated_startup"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "bookmark add/remove の artwork/novel と follow add/remove・user follow alias を Go 260操作ケースで比較し、278 startup入力のうち275ケースの実 Rust子プロセス stdout/stderr/exit・config/DB作成順を比較。3件のroot選択前 --no-proxy 診断は Go契約のみ固定し、Rust比較は未検証。text/record pipeline・skip/fail-fast・取消/read error・formと保存accountを接続する。bookmark detail/list/tags と userの他操作は対象外。全 flag/help・TTY・正常子プロセスHTTPS・取消/deadline/通信の全条件・実状態変更・他OS/archは未検証。"
+      ]
     },
     {
       "id": "cli:pixiv user follow remove",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv user follow remove"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/mutation.rs",
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-app/src/execution.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_mutation_cli_test.go#TestMigrationBookmarkFollowCLIContracts",
+        "crates/pixiv-cli/tests/mutations.rs#bookmark_follow_preserve_frozen_go_cli_and_saved_account_contracts",
+        "crates/pixiv-cli/tests/mutations.rs#read_error_discards_partial_record_before_mutation",
+        "internal/cli/migration_mutation_cli_test.go#TestMigrationMutationPipelineCancellationAndReadFailures",
+        "crates/pixiv-cli/tests/mutations.rs#saved_pipeline_cancellation_stops_before_read_and_after_first_failed_invoke",
+        "crates/pixiv-cli/tests/mutations.rs#real_mutation_cli_preserves_go_isolated_startup"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "bookmark add/remove の artwork/novel と follow add/remove・user follow alias を Go 260操作ケースで比較し、278 startup入力のうち275ケースの実 Rust子プロセス stdout/stderr/exit・config/DB作成順を比較。3件のroot選択前 --no-proxy 診断は Go契約のみ固定し、Rust比較は未検証。text/record pipeline・skip/fail-fast・取消/read error・formと保存accountを接続する。bookmark detail/list/tags と userの他操作は対象外。全 flag/help・TTY・正常子プロセスHTTPS・取消/deadline/通信の全条件・実状態変更・他OS/archは未検証。"
+      ]
     },
     {
       "id": "cli:pixiv user followers",
@@ -1609,27 +1744,51 @@
     },
     {
       "id": "mcp:pixiv:add_bookmark",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "add_bookmark"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/mutation.rs",
+        "crates/pixiv-mcp/src/stdio.rs",
+        "crates/pixiv-app/src/execution.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_bookmark_follow_test.go#TestMigrationMCPBookmarkFollowMatchesFrozenSchemaResultsValidationAndForms",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#bookmarks_and_follows_match_go_schemas_results_forms_and_saved_stdio_without_replay",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#saved_pool_mutations_do_not_replay_rate_limited_requests"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "6 tool の schema と Go 172ケースで direct/stdio/保存 account の output・validation・form・HTTP status を比較。public SDK 呼出し後は失敗も committed とし、2 account の429でも mutation を再送しない。全 JSON 構文・取消/deadline/disconnect・実 HTTPS・実サービスの状態変更・他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:add_novel_bookmark",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "add_novel_bookmark"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/mutation.rs",
+        "crates/pixiv-mcp/src/stdio.rs",
+        "crates/pixiv-app/src/execution.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_bookmark_follow_test.go#TestMigrationMCPBookmarkFollowMatchesFrozenSchemaResultsValidationAndForms",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#bookmarks_and_follows_match_go_schemas_results_forms_and_saved_stdio_without_replay",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#saved_pool_mutations_do_not_replay_rate_limited_requests"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "6 tool の schema と Go 172ケースで direct/stdio/保存 account の output・validation・form・HTTP status を比較。public SDK 呼出し後は失敗も committed とし、2 account の429でも mutation を再送しない。全 JSON 構文・取消/deadline/disconnect・実 HTTPS・実サービスの状態変更・他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:blocked_users",
@@ -1765,15 +1924,27 @@
     },
     {
       "id": "mcp:pixiv:follow_user",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "follow_user"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/mutation.rs",
+        "crates/pixiv-mcp/src/stdio.rs",
+        "crates/pixiv-app/src/execution.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_bookmark_follow_test.go#TestMigrationMCPBookmarkFollowMatchesFrozenSchemaResultsValidationAndForms",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#bookmarks_and_follows_match_go_schemas_results_forms_and_saved_stdio_without_replay",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#saved_pool_mutations_do_not_replay_rate_limited_requests"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "6 tool の schema と Go 172ケースで direct/stdio/保存 account の output・validation・form・HTTP status を比較。public SDK 呼出し後は失敗も committed とし、2 account の429でも mutation を再送しない。全 JSON 構文・取消/deadline/disconnect・実 HTTPS・実サービスの状態変更・他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:illust_comments",
@@ -2042,27 +2213,51 @@
     },
     {
       "id": "mcp:pixiv:remove_bookmark",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "remove_bookmark"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/mutation.rs",
+        "crates/pixiv-mcp/src/stdio.rs",
+        "crates/pixiv-app/src/execution.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_bookmark_follow_test.go#TestMigrationMCPBookmarkFollowMatchesFrozenSchemaResultsValidationAndForms",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#bookmarks_and_follows_match_go_schemas_results_forms_and_saved_stdio_without_replay",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#saved_pool_mutations_do_not_replay_rate_limited_requests"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "6 tool の schema と Go 172ケースで direct/stdio/保存 account の output・validation・form・HTTP status を比較。public SDK 呼出し後は失敗も committed とし、2 account の429でも mutation を再送しない。全 JSON 構文・取消/deadline/disconnect・実 HTTPS・実サービスの状態変更・他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:remove_novel_bookmark",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "remove_novel_bookmark"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/mutation.rs",
+        "crates/pixiv-mcp/src/stdio.rs",
+        "crates/pixiv-app/src/execution.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_bookmark_follow_test.go#TestMigrationMCPBookmarkFollowMatchesFrozenSchemaResultsValidationAndForms",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#bookmarks_and_follows_match_go_schemas_results_forms_and_saved_stdio_without_replay",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#saved_pool_mutations_do_not_replay_rate_limited_requests"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "6 tool の schema と Go 172ケースで direct/stdio/保存 account の output・validation・form・HTTP status を比較。public SDK 呼出し後は失敗も committed とし、2 account の429でも mutation を再送しない。全 JSON 構文・取消/deadline/disconnect・実 HTTPS・実サービスの状態変更・他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:reply_artwork_comment",
@@ -2306,15 +2501,27 @@
     },
     {
       "id": "mcp:pixiv:unfollow_user",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "unfollow_user"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/mutation.rs",
+        "crates/pixiv-mcp/src/stdio.rs",
+        "crates/pixiv-app/src/execution.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_bookmark_follow_test.go#TestMigrationMCPBookmarkFollowMatchesFrozenSchemaResultsValidationAndForms",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#bookmarks_and_follows_match_go_schemas_results_forms_and_saved_stdio_without_replay",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#saved_pool_mutations_do_not_replay_rate_limited_requests"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "6 tool の schema と Go 172ケースで direct/stdio/保存 account の output・validation・form・HTTP status を比較。public SDK 呼出し後は失敗も committed とし、2 account の429でも mutation を再送しない。全 JSON 構文・取消/deadline/disconnect・実 HTTPS・実サービスの状態変更・他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:user_artworks",
@@ -5640,13 +5847,17 @@
       ],
       "tests": [
         "sdk/pixiv/migration_mutation_test.go#TestMigrationFormMutationsMatchFrozenValidationWireAndStatus",
-        "crates/pixiv-sdk/tests/form_mutations.rs"
+        "crates/pixiv-sdk/tests/form_mutations.rs",
+        "crates/pixiv-app/tests/pool_session.rs#execution_write_never_replays_an_invoked_mutation_and_releases_its_account",
+        "crates/pixiv-cli/tests/mutations.rs#bookmark_follow_preserve_frozen_go_cli_and_saved_account_contracts",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#bookmarks_and_follows_match_go_schemas_results_forms_and_saved_stdio_without_replay"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64 (partial)"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "SDK の既存178 formケースを Linuxでも比較。CLI bookmark/follow と MCP6 mutation の direct/stdio/保存 account を接続し、呼出し後の失敗も committed として account pool 再送を禁止する。旧名 alias・restrict/tags と HTTP分類は既存契約を維持。bookmark read-backの既存比較以外の実状態変更/read-back、全入力/JSON/認証/取消/deadline/TLS/DNS/redirect、他OSは未検証。"
       ]
     },
     {
@@ -5663,13 +5874,17 @@
       ],
       "tests": [
         "sdk/pixiv/migration_mutation_test.go#TestMigrationFormMutationsMatchFrozenValidationWireAndStatus",
-        "crates/pixiv-sdk/tests/form_mutations.rs"
+        "crates/pixiv-sdk/tests/form_mutations.rs",
+        "crates/pixiv-app/tests/pool_session.rs#execution_write_never_replays_an_invoked_mutation_and_releases_its_account",
+        "crates/pixiv-cli/tests/mutations.rs#bookmark_follow_preserve_frozen_go_cli_and_saved_account_contracts",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#bookmarks_and_follows_match_go_schemas_results_forms_and_saved_stdio_without_replay"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64 (partial)"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "SDK の既存178 formケースを Linuxでも比較。CLI bookmark/follow と MCP6 mutation の direct/stdio/保存 account を接続し、呼出し後の失敗も committed として account pool 再送を禁止する。旧名 alias・restrict/tags と HTTP分類は既存契約を維持。bookmark read-backの既存比較以外の実状態変更/read-back、全入力/JSON/認証/取消/deadline/TLS/DNS/redirect、他OSは未検証。"
       ]
     },
     {
@@ -5686,13 +5901,17 @@
       ],
       "tests": [
         "sdk/pixiv/migration_mutation_test.go#TestMigrationFormMutationsMatchFrozenValidationWireAndStatus",
-        "crates/pixiv-sdk/tests/form_mutations.rs"
+        "crates/pixiv-sdk/tests/form_mutations.rs",
+        "crates/pixiv-app/tests/pool_session.rs#execution_write_never_replays_an_invoked_mutation_and_releases_its_account",
+        "crates/pixiv-cli/tests/mutations.rs#bookmark_follow_preserve_frozen_go_cli_and_saved_account_contracts",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#bookmarks_and_follows_match_go_schemas_results_forms_and_saved_stdio_without_replay"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64 (partial)"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "SDK の既存178 formケースを Linuxでも比較。CLI bookmark/follow と MCP6 mutation の direct/stdio/保存 account を接続し、呼出し後の失敗も committed として account pool 再送を禁止する。旧名 alias・restrict/tags と HTTP分類は既存契約を維持。bookmark read-backの既存比較以外の実状態変更/read-back、全入力/JSON/認証/取消/deadline/TLS/DNS/redirect、他OSは未検証。"
       ]
     },
     {
@@ -6186,14 +6405,17 @@
         "sdk/pixiv/migration_mutation_test.go#TestMigrationFormMutationsMatchFrozenValidationWireAndStatus",
         "crates/pixiv-sdk/tests/form_mutations.rs",
         "sdk/pixiv/migration_transport_failure_test.go#TestMigrationSDKTransportFailureClassificationAndBodyConsumption",
-        "crates/pixiv-sdk/tests/transport_failure.rs#sdk_transport_failures_match_go_classification_and_consume_error_bodies"
+        "crates/pixiv-sdk/tests/transport_failure.rs#sdk_transport_failures_match_go_classification_and_consume_error_bodies",
+        "crates/pixiv-app/tests/pool_session.rs#execution_write_never_replays_an_invoked_mutation_and_releases_its_account",
+        "crates/pixiv-cli/tests/mutations.rs#bookmark_follow_preserve_frozen_go_cli_and_saved_account_contracts",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#bookmarks_and_follows_match_go_schemas_results_forms_and_saved_stdio_without_replay"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64 (partial)"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。",
-        "通信失敗の DNS/proxyconnect 分類、timeout 実測、Context deadline/取消の全条件、TLS certificate/alert の全種類、正常 HTTPS endpoint の実 CLI/MCP wire、network 診断イベント、他 OS/arch は未検証または未移植。比較済み21ケースの範囲は contracts.md を参照。"
+        "SDK の既存178 formケースを Linuxでも比較。CLI bookmark/follow と MCP6 mutation の direct/stdio/保存 account を接続し、呼出し後の失敗も committed として account pool 再送を禁止する。旧名 alias・restrict/tags と HTTP分類は既存契約を維持。bookmark read-backの既存比較以外の実状態変更/read-back、全入力/JSON/認証/取消/deadline/TLS/DNS/redirect、他OSは未検証。"
       ]
     },
     {
@@ -6210,13 +6432,17 @@
       ],
       "tests": [
         "sdk/pixiv/migration_mutation_test.go#TestMigrationFormMutationsMatchFrozenValidationWireAndStatus",
-        "crates/pixiv-sdk/tests/form_mutations.rs"
+        "crates/pixiv-sdk/tests/form_mutations.rs",
+        "crates/pixiv-app/tests/pool_session.rs#execution_write_never_replays_an_invoked_mutation_and_releases_its_account",
+        "crates/pixiv-cli/tests/mutations.rs#bookmark_follow_preserve_frozen_go_cli_and_saved_account_contracts",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#bookmarks_and_follows_match_go_schemas_results_forms_and_saved_stdio_without_replay"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64 (partial)"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "SDK の既存178 formケースを Linuxでも比較。CLI bookmark/follow と MCP6 mutation の direct/stdio/保存 account を接続し、呼出し後の失敗も committed として account pool 再送を禁止する。旧名 alias・restrict/tags と HTTP分類は既存契約を維持。bookmark read-backの既存比較以外の実状態変更/read-back、全入力/JSON/認証/取消/deadline/TLS/DNS/redirect、他OSは未検証。"
       ]
     },
     {
@@ -6233,13 +6459,17 @@
       ],
       "tests": [
         "sdk/pixiv/migration_mutation_test.go#TestMigrationFormMutationsMatchFrozenValidationWireAndStatus",
-        "crates/pixiv-sdk/tests/form_mutations.rs"
+        "crates/pixiv-sdk/tests/form_mutations.rs",
+        "crates/pixiv-app/tests/pool_session.rs#execution_write_never_replays_an_invoked_mutation_and_releases_its_account",
+        "crates/pixiv-cli/tests/mutations.rs#bookmark_follow_preserve_frozen_go_cli_and_saved_account_contracts",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#bookmarks_and_follows_match_go_schemas_results_forms_and_saved_stdio_without_replay"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64 (partial)"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "SDK の既存178 formケースを Linuxでも比較。CLI bookmark/follow と MCP6 mutation の direct/stdio/保存 account を接続し、呼出し後の失敗も committed として account pool 再送を禁止する。旧名 alias・restrict/tags と HTTP分類は既存契約を維持。bookmark read-backの既存比較以外の実状態変更/read-back、全入力/JSON/認証/取消/deadline/TLS/DNS/redirect、他OSは未検証。"
       ]
     },
     {
@@ -6480,13 +6710,17 @@
       ],
       "tests": [
         "sdk/pixiv/migration_mutation_test.go#TestMigrationFormMutationsMatchFrozenValidationWireAndStatus",
-        "crates/pixiv-sdk/tests/form_mutations.rs"
+        "crates/pixiv-sdk/tests/form_mutations.rs",
+        "crates/pixiv-app/tests/pool_session.rs#execution_write_never_replays_an_invoked_mutation_and_releases_its_account",
+        "crates/pixiv-cli/tests/mutations.rs#bookmark_follow_preserve_frozen_go_cli_and_saved_account_contracts",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#bookmarks_and_follows_match_go_schemas_results_forms_and_saved_stdio_without_replay"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64 (partial)"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "SDK の既存178 formケースを Linuxでも比較。CLI bookmark/follow と MCP6 mutation の direct/stdio/保存 account を接続し、呼出し後の失敗も committed として account pool 再送を禁止する。旧名 alias・restrict/tags と HTTP分類は既存契約を維持。bookmark read-backの既存比較以外の実状態変更/read-back、全入力/JSON/認証/取消/deadline/TLS/DNS/redirect、他OSは未検証。"
       ]
     },
     {
@@ -6780,13 +7014,17 @@
       ],
       "tests": [
         "sdk/pixiv/migration_mutation_test.go#TestMigrationFormMutationsMatchFrozenValidationWireAndStatus",
-        "crates/pixiv-sdk/tests/form_mutations.rs"
+        "crates/pixiv-sdk/tests/form_mutations.rs",
+        "crates/pixiv-app/tests/pool_session.rs#execution_write_never_replays_an_invoked_mutation_and_releases_its_account",
+        "crates/pixiv-cli/tests/mutations.rs#bookmark_follow_preserve_frozen_go_cli_and_saved_account_contracts",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#bookmarks_and_follows_match_go_schemas_results_forms_and_saved_stdio_without_replay"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64 (partial)"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "SDK の既存178 formケースを Linuxでも比較。CLI bookmark/follow と MCP6 mutation の direct/stdio/保存 account を接続し、呼出し後の失敗も committed として account pool 再送を禁止する。旧名 alias・restrict/tags と HTTP分類は既存契約を維持。bookmark read-backの既存比較以外の実状態変更/read-back、全入力/JSON/認証/取消/deadline/TLS/DNS/redirect、他OSは未検証。"
       ]
     },
     {
@@ -6803,13 +7041,17 @@
       ],
       "tests": [
         "sdk/pixiv/migration_mutation_test.go#TestMigrationFormMutationsMatchFrozenValidationWireAndStatus",
-        "crates/pixiv-sdk/tests/form_mutations.rs"
+        "crates/pixiv-sdk/tests/form_mutations.rs",
+        "crates/pixiv-app/tests/pool_session.rs#execution_write_never_replays_an_invoked_mutation_and_releases_its_account",
+        "crates/pixiv-cli/tests/mutations.rs#bookmark_follow_preserve_frozen_go_cli_and_saved_account_contracts",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#bookmarks_and_follows_match_go_schemas_results_forms_and_saved_stdio_without_replay"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64 (partial)"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "SDK の既存178 formケースを Linuxでも比較。CLI bookmark/follow と MCP6 mutation の direct/stdio/保存 account を接続し、呼出し後の失敗も committed として account pool 再送を禁止する。旧名 alias・restrict/tags と HTTP分類は既存契約を維持。bookmark read-backの既存比較以外の実状態変更/read-back、全入力/JSON/認証/取消/deadline/TLS/DNS/redirect、他OSは未検証。"
       ]
     },
     {
@@ -6826,13 +7068,17 @@
       ],
       "tests": [
         "sdk/pixiv/migration_mutation_test.go#TestMigrationFormMutationsMatchFrozenValidationWireAndStatus",
-        "crates/pixiv-sdk/tests/form_mutations.rs"
+        "crates/pixiv-sdk/tests/form_mutations.rs",
+        "crates/pixiv-app/tests/pool_session.rs#execution_write_never_replays_an_invoked_mutation_and_releases_its_account",
+        "crates/pixiv-cli/tests/mutations.rs#bookmark_follow_preserve_frozen_go_cli_and_saved_account_contracts",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#bookmarks_and_follows_match_go_schemas_results_forms_and_saved_stdio_without_replay"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64 (partial)"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "SDK の既存178 formケースを Linuxでも比較。CLI bookmark/follow と MCP6 mutation の direct/stdio/保存 account を接続し、呼出し後の失敗も committed として account pool 再送を禁止する。旧名 alias・restrict/tags と HTTP分類は既存契約を維持。bookmark read-backの既存比較以外の実状態変更/read-back、全入力/JSON/認証/取消/deadline/TLS/DNS/redirect、他OSは未検証。"
       ]
     },
     {
@@ -7115,13 +7361,17 @@
       ],
       "tests": [
         "sdk/pixiv/migration_mutation_test.go#TestMigrationFormMutationsMatchFrozenValidationWireAndStatus",
-        "crates/pixiv-sdk/tests/form_mutations.rs"
+        "crates/pixiv-sdk/tests/form_mutations.rs",
+        "crates/pixiv-app/tests/pool_session.rs#execution_write_never_replays_an_invoked_mutation_and_releases_its_account",
+        "crates/pixiv-cli/tests/mutations.rs#bookmark_follow_preserve_frozen_go_cli_and_saved_account_contracts",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#bookmarks_and_follows_match_go_schemas_results_forms_and_saved_stdio_without_replay"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64 (partial)"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "SDK の既存178 formケースを Linuxでも比較。CLI bookmark/follow と MCP6 mutation の direct/stdio/保存 account を接続し、呼出し後の失敗も committed として account pool 再送を禁止する。旧名 alias・restrict/tags と HTTP分類は既存契約を維持。bookmark read-backの既存比較以外の実状態変更/read-back、全入力/JSON/認証/取消/deadline/TLS/DNS/redirect、他OSは未検証。"
       ]
     },
     {
@@ -7637,13 +7887,17 @@
       ],
       "tests": [
         "sdk/pixiv/migration_mutation_test.go#TestMigrationFormMutationsMatchFrozenValidationWireAndStatus",
-        "crates/pixiv-sdk/tests/form_mutations.rs"
+        "crates/pixiv-sdk/tests/form_mutations.rs",
+        "crates/pixiv-app/tests/pool_session.rs#execution_write_never_replays_an_invoked_mutation_and_releases_its_account",
+        "crates/pixiv-cli/tests/mutations.rs#bookmark_follow_preserve_frozen_go_cli_and_saved_account_contracts",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#bookmarks_and_follows_match_go_schemas_results_forms_and_saved_stdio_without_replay"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64 (partial)"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "SDK の既存178 formケースを Linuxでも比較。CLI bookmark/follow と MCP6 mutation の direct/stdio/保存 account を接続し、呼出し後の失敗も committed として account pool 再送を禁止する。旧名 alias・restrict/tags と HTTP分類は既存契約を維持。bookmark read-backの既存比較以外の実状態変更/read-back、全入力/JSON/認証/取消/deadline/TLS/DNS/redirect、他OSは未検証。"
       ]
     },
     {
@@ -9406,13 +9660,17 @@
       ],
       "tests": [
         "sdk/pixiv/migration_mutation_test.go#TestMigrationFormMutationsMatchFrozenValidationWireAndStatus",
-        "crates/pixiv-sdk/tests/form_mutations.rs"
+        "crates/pixiv-sdk/tests/form_mutations.rs",
+        "crates/pixiv-app/tests/pool_session.rs#execution_write_never_replays_an_invoked_mutation_and_releases_its_account",
+        "crates/pixiv-cli/tests/mutations.rs#bookmark_follow_preserve_frozen_go_cli_and_saved_account_contracts",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#bookmarks_and_follows_match_go_schemas_results_forms_and_saved_stdio_without_replay"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64 (partial)"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "SDK の既存178 formケースを Linuxでも比較。CLI bookmark/follow と MCP6 mutation の direct/stdio/保存 account を接続し、呼出し後の失敗も committed として account pool 再送を禁止する。旧名 alias・restrict/tags と HTTP分類は既存契約を維持。bookmark read-backの既存比較以外の実状態変更/read-back、全入力/JSON/認証/取消/deadline/TLS/DNS/redirect、他OSは未検証。"
       ]
     },
     {
@@ -9429,13 +9687,17 @@
       ],
       "tests": [
         "sdk/pixiv/migration_mutation_test.go#TestMigrationFormMutationsMatchFrozenValidationWireAndStatus",
-        "crates/pixiv-sdk/tests/form_mutations.rs"
+        "crates/pixiv-sdk/tests/form_mutations.rs",
+        "crates/pixiv-app/tests/pool_session.rs#execution_write_never_replays_an_invoked_mutation_and_releases_its_account",
+        "crates/pixiv-cli/tests/mutations.rs#bookmark_follow_preserve_frozen_go_cli_and_saved_account_contracts",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#bookmarks_and_follows_match_go_schemas_results_forms_and_saved_stdio_without_replay"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64 (partial)"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "SDK の既存178 formケースを Linuxでも比較。CLI bookmark/follow と MCP6 mutation の direct/stdio/保存 account を接続し、呼出し後の失敗も committed として account pool 再送を禁止する。旧名 alias・restrict/tags と HTTP分類は既存契約を維持。bookmark read-backの既存比較以外の実状態変更/read-back、全入力/JSON/認証/取消/deadline/TLS/DNS/redirect、他OSは未検証。"
       ]
     },
     {
@@ -9452,13 +9714,17 @@
       ],
       "tests": [
         "sdk/pixiv/migration_mutation_test.go#TestMigrationFormMutationsMatchFrozenValidationWireAndStatus",
-        "crates/pixiv-sdk/tests/form_mutations.rs"
+        "crates/pixiv-sdk/tests/form_mutations.rs",
+        "crates/pixiv-app/tests/pool_session.rs#execution_write_never_replays_an_invoked_mutation_and_releases_its_account",
+        "crates/pixiv-cli/tests/mutations.rs#bookmark_follow_preserve_frozen_go_cli_and_saved_account_contracts",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#bookmarks_and_follows_match_go_schemas_results_forms_and_saved_stdio_without_replay"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64 (partial)"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "SDK の既存178 formケースを Linuxでも比較。CLI bookmark/follow と MCP6 mutation の direct/stdio/保存 account を接続し、呼出し後の失敗も committed として account pool 再送を禁止する。旧名 alias・restrict/tags と HTTP分類は既存契約を維持。bookmark read-backの既存比較以外の実状態変更/read-back、全入力/JSON/認証/取消/deadline/TLS/DNS/redirect、他OSは未検証。"
       ]
     },
     {
@@ -9521,13 +9787,17 @@
       ],
       "tests": [
         "sdk/pixiv/migration_mutation_test.go#TestMigrationFormMutationsMatchFrozenValidationWireAndStatus",
-        "crates/pixiv-sdk/tests/form_mutations.rs"
+        "crates/pixiv-sdk/tests/form_mutations.rs",
+        "crates/pixiv-app/tests/pool_session.rs#execution_write_never_replays_an_invoked_mutation_and_releases_its_account",
+        "crates/pixiv-cli/tests/mutations.rs#bookmark_follow_preserve_frozen_go_cli_and_saved_account_contracts",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#bookmarks_and_follows_match_go_schemas_results_forms_and_saved_stdio_without_replay"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64 (partial)"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "SDK の既存178 formケースを Linuxでも比較。CLI bookmark/follow と MCP6 mutation の direct/stdio/保存 account を接続し、呼出し後の失敗も committed として account pool 再送を禁止する。旧名 alias・restrict/tags と HTTP分類は既存契約を維持。bookmark read-backの既存比較以外の実状態変更/read-back、全入力/JSON/認証/取消/deadline/TLS/DNS/redirect、他OSは未検証。"
       ]
     },
     {
@@ -9544,13 +9814,17 @@
       ],
       "tests": [
         "sdk/pixiv/migration_mutation_test.go#TestMigrationFormMutationsMatchFrozenValidationWireAndStatus",
-        "crates/pixiv-sdk/tests/form_mutations.rs"
+        "crates/pixiv-sdk/tests/form_mutations.rs",
+        "crates/pixiv-app/tests/pool_session.rs#execution_write_never_replays_an_invoked_mutation_and_releases_its_account",
+        "crates/pixiv-cli/tests/mutations.rs#bookmark_follow_preserve_frozen_go_cli_and_saved_account_contracts",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#bookmarks_and_follows_match_go_schemas_results_forms_and_saved_stdio_without_replay"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64 (partial)"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "SDK の既存178 formケースを Linuxでも比較。CLI bookmark/follow と MCP6 mutation の direct/stdio/保存 account を接続し、呼出し後の失敗も committed として account pool 再送を禁止する。旧名 alias・restrict/tags と HTTP分類は既存契約を維持。bookmark read-backの既存比較以外の実状態変更/read-back、全入力/JSON/認証/取消/deadline/TLS/DNS/redirect、他OSは未検証。"
       ]
     },
     {
@@ -9567,13 +9841,17 @@
       ],
       "tests": [
         "sdk/pixiv/migration_mutation_test.go#TestMigrationFormMutationsMatchFrozenValidationWireAndStatus",
-        "crates/pixiv-sdk/tests/form_mutations.rs"
+        "crates/pixiv-sdk/tests/form_mutations.rs",
+        "crates/pixiv-app/tests/pool_session.rs#execution_write_never_replays_an_invoked_mutation_and_releases_its_account",
+        "crates/pixiv-cli/tests/mutations.rs#bookmark_follow_preserve_frozen_go_cli_and_saved_account_contracts",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#bookmarks_and_follows_match_go_schemas_results_forms_and_saved_stdio_without_replay"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64 (partial)"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "SDK の既存178 formケースを Linuxでも比較。CLI bookmark/follow と MCP6 mutation の direct/stdio/保存 account を接続し、呼出し後の失敗も committed として account pool 再送を禁止する。旧名 alias・restrict/tags と HTTP分類は既存契約を維持。bookmark read-backの既存比較以外の実状態変更/read-back、全入力/JSON/認証/取消/deadline/TLS/DNS/redirect、他OSは未検証。"
       ]
     },
     {
@@ -11079,13 +11357,17 @@
       ],
       "tests": [
         "sdk/pixiv/migration_mutation_test.go#TestMigrationFormMutationsMatchFrozenValidationWireAndStatus",
-        "crates/pixiv-sdk/tests/form_mutations.rs"
+        "crates/pixiv-sdk/tests/form_mutations.rs",
+        "crates/pixiv-app/tests/pool_session.rs#execution_write_never_replays_an_invoked_mutation_and_releases_its_account",
+        "crates/pixiv-cli/tests/mutations.rs#bookmark_follow_preserve_frozen_go_cli_and_saved_account_contracts",
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#bookmarks_and_follows_match_go_schemas_results_forms_and_saved_stdio_without_replay"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64 (partial)"
       ],
       "differences": [
-        "9操作・178ケースでID/restrict検証・既定値・旧名wrapperの操作名・複数tagsの順・form・HTTP分類・再送なしを比較。実HTTP6ケースと送信間隔のvirtual timeテストも検証。RestrictはString、旧名requestはtype aliasとして対応。bookmarkのオフラインread-backは別の60ケースで比較。CLI/MCP、followのread-back、全認証/取消/deadline/TLS/DNS/redirect、実サービスの状態変更、他OSは未検証。"
+        "SDK の既存178 formケースを Linuxでも比較。CLI bookmark/follow と MCP6 mutation の direct/stdio/保存 account を接続し、呼出し後の失敗も committed として account pool 再送を禁止する。旧名 alias・restrict/tags と HTTP分類は既存契約を維持。bookmark read-backの既存比較以外の実状態変更/read-back、全入力/JSON/認証/取消/deadline/TLS/DNS/redirect、他OSは未検証。"
       ]
     },
     {

@@ -232,6 +232,77 @@ async fn execution_pool_overrides_the_requested_account_and_persists_replay_stat
 }
 
 #[tokio::test]
+async fn execution_write_never_replays_an_invoked_mutation_and_releases_its_account() {
+    use pixiv_app::execution::Execution;
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("config.toml");
+    std::fs::write(
+        &path,
+        "[account_pool]\nenabled = true\nstrategy = 'round_robin'\n",
+    )
+    .unwrap();
+    let mut database = Database::open(directory.path()).unwrap();
+    for id in [42, 43] {
+        database
+            .save_pixiv_credential(&PixivAccount::new(
+                id,
+                "stored",
+                format!("fixture-refresh-{id}").as_bytes(),
+            ))
+            .unwrap();
+    }
+    database.set_all_pixiv_schedulable(true).unwrap();
+    let database = Arc::new(Mutex::new(database));
+    let requests = Arc::new(Mutex::new(Vec::new()));
+    let factory_database = database.clone();
+    let factory_requests = requests.clone();
+    let execution = Execution::new(Store::new(&path), database.clone(), move |_| {
+        Ok(CurrentRetryConnection(Connection {
+            requests: factory_requests.clone(),
+            database: factory_database.clone(),
+        }))
+    });
+    let error = execution
+        .write(&Context::new(), 99, Some(""), |_, client| async move {
+            client
+                .follow_user(pixiv_sdk::pixiv::FollowUserRequest {
+                    user_id: 1,
+                    restrict: String::new(),
+                })
+                .await
+                .map_err(Into::into)
+        })
+        .await
+        .unwrap_err();
+    assert_eq!(error.classified().unwrap().code, Reason::RateLimited);
+    assert_eq!(*requests.lock().unwrap(), [42]);
+    {
+        let database = database.lock().unwrap();
+        assert_eq!(database.get_pixiv(42).unwrap().credential_revision, 2);
+        assert_eq!(database.get_pixiv(43).unwrap().credential_revision, 1);
+        assert_eq!(database.get_pixiv(42).unwrap().pool_frozen_until, None);
+    }
+    std::fs::write(&path, "[pixiv.auth]\ndefault_user_id = 43\n").unwrap();
+    let error = tokio::time::timeout(
+        std::time::Duration::from_secs(5),
+        execution.write(&Context::new(), 0, Some(""), |_, client| async move {
+            client
+                .unfollow_user(pixiv_sdk::pixiv::UnfollowUserRequest { user_id: 1 })
+                .await
+                .map_err(Into::into)
+        }),
+    )
+    .await
+    .unwrap()
+    .unwrap_err();
+    assert_eq!(
+        error.classified().unwrap().code,
+        Reason::MalformedUpstreamResponse
+    );
+    assert_eq!(*requests.lock().unwrap(), [42, 43]);
+}
+
+#[tokio::test]
 async fn execution_rejects_configuration_and_proxy_errors_before_acquiring_an_account() {
     use pixiv_app::{execution::Execution, scheduler::SchedulerError};
     use std::error::Error as _;

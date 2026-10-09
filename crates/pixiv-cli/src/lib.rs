@@ -1,4 +1,5 @@
 mod json_spool;
+pub mod mutation;
 mod novel_list;
 pub mod novel_search;
 pub mod ranking;
@@ -29,6 +30,7 @@ pub enum CommandError {
     Output(io::Error),
     App(SchedulerError),
     State(Box<dyn std::error::Error + Send + Sync>),
+    Pipeline,
 }
 impl From<SchedulerError> for CommandError {
     fn from(error: SchedulerError) -> Self {
@@ -55,6 +57,7 @@ impl fmt::Display for CommandError {
             Self::Output(error) => error.fmt(f),
             Self::App(error) => error.fmt(f),
             Self::State(error) => error.fmt(f),
+            Self::Pipeline => f.write_str("pipeline records failed"),
         }
     }
 }
@@ -65,7 +68,7 @@ impl std::error::Error for CommandError {
             Self::Output(error) => Some(error),
             Self::App(error) => Some(error),
             Self::State(error) => Some(error.as_ref()),
-            Self::Message(_) | Self::Usage(_) | Self::MessageText(_) => None,
+            Self::Message(_) | Self::Usage(_) | Self::MessageText(_) | Self::Pipeline => None,
         }
     }
 }
@@ -83,7 +86,8 @@ impl CommandError {
             | Self::Usage(_)
             | Self::MessageText(_)
             | Self::Output(_)
-            | Self::State(_) => None,
+            | Self::State(_)
+            | Self::Pipeline => None,
         }
     }
 }
@@ -97,6 +101,9 @@ pub fn finish_command<W: Write>(
     let Err(error) = result else {
         return 0;
     };
+    if matches!(error, CommandError::Pipeline) {
+        return 1;
+    }
     if matches!(error, CommandError::Usage(_)) {
         let _ = writeln!(diagnostics, "error: {error}");
         return 2;

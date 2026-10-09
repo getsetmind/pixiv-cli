@@ -1,0 +1,49 @@
+{
+  "description": "Remove a novel from bookmarks.",
+  "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "novel_id": {
+        "description": "novel ID",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "novel_id"
+    ],
+    "type": "object"
+  },
+  "name": "remove_novel_bookmark",
+  "outputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "action": {
+        "type": "string"
+      },
+      "comment_id": {
+        "type": "integer"
+      },
+      "illust_id": {
+        "type": "integer"
+      },
+      "novel_id": {
+        "type": "integer"
+      },
+      "success": {
+        "type": "boolean"
+      },
+      "text": {
+        "type": "string"
+      },
+      "user_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "success",
+      "action",
+      "text"
+    ],
+    "type": "object"
+  }
+}
