@@ -1,0 +1,463 @@
+{
+  "reference": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "source_sha256": "7cc57f3f1791038a2edbd4f0ff3432955218f1397934d83bcc6105dfbeec18f8",
+  "evidence": "Frozen Go source with os/exec mock; native Swift compilation, LaunchServices and CommandContext cancellation unverified",
+  "bundle_id": "com.flanchan.pixiv-cli.url-handler",
+  "source_version": "6",
+  "app_relative_path": ".pixiv-cli/url-handler/PixivCLIURLHandler.app",
+  "callback_url": "pixiv://account/login?code=private-code&state=a b;$(false)",
+  "endpoint_url": "http://127.0.0.1:41871/callback",
+  "plist": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n  <key>CFBundleExecutable</key><string>PixivCLIURLHandler</string>\n  <key>CFBundleIdentifier</key><string>com.flanchan.pixiv-cli.url-handler</string>\n  <key>CFBundleName</key><string>PixivCLIURLHandler</string>\n  <key>CFBundlePackageType</key><string>APPL</string>\n  <key>LSUIElement</key><true/>\n  <key>CFBundleURLTypes</key>\n  <array>\n    <dict>\n      <key>CFBundleURLName</key><string>Pixiv CLI OAuth Callback</string>\n      <key>CFBundleURLSchemes</key>\n      <array><string>pixiv</string></array>\n    </dict>\n  </array>\n</dict>\n</plist>\n",
+  "swift_source": "import Cocoa\nimport Foundation\n\nfinal class AppDelegate: NSObject, NSApplicationDelegate {\n    override init() {\n        super.init()\n        NSAppleEventManager.shared().setEventHandler(self, andSelector: #selector(handleGetURLEvent(_:withReplyEvent:)), forEventClass: AEEventClass(kInternetEventClass), andEventID: AEEventID(kAEGetURL))\n    }\n\n\t@objc func handleGetURLEvent(_ event: NSAppleEventDescriptor, withReplyEvent replyEvent: NSAppleEventDescriptor) {\n\t\tguard let callbackURL = event.paramDescriptor(forKeyword: keyDirectObject)?.stringValue else {\n\t\t\tNSApp.terminate(nil)\n\t\t\treturn\n\t\t}\n\t\trunCallbackHandler(callbackURL)\n\t\tNSApp.terminate(nil)\n\t}\n\n\tprivate func runCallbackHandler(_ callbackURL: String) {\n\t\tguard let manifestURL = manifestURL(),\n\t\t\t  let data = try? Data(contentsOf: manifestURL),\n\t\t\t  let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any],\n\t\t\t  let executable = object[\"executable_path\"] as? String,\n\t\t\t  !executable.isEmpty else {\n\t\t\treturn\n\t\t}\n\t\tlet process = Process()\n\t\tprocess.executableURL = URL(fileURLWithPath: executable)\n\t\tprocess.arguments = [\"auth\", \"_callback\", callbackURL]\n\t\tif let homeDirectory = object[\"home_directory\"] as? String, !homeDirectory.isEmpty {\n\t\t\tvar environment = ProcessInfo.processInfo.environment\n\t\t\tenvironment[\"HOME\"] = homeDirectory\n\t\t\tenvironment[\"USERPROFILE\"] = homeDirectory\n\t\t\tprocess.environment = environment\n\t\t}\n\t\ttry? process.run()\n\t}\n\n\tprivate func manifestURL() -> URL? {\n\t\t// LaunchServices 不会继承 CLI 进程的 HOME。先读随已注册 app 一同写入\n\t\t// 的私有 manifest，使隔离 HOME 仍能回调正确 binary；旧版本只保存的\n\t\t// 用户目录副本仍作为兼容回退。二者都不含 bearer secret。\n\t\tif let resourceURL = Bundle.main.resourceURL {\n\t\t\tlet bundleManifest = resourceURL.appendingPathComponent(\"handler-manifest.json\")\n\t\t\tif FileManager.default.isReadableFile(atPath: bundleManifest.path) {\n\t\t\t\treturn bundleManifest\n\t\t\t}\n\t\t}\n\t\treturn URL(fileURLWithPath: NSHomeDirectory())\n\t\t\t.appendingPathComponent(\".pixiv-cli/url-handler/handler-manifest.json\")\n\t}\n}\n\nlet app = NSApplication.shared\nlet delegate = AppDelegate()\napp.delegate = delegate\napp.setActivationPolicy(.accessory)\napp.run()\n",
+  "cases": [
+    {
+      "name": "ensure-first",
+      "operation": "ensure",
+      "previous": "old.bundle",
+      "current": "com.flanchan.pixiv-cli.url-handler",
+      "failure": "",
+      "trace": [
+        "compile",
+        "query",
+        "register",
+        "set:com.flanchan.pixiv-cli.url-handler"
+      ],
+      "error": "",
+      "manifest_exists": true,
+      "endpoint_exists": false
+    },
+    {
+      "name": "ensure-repeat",
+      "operation": "repeat",
+      "previous": "old.bundle",
+      "current": "com.flanchan.pixiv-cli.url-handler",
+      "failure": "",
+      "trace": [
+        "register",
+        "set:com.flanchan.pixiv-cli.url-handler"
+      ],
+      "error": "",
+      "manifest_exists": true,
+      "endpoint_exists": false
+    },
+    {
+      "name": "ensure-query-error",
+      "operation": "ensure",
+      "previous": "old.bundle",
+      "current": "com.flanchan.pixiv-cli.url-handler",
+      "failure": "query",
+      "trace": [
+        "compile",
+        "query"
+      ],
+      "error": "synthetic query",
+      "manifest_exists": false,
+      "endpoint_exists": false
+    },
+    {
+      "name": "ensure-register-error",
+      "operation": "ensure",
+      "previous": "old.bundle",
+      "current": "com.flanchan.pixiv-cli.url-handler",
+      "failure": "register",
+      "trace": [
+        "compile",
+        "query",
+        "register"
+      ],
+      "error": "register pixiv:// callback helper: synthetic exit: stdout\nstderr",
+      "manifest_exists": false,
+      "endpoint_exists": false
+    },
+    {
+      "name": "ensure-set-error",
+      "operation": "ensure",
+      "previous": "old.bundle",
+      "current": "com.flanchan.pixiv-cli.url-handler",
+      "failure": "set",
+      "trace": [
+        "compile",
+        "query",
+        "register",
+        "set:com.flanchan.pixiv-cli.url-handler"
+      ],
+      "error": "set pixiv:// callback handler: synthetic exit: stdout\nstderr",
+      "manifest_exists": false,
+      "endpoint_exists": false
+    },
+    {
+      "name": "ensure-save-error-restores",
+      "operation": "ensure",
+      "previous": "old.bundle",
+      "current": "com.flanchan.pixiv-cli.url-handler",
+      "failure": "save",
+      "trace": [
+        "compile",
+        "query",
+        "register",
+        "set:com.flanchan.pixiv-cli.url-handler",
+        "set:old.bundle"
+      ],
+      "error": "filesystem",
+      "manifest_exists": false,
+      "endpoint_exists": false
+    },
+    {
+      "name": "disable-external",
+      "operation": "disable",
+      "previous": "old.bundle",
+      "current": "external.bundle",
+      "failure": "",
+      "trace": [
+        "query"
+      ],
+      "error": "",
+      "manifest_exists": false,
+      "endpoint_exists": false
+    },
+    {
+      "name": "disable-restores",
+      "operation": "disable",
+      "previous": "old.bundle",
+      "current": "com.flanchan.pixiv-cli.url-handler",
+      "failure": "",
+      "trace": [
+        "query",
+        "set:old.bundle"
+      ],
+      "error": "",
+      "manifest_exists": false,
+      "endpoint_exists": false
+    },
+    {
+      "name": "disable-empty-unsafe",
+      "operation": "disable",
+      "previous": "",
+      "current": "com.flanchan.pixiv-cli.url-handler",
+      "failure": "",
+      "trace": [
+        "query"
+      ],
+      "error": "cannot safely restore a previous macOS Pixiv URL handler",
+      "manifest_exists": true,
+      "endpoint_exists": false
+    },
+    {
+      "name": "disable-self-unsafe",
+      "operation": "disable",
+      "previous": "com.flanchan.pixiv-cli.url-handler",
+      "current": "com.flanchan.pixiv-cli.url-handler",
+      "failure": "",
+      "trace": [
+        "query"
+      ],
+      "error": "cannot safely restore a previous macOS Pixiv URL handler",
+      "manifest_exists": true,
+      "endpoint_exists": false
+    },
+    {
+      "name": "disable-query-error",
+      "operation": "disable",
+      "previous": "old.bundle",
+      "current": "com.flanchan.pixiv-cli.url-handler",
+      "failure": "query",
+      "trace": [
+        "query"
+      ],
+      "error": "synthetic query",
+      "manifest_exists": true,
+      "endpoint_exists": false
+    },
+    {
+      "name": "disable-set-error",
+      "operation": "disable",
+      "previous": "old.bundle",
+      "current": "com.flanchan.pixiv-cli.url-handler",
+      "failure": "set",
+      "trace": [
+        "query",
+        "set:old.bundle"
+      ],
+      "error": "set pixiv:// callback handler: synthetic exit: stdout\nstderr",
+      "manifest_exists": true,
+      "endpoint_exists": false
+    },
+    {
+      "name": "disable-missing",
+      "operation": "disable-missing",
+      "previous": "old.bundle",
+      "current": "com.flanchan.pixiv-cli.url-handler",
+      "failure": "",
+      "trace": [],
+      "error": "",
+      "manifest_exists": false,
+      "endpoint_exists": false
+    },
+    {
+      "name": "install-cleanup-restores",
+      "operation": "install",
+      "previous": "old.bundle",
+      "current": "com.flanchan.pixiv-cli.url-handler",
+      "failure": "",
+      "trace": [
+        "find:swiftc",
+        "find:swift",
+        "compile",
+        "query",
+        "register",
+        "set:com.flanchan.pixiv-cli.url-handler",
+        "set:old.bundle",
+        "set:old.bundle"
+      ],
+      "error": "",
+      "manifest_exists": false,
+      "endpoint_exists": false
+    },
+    {
+      "name": "install-cleanup-empty",
+      "operation": "install",
+      "previous": "",
+      "current": "com.flanchan.pixiv-cli.url-handler",
+      "failure": "",
+      "trace": [
+        "find:swiftc",
+        "find:swift",
+        "compile",
+        "query",
+        "register",
+        "set:com.flanchan.pixiv-cli.url-handler"
+      ],
+      "error": "",
+      "manifest_exists": false,
+      "endpoint_exists": false
+    },
+    {
+      "name": "install-cleanup-self",
+      "operation": "install",
+      "previous": "com.flanchan.pixiv-cli.url-handler",
+      "current": "com.flanchan.pixiv-cli.url-handler",
+      "failure": "",
+      "trace": [
+        "find:swiftc",
+        "find:swift",
+        "compile",
+        "query",
+        "register",
+        "set:com.flanchan.pixiv-cli.url-handler"
+      ],
+      "error": "",
+      "manifest_exists": false,
+      "endpoint_exists": false
+    },
+    {
+      "name": "install-query-error-ignored",
+      "operation": "install",
+      "previous": "old.bundle",
+      "current": "com.flanchan.pixiv-cli.url-handler",
+      "failure": "query",
+      "trace": [
+        "find:swiftc",
+        "find:swift",
+        "compile",
+        "query",
+        "register",
+        "set:com.flanchan.pixiv-cli.url-handler"
+      ],
+      "error": "",
+      "manifest_exists": false,
+      "endpoint_exists": false
+    },
+    {
+      "name": "install-register-error",
+      "operation": "install",
+      "previous": "old.bundle",
+      "current": "com.flanchan.pixiv-cli.url-handler",
+      "failure": "register",
+      "trace": [
+        "find:swiftc",
+        "find:swift",
+        "compile",
+        "query",
+        "register"
+      ],
+      "error": "register pixiv:// callback helper: synthetic exit: stdout\nstderr",
+      "manifest_exists": false,
+      "endpoint_exists": false
+    },
+    {
+      "name": "install-set-error-restores",
+      "operation": "install",
+      "previous": "old.bundle",
+      "current": "com.flanchan.pixiv-cli.url-handler",
+      "failure": "set",
+      "trace": [
+        "find:swiftc",
+        "find:swift",
+        "compile",
+        "query",
+        "register",
+        "set:com.flanchan.pixiv-cli.url-handler",
+        "set:old.bundle"
+      ],
+      "error": "set pixiv:// callback handler: synthetic exit: stdout\nstderr",
+      "manifest_exists": false,
+      "endpoint_exists": false
+    },
+    {
+      "name": "install-missing-swiftc",
+      "operation": "install",
+      "previous": "old.bundle",
+      "current": "com.flanchan.pixiv-cli.url-handler",
+      "failure": "swiftc",
+      "trace": [
+        "find:swiftc"
+      ],
+      "error": "synthetic missing swiftc",
+      "manifest_exists": false,
+      "endpoint_exists": false
+    },
+    {
+      "name": "install-missing-swift",
+      "operation": "install",
+      "previous": "old.bundle",
+      "current": "com.flanchan.pixiv-cli.url-handler",
+      "failure": "swift",
+      "trace": [
+        "find:swiftc",
+        "find:swift"
+      ],
+      "error": "synthetic missing swift",
+      "manifest_exists": false,
+      "endpoint_exists": false
+    },
+    {
+      "name": "install-invalid-endpoint-after-compile",
+      "operation": "install",
+      "previous": "old.bundle",
+      "current": "com.flanchan.pixiv-cli.url-handler",
+      "failure": "endpoint",
+      "trace": [
+        "find:swiftc",
+        "find:swift",
+        "compile"
+      ],
+      "error": "invalid callback endpoint",
+      "manifest_exists": false,
+      "endpoint_exists": false
+    },
+    {
+      "name": "delegate-explicit",
+      "operation": "delegate",
+      "previous": "old.bundle",
+      "current": "com.flanchan.pixiv-cli.url-handler",
+      "failure": "",
+      "trace": [
+        "open"
+      ],
+      "error": "",
+      "manifest_exists": true,
+      "endpoint_exists": false
+    },
+    {
+      "name": "delegate-failure-redacted",
+      "operation": "delegate",
+      "previous": "old.bundle",
+      "current": "com.flanchan.pixiv-cli.url-handler",
+      "failure": "open",
+      "trace": [
+        "open"
+      ],
+      "error": "could not open previous Pixiv URL handler",
+      "manifest_exists": true,
+      "endpoint_exists": false
+    },
+    {
+      "name": "delegate-empty",
+      "operation": "delegate",
+      "previous": "",
+      "current": "com.flanchan.pixiv-cli.url-handler",
+      "failure": "",
+      "trace": [],
+      "error": "no previous Pixiv URL handler is available",
+      "manifest_exists": true,
+      "endpoint_exists": false
+    },
+    {
+      "name": "delegate-self",
+      "operation": "delegate",
+      "previous": "com.flanchan.pixiv-cli.url-handler",
+      "current": "com.flanchan.pixiv-cli.url-handler",
+      "failure": "",
+      "trace": [],
+      "error": "no previous Pixiv URL handler is available",
+      "manifest_exists": true,
+      "endpoint_exists": false
+    },
+    {
+      "name": "delegate-missing",
+      "operation": "delegate-missing",
+      "previous": "old.bundle",
+      "current": "com.flanchan.pixiv-cli.url-handler",
+      "failure": "",
+      "trace": [],
+      "error": "no previous Pixiv URL handler is available",
+      "manifest_exists": false,
+      "endpoint_exists": false
+    }
+  ],
+  "query_script": "import Foundation; import CoreServices; let scheme=\"pixiv\" as NSString; if let h = LSCopyDefaultHandlerForURLScheme(scheme)?.takeRetainedValue() { print(h as String) }",
+  "set_script_template": "import Foundation; import CoreServices; let scheme=\"pixiv\" as NSString; let handler={quoted_bundle_id} as NSString; let status = LSSetDefaultHandlerForURLScheme(scheme, handler); if status != 0 { exit(1) }",
+  "native_port_error": "set pixiv:// callback handler: synthetic exit: stdout\nstderr",
+  "bundle_manifest_zero_version": {
+    "version": 0,
+    "executable_path": "old",
+    "previous_handler": "old.bundle"
+  },
+  "compiler_cache_cases": [
+    {
+      "name": "trimmed-version",
+      "kind": "trim",
+      "compile": false
+    },
+    {
+      "name": "symlink-assets",
+      "kind": "symlink",
+      "compile": false
+    },
+    {
+      "name": "directory-executable",
+      "kind": "exec-directory",
+      "compile": true
+    },
+    {
+      "name": "directory-plist",
+      "kind": "plist-directory",
+      "compile": true
+    },
+    {
+      "name": "missing-executable",
+      "kind": "missing",
+      "compile": true
+    }
+  ],
+  "native_script_cases": [
+    {
+      "scheme": "pixiv",
+      "bundle_id": "old.bundle",
+      "query_script": "import Foundation; import CoreServices; let scheme=\"pixiv\" as NSString; if let h = LSCopyDefaultHandlerForURLScheme(scheme)?.takeRetainedValue() { print(h as String) }",
+      "set_script": "import Foundation; import CoreServices; let scheme=\"pixiv\" as NSString; let handler=\"old.bundle\" as NSString; let status = LSSetDefaultHandlerForURLScheme(scheme, handler); if status != 0 { exit(1) }",
+      "error": "set pixiv:// callback handler: synthetic exit: stdout\nstderr"
+    },
+    {
+      "scheme": "pixiv\"\\\n",
+      "bundle_id": "old\"\\\n.bundle",
+      "query_script": "import Foundation; import CoreServices; let scheme=\"pixiv\\\"\\\\\\n\" as NSString; if let h = LSCopyDefaultHandlerForURLScheme(scheme)?.takeRetainedValue() { print(h as String) }",
+      "set_script": "import Foundation; import CoreServices; let scheme=\"pixiv\\\"\\\\\\n\" as NSString; let handler=\"old\\\"\\\\\\n.bundle\" as NSString; let status = LSSetDefaultHandlerForURLScheme(scheme, handler); if status != 0 { exit(1) }",
+      "error": "set pixiv\"\\\n:// callback handler: synthetic exit: stdout\nstderr"
+    }
+  ],
+  "helper_source_sha256": {
+    "persistent_state.go": "db753b648f1fba7f722e8a41856126210a99639ccda174a98cada1b85c8a06e4",
+    "endpoint.go": "91be2a6cd6ffb996559e9fe06097383a54527551cebf1513273890ba15671beb"
+  }
+}

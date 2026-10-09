@@ -476,13 +476,9 @@ fn snapshot_file(path: &Path) -> Result<NativeSnapshot, LinuxHandlerError> {
     Ok(snapshot)
 }
 fn remove(path: &Path) -> io::Result<()> {
-    match fs::remove_file(path) {
-        Ok(()) => Ok(()),
-        Err(error) if error.kind() == io::ErrorKind::NotFound => Ok(()),
-        Err(_) if path.is_dir() => fs::remove_dir(path),
-        Err(error) => Err(error),
-    }
+    private_file::remove_if_exists(path)
 }
+
 fn restore(snapshots: &[NativeSnapshot]) -> Result<(), LinuxHandlerError> {
     let mut errors = Vec::new();
     for snapshot in snapshots {

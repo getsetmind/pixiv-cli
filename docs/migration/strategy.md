@@ -87,6 +87,10 @@ cursor と resource reference は不透明なデータでも外部契約であ�
 
 実装中は変更した境界の比較テストで失敗と修正を確認する。接続した経路の変更が揃ったら必須チェックをまとめて実行し、そこで初めて commit・push の区切りにする。フローや文書だけを修正した場合に、変更のない Rust の全チェックを繰り返さない。チェック失敗後は原因の対象を絞って修正し、必要な全チェックを再実行する。Formatter・Clippy・本番コードとテストの分離は引き続き必須とする。
 
+### 現在の login OS 依存の境界
+
+Linux XDGとDarwin associationのensure/disable/temp restore/delegateを共有manifest/processに接続する。Darwinは固定Go sourceのSHAを確認し、temporary packageでbuild tag除去とos/exec importのmock置換だけを行う比較とする。native Darwin compile/LaunchServices実行とは区別し、Windows backend・full CLI login/hidden callback/startup wiring、relay HTTP/2、Accept header差分とpublic client lifecycleを次の実装・検証へ残す。実browser/registration/host security changesは行わず、native検証は別環境の明示された工程で扱う。
+
 ### 作業範囲と調査の制御
 
 各区切りを始める前に、利用者の操作、Go で確認した期待結果、現在失敗している Rust の入口、区切りを終える検証を短く記録する。対象テストと実装箇所が決まったら実装へ進む。同じ調査を続ける場合は、未回答の問いと、それが現在の機能を妨げる理由を示す。

@@ -8,6 +8,7 @@ pub mod auth_bundle;
 pub mod callback_handler;
 pub mod config;
 pub mod connection;
+pub mod darwin_handler;
 pub mod database;
 pub mod dates;
 pub mod diagnostics;

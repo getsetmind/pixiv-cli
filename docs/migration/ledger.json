@@ -478,7 +478,9 @@
         "crates/pixiv-app/src/host_process.rs",
         "crates/pixiv-app/src/native_browser.rs",
         "crates/pixiv-app/src/linux_handler.rs",
-        "crates/pixiv-app/src/host_context.rs"
+        "crates/pixiv-app/src/host_context.rs",
+        "crates/pixiv-app/src/darwin_handler.rs",
+        "crates/pixiv-app/src/config/private_file.rs"
       ],
       "tests": [
         "internal/cli/commands/pixiv/auth/migration_input_test.go",
@@ -521,12 +523,21 @@
         "internal/cli/commands/pixiv/auth/loginhelper/migration_host_context_test.go",
         "crates/pixiv-app/tests/linux_handler.rs",
         "crates/pixiv-app/tests/host_context.rs",
-        "crates/pixiv-app/tests/fixtures/linux_handler.json"
+        "crates/pixiv-app/tests/fixtures/linux_handler.json",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_darwin_source_test.go",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_darwin_contract_payload_test.go",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_darwin_mock_payload_test.go",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_merged_process_output_test.go",
+        "crates/pixiv-app/tests/darwin_handler.rs",
+        "crates/pixiv-app/tests/merged_process_output.rs",
+        "crates/pixiv-app/tests/fixtures/darwin_handler.json",
+        "crates/pixiv-app/tests/fixtures/merged_process_output.json"
       ],
       "verified_platforms": [],
       "differences": [
-        "CLI login/hidden callback入口は未接続。input/pages/local bridge・remote protocol/private state/streaming client・relay session/context HTTP1/TLS・default paths/private endpoint/callback action・manifest/native browser・Linux XDG/context process依存は対象例で実装する。full CLI state wiring/startup/options/TTY/native hooks・Darwin/Windows association/ShellExecuteExWは未移植。Windows/macOS/BSD native compile/run・全PATHEXT/lookup/env/error/ACLとDarwin combined compiler-output orderingは未検証または未実装。Windows NULはGo panicをnative call前にsourceで維持するがLinux gateでnative実行証明へ数えない。Go TLS serverはHTTP/2 negotiation/servingを持つがRust relayはHTTP/1のみで、HTTP/2は実際の未移植transport capability。synthetic local TLS trustはtest限定でhost trustを変更しない。Go stateにTTLは無く追加しない。nonUTF8 URL/環境値対String、全URL/JSON/native header・Go native exact診断・TLS/proxy実通信/IDNA/IPv6zone/unknown proxy scheme・gzip/wire data+error chunking・全concurrency/cancel/clock/socket flush/backpressureとWindows/native platformは未検証または差分。HandoffReadの0None=EOFはarbitrary Go Readerの0nil/data+EOFを表せずsynthetic n+nonEOF read-error例を全native wireへ外挿しない。SDK owned HTTP/context/idle lifecycle・blocked prompt cleanup・全並行scheduleの既存debtも保持する。 native reqwest0.13.5がAccept: */*を追加する具体差分はGoのAccept不在と別々にcaptureし未解消とする。native header parityを宣言しない。",
-        "Linux実desktop registration/外部gioは未実行。native IO DisplayはGo PathError書式との差分を保持し、全filesystem/race/privilege/env/cancel/platformは未検証。raw native XDG/executable/temp snapshotは対象例で保持するが、persistent JSON pathの不正UTF8はGo同様per-byte replacementへ変換し、そのGo restore結果をhardeningで変更しない。Context stderr32KiB prefix/suffixはbounded capture、SIGKILL/lookup-before-cancel/descendant EOFの対象例を比較し、successful-exit cancel race・任意signal/native pipe faultを未検証とする。"
+        "CLI login/hidden callback入口は未接続。input/pages/local bridge・remote protocol/private state/streaming client・relay session/context HTTP1/TLS・default paths/private endpoint/callback action・manifest/native browser・Linux XDG/Darwin association/context process依存は対象例で実装する。full CLI state wiring/startup/options/TTY/native hooks・Windows association/ShellExecuteExWは未移植。Windows/macOS/BSD native compile/run・全PATHEXT/lookup/env/error/ACL・全merged-output post-start faultは未検証。Windows NULはGo panicをnative call前にsourceで維持するがLinux gateでnative実行証明へ数えない。Go TLS serverはHTTP/2 negotiation/servingを持つがRust relayはHTTP/1のみで、HTTP/2は実際の未移植transport capability。synthetic local TLS trustはtest限定でhost trustを変更しない。Go stateにTTLは無く追加しない。nonUTF8 URL/環境値対String、全URL/JSON/native header・Go native exact診断・TLS/proxy実通信/IDNA/IPv6zone/unknown proxy scheme・gzip/wire data+error chunking・全concurrency/cancel/clock/socket flush/backpressureとWindows/native platformは未検証または差分。HandoffReadの0None=EOFはarbitrary Go Readerの0nil/data+EOFを表せずsynthetic n+nonEOF read-error例を全native wireへ外挿しない。SDK owned HTTP/context/idle lifecycle・blocked prompt cleanup・全並行scheduleの既存debtも保持する。 native reqwest0.13.5がAccept: */*を追加する具体差分はGoのAccept不在と別々にcaptureし未解消とする。native header parityを宣言しない。",
+        "Linux実desktop registration/外部gioは未実行。native IO DisplayはGo PathError書式との差分を保持し、全filesystem/race/privilege/env/cancel/platformは未検証。raw native XDG/executable/temp snapshotは対象例で保持するが、persistent JSON pathの不正UTF8はGo同様per-byte replacementへ変換し、そのGo restore結果をhardeningで変更しない。Context stderr32KiB prefix/suffixはbounded capture、SIGKILL/lookup-before-cancel/descendant EOFの対象例を比較し、successful-exit cancel race・任意signal/native pipe faultを未検証とする。",
+        "Darwin associationは固定Go sourceのbuild tag除去とos/exec importだけをmock化したcontrol-flow比較。27flow・5cache/file-kind・2script・bundle version0・endpoint replacement empty/nonempty directory cleanup・private compiler source/assetsを固定し、Swift/plist bytesを共用fixtureと比較する。実Darwin Swift compile/LaunchServices・native process cancellation・全IO/permission/random faultは未検証。Combinedは同じkernel pipeでraw binaryを保持するが、構築したCaptured error accessor testを全native post-start faultの実行証明としない。Darwin query/diagnostic Stringの不正UTF8はGo raw bytes対Rust replacementの具体差分を保持し、typed captured bytesと混同しない。Go同様temporary cleanupがlater external choiceを上書きし、query failureを無視し、cache時permissionを修復しない。"
       ]
     },
     {

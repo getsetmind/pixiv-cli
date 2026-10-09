@@ -115,19 +115,20 @@ pub fn save_handler_manifest_at(
     private_file::write(path, &encode(manifest)?).map_err(HandlerManifestError::Storage)
 }
 pub fn remove_handler_manifest_at(path: &Path) -> Result<(), HandlerManifestError> {
-    match fs::remove_file(path) {
-        Ok(()) => Ok(()),
-        Err(error) if error.kind() == io::ErrorKind::NotFound => Ok(()),
-        Err(_) if path.is_dir() => fs::remove_dir(path).map_err(HandlerManifestError::Io),
-        Err(error) => Err(HandlerManifestError::Io(error)),
-    }
+    private_file::remove_if_exists(path).map_err(HandlerManifestError::Io)
 }
+
 pub fn encode(manifest: &HandlerManifest) -> Result<Vec<u8>, HandlerManifestError> {
     let mut manifest = manifest.clone();
     if manifest.version == 0 {
         manifest.version = 1;
     }
-    serde_json::to_string(&manifest)
+    encode_unpromoted(&manifest)
+}
+pub(crate) fn encode_unpromoted(
+    manifest: &HandlerManifest,
+) -> Result<Vec<u8>, HandlerManifestError> {
+    serde_json::to_string(manifest)
         .map(|body| escape_json_html(body).into_bytes())
         .map_err(|_| HandlerManifestError::Invalid)
 }

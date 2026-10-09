@@ -55,7 +55,7 @@ impl ContextHostProcess for SystemHostProcess {
         args: &[OsString],
         stdio: ProcessStdio,
     ) -> Result<ProcessOutput, HostProcessError> {
-        let (executable, mut command) = prepare_command(self, program, args, stdio)?;
+        let (executable, mut command, combined) = prepare_command(self, program, args, stdio)?;
         if let Some(reason) = context.error() {
             return Err(HostProcessError::Context(reason));
         }
@@ -63,6 +63,9 @@ impl ContextHostProcess for SystemHostProcess {
             program: executable.into_os_string(),
             source,
         })?;
-        collect_child_output(program, stdio, child, |child| wait_context(child, context))
+        drop(command);
+        collect_child_output(program, stdio, child, combined, |child| {
+            wait_context(child, context)
+        })
     }
 }

@@ -5,6 +5,15 @@ use std::{
     path::{Path, PathBuf},
 };
 
+pub(crate) fn remove_if_exists(path: &Path) -> io::Result<()> {
+    match fs::remove_file(path) {
+        Ok(()) => Ok(()),
+        Err(error) if error.kind() == io::ErrorKind::NotFound => Ok(()),
+        Err(_) if path.is_dir() => fs::remove_dir(path),
+        Err(error) => Err(error),
+    }
+}
+
 pub(crate) fn directory(path: &Path) -> &Path {
     path.parent()
         .filter(|parent| !parent.as_os_str().is_empty())

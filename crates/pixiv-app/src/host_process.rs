@@ -39,6 +39,7 @@ pub enum ProcessStdio {
     Inherit,
     Capture,
     CaptureStdout,
+    Combined,
     Discard,
 }
 
@@ -67,11 +68,36 @@ pub enum HostProcessError {
         program: OsString,
         output: ProcessOutput,
     },
+    Captured {
+        source: Box<HostProcessError>,
+        stdout: Vec<u8>,
+        stderr: Vec<u8>,
+    },
     Native(io::Error),
     Context(crate::lifecycle::ContextError),
 }
 
 impl HostProcessError {
+    pub fn captured_stdout(&self) -> &[u8] {
+        match self {
+            Self::Exit { output, .. } => &output.stdout,
+            Self::Captured { stdout, .. } => stdout,
+            _ => &[],
+        }
+    }
+
+    fn with_captured_output(self, stdio: ProcessStdio, stdout: Vec<u8>, stderr: Vec<u8>) -> Self {
+        if stdio == ProcessStdio::Combined {
+            Self::Captured {
+                source: Box::new(self),
+                stdout,
+                stderr,
+            }
+        } else {
+            self
+        }
+    }
+
     pub fn is_not_found(&self) -> bool {
         matches!(self, Self::Lookup { source, .. } if source.kind() == io::ErrorKind::NotFound)
     }
@@ -98,6 +124,7 @@ impl fmt::Display for HostProcessError {
                 }
                 source.fmt(f)
             }
+            Self::Captured { source, .. } => source.fmt(f),
             Self::Native(source) => source.fmt(f),
             Self::Context(source) => source.fmt(f),
             Self::Exit { output, .. } => match output.status.code() {
@@ -124,6 +151,7 @@ impl Error for HostProcessError {
                 Some(source)
             }
             Self::Context(source) => Some(source),
+            Self::Captured { source, .. } => Some(source.as_ref()),
             Self::RelativePath { .. } | Self::Exit { .. } => None,
         }
     }
@@ -368,7 +396,7 @@ pub(crate) fn prepare_command(
     program: &OsStr,
     args: &[OsString],
     stdio: ProcessStdio,
-) -> Result<(PathBuf, Command), HostProcessError> {
+) -> Result<(PathBuf, Command, Option<io::PipeReader>), HostProcessError> {
     let path = Path::new(program);
     let executable = if contains_separator(program) || path.is_absolute() {
         #[cfg(windows)]
@@ -389,6 +417,7 @@ pub(crate) fn prepare_command(
         use std::os::unix::process::CommandExt;
         command.arg0(program);
     }
+    let mut combined = None;
     match stdio {
         ProcessStdio::Inherit => {
             command.stdout(Stdio::inherit()).stderr(Stdio::inherit());
@@ -396,11 +425,19 @@ pub(crate) fn prepare_command(
         ProcessStdio::Discard => {
             command.stdout(Stdio::null()).stderr(Stdio::null());
         }
+        ProcessStdio::Combined => {
+            let (reader, writer) = io::pipe().map_err(HostProcessError::Native)?;
+            let stderr = writer.try_clone().map_err(HostProcessError::Native)?;
+            command
+                .stdout(Stdio::from(writer))
+                .stderr(Stdio::from(stderr));
+            combined = Some(reader);
+        }
         ProcessStdio::Capture | ProcessStdio::CaptureStdout => {
             command.stdout(Stdio::piped()).stderr(Stdio::piped());
         }
     }
-    Ok((executable, command))
+    Ok((executable, command, combined))
 }
 
 pub(crate) fn finish_output(
@@ -466,12 +503,16 @@ pub(crate) fn collect_child_output(
     program: &OsStr,
     stdio: ProcessStdio,
     mut child: Child,
+    combined: Option<io::PipeReader>,
     wait: impl FnOnce(&mut Child) -> io::Result<(ExitStatus, Option<HostProcessError>)>,
 ) -> Result<ProcessOutput, HostProcessError> {
     let stdout = child.stdout.take();
     let stderr = child.stderr.take();
     thread::scope(|scope| {
-        let stdout = scope.spawn(move || read_pipe(stdout, false));
+        let stdout = scope.spawn(move || match combined {
+            Some(reader) => read_pipe(Some(reader), false),
+            None => read_pipe(stdout, false),
+        });
         let stderr = scope.spawn(move || read_pipe(stderr, stdio == ProcessStdio::CaptureStdout));
         let waited = wait(&mut child);
         if waited.is_err() {
@@ -484,7 +525,14 @@ pub(crate) fn collect_child_output(
         let (stderr, stderr_error) = stderr
             .join()
             .unwrap_or_else(|_| (Vec::new(), Some(io::Error::other("stderr reader panicked"))));
-        let (status, cancellation) = waited.map_err(HostProcessError::Native)?;
+        let (status, cancellation) = match waited {
+            Ok(waited) => waited,
+            Err(error) => {
+                return Err(
+                    HostProcessError::Native(error).with_captured_output(stdio, stdout, stderr)
+                );
+            }
+        };
         let output = ProcessOutput {
             status,
             stdout,
@@ -494,10 +542,14 @@ pub(crate) fn collect_child_output(
             return finish_output(program, stdio, output);
         }
         if let Some(error) = cancellation {
-            return Err(error);
+            return Err(error.with_captured_output(stdio, output.stdout, output.stderr));
         }
         if let Some(error) = stdout_error.or(stderr_error) {
-            return Err(HostProcessError::Native(error));
+            return Err(HostProcessError::Native(error).with_captured_output(
+                stdio,
+                output.stdout,
+                output.stderr,
+            ));
         }
         finish_output(program, stdio, output)
     })
@@ -545,13 +597,14 @@ impl HostProcess for SystemHostProcess {
         args: &[OsString],
         stdio: ProcessStdio,
     ) -> Result<ProcessOutput, HostProcessError> {
-        let (executable, mut command) = prepare_command(self, program, args, stdio)?;
-        if stdio == ProcessStdio::CaptureStdout {
+        let (executable, mut command, combined) = prepare_command(self, program, args, stdio)?;
+        if matches!(stdio, ProcessStdio::CaptureStdout | ProcessStdio::Combined) {
             let child = command.spawn().map_err(|source| HostProcessError::Spawn {
                 program: executable.into_os_string(),
                 source,
             })?;
-            return collect_child_output(program, stdio, child, |child| {
+            drop(command);
+            return collect_child_output(program, stdio, child, combined, |child| {
                 child.wait().map(|status| (status, None))
             });
         }
