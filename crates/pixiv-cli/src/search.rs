@@ -116,6 +116,9 @@ pub async fn saved_artwork_search<T: Transport + 'static, W: Write + Send + 'sta
 ) -> Result<(), CommandError> {
     options.validate_bookmark_strategy()?;
     let output = Arc::new(Mutex::new(output));
+    let callback_output = output.clone();
+    let collected = Arc::new(Mutex::new(None));
+    let staged = collected.clone();
     let terminal_error = Arc::new(Mutex::new(None));
     let retained = terminal_error.clone();
     let result = execution
@@ -128,14 +131,18 @@ pub async fn saved_artwork_search<T: Transport + 'static, W: Write + Send + 'sta
                 let options = options.clone();
                 let committed = Arc::new(AtomicBool::new(false));
                 let mut writer = SearchWriter {
-                    output: output.clone(),
+                    output: callback_output.clone(),
                     committed: committed.clone(),
                 };
                 let retained = retained.clone();
+                let staged = staged.clone();
                 Box::pin(async move {
                     let error =
-                        match artwork_search(&client, request, &options, mode, &mut writer).await {
-                            Ok(()) => None,
+                        match search_attempt(&client, request, &options, mode, &mut writer).await {
+                            Ok(value) => {
+                                *staged.lock().unwrap_or_else(|error| error.into_inner()) = value;
+                                None
+                            }
                             Err(CommandError::Sdk(error)) => Some(SchedulerError::from(error)),
                             Err(CommandError::App(error)) => Some(error),
                             Err(error) => {
@@ -160,7 +167,15 @@ pub async fn saved_artwork_search<T: Transport + 'static, W: Write + Send + 'sta
     {
         return Err(error);
     }
-    result.map_err(Into::into)
+    result?;
+    if let Some(value) = collected
+        .lock()
+        .unwrap_or_else(|error| error.into_inner())
+        .take()
+    {
+        value.write(&mut *output.lock().unwrap_or_else(|error| error.into_inner()))?;
+    }
+    Ok(())
 }
 
 #[derive(Args, Clone, Debug)]
@@ -379,6 +394,81 @@ pub async fn artwork_search<T: Transport, W: Write>(
     mode: crate::DetailOutput,
     out: &mut W,
 ) -> Result<(), CommandError> {
+    if let Some(value) = search_attempt(client, request, options, mode, out).await? {
+        value.write(out)?;
+    }
+    Ok(())
+}
+
+enum PreparedSearch {
+    Json(crate::json_spool::JsonSpool),
+    Collected {
+        word: String,
+        items: Vec<Artwork>,
+        mode: crate::DetailOutput,
+        filter: Option<BookmarkFilterOutput>,
+    },
+}
+
+#[derive(serde::Serialize)]
+struct BookmarkFilterOutput {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    min: Option<i64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    max: Option<i64>,
+    membership: &'static str,
+    strategy: &'static str,
+    completeness: &'static str,
+}
+
+#[derive(serde::Serialize)]
+struct CollectedSearchOutput<'a> {
+    illusts: Vec<pixiv_sdk::dto::ArtworkDto<'a>>,
+    filter: BookmarkFilterOutput,
+}
+
+impl PreparedSearch {
+    fn write<W: Write>(self, out: &mut W) -> Result<(), CommandError> {
+        match self {
+            Self::Json(mut spool) => spool.commit(out),
+            Self::Collected {
+                word,
+                items,
+                mode,
+                filter,
+            } => {
+                if mode == crate::DetailOutput::Json {
+                    let Some(filter) = filter else {
+                        return write_search_json(&items, out);
+                    };
+                    let dtos = items
+                        .iter()
+                        .map(pixiv_sdk::dto::ArtworkDto::from)
+                        .collect::<Vec<_>>();
+                    let body = serde_json::to_string_pretty(&CollectedSearchOutput {
+                        illusts: dtos,
+                        filter,
+                    })
+                    .map_err(|_| {
+                        pixiv_sdk::Error::new(pixiv_sdk::Reason::LocalStateError, "output")
+                    })?;
+                    writeln!(out, "{}", crate::go_json_escape(body))?;
+                    Ok(())
+                } else {
+                    present_search(&word, &items, mode, &mut false, out)
+                }
+            }
+        }
+    }
+}
+
+async fn search_attempt<T: Transport, W: Write>(
+    client: &Client<T>,
+    request: SearchArtworksRequest,
+    options: &SearchOptions,
+    mode: crate::DetailOutput,
+    out: &mut W,
+) -> Result<Option<PreparedSearch>, CommandError> {
     let word = request.word.clone();
     let local = pixiv_app::search_filter::normalize_filter(&options.rating, &options.content_type)
         .map_err(|error| CommandError::Message(error.message()))?
@@ -388,25 +478,38 @@ pub async fn artwork_search<T: Transport, W: Write>(
         || options.bookmark_max.is_some()
         || options.bookmark_strategy.is_some()
     {
-        return bookmark_search(client, request, options, mode, out).await;
+        return collect_bookmark_search(client, request, options, mode)
+            .await
+            .map(Some);
     }
     if mode == crate::DetailOutput::Json {
         if local {
             let items = collect_search(client, request, options).await?;
-            return write_search_json(&items, out);
+            return Ok(Some(PreparedSearch::Collected {
+                word,
+                items,
+                mode,
+                filter: None,
+            }));
         }
         let mut spool = crate::json_spool::JsonSpool::new()?;
         visit_search(client, request, options, |batch| spool.append(&batch)).await?;
-        return spool.commit(out);
+        return Ok(Some(PreparedSearch::Json(spool)));
     }
     let mut heading_written = false;
-    let mut present = |items: Vec<Artwork>| -> Result<(), CommandError> {
+    let present = |items: Vec<Artwork>| -> Result<(), CommandError> {
         present_search(&word, &items, mode, &mut heading_written, out)
     };
     if local {
-        present(collect_search(client, request, options).await?)
+        Ok(Some(PreparedSearch::Collected {
+            word,
+            items: collect_search(client, request, options).await?,
+            mode,
+            filter: None,
+        }))
     } else {
-        visit_search(client, request, options, present).await
+        visit_search(client, request, options, present).await?;
+        Ok(None)
     }
 }
 
@@ -456,13 +559,12 @@ fn present_search<W: Write>(
     Ok(())
 }
 
-async fn bookmark_search<T: Transport, W: Write>(
+async fn collect_bookmark_search<T: Transport>(
     client: &Client<T>,
     mut request: SearchArtworksRequest,
     options: &SearchOptions,
     mode: crate::DetailOutput,
-    out: &mut W,
-) -> Result<(), CommandError> {
+) -> Result<PreparedSearch, CommandError> {
     if options.bookmark_min.is_none() && options.bookmark_max.is_none() {
         return Err(CommandError::Message(
             "--bookmark-strategy requires --bookmark-min or --bookmark-max",
@@ -558,26 +660,23 @@ async fn bookmark_search<T: Transport, W: Write>(
     .map_err(traversal_error)?;
     let items = page.items;
     let more = page.result.has_more;
-    if mode == crate::DetailOutput::Json {
-        let mut metadata = serde_json::json!({"membership":"unknown","strategy":strategy,"completeness":if more{"partial"}else{"complete_for_source"}});
-        if let Some(min) = options.bookmark_min {
-            metadata["min"] = min.into();
-        }
-        if let Some(max) = options.bookmark_max {
-            metadata["max"] = max.into();
-        }
-        let dtos = items
-            .iter()
-            .map(pixiv_sdk::dto::ArtworkDto::from)
-            .collect::<Vec<_>>();
-        let body =
-            serde_json::to_string_pretty(&serde_json::json!({"illusts":dtos,"filter":metadata}))
-                .map_err(|_| pixiv_sdk::Error::new(pixiv_sdk::Reason::LocalStateError, "output"))?;
-        writeln!(out, "{}", crate::go_json_escape(body))?;
-        Ok(())
-    } else {
-        present_search(&request.word, &items, mode, &mut false, out)
-    }
+    let metadata = BookmarkFilterOutput {
+        min: options.bookmark_min,
+        max: options.bookmark_max,
+        membership: "unknown",
+        strategy,
+        completeness: if more {
+            "partial"
+        } else {
+            "complete_for_source"
+        },
+    };
+    Ok(PreparedSearch::Collected {
+        word: request.word,
+        items,
+        mode,
+        filter: Some(metadata),
+    })
 }
 
 fn quote(value: &str) -> String {
