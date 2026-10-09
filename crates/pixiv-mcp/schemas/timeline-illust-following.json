@@ -1,0 +1,158 @@
+{
+  "description": "Browse artworks from followed artists.",
+  "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "illust_filter": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "min_pages": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "min_views": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "type": {
+            "enum": [
+              "illust",
+              "manga",
+              "ugoira"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "limit": {
+        "description": "Maximum logical results; 0 returns all; omitted reads one upstream batch.",
+        "minimum": 0,
+        "type": "integer"
+      },
+      "page": {
+        "description": "1-based logical page; requires a positive limit.",
+        "minimum": 1,
+        "type": "integer"
+      },
+      "restrict": {
+        "description": "Visibility scope; omitted defaults to public.",
+        "enum": [
+          "public",
+          "private"
+        ],
+        "type": "string"
+      }
+    },
+    "type": "object"
+  },
+  "name": "timeline_illust_following",
+  "outputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "access_control": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "bookmark_tags": {
+        "items": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "type": "array"
+      },
+      "bookmarked": {
+        "type": "boolean"
+      },
+      "comments": {
+        "items": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "type": "array"
+      },
+      "content": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "filter": {
+        "additionalProperties": false,
+        "properties": {
+          "completeness": {
+            "type": "string"
+          },
+          "max": {
+            "type": "integer"
+          },
+          "membership": {
+            "type": "string"
+          },
+          "min": {
+            "type": "integer"
+          },
+          "strategy": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "pagination": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "records": {
+        "items": {
+          "additionalProperties": true,
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "type",
+            "url"
+          ],
+          "type": "object"
+        },
+        "type": "array"
+      },
+      "restrict": {
+        "type": "string"
+      },
+      "series": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "tags": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "total": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "records"
+    ],
+    "type": "object"
+  }
+}

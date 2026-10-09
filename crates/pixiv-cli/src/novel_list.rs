@@ -13,6 +13,8 @@ use std::{
 #[derive(Clone)]
 pub(crate) enum Source {
     Ranking(pixiv_sdk::pixiv::NovelRankingRequest),
+    Following(pixiv_sdk::pixiv::FollowingNovelsRequest),
+    Latest(pixiv_sdk::pixiv::LatestNovelsRequest),
     Bookmarks(
         pixiv_sdk::pixiv::UserNovelBookmarksRequest,
         Arc<std::sync::atomic::AtomicI64>,
@@ -128,6 +130,14 @@ pub(crate) async fn attempt<T: Transport, W: Write>(
                             crate::bookmark_lists::current_target(client, &identity, false)?;
                         request.cursor = cursor;
                         client.user_novel_bookmarks(request).await
+                    }
+                    Source::Following(mut request) => {
+                        request.cursor = cursor;
+                        client.following_novels(request).await
+                    }
+                    Source::Latest(mut request) => {
+                        request.cursor = cursor;
+                        client.latest_novels(request).await
                     }
                     Source::Ranking(mut request) => {
                         request.cursor = cursor;

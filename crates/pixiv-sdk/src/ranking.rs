@@ -218,7 +218,7 @@ pub(crate) fn apply_keyed_value(
     }
     Ok(())
 }
-fn cursor_position(
+pub(crate) fn cursor_position(
     cursor: &Cursor,
     operation: &'static str,
     digest: &str,

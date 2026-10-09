@@ -1,0 +1,1262 @@
+[
+  {
+    "scenario": "success",
+    "mode": "human",
+    "kind": "artwork",
+    "name": "following-human",
+    "operation": "following",
+    "content_type": "",
+    "source": "following-artwork",
+    "args": [
+      "--type=artwork",
+      "--limit=0"
+    ],
+    "opens": [
+      42
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": "",
+        "path": "/v2/illust/follow",
+        "query": {
+          "restrict": [
+            "public"
+          ]
+        }
+      },
+      {
+        "id": 42,
+        "offset": "30",
+        "path": "/v2/illust/follow",
+        "query": {
+          "offset": [
+            "30"
+          ],
+          "restrict": [
+            "public"
+          ]
+        }
+      }
+    ],
+    "closes": 1,
+    "under_lease": true,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      },
+      {
+        "id": 43,
+        "revision": 1,
+        "frozen": false,
+        "selected": false
+      }
+    ],
+    "stdout": "new artworks from followed users\nhttps://www.pixiv.net/artworks/101\n101 \"item-account-42\" by author\nline bookmarks:12 views:34 tags:tag\nline\nhttps://www.pixiv.net/artworks/102\n102 \"item-account-42\" by author\nline bookmarks:12 views:34 tags:tag\nline\nhttps://www.pixiv.net/artworks/102\n102 \"item-account-42\" by author\nline bookmarks:12 views:34 tags:tag\nline\nhttps://www.pixiv.net/artworks/103\n103 \"item-account-42\" by author\nline bookmarks:12 views:34 tags:tag\nline\nhttps://www.pixiv.net/artworks/104\n104 \"item-account-42\" by author\nline bookmarks:12 views:34 tags:tag\nline\n",
+    "stderr": "",
+    "exit": 0
+  },
+  {
+    "scenario": "success",
+    "mode": "json",
+    "kind": "artwork",
+    "name": "following-json",
+    "operation": "following",
+    "content_type": "",
+    "source": "following-artwork",
+    "args": [
+      "--type=artwork",
+      "--limit=0",
+      "--json"
+    ],
+    "opens": [
+      42
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": "",
+        "path": "/v2/illust/follow",
+        "query": {
+          "restrict": [
+            "public"
+          ]
+        }
+      },
+      {
+        "id": 42,
+        "offset": "30",
+        "path": "/v2/illust/follow",
+        "query": {
+          "offset": [
+            "30"
+          ],
+          "restrict": [
+            "public"
+          ]
+        }
+      }
+    ],
+    "closes": 1,
+    "under_lease": false,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      },
+      {
+        "id": 43,
+        "revision": 1,
+        "frozen": false,
+        "selected": false
+      }
+    ],
+    "stdout": "{\n  \"illusts\": [\n    {\n      \"id\": 101,\n      \"title\": \"item-account-42\",\n      \"caption\": \"\",\n      \"kind\": \"illustration\",\n      \"raw_kind\": \"illust\",\n      \"tags\": [\n        {\n          \"name\": \"tag\\nline\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 9,\n        \"name\": \"author\\nline\",\n        \"account\": \"\",\n        \"comment\": \"\",\n        \"is_followed\": false,\n        \"profile_image\": {\n          \"resource\": null,\n          \"variant\": \"\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2024-01-01T18:04:05Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 0,\n      \"height\": 0,\n      \"page_count\": 0,\n      \"x_restrict\": 0,\n      \"ai_type\": 0,\n      \"cover\": {\n        \"resource\": null,\n        \"variant\": \"\",\n        \"width\": 0,\n        \"height\": 0\n      }\n    },\n    {\n      \"id\": 102,\n      \"title\": \"item-account-42\",\n      \"caption\": \"\",\n      \"kind\": \"manga\",\n      \"raw_kind\": \"manga\",\n      \"tags\": [\n        {\n          \"name\": \"tag\\nline\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 9,\n        \"name\": \"author\\nline\",\n        \"account\": \"\",\n        \"comment\": \"\",\n        \"is_followed\": false,\n        \"profile_image\": {\n          \"resource\": null,\n          \"variant\": \"\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2024-01-01T18:04:05Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 0,\n      \"height\": 0,\n      \"page_count\": 0,\n      \"x_restrict\": 0,\n      \"ai_type\": 0,\n      \"cover\": {\n        \"resource\": null,\n        \"variant\": \"\",\n        \"width\": 0,\n        \"height\": 0\n      }\n    },\n    {\n      \"id\": 102,\n      \"title\": \"item-account-42\",\n      \"caption\": \"\",\n      \"kind\": \"manga\",\n      \"raw_kind\": \"manga\",\n      \"tags\": [\n        {\n          \"name\": \"tag\\nline\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 9,\n        \"name\": \"author\\nline\",\n        \"account\": \"\",\n        \"comment\": \"\",\n        \"is_followed\": false,\n        \"profile_image\": {\n          \"resource\": null,\n          \"variant\": \"\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2024-01-01T18:04:05Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 0,\n      \"height\": 0,\n      \"page_count\": 0,\n      \"x_restrict\": 0,\n      \"ai_type\": 0,\n      \"cover\": {\n        \"resource\": null,\n        \"variant\": \"\",\n        \"width\": 0,\n        \"height\": 0\n      }\n    },\n    {\n      \"id\": 103,\n      \"title\": \"item-account-42\",\n      \"caption\": \"\",\n      \"kind\": \"ugoira\",\n      \"raw_kind\": \"ugoira\",\n      \"tags\": [\n        {\n          \"name\": \"tag\\nline\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 9,\n        \"name\": \"author\\nline\",\n        \"account\": \"\",\n        \"comment\": \"\",\n        \"is_followed\": false,\n        \"profile_image\": {\n          \"resource\": null,\n          \"variant\": \"\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2024-01-01T18:04:05Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 0,\n      \"height\": 0,\n      \"page_count\": 0,\n      \"x_restrict\": 0,\n      \"ai_type\": 0,\n      \"cover\": {\n        \"resource\": null,\n        \"variant\": \"\",\n        \"width\": 0,\n        \"height\": 0\n      }\n    },\n    {\n      \"id\": 104,\n      \"title\": \"item-account-42\",\n      \"caption\": \"\",\n      \"kind\": \"illustration\",\n      \"raw_kind\": \"illust\",\n      \"tags\": [\n        {\n          \"name\": \"tag\\nline\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 9,\n        \"name\": \"author\\nline\",\n        \"account\": \"\",\n        \"comment\": \"\",\n        \"is_followed\": false,\n        \"profile_image\": {\n          \"resource\": null,\n          \"variant\": \"\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2024-01-01T18:04:05Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 0,\n      \"height\": 0,\n      \"page_count\": 0,\n      \"x_restrict\": 0,\n      \"ai_type\": 0,\n      \"cover\": {\n        \"resource\": null,\n        \"variant\": \"\",\n        \"width\": 0,\n        \"height\": 0\n      }\n    }\n  ]\n}\n",
+    "stderr": "",
+    "exit": 0
+  },
+  {
+    "scenario": "success",
+    "mode": "ndjson",
+    "kind": "artwork",
+    "name": "following-ndjson",
+    "operation": "following",
+    "content_type": "",
+    "source": "following-artwork",
+    "args": [
+      "--type=artwork",
+      "--limit=0",
+      "--ndjson"
+    ],
+    "opens": [
+      42
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": "",
+        "path": "/v2/illust/follow",
+        "query": {
+          "restrict": [
+            "public"
+          ]
+        }
+      },
+      {
+        "id": 42,
+        "offset": "30",
+        "path": "/v2/illust/follow",
+        "query": {
+          "offset": [
+            "30"
+          ],
+          "restrict": [
+            "public"
+          ]
+        }
+      }
+    ],
+    "closes": 1,
+    "under_lease": true,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      },
+      {
+        "id": 43,
+        "revision": 1,
+        "frozen": false,
+        "selected": false
+      }
+    ],
+    "stdout": "{\"ai_type\":0,\"caption\":\"\",\"cover\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0},\"height\":0,\"id\":\"101\",\"kind\":\"illustration\",\"page_count\":0,\"published_at\":\"2024-01-01T18:04:05Z\",\"raw_kind\":\"illust\",\"tags\":[{\"name\":\"tag\\nline\",\"translated_name\":\"\"}],\"title\":\"item-account-42\",\"total_bookmarks\":12,\"total_views\":34,\"type\":\"illust\",\"url\":\"https://www.pixiv.net/artworks/101\",\"user\":{\"account\":\"\",\"comment\":\"\",\"id\":9,\"is_followed\":false,\"name\":\"author\\nline\",\"profile_image\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0}},\"width\":0,\"x_restrict\":0}\n{\"ai_type\":0,\"caption\":\"\",\"cover\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0},\"height\":0,\"id\":\"102\",\"kind\":\"manga\",\"page_count\":0,\"published_at\":\"2024-01-01T18:04:05Z\",\"raw_kind\":\"manga\",\"tags\":[{\"name\":\"tag\\nline\",\"translated_name\":\"\"}],\"title\":\"item-account-42\",\"total_bookmarks\":12,\"total_views\":34,\"type\":\"manga\",\"url\":\"https://www.pixiv.net/artworks/102\",\"user\":{\"account\":\"\",\"comment\":\"\",\"id\":9,\"is_followed\":false,\"name\":\"author\\nline\",\"profile_image\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0}},\"width\":0,\"x_restrict\":0}\n{\"ai_type\":0,\"caption\":\"\",\"cover\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0},\"height\":0,\"id\":\"102\",\"kind\":\"manga\",\"page_count\":0,\"published_at\":\"2024-01-01T18:04:05Z\",\"raw_kind\":\"manga\",\"tags\":[{\"name\":\"tag\\nline\",\"translated_name\":\"\"}],\"title\":\"item-account-42\",\"total_bookmarks\":12,\"total_views\":34,\"type\":\"manga\",\"url\":\"https://www.pixiv.net/artworks/102\",\"user\":{\"account\":\"\",\"comment\":\"\",\"id\":9,\"is_followed\":false,\"name\":\"author\\nline\",\"profile_image\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0}},\"width\":0,\"x_restrict\":0}\n{\"ai_type\":0,\"caption\":\"\",\"cover\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0},\"height\":0,\"id\":\"103\",\"kind\":\"ugoira\",\"page_count\":0,\"published_at\":\"2024-01-01T18:04:05Z\",\"raw_kind\":\"ugoira\",\"tags\":[{\"name\":\"tag\\nline\",\"translated_name\":\"\"}],\"title\":\"item-account-42\",\"total_bookmarks\":12,\"total_views\":34,\"type\":\"ugoira\",\"url\":\"https://www.pixiv.net/artworks/103\",\"user\":{\"account\":\"\",\"comment\":\"\",\"id\":9,\"is_followed\":false,\"name\":\"author\\nline\",\"profile_image\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0}},\"width\":0,\"x_restrict\":0}\n{\"ai_type\":0,\"caption\":\"\",\"cover\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0},\"height\":0,\"id\":\"104\",\"kind\":\"illustration\",\"page_count\":0,\"published_at\":\"2024-01-01T18:04:05Z\",\"raw_kind\":\"illust\",\"tags\":[{\"name\":\"tag\\nline\",\"translated_name\":\"\"}],\"title\":\"item-account-42\",\"total_bookmarks\":12,\"total_views\":34,\"type\":\"illust\",\"url\":\"https://www.pixiv.net/artworks/104\",\"user\":{\"account\":\"\",\"comment\":\"\",\"id\":9,\"is_followed\":false,\"name\":\"author\\nline\",\"profile_image\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0}},\"width\":0,\"x_restrict\":0}\n",
+    "stderr": "",
+    "exit": 0
+  },
+  {
+    "scenario": "success",
+    "mode": "json",
+    "kind": "novel",
+    "name": "latest-novel-json",
+    "operation": "latest",
+    "content_type": "",
+    "source": "latest-novel",
+    "args": [
+      "--type=novel",
+      "--limit=0",
+      "--json"
+    ],
+    "opens": [
+      42
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": "",
+        "path": "/v1/novel/new",
+        "query": {
+          "filter": [
+            "for_android"
+          ]
+        }
+      },
+      {
+        "id": 42,
+        "offset": "30",
+        "path": "/v1/novel/new",
+        "query": {
+          "filter": [
+            "for_android"
+          ],
+          "max_novel_id": [
+            "30"
+          ]
+        }
+      }
+    ],
+    "closes": 1,
+    "under_lease": false,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      },
+      {
+        "id": 43,
+        "revision": 1,
+        "frozen": false,
+        "selected": false
+      }
+    ],
+    "stdout": "{\n  \"novels\": [\n    {\n      \"id\": 201,\n      \"title\": \"item-account-42\",\n      \"caption\": \"\",\n      \"user\": {\n        \"id\": 9,\n        \"name\": \"author\\nline\",\n        \"account\": \"\",\n        \"comment\": \"\",\n        \"is_followed\": false,\n        \"profile_image\": {\n          \"resource\": null,\n          \"variant\": \"\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"tags\": [\n        {\n          \"name\": \"tag\\nline\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"published_at\": \"2024-01-01T18:04:05Z\",\n      \"updated_at\": null,\n      \"x_restrict\": 0,\n      \"text_length\": 123,\n      \"is_original\": false,\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"cover\": {\n        \"resource\": null,\n        \"variant\": \"\",\n        \"width\": 0,\n        \"height\": 0\n      }\n    },\n    {\n      \"id\": 202,\n      \"title\": \"item-account-42\",\n      \"caption\": \"\",\n      \"user\": {\n        \"id\": 9,\n        \"name\": \"author\\nline\",\n        \"account\": \"\",\n        \"comment\": \"\",\n        \"is_followed\": false,\n        \"profile_image\": {\n          \"resource\": null,\n          \"variant\": \"\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"tags\": [\n        {\n          \"name\": \"tag\\nline\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"published_at\": \"2024-01-01T18:04:05Z\",\n      \"updated_at\": null,\n      \"x_restrict\": 0,\n      \"text_length\": 123,\n      \"is_original\": false,\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"cover\": {\n        \"resource\": null,\n        \"variant\": \"\",\n        \"width\": 0,\n        \"height\": 0\n      }\n    },\n    {\n      \"id\": 202,\n      \"title\": \"item-account-42\",\n      \"caption\": \"\",\n      \"user\": {\n        \"id\": 9,\n        \"name\": \"author\\nline\",\n        \"account\": \"\",\n        \"comment\": \"\",\n        \"is_followed\": false,\n        \"profile_image\": {\n          \"resource\": null,\n          \"variant\": \"\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"tags\": [\n        {\n          \"name\": \"tag\\nline\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"published_at\": \"2024-01-01T18:04:05Z\",\n      \"updated_at\": null,\n      \"x_restrict\": 0,\n      \"text_length\": 123,\n      \"is_original\": false,\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"cover\": {\n        \"resource\": null,\n        \"variant\": \"\",\n        \"width\": 0,\n        \"height\": 0\n      }\n    },\n    {\n      \"id\": 203,\n      \"title\": \"item-account-42\",\n      \"caption\": \"\",\n      \"user\": {\n        \"id\": 9,\n        \"name\": \"author\\nline\",\n        \"account\": \"\",\n        \"comment\": \"\",\n        \"is_followed\": false,\n        \"profile_image\": {\n          \"resource\": null,\n          \"variant\": \"\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"tags\": [\n        {\n          \"name\": \"tag\\nline\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"published_at\": \"2024-01-01T18:04:05Z\",\n      \"updated_at\": null,\n      \"x_restrict\": 0,\n      \"text_length\": 123,\n      \"is_original\": false,\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"cover\": {\n        \"resource\": null,\n        \"variant\": \"\",\n        \"width\": 0,\n        \"height\": 0\n      }\n    },\n    {\n      \"id\": 204,\n      \"title\": \"item-account-42\",\n      \"caption\": \"\",\n      \"user\": {\n        \"id\": 9,\n        \"name\": \"author\\nline\",\n        \"account\": \"\",\n        \"comment\": \"\",\n        \"is_followed\": false,\n        \"profile_image\": {\n          \"resource\": null,\n          \"variant\": \"\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"tags\": [\n        {\n          \"name\": \"tag\\nline\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"published_at\": \"2024-01-01T18:04:05Z\",\n      \"updated_at\": null,\n      \"x_restrict\": 0,\n      \"text_length\": 123,\n      \"is_original\": false,\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"cover\": {\n        \"resource\": null,\n        \"variant\": \"\",\n        \"width\": 0,\n        \"height\": 0\n      }\n    }\n  ]\n}\n",
+    "stderr": "",
+    "exit": 0
+  },
+  {
+    "scenario": "success",
+    "mode": "ndjson",
+    "kind": "artwork",
+    "name": "latest-manga-ndjson",
+    "operation": "latest",
+    "content_type": "manga",
+    "source": "latest-artwork",
+    "args": [
+      "--type=artwork",
+      "--limit=0",
+      "--content-type=manga",
+      "--ndjson"
+    ],
+    "opens": [
+      42
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": "",
+        "path": "/v1/illust/new",
+        "query": {
+          "content_type": [
+            "manga"
+          ],
+          "filter": [
+            "for_android"
+          ]
+        }
+      },
+      {
+        "id": 42,
+        "offset": "30",
+        "path": "/v1/illust/new",
+        "query": {
+          "content_type": [
+            "manga"
+          ],
+          "filter": [
+            "for_android"
+          ],
+          "max_illust_id": [
+            "30"
+          ]
+        }
+      }
+    ],
+    "closes": 1,
+    "under_lease": true,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      },
+      {
+        "id": 43,
+        "revision": 1,
+        "frozen": false,
+        "selected": false
+      }
+    ],
+    "stdout": "{\"ai_type\":0,\"caption\":\"\",\"cover\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0},\"height\":0,\"id\":\"101\",\"kind\":\"illustration\",\"page_count\":0,\"published_at\":\"2024-01-01T18:04:05Z\",\"raw_kind\":\"illust\",\"tags\":[{\"name\":\"tag\\nline\",\"translated_name\":\"\"}],\"title\":\"item-account-42\",\"total_bookmarks\":12,\"total_views\":34,\"type\":\"illust\",\"url\":\"https://www.pixiv.net/artworks/101\",\"user\":{\"account\":\"\",\"comment\":\"\",\"id\":9,\"is_followed\":false,\"name\":\"author\\nline\",\"profile_image\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0}},\"width\":0,\"x_restrict\":0}\n{\"ai_type\":0,\"caption\":\"\",\"cover\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0},\"height\":0,\"id\":\"102\",\"kind\":\"manga\",\"page_count\":0,\"published_at\":\"2024-01-01T18:04:05Z\",\"raw_kind\":\"manga\",\"tags\":[{\"name\":\"tag\\nline\",\"translated_name\":\"\"}],\"title\":\"item-account-42\",\"total_bookmarks\":12,\"total_views\":34,\"type\":\"manga\",\"url\":\"https://www.pixiv.net/artworks/102\",\"user\":{\"account\":\"\",\"comment\":\"\",\"id\":9,\"is_followed\":false,\"name\":\"author\\nline\",\"profile_image\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0}},\"width\":0,\"x_restrict\":0}\n{\"ai_type\":0,\"caption\":\"\",\"cover\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0},\"height\":0,\"id\":\"102\",\"kind\":\"manga\",\"page_count\":0,\"published_at\":\"2024-01-01T18:04:05Z\",\"raw_kind\":\"manga\",\"tags\":[{\"name\":\"tag\\nline\",\"translated_name\":\"\"}],\"title\":\"item-account-42\",\"total_bookmarks\":12,\"total_views\":34,\"type\":\"manga\",\"url\":\"https://www.pixiv.net/artworks/102\",\"user\":{\"account\":\"\",\"comment\":\"\",\"id\":9,\"is_followed\":false,\"name\":\"author\\nline\",\"profile_image\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0}},\"width\":0,\"x_restrict\":0}\n{\"ai_type\":0,\"caption\":\"\",\"cover\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0},\"height\":0,\"id\":\"103\",\"kind\":\"ugoira\",\"page_count\":0,\"published_at\":\"2024-01-01T18:04:05Z\",\"raw_kind\":\"ugoira\",\"tags\":[{\"name\":\"tag\\nline\",\"translated_name\":\"\"}],\"title\":\"item-account-42\",\"total_bookmarks\":12,\"total_views\":34,\"type\":\"ugoira\",\"url\":\"https://www.pixiv.net/artworks/103\",\"user\":{\"account\":\"\",\"comment\":\"\",\"id\":9,\"is_followed\":false,\"name\":\"author\\nline\",\"profile_image\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0}},\"width\":0,\"x_restrict\":0}\n{\"ai_type\":0,\"caption\":\"\",\"cover\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0},\"height\":0,\"id\":\"104\",\"kind\":\"illustration\",\"page_count\":0,\"published_at\":\"2024-01-01T18:04:05Z\",\"raw_kind\":\"illust\",\"tags\":[{\"name\":\"tag\\nline\",\"translated_name\":\"\"}],\"title\":\"item-account-42\",\"total_bookmarks\":12,\"total_views\":34,\"type\":\"illust\",\"url\":\"https://www.pixiv.net/artworks/104\",\"user\":{\"account\":\"\",\"comment\":\"\",\"id\":9,\"is_followed\":false,\"name\":\"author\\nline\",\"profile_image\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0}},\"width\":0,\"x_restrict\":0}\n",
+    "stderr": "",
+    "exit": 0
+  },
+  {
+    "scenario": "after_page",
+    "mode": "human",
+    "kind": "artwork",
+    "name": "following-human-after-page",
+    "operation": "following",
+    "content_type": "",
+    "source": "following-artwork",
+    "args": [
+      "--type=artwork",
+      "--limit=0"
+    ],
+    "opens": [
+      42
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": "",
+        "path": "/v2/illust/follow",
+        "query": {
+          "restrict": [
+            "public"
+          ]
+        }
+      },
+      {
+        "id": 42,
+        "offset": "30",
+        "path": "/v2/illust/follow",
+        "query": {
+          "offset": [
+            "30"
+          ],
+          "restrict": [
+            "public"
+          ]
+        }
+      },
+      {
+        "id": 42,
+        "offset": "30",
+        "path": "/v2/illust/follow",
+        "query": {
+          "offset": [
+            "30"
+          ],
+          "restrict": [
+            "public"
+          ]
+        }
+      }
+    ],
+    "closes": 1,
+    "under_lease": true,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      },
+      {
+        "id": 43,
+        "revision": 1,
+        "frozen": false,
+        "selected": false
+      }
+    ],
+    "stdout": "new artworks from followed users\nhttps://www.pixiv.net/artworks/101\n101 \"item-account-42\" by author\nline bookmarks:12 views:34 tags:tag\nline\nhttps://www.pixiv.net/artworks/102\n102 \"item-account-42\" by author\nline bookmarks:12 views:34 tags:tag\nline\n",
+    "stderr": "error: pixiv:FollowingArtworks: rate_limited\n",
+    "exit": 1
+  },
+  {
+    "scenario": "after_page",
+    "mode": "json",
+    "kind": "artwork",
+    "name": "following-json-after-page",
+    "operation": "following",
+    "content_type": "",
+    "source": "following-artwork",
+    "args": [
+      "--type=artwork",
+      "--limit=0",
+      "--json"
+    ],
+    "opens": [
+      42,
+      43
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": "",
+        "path": "/v2/illust/follow",
+        "query": {
+          "restrict": [
+            "public"
+          ]
+        }
+      },
+      {
+        "id": 42,
+        "offset": "30",
+        "path": "/v2/illust/follow",
+        "query": {
+          "offset": [
+            "30"
+          ],
+          "restrict": [
+            "public"
+          ]
+        }
+      },
+      {
+        "id": 42,
+        "offset": "30",
+        "path": "/v2/illust/follow",
+        "query": {
+          "offset": [
+            "30"
+          ],
+          "restrict": [
+            "public"
+          ]
+        }
+      },
+      {
+        "id": 43,
+        "offset": "",
+        "path": "/v2/illust/follow",
+        "query": {
+          "restrict": [
+            "public"
+          ]
+        }
+      },
+      {
+        "id": 43,
+        "offset": "30",
+        "path": "/v2/illust/follow",
+        "query": {
+          "offset": [
+            "30"
+          ],
+          "restrict": [
+            "public"
+          ]
+        }
+      }
+    ],
+    "closes": 2,
+    "under_lease": false,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": true,
+        "selected": false
+      },
+      {
+        "id": 43,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      }
+    ],
+    "stdout": "{\n  \"illusts\": [\n    {\n      \"id\": 101,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\",\n      \"kind\": \"illustration\",\n      \"raw_kind\": \"illust\",\n      \"tags\": [\n        {\n          \"name\": \"tag\\nline\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 9,\n        \"name\": \"author\\nline\",\n        \"account\": \"\",\n        \"comment\": \"\",\n        \"is_followed\": false,\n        \"profile_image\": {\n          \"resource\": null,\n          \"variant\": \"\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2024-01-01T18:04:05Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 0,\n      \"height\": 0,\n      \"page_count\": 0,\n      \"x_restrict\": 0,\n      \"ai_type\": 0,\n      \"cover\": {\n        \"resource\": null,\n        \"variant\": \"\",\n        \"width\": 0,\n        \"height\": 0\n      }\n    },\n    {\n      \"id\": 102,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\",\n      \"kind\": \"manga\",\n      \"raw_kind\": \"manga\",\n      \"tags\": [\n        {\n          \"name\": \"tag\\nline\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 9,\n        \"name\": \"author\\nline\",\n        \"account\": \"\",\n        \"comment\": \"\",\n        \"is_followed\": false,\n        \"profile_image\": {\n          \"resource\": null,\n          \"variant\": \"\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2024-01-01T18:04:05Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 0,\n      \"height\": 0,\n      \"page_count\": 0,\n      \"x_restrict\": 0,\n      \"ai_type\": 0,\n      \"cover\": {\n        \"resource\": null,\n        \"variant\": \"\",\n        \"width\": 0,\n        \"height\": 0\n      }\n    },\n    {\n      \"id\": 102,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\",\n      \"kind\": \"manga\",\n      \"raw_kind\": \"manga\",\n      \"tags\": [\n        {\n          \"name\": \"tag\\nline\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 9,\n        \"name\": \"author\\nline\",\n        \"account\": \"\",\n        \"comment\": \"\",\n        \"is_followed\": false,\n        \"profile_image\": {\n          \"resource\": null,\n          \"variant\": \"\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2024-01-01T18:04:05Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 0,\n      \"height\": 0,\n      \"page_count\": 0,\n      \"x_restrict\": 0,\n      \"ai_type\": 0,\n      \"cover\": {\n        \"resource\": null,\n        \"variant\": \"\",\n        \"width\": 0,\n        \"height\": 0\n      }\n    },\n    {\n      \"id\": 103,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\",\n      \"kind\": \"ugoira\",\n      \"raw_kind\": \"ugoira\",\n      \"tags\": [\n        {\n          \"name\": \"tag\\nline\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 9,\n        \"name\": \"author\\nline\",\n        \"account\": \"\",\n        \"comment\": \"\",\n        \"is_followed\": false,\n        \"profile_image\": {\n          \"resource\": null,\n          \"variant\": \"\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2024-01-01T18:04:05Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 0,\n      \"height\": 0,\n      \"page_count\": 0,\n      \"x_restrict\": 0,\n      \"ai_type\": 0,\n      \"cover\": {\n        \"resource\": null,\n        \"variant\": \"\",\n        \"width\": 0,\n        \"height\": 0\n      }\n    },\n    {\n      \"id\": 104,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\",\n      \"kind\": \"illustration\",\n      \"raw_kind\": \"illust\",\n      \"tags\": [\n        {\n          \"name\": \"tag\\nline\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 9,\n        \"name\": \"author\\nline\",\n        \"account\": \"\",\n        \"comment\": \"\",\n        \"is_followed\": false,\n        \"profile_image\": {\n          \"resource\": null,\n          \"variant\": \"\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2024-01-01T18:04:05Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 0,\n      \"height\": 0,\n      \"page_count\": 0,\n      \"x_restrict\": 0,\n      \"ai_type\": 0,\n      \"cover\": {\n        \"resource\": null,\n        \"variant\": \"\",\n        \"width\": 0,\n        \"height\": 0\n      }\n    }\n  ]\n}\n",
+    "stderr": "",
+    "exit": 0
+  },
+  {
+    "scenario": "after_page",
+    "mode": "ndjson",
+    "kind": "artwork",
+    "name": "following-ndjson-after-page",
+    "operation": "following",
+    "content_type": "",
+    "source": "following-artwork",
+    "args": [
+      "--type=artwork",
+      "--limit=0",
+      "--ndjson"
+    ],
+    "opens": [
+      42
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": "",
+        "path": "/v2/illust/follow",
+        "query": {
+          "restrict": [
+            "public"
+          ]
+        }
+      },
+      {
+        "id": 42,
+        "offset": "30",
+        "path": "/v2/illust/follow",
+        "query": {
+          "offset": [
+            "30"
+          ],
+          "restrict": [
+            "public"
+          ]
+        }
+      },
+      {
+        "id": 42,
+        "offset": "30",
+        "path": "/v2/illust/follow",
+        "query": {
+          "offset": [
+            "30"
+          ],
+          "restrict": [
+            "public"
+          ]
+        }
+      }
+    ],
+    "closes": 1,
+    "under_lease": true,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      },
+      {
+        "id": 43,
+        "revision": 1,
+        "frozen": false,
+        "selected": false
+      }
+    ],
+    "stdout": "{\"ai_type\":0,\"caption\":\"\",\"cover\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0},\"height\":0,\"id\":\"101\",\"kind\":\"illustration\",\"page_count\":0,\"published_at\":\"2024-01-01T18:04:05Z\",\"raw_kind\":\"illust\",\"tags\":[{\"name\":\"tag\\nline\",\"translated_name\":\"\"}],\"title\":\"item-account-42\",\"total_bookmarks\":12,\"total_views\":34,\"type\":\"illust\",\"url\":\"https://www.pixiv.net/artworks/101\",\"user\":{\"account\":\"\",\"comment\":\"\",\"id\":9,\"is_followed\":false,\"name\":\"author\\nline\",\"profile_image\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0}},\"width\":0,\"x_restrict\":0}\n{\"ai_type\":0,\"caption\":\"\",\"cover\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0},\"height\":0,\"id\":\"102\",\"kind\":\"manga\",\"page_count\":0,\"published_at\":\"2024-01-01T18:04:05Z\",\"raw_kind\":\"manga\",\"tags\":[{\"name\":\"tag\\nline\",\"translated_name\":\"\"}],\"title\":\"item-account-42\",\"total_bookmarks\":12,\"total_views\":34,\"type\":\"manga\",\"url\":\"https://www.pixiv.net/artworks/102\",\"user\":{\"account\":\"\",\"comment\":\"\",\"id\":9,\"is_followed\":false,\"name\":\"author\\nline\",\"profile_image\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0}},\"width\":0,\"x_restrict\":0}\n",
+    "stderr": "{\"error\":{\"code\":\"rate_limited\",\"message\":\"pixiv:FollowingArtworks: rate_limited\",\"retry_after_seconds\":120}}\n",
+    "exit": 1
+  },
+  {
+    "scenario": "before_output",
+    "mode": "json",
+    "kind": "artwork",
+    "name": "following-json-before-output",
+    "operation": "following",
+    "content_type": "",
+    "source": "following-artwork",
+    "args": [
+      "--type=artwork",
+      "--limit=0",
+      "--json"
+    ],
+    "opens": [
+      42,
+      43
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": "",
+        "path": "/v2/illust/follow",
+        "query": {
+          "restrict": [
+            "public"
+          ]
+        }
+      },
+      {
+        "id": 42,
+        "offset": "",
+        "path": "/v2/illust/follow",
+        "query": {
+          "restrict": [
+            "public"
+          ]
+        }
+      },
+      {
+        "id": 43,
+        "offset": "",
+        "path": "/v2/illust/follow",
+        "query": {
+          "restrict": [
+            "public"
+          ]
+        }
+      },
+      {
+        "id": 43,
+        "offset": "30",
+        "path": "/v2/illust/follow",
+        "query": {
+          "offset": [
+            "30"
+          ],
+          "restrict": [
+            "public"
+          ]
+        }
+      }
+    ],
+    "closes": 2,
+    "under_lease": false,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": true,
+        "selected": false
+      },
+      {
+        "id": 43,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      }
+    ],
+    "stdout": "{\n  \"illusts\": [\n    {\n      \"id\": 101,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\",\n      \"kind\": \"illustration\",\n      \"raw_kind\": \"illust\",\n      \"tags\": [\n        {\n          \"name\": \"tag\\nline\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 9,\n        \"name\": \"author\\nline\",\n        \"account\": \"\",\n        \"comment\": \"\",\n        \"is_followed\": false,\n        \"profile_image\": {\n          \"resource\": null,\n          \"variant\": \"\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2024-01-01T18:04:05Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 0,\n      \"height\": 0,\n      \"page_count\": 0,\n      \"x_restrict\": 0,\n      \"ai_type\": 0,\n      \"cover\": {\n        \"resource\": null,\n        \"variant\": \"\",\n        \"width\": 0,\n        \"height\": 0\n      }\n    },\n    {\n      \"id\": 102,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\",\n      \"kind\": \"manga\",\n      \"raw_kind\": \"manga\",\n      \"tags\": [\n        {\n          \"name\": \"tag\\nline\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 9,\n        \"name\": \"author\\nline\",\n        \"account\": \"\",\n        \"comment\": \"\",\n        \"is_followed\": false,\n        \"profile_image\": {\n          \"resource\": null,\n          \"variant\": \"\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2024-01-01T18:04:05Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 0,\n      \"height\": 0,\n      \"page_count\": 0,\n      \"x_restrict\": 0,\n      \"ai_type\": 0,\n      \"cover\": {\n        \"resource\": null,\n        \"variant\": \"\",\n        \"width\": 0,\n        \"height\": 0\n      }\n    },\n    {\n      \"id\": 102,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\",\n      \"kind\": \"manga\",\n      \"raw_kind\": \"manga\",\n      \"tags\": [\n        {\n          \"name\": \"tag\\nline\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 9,\n        \"name\": \"author\\nline\",\n        \"account\": \"\",\n        \"comment\": \"\",\n        \"is_followed\": false,\n        \"profile_image\": {\n          \"resource\": null,\n          \"variant\": \"\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2024-01-01T18:04:05Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 0,\n      \"height\": 0,\n      \"page_count\": 0,\n      \"x_restrict\": 0,\n      \"ai_type\": 0,\n      \"cover\": {\n        \"resource\": null,\n        \"variant\": \"\",\n        \"width\": 0,\n        \"height\": 0\n      }\n    },\n    {\n      \"id\": 103,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\",\n      \"kind\": \"ugoira\",\n      \"raw_kind\": \"ugoira\",\n      \"tags\": [\n        {\n          \"name\": \"tag\\nline\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 9,\n        \"name\": \"author\\nline\",\n        \"account\": \"\",\n        \"comment\": \"\",\n        \"is_followed\": false,\n        \"profile_image\": {\n          \"resource\": null,\n          \"variant\": \"\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2024-01-01T18:04:05Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 0,\n      \"height\": 0,\n      \"page_count\": 0,\n      \"x_restrict\": 0,\n      \"ai_type\": 0,\n      \"cover\": {\n        \"resource\": null,\n        \"variant\": \"\",\n        \"width\": 0,\n        \"height\": 0\n      }\n    },\n    {\n      \"id\": 104,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\",\n      \"kind\": \"illustration\",\n      \"raw_kind\": \"illust\",\n      \"tags\": [\n        {\n          \"name\": \"tag\\nline\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 9,\n        \"name\": \"author\\nline\",\n        \"account\": \"\",\n        \"comment\": \"\",\n        \"is_followed\": false,\n        \"profile_image\": {\n          \"resource\": null,\n          \"variant\": \"\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2024-01-01T18:04:05Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 0,\n      \"height\": 0,\n      \"page_count\": 0,\n      \"x_restrict\": 0,\n      \"ai_type\": 0,\n      \"cover\": {\n        \"resource\": null,\n        \"variant\": \"\",\n        \"width\": 0,\n        \"height\": 0\n      }\n    }\n  ]\n}\n",
+    "stderr": "",
+    "exit": 0
+  },
+  {
+    "scenario": "before_output",
+    "mode": "ndjson",
+    "kind": "novel",
+    "name": "following-novel-ndjson-before-output",
+    "operation": "following",
+    "content_type": "",
+    "source": "following-novel",
+    "args": [
+      "--type=novel",
+      "--limit=0",
+      "--ndjson"
+    ],
+    "opens": [
+      42,
+      43
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": "",
+        "path": "/v1/novel/follow",
+        "query": {
+          "restrict": [
+            "public"
+          ]
+        }
+      },
+      {
+        "id": 42,
+        "offset": "",
+        "path": "/v1/novel/follow",
+        "query": {
+          "restrict": [
+            "public"
+          ]
+        }
+      },
+      {
+        "id": 43,
+        "offset": "",
+        "path": "/v1/novel/follow",
+        "query": {
+          "restrict": [
+            "public"
+          ]
+        }
+      },
+      {
+        "id": 43,
+        "offset": "30",
+        "path": "/v1/novel/follow",
+        "query": {
+          "offset": [
+            "30"
+          ],
+          "restrict": [
+            "public"
+          ]
+        }
+      }
+    ],
+    "closes": 2,
+    "under_lease": true,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": true,
+        "selected": false
+      },
+      {
+        "id": 43,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      }
+    ],
+    "stdout": "{\"caption\":\"\",\"cover\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0},\"id\":\"201\",\"is_original\":false,\"published_at\":\"2024-01-01T18:04:05Z\",\"tags\":[{\"name\":\"tag\\nline\",\"translated_name\":\"\"}],\"text_length\":123,\"title\":\"item-account-43\",\"total_bookmarks\":12,\"total_views\":34,\"type\":\"novel\",\"updated_at\":null,\"url\":\"https://www.pixiv.net/novel/show.php?id=201\",\"user\":{\"account\":\"\",\"comment\":\"\",\"id\":9,\"is_followed\":false,\"name\":\"author\\nline\",\"profile_image\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0}},\"x_restrict\":0}\n{\"caption\":\"\",\"cover\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0},\"id\":\"202\",\"is_original\":false,\"published_at\":\"2024-01-01T18:04:05Z\",\"tags\":[{\"name\":\"tag\\nline\",\"translated_name\":\"\"}],\"text_length\":123,\"title\":\"item-account-43\",\"total_bookmarks\":12,\"total_views\":34,\"type\":\"novel\",\"updated_at\":null,\"url\":\"https://www.pixiv.net/novel/show.php?id=202\",\"user\":{\"account\":\"\",\"comment\":\"\",\"id\":9,\"is_followed\":false,\"name\":\"author\\nline\",\"profile_image\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0}},\"x_restrict\":0}\n{\"caption\":\"\",\"cover\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0},\"id\":\"202\",\"is_original\":false,\"published_at\":\"2024-01-01T18:04:05Z\",\"tags\":[{\"name\":\"tag\\nline\",\"translated_name\":\"\"}],\"text_length\":123,\"title\":\"item-account-43\",\"total_bookmarks\":12,\"total_views\":34,\"type\":\"novel\",\"updated_at\":null,\"url\":\"https://www.pixiv.net/novel/show.php?id=202\",\"user\":{\"account\":\"\",\"comment\":\"\",\"id\":9,\"is_followed\":false,\"name\":\"author\\nline\",\"profile_image\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0}},\"x_restrict\":0}\n{\"caption\":\"\",\"cover\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0},\"id\":\"203\",\"is_original\":false,\"published_at\":\"2024-01-01T18:04:05Z\",\"tags\":[{\"name\":\"tag\\nline\",\"translated_name\":\"\"}],\"text_length\":123,\"title\":\"item-account-43\",\"total_bookmarks\":12,\"total_views\":34,\"type\":\"novel\",\"updated_at\":null,\"url\":\"https://www.pixiv.net/novel/show.php?id=203\",\"user\":{\"account\":\"\",\"comment\":\"\",\"id\":9,\"is_followed\":false,\"name\":\"author\\nline\",\"profile_image\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0}},\"x_restrict\":0}\n{\"caption\":\"\",\"cover\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0},\"id\":\"204\",\"is_original\":false,\"published_at\":\"2024-01-01T18:04:05Z\",\"tags\":[{\"name\":\"tag\\nline\",\"translated_name\":\"\"}],\"text_length\":123,\"title\":\"item-account-43\",\"total_bookmarks\":12,\"total_views\":34,\"type\":\"novel\",\"updated_at\":null,\"url\":\"https://www.pixiv.net/novel/show.php?id=204\",\"user\":{\"account\":\"\",\"comment\":\"\",\"id\":9,\"is_followed\":false,\"name\":\"author\\nline\",\"profile_image\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0}},\"x_restrict\":0}\n",
+    "stderr": "",
+    "exit": 0
+  },
+  {
+    "scenario": "empty_before_output",
+    "mode": "ndjson",
+    "kind": "artwork",
+    "name": "filtered-empty-before-output",
+    "operation": "following",
+    "content_type": "manga",
+    "source": "following-artwork-manga-filter-empty",
+    "args": [
+      "--type=artwork",
+      "--limit=0",
+      "--content-type=manga",
+      "--ndjson"
+    ],
+    "opens": [
+      42,
+      43
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": "",
+        "path": "/v2/illust/follow",
+        "query": {
+          "restrict": [
+            "public"
+          ]
+        }
+      },
+      {
+        "id": 42,
+        "offset": "30",
+        "path": "/v2/illust/follow",
+        "query": {
+          "offset": [
+            "30"
+          ],
+          "restrict": [
+            "public"
+          ]
+        }
+      },
+      {
+        "id": 42,
+        "offset": "30",
+        "path": "/v2/illust/follow",
+        "query": {
+          "offset": [
+            "30"
+          ],
+          "restrict": [
+            "public"
+          ]
+        }
+      },
+      {
+        "id": 43,
+        "offset": "",
+        "path": "/v2/illust/follow",
+        "query": {
+          "restrict": [
+            "public"
+          ]
+        }
+      },
+      {
+        "id": 43,
+        "offset": "30",
+        "path": "/v2/illust/follow",
+        "query": {
+          "offset": [
+            "30"
+          ],
+          "restrict": [
+            "public"
+          ]
+        }
+      }
+    ],
+    "closes": 2,
+    "under_lease": true,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": true,
+        "selected": false
+      },
+      {
+        "id": 43,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      }
+    ],
+    "stdout": "{\"ai_type\":0,\"caption\":\"\",\"cover\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0},\"height\":0,\"id\":\"103\",\"kind\":\"manga\",\"page_count\":0,\"published_at\":\"2024-01-01T18:04:05Z\",\"raw_kind\":\"manga\",\"tags\":[{\"name\":\"tag\\nline\",\"translated_name\":\"\"}],\"title\":\"item-account-43\",\"total_bookmarks\":12,\"total_views\":34,\"type\":\"manga\",\"url\":\"https://www.pixiv.net/artworks/103\",\"user\":{\"account\":\"\",\"comment\":\"\",\"id\":9,\"is_followed\":false,\"name\":\"author\\nline\",\"profile_image\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0}},\"width\":0,\"x_restrict\":0}\n{\"ai_type\":0,\"caption\":\"\",\"cover\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0},\"height\":0,\"id\":\"105\",\"kind\":\"manga\",\"page_count\":0,\"published_at\":\"2024-01-01T18:04:05Z\",\"raw_kind\":\"manga\",\"tags\":[{\"name\":\"tag\\nline\",\"translated_name\":\"\"}],\"title\":\"item-account-43\",\"total_bookmarks\":12,\"total_views\":34,\"type\":\"manga\",\"url\":\"https://www.pixiv.net/artworks/105\",\"user\":{\"account\":\"\",\"comment\":\"\",\"id\":9,\"is_followed\":false,\"name\":\"author\\nline\",\"profile_image\":{\"height\":0,\"resource\":null,\"variant\":\"\",\"width\":0}},\"width\":0,\"x_restrict\":0}\n",
+    "stderr": "",
+    "exit": 0
+  },
+  {
+    "scenario": "all_rate_limited",
+    "mode": "json",
+    "kind": "artwork",
+    "name": "all-rate-limited",
+    "operation": "following",
+    "content_type": "",
+    "source": "following-artwork",
+    "args": [
+      "--type=artwork",
+      "--limit=0",
+      "--json"
+    ],
+    "opens": [
+      42,
+      43
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": "",
+        "path": "/v2/illust/follow",
+        "query": {
+          "restrict": [
+            "public"
+          ]
+        }
+      },
+      {
+        "id": 42,
+        "offset": "",
+        "path": "/v2/illust/follow",
+        "query": {
+          "restrict": [
+            "public"
+          ]
+        }
+      },
+      {
+        "id": 43,
+        "offset": "",
+        "path": "/v2/illust/follow",
+        "query": {
+          "restrict": [
+            "public"
+          ]
+        }
+      },
+      {
+        "id": 43,
+        "offset": "",
+        "path": "/v2/illust/follow",
+        "query": {
+          "restrict": [
+            "public"
+          ]
+        }
+      }
+    ],
+    "closes": 2,
+    "under_lease": false,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": true,
+        "selected": false
+      },
+      {
+        "id": 43,
+        "revision": 2,
+        "frozen": true,
+        "selected": true
+      }
+    ],
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"rate_limited\",\"message\":\"pixiv:account_pool: rate_limited: account_pool_all_frozen\",\"retry_after_seconds\":120}}\n",
+    "exit": 1
+  },
+  {
+    "scenario": "not_retryable",
+    "mode": "human",
+    "kind": "novel",
+    "name": "not-retryable",
+    "operation": "latest",
+    "content_type": "",
+    "source": "latest-novel",
+    "args": [
+      "--type=novel",
+      "--limit=0"
+    ],
+    "opens": [
+      42
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": "",
+        "path": "/v1/novel/new",
+        "query": {
+          "filter": [
+            "for_android"
+          ]
+        }
+      }
+    ],
+    "closes": 1,
+    "under_lease": false,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      },
+      {
+        "id": 43,
+        "revision": 1,
+        "frozen": false,
+        "selected": false
+      }
+    ],
+    "stdout": "",
+    "stderr": "error: pixiv:LatestNovels: credentials_expired\n",
+    "exit": 1
+  },
+  {
+    "scenario": "broken",
+    "mode": "human",
+    "kind": "artwork",
+    "name": "broken-human",
+    "operation": "following",
+    "content_type": "",
+    "source": "following-artwork",
+    "args": [
+      "--type=artwork",
+      "--limit=0"
+    ],
+    "opens": [
+      42
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": "",
+        "path": "/v2/illust/follow",
+        "query": {
+          "restrict": [
+            "public"
+          ]
+        }
+      }
+    ],
+    "closes": 1,
+    "under_lease": true,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      },
+      {
+        "id": 43,
+        "revision": 1,
+        "frozen": false,
+        "selected": false
+      }
+    ],
+    "stdout": "",
+    "stderr": "error: broken pipe\n",
+    "exit": 1
+  },
+  {
+    "scenario": "broken",
+    "mode": "json",
+    "kind": "artwork",
+    "name": "broken-json",
+    "operation": "following",
+    "content_type": "",
+    "source": "following-artwork",
+    "args": [
+      "--type=artwork",
+      "--limit=0",
+      "--json"
+    ],
+    "opens": [
+      42
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": "",
+        "path": "/v2/illust/follow",
+        "query": {
+          "restrict": [
+            "public"
+          ]
+        }
+      },
+      {
+        "id": 42,
+        "offset": "30",
+        "path": "/v2/illust/follow",
+        "query": {
+          "offset": [
+            "30"
+          ],
+          "restrict": [
+            "public"
+          ]
+        }
+      }
+    ],
+    "closes": 1,
+    "under_lease": false,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      },
+      {
+        "id": 43,
+        "revision": 1,
+        "frozen": false,
+        "selected": false
+      }
+    ],
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"broken pipe\"}}\n",
+    "exit": 1
+  },
+  {
+    "scenario": "short",
+    "mode": "json",
+    "kind": "novel",
+    "name": "short-novel-json",
+    "operation": "latest",
+    "content_type": "",
+    "source": "latest-novel",
+    "args": [
+      "--type=novel",
+      "--limit=0",
+      "--json"
+    ],
+    "opens": [
+      42
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": "",
+        "path": "/v1/novel/new",
+        "query": {
+          "filter": [
+            "for_android"
+          ]
+        }
+      },
+      {
+        "id": 42,
+        "offset": "30",
+        "path": "/v1/novel/new",
+        "query": {
+          "filter": [
+            "for_android"
+          ],
+          "max_novel_id": [
+            "30"
+          ]
+        }
+      }
+    ],
+    "closes": 1,
+    "under_lease": false,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      },
+      {
+        "id": 43,
+        "revision": 1,
+        "frozen": false,
+        "selected": false
+      }
+    ],
+    "stdout": "{\n  \"novel",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"short write\"}}\n",
+    "exit": 1
+  },
+  {
+    "scenario": "other",
+    "mode": "ndjson",
+    "kind": "artwork",
+    "name": "other-ndjson",
+    "operation": "following",
+    "content_type": "",
+    "source": "following-artwork",
+    "args": [
+      "--type=artwork",
+      "--limit=0",
+      "--ndjson"
+    ],
+    "opens": [
+      42
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": "",
+        "path": "/v2/illust/follow",
+        "query": {
+          "restrict": [
+            "public"
+          ]
+        }
+      }
+    ],
+    "closes": 1,
+    "under_lease": true,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      },
+      {
+        "id": 43,
+        "revision": 1,
+        "frozen": false,
+        "selected": false
+      }
+    ],
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"fixture write failed\"}}\n",
+    "exit": 1
+  },
+  {
+    "scenario": "after_page",
+    "mode": "json",
+    "kind": "novel",
+    "name": "latest-novel-json-after-page",
+    "operation": "latest",
+    "content_type": "",
+    "source": "latest-novel",
+    "args": [
+      "--type=novel",
+      "--limit=0",
+      "--json"
+    ],
+    "opens": [
+      42,
+      43
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": "",
+        "path": "/v1/novel/new",
+        "query": {
+          "filter": [
+            "for_android"
+          ]
+        }
+      },
+      {
+        "id": 42,
+        "offset": "30",
+        "path": "/v1/novel/new",
+        "query": {
+          "filter": [
+            "for_android"
+          ],
+          "max_novel_id": [
+            "30"
+          ]
+        }
+      },
+      {
+        "id": 42,
+        "offset": "30",
+        "path": "/v1/novel/new",
+        "query": {
+          "filter": [
+            "for_android"
+          ],
+          "max_novel_id": [
+            "30"
+          ]
+        }
+      },
+      {
+        "id": 43,
+        "offset": "",
+        "path": "/v1/novel/new",
+        "query": {
+          "filter": [
+            "for_android"
+          ]
+        }
+      },
+      {
+        "id": 43,
+        "offset": "30",
+        "path": "/v1/novel/new",
+        "query": {
+          "filter": [
+            "for_android"
+          ],
+          "max_novel_id": [
+            "30"
+          ]
+        }
+      }
+    ],
+    "closes": 2,
+    "under_lease": false,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": true,
+        "selected": false
+      },
+      {
+        "id": 43,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      }
+    ],
+    "stdout": "{\n  \"novels\": [\n    {\n      \"id\": 201,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\",\n      \"user\": {\n        \"id\": 9,\n        \"name\": \"author\\nline\",\n        \"account\": \"\",\n        \"comment\": \"\",\n        \"is_followed\": false,\n        \"profile_image\": {\n          \"resource\": null,\n          \"variant\": \"\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"tags\": [\n        {\n          \"name\": \"tag\\nline\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"published_at\": \"2024-01-01T18:04:05Z\",\n      \"updated_at\": null,\n      \"x_restrict\": 0,\n      \"text_length\": 123,\n      \"is_original\": false,\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"cover\": {\n        \"resource\": null,\n        \"variant\": \"\",\n        \"width\": 0,\n        \"height\": 0\n      }\n    },\n    {\n      \"id\": 202,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\",\n      \"user\": {\n        \"id\": 9,\n        \"name\": \"author\\nline\",\n        \"account\": \"\",\n        \"comment\": \"\",\n        \"is_followed\": false,\n        \"profile_image\": {\n          \"resource\": null,\n          \"variant\": \"\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"tags\": [\n        {\n          \"name\": \"tag\\nline\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"published_at\": \"2024-01-01T18:04:05Z\",\n      \"updated_at\": null,\n      \"x_restrict\": 0,\n      \"text_length\": 123,\n      \"is_original\": false,\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"cover\": {\n        \"resource\": null,\n        \"variant\": \"\",\n        \"width\": 0,\n        \"height\": 0\n      }\n    },\n    {\n      \"id\": 202,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\",\n      \"user\": {\n        \"id\": 9,\n        \"name\": \"author\\nline\",\n        \"account\": \"\",\n        \"comment\": \"\",\n        \"is_followed\": false,\n        \"profile_image\": {\n          \"resource\": null,\n          \"variant\": \"\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"tags\": [\n        {\n          \"name\": \"tag\\nline\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"published_at\": \"2024-01-01T18:04:05Z\",\n      \"updated_at\": null,\n      \"x_restrict\": 0,\n      \"text_length\": 123,\n      \"is_original\": false,\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"cover\": {\n        \"resource\": null,\n        \"variant\": \"\",\n        \"width\": 0,\n        \"height\": 0\n      }\n    },\n    {\n      \"id\": 203,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\",\n      \"user\": {\n        \"id\": 9,\n        \"name\": \"author\\nline\",\n        \"account\": \"\",\n        \"comment\": \"\",\n        \"is_followed\": false,\n        \"profile_image\": {\n          \"resource\": null,\n          \"variant\": \"\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"tags\": [\n        {\n          \"name\": \"tag\\nline\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"published_at\": \"2024-01-01T18:04:05Z\",\n      \"updated_at\": null,\n      \"x_restrict\": 0,\n      \"text_length\": 123,\n      \"is_original\": false,\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"cover\": {\n        \"resource\": null,\n        \"variant\": \"\",\n        \"width\": 0,\n        \"height\": 0\n      }\n    },\n    {\n      \"id\": 204,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\",\n      \"user\": {\n        \"id\": 9,\n        \"name\": \"author\\nline\",\n        \"account\": \"\",\n        \"comment\": \"\",\n        \"is_followed\": false,\n        \"profile_image\": {\n          \"resource\": null,\n          \"variant\": \"\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"tags\": [\n        {\n          \"name\": \"tag\\nline\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"published_at\": \"2024-01-01T18:04:05Z\",\n      \"updated_at\": null,\n      \"x_restrict\": 0,\n      \"text_length\": 123,\n      \"is_original\": false,\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"cover\": {\n        \"resource\": null,\n        \"variant\": \"\",\n        \"width\": 0,\n        \"height\": 0\n      }\n    }\n  ]\n}\n",
+    "stderr": "",
+    "exit": 0
+  }
+]

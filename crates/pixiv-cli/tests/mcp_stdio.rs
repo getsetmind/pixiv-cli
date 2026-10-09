@@ -1,3 +1,5 @@
+#[path = "../../pixiv-mcp/tests/support/implemented_catalog.rs"]
+mod implemented_catalog;
 use serde_json::{Value, json};
 use std::{
     io::Write,
@@ -76,10 +78,7 @@ fn mcp_process_exchanges_jsonrpc_without_stdout_diagnostics_or_credentials() {
         by_id("list")["result"]["tools"][7],
         pixiv_mcp::search_user_tool()
     );
-    assert_eq!(
-        by_id("list")["result"]["tools"].as_array().unwrap().len(),
-        34
-    );
+    implemented_catalog::assert_catalog(by_id("list")["result"]["tools"].as_array().unwrap());
     assert_eq!(
         by_id("list")["result"]["tools"][19],
         pixiv_mcp::recommended_tool()
@@ -103,6 +102,24 @@ fn mcp_process_exchanges_jsonrpc_without_stdout_diagnostics_or_credentials() {
         assert_eq!(
             by_id("list")["result"]["tools"][26 + index],
             pixiv_mcp::bookmark_list_tool(kind)
+        );
+    }
+    let timeline_contract: Value = serde_json::from_str(include_str!(
+        "../../../docs/migration/contracts/mcp-timeline.json"
+    ))
+    .unwrap();
+    for (index, name) in [
+        "timeline_illust_following",
+        "timeline_novel_following",
+        "timeline_illust_latest",
+        "timeline_novel_latest",
+    ]
+    .into_iter()
+    .enumerate()
+    {
+        assert_eq!(
+            by_id("list")["result"]["tools"][34 + index],
+            timeline_contract["tools"][name]
         );
     }
     for (index, name) in [

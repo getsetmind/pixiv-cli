@@ -4,6 +4,7 @@ use std::{
 };
 
 pub fn assert_startup(case: &serde_json::Value) {
+    let group = case["group"].as_str().unwrap_or("user");
     let home = tempfile::tempdir().unwrap();
     let directory = home.path().join(".pixiv-cli");
     let path = directory.join("config.toml");
@@ -16,7 +17,7 @@ pub fn assert_startup(case: &serde_json::Value) {
         "reader failures are covered at the public input boundary"
     );
     let mut child = Command::new(env!("CARGO_BIN_EXE_pixiv"))
-        .arg("user")
+        .arg(group)
         .args(
             case["args"]
                 .as_array()

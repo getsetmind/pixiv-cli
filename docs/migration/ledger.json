@@ -1456,39 +1456,90 @@
     },
     {
       "id": "cli:pixiv timeline",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv timeline"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/timeline.rs",
+        "crates/pixiv-cli/src/artwork_list.rs",
+        "crates/pixiv-cli/src/novel_list.rs",
+        "crates/pixiv-cli/src/main.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_timeline_test.go",
+        "internal/cli/migration_timeline_startup_test.go",
+        "internal/cli/migration_timeline_pool_test.go",
+        "internal/cli/migration_timeline_flags_test.go",
+        "crates/pixiv-cli/tests/timeline.rs",
+        "crates/pixiv-cli/tests/timeline_startup.rs",
+        "crates/pixiv-cli/tests/timeline_pool.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "timeline following/latest全kind・旧alias・local subtype filterを共通list traversal/output/poolへ接続。Go73処理行と保存済み境界、2 leaf拒否行、22実startup、18pool、33 scalar flag行/実parser値を比較。2 Cobra leaf診断/exitとanonymous repeated-cursor生診断nonceは未検証、観測を保持。timeline限定Go base0/bool解析・数値overflow順・Go引用を固定し、他commandのparserを変更しない。MyPixiv、group単体help/全flag/help/TTY/OS hooks、root parser3/Linux snapshot、raw-wire/全通信/取消/parallel/他platform・配布は未検証。"
+      ]
     },
     {
       "id": "cli:pixiv timeline following",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv timeline following"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/timeline.rs",
+        "crates/pixiv-cli/src/artwork_list.rs",
+        "crates/pixiv-cli/src/novel_list.rs",
+        "crates/pixiv-cli/src/main.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_timeline_test.go",
+        "internal/cli/migration_timeline_startup_test.go",
+        "internal/cli/migration_timeline_pool_test.go",
+        "internal/cli/migration_timeline_flags_test.go",
+        "crates/pixiv-cli/tests/timeline.rs",
+        "crates/pixiv-cli/tests/timeline_startup.rs",
+        "crates/pixiv-cli/tests/timeline_pool.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "timeline following/latest全kind・旧alias・local subtype filterを共通list traversal/output/poolへ接続。Go73処理行と保存済み境界、2 leaf拒否行、22実startup、18pool、33 scalar flag行/実parser値を比較。2 Cobra leaf診断/exitとanonymous repeated-cursor生診断nonceは未検証、観測を保持。timeline限定Go base0/bool解析・数値overflow順・Go引用を固定し、他commandのparserを変更しない。MyPixiv、group単体help/全flag/help/TTY/OS hooks、root parser3/Linux snapshot、raw-wire/全通信/取消/parallel/他platform・配布は未検証。"
+      ]
     },
     {
       "id": "cli:pixiv timeline latest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv timeline latest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/timeline.rs",
+        "crates/pixiv-cli/src/artwork_list.rs",
+        "crates/pixiv-cli/src/novel_list.rs",
+        "crates/pixiv-cli/src/main.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_timeline_test.go",
+        "internal/cli/migration_timeline_startup_test.go",
+        "internal/cli/migration_timeline_pool_test.go",
+        "internal/cli/migration_timeline_flags_test.go",
+        "crates/pixiv-cli/tests/timeline.rs",
+        "crates/pixiv-cli/tests/timeline_startup.rs",
+        "crates/pixiv-cli/tests/timeline_pool.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "timeline following/latest全kind・旧alias・local subtype filterを共通list traversal/output/poolへ接続。Go73処理行と保存済み境界、2 leaf拒否行、22実startup、18pool、33 scalar flag行/実parser値を比較。2 Cobra leaf診断/exitとanonymous repeated-cursor生診断nonceは未検証、観測を保持。timeline限定Go base0/bool解析・数値overflow順・Go引用を固定し、他commandのparserを変更しない。MyPixiv、group単体help/全flag/help/TTY/OS hooks、root parser3/Linux snapshot、raw-wire/全通信/取消/parallel/他platform・配布は未検証。"
+      ]
     },
     {
       "id": "cli:pixiv ugoira",
@@ -2828,51 +2879,103 @@
     },
     {
       "id": "mcp:pixiv:timeline_illust_following",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "timeline_illust_following"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/timeline.rs",
+        "crates/pixiv-mcp/src/stdio.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_timeline_test.go",
+        "internal/mcpserver/pixiv/migration_timeline_pool_test.go",
+        "crates/pixiv-mcp/tests/timeline.rs",
+        "crates/pixiv-mcp/tests/timeline_pool.rs",
+        "crates/pixiv-mcp/tests/stdio.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go213 direct/raw/savedと8 real-pool行でtyped schema/records/filter/logical paging・exact request/result/stateを比較。旧34tool全entryを保持して4追加、38metadataを独立Go基準とも比較。following restrict defaults/local filter、latest必須content_type illust|manga、whole collection replay/lease解放を保持。MyPixiv、raw-wire、全通信/取消/concurrency/disconnect/他platformと配布は未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:timeline_illust_latest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "timeline_illust_latest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/timeline.rs",
+        "crates/pixiv-mcp/src/stdio.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_timeline_test.go",
+        "internal/mcpserver/pixiv/migration_timeline_pool_test.go",
+        "crates/pixiv-mcp/tests/timeline.rs",
+        "crates/pixiv-mcp/tests/timeline_pool.rs",
+        "crates/pixiv-mcp/tests/stdio.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go213 direct/raw/savedと8 real-pool行でtyped schema/records/filter/logical paging・exact request/result/stateを比較。旧34tool全entryを保持して4追加、38metadataを独立Go基準とも比較。following restrict defaults/local filter、latest必須content_type illust|manga、whole collection replay/lease解放を保持。MyPixiv、raw-wire、全通信/取消/concurrency/disconnect/他platformと配布は未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:timeline_novel_following",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "timeline_novel_following"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/timeline.rs",
+        "crates/pixiv-mcp/src/stdio.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_timeline_test.go",
+        "internal/mcpserver/pixiv/migration_timeline_pool_test.go",
+        "crates/pixiv-mcp/tests/timeline.rs",
+        "crates/pixiv-mcp/tests/timeline_pool.rs",
+        "crates/pixiv-mcp/tests/stdio.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go213 direct/raw/savedと8 real-pool行でtyped schema/records/filter/logical paging・exact request/result/stateを比較。旧34tool全entryを保持して4追加、38metadataを独立Go基準とも比較。following restrict defaults/local filter、latest必須content_type illust|manga、whole collection replay/lease解放を保持。MyPixiv、raw-wire、全通信/取消/concurrency/disconnect/他platformと配布は未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:timeline_novel_latest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "timeline_novel_latest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/timeline.rs",
+        "crates/pixiv-mcp/src/stdio.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_timeline_test.go",
+        "internal/mcpserver/pixiv/migration_timeline_pool_test.go",
+        "crates/pixiv-mcp/tests/timeline.rs",
+        "crates/pixiv-mcp/tests/timeline_pool.rs",
+        "crates/pixiv-mcp/tests/stdio.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go213 direct/raw/savedと8 real-pool行でtyped schema/records/filter/logical paging・exact request/result/stateを比較。旧34tool全entryを保持して4追加、38metadataを独立Go基準とも比較。following restrict defaults/local filter、latest必須content_type illust|manga、whole collection replay/lease解放を保持。MyPixiv、raw-wire、全通信/取消/concurrency/disconnect/他platformと配布は未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:trending_tags_illust",
@@ -7191,27 +7294,51 @@
     },
     {
       "id": "sdk/pixiv:Client.FollowingArtworks",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.FollowingArtworks"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/timeline.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_timeline_test.go",
+        "crates/pixiv-sdk/tests/timeline.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go221 targeted行でrequest/DTO/resource・型/null/error、query bytes、next URL・offset/max-ID、operation/query/account/instance bindingを比較。LatestArtworksは正のoffset cursor検証後にHTTP前UpstreamErrorとなるGo挙動を保持。following account/instance helperはuser_relationshipsと再利用、当該回帰も検査。anonymous envelope iは既存Go共通helper同様placeholderに置換し、nonce bytesは未検証、同/別client binding結果は比較。raw-wire casing/duplicates/order、全cursor payload/通信/auth/取消/並行、MyPixiv、他platform/配布は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.FollowingNovels",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.FollowingNovels"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/timeline.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_timeline_test.go",
+        "crates/pixiv-sdk/tests/timeline.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go221 targeted行でrequest/DTO/resource・型/null/error、query bytes、next URL・offset/max-ID、operation/query/account/instance bindingを比較。LatestArtworksは正のoffset cursor検証後にHTTP前UpstreamErrorとなるGo挙動を保持。following account/instance helperはuser_relationshipsと再利用、当該回帰も検査。anonymous envelope iは既存Go共通helper同様placeholderに置換し、nonce bytesは未検証、同/別client binding結果は比較。raw-wire casing/duplicates/order、全cursor payload/通信/auth/取消/並行、MyPixiv、他platform/配布は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.FollowUser",
@@ -7242,27 +7369,51 @@
     },
     {
       "id": "sdk/pixiv:Client.LatestArtworks",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.LatestArtworks"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/timeline.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_timeline_test.go",
+        "crates/pixiv-sdk/tests/timeline.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go221 targeted行でrequest/DTO/resource・型/null/error、query bytes、next URL・offset/max-ID、operation/query/account/instance bindingを比較。LatestArtworksは正のoffset cursor検証後にHTTP前UpstreamErrorとなるGo挙動を保持。following account/instance helperはuser_relationshipsと再利用、当該回帰も検査。anonymous envelope iは既存Go共通helper同様placeholderに置換し、nonce bytesは未検証、同/別client binding結果は比較。raw-wire casing/duplicates/order、全cursor payload/通信/auth/取消/並行、MyPixiv、他platform/配布は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.LatestNovels",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.LatestNovels"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/timeline.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_timeline_test.go",
+        "crates/pixiv-sdk/tests/timeline.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go221 targeted行でrequest/DTO/resource・型/null/error、query bytes、next URL・offset/max-ID、operation/query/account/instance bindingを比較。LatestArtworksは正のoffset cursor検証後にHTTP前UpstreamErrorとなるGo挙動を保持。following account/instance helperはuser_relationshipsと再利用、当該回帰も検査。anonymous envelope iは既存Go共通helper同様placeholderに置換し、nonce bytesは未検証、同/別client binding結果は比較。raw-wire casing/duplicates/order、全cursor payload/通信/auth/取消/並行、MyPixiv、他platform/配布は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.MyPixivArtworks",
@@ -8549,27 +8700,51 @@
     },
     {
       "id": "sdk/pixiv:FollowingArtworksRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:FollowingArtworksRequest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/timeline.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_timeline_test.go",
+        "crates/pixiv-sdk/tests/timeline.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go221 targeted行でrequest/DTO/resource・型/null/error、query bytes、next URL・offset/max-ID、operation/query/account/instance bindingを比較。LatestArtworksは正のoffset cursor検証後にHTTP前UpstreamErrorとなるGo挙動を保持。following account/instance helperはuser_relationshipsと再利用、当該回帰も検査。anonymous envelope iは既存Go共通helper同様placeholderに置換し、nonce bytesは未検証、同/別client binding結果は比較。raw-wire casing/duplicates/order、全cursor payload/通信/auth/取消/並行、MyPixiv、他platform/配布は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:FollowingNovelsRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:FollowingNovelsRequest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/timeline.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_timeline_test.go",
+        "crates/pixiv-sdk/tests/timeline.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go221 targeted行でrequest/DTO/resource・型/null/error、query bytes、next URL・offset/max-ID、operation/query/account/instance bindingを比較。LatestArtworksは正のoffset cursor検証後にHTTP前UpstreamErrorとなるGo挙動を保持。following account/instance helperはuser_relationshipsと再利用、当該回帰も検査。anonymous envelope iは既存Go共通helper同様placeholderに置換し、nonce bytesは未検証、同/別client binding結果は比較。raw-wire casing/duplicates/order、全cursor payload/通信/auth/取消/並行、MyPixiv、他platform/配布は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:FollowUserRequest",
@@ -8672,27 +8847,51 @@
     },
     {
       "id": "sdk/pixiv:LatestArtworksRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:LatestArtworksRequest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/timeline.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_timeline_test.go",
+        "crates/pixiv-sdk/tests/timeline.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go221 targeted行でrequest/DTO/resource・型/null/error、query bytes、next URL・offset/max-ID、operation/query/account/instance bindingを比較。LatestArtworksは正のoffset cursor検証後にHTTP前UpstreamErrorとなるGo挙動を保持。following account/instance helperはuser_relationshipsと再利用、当該回帰も検査。anonymous envelope iは既存Go共通helper同様placeholderに置換し、nonce bytesは未検証、同/別client binding結果は比較。raw-wire casing/duplicates/order、全cursor payload/通信/auth/取消/並行、MyPixiv、他platform/配布は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:LatestNovelsRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:LatestNovelsRequest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/timeline.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_timeline_test.go",
+        "crates/pixiv-sdk/tests/timeline.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go221 targeted行でrequest/DTO/resource・型/null/error、query bytes、next URL・offset/max-ID、operation/query/account/instance bindingを比較。LatestArtworksは正のoffset cursor検証後にHTTP前UpstreamErrorとなるGo挙動を保持。following account/instance helperはuser_relationshipsと再利用、当該回帰も検査。anonymous envelope iは既存Go共通helper同様placeholderに置換し、nonce bytesは未検証、同/別client binding結果は比較。raw-wire casing/duplicates/order、全cursor payload/通信/auth/取消/並行、MyPixiv、他platform/配布は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:LoginOptions",

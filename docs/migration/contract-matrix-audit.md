@@ -29,3 +29,7 @@ main/records/bodies の完全な観測結果（operation、kind、path/query、c
 - fixture bytesとGo/Rust runtimeをcheckpointで記録する
 
 Cobraのleaf harnessとGoの実際のRun/root parserは、同じ未対応flagでもexit/messageが異なる。片方の期待値を他方の実行境界に当てはめない。Rustに存在しないleaf診断rendererを比較済みとせず、その差と実際のroot startup比較を分けて記録する。
+
+## 次checkpoint: timeline
+
+同じ方針をfollowing/latestに適用し、SDK221、MCP213+pool8、CLI main75（73処理/2拒否）、startup22、pool18、scalar33の590行に絞った。body mapと過去のrich DTO/helperを再利用し、BindNoInputのrecord×kind×mode直積は作らない。10 fixture/evidence filesは計1,745,217 bytes（1.66 MiB）。anonymous cursor生診断の815 bytesはcomparison rowに数えない。Scalarの4追加はoverflowと不正suffixの優先順位、control/Unicode quotingというdistinct behaviorを固定するためであり、writer/body/outputとの直積は増やしていない。観測runtimeはcontracts.mdに記録する。

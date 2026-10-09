@@ -20,6 +20,11 @@ use std::{
 #[derive(Clone)]
 pub(crate) enum Source {
     Ranking(ArtworkRankingRequest),
+    Following(
+        pixiv_sdk::pixiv::FollowingArtworksRequest,
+        pixiv_app::search_filter::ArtworkFilter,
+    ),
+    Latest(pixiv_sdk::pixiv::LatestArtworksRequest),
     Bookmarks(
         pixiv_sdk::pixiv::UserArtworkBookmarksRequest,
         Arc<std::sync::atomic::AtomicI64>,
@@ -128,6 +133,27 @@ pub(crate) async fn attempt<T: Transport, W: Write>(
                         request.cursor = cursor;
                         client.user_artwork_bookmarks(request).await
                     }
+                    Source::Following(mut request, filter) => {
+                        request.cursor = cursor;
+                        client.following_artworks(request).await.map(|mut page| {
+                            page.items.retain(|item| {
+                                filter.matches(
+                                    item.x_restrict,
+                                    match item.kind {
+                                        pixiv_sdk::models::ArtworkKind::Illust => "illust",
+                                        pixiv_sdk::models::ArtworkKind::Manga => "manga",
+                                        pixiv_sdk::models::ArtworkKind::Ugoira => "ugoira",
+                                        pixiv_sdk::models::ArtworkKind::Unknown => "unknown",
+                                    },
+                                )
+                            });
+                            page
+                        })
+                    }
+                    Source::Latest(mut request) => {
+                        request.cursor = cursor;
+                        client.latest_artworks(request).await
+                    }
                     Source::Ranking(mut request) => {
                         request.cursor = cursor;
                         client.artwork_ranking(request).await
@@ -174,7 +200,10 @@ pub(crate) async fn attempt<T: Transport, W: Write>(
                     listing.source,
                     Source::User(..) | Source::Bookmarks(_, _, true)
                 );
-                let plain = matches!(listing.source, Source::Bookmarks(..));
+                let plain = matches!(
+                    listing.source,
+                    Source::Bookmarks(..) | Source::Following(..) | Source::Latest(..)
+                );
                 if user || plain {
                     writeln!(out, "https://www.pixiv.net/artworks/{}", item.id)?;
                 } else {

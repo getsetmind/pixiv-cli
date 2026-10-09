@@ -26,6 +26,7 @@ impl ProxyOptions {
         proxy_override(self.proxy.as_deref(), self.no_proxy)
     }
 }
+
 fn proxy_override(
     proxy: Option<&str>,
     no_proxy: Option<bool>,
@@ -138,7 +139,29 @@ enum UserCommand {
 }
 
 #[derive(Subcommand)]
+enum TimelineCommand {
+    #[command(args_override_self = true)]
+    Following {
+        #[command(flatten)]
+        options: Box<pixiv_cli_rs::timeline::FollowingOptions>,
+        #[command(flatten)]
+        connection: ProxyOptions,
+    },
+    #[command(args_override_self = true)]
+    Latest {
+        #[command(flatten)]
+        options: Box<pixiv_cli_rs::timeline::TimelineOptions>,
+        #[command(flatten)]
+        connection: ProxyOptions,
+    },
+}
+
+#[derive(Subcommand)]
 enum Command {
+    Timeline {
+        #[command(subcommand)]
+        command: TimelineCommand,
+    },
     Bookmark {
         #[command(subcommand)]
         command: BookmarkGroupCommand,
@@ -214,13 +237,20 @@ enum Command {
 #[tokio::main]
 async fn main() {
     let matches = Arguments::command()
+        .mut_subcommand("timeline", |command| {
+            command
+                .mut_subcommand("following", pixiv_cli_rs::timeline::configure_command)
+                .mut_subcommand("latest", pixiv_cli_rs::timeline::configure_command)
+        })
         .try_get_matches()
         .unwrap_or_else(|error| {
             let mutation_route = matches!(
                 std::env::args().nth(1).as_deref(),
                 Some("bookmark" | "follow" | "user")
             );
-            let command_error = if mutation_route {
+            let command_error = if std::env::args().nth(1).as_deref() == Some("timeline") {
+                pixiv_cli_rs::timeline::argument_error(&error)
+            } else if mutation_route {
                 pixiv_cli_rs::mutation::argument_error(&error)
             } else {
                 pixiv_cli_rs::argument_error(&error)
@@ -261,6 +291,13 @@ async fn main() {
         command => command,
     };
     let machine_output = match &args.command {
+        Command::Timeline { command } => {
+            let options = match command {
+                TimelineCommand::Following { options, .. } => &options.timeline.listing,
+                TimelineCommand::Latest { options, .. } => &options.listing,
+            };
+            options.json.is_some() || options.ndjson
+        }
         Command::Bookmark {
             command: BookmarkGroupCommand::Detail { options, .. },
         } => options.json.is_some(),
@@ -298,6 +335,13 @@ async fn main() {
         Command::Series { options, .. } => options.json.is_some() || options.ndjson,
     };
     let mut ndjson_output = match &args.command {
+        Command::Timeline { command } => {
+            let options = match command {
+                TimelineCommand::Following { options, .. } => &options.timeline.listing,
+                TimelineCommand::Latest { options, .. } => &options.listing,
+            };
+            options.ndjson || (options.json.is_none() && !io::stdout().is_terminal())
+        }
         Command::Bookmark {
             command: BookmarkGroupCommand::Tags { options, .. },
         } => options.listing.ndjson,
@@ -445,6 +489,22 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
     if let Command::Series { options, .. } = &mut args.command {
         options.resolve_source(&mut io::stdin().lock(), io::stdin().is_terminal())?;
     }
+    let timeline = match &args.command {
+        Command::Timeline {
+            command: TimelineCommand::Following { options, .. },
+        } => Some(pixiv_cli_rs::timeline::Timeline::Following(
+            options.as_ref().clone(),
+        )),
+        Command::Timeline {
+            command: TimelineCommand::Latest { options, .. },
+        } => Some(pixiv_cli_rs::timeline::Timeline::Latest(
+            options.as_ref().clone(),
+        )),
+        _ => None,
+    };
+    if let Some(options) = &timeline {
+        options.validate_arguments()?;
+    }
     let search_word = match &args.command {
         Command::Search { input, .. } => {
             if input.trending_tags {
@@ -458,7 +518,8 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
     };
     let account_config = if matches!(
         &args.command,
-        Command::Detail { .. }
+        Command::Timeline { .. }
+            | Command::Detail { .. }
             | Command::Mcp { .. }
             | Command::Search { .. }
             | Command::Recommended { .. }
@@ -605,6 +666,46 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
             std::sync::Arc::new(std::sync::Mutex::new(database)),
         );
         return pixiv_cli_rs::bookmark_lists::saved_bookmark_lists(
+            &execution,
+            &pixiv_app::lifecycle::Context::new(),
+            options,
+            proxy,
+            mode,
+            io::stdout(),
+        )
+        .await;
+    }
+    if let Some(options) = timeline {
+        let (directory, config) = account_config.expect("timeline startup was resolved");
+        options.validate()?;
+        let connection = match &args.command {
+            Command::Timeline {
+                command:
+                    TimelineCommand::Following { connection, .. }
+                    | TimelineCommand::Latest { connection, .. },
+            } => connection,
+            _ => unreachable!("timeline route was resolved"),
+        };
+        let proxy = connection.override_value()?;
+        let configured_json = if options.options().listing.ndjson {
+            options.output_mode(false, true)?;
+            false
+        } else {
+            config
+                .current()
+                .and_then(|snapshot| snapshot.runtime())
+                .map_err(pixiv_app::scheduler::SchedulerError::from)?
+                .output_json
+        };
+        let mode = options.output_mode(configured_json, io::stdout().is_terminal())?;
+        *ndjson_output = mode == DetailOutput::Ndjson;
+        let database = pixiv_app::database::Database::open(&directory)
+            .map_err(|error| CommandError::State(Box::new(error)))?;
+        let execution = pixiv_app::execution::Execution::http(
+            config,
+            std::sync::Arc::new(std::sync::Mutex::new(database)),
+        );
+        return pixiv_cli_rs::timeline::saved_timeline(
             &execution,
             &pixiv_app::lifecycle::Context::new(),
             options,
@@ -1096,6 +1197,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
         .ok();
     let client = Client::new(&token, proxy.as_deref())?;
     match args.command {
+        Command::Timeline { .. } => unreachable!("timeline uses saved account execution"),
         Command::Novel { .. } => unreachable!("novel commands were resolved"),
         Command::Mcp { .. } => unreachable!("MCP uses saved account execution"),
         Command::Bookmark { .. } | Command::Follow { .. } | Command::User { .. } => {

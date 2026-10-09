@@ -1,5 +1,3 @@
-#[path = "support/implemented_catalog.rs"]
-mod implemented_catalog;
 use pixiv_sdk::{
     Client,
     transport::{Request, Response, Transport},
@@ -24,23 +22,45 @@ struct Case {
     calls: usize,
     requests: usize,
     rpc_error: String,
+    queries: Option<Vec<String>>,
 }
 #[derive(Clone)]
 struct Fixture {
+    authorization: &'static str,
+    tool_name: String,
     bodies: Vec<Value>,
+    queries: Vec<String>,
     requests: Arc<Mutex<usize>>,
 }
 impl Transport for Fixture {
     async fn send(&self, request: Request) -> pixiv_sdk::Result<Response> {
         assert_eq!(request.method.as_str(), "GET");
-        assert_eq!(request.url, "https://app-api.pixiv.net/v2/novel/series");
-        assert!(
+        assert_eq!(
+            request.url,
+            match self.tool_name.as_str() {
+                "timeline_illust_following" => "https://app-api.pixiv.net/v2/illust/follow",
+                "timeline_novel_following" => "https://app-api.pixiv.net/v1/novel/follow",
+                "timeline_illust_latest" => "https://app-api.pixiv.net/v1/illust/new",
+                "timeline_novel_latest" => "https://app-api.pixiv.net/v1/novel/new",
+                _ => panic!("unexpected tool"),
+            }
+        );
+        assert_eq!(
             request
-                .parameters
-                .contains(&("series_id".into(), "21".into()))
-                || request.parameters.iter().any(|(key, _)| key == "series_id")
+                .headers
+                .iter()
+                .find(|(name, _)| name == "Authorization")
+                .unwrap()
+                .1,
+            self.authorization
         );
         let mut requests = self.requests.lock().unwrap();
+        let mut parameters = request.parameters.clone();
+        parameters.sort();
+        let query = url::form_urlencoded::Serializer::new(String::new())
+            .extend_pairs(parameters)
+            .finish();
+        assert_eq!(query, self.queries[*requests]);
         let body = self.bodies[*requests].clone();
         *requests += 1;
         Ok(Response {
@@ -51,46 +71,46 @@ impl Transport for Fixture {
     }
 }
 #[tokio::test]
-async fn novel_series_content_match_go_schemas_records_errors_and_saved_account_stdio() {
+async fn timeline_matches_go_schemas_records_errors_and_saved_account_stdio() {
     let contract: Contract = serde_json::from_str(include_str!(
-        "../../../docs/migration/contracts/mcp-novel-series-content.json"
+        "../../../docs/migration/contracts/mcp-timeline.json"
     ))
     .unwrap();
-    assert_eq!(
-        pixiv_mcp::novel_series_tool(),
-        contract.tools["novel_series"]
-    );
-    assert_eq!(
-        pixiv_mcp::novel_content_tool(),
-        contract.tools["novel_content"]
-    );
-    assert_eq!(contract.cases.len(), 50);
+    assert_eq!(contract.cases.len(), 213);
+    for name in [
+        "timeline_illust_following",
+        "timeline_novel_following",
+        "timeline_illust_latest",
+        "timeline_novel_latest",
+    ] {
+        assert_eq!(
+            pixiv_mcp::timeline_tool(pixiv_mcp::Timeline::from_name(name).unwrap()),
+            contract.tools[name]
+        );
+    }
     for case in contract.cases {
         let fixture = Fixture {
+            authorization: "Bearer fixture-access",
+            tool_name: case.tool_name.clone(),
             bodies: case.bodies,
+            queries: case.queries.unwrap_or_default(),
             requests: Arc::new(Mutex::new(0)),
         };
         let client = Client::with_transport("fixture-access", fixture.clone());
         if case.rpc_error.is_empty() {
-            let result = if case.tool_name == "novel_series" {
-                serde_json::to_value(
-                    pixiv_mcp::novel_series(
-                        &client,
-                        serde_json::from_value(case.arguments.clone()).unwrap(),
-                    )
-                    .await,
+            let result = serde_json::to_value(
+                pixiv_mcp::timeline(
+                    &client,
+                    pixiv_mcp::Timeline::from_name(&case.tool_name).unwrap(),
+                    if case.arguments.is_null() {
+                        pixiv_mcp::TimelineInput::default()
+                    } else {
+                        serde_json::from_value(case.arguments.clone()).unwrap()
+                    },
                 )
-                .unwrap()
-            } else {
-                serde_json::to_value(
-                    pixiv_mcp::novel_content(
-                        &client,
-                        serde_json::from_value(case.arguments.clone()).unwrap(),
-                    )
-                    .await,
-                )
-                .unwrap()
-            };
+                .await,
+            )
+            .unwrap();
             assert_eq!(result, case.result, "{} direct", case.name);
             assert_eq!(
                 *fixture.requests.lock().unwrap(),
@@ -111,7 +131,11 @@ async fn novel_series_content_match_go_schemas_records_errors_and_saved_account_
             *fixture.requests.lock().unwrap() = 0;
             let mut output = vec![];
             if saved {
-                let accounts = saved_account::saved_execution(fixture.clone());
+                let saved_fixture = Fixture {
+                    authorization: "Bearer fixture-access-42",
+                    ..fixture.clone()
+                };
+                let accounts = saved_account::saved_execution(saved_fixture);
                 pixiv_mcp::stdio::serve_saved(&accounts.execution, input.as_bytes(), &mut output)
                     .await
                     .unwrap();
@@ -155,61 +179,7 @@ async fn novel_series_content_match_go_schemas_records_errors_and_saved_account_
                 "{} saved={saved}",
                 case.name
             );
-            assert_eq!(
-                case.calls,
-                usize::from(
-                    case.requests > 0
-                        || (case.tool_name == "novel_content"
-                            && case.rpc_error.is_empty()
-                            && case.arguments["novel_id"].as_i64().unwrap() > 0)
-                ),
-                "{}",
-                case.name
-            );
+            assert_eq!(case.calls, usize::from(case.requests > 0), "{}", case.name);
         }
     }
-}
-
-#[tokio::test]
-async fn stdio_lists_both_new_tools_and_retains_existing_tools() {
-    let contract: Contract = serde_json::from_str(include_str!(
-        "../../../docs/migration/contracts/mcp-novel-series-content.json"
-    ))
-    .unwrap();
-    let fixture = Fixture {
-        bodies: vec![],
-        requests: Arc::new(Mutex::new(0)),
-    };
-    let client = Client::with_transport("fixture-access", fixture.clone());
-    let input = concat!(
-        "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{\"protocolVersion\":\"2025-06-18\",\"capabilities\":{},\"clientInfo\":{\"name\":\"fixture\",\"version\":\"1\"}}}\n",
-        "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/list\",\"params\":{}}\n"
-    );
-    let mut output = vec![];
-    pixiv_mcp::stdio::serve(&client, input.as_bytes(), &mut output)
-        .await
-        .unwrap();
-    let responses = String::from_utf8(output)
-        .unwrap()
-        .lines()
-        .map(|line| serde_json::from_str::<Value>(line).unwrap())
-        .collect::<Vec<_>>();
-    let tools = responses
-        .iter()
-        .find(|response| response["id"] == 2)
-        .unwrap()["result"]["tools"]
-        .as_array()
-        .unwrap();
-    implemented_catalog::assert_catalog(tools);
-    assert_eq!(tools[19]["name"], "recommended");
-    assert_eq!(tools[14]["name"], "novel_series");
-    assert_eq!(tools[15]["name"], "novel_content");
-    assert_eq!(tools[16]["name"], "illust_series");
-    for (name, expected) in contract.tools {
-        assert_eq!(
-            *tools.iter().find(|tool| tool["name"] == name).unwrap(),
-            expected
-        );
-    }
-    assert_eq!(*fixture.requests.lock().unwrap(), 0);
 }

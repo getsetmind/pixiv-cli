@@ -147,3 +147,51 @@ fn continuation_query<'a>(raw: &'a str, endpoint: &str) -> Option<&'a str> {
     }
     Some(query)
 }
+
+impl<T: crate::transport::Transport> crate::Client<T> {
+    pub(crate) fn validate_scoped_cursor(
+        &self,
+        cursor: &crate::cursor::Cursor,
+        operation: &'static str,
+        binding: i64,
+        digest: &str,
+    ) -> crate::Result<()> {
+        if cursor.is_zero() {
+            return Ok(());
+        }
+        let invalid =
+            |detail| crate::Error::new(crate::Reason::InvalidCursor, operation).with_detail(detail);
+        cursor
+            .validate("pixiv", operation, binding, digest)
+            .map_err(|_| invalid("cursor does not match this operation and query"))?;
+        if let Some(identity) = cursor.identity() {
+            if identity != self.user_id.to_string() {
+                return Err(invalid("cursor belongs to a different account"));
+            }
+        } else {
+            cursor
+                .validate_instance(self.cursor_instance.as_deref().unwrap_or_default())
+                .map_err(|_| invalid("cursor belongs to a different client instance"))?;
+        }
+        Ok(())
+    }
+    pub(crate) fn scoped_cursor_options(
+        &self,
+        operation: &'static str,
+    ) -> crate::Result<crate::cursor::CursorOptions> {
+        Ok(if self.user_id > 0 {
+            crate::cursor::CursorOptions {
+                identity: self.user_id.to_string(),
+                ..Default::default()
+            }
+        } else {
+            crate::cursor::CursorOptions {
+                instance: Some(self.cursor_instance.clone().ok_or_else(|| {
+                    crate::Error::new(crate::Reason::LocalStateError, operation)
+                        .with_detail("cursor instance is not configured")
+                })?),
+                ..Default::default()
+            }
+        })
+    }
+}

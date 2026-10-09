@@ -1,3 +1,5 @@
+#[path = "support/implemented_catalog.rs"]
+mod implemented_catalog;
 use pixiv_mcp::stdio::serve;
 use pixiv_sdk::{
     Client, Result,
@@ -659,8 +661,13 @@ async fn stdio_publishes_implemented_tool_metadata_and_preserves_request_ids() {
             pixiv_mcp::bookmark_read_tool(pixiv_mcp::BookmarkRead::ArtworkTags),
             pixiv_mcp::bookmark_read_tool(pixiv_mcp::BookmarkRead::NovelTags),
             pixiv_mcp::bookmark_read_tool(pixiv_mcp::BookmarkRead::AllTags),
+            pixiv_mcp::timeline_tool(pixiv_mcp::Timeline::IllustFollowing),
+            pixiv_mcp::timeline_tool(pixiv_mcp::Timeline::NovelFollowing),
+            pixiv_mcp::timeline_tool(pixiv_mcp::Timeline::IllustLatest),
+            pixiv_mcp::timeline_tool(pixiv_mcp::Timeline::NovelLatest),
         ])
     );
+    implemented_catalog::assert_catalog(responses[1]["result"]["tools"].as_array().unwrap());
     for (index, name) in [
         "bookmark_detail",
         "novel_bookmark_detail",

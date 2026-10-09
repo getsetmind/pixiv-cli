@@ -1200,3 +1200,40 @@ cargo test -p pixiv-sdk --test artwork_bookmark_tags --test novel_bookmark_tags 
 Go broad regressionはSDK・bookmark command・CLI migration・MCP・vet・migration台帳検査が成功した。Linux公開面snapshot不在による1 testの除外、既知2scopeと今回2行の非決定的診断を明示しており、strict全scope成功とは扱わない。初回Rust比較ではleaf/rootの境界混同、saved fixtureのidentity42固定、raw responseのsend override不足が失敗した。境界を分離し、共有test helperとmockを実際のtransport動作へ合わせて修正した。固定Go期待値は変更せず、失敗ログと再検査ログを保持する。
 
 最終 `scripts/check-rust.ps1` はLinux amd64でexit0、210秒。Formatter、Clippy（全target、warnings denied）、workspace tests（239 passed、既存helper3 ignored）、workspace release（29.90秒）が成功した。初回formatter失敗と、旧29-tool catalog期待値の失敗も保存した。catalogは旧29全entryを変更せず5toolを追加し、各追加entryを固定Go metadataとも比較した。Go本番・go.mod・go.sumは参照commitから差分0。scoped確認の成功を全wire/通信/他platformや最終切替のverifiedとは扱わない。
+
+## Timeline following/latest の SDK・CLI・MCP
+
+Goの実在する4feedを縦断移植する。SDK `FollowingArtworks`/`FollowingNovels`/`LatestArtworks`/`LatestNovels` と各request型、CLI `timeline following`/`latest`、MCP `timeline_illust_following`/`timeline_novel_following`/`timeline_illust_latest`/`timeline_novel_latest` が対象。MyPixivの3feedとその入口は別scopeとして残す。既存Artwork/Novel DTO・resource・cursor、filter、logical traversal、renderer、saved account/poolを再利用する。
+
+SDK [timeline.json](../../crates/pixiv-sdk/tests/fixtures/timeline.json)は221 targeted行。restrict/defaultとcontent_type、検証順、query bytes、typed DTO/resource、空/null/不正field、next URL、operation/query/account/instance bindingを固定する。Followingはaccountまたはanonymous instanceに結び付き、Latestはglobal cursorである。LatestArtworksはoffsetとmax_illust_idのresponse continuationを受け取るが、正のoffset cursorで次を取得するとHTTP前UpstreamErrorになる実際のGo挙動を保持する。LatestNovelsはmax_novel_id。LatestArtworksのfilter=for_androidはwire queryに含み、cursor query digestには含まないGo境界を維持する。unrelated opposite list fieldを無視する2例も固定した。scoped cursorの検証/options生成をtimelineと既存user_relationshipsだけで共有し、既存関係一覧も回帰検査する。
+
+anonymous cursor envelopeのランダム`i`だけは既存Go `migrationSearchCursor`と同じplaceholderに置換する。payload、他のfield、binding結果、error textは変更しない。同じanonymous clientで続行し、別clientで拒否される実結果を比較する。ランダムnonce bytesの一致は未検証。
+
+CLI [main75](contracts/cli-timeline.json)の73行は実処理をdirect/saved境界で比較し、2行はClap leafの拒否だけを検査する。Cobra leaf固有のexact診断/exitは未検証。shared [body map](contracts/cli-timeline-bodies.json)、[実startup22](contracts/cli-timeline-startup.json)、[real-pool18](contracts/cli-timeline-pool.json)を使用する。followingのillust alias、全subtype、restrict、latestのillust/manga旧aliasとchanged content-type競合、novelのchanged subtype拒否、default illust、zero stdin read、設定/引数/proxy順、human/JSON/NDJSON/明示false/auto、logical window、commit/EPIPE/replayとleaseを維持する。Following artworkのlocal filterはupstream cursorを保持し、logical windowより前に適用して空のfiltered pageを跨ぐ。
+
+[Scalar flags33](contracts/cli-timeline-flags.json)はoutput/body直積を増やさず、Go base0のhex/octal/binary/underscore/sign/range、strconv boolean、missing value、actual Run errorを固定する。libraryからbinaryへ渡す実際のtimeline command configurationを使い、normalized parsed_valueも比較する。timelineだけにparserを付け、他commandのparserは変更しない。uint64 overflowが後続不正文字より先に選ばれ、signed範囲判定はsyntaxの後になる順序を保つ。BELとU+2028を含む診断は既存Go quote helperを再利用する。
+
+CLI leaf captureのanonymous NewWithはランダムinstanceを含むrepeated-cursor診断を生成したため、Rust比較前に合成OpenWith account42でfixtureを安定化した。最初の生観測は[non-comparable evidence](contracts/cli-timeline-nondeterminism.json)に保持し、replay失敗を観測していない段階で失敗証拠を捏造しない。account42の同じrepeated-cursor入力/結果はmainに保持する。anonymousの正確な生診断文字列は未検証。
+
+MCP [direct213](contracts/mcp-timeline.json)と[real-pool8](contracts/mcp-timeline-pool.json)を固定する。following restrict omitted→public、latest artworkは必須content_type illust|manga、各filter・schema/numeric/null・typed Records・logical budget/dedupを比較する。旧34tool全metadataを保持して4toolを追加し、38件のcatalogを独立Go基準とも比較する。poolは2callずつ行い、discarded account42 metadataを返さずaccount43でwhole collectionをreplayする成功とmalformed failure、query continuation、rotation-before-content、revision/freeze/selection、closeとgate reuseを検査する。
+
+初回Rust比較でother_client fixtureがverified identityを失い、saved MCP fixtureがdirect tokenを期待していた2件は、actual Go/shared saved helperと同じtest setupに修正した。Go期待値とproduction挙動は変更していない。実startupのmalformed scalar失敗と独立reviewのoverflow/quote差分はGo-first追加4行で修正した。
+
+finite scalar行は全flag/help/TTY/OS startupの証明ではない。timeline以外の既存CLI scalar parserのbase0/bool forms、group単体help、既存root parser3差分/Linux公開面snapshot、非user raw-wire casing/duplicates/order/null/UTF-8/precision、全cursor payloadと通信/auth/取消/concurrency/resource、他OS/archと署名配布は未検証。
+
+対象Go fixtureの最終replayはSDK0.022秒、CLI全timelineを3回で1.385秒、MCP direct7.680秒、pool0.355秒。Rust focused比較はSDK2 test0.08秒＋既存relationship0.09秒、MCP direct0.76秒/pool0.08秒、CLI main/normalized flags0.24秒/pool0.09秒/startupとflags0.79秒だった。これらはLinux cloudの観測値であり、他platformやdistinct behavior数へ換算しない。fixture/evidence10 filesは1,745,217 bytes。
+
+```text
+go test ./sdk/... ./internal/cli/commands/pixiv/timeline -count=1
+go test ./internal/cli -run '^TestMigration' -skip '^TestMigrationCLIContractKeepsCommandsAliasesAndFlags$' -count=1
+go test ./internal/mcpserver/pixiv -count=1 -args -migration-skip-nondeterministic-novel-property-order -migration-skip-nondeterministic-user-works-violation-selection -migration-mcp-bookmark-reads-allow-diagnostic-order
+go vet ./sdk/pixiv ./internal/cli ./internal/cli/commands/pixiv/timeline ./internal/mcpserver/pixiv
+go test ./scripts/tests/migration -count=1
+cargo test -p pixiv-sdk --test timeline --test user_relationships --locked
+cargo test -p pixiv-mcp --test timeline --test timeline_pool --test stdio --test novel_series_content --locked
+cargo test -p pixiv-cli-rs --test timeline --test timeline_startup --test timeline_pool --locked
+```
+
+Go broad regressionのSDK、timeline command、CLI migration（33.843秒）、MCP（78.188秒）、vet・migration台帳検査は成功した。既存のLinux snapshot不在による1 test除外と3個の限定diagnostic opt-inを保持し、strict全Go確認とは扱わない。full Rust gateではCLI-hosted MCPの旧34 countとbookmark-readの旧34 names assertionが順に失敗した。旧assertionの意味を保持して38件へ追加し、implemented namesと独立Go metadata lookupをtests/の共通helperで再利用する。schema-loaderとregistrationの一致、request-ID、独立hostの検査は別に保持する。失敗ログも保存する。
+
+最終 `scripts/check-rust.ps1` はLinux amd64でexit0、218秒。Formatter、全target Clippy（warnings denied）、workspace tests（248 passed、既存helper3 ignored）、workspace release（32.00秒）が成功した。共通catalog helperへの整理後の全treeで実行し、途中の旧catalog失敗を成功扱いにしない。Go本番・go.mod・go.sumは固定参照commitから差分0。operation/入口のscoped確認を、全wire・通信・他platform・最終切替のverifiedとは扱わない。

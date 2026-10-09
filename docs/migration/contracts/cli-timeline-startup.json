@@ -1,0 +1,416 @@
+[
+  {
+    "name": "following-missing-type",
+    "args": [
+      "following"
+    ],
+    "input": "",
+    "before": null,
+    "read_error": false,
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: type must be one of: artwork, novel\n",
+    "config": true,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": false,
+    "bytes": 0,
+    "read_calls": 0
+  },
+  {
+    "name": "latest-missing-type-json",
+    "args": [
+      "latest",
+      "--json"
+    ],
+    "input": "",
+    "before": null,
+    "read_error": false,
+    "exit": 1,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"type must be one of: artwork, novel\"}}\n",
+    "config": true,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": false,
+    "bytes": 0,
+    "read_calls": 0
+  },
+  {
+    "name": "following-artwork-auth",
+    "args": [
+      "following",
+      "--type=artwork"
+    ],
+    "input": "",
+    "before": null,
+    "read_error": false,
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+    "config": true,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": true,
+    "bytes": 0,
+    "read_calls": 0
+  },
+  {
+    "name": "latest-novel-auth-json",
+    "args": [
+      "latest",
+      "--type=novel",
+      "--json"
+    ],
+    "input": "",
+    "before": null,
+    "read_error": false,
+    "exit": 1,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:auth: unauthorized: no pixiv account is authenticated\"}}\n",
+    "config": true,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": true,
+    "bytes": 0,
+    "read_calls": 0
+  },
+  {
+    "name": "following-novel-auth-ndjson",
+    "args": [
+      "following",
+      "--type=novel",
+      "--ndjson"
+    ],
+    "input": "",
+    "before": null,
+    "read_error": false,
+    "exit": 1,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:auth: unauthorized: no pixiv account is authenticated\"}}\n",
+    "config": true,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": true,
+    "bytes": 0,
+    "read_calls": 0
+  },
+  {
+    "name": "invalid-type-priority",
+    "args": [
+      "following",
+      "--type=invalid",
+      "--page=0"
+    ],
+    "input": "",
+    "before": null,
+    "read_error": false,
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: type must be one of: artwork, novel\n",
+    "config": true,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": false,
+    "bytes": 0,
+    "read_calls": 0
+  },
+  {
+    "name": "positional-input",
+    "args": [
+      "latest",
+      "--type=artwork",
+      "42"
+    ],
+    "input": "",
+    "before": null,
+    "read_error": false,
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: usage: pixiv timeline latest --type artwork|novel [--content-type illust|manga]\n",
+    "config": false,
+    "after": "",
+    "database": false,
+    "bytes": 0,
+    "read_calls": 0
+  },
+  {
+    "name": "stdin-ignored",
+    "args": [
+      "following",
+      "--type=artwork"
+    ],
+    "input": "{\"id\":42}\n42\n",
+    "before": null,
+    "read_error": false,
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+    "config": true,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": true,
+    "bytes": 0,
+    "read_calls": 0
+  },
+  {
+    "name": "failed-reader-ignored",
+    "args": [
+      "latest",
+      "--type=novel"
+    ],
+    "input": "",
+    "before": null,
+    "read_error": true,
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+    "config": true,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": true,
+    "bytes": 0,
+    "read_calls": 0
+  },
+  {
+    "name": "invalid-page",
+    "args": [
+      "following",
+      "--type=artwork",
+      "--page=0",
+      "--json"
+    ],
+    "input": "",
+    "before": null,
+    "read_error": false,
+    "exit": 1,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"page must be a positive integer\"}}\n",
+    "config": true,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": false,
+    "bytes": 0,
+    "read_calls": 0
+  },
+  {
+    "name": "restrict-output-conflict",
+    "args": [
+      "following",
+      "--type=novel",
+      "--restrict=invalid",
+      "--ndjson",
+      "--json"
+    ],
+    "input": "",
+    "before": null,
+    "read_error": false,
+    "exit": 2,
+    "stdout": "",
+    "stderr": "error: --ndjson cannot be used with --json\n",
+    "config": true,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": false,
+    "bytes": 0,
+    "read_calls": 0
+  },
+  {
+    "name": "proxy-output-conflict",
+    "args": [
+      "latest",
+      "--type=artwork",
+      "--proxy=",
+      "--no-proxy",
+      "--ndjson",
+      "--json"
+    ],
+    "input": "",
+    "before": null,
+    "read_error": false,
+    "exit": 1,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"use either --proxy or --no-proxy, not both\"}}\n",
+    "config": true,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n",
+    "database": false,
+    "bytes": 0,
+    "read_calls": 0
+  },
+  {
+    "name": "unknown-latest-restrict",
+    "args": [
+      "latest",
+      "--type=novel",
+      "--restrict=public"
+    ],
+    "input": "",
+    "before": null,
+    "read_error": false,
+    "exit": 2,
+    "stdout": "",
+    "stderr": "error: unknown option '--restrict'\n",
+    "config": false,
+    "after": "",
+    "database": false,
+    "bytes": 0,
+    "read_calls": 0
+  },
+  {
+    "name": "unknown-flag-json",
+    "args": [
+      "following",
+      "--type=artwork",
+      "--unknown",
+      "--json"
+    ],
+    "input": "",
+    "before": null,
+    "read_error": false,
+    "exit": 2,
+    "stdout": "",
+    "stderr": "error: unknown option '--unknown'\n",
+    "config": false,
+    "after": "",
+    "database": false,
+    "bytes": 0,
+    "read_calls": 0
+  },
+  {
+    "name": "malformed-limit",
+    "args": [
+      "following",
+      "--type=artwork",
+      "--limit=bad"
+    ],
+    "input": "",
+    "before": null,
+    "read_error": false,
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: invalid argument \"bad\" for \"-l, --limit\" flag: strconv.ParseInt: parsing \"bad\": invalid syntax\n",
+    "config": false,
+    "after": "",
+    "database": false,
+    "bytes": 0,
+    "read_calls": 0
+  },
+  {
+    "name": "malformed-bool-json",
+    "args": [
+      "latest",
+      "--type=novel",
+      "--json=bad"
+    ],
+    "input": "",
+    "before": null,
+    "read_error": false,
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: invalid argument \"bad\" for \"-j, --json\" flag: strconv.ParseBool: parsing \"bad\": invalid syntax\n",
+    "config": false,
+    "after": "",
+    "database": false,
+    "bytes": 0,
+    "read_calls": 0
+  },
+  {
+    "name": "malformed-config-before-type",
+    "args": [
+      "following",
+      "--type=invalid"
+    ],
+    "input": "",
+    "before": "[unfinished\n",
+    "read_error": false,
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: toml: expected character ]\n",
+    "config": true,
+    "after": "[unfinished\n",
+    "database": false,
+    "bytes": 0,
+    "read_calls": 0
+  },
+  {
+    "name": "malformed-config-before-page",
+    "args": [
+      "latest",
+      "--type=artwork",
+      "--page=0"
+    ],
+    "input": "",
+    "before": "[unfinished\n",
+    "read_error": false,
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: toml: expected character ]\n",
+    "config": true,
+    "after": "[unfinished\n",
+    "database": false,
+    "bytes": 0,
+    "read_calls": 0
+  },
+  {
+    "name": "unknown-config-preserved",
+    "args": [
+      "following",
+      "--type=artwork"
+    ],
+    "input": "",
+    "before": "# mine\r\n[unknown]\r\nkeep = true\r\n",
+    "read_error": false,
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+    "config": true,
+    "after": "# mine\r\n[unknown]\r\nkeep = true\r\n",
+    "database": true,
+    "bytes": 0,
+    "read_calls": 0
+  },
+  {
+    "name": "configured-json-type-error",
+    "args": [
+      "latest"
+    ],
+    "input": "",
+    "before": "[output]\njson = true\n",
+    "read_error": false,
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: type must be one of: artwork, novel\n",
+    "config": true,
+    "after": "[output]\njson = true\n",
+    "database": false,
+    "bytes": 0,
+    "read_calls": 0
+  },
+  {
+    "name": "invalid-proxy-config",
+    "args": [
+      "following",
+      "--type=novel"
+    ],
+    "input": "",
+    "before": "[pixiv.network]\nproxy_url = 'invalid'\n",
+    "read_error": false,
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration\n",
+    "config": true,
+    "after": "[pixiv.network]\nproxy_url = 'invalid'\n",
+    "database": true,
+    "bytes": 0,
+    "read_calls": 0
+  },
+  {
+    "name": "proxy-config-cleared",
+    "args": [
+      "latest",
+      "--type=artwork",
+      "--no-proxy"
+    ],
+    "input": "",
+    "before": "[pixiv.network]\nproxy_url = 'invalid'\n",
+    "read_error": false,
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+    "config": true,
+    "after": "[pixiv.network]\nproxy_url = 'invalid'\n",
+    "database": true,
+    "bytes": 0,
+    "read_calls": 0
+  }
+]

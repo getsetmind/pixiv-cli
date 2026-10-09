@@ -10,6 +10,7 @@ pub mod ranking;
 pub mod recommended;
 mod record_input;
 pub mod search;
+pub mod timeline;
 pub mod trending;
 pub mod user_relationships;
 pub mod user_search;

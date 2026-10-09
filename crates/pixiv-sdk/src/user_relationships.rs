@@ -1,7 +1,7 @@
 use crate::{
     Client, Error, Reason, Result,
     artwork::WireUser,
-    cursor::{Cursor, CursorOptions, Page},
+    cursor::{Cursor, Page},
     models::UserPreview,
     ranking::apply_offset,
     transport::Transport,
@@ -127,21 +127,7 @@ impl<T: Transport> Client<T> {
             );
         }
         let digest = crate::continuation::query_digest(&query);
-        if !cursor.is_zero() {
-            let invalid = |detail| Error::new(Reason::InvalidCursor, operation).with_detail(detail);
-            cursor
-                .validate("pixiv", operation, 1, &digest)
-                .map_err(|_| invalid("cursor does not match this operation and query"))?;
-            if let Some(identity) = cursor.identity() {
-                if identity != self.user_id.to_string() {
-                    return Err(invalid("cursor belongs to a different account"));
-                }
-            } else {
-                cursor
-                    .validate_instance(self.cursor_instance.as_deref().unwrap_or_default())
-                    .map_err(|_| invalid("cursor belongs to a different client instance"))?;
-            }
-        }
+        self.validate_scoped_cursor(&cursor, operation, 1, &digest)?;
         apply_offset(&cursor, operation, &digest, &mut query)?;
         let mut allowed = vec!["offset", user_key];
         if query.contains_key("restrict") {
@@ -184,20 +170,7 @@ impl<T: Transport> Client<T> {
             })
             .transpose()?;
         let next = if let Some(offset) = offset {
-            let options = if self.user_id > 0 {
-                CursorOptions {
-                    identity: self.user_id.to_string(),
-                    ..Default::default()
-                }
-            } else {
-                CursorOptions {
-                    instance: Some(self.cursor_instance.clone().ok_or_else(|| {
-                        Error::new(Reason::LocalStateError, operation)
-                            .with_detail("cursor instance is not configured")
-                    })?),
-                    ..Default::default()
-                }
-            };
+            let options = self.scoped_cursor_options(operation)?;
             Cursor::new(
                 "pixiv",
                 operation,

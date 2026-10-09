@@ -1,3 +1,5 @@
+#[path = "support/implemented_catalog.rs"]
+mod implemented_catalog;
 use pixiv_sdk::{
     Client,
     transport::{Request, Response, Transport},
@@ -229,47 +231,5 @@ async fn bookmark_reads_append_catalog_without_reordering_existing_tools() {
     let tools = responses.iter().find(|r| r["id"] == 2).unwrap()["result"]["tools"]
         .as_array()
         .unwrap();
-    let names = tools
-        .iter()
-        .map(|tool| tool["name"].as_str().unwrap())
-        .collect::<Vec<_>>();
-    assert_eq!(
-        names,
-        [
-            "illust_detail",
-            "search_illust",
-            "trending_tags_illust",
-            "illust_ranking",
-            "novel_detail",
-            "search_novel",
-            "user_detail",
-            "search_user",
-            "add_bookmark",
-            "remove_bookmark",
-            "add_novel_bookmark",
-            "remove_novel_bookmark",
-            "follow_user",
-            "unfollow_user",
-            "novel_series",
-            "novel_content",
-            "illust_series",
-            "illust_related",
-            "illust_recommended",
-            "recommended",
-            "user_artworks",
-            "user_novels",
-            "user_following",
-            "user_followers",
-            "related_users",
-            "blocked_users",
-            "user_bookmarks",
-            "user_novel_bookmarks",
-            "bookmark_list_all",
-            "bookmark_detail",
-            "novel_bookmark_detail",
-            "bookmark_tags",
-            "novel_bookmark_tags",
-            "bookmark_tags_all"
-        ]
-    );
+    implemented_catalog::assert_catalog(tools);
 }
