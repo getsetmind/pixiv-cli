@@ -28,6 +28,16 @@ pub(crate) fn query_digest(query: &BTreeMap<String, String>) -> String {
     }
     format!("{:x}", Sha256::digest(canonical.as_bytes()))
 }
+pub(crate) fn next_zero_offset(raw: &str, endpoint: &str, allowed_keys: &[&str]) -> Option<i64> {
+    let params = next_params(raw, endpoint, allowed_keys, &[], &[])?;
+    let value = params
+        .get("offset")?
+        .as_ref()?
+        .first()?
+        .parse::<i64>()
+        .ok()?;
+    (value >= 0).then_some(value)
+}
 pub(crate) fn next_offset(raw: &str, endpoint: &str, allowed_keys: &[&str]) -> Option<i64> {
     next_value(raw, endpoint, allowed_keys, "offset")
 }

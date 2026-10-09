@@ -55,7 +55,11 @@ fn validate(input: &SearchNovelInput) -> Result<crate::search::Plan, String> {
         ..Default::default()
     };
     let plan = crate::search::validate(&mut common)?;
-    if let Some(filter) = &input.novel_filter {
+    validate_filter(input.novel_filter.as_ref())?;
+    Ok(plan)
+}
+pub(crate) fn validate_filter(filter: Option<&NovelFilter>) -> Result<(), String> {
+    if let Some(filter) = filter {
         if filter.id.is_some_and(|id| id <= 0) {
             return Err("novel_filter.id must be positive".into());
         }
@@ -63,7 +67,19 @@ fn validate(input: &SearchNovelInput) -> Result<crate::search::Plan, String> {
             return Err("novel_filter.min_views must be zero or positive".into());
         }
     }
-    Ok(plan)
+    Ok(())
+}
+pub(crate) fn matches(novel: &Novel, filter: Option<&NovelFilter>) -> bool {
+    filter.is_none_or(|filter| {
+        filter.id.is_none_or(|id| novel.id == id)
+            && filter
+                .min_views
+                .is_none_or(|minimum| novel.total_views >= minimum)
+            && filter
+                .tags
+                .iter()
+                .all(|tag| novel.tags.iter().any(|actual| actual.name == *tag))
+    })
 }
 pub async fn search_novel<T: Transport>(
     client: &Client<T>,
@@ -145,16 +161,7 @@ async fn collect<T: Transport>(
             }
         },
         |novel: &Novel| {
-            let matches = input.novel_filter.as_ref().is_none_or(|filter| {
-                filter.id.is_none_or(|id| novel.id == id)
-                    && filter
-                        .min_views
-                        .is_none_or(|minimum| novel.total_views >= minimum)
-                    && filter
-                        .tags
-                        .iter()
-                        .all(|tag| novel.tags.iter().any(|actual| actual.name == *tag))
-            });
+            let matches = matches(novel, input.novel_filter.as_ref());
             Ok(matches && seen.insert(novel.id))
         },
         None::<fn(Cursor, usize) -> Result<Cursor, SchedulerError>>,

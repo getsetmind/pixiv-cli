@@ -1,0 +1,150 @@
+{
+  "description": "Get typed personalized recommendations through the Pixiv SDK.",
+  "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "illust_filter": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "min_pages": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "min_views": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "type": {
+            "enum": [
+              "illust",
+              "manga",
+              "ugoira"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "kind": {
+        "enum": [
+          "all",
+          "illust",
+          "manga",
+          "novel",
+          "user"
+        ],
+        "type": "string"
+      },
+      "limit": {
+        "description": "Maximum logical results; 0 returns all; omitted reads one upstream batch. Artwork recommendation filters are applied after selecting this upstream window.",
+        "minimum": 0,
+        "type": "integer"
+      },
+      "novel_filter": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "min_views": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "page": {
+        "description": "1-based logical page; requires a positive limit. Artwork recommendation filters are applied after selecting this upstream window.",
+        "minimum": 1,
+        "type": "integer"
+      },
+      "user_filter": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "required": [
+      "kind"
+    ],
+    "type": "object"
+  },
+  "name": "recommended",
+  "outputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "pagination": {
+        "additionalProperties": false,
+        "properties": {
+          "illust": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "manga": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "novel": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "user": {
+            "additionalProperties": true,
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "records": {
+        "items": {
+          "additionalProperties": true,
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "type",
+            "url"
+          ],
+          "type": "object"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "records",
+      "pagination"
+    ],
+    "type": "object"
+  }
+}

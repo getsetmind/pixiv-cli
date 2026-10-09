@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::BTreeMap;
 
-type Params = BTreeMap<String, Option<Vec<String>>>;
+pub(crate) type Params = BTreeMap<String, Option<Vec<String>>>;
 const RELATED: &str = "RelatedArtworks";
 const RECOMMENDED: &str = "RecommendedArtworks";
 const RECOMMENDED_KEYS: &[&str] = &[
@@ -78,12 +78,23 @@ fn valid_params(operation: &str, params: &Params) -> bool {
             && positive(params.get("seed_illust_ids[]"))
             && positive(params.get("viewed[]"));
     }
+    let keys: &[&str] = if operation == "RecommendedNovels" {
+        &[
+            "offset",
+            "already_recommended",
+            "max_bookmark_id_for_recommend",
+            "include_ranking_novels",
+            "include_privacy_policy",
+        ]
+    } else {
+        RECOMMENDED_KEYS
+    };
     !params.is_empty()
         && params.iter().all(|(key, values)| {
             let Some(values) = values else {
                 return false;
             };
-            if values.len() != 1 || values[0].is_empty() {
+            if !keys.contains(&key.as_str()) || values.len() != 1 || values[0].is_empty() {
                 return false;
             }
             let value = &values[0];
@@ -92,13 +103,15 @@ fn valid_params(operation: &str, params: &Params) -> bool {
                 "min_bookmark_id_for_recent_illust" | "max_bookmark_id_for_recommend" => {
                     value.parse::<i64>().is_ok_and(|v| v > 0)
                 }
-                "include_ranking_illusts" | "include_privacy_policy" => {
+                "include_ranking_illusts" | "include_ranking_novels" | "include_privacy_policy" => {
                     matches!(value.as_str(), "true" | "false")
                 }
+                "already_recommended" => true,
                 _ => false,
             }
         })
 }
+
 fn indexed(params: &Params, prefix: &str) -> Option<Vec<String>> {
     let mut entries = BTreeMap::new();
     for (key, values) in params {
@@ -158,7 +171,7 @@ fn next_params(operation: &str, raw: &str) -> Option<Params> {
     ]))
 }
 impl<T: Transport> Client<T> {
-    fn artwork_feed_params(
+    pub(crate) fn artwork_feed_params(
         &self,
         operation: &'static str,
         digest: &str,

@@ -1,0 +1,296 @@
+[
+  {
+    "name": "null-tools",
+    "body": {
+      "user_previews": [
+        {
+          "user": {
+            "id": 1
+          },
+          "illusts": [
+            {
+              "id": 2,
+              "user": {
+                "id": 1
+              },
+              "tools": [
+                null
+              ],
+              "create_date": "2026-09-01T00:00:00Z"
+            }
+          ]
+        }
+      ]
+    },
+    "result": {
+      "items": [
+        {
+          "user": {
+            "id": 1,
+            "name": "",
+            "account": "",
+            "comment": "",
+            "is_followed": false,
+            "profile_image": {
+              "resource": null,
+              "variant": "",
+              "width": 0,
+              "height": 0
+            }
+          },
+          "illusts": [
+            {
+              "id": 2,
+              "title": "",
+              "caption": "",
+              "kind": "unknown",
+              "raw_kind": "",
+              "tags": [],
+              "user": {
+                "id": 1,
+                "name": "",
+                "account": "",
+                "comment": "",
+                "is_followed": false,
+                "profile_image": {
+                  "resource": null,
+                  "variant": "",
+                  "width": 0,
+                  "height": 0
+                }
+              },
+              "published_at": "2026-09-01T00:00:00Z",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "width": 0,
+              "height": 0,
+              "page_count": 0,
+              "x_restrict": 0,
+              "ai_type": 0,
+              "tools": [
+                ""
+              ],
+              "cover": {
+                "resource": null,
+                "variant": "",
+                "width": 0,
+                "height": 0
+              }
+            }
+          ],
+          "novels": []
+        }
+      ],
+      "cursor": null,
+      "reason": "",
+      "message": ""
+    }
+  },
+  {
+    "name": "null-meta-page",
+    "body": {
+      "user_previews": [
+        {
+          "user": {
+            "id": 1
+          },
+          "illusts": [
+            {
+              "id": 2,
+              "user": {
+                "id": 1
+              },
+              "meta_pages": [
+                null
+              ],
+              "create_date": "2026-09-01T00:00:00Z"
+            }
+          ]
+        }
+      ]
+    },
+    "result": {
+      "items": [
+        {
+          "user": {
+            "id": 1,
+            "name": "",
+            "account": "",
+            "comment": "",
+            "is_followed": false,
+            "profile_image": {
+              "resource": null,
+              "variant": "",
+              "width": 0,
+              "height": 0
+            }
+          },
+          "illusts": [
+            {
+              "id": 2,
+              "title": "",
+              "caption": "",
+              "kind": "unknown",
+              "raw_kind": "",
+              "tags": [],
+              "user": {
+                "id": 1,
+                "name": "",
+                "account": "",
+                "comment": "",
+                "is_followed": false,
+                "profile_image": {
+                  "resource": null,
+                  "variant": "",
+                  "width": 0,
+                  "height": 0
+                }
+              },
+              "published_at": "2026-09-01T00:00:00Z",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "width": 0,
+              "height": 0,
+              "page_count": 0,
+              "x_restrict": 0,
+              "ai_type": 0,
+              "cover": {
+                "resource": null,
+                "variant": "",
+                "width": 0,
+                "height": 0
+              }
+            }
+          ],
+          "novels": []
+        }
+      ],
+      "cursor": null,
+      "reason": "",
+      "message": ""
+    }
+  },
+  {
+    "name": "invalid-meta-page-index",
+    "body": {
+      "user_previews": [
+        {
+          "user": {
+            "id": 1
+          },
+          "illusts": [
+            {
+              "id": 2,
+              "user": {
+                "id": 1
+              },
+              "meta_pages": [
+                {
+                  "page_index": "bad"
+                }
+              ],
+              "create_date": "2026-09-01T00:00:00Z"
+            }
+          ]
+        }
+      ]
+    },
+    "result": {
+      "items": [],
+      "cursor": null,
+      "reason": "malformed_upstream_response",
+      "message": "pixiv:RecommendedUsers: malformed_upstream_response"
+    }
+  },
+  {
+    "name": "invalid-meta-page-extension",
+    "body": {
+      "user_previews": [
+        {
+          "user": {
+            "id": 1
+          },
+          "illusts": [
+            {
+              "id": 2,
+              "user": {
+                "id": 1
+              },
+              "meta_pages": [
+                {
+                  "extension": 1
+                }
+              ],
+              "create_date": "2026-09-01T00:00:00Z"
+            }
+          ]
+        }
+      ]
+    },
+    "result": {
+      "items": [],
+      "cursor": null,
+      "reason": "malformed_upstream_response",
+      "message": "pixiv:RecommendedUsers: malformed_upstream_response"
+    }
+  },
+  {
+    "name": "uppercase-preview",
+    "body": {
+      "user_previews": [
+        {
+          "USER": {
+            "ID": 1,
+            "NAME": "writer"
+          }
+        }
+      ]
+    },
+    "result": {
+      "items": [
+        {
+          "user": {
+            "id": 1,
+            "name": "writer",
+            "account": "",
+            "comment": "",
+            "is_followed": false,
+            "profile_image": {
+              "resource": null,
+              "variant": "",
+              "width": 0,
+              "height": 0
+            }
+          },
+          "illusts": [],
+          "novels": []
+        }
+      ],
+      "cursor": null,
+      "reason": "",
+      "message": ""
+    }
+  },
+  {
+    "name": "escaped-novel-cursor",
+    "body": {
+      "novels": [],
+      "next_url": "https://app-api.pixiv.net/v1/novel/recommended?already_recommended=%3C%3E%26%E2%80%A8%E2%80%A9"
+    },
+    "result": {
+      "items": [],
+      "cursor": {
+        "b": 2,
+        "e": true,
+        "i": "instance",
+        "o": "RecommendedNovels",
+        "p": "pixiv",
+        "pl": "eyJrIjoiIiwidiI6MCwicCI6eyJhbHJlYWR5X3JlY29tbWVuZGVkIjpbIlx1MDAzY1x1MDAzZVx1MDAyNlx1MjAyOFx1MjAyOSJdfX0=",
+        "q": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "v": 1
+      },
+      "reason": "",
+      "message": ""
+    }
+  }
+]

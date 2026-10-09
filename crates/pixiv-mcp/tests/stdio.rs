@@ -640,6 +640,7 @@ async fn stdio_publishes_implemented_tool_metadata_and_preserves_request_ids() {
             pixiv_mcp::illust_series_tool(),
             pixiv_mcp::illust_related_tool(),
             pixiv_mcp::illust_recommended_tool(),
+            pixiv_mcp::recommended_tool(),
         ])
     );
 }

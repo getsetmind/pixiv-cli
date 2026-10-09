@@ -18,6 +18,7 @@ pub mod oauth;
 mod pacing;
 pub mod pixiv;
 mod ranking;
+mod recommendations;
 pub mod reference;
 pub mod resource;
 mod resource_io;

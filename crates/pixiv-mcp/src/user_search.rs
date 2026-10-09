@@ -70,14 +70,17 @@ fn validate(input: &SearchUserInput) -> Result<crate::search::Plan, String> {
         ..Default::default()
     };
     let plan = crate::search::validate(&mut common)?;
-    if input
-        .user_filter
-        .as_ref()
-        .is_some_and(|filter| filter.id.is_some_and(|id| id <= 0))
-    {
+    validate_filter(input.user_filter.as_ref())?;
+    Ok(plan)
+}
+pub(crate) fn validate_filter(filter: Option<&UserFilter>) -> Result<(), String> {
+    if filter.is_some_and(|filter| filter.id.is_some_and(|id| id <= 0)) {
         return Err("user_filter.id must be positive".into());
     }
-    Ok(plan)
+    Ok(())
+}
+pub(crate) fn matches(preview: &UserPreview, filter: Option<&UserFilter>) -> bool {
+    filter.is_none_or(|filter| filter.id.is_none_or(|id| preview.user.id == id))
 }
 pub async fn search_user<T: Transport>(
     client: &Client<T>,
@@ -156,10 +159,7 @@ async fn collect<T: Transport>(
             }
         },
         |preview: &UserPreview| {
-            let matches = input
-                .user_filter
-                .as_ref()
-                .is_none_or(|filter| filter.id.is_none_or(|id| preview.user.id == id));
+            let matches = matches(preview, input.user_filter.as_ref());
             Ok(matches && seen.insert(preview.user.id))
         },
         None::<fn(Cursor, usize) -> Result<Cursor, SchedulerError>>,

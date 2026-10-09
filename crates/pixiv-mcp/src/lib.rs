@@ -201,3 +201,6 @@ pub use artwork_feed::{
     IllustRecommendedInput, IllustRelatedInput, illust_recommended, illust_recommended_tool,
     illust_related, illust_related_tool,
 };
+
+mod recommended;
+pub use recommended::{RecommendedInput, recommended, recommended_tool};

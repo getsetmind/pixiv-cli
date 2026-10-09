@@ -313,7 +313,7 @@ fn plan(input: &SearchIllustInput) -> Result<Plan, String> {
         one_batch: input.limit.is_none(),
     })
 }
-fn pagination(plan: &Plan, limit: Option<i64>, returned: usize, more: bool) -> Value {
+pub(crate) fn pagination(plan: &Plan, limit: Option<i64>, returned: usize, more: bool) -> Value {
     json!({"page":plan.page,"limit":limit,"returned":returned,"has_more":more,"next_page":if more && limit.is_some_and(|limit|limit > 0) { plan.page.checked_add(1) } else { None }})
 }
 pub(crate) fn failure(message: String) -> CallToolResult {

@@ -1075,3 +1075,21 @@ Go の next_url parser と次回 cursor validation は同じ検証ではない�
 Go の scoped 全体検査は終了0で、SDK・MCP・CLI・migration 台帳、関連 vet と gofmt が成功した。MCP は opt-in の `-migration-skip-nondeterministic-novel-property-order` を使い、novel_content-argument-p の診断全文が観測した2通りのいずれかであることを確認した上で、この行の未知 property の順だけを未検証にする。他の診断内容、result・calls・requests、schema、全ての他の行は元の byte 比較を維持する。flag 無指定の検査は従来通り strict で、非決定的な順で失敗し得る。CLI は既知の cli.linux-amd64.json 不在の公開面検査だけを除外した。失敗ログ、20回再現ログ、scoped 成功ログを分けて保持し、未検証を成功扱いにしていない。
 
 Linux amd64 の最終 scripts/check-rust.ps1 は終了0で、Formatter、workspace all-target Clippy、196 passed・0 failed・既存3 ignored、release build が成功した。最初の全チェックは既存 novel-series catalog set が追加2 tool を含んでおらず失敗した。旧17 tool の比較を保持して2 tool を追加し、全チェックを再実行した。最終 Clippy build は約0.4秒、test build は約2秒、release build は約19秒だった。独立レビューは feed 実装と、診断順だけを隔離する Go 比較を確認した。実装・契約取得・比較・検証は約15分で、Go 本番コード・go.mod・go.sum は固定参照との差がなく、実 Pixiv 資格情報・ライブアクセスを使用していない。台帳の in_progress と全体切替条件を維持する。
+
+## 小説・ユーザー推奨 SDK と混合 recommended MCP
+
+[novel-user-recommendations.json](contracts/novel-user-recommendations.json) は RecommendedNovels と RecommendedUsers の固定 Go 166ケースである。小説の構造化 params と binding v2、ユーザーの scalar offset と binding v1、account/client/query binding、明示 offset=0、DTO、sample works、query 順序/多重値と cursor payload を比較する。ユーザーの sample は endpoint が全 ID を検証した後、publish time/resource の map-time 失敗を Go と同じく省略する。通常の SearchUsers と違い sample artwork/novel を保持する。既存 artwork params helper と URL safety を再利用し、前の155作品 feed 比較も通った。
+
+[recommendation-sample-wire-gaps.json](contracts/recommendation-sample-wire-gaps.json) は別に固定した6 Go ケースである。4つの sample null/type ケースは RecommendedUsers の範囲だけで修正した。null tools は空文字列の要素、null meta_pages はゼロ値 page になり、不正な page_index/extension 型は mapping 前に endpoint 全体を拒否する。他操作の schema を厳しくしていない。already_recommended の <>& と U+2028/U+2029 は Go と同じ escape を cursor payload に保存する。これら5ケースは Rust と比較済みで、uppercase user の1ケースは Go evidence だけを残し、対応 Rust 比較から明示的に除いた未検証の共有 raw-wire gap である。未検証を passing comparison の件数に含めない。
+
+追加の mock resource 比較では推奨小説と推奨ユーザー/sample の計6 cover/profile reference を public OpenResource で開き、覚えた URL を使って追加 metadata API 要求をしないことを確認した。実画像の取得や全 resource edge の証明ではない。
+
+[mcp-recommended.json](../../crates/pixiv-mcp/tests/fixtures/mcp-recommended.json) は recommended の schema と279ケースである。all/illust/manga/novel/user、全 filter、conflict、page/limit、records 順、kind ごとの pagination、異常系を直接・stdio・保存済み account で比較する。Go 先行の追加6ケースで nested integer overflow の In.illust_filter.id/min_views/min_pages、In.novel_filter.id/min_views、In.user_filter.id の診断を確認した。元の273行と schema は変更していない。最初の Rust 比較は Go の null bodies を受け取る fixture loader で失敗し、その後の比較で overflow の struct 名が recommendedIn になっている差を検出した。fixture を変えず、test loader と production binding 名をそれぞれ修正して比較全体を再実行した。
+
+混合 artwork の論理 raw window は1回だけ取得してから illust/manga に filter・分割する。専用 illust_recommended の先 filter と混同しない。all に明示的な illust_filter.type があると両 section で同じ type を保持し、Go と同じ重複 records を返す。visual has_more は raw window の値を各 section が共有し、filtered output が空でも変えない。小説とユーザーは各 filter を論理 pagination 前に適用する。
+
+[mcp-recommended-pool.json](../../crates/pixiv-mcp/tests/fixtures/mcp-recommended-pool.json) は2つの実 DB/2 account replay mode を固定する。Go の aggregate output は試行 callback の外にあるため、後続 feed の retry で既に完了した section の records を保持して追加する。成功時に重複した7 records があっても pagination は最終試行の各 section 件数を示す。Rust はこの既存の動作を勝手に改善しない。最終失敗では fresh error envelope の records[]/pagination{} を返す。account 42から43への切替、endpoint trace、lease 解放と次回 reuse も比較する。既存19 tool の順序/schema を保ち、recommended を20番目へ追加した。
+
+この工程は recommended CLI の全 kind を移植するための読み取り依存を揃えるものだが、CLI 自体は pending を維持する。共有 raw-wire/cursor payload の大小文字・重複/null・不正 UTF-8・任意 JSON precision、schema 複数不正 field の診断順、取消/concurrency/disconnect、全通信/Options・実 HTTPS/resource、他 OS/arch は未検証である。前の root parser3差分、Linux 公開面 snapshot 不在、novel_content の2未知 property の順序非決定性も解消扱いにしない。
+
+Linux amd64 の最終 scripts/check-rust.ps1 は終了0で、Formatter、workspace all-target Clippy、201 passed・0 failed・既存3 ignored、release build が成功した。Clippy build は約7秒、test build は約30秒、release build は約19秒で、全チェックは約2分半だった。Go SDK・MCP・CLI・migration 台帳、関連 vet/gofmt、固定参照との本番 Go/go.mod/go.sum の無差分チェックも成功した。既知の Linux 公開面検査だけの除外と、novel_content の未知 property 診断順だけを隔離する opt-in flag は継続し、該当未検証を通過扱いにしていない。独立レビューは scoped sample/type correction、exact overflow diagnostics、aggregate/replay と catalog を確認した。実装・契約取得・比較・検証は約14分で、実 Pixiv 資格情報・ライブアクセスを使用していない。台帳の in_progress と全体切替条件を維持する。
