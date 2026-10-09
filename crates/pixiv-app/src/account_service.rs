@@ -14,6 +14,12 @@ use std::sync::{Arc, Mutex};
 pub use crate::account_views::AccountSummary;
 
 pub trait AccountRepository: Send + Sync {
+    fn remove(&self, _context: &Context, _user_id: i64) -> Result<(), SchedulerError> {
+        Err(SchedulerError::Message(
+            "pixiv account management repository is not configured".into(),
+        ))
+    }
+
     fn pool_status(&self, _context: &Context, _now: i64) -> Result<PoolStatus, SchedulerError> {
         Err(SchedulerError::Message(
             "pixiv account pool repository is not configured".into(),
@@ -50,6 +56,16 @@ pub trait AccountRepository: Send + Sync {
 }
 
 impl AccountRepository for Mutex<Database> {
+    fn remove(&self, context: &Context, user_id: i64) -> Result<(), SchedulerError> {
+        if let Some(error) = context.error() {
+            return Err(error.into());
+        }
+        self.lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner())
+            .remove_pixiv(user_id)
+            .map_err(SchedulerError::Account)
+    }
+
     fn pool_status(&self, context: &Context, now: i64) -> Result<PoolStatus, SchedulerError> {
         let mut database = self.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
         if let Some(error) = context.error() {

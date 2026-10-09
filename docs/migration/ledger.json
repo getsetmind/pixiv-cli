@@ -44,7 +44,10 @@
         "crates/pixiv-cli/src/auth_accounts.rs",
         "crates/pixiv-cli/src/main.rs",
         "crates/pixiv-app/src/account_views.rs",
-        "crates/pixiv-app/src/database/pool.rs"
+        "crates/pixiv-app/src/database/pool.rs",
+        "crates/pixiv-cli/src/terminal_prompt.rs",
+        "crates/pixiv-app/src/account_management.rs",
+        "crates/pixiv-app/src/config/mutations.rs"
       ],
       "tests": [
         "internal/storage/database/migration_contract_test.go#TestMigrationDatabasePreservesSchemaAndRejectsDrift",
@@ -105,15 +108,26 @@
         "crates/pixiv-cli/tests/auth_accounts_startup.rs",
         "crates/pixiv-cli/tests/auth_accounts_boundaries.rs",
         "crates/pixiv-cli/tests/support/auth_accounts.rs",
-        "crates/pixiv-app/tests/auth_account_views.rs"
+        "crates/pixiv-app/tests/auth_account_views.rs",
+        "internal/cli/migration_auth_selection_test.go",
+        "internal/cli/commands/pixiv/auth/migration_terminal_prompt_test.go",
+        "internal/services/pixiv/account/migration_management_test.go",
+        "internal/config/settings/migration_default_management_test.go",
+        "docs/migration/contracts/cli-auth-selection.json",
+        "crates/pixiv-cli/tests/auth_selection_startup.rs",
+        "crates/pixiv-cli/tests/auth_selection_boundaries.rs",
+        "crates/pixiv-cli/tests/auth_selection_ports.rs",
+        "crates/pixiv-cli/tests/terminal_prompt.rs",
+        "crates/pixiv-app/tests/account_management.rs",
+        "crates/pixiv-app/tests/config_default_management.rs"
       ],
       "verified_platforms": [
         "windows-amd64",
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "認証DBの基盤のみ着手。Go Openの19ケースでschema/index/台帳、v1→v3、checksum、application_id、版/名前の拒否と失敗後状態、合成アカウントのtoken/revisionを比較。Rust作成・Go v3・Go v1の3ファイルをRust子プロセス経由でGoが再開。残るauth use/remove/import/export/check/refresh/login/callback、FANBOX repository・refresh application・pool session/config/SQL取消・強制終了復旧・全障害・Windows ACL・Unix mode・他OSは未移植または未検証。接続内pragma/lockは未比較。user_version=3に未知第4台帳行がある場合も固定Goが受け入れる挙動を維持。SQLite driver固有のempty-ledgerエラーは失敗箇所まで比較。",
-        "Pixiv repositoryのsave/batch/list/get/remove/metadata/rotation CASを31操作で比較。token copy/Debug秘匿、8件の共有connection更新で成功1件/conflict7件、Go→Rust→Go→Rustの実ファイル状態を検証。時刻は操作前に11/22へ制御し実際の更新時刻が操作window内であることを確認して-1化。SQLite固有診断は制約種別と対象列のみ比較。残るauth use/remove/import/export/check/refresh/login/callback、FANBOX、refresh UID照合/app接続、pool session Use/refresh、別connection/process競合、取消/強制停止、全境界/障害、config・MCP、他OSは未実装または未検証。",
+        "認証DBの基盤のみ着手。Go Openの19ケースでschema/index/台帳、v1→v3、checksum、application_id、版/名前の拒否と失敗後状態、合成アカウントのtoken/revisionを比較。Rust作成・Go v3・Go v1の3ファイルをRust子プロセス経由でGoが再開。残るauth import/export/check/refresh/login/callback、FANBOX repository・refresh application・pool session/config/SQL取消・強制終了復旧・全障害・Windows ACL・Unix mode・他OSは未移植または未検証。接続内pragma/lockは未比較。user_version=3に未知第4台帳行がある場合も固定Goが受け入れる挙動を維持。SQLite driver固有のempty-ledgerエラーは失敗箇所まで比較。",
+        "Pixiv repositoryのsave/batch/list/get/remove/metadata/rotation CASを31操作で比較。token copy/Debug秘匿、8件の共有connection更新で成功1件/conflict7件、Go→Rust→Go→Rustの実ファイル状態を検証。時刻は操作前に11/22へ制御し実際の更新時刻が操作window内であることを確認して-1化。SQLite固有診断は制約種別と対象列のみ比較。残るauth import/export/check/refresh/login/callback、FANBOX、refresh UID照合/app接続、pool session Use/refresh、別connection/process競合、取消/強制停止、全境界/障害、config・MCP、他OSは未実装または未検証。",
         "Schedulerの再試行・commit・取消・枯渇・clock・保存状態をGoの97ケースで比較し、待機中の試行への外部commit/取消もGo/Rustで検証。wrapped SDK causeの分類と全文を保持。CLI/MCP/configと認証sessionのUse/refresh・実通信への接続は未移植。SQL実行中の取消、親子context、全競合・clock極値・全Unicode診断、他OSは未検証。",
         "Schedulerの97ケースにselected/frozeイベント全13フィールドと順序の比較を追加。重複UID拒否前のselectedとFreeze成功後だけのfrozeを維持。診断scopeの有無/nil sink/child/明示module/直接通知/取消の64ケースをGo/Rustで比較し、module補完・request ID上書き・取消後の通知・scope不在の無通知を検証。CLI/MCP bootstrap/presenterと他subsystemの診断、並行sink/障害・全値域、他OSは未移植または未検証。",
         "refresh rotation Gateの12ケースで未設定/callback不在/成功/失敗/取消/deadline/panic後の解放をGo/Rustで比較。Rustの共有Permitによりclone間を直列化し、task abort後の解放も検証。GoのAcquire/ReleaseはRustの所有guard/dropに対応。取消済みかつ空き枠のselectは両結果が許容される。CLI/MCP/bootstrap、別process/全競合/負荷/公平性、他OSは未移植または未検証。",
@@ -124,7 +138,8 @@
         "設定 snapshot・runtime・default UID の98ケースをGo/Rustで比較。file/env捕捉、explicit empty、型変換とdomain検証、removed_settingとエラー順序、日時・数値・duration境界、読み込み後のfile不変を確認。実StoreをAccountServiceのdefault UID readerとFacadeのpool config readerに接続してDB/refresh/pool replayをRustで検証し、設定失敗がclient取得前に止まることとtyped ConfigError/IO causeを確認。他CLI/MCP/bootstrap・全TOML/型変換/診断/非UTF8入力、他OSは未完了。config入口は別checkpoint、auth list/pool入口は下記scopeで接続。",
         "CommandConnectionの25ケースでproxy/interval/errorと実HTTP transport構築可否を比較し、選択したintervalをtransportへ渡す。共有HTTP pacingをGoのOpenWith後のcontent/resource redirect/mutation 5通信とRust実socketで比較（観測差5ms）。clone間でlast startを共有する。Goのdefault SDK HTTP timeout=0を再現しRust試作の60秒制限を削除。仮想61秒で保留responseが存続し、pacing待機task abort後も残り時間で次requestが再開することを確認。SDK Options全体/client再構築/pool replayの寿命/context取消/deadline/全競合/App API redirect/TLS/SOCKS wire/pool/idle cleanup/CLI/MCP bootstrap/他OSは未完了または未検証。",
         "本番 Execution で Store・DB・refresh CAS・Gate・pool を接続し設定の fresh read と replay を検証。auth list/poolと既存data CLI/MCPの呼び出し元・ホームパス・初回設定作成は対象例で接続済み。他auth/bootstrapは未完了。transport constructor 失敗の Gate 前後の順序差は未解消。",
-        "auth group/list・pool group/status/enable/disableを接続。Go CLI104行（91actualroot/13reader-writer）とdomain12行で空list=null対status=[]、HasToken=true/checked_at省略、explicit JSON Changed/error、per-row default/stale default、snapshot先読/期限cleanup、atomic対象/all membership/rollback、Go max時刻のRFC3339/JSON拒否/wrapped Beforeを比較。app4+CLI3focused成功。full Rust gate終了0、297passed/既存3ignored、release成功。use/remove/import/export/check/refresh/login/hidden callbackと実OS startup/update/diagnostic/close、SQL実行中取消/blocked mutex/全wire/時間境界/他platform・配布は未検証または未実装。既存windows-amd64はfoundationの先行証拠であり、この新local CLI scopeはLinuxのみ比較。"
+        "auth group/list・pool group/status/enable/disableを接続。Go CLI104行（91actualroot/13reader-writer）とdomain12行で空list=null対status=[]、HasToken=true/checked_at省略、explicit JSON Changed/error、per-row default/stale default、snapshot先読/期限cleanup、atomic対象/all membership/rollback、Go max時刻のRFC3339/JSON拒否/wrapped Beforeを比較。app4+CLI3focused成功。full Rust gate終了0、297passed/既存3ignored、release成功。import/export/check/refresh/login/hidden callbackと実OS startup/update/diagnostic/close、SQL実行中取消/blocked mutex/全wire/時間境界/他platform・配布は未検証または未実装。既存windows-amd64はfoundationの先行証拠であり、この新local CLI scopeはLinuxのみ比較。",
+        "auth use/removeを既存account/configへ接続。Go fixture68行（62actualroot/6injected IO、58,147bytes）と別5prompt/3List-failure、domain/configの対象例でUID/stdin/flags/JSON、選択/確認、3回List、default clear-before-delete/失敗時rollbackなし、post-delete List失敗時committed state、comments/unknown keys/private writeを比較。Unix PTYで実CLIの選択/取消/確定removeと保存状態、Surveyのkeys/filter/Vim/paging/initial ANSI対象例を比較。full script終了0・346秒、Formatter/Clippy・314passed/既存3ignored・release40.50秒成功。Go related tests/vet終了0（既存Linux snapshot1test除外・未指定interop skipを保持）。Ctrl-D/no-matchは固定Go panicに対してRust bounded errorとなる具体差分を保持。全redraw/cursor/width/color-env/malformed CSI/非UTF8・native Windows console/他platform、startup/update/diagnostic/DB close、SQL実行中取消/blocked mutex/並行、その他authは未検証または未実装。"
       ]
     },
     {
@@ -215,7 +230,7 @@
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "auth group/list・pool group/status/enable/disableを接続。Go CLI104行（91actualroot/13reader-writer）とdomain12行で空list=null対status=[]、HasToken=true/checked_at省略、explicit JSON Changed/error、per-row default/stale default、snapshot先読/期限cleanup、atomic対象/all membership/rollback、Go max時刻のRFC3339/JSON拒否/wrapped Beforeを比較。app4+CLI3focused成功。full Rust gate終了0、297passed/既存3ignored、release成功。use/remove/import/export/check/refresh/login/hidden callbackと実OS startup/update/diagnostic/close、SQL実行中取消/blocked mutex/全wire/時間境界/他platform・配布は未検証または未実装。"
+        "auth group/list・pool group/status/enable/disableを接続。Go CLI104行（91actualroot/13reader-writer）とdomain12行で空list=null対status=[]、HasToken=true/checked_at省略、explicit JSON Changed/error、per-row default/stale default、snapshot先読/期限cleanup、atomic対象/all membership/rollback、Go max時刻のRFC3339/JSON拒否/wrapped Beforeを比較。app4+CLI3focused成功。full Rust gate終了0、297passed/既存3ignored、release成功。import/export/check/refresh/login/hidden callbackと実OS startup/update/diagnostic/close、SQL実行中取消/blocked mutex/全wire/時間境界/他platform・配布は未検証または未実装。"
       ]
     },
     {
@@ -329,7 +344,7 @@
         "設定 snapshot・runtime・default UID の98ケースをGo/Rustで比較。file/env捕捉、explicit empty、型変換とdomain検証、removed_settingとエラー順序、日時・数値・duration境界、読み込み後のfile不変を確認。実StoreをAccountServiceのdefault UID readerとFacadeのpool config readerに接続してDB/refresh/pool replayをRustで検証し、設定失敗がclient取得前に止まることとtyped ConfigError/IO causeを確認。他CLI/MCP/bootstrap・全TOML/型変換/診断/非UTF8入力、他OSは未完了。config入口は別checkpoint、auth list/pool入口は下記scopeで接続。",
         "CommandConnectionの25ケースでproxy/interval/errorと実HTTP transport構築可否を比較し、選択したintervalをtransportへ渡す。共有HTTP pacingをGoのOpenWith後のcontent/resource redirect/mutation 5通信とRust実socketで比較（観測差5ms）。clone間でlast startを共有する。Goのdefault SDK HTTP timeout=0を再現しRust試作の60秒制限を削除。仮想61秒で保留responseが存続し、pacing待機task abort後も残り時間で次requestが再開することを確認。SDK Options全体/client再構築/pool replayの寿命/context取消/deadline/全競合/App API redirect/TLS/SOCKS wire/pool/idle cleanup/CLI/MCP bootstrap/他OSは未完了または未検証。",
         "本番 Execution で Store・DB・refresh CAS・Gate・pool を接続し設定の fresh read と replay を検証。auth list/poolと既存data CLI/MCPの呼び出し元・ホームパス・初回設定作成は対象例で接続済み。他auth/bootstrapは未完了。transport constructor 失敗の Gate 前後の順序差は未解消。",
-        "auth group/list・pool group/status/enable/disableを接続。Go CLI104行（91actualroot/13reader-writer）とdomain12行で空list=null対status=[]、HasToken=true/checked_at省略、explicit JSON Changed/error、per-row default/stale default、snapshot先読/期限cleanup、atomic対象/all membership/rollback、Go max時刻のRFC3339/JSON拒否/wrapped Beforeを比較。app4+CLI3focused成功。full Rust gate終了0、297passed/既存3ignored、release成功。use/remove/import/export/check/refresh/login/hidden callbackと実OS startup/update/diagnostic/close、SQL実行中取消/blocked mutex/全wire/時間境界/他platform・配布は未検証または未実装。既存windows-amd64はfoundationの先行証拠であり、この新local CLI scopeはLinuxのみ比較。"
+        "auth group/list・pool group/status/enable/disableを接続。Go CLI104行（91actualroot/13reader-writer）とdomain12行で空list=null対status=[]、HasToken=true/checked_at省略、explicit JSON Changed/error、per-row default/stale default、snapshot先読/期限cleanup、atomic対象/all membership/rollback、Go max時刻のRFC3339/JSON拒否/wrapped Beforeを比較。app4+CLI3focused成功。full Rust gate終了0、297passed/既存3ignored、release成功。import/export/check/refresh/login/hidden callbackと実OS startup/update/diagnostic/close、SQL実行中取消/blocked mutex/全wire/時間境界/他platform・配布は未検証または未実装。既存windows-amd64はfoundationの先行証拠であり、この新local CLI scopeはLinuxのみ比較。"
       ]
     },
     {
@@ -360,7 +375,7 @@
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "auth group/list・pool group/status/enable/disableを接続。Go CLI104行（91actualroot/13reader-writer）とdomain12行で空list=null対status=[]、HasToken=true/checked_at省略、explicit JSON Changed/error、per-row default/stale default、snapshot先読/期限cleanup、atomic対象/all membership/rollback、Go max時刻のRFC3339/JSON拒否/wrapped Beforeを比較。app4+CLI3focused成功。full Rust gate終了0、297passed/既存3ignored、release成功。use/remove/import/export/check/refresh/login/hidden callbackと実OS startup/update/diagnostic/close、SQL実行中取消/blocked mutex/全wire/時間境界/他platform・配布は未検証または未実装。"
+        "auth group/list・pool group/status/enable/disableを接続。Go CLI104行（91actualroot/13reader-writer）とdomain12行で空list=null対status=[]、HasToken=true/checked_at省略、explicit JSON Changed/error、per-row default/stale default、snapshot先読/期限cleanup、atomic対象/all membership/rollback、Go max時刻のRFC3339/JSON拒否/wrapped Beforeを比較。app4+CLI3focused成功。full Rust gate終了0、297passed/既存3ignored、release成功。import/export/check/refresh/login/hidden callbackと実OS startup/update/diagnostic/close、SQL実行中取消/blocked mutex/全wire/時間境界/他platform・配布は未検証または未実装。"
       ]
     },
     {
@@ -391,7 +406,7 @@
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "auth group/list・pool group/status/enable/disableを接続。Go CLI104行（91actualroot/13reader-writer）とdomain12行で空list=null対status=[]、HasToken=true/checked_at省略、explicit JSON Changed/error、per-row default/stale default、snapshot先読/期限cleanup、atomic対象/all membership/rollback、Go max時刻のRFC3339/JSON拒否/wrapped Beforeを比較。app4+CLI3focused成功。full Rust gate終了0、297passed/既存3ignored、release成功。use/remove/import/export/check/refresh/login/hidden callbackと実OS startup/update/diagnostic/close、SQL実行中取消/blocked mutex/全wire/時間境界/他platform・配布は未検証または未実装。"
+        "auth group/list・pool group/status/enable/disableを接続。Go CLI104行（91actualroot/13reader-writer）とdomain12行で空list=null対status=[]、HasToken=true/checked_at省略、explicit JSON Changed/error、per-row default/stale default、snapshot先読/期限cleanup、atomic対象/all membership/rollback、Go max時刻のRFC3339/JSON拒否/wrapped Beforeを比較。app4+CLI3focused成功。full Rust gate終了0、297passed/既存3ignored、release成功。import/export/check/refresh/login/hidden callbackと実OS startup/update/diagnostic/close、SQL実行中取消/blocked mutex/全wire/時間境界/他platform・配布は未検証または未実装。"
       ]
     },
     {
@@ -422,7 +437,7 @@
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "auth group/list・pool group/status/enable/disableを接続。Go CLI104行（91actualroot/13reader-writer）とdomain12行で空list=null対status=[]、HasToken=true/checked_at省略、explicit JSON Changed/error、per-row default/stale default、snapshot先読/期限cleanup、atomic対象/all membership/rollback、Go max時刻のRFC3339/JSON拒否/wrapped Beforeを比較。app4+CLI3focused成功。full Rust gate終了0、297passed/既存3ignored、release成功。use/remove/import/export/check/refresh/login/hidden callbackと実OS startup/update/diagnostic/close、SQL実行中取消/blocked mutex/全wire/時間境界/他platform・配布は未検証または未実装。"
+        "auth group/list・pool group/status/enable/disableを接続。Go CLI104行（91actualroot/13reader-writer）とdomain12行で空list=null対status=[]、HasToken=true/checked_at省略、explicit JSON Changed/error、per-row default/stale default、snapshot先読/期限cleanup、atomic対象/all membership/rollback、Go max時刻のRFC3339/JSON拒否/wrapped Beforeを比較。app4+CLI3focused成功。full Rust gate終了0、297passed/既存3ignored、release成功。import/export/check/refresh/login/hidden callbackと実OS startup/update/diagnostic/close、SQL実行中取消/blocked mutex/全wire/時間境界/他platform・配布は未検証または未実装。"
       ]
     },
     {
@@ -439,27 +454,75 @@
     },
     {
       "id": "cli:pixiv auth remove",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv auth remove"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/auth_accounts.rs",
+        "crates/pixiv-cli/src/terminal_prompt.rs",
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-app/src/account_management.rs",
+        "crates/pixiv-app/src/account_service.rs",
+        "crates/pixiv-app/src/config/mutations.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_auth_selection_test.go",
+        "internal/cli/commands/pixiv/auth/migration_terminal_prompt_test.go",
+        "internal/services/pixiv/account/migration_management_test.go",
+        "internal/config/settings/migration_default_management_test.go",
+        "docs/migration/contracts/cli-auth-selection.json",
+        "crates/pixiv-cli/tests/auth_selection_startup.rs",
+        "crates/pixiv-cli/tests/auth_selection_boundaries.rs",
+        "crates/pixiv-cli/tests/auth_selection_ports.rs",
+        "crates/pixiv-cli/tests/terminal_prompt.rs",
+        "crates/pixiv-cli/tests/support/auth_accounts.rs",
+        "crates/pixiv-app/tests/account_management.rs",
+        "crates/pixiv-app/tests/config_default_management.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "auth use/removeを既存account/configへ接続。Go fixture68行（62actualroot/6injected IO、58,147bytes）と別5prompt/3List-failure、domain/configの対象例でUID/stdin/flags/JSON、選択/確認、3回List、default clear-before-delete/失敗時rollbackなし、post-delete List失敗時committed state、comments/unknown keys/private writeを比較。Unix PTYで実CLIの選択/取消/確定removeと保存状態、Surveyのkeys/filter/Vim/paging/initial ANSI対象例を比較。full script終了0・346秒、Formatter/Clippy・314passed/既存3ignored・release40.50秒成功。Go related tests/vet終了0（既存Linux snapshot1test除外・未指定interop skipを保持）。Ctrl-D/no-matchは固定Go panicに対してRust bounded errorとなる具体差分を保持。全redraw/cursor/width/color-env/malformed CSI/非UTF8・native Windows console/他platform、startup/update/diagnostic/DB close、SQL実行中取消/blocked mutex/並行、その他authは未検証または未実装。"
+      ]
     },
     {
       "id": "cli:pixiv auth use",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv auth use"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/auth_accounts.rs",
+        "crates/pixiv-cli/src/terminal_prompt.rs",
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-app/src/account_management.rs",
+        "crates/pixiv-app/src/account_service.rs",
+        "crates/pixiv-app/src/config/mutations.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_auth_selection_test.go",
+        "internal/cli/commands/pixiv/auth/migration_terminal_prompt_test.go",
+        "internal/services/pixiv/account/migration_management_test.go",
+        "internal/config/settings/migration_default_management_test.go",
+        "docs/migration/contracts/cli-auth-selection.json",
+        "crates/pixiv-cli/tests/auth_selection_startup.rs",
+        "crates/pixiv-cli/tests/auth_selection_boundaries.rs",
+        "crates/pixiv-cli/tests/auth_selection_ports.rs",
+        "crates/pixiv-cli/tests/terminal_prompt.rs",
+        "crates/pixiv-cli/tests/support/auth_accounts.rs",
+        "crates/pixiv-app/tests/account_management.rs",
+        "crates/pixiv-app/tests/config_default_management.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "auth use/removeを既存account/configへ接続。Go fixture68行（62actualroot/6injected IO、58,147bytes）と別5prompt/3List-failure、domain/configの対象例でUID/stdin/flags/JSON、選択/確認、3回List、default clear-before-delete/失敗時rollbackなし、post-delete List失敗時committed state、comments/unknown keys/private writeを比較。Unix PTYで実CLIの選択/取消/確定removeと保存状態、Surveyのkeys/filter/Vim/paging/initial ANSI対象例を比較。full script終了0・346秒、Formatter/Clippy・314passed/既存3ignored・release40.50秒成功。Go related tests/vet終了0（既存Linux snapshot1test除外・未指定interop skipを保持）。Ctrl-D/no-matchは固定Go panicに対してRust bounded errorとなる具体差分を保持。全redraw/cursor/width/color-env/malformed CSI/非UTF8・native Windows console/他platform、startup/update/diagnostic/DB close、SQL実行中取消/blocked mutex/並行、その他authは未検証または未実装。"
+      ]
     },
     {
       "id": "cli:pixiv bookmark",

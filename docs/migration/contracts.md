@@ -1395,3 +1395,25 @@ Go-first year10000・max i64・mixed正常future/maxのhuman/JSON例で、Chrono
 full Rust scriptはapp testのcollapsible-else-ifとauth flag scannerのnonminimal-boolで停止した。意味を変えない形へ補正し、各失敗log/終了1を保持して同じ全stageを再実行した。POWERSHELL_TELEMETRY_OPTOUT=1・Cargo offline・既存network restrictionを維持し、終了sentinel0・310秒、Formatter/Clippy・workspace297passed/0failed/既存3ignored・release35.62秒の完了を確認した。既存auth/pool groupのwindows-amd64 foundation証拠は保持するが、新local CLI scopeの比較はLinuxのみでありWindows実行へ外挿しない。
 
 実startup/update/OS hooks・diagnostics/DB close報告、全時間/UID/UTF8/flag/help、SQL実行中取消/blocked mutex/並行、Windows/macOS/全arch・配布信頼を保持する。local auth4leafの比較をauth全機能やwhole migrationの完了としない。
+
+## Auth use/remove・default 保存・terminal selection（2026-10-09）
+
+固定Goの`auth use [UID]`と`auth remove [UID] [--yes]`を既存account/configへ接続する。合成DB・temp config・injected IO・Unix PTYだけを用い、実アカウントの選択・削除や資格情報の作成を行わない。MCPに存在しないauth入口を追加しない。
+
+[CLI fixture](contracts/cli-auth-selection.json)は68行・58,147bytes。62行を実root executable、6行をreader/writer dependencyでexact比較する。別のGo/Rust port比較は5 selection/confirmation行と3 List-failure行。既存seed/state/error処理を再利用し、不要な全flag×output×stateのCartesian matrixは増やさない。plain human writesの失敗はGo同様無視し、JSON write errorは報告する。UIDはsigned decimal int64でpositiveだけを受け入れ、`+`・whitespace/stdin・最大値・invalid・max1/unknown flag/helpを対象例で比較する。
+
+UID指定時もcontrollerは最初のListを実行する。空/whitespace UIDはterminal選択へ進み、非TTYでは`uid is required`となる。選択label/optionsはfresh list順とraw usernameを維持する。JSONでもTTY promptは実行し、`--yes`はremoveの確認だけを省略してselectionを省略しない。removeはcontrollerのList→selection/confirmation→wrapperのList→domain remove→wrapperのfresh Listを保持する。第二Listの失敗はmutation前、第三Listの失敗はdelete後のcommitted stateとoutputなしで報告する。
+
+Domain/configは埋め込みGo-first tablesの9 call-order/failure行、3 missing-account actions、6 exact document行、4 read/private-write failure行を固定する。`UseAccount`はGet→Set。`RemoveAccount`はexplicit default read→matching default clear→repository deleteであり、delete失敗時もdefaultを戻さない。Go source commentのrollback説明より実コードと再現結果を優先する。matching stale defaultのdirect domain removeでもclear後にnot-foundとなる一方、CLI wrapperはpre-delete Listで対象を検査する。CLIが表示するimplicit fallback defaultはconfigへ書き戻さない。
+
+`AccountService`の既存構築を維持するadditive management/default-storeと、normal CLIで使う`AccountSelection` compositionを共有する。default set/clearは既存lossless document formatter/private atomic writerを再利用し、owned UID commentの置換、unknown/comment保存、empty auth table除去、absent clear時のwrite、positive validation-before-read、fresh file read、read/write failures・Unix private modesを対象例で確認する。既存Windows private writerの未検証事項は継承する。
+
+Terminalは実stdin/stdoutの両TTYを要件とし、raw mode/cursorの復元、arrow/tab wrap・case-insensitive/Unicode filter・rune backspace・Ctrl-W/X clear・Ctrl-U ignore・Ctrl-D/current・interrupt/EOF・Escape Vim j/k・7-row pagingと、strict yes/no/default-false・invalid retry・cursor editingを実Go Survey入力で先に固定する。Rust Unix PTYは本番promptに加えて実`pixiv` executableでdefault selection・remove cancel・confirmed removalのstdout/config/DB/token stateを確認する。最初のremove-success testはimplicit fallbackをpersisted Some(1)と誤認して失敗した。固定Go fixtureのclear後configとdefault1 outputを確認し、testだけをNoneへ直した。production/Go期待値は変更せず、失敗logを保持する。
+
+initial colored ANSI fragmentは`CLICOLOR_FORCE=1`の固定Go bytesをexact substring比較する。full redrawはRust save/restore+erase-to-endとGo offset/resetが異なるため、全cursor positioning/wrapped width（Go x/text EastAsian width対Rust unicode-width/max1）・color environment・malformed CSI/非UTF8・native Windows console実行の互換証明とは扱わない。Ctrl-Dでfilterがno-matchの場合、固定Goはempty options indexでpanicし、Rustは`no available options`を返す具体差分を保持する。当該Rust regressionはbounded errorの検査であり、Go parityの成功行に数えない。
+
+Focused app5・CLI5・最終terminal PTY7が成功した。Go related account/config/auth/CLIと台帳suite/vetは終了0（CLI40.729秒）。Go Cargo interop flag未指定のskipと既存Linux公開面snapshot不在1testの除外を保持し、strict全Go passとはしない。
+
+full script初回はlib module順序/main行のFormatter差分で終了1となり、失敗logを保持してformattingだけを補正した。POWERSHELL_TELEMETRY_OPTOUT=1・Cargo offline・既存network restrictionのまま全stageを再実行し、終了sentinel0・346秒、Formatter/Clippy・workspace314passed/0failed/既存3ignored・release40.50秒の完了を確認した。独立read-only reviewは記録したterminal差分以外のblocking regressionを報告しなかった。
+
+対象scopeの成功をauth全体・全terminal・全platform・whole migrationのverifiedへ外挿しない。残るauth import/export/check/refresh/login・callback/URL handler、startup/update/diagnostic/DB close、全clock/UTF8/flag/help/SQL取消/並行・Windows/macOS/各arch/配布は台帳に残す。

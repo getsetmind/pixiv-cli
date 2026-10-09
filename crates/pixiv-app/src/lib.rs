@@ -1,3 +1,4 @@
+pub mod account_management;
 pub mod account_service;
 pub mod account_views;
 pub mod config;

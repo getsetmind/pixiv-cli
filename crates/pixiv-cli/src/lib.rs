@@ -15,6 +15,7 @@ pub mod ranking;
 pub mod recommended;
 mod record_input;
 pub mod search;
+pub mod terminal_prompt;
 pub mod timeline;
 pub mod trending;
 pub mod user_relationships;

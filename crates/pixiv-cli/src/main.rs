@@ -1668,10 +1668,17 @@ fn execute_auth() -> (Result<(), CommandError>, bool) {
         } else {
             std::path::PathBuf::new()
         };
-        command.execute(
+        drop(input);
+        let mut prompts = pixiv_cli_rs::terminal_prompt::TerminalPrompts::new(
+            io::stdin(),
+            io::stdout(),
+            io::stderr(),
+        );
+        command.execute_with_prompts(
             &pixiv_app::config::Store::new(path),
             &pixiv_app::lifecycle::Context::new(),
             &mut io::stdout().lock(),
+            &mut prompts,
         )
     })();
     (result, machine)

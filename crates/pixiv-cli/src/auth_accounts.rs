@@ -8,6 +8,23 @@ use std::{
     sync::{Arc, Mutex},
 };
 
+pub trait AccountPrompts {
+    fn can_prompt(&self) -> bool;
+    fn select(&mut self, message: &str, options: &[String]) -> Result<String, CommandError>;
+    fn confirm(&mut self, message: &str, default: bool) -> Result<bool, CommandError>;
+}
+struct Noninteractive;
+impl AccountPrompts for Noninteractive {
+    fn can_prompt(&self) -> bool {
+        false
+    }
+    fn select(&mut self, _: &str, _: &[String]) -> Result<String, CommandError> {
+        Err(CommandError::Message("uid is required"))
+    }
+    fn confirm(&mut self, _: &str, _: bool) -> Result<bool, CommandError> {
+        Ok(false)
+    }
+}
 pub enum AuthCommand {
     Help(String),
     List {
@@ -22,6 +39,12 @@ pub enum AuthCommand {
         json: bool,
         values: Vec<String>,
     },
+    Select {
+        remove: bool,
+        json: bool,
+        yes: bool,
+        value: Option<String>,
+    },
     Pending(String),
 }
 impl AuthCommand {
@@ -33,6 +56,7 @@ impl AuthCommand {
         let mut values = Vec::new();
         let mut json = false;
         let mut all = false;
+        let mut yes = false;
         let mut help = false;
         let mut flags = true;
         let mut discovered = Vec::new();
@@ -51,10 +75,16 @@ impl AuthCommand {
         }
         let pool = discovered.first().is_some_and(|s| *s == "pool");
         let op = discovered.get(usize::from(pool)).copied().unwrap_or("");
+        let selection = !pool && matches!(op, "use" | "remove");
         let change = pool && matches!(op, "enable" | "disable");
         let leaf = matches!(
             (pool, op),
-            (false, "list") | (true, "status") | (true, "enable") | (true, "disable")
+            (false, "use")
+                | (false, "remove")
+                | (false, "list")
+                | (true, "status")
+                | (true, "enable")
+                | (true, "disable")
         );
         for arg in args {
             if flags && arg == "--" {
@@ -69,6 +99,7 @@ impl AuthCommand {
                     "--help" => &mut help,
                     "--json" if leaf => &mut json,
                     "--all" if change => &mut all,
+                    "--yes" if selection && op == "remove" => &mut yes,
                     _ => return Err(CommandError::Usage(format!("unknown option '{name}'"))),
                 };
                 *target = boolean(raw, if name == "--help" { "-h, --help" } else { name })?;
@@ -128,6 +159,33 @@ impl AuthCommand {
             .into_iter()
             .skip(if pool { 2 } else { 1 })
             .collect::<Vec<_>>();
+        if selection {
+            if values.len() > 1 {
+                return Err(CommandError::Message(if op == "remove" {
+                    "usage: pixiv auth remove [UID] [--yes]"
+                } else {
+                    "usage: pixiv auth use [UID]"
+                }));
+            }
+            if values.is_empty() && !terminal {
+                match crate::search::read_text_value(
+                    input,
+                    false,
+                    "uid is required",
+                    "stdin value is not valid UTF-8",
+                ) {
+                    Ok(value) => values.push(value),
+                    Err(CommandError::Message("uid is required")) => {}
+                    Err(error) => return Err(error),
+                }
+            }
+            return Ok(Self::Select {
+                remove: op == "remove",
+                json,
+                yes,
+                value: values.into_iter().next(),
+            });
+        }
         if change {
             if values.is_empty() && !all && !terminal {
                 match crate::search::read_text_value(
@@ -177,12 +235,13 @@ impl AuthCommand {
             Self::List { json: true }
                 | Self::Status { json: true }
                 | Self::Change { json: true, .. }
+                | Self::Select { json: true, .. }
         )
     }
     pub fn requires_config(&self) -> bool {
         matches!(
             self,
-            Self::List { .. } | Self::Status { .. } | Self::Change { .. }
+            Self::List { .. } | Self::Status { .. } | Self::Change { .. } | Self::Select { .. }
         )
     }
     pub fn execute<W: Write>(
@@ -190,6 +249,15 @@ impl AuthCommand {
         store: &Store,
         context: &Context,
         out: &mut W,
+    ) -> Result<(), CommandError> {
+        self.execute_with_prompts(store, context, out, &mut Noninteractive)
+    }
+    pub fn execute_with_prompts<W: Write>(
+        &self,
+        store: &Store,
+        context: &Context,
+        out: &mut W,
+        prompts: &mut dyn AccountPrompts,
     ) -> Result<(), CommandError> {
         match self {
             Self::Help(text) => {
@@ -219,6 +287,28 @@ impl AuthCommand {
                 defaults.read_pixiv_default_user_id().map_err(Into::into)
             })),
         };
+        if let Self::Select {
+            remove,
+            json,
+            yes,
+            value,
+        } = self
+        {
+            return AccountSelection {
+                service: &service,
+                defaults: store,
+            }
+            .execute(
+                value.as_deref(),
+                SelectionOptions {
+                    remove: *remove,
+                    json: *json,
+                    yes: *yes,
+                },
+                out,
+                prompts,
+            );
+        }
         if let Self::Change {
             enabled,
             all,
@@ -368,6 +458,101 @@ impl AuthCommand {
         Ok(())
     }
 }
+pub struct SelectionOptions {
+    pub remove: bool,
+    pub json: bool,
+    pub yes: bool,
+}
+pub struct AccountSelection<'a> {
+    pub service: &'a AccountService,
+    pub defaults: &'a dyn pixiv_app::account_management::AccountDefaultStore,
+}
+impl AccountSelection<'_> {
+    pub fn execute<W: Write>(
+        &self,
+        value: Option<&str>,
+        options: SelectionOptions,
+        out: &mut W,
+        prompts: &mut dyn AccountPrompts,
+    ) -> Result<(), CommandError> {
+        let background = Context::new();
+        let SelectionOptions { remove, json, yes } = options;
+        let service = self.service;
+        let store = self.defaults;
+        let accounts = service.list_accounts(&background)?;
+        let user_id = if let Some(value) = value.filter(|v| !v.trim().is_empty()) {
+            uid(value)?
+        } else {
+            if !prompts.can_prompt() {
+                return Err(CommandError::Message("uid is required"));
+            }
+            if accounts.is_empty() {
+                return Err(CommandError::Message("no accounts"));
+            }
+            let options = accounts
+                .iter()
+                .map(|a| {
+                    if a.username.is_empty() {
+                        a.user_id.to_string()
+                    } else {
+                        format!("{} {}", a.user_id, a.username)
+                    }
+                })
+                .collect::<Vec<_>>();
+            let selected = prompts.select(
+                if remove {
+                    "Select account to remove"
+                } else {
+                    "Select default account"
+                },
+                &options,
+            )?;
+            uid(selected.split_whitespace().next().unwrap_or(""))?
+        };
+        if !remove {
+            service
+                .management(store)
+                .use_account(&background, user_id)?;
+            if json {
+                return print_json(out, &serde_json::json!({"default_user_id":user_id}));
+            }
+            let _ = writeln!(out, "default uid: {user_id}");
+            return Ok(());
+        }
+        if prompts.can_prompt()
+            && !yes
+            && !prompts.confirm(&format!("Remove uid {user_id}?"), false)?
+        {
+            return Err(CommandError::Message("account removal canceled"));
+        }
+        let accounts = service.list_accounts(&background)?;
+        if !accounts.iter().any(|a| a.user_id == user_id) {
+            return Err(CommandError::MessageText(format!(
+                "account uid {user_id} not found"
+            )));
+        }
+        service
+            .management(store)
+            .remove_account(&background, user_id)?;
+        let default_user_id = service
+            .list_accounts(&background)?
+            .iter()
+            .rfind(|a| a.default)
+            .map_or(0, |a| a.user_id);
+        if json {
+            return print_json(
+                out,
+                &serde_json::json!({"default_user_id":default_user_id,"removed_user_id":user_id}),
+            );
+        }
+        let _ = writeln!(out, "account uid:{user_id} removed");
+        if default_user_id != 0 {
+            let _ = writeln!(out, "default uid: {default_user_id}");
+        }
+        Ok(())
+    }
+}
+
 fn boolean(raw: &str, name: &str) -> Result<bool, CommandError> {
     match raw {
         "1" | "t" | "T" | "TRUE" | "true" | "True" => Ok(true),
@@ -472,6 +657,8 @@ fn help_text(path: &str) -> String {
     match path{
 ""=>"Manage local Pixiv authentication\n\nUsage:\n  pixiv auth [flags]\n  pixiv auth [command]\n\nAvailable Commands:\n  check            Validate an account token\n  export           Export stored authentication\n  import           Import or replace an account\n  list             List accounts\n  login            Login with the Pixiv browser OAuth flow\n  pool             Manage account pool scheduling\n  refresh          Refresh account credentials and membership status\n  remove           Remove an account\n  use              Set the default account\n\nFlags:\n  -h, --help   help for auth\n\nUse \"pixiv auth [command] --help\" for more information about a command.\n".into(),
 "pool"=>"Manage account pool scheduling\n\nUsage:\n  pixiv auth pool [flags]\n  pixiv auth pool [command]\n\nAvailable Commands:\n  disable     Disable accounts in the pool\n  enable      Enable accounts in the pool\n  status      Show account pool scheduling status\n\nFlags:\n  -h, --help   help for pool\n\nUse \"pixiv auth pool [command] --help\" for more information about a command.\n".into(),
+"use"=>"Set the default account\n\nUsage:\n  pixiv auth use [UID] [flags]\n\nFlags:\n  -h, --help   help for use\n      --json   print JSON\n".into(),
+"remove"=>"Remove an account\n\nUsage:\n  pixiv auth remove [UID] [flags]\n\nFlags:\n  -h, --help   help for remove\n      --json   print JSON\n      --yes    skip confirmation in interactive terminals\n".into(),
 "list"=>"List accounts\n\nUsage:\n  pixiv auth list [flags]\n\nFlags:\n  -h, --help   help for list\n      --json   print JSON\n".into(),
 "pool status"=>"Show account pool scheduling status\n\nUsage:\n  pixiv auth pool status [flags]\n\nFlags:\n  -h, --help   help for status\n      --json   print JSON\n".into(),
 "pool enable"=>"Enable accounts in the pool\n\nUsage:\n  pixiv auth pool enable [UID...] [flags]\n\nFlags:\n      --all    apply to every stored account\n  -h, --help   help for enable\n      --json   print JSON\n".into(),
@@ -496,7 +683,7 @@ pub fn machine_output_requested(args: &[String]) -> bool {
     }
     let leaf = matches!(
         discovered.as_slice(),
-        ["list", ..] | ["pool", "status" | "enable" | "disable", ..]
+        ["list" | "use" | "remove", ..] | ["pool", "status" | "enable" | "disable", ..]
     );
     if !leaf {
         return false;
@@ -511,7 +698,10 @@ pub fn machine_output_requested(args: &[String]) -> bool {
             let (name, raw) = arg
                 .split_once('=')
                 .map_or((arg.as_str(), "true"), |(a, b)| (a, b));
-            if !(matches!(name, "--json" | "--help") || name == "--all" && change) {
+            if !(matches!(name, "--json" | "--help")
+                || name == "--all" && change
+                || name == "--yes" && discovered.first() == Some(&"remove"))
+            {
                 break;
             }
             if boolean(raw, name).is_err() {

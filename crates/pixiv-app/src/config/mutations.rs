@@ -121,6 +121,22 @@ fn parse_input(spec: &Spec, raw: &str) -> Result<toml_edit::Value, ConfigError> 
 }
 
 impl Store {
+    pub fn set_pixiv_default_user_id(&self, user_id: i64) -> Result<(), ConfigError> {
+        if user_id <= 0 {
+            return Err(ConfigError::Invalid(
+                "config: default_user_id must be positive".into(),
+            ));
+        }
+        self.mutate_path(
+            "pixiv.auth.default_user_id",
+            Some(toml_edit::Value::from(user_id)),
+        )
+    }
+
+    pub fn clear_pixiv_default_user_id(&self) -> Result<(), ConfigError> {
+        self.mutate_path("pixiv.auth.default_user_id", None)
+    }
+
     pub fn get(&self, alias: &str) -> Result<SettingValue, ConfigError> {
         self.get_with_environment(alias, environment())
     }
@@ -152,7 +168,7 @@ impl Store {
     ) -> Result<ConfigMutationResult, ConfigError> {
         let spec = spec(alias)?;
         let value = parse_input(spec, raw)?;
-        self.mutate(spec, Some(value))?;
+        self.mutate_path(spec.path, Some(value))?;
         Ok(mutation_result(spec, environment.into_iter().collect()))
     }
 
@@ -166,17 +182,17 @@ impl Store {
         environment: impl IntoIterator<Item = (String, String)>,
     ) -> Result<ConfigMutationResult, ConfigError> {
         let spec = spec(alias)?;
-        self.mutate(spec, None)?;
+        self.mutate_path(spec.path, None)?;
         Ok(mutation_result(spec, environment.into_iter().collect()))
     }
 
-    fn mutate(&self, spec: &Spec, value: Option<toml_edit::Value>) -> Result<(), ConfigError> {
+    fn mutate_path(&self, path: &str, value: Option<toml_edit::Value>) -> Result<(), ConfigError> {
         let body = match std::fs::read_to_string(&self.path) {
             Ok(body) => body,
             Err(error) if error.kind() == std::io::ErrorKind::NotFound => String::new(),
             Err(error) => return Err(ConfigError::Io(error)),
         };
-        let body = document::mutate(&body, spec.path, value)?;
+        let body = document::mutate(&body, path, value)?;
         private_file::write(&self.path, body.as_bytes())
     }
 }
