@@ -1,6 +1,7 @@
 mod artwork;
 mod bookmark;
 mod codec;
+mod continuation;
 pub mod cursor;
 pub mod dto;
 pub mod error;
@@ -9,6 +10,7 @@ mod mutation;
 pub mod oauth;
 mod pacing;
 pub mod pixiv;
+mod ranking;
 pub mod reference;
 pub mod resource;
 mod resource_io;

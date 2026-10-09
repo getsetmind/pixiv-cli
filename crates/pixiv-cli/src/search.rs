@@ -145,9 +145,9 @@ impl SearchInput {
     }
 }
 
-struct SearchWriter<W> {
-    output: Arc<Mutex<W>>,
-    committed: Arc<AtomicBool>,
+pub(crate) struct SearchWriter<W> {
+    pub(crate) output: Arc<Mutex<W>>,
+    pub(crate) committed: Arc<AtomicBool>,
 }
 
 impl<W: Write> Write for SearchWriter<W> {
@@ -391,7 +391,7 @@ impl SearchOptions {
         Ok(request)
     }
 
-    fn plan(&self) -> Result<SearchPlan, CommandError> {
+    pub(crate) fn plan(&self) -> Result<SearchPlan, CommandError> {
         let limit = self.limit.unwrap_or_default();
         if limit < 0 {
             return Err(CommandError::Message(
@@ -421,10 +421,10 @@ impl SearchOptions {
     }
 }
 
-struct SearchPlan {
-    limit: usize,
-    skip: usize,
-    one_batch: bool,
+pub(crate) struct SearchPlan {
+    pub(crate) limit: usize,
+    pub(crate) skip: usize,
+    pub(crate) one_batch: bool,
 }
 
 pub fn write_search_json<W: Write>(items: &[Artwork], out: &mut W) -> Result<(), CommandError> {
@@ -575,7 +575,7 @@ async fn search_attempt<T: Transport, W: Write>(
     }
 }
 
-fn present_search<W: Write>(
+pub(crate) fn present_search<W: Write>(
     word: &str,
     items: &[Artwork],
     mode: crate::DetailOutput,
@@ -741,7 +741,7 @@ async fn collect_bookmark_search<T: Transport>(
     })
 }
 
-fn quote(value: &str) -> String {
+pub(crate) fn quote(value: &str) -> String {
     let mut out = String::from("\"");
     for ch in value.chars() {
         if ch != ' '

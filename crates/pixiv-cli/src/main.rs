@@ -62,6 +62,13 @@ enum Command {
         #[command(flatten)]
         options: Box<SearchOptions>,
     },
+    #[command(args_override_self = true)]
+    Ranking {
+        #[command(flatten)]
+        options: Box<pixiv_cli_rs::ranking::RankingOptions>,
+        #[command(flatten)]
+        connection: ProxyOptions,
+    },
     Ugoira {
         source: String,
         #[arg(long)]
@@ -85,6 +92,7 @@ async fn main() {
         Command::Detail { json, ndjson, .. } => *json || *ndjson,
         Command::Ugoira { json, .. } => *json,
         Command::Search { input, .. } => input.machine_output(),
+        Command::Ranking { options, .. } => options.json.is_some() || options.ndjson,
     };
     let mut ndjson_output = match &args.command {
         Command::Mcp { .. } => false,
@@ -93,6 +101,9 @@ async fn main() {
             input.ndjson || (input.json.is_none() && !io::stdout().is_terminal())
         }
         Command::Ugoira { .. } => false,
+        Command::Ranking { options, .. } => {
+            options.ndjson || (options.json.is_none() && !io::stdout().is_terminal())
+        }
     };
     let exit = finish_command(
         execute(args, &mut ndjson_output).await,
@@ -106,6 +117,9 @@ async fn main() {
 }
 
 async fn execute(args: Arguments, ndjson_output: &mut bool) -> Result<(), CommandError> {
+    if let Command::Ranking { options, .. } = &args.command {
+        options.validate_arguments()?;
+    }
     let search_word = match &args.command {
         Command::Search { input, .. } => {
             if input.trending_tags {
@@ -119,7 +133,10 @@ async fn execute(args: Arguments, ndjson_output: &mut bool) -> Result<(), Comman
     };
     let account_config = if matches!(
         &args.command,
-        Command::Detail { .. } | Command::Mcp { .. } | Command::Search { .. }
+        Command::Detail { .. }
+            | Command::Mcp { .. }
+            | Command::Search { .. }
+            | Command::Ranking { .. }
     ) {
         let home_name = if cfg!(windows) { "USERPROFILE" } else { "HOME" };
         let home = std::env::var_os(home_name)
@@ -228,6 +245,37 @@ async fn execute(args: Arguments, ndjson_output: &mut bool) -> Result<(), Comman
         )
         .await;
     }
+    if let Command::Ranking {
+        options,
+        connection,
+    } = &args.command
+    {
+        let (directory, config) = account_config.expect("ranking startup was resolved");
+        options.validate()?;
+        let proxy = connection.override_value()?;
+        let configured_json = config
+            .current()
+            .and_then(|snapshot| snapshot.runtime())
+            .map_err(pixiv_app::scheduler::SchedulerError::from)?
+            .output_json;
+        let mode = options.output_mode(configured_json, io::stdout().is_terminal())?;
+        *ndjson_output = mode == DetailOutput::Ndjson;
+        let database = pixiv_app::database::Database::open(&directory)
+            .map_err(|error| CommandError::State(Box::new(error)))?;
+        let execution = pixiv_app::execution::Execution::http(
+            config,
+            std::sync::Arc::new(std::sync::Mutex::new(database)),
+        );
+        return pixiv_cli_rs::ranking::saved_artwork_ranking(
+            &execution,
+            &pixiv_app::lifecycle::Context::new(),
+            options.as_ref().clone(),
+            proxy,
+            mode,
+            io::stdout(),
+        )
+        .await;
+    }
     if let Command::Detail {
         json,
         ndjson,
@@ -304,6 +352,7 @@ async fn execute(args: Arguments, ndjson_output: &mut bool) -> Result<(), Comman
         Command::Mcp { .. } => unreachable!("MCP uses saved account execution"),
         Command::Detail { .. } => unreachable!("detail uses saved account execution"),
         Command::Search { .. } => unreachable!("search uses saved account execution"),
+        Command::Ranking { .. } => unreachable!("ranking uses saved account execution"),
         Command::Ugoira { source, json } => {
             let metadata = client.ugoira_metadata(artwork_id(&source)?).await?;
             if json {

@@ -1039,15 +1039,32 @@
     },
     {
       "id": "cli:pixiv ranking",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv ranking"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/ranking.rs",
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/search.rs",
+        "crates/pixiv-cli/src/json_spool.rs",
+        "crates/pixiv-app/src/pagination.rs",
+        "crates/pixiv-app/src/execution.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_ranking_test.go#TestMigrationRankingPreservesLogicalPagesOutputsAndStartup",
+        "crates/pixiv-cli/tests/ranking.rs#ranking_preserves_go_output_windows_errors_and_saved_account_execution",
+        "crates/pixiv-cli/tests/ranking.rs#ranking_process_preserves_go_validation_authentication_and_startup_order",
+        "sdk/pixiv/migration_ranking_test.go#TestMigrationArtworkRankingPreservesModesDatesPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/artwork_ranking.rs#ranking_matches_go_modes_dates_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "作品ランキングを既存設定・保存済みアカウントの Execution に接続。Go の204ケースで全16モード、日付、human の見出し/順位、JSON/NDJSON、DTO、不正応答、論理 limit/page、入力/type 拒否と実子プロセスの起動順を比較。直接 Client と保存済みアカウントの両経路で同じ結果/query と refresh の CAS 保存・Bearer を確認。JSON は既存 spool でページ単位に蓄積して lease 解放後に公開する。--type novel は未移植で明示的な未実装エラーを返す。全 flag 構文/help・proxy・出力 override/TTY、writer 部分失敗・取消・pool replay、実 HTTPS と他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "cli:pixiv recommended",
@@ -1739,15 +1756,30 @@
     },
     {
       "id": "mcp:pixiv:illust_ranking",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "illust_ranking"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/ranking.rs",
+        "crates/pixiv-mcp/src/stdio.rs",
+        "crates/pixiv-mcp/src/search.rs",
+        "crates/pixiv-mcp/schemas/illust-ranking.json",
+        "crates/pixiv-app/src/pagination.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_mcp_ranking_test.go#TestMigrationMCPArtworkRankingPreservesFiltersPagesAndSchema",
+        "crates/pixiv-mcp/tests/ranking.rs#ranking_tool_preserves_go_schema_filter_windows_results_and_saved_accounts",
+        "sdk/pixiv/migration_ranking_test.go#TestMigrationArtworkRankingPreservesModesDatesPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/artwork_ranking.rs#ranking_matches_go_modes_dates_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "実 Go MCP session の schema と60応答/query を固定し、全16モード、日付、空/不正応答、論理 page/limit と overflow、illust_filter、重複除去、pagination を Rust の直接呼出し・stdio・保存済み account で比較。共通の schema/plan/filter/result を検索と共有。入力 schema 拒否・整数範囲/精度の全条件、取消・pool replay・disconnect、実 HTTPS と他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:illust_recommended",
@@ -5845,15 +5877,26 @@
     },
     {
       "id": "sdk/pixiv:ArtworkRankingRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ArtworkRankingRequest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_ranking_test.go#TestMigrationArtworkRankingPreservesModesDatesPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/artwork_ranking.rs#ranking_matches_go_modes_dates_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "固定 Go の71ケースで全16モード、日付、DTO、複数ページ、不正 next_url、cursor binding/payload を比較。作品ランキング cursor は binding=1 でアカウントを跨いで利用でき、mode/date の変更は拒否する。Rust RankingMode は String alias、Go の各定数は RANKING_MODE_* の &str 定数に対応する。小説ランキングへの適用、HTTP異常・取消・pool 全条件、全 URL 構文・resource 利用、他 OS/arch は未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:ArtworkRequest",
@@ -6148,15 +6191,26 @@
     },
     {
       "id": "sdk/pixiv:Client.ArtworkRanking",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.ArtworkRanking"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_ranking_test.go#TestMigrationArtworkRankingPreservesModesDatesPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/artwork_ranking.rs#ranking_matches_go_modes_dates_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "固定 Go の71ケースで全16モード、日付、DTO、複数ページ、不正 next_url、cursor binding/payload を比較。作品ランキング cursor は binding=1 でアカウントを跨いで利用でき、mode/date の変更は拒否する。Rust RankingMode は String alias、Go の各定数は RANKING_MODE_* の &str 定数に対応する。小説ランキングへの適用、HTTP異常・取消・pool 全条件、全 URL 構文・resource 利用、他 OS/arch は未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.ArtworkSeries",
@@ -8427,207 +8481,394 @@
     },
     {
       "id": "sdk/pixiv:RankingMode",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:RankingMode"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_ranking_test.go#TestMigrationArtworkRankingPreservesModesDatesPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/artwork_ranking.rs#ranking_matches_go_modes_dates_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "固定 Go の71ケースで全16モード、日付、DTO、複数ページ、不正 next_url、cursor binding/payload を比較。作品ランキング cursor は binding=1 でアカウントを跨いで利用でき、mode/date の変更は拒否する。Rust RankingMode は String alias、Go の各定数は RANKING_MODE_* の &str 定数に対応する。小説ランキングへの適用、HTTP異常・取消・pool 全条件、全 URL 構文・resource 利用、他 OS/arch は未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:RankingModeDay",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:RankingModeDay"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_ranking_test.go#TestMigrationArtworkRankingPreservesModesDatesPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/artwork_ranking.rs#ranking_matches_go_modes_dates_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "固定 Go の71ケースで全16モード、日付、DTO、複数ページ、不正 next_url、cursor binding/payload を比較。作品ランキング cursor は binding=1 でアカウントを跨いで利用でき、mode/date の変更は拒否する。Rust RankingMode は String alias、Go の各定数は RANKING_MODE_* の &str 定数に対応する。小説ランキングへの適用、HTTP異常・取消・pool 全条件、全 URL 構文・resource 利用、他 OS/arch は未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:RankingModeDayFemale",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:RankingModeDayFemale"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_ranking_test.go#TestMigrationArtworkRankingPreservesModesDatesPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/artwork_ranking.rs#ranking_matches_go_modes_dates_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "固定 Go の71ケースで全16モード、日付、DTO、複数ページ、不正 next_url、cursor binding/payload を比較。作品ランキング cursor は binding=1 でアカウントを跨いで利用でき、mode/date の変更は拒否する。Rust RankingMode は String alias、Go の各定数は RANKING_MODE_* の &str 定数に対応する。小説ランキングへの適用、HTTP異常・取消・pool 全条件、全 URL 構文・resource 利用、他 OS/arch は未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:RankingModeDayFemaleR18",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:RankingModeDayFemaleR18"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_ranking_test.go#TestMigrationArtworkRankingPreservesModesDatesPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/artwork_ranking.rs#ranking_matches_go_modes_dates_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "固定 Go の71ケースで全16モード、日付、DTO、複数ページ、不正 next_url、cursor binding/payload を比較。作品ランキング cursor は binding=1 でアカウントを跨いで利用でき、mode/date の変更は拒否する。Rust RankingMode は String alias、Go の各定数は RANKING_MODE_* の &str 定数に対応する。小説ランキングへの適用、HTTP異常・取消・pool 全条件、全 URL 構文・resource 利用、他 OS/arch は未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:RankingModeDayMale",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:RankingModeDayMale"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_ranking_test.go#TestMigrationArtworkRankingPreservesModesDatesPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/artwork_ranking.rs#ranking_matches_go_modes_dates_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "固定 Go の71ケースで全16モード、日付、DTO、複数ページ、不正 next_url、cursor binding/payload を比較。作品ランキング cursor は binding=1 でアカウントを跨いで利用でき、mode/date の変更は拒否する。Rust RankingMode は String alias、Go の各定数は RANKING_MODE_* の &str 定数に対応する。小説ランキングへの適用、HTTP異常・取消・pool 全条件、全 URL 構文・resource 利用、他 OS/arch は未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:RankingModeDayMaleR18",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:RankingModeDayMaleR18"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_ranking_test.go#TestMigrationArtworkRankingPreservesModesDatesPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/artwork_ranking.rs#ranking_matches_go_modes_dates_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "固定 Go の71ケースで全16モード、日付、DTO、複数ページ、不正 next_url、cursor binding/payload を比較。作品ランキング cursor は binding=1 でアカウントを跨いで利用でき、mode/date の変更は拒否する。Rust RankingMode は String alias、Go の各定数は RANKING_MODE_* の &str 定数に対応する。小説ランキングへの適用、HTTP異常・取消・pool 全条件、全 URL 構文・resource 利用、他 OS/arch は未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:RankingModeDayManga",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:RankingModeDayManga"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_ranking_test.go#TestMigrationArtworkRankingPreservesModesDatesPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/artwork_ranking.rs#ranking_matches_go_modes_dates_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "固定 Go の71ケースで全16モード、日付、DTO、複数ページ、不正 next_url、cursor binding/payload を比較。作品ランキング cursor は binding=1 でアカウントを跨いで利用でき、mode/date の変更は拒否する。Rust RankingMode は String alias、Go の各定数は RANKING_MODE_* の &str 定数に対応する。小説ランキングへの適用、HTTP異常・取消・pool 全条件、全 URL 構文・resource 利用、他 OS/arch は未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:RankingModeDayR18",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:RankingModeDayR18"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_ranking_test.go#TestMigrationArtworkRankingPreservesModesDatesPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/artwork_ranking.rs#ranking_matches_go_modes_dates_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "固定 Go の71ケースで全16モード、日付、DTO、複数ページ、不正 next_url、cursor binding/payload を比較。作品ランキング cursor は binding=1 でアカウントを跨いで利用でき、mode/date の変更は拒否する。Rust RankingMode は String alias、Go の各定数は RANKING_MODE_* の &str 定数に対応する。小説ランキングへの適用、HTTP異常・取消・pool 全条件、全 URL 構文・resource 利用、他 OS/arch は未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:RankingModeMonth",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:RankingModeMonth"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_ranking_test.go#TestMigrationArtworkRankingPreservesModesDatesPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/artwork_ranking.rs#ranking_matches_go_modes_dates_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "固定 Go の71ケースで全16モード、日付、DTO、複数ページ、不正 next_url、cursor binding/payload を比較。作品ランキング cursor は binding=1 でアカウントを跨いで利用でき、mode/date の変更は拒否する。Rust RankingMode は String alias、Go の各定数は RANKING_MODE_* の &str 定数に対応する。小説ランキングへの適用、HTTP異常・取消・pool 全条件、全 URL 構文・resource 利用、他 OS/arch は未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:RankingModeMonthManga",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:RankingModeMonthManga"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_ranking_test.go#TestMigrationArtworkRankingPreservesModesDatesPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/artwork_ranking.rs#ranking_matches_go_modes_dates_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "固定 Go の71ケースで全16モード、日付、DTO、複数ページ、不正 next_url、cursor binding/payload を比較。作品ランキング cursor は binding=1 でアカウントを跨いで利用でき、mode/date の変更は拒否する。Rust RankingMode は String alias、Go の各定数は RANKING_MODE_* の &str 定数に対応する。小説ランキングへの適用、HTTP異常・取消・pool 全条件、全 URL 構文・resource 利用、他 OS/arch は未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:RankingModeWeek",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:RankingModeWeek"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_ranking_test.go#TestMigrationArtworkRankingPreservesModesDatesPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/artwork_ranking.rs#ranking_matches_go_modes_dates_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "固定 Go の71ケースで全16モード、日付、DTO、複数ページ、不正 next_url、cursor binding/payload を比較。作品ランキング cursor は binding=1 でアカウントを跨いで利用でき、mode/date の変更は拒否する。Rust RankingMode は String alias、Go の各定数は RANKING_MODE_* の &str 定数に対応する。小説ランキングへの適用、HTTP異常・取消・pool 全条件、全 URL 構文・resource 利用、他 OS/arch は未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:RankingModeWeekManga",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:RankingModeWeekManga"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_ranking_test.go#TestMigrationArtworkRankingPreservesModesDatesPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/artwork_ranking.rs#ranking_matches_go_modes_dates_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "固定 Go の71ケースで全16モード、日付、DTO、複数ページ、不正 next_url、cursor binding/payload を比較。作品ランキング cursor は binding=1 でアカウントを跨いで利用でき、mode/date の変更は拒否する。Rust RankingMode は String alias、Go の各定数は RANKING_MODE_* の &str 定数に対応する。小説ランキングへの適用、HTTP異常・取消・pool 全条件、全 URL 構文・resource 利用、他 OS/arch は未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:RankingModeWeekOriginal",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:RankingModeWeekOriginal"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_ranking_test.go#TestMigrationArtworkRankingPreservesModesDatesPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/artwork_ranking.rs#ranking_matches_go_modes_dates_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "固定 Go の71ケースで全16モード、日付、DTO、複数ページ、不正 next_url、cursor binding/payload を比較。作品ランキング cursor は binding=1 でアカウントを跨いで利用でき、mode/date の変更は拒否する。Rust RankingMode は String alias、Go の各定数は RANKING_MODE_* の &str 定数に対応する。小説ランキングへの適用、HTTP異常・取消・pool 全条件、全 URL 構文・resource 利用、他 OS/arch は未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:RankingModeWeekR18",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:RankingModeWeekR18"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_ranking_test.go#TestMigrationArtworkRankingPreservesModesDatesPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/artwork_ranking.rs#ranking_matches_go_modes_dates_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "固定 Go の71ケースで全16モード、日付、DTO、複数ページ、不正 next_url、cursor binding/payload を比較。作品ランキング cursor は binding=1 でアカウントを跨いで利用でき、mode/date の変更は拒否する。Rust RankingMode は String alias、Go の各定数は RANKING_MODE_* の &str 定数に対応する。小説ランキングへの適用、HTTP異常・取消・pool 全条件、全 URL 構文・resource 利用、他 OS/arch は未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:RankingModeWeekR18G",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:RankingModeWeekR18G"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_ranking_test.go#TestMigrationArtworkRankingPreservesModesDatesPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/artwork_ranking.rs#ranking_matches_go_modes_dates_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "固定 Go の71ケースで全16モード、日付、DTO、複数ページ、不正 next_url、cursor binding/payload を比較。作品ランキング cursor は binding=1 でアカウントを跨いで利用でき、mode/date の変更は拒否する。Rust RankingMode は String alias、Go の各定数は RANKING_MODE_* の &str 定数に対応する。小説ランキングへの適用、HTTP異常・取消・pool 全条件、全 URL 構文・resource 利用、他 OS/arch は未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:RankingModeWeekRookie",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:RankingModeWeekRookie"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_ranking_test.go#TestMigrationArtworkRankingPreservesModesDatesPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/artwork_ranking.rs#ranking_matches_go_modes_dates_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "固定 Go の71ケースで全16モード、日付、DTO、複数ページ、不正 next_url、cursor binding/payload を比較。作品ランキング cursor は binding=1 でアカウントを跨いで利用でき、mode/date の変更は拒否する。Rust RankingMode は String alias、Go の各定数は RANKING_MODE_* の &str 定数に対応する。小説ランキングへの適用、HTTP異常・取消・pool 全条件、全 URL 構文・resource 利用、他 OS/arch は未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:RankingModeWeekRookieManga",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:RankingModeWeekRookieManga"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_ranking_test.go#TestMigrationArtworkRankingPreservesModesDatesPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/artwork_ranking.rs#ranking_matches_go_modes_dates_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "固定 Go の71ケースで全16モード、日付、DTO、複数ページ、不正 next_url、cursor binding/payload を比較。作品ランキング cursor は binding=1 でアカウントを跨いで利用でき、mode/date の変更は拒否する。Rust RankingMode は String alias、Go の各定数は RANKING_MODE_* の &str 定数に対応する。小説ランキングへの適用、HTTP異常・取消・pool 全条件、全 URL 構文・resource 利用、他 OS/arch は未移植または未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:RecommendedArtworksRequest",

@@ -1,4 +1,5 @@
 mod json_spool;
+pub mod ranking;
 pub mod search;
 pub mod trending;
 

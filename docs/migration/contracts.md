@@ -891,3 +891,14 @@ Rust の CLI は保存済みアカウントから `Execution::read` で型付き
 
 
 全体検証で、既存の search pool 比較に実時間の秒境界による不安定さが見つかった。`all_rate_limited` の残り秒数は固定した120と直接比較せず、各429応答の時刻から120秒の範囲に DB の凍結期限があることと、出力前後の実時刻からその期限までの残り秒数が正しいことを検証する。その項目だけを比較用の値へ合わせ、他の envelope 項目は Go と完全に比較する。本番の時刻取得・retry 計算や Go fixture は変更していない。
+
+
+## 作品ランキングの SDK・CLI・MCP
+
+[artwork-ranking.json](contracts/artwork-ranking.json) は固定 Go の71ケースである。全16モードと既定値、日付、DTO、複数ページ、不正な next_url、cursor payload と mode/date binding を固定する。作品ランキングの cursor は検索と異なり binding=1 であり、アカウントを跨いで使える。正の consumed を持つ cursor は Go と同じく batch 内の切捨てに使わない。Rust の RankingMode は String alias、各モード定数は `RANKING_MODE_*` の `&str` として対応する。query digest と endpoint ごとの allowlist 付き継続 URL parser は検索と共有し、検索の既存比較も維持する。
+
+[cli-ranking.json](contracts/cli-ranking.json) は Go の204ケースである。作品ランキングの human 見出しと順位、JSON/NDJSON、論理 limit/page、空・不正応答、入力/type 拒否、実 Go Run/root の設定・DB 作成順と診断を固定する。Rust の直接 client と保存済みアカウント経由で同じ結果と query を比較し、refresh の CAS 保存と Bearer 使用も確認する。実 Rust バイナリの204起動ケースも比較する。JSON は既存の private spool でページごとに蓄積し、全取得が成功して lease を解放した後に出力する。
+
+[mcp-ranking.json](contracts/mcp-ranking.json) は実 Go MCP session の schema と60応答である。全16モード、日付、空・不正応答、論理 page/limit と offset overflow、illust_filter と重複除去、pagination を固定する。Rust の直接呼出し、stdio、保存済みアカウントの stdio で同じ result と query を比較する。検索と共通の schema 検証、list plan、filter 判定、record/result 生成を使う。
+
+検証環境は Windows amd64 である。小説ランキングは未移植で、Rust CLI の `--type novel` は未実装エラーを返す。全 flag 構文/help・proxy・出力 override/TTY、部分 writer 失敗、取消・pool replay・disconnect、schema 拒否と整数精度の全条件、実 HTTPS と他 OS/arch は未検証。作品ランキングの接続を ranking 全体や全環境の完了として扱わない。

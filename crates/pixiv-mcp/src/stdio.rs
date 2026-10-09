@@ -15,6 +15,7 @@ type ToolFuture<'a> = Pin<Box<dyn Future<Output = Value> + 'a>>;
 enum ToolInput {
     Detail(IllustReference),
     Trending,
+    Ranking(Box<crate::IllustRankingInput>),
     Search(Box<crate::SearchIllustInput>),
 }
 
@@ -38,6 +39,10 @@ pub async fn serve<T: Transport, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
                 }
                 ToolInput::Trending => {
                     serde_json::to_value(crate::trending_tags_illust(client).await)
+                        .expect("tool result is serializable")
+                }
+                ToolInput::Ranking(input) => {
+                    serde_json::to_value(crate::illust_ranking(client, *input).await)
                         .expect("tool result is serializable")
                 }
                 ToolInput::Search(input) => {
@@ -78,6 +83,10 @@ pub async fn serve_saved_with_proxy<
                 .expect("tool result is serializable"),
                 ToolInput::Trending => serde_json::to_value(
                     crate::trending::saved_trending_tags_illust(execution, &context, proxy).await,
+                )
+                .expect("tool result is serializable"),
+                ToolInput::Ranking(input) => serde_json::to_value(
+                    crate::ranking::saved_illust_ranking(execution, &context, *input, proxy).await,
                 )
                 .expect("tool result is serializable"),
                 ToolInput::Search(input) => serde_json::to_value(
@@ -131,7 +140,7 @@ async fn serve_with<'a, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
                     }
                     "ping" => success(id, json!({})),
                     _ if !session.initialized => protocol_error(id,0,format!("method {method:?} is invalid during session initialization")),
-                    "tools/list" => success(id,json!({"tools":[illust_detail_tool(),crate::search_illust_tool(),crate::trending_tags_illust_tool()]})),
+                    "tools/list" => success(id,json!({"tools":[illust_detail_tool(),crate::search_illust_tool(),crate::trending_tags_illust_tool(),crate::illust_ranking_tool()]})),
                     "logging/setLevel" => {
                         if params.is_none() || params.is_some_and(Value::is_null) {
                             protocol_error(id,-32600,"invalid request: missing required \"params\"".into())
@@ -143,24 +152,25 @@ async fn serve_with<'a, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
                     "tools/call" => {
                         if let Some(params) = params.filter(|value| !value.is_null()) {
                             let name = params["name"].as_str().unwrap_or_default();
-                            if !matches!(name, "illust_detail" | "search_illust" | "trending_tags_illust") {
+                            if !matches!(name, "illust_detail" | "search_illust" | "trending_tags_illust" | "illust_ranking") {
                                 protocol_error(id,-32602,format!("unknown tool {name:?}"))
                             } else {
                                 let input = if name == "search_illust" {
                                     crate::search::decode(params.get("arguments")).map(|input| ToolInput::Search(Box::new(input)))
-                                } else if name == "trending_tags_illust" { crate::trending::decode(params.get("arguments")).map(|()|ToolInput::Trending) } else { decode_reference(params.get("arguments")).map(ToolInput::Detail) };
+                                } else if name == "illust_ranking" { crate::ranking::decode(params.get("arguments")).map(|input|ToolInput::Ranking(Box::new(input))) } else if name == "trending_tags_illust" { crate::trending::decode(params.get("arguments")).map(|()|ToolInput::Trending) } else { decode_reference(params.get("arguments")).map(ToolInput::Detail) };
                                 match input {
                                     Ok(input) => {
                                         let (handle, registration) = AbortHandle::new_pair();
                                         inflight.insert(id.to_string(), handle);
                                         pending.push(Box::pin(async move {
                                             let is_search = matches!(&input, ToolInput::Search(_));
+                                            let is_ranking = matches!(&input, ToolInput::Ranking(_));
                                             let is_trending = matches!(&input, ToolInput::Trending);
                                             let result = match Abortable::new(invoke(input), registration).await {
                                                 Ok(result) => result,
                                                 Err(_) => {
-                                                    let message = pixiv_sdk::Error::new(pixiv_sdk::Reason::UpstreamUnavailable,if is_search { "SearchArtworks" } else if is_trending { "TrendingArtworkTags" } else { "Artwork" }).with_detail("pixiv upstream transport failed").to_string();
-                                                    if is_search { serde_json::to_value(crate::search::failure(message)) } else if is_trending { serde_json::to_value(crate::trending::failure(message)) } else { serde_json::to_value(crate::failure(message)) }.expect("tool result is serializable")
+                                                    let message = pixiv_sdk::Error::new(pixiv_sdk::Reason::UpstreamUnavailable,if is_search { "SearchArtworks" } else if is_ranking { "ArtworkRanking" } else if is_trending { "TrendingArtworkTags" } else { "Artwork" }).with_detail("pixiv upstream transport failed").to_string();
+                                                    if is_search || is_ranking { serde_json::to_value(crate::search::failure(message)) } else if is_trending { serde_json::to_value(crate::trending::failure(message)) } else { serde_json::to_value(crate::failure(message)) }.expect("tool result is serializable")
                                                 },
                                             };
                                             success(id,result)

@@ -57,8 +57,12 @@ fn mcp_process_exchanges_jsonrpc_without_stdout_diagnostics_or_credentials() {
         pixiv_mcp::trending_tags_illust_tool()
     );
     assert_eq!(
+        by_id("list")["result"]["tools"][3],
+        pixiv_mcp::illust_ranking_tool()
+    );
+    assert_eq!(
         by_id("list")["result"]["tools"].as_array().unwrap().len(),
-        3
+        4
     );
     assert_eq!(
         by_id("invalid")["result"]["content"][0]["text"],

@@ -128,7 +128,7 @@ fn date_shape(value: &str) -> bool {
             }
         })
 }
-fn validate_schema(
+pub(crate) fn validate_schema(
     value: &mut Value,
     schema: &Value,
     path: &str,
@@ -229,11 +229,11 @@ fn validate_schema(
 }
 
 #[derive(Clone, Copy)]
-struct Plan {
-    page: i64,
-    limit: i64,
-    skip: i64,
-    one_batch: bool,
+pub(crate) struct Plan {
+    pub(crate) page: i64,
+    pub(crate) limit: i64,
+    pub(crate) skip: i64,
+    pub(crate) one_batch: bool,
 }
 fn plan(input: &SearchIllustInput) -> Result<Plan, String> {
     if input.page.is_some_and(|page| page <= 0) {
@@ -273,10 +273,10 @@ pub(crate) fn failure(message: String) -> CallToolResult {
         Some(json!({"page":1,"limit":null,"returned":0,"has_more":false,"next_page":null}));
     result
 }
-fn valid_date(value: &str) -> bool {
+pub(crate) fn valid_date(value: &str) -> bool {
     date_shape(value) && NaiveDate::parse_from_str(value, "%Y-%m-%d").is_ok()
 }
-fn validate(input: &mut SearchIllustInput) -> Result<Plan, String> {
+pub(crate) fn validate(input: &mut SearchIllustInput) -> Result<Plan, String> {
     if input.start_date.is_empty()
         && input.end_date.is_empty()
         && let Some(range) =
@@ -336,7 +336,7 @@ fn kind(artwork: &Artwork) -> &'static str {
         ArtworkKind::Unknown => "unknown",
     }
 }
-fn matches(
+pub(crate) fn matches(
     artwork: &Artwork,
     filter: &IllustFilter,
     local_type: &pixiv_app::search_filter::ArtworkFilter,
@@ -385,7 +385,7 @@ pub(crate) async fn saved_search_illust<T: Transport + 'static>(
     search_result(result, &input, &plan)
 }
 
-fn search_result(
+pub(crate) fn search_result(
     result: Result<(Vec<Artwork>, bool, Option<Value>), SchedulerError>,
     input: &SearchIllustInput,
     plan: &Plan,

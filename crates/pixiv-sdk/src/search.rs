@@ -1,3 +1,4 @@
+use crate::continuation::query_digest;
 use crate::{
     Client, Error, Reason, Result,
     cursor::{Cursor, CursorOptions, Page},
@@ -7,7 +8,6 @@ use crate::{
 use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
 
 const OPERATION: &str = "SearchArtworks";
@@ -33,33 +33,6 @@ pub struct SearchArtworksRequest {
 
 fn error(reason: Reason, detail: &str) -> Error {
     Error::new(reason, OPERATION).with_detail(detail)
-}
-fn query_escape(value: &str) -> String {
-    let mut encoded = String::new();
-    for byte in value.bytes() {
-        match byte {
-            b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'_' | b'.' | b'~' => {
-                encoded.push(byte as char)
-            }
-            b' ' => encoded.push('+'),
-            _ => {
-                encoded.push('%');
-                encoded.push(char::from(b"0123456789ABCDEF"[(byte >> 4) as usize]));
-                encoded.push(char::from(b"0123456789ABCDEF"[(byte & 15) as usize]));
-            }
-        }
-    }
-    encoded
-}
-fn query_digest(query: &BTreeMap<String, String>) -> String {
-    let mut canonical = String::new();
-    for (key, value) in query {
-        canonical.push_str(&query_escape(key));
-        canonical.push('=');
-        canonical.push_str(&query_escape(value));
-        canonical.push('&');
-    }
-    format!("{:x}", Sha256::digest(canonical.as_bytes()))
 }
 fn date(raw: &str, field: &str) -> Result<Option<NaiveDate>> {
     if raw.is_empty() {
@@ -263,70 +236,6 @@ struct Envelope {
     next_url: Option<String>,
 }
 
-fn next_offset(raw: &str) -> Option<i64> {
-    let (scheme, remainder) = raw.split_once("://")?;
-    if !scheme.eq_ignore_ascii_case("https") || raw.bytes().any(|byte| byte < 32 || byte == 127) {
-        return None;
-    }
-    let (authority, path) = remainder.split_once('/')?;
-    if !matches!(authority, "app-api.pixiv.net" | "app-api.pixiv.net:") {
-        return None;
-    }
-    let (path, fragment) = path
-        .split_once('#')
-        .map_or((path, ""), |(path, fragment)| (path, fragment));
-    if !fragment.is_empty() {
-        return None;
-    }
-    let (path, query) = path.split_once('?')?;
-    if path != "v1/search/illust" || query.contains(';') {
-        return None;
-    }
-    let bytes = query.as_bytes();
-    for (index, byte) in bytes.iter().enumerate() {
-        if *byte == b'%'
-            && (bytes
-                .get(index + 1)
-                .is_none_or(|byte| !byte.is_ascii_hexdigit())
-                || bytes
-                    .get(index + 2)
-                    .is_none_or(|byte| !byte.is_ascii_hexdigit()))
-        {
-            return None;
-        }
-    }
-    let mut entries = BTreeMap::new();
-    for (key, value) in url::form_urlencoded::parse(bytes) {
-        if !matches!(
-            key.as_ref(),
-            "offset"
-                | "word"
-                | "search_target"
-                | "sort"
-                | "duration"
-                | "start_date"
-                | "end_date"
-                | "search_ai_type"
-                | "ratio_pattern"
-                | "content_type"
-                | "tool"
-                | "bookmark_num_min"
-                | "bookmark_num_max"
-                | "width_min"
-                | "width_max"
-                | "height_min"
-                | "height_max"
-        ) || entries
-            .insert(key.into_owned(), value.into_owned())
-            .is_some()
-        {
-            return None;
-        }
-    }
-    let value = entries.get("offset")?.parse::<i64>().ok()?;
-    (value > 0).then_some(value)
-}
-
 impl<T: Transport> Client<T> {
     fn search_position(&self, cursor: &Cursor, digest: &str) -> Result<Position> {
         if cursor.is_zero() {
@@ -443,7 +352,32 @@ impl<T: Transport> Client<T> {
         let offset = envelope
             .next_url
             .as_deref()
-            .map(|raw| next_offset(raw).ok_or_else(malformed))
+            .map(|raw| {
+                crate::continuation::next_offset(
+                    raw,
+                    "v1/search/illust",
+                    &[
+                        "offset",
+                        "word",
+                        "search_target",
+                        "sort",
+                        "duration",
+                        "start_date",
+                        "end_date",
+                        "search_ai_type",
+                        "ratio_pattern",
+                        "content_type",
+                        "tool",
+                        "bookmark_num_min",
+                        "bookmark_num_max",
+                        "width_min",
+                        "width_max",
+                        "height_min",
+                        "height_max",
+                    ],
+                )
+                .ok_or_else(malformed)
+            })
             .transpose()?;
         let mut items = Vec::with_capacity(values.len());
         for value in values {
