@@ -414,15 +414,33 @@
     },
     {
       "id": "cli:pixiv bookmark detail",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv bookmark detail"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/bookmark_reads.rs",
+        "crates/pixiv-cli/src/bookmark_lists.rs",
+        "crates/pixiv-cli/src/record_input.rs",
+        "crates/pixiv-cli/src/main.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_bookmark_reads_test.go",
+        "internal/cli/migration_bookmark_reads_records_test.go",
+        "internal/cli/migration_bookmark_reads_bodies_test.go",
+        "internal/cli/migration_bookmark_reads_startup_test.go",
+        "internal/cli/migration_bookmark_reads_pool_test.go",
+        "crates/pixiv-cli/tests/bookmark_reads.rs",
+        "crates/pixiv-cli/tests/bookmark_reads_startup.rs",
+        "crates/pixiv-cli/tests/bookmark_reads_pool.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "既存SDK detail/tagsをCLI全kindへ接続。Go8628処理行と8592保存済み境界、312pool行、独立Run startupを比較。869 Cobra leaf parser行はRustの拒否のみ検査しexact leaf診断/exitは未検証。fixture直積の監査と範囲はcontracts.md/contract-matrix-audit.md。raw-wire/全通信/取消/parallel、root parser3/Linux公開面snapshot、全flag/help/TTY/OS hooks、他platform/配布は未検証。"
+      ]
     },
     {
       "id": "cli:pixiv bookmark list",
@@ -482,15 +500,33 @@
     },
     {
       "id": "cli:pixiv bookmark tags",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv bookmark tags"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/bookmark_reads.rs",
+        "crates/pixiv-cli/src/bookmark_lists.rs",
+        "crates/pixiv-cli/src/record_input.rs",
+        "crates/pixiv-cli/src/main.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_bookmark_reads_test.go",
+        "internal/cli/migration_bookmark_reads_records_test.go",
+        "internal/cli/migration_bookmark_reads_bodies_test.go",
+        "internal/cli/migration_bookmark_reads_startup_test.go",
+        "internal/cli/migration_bookmark_reads_pool_test.go",
+        "crates/pixiv-cli/tests/bookmark_reads.rs",
+        "crates/pixiv-cli/tests/bookmark_reads_startup.rs",
+        "crates/pixiv-cli/tests/bookmark_reads_pool.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "既存SDK detail/tagsをCLI全kindへ接続。Go8628処理行と8592保存済み境界、312pool行、独立Run startupを比較。869 Cobra leaf parser行はRustの拒否のみ検査しexact leaf診断/exitは未検証。fixture直積の監査と範囲はcontracts.md/contract-matrix-audit.md。raw-wire/全通信/取消/parallel、root parser3/Linux公開面snapshot、全flag/help/TTY/OS hooks、他platform/配布は未検証。"
+      ]
     },
     {
       "id": "cli:pixiv comment",
@@ -1996,15 +2032,27 @@
     },
     {
       "id": "mcp:pixiv:bookmark_detail",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "bookmark_detail"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/bookmark_reads.rs",
+        "crates/pixiv-mcp/src/stdio.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_bookmark_reads_test.go",
+        "internal/mcpserver/pixiv/migration_bookmark_reads_pool_test.go",
+        "crates/pixiv-mcp/tests/bookmark_reads.rs",
+        "crates/pixiv-mcp/tests/bookmark_reads_pool.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "既存SDKを5typed toolへ接続し旧29tool順を保持。Go202 direct行/16real pool行とschema/RPCを比較。artwork tags:nullのGo schema違反RPC code0、novel tags:[]を保持。tag-all複数違反2行のfirst diagnostic選択は非決定的で未検証、固定期待値保持/Go opt-in完全候補検査のみ。raw-wire、全通信/取消/parallel/disconnect、他platform/配布は未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:bookmark_list_all",
@@ -2032,27 +2080,51 @@
     },
     {
       "id": "mcp:pixiv:bookmark_tags",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "bookmark_tags"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/bookmark_reads.rs",
+        "crates/pixiv-mcp/src/stdio.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_bookmark_reads_test.go",
+        "internal/mcpserver/pixiv/migration_bookmark_reads_pool_test.go",
+        "crates/pixiv-mcp/tests/bookmark_reads.rs",
+        "crates/pixiv-mcp/tests/bookmark_reads_pool.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "既存SDKを5typed toolへ接続し旧29tool順を保持。Go202 direct行/16real pool行とschema/RPCを比較。artwork tags:nullのGo schema違反RPC code0、novel tags:[]を保持。tag-all複数違反2行のfirst diagnostic選択は非決定的で未検証、固定期待値保持/Go opt-in完全候補検査のみ。raw-wire、全通信/取消/parallel/disconnect、他platform/配布は未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:bookmark_tags_all",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "bookmark_tags_all"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/bookmark_reads.rs",
+        "crates/pixiv-mcp/src/stdio.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_bookmark_reads_test.go",
+        "internal/mcpserver/pixiv/migration_bookmark_reads_pool_test.go",
+        "crates/pixiv-mcp/tests/bookmark_reads.rs",
+        "crates/pixiv-mcp/tests/bookmark_reads_pool.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "既存SDKを5typed toolへ接続し旧29tool順を保持。Go202 direct行/16real pool行とschema/RPCを比較。artwork tags:nullのGo schema違反RPC code0、novel tags:[]を保持。tag-all複数違反2行のfirst diagnostic選択は非決定的で未検証、固定期待値保持/Go opt-in完全候補検査のみ。raw-wire、全通信/取消/parallel/disconnect、他platform/配布は未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:create_artwork_comment",
@@ -2352,27 +2424,51 @@
     },
     {
       "id": "mcp:pixiv:novel_bookmark_detail",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "novel_bookmark_detail"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/bookmark_reads.rs",
+        "crates/pixiv-mcp/src/stdio.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_bookmark_reads_test.go",
+        "internal/mcpserver/pixiv/migration_bookmark_reads_pool_test.go",
+        "crates/pixiv-mcp/tests/bookmark_reads.rs",
+        "crates/pixiv-mcp/tests/bookmark_reads_pool.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "既存SDKを5typed toolへ接続し旧29tool順を保持。Go202 direct行/16real pool行とschema/RPCを比較。artwork tags:nullのGo schema違反RPC code0、novel tags:[]を保持。tag-all複数違反2行のfirst diagnostic選択は非決定的で未検証、固定期待値保持/Go opt-in完全候補検査のみ。raw-wire、全通信/取消/parallel/disconnect、他platform/配布は未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:novel_bookmark_tags",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "novel_bookmark_tags"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/bookmark_reads.rs",
+        "crates/pixiv-mcp/src/stdio.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_bookmark_reads_test.go",
+        "internal/mcpserver/pixiv/migration_bookmark_reads_pool_test.go",
+        "crates/pixiv-mcp/tests/bookmark_reads.rs",
+        "crates/pixiv-mcp/tests/bookmark_reads_pool.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "既存SDKを5typed toolへ接続し旧29tool順を保持。Go202 direct行/16real pool行とschema/RPCを比較。artwork tags:nullのGo schema違反RPC code0、novel tags:[]を保持。tag-all複数違反2行のfirst diagnostic選択は非決定的で未検証、固定期待値保持/Go opt-in完全候補検査のみ。raw-wire、全通信/取消/parallel/disconnect、他platform/配布は未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:novel_comments",
@@ -7950,13 +8046,17 @@
       ],
       "tests": [
         "sdk/pixiv/migration_artwork_tags_test.go#TestMigrationArtworkBookmarkTagsMatchFrozenPagesAndCursors",
-        "crates/pixiv-sdk/tests/artwork_bookmark_tags.rs#artwork_bookmark_tag_pages_and_bound_cursors_match_go_without_replaying_next_urls"
+        "crates/pixiv-sdk/tests/artwork_bookmark_tags.rs#artwork_bookmark_tag_pages_and_bound_cursors_match_go_without_replaying_next_urls",
+        "internal/mcpserver/pixiv/migration_bookmark_reads_pool_test.go",
+        "crates/pixiv-mcp/tests/bookmark_reads_pool.rs"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64 (partial)"
       ],
       "differences": [
-        "61 fixed Go artwork bookmark tag cases compare required arrays, DTOs, next URL offset extraction, bound cursor strings/payload validation and a three-page sequence with an empty middle page. Artwork request uses the novel request type alias. Full JSON key case/duplicates/invalid UTF-8, URL syntax edges, real transport/full HTTP and retry conditions, authentication/cancellation/deadline, CLI/MCP, live service and other platforms remain unverified."
+        "61 fixed Go artwork bookmark tag cases compare required arrays, DTOs, next URL offset extraction, bound cursor strings/payload validation and a three-page sequence with an empty middle page. Artwork request uses the novel request type alias. Full JSON key case/duplicates/invalid UTF-8, URL syntax edges, real transport/full HTTP and retry conditions, authentication/cancellation/deadline, live service and remaining platforms remain unverified.",
+        "CLI/MCP bookmark readsでGET queryのGo key順とpool replayを比較。共通GET escape/POST form/OAuthは変更しない。raw-wire等の残る境界はcontracts.md。"
       ]
     },
     {
@@ -8122,14 +8222,18 @@
       ],
       "tests": [
         "sdk/pixiv/migration_bookmark_tags_test.go#TestMigrationNovelBookmarkTagsMatchFrozenValidationAndDTOs",
-        "crates/pixiv-sdk/tests/novel_bookmark_tags.rs#novel_bookmark_tags_preserve_required_arrays_counts_and_reject_continuation_before_io"
+        "crates/pixiv-sdk/tests/novel_bookmark_tags.rs#novel_bookmark_tags_preserve_required_arrays_counts_and_reject_continuation_before_io",
+        "internal/mcpserver/pixiv/migration_bookmark_reads_pool_test.go",
+        "crates/pixiv-mcp/tests/bookmark_reads_pool.rs"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64 (partial)"
       ],
       "differences": [
         "38 fixed Go fixture cases compare novel bookmark tag validation order, pre-network cursor rejection, path/query, HTTP errors, required arrays, name/count mapping and DTOs; Go int on supported 64-bit targets maps to Rust i64.",
-        "Artwork bookmark tag pagination, JSON key case/duplicates/invalid UTF-8, real transport integration, full authentication/cancellation/deadline, CLI/MCP, live service and other platforms remain unverified."
+        "Artwork bookmark tag pagination, JSON key case/duplicates/invalid UTF-8, real transport integration, full authentication/cancellation/deadline, live service and remaining platforms remain unverified.",
+        "CLI/MCP bookmark readsでGET queryのGo key順とpool replayを比較。共通GET escape/POST form/OAuthは変更しない。raw-wire等の残る境界はcontracts.md。"
       ]
     },
     {
@@ -12640,13 +12744,17 @@
       ],
       "tests": [
         "sdk/pixiv/migration_artwork_tags_test.go#TestMigrationArtworkBookmarkTagsMatchFrozenPagesAndCursors",
-        "crates/pixiv-sdk/tests/artwork_bookmark_tags.rs#artwork_bookmark_tag_pages_and_bound_cursors_match_go_without_replaying_next_urls"
+        "crates/pixiv-sdk/tests/artwork_bookmark_tags.rs#artwork_bookmark_tag_pages_and_bound_cursors_match_go_without_replaying_next_urls",
+        "internal/mcpserver/pixiv/migration_bookmark_reads_pool_test.go",
+        "crates/pixiv-mcp/tests/bookmark_reads_pool.rs"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64 (partial)"
       ],
       "differences": [
-        "61 fixed Go artwork bookmark tag cases compare required arrays, DTOs, next URL offset extraction, bound cursor strings/payload validation and a three-page sequence with an empty middle page. Artwork request uses the novel request type alias. Full JSON key case/duplicates/invalid UTF-8, URL syntax edges, real transport/full HTTP and retry conditions, authentication/cancellation/deadline, CLI/MCP, live service and other platforms remain unverified."
+        "61 fixed Go artwork bookmark tag cases compare required arrays, DTOs, next URL offset extraction, bound cursor strings/payload validation and a three-page sequence with an empty middle page. Artwork request uses the novel request type alias. Full JSON key case/duplicates/invalid UTF-8, URL syntax edges, real transport/full HTTP and retry conditions, authentication/cancellation/deadline, live service and remaining platforms remain unverified.",
+        "CLI/MCP bookmark readsでGET queryのGo key順とpool replayを比較。共通GET escape/POST form/OAuthは変更しない。raw-wire等の残る境界はcontracts.md。"
       ]
     },
     {
@@ -12873,14 +12981,18 @@
       ],
       "tests": [
         "sdk/pixiv/migration_bookmark_tags_test.go#TestMigrationNovelBookmarkTagsMatchFrozenValidationAndDTOs",
-        "crates/pixiv-sdk/tests/novel_bookmark_tags.rs#novel_bookmark_tags_preserve_required_arrays_counts_and_reject_continuation_before_io"
+        "crates/pixiv-sdk/tests/novel_bookmark_tags.rs#novel_bookmark_tags_preserve_required_arrays_counts_and_reject_continuation_before_io",
+        "internal/mcpserver/pixiv/migration_bookmark_reads_pool_test.go",
+        "crates/pixiv-mcp/tests/bookmark_reads_pool.rs"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64 (partial)"
       ],
       "differences": [
         "38 fixed Go fixture cases compare novel bookmark tag validation order, pre-network cursor rejection, path/query, HTTP errors, required arrays, name/count mapping and DTOs; Go int on supported 64-bit targets maps to Rust i64.",
-        "Artwork bookmark tag pagination, JSON key case/duplicates/invalid UTF-8, real transport integration, full authentication/cancellation/deadline, CLI/MCP, live service and other platforms remain unverified."
+        "Artwork bookmark tag pagination, JSON key case/duplicates/invalid UTF-8, real transport integration, full authentication/cancellation/deadline, live service and remaining platforms remain unverified.",
+        "CLI/MCP bookmark readsでGET queryのGo key順とpool replayを比較。共通GET escape/POST form/OAuthは変更しない。raw-wire等の残る境界はcontracts.md。"
       ]
     },
     {

@@ -218,3 +218,9 @@ pub use user_relationships::{
 
 mod bookmark_lists;
 pub use bookmark_lists::{BookmarkList, BookmarkListInput, bookmark_list, bookmark_list_tool};
+
+mod bookmark_reads;
+pub use bookmark_reads::{
+    BookmarkDetailOutput, BookmarkRead, BookmarkReadInput, BookmarkReadOutput, BookmarkTagOutput,
+    BookmarkTagsOutput, bookmark_read, bookmark_read_tool,
+};

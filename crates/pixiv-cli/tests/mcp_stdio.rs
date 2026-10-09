@@ -78,7 +78,7 @@ fn mcp_process_exchanges_jsonrpc_without_stdout_diagnostics_or_credentials() {
     );
     assert_eq!(
         by_id("list")["result"]["tools"].as_array().unwrap().len(),
-        29
+        34
     );
     assert_eq!(
         by_id("list")["result"]["tools"][19],

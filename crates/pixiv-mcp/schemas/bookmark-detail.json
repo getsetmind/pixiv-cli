@@ -1,0 +1,39 @@
+{
+  "description": "Get the current user's bookmark state for one artwork.",
+  "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "illust_id": {
+        "description": "positive artwork ID",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "illust_id"
+    ],
+    "type": "object"
+  },
+  "name": "bookmark_detail",
+  "outputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "bookmarked": {
+        "type": "boolean"
+      },
+      "restrict": {
+        "type": "string"
+      },
+      "tags": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "bookmarked",
+      "tags"
+    ],
+    "type": "object"
+  }
+}

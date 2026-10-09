@@ -1,0 +1,75 @@
+{
+  "description": "List artwork bookmark tags followed by novel bookmark tags without merging names.",
+  "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "limit": {
+        "description": "Maximum logical results; 0 returns all; omit for one logical batch.",
+        "minimum": 0,
+        "type": "integer"
+      },
+      "page": {
+        "description": "1-based logical page; requires a positive limit.",
+        "minimum": 1,
+        "type": "integer"
+      },
+      "restrict": {
+        "description": "Bookmark visibility.",
+        "enum": [
+          "public",
+          "private"
+        ],
+        "type": "string"
+      },
+      "user_id": {
+        "description": "Optional positive Pixiv user ID; defaults to the authenticated user.",
+        "minimum": 1,
+        "type": "integer"
+      }
+    },
+    "required": null,
+    "type": "object"
+  },
+  "name": "bookmark_tags_all",
+  "outputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "bookmark_tags": {
+        "items": {
+          "additionalProperties": false,
+          "properties": {
+            "content_type": {
+              "enum": [
+                "artwork",
+                "novel"
+              ],
+              "type": "string"
+            },
+            "count": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "count",
+            "content_type"
+          ],
+          "type": "object"
+        },
+        "type": "array"
+      },
+      "pagination": {
+        "additionalProperties": true,
+        "type": "object"
+      }
+    },
+    "required": [
+      "bookmark_tags",
+      "pagination"
+    ],
+    "type": "object"
+  }
+}

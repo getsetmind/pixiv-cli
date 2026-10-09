@@ -1,0 +1,39 @@
+{
+  "description": "Get the current user's bookmark state for one novel.",
+  "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "novel_id": {
+        "description": "positive novel ID",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "novel_id"
+    ],
+    "type": "object"
+  },
+  "name": "novel_bookmark_detail",
+  "outputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "bookmarked": {
+        "type": "boolean"
+      },
+      "restrict": {
+        "type": "string"
+      },
+      "tags": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "bookmarked",
+      "tags"
+    ],
+    "type": "object"
+  }
+}

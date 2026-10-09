@@ -593,6 +593,10 @@ async fn stdio_cancels_inflight_io_while_ping_remains_responsive() {
 
 #[tokio::test]
 async fn stdio_publishes_implemented_tool_metadata_and_preserves_request_ids() {
+    let bookmark_contract: Value = serde_json::from_str(include_str!(
+        "../../../docs/migration/contracts/mcp-bookmark-reads.json"
+    ))
+    .unwrap();
     let requests = Mutex::new(0);
     let client = Client::with_transport(
         "",
@@ -650,6 +654,26 @@ async fn stdio_publishes_implemented_tool_metadata_and_preserves_request_ids() {
             pixiv_mcp::bookmark_list_tool(pixiv_mcp::BookmarkList::Artwork),
             pixiv_mcp::bookmark_list_tool(pixiv_mcp::BookmarkList::Novel),
             pixiv_mcp::bookmark_list_tool(pixiv_mcp::BookmarkList::All),
+            pixiv_mcp::bookmark_read_tool(pixiv_mcp::BookmarkRead::ArtworkDetail),
+            pixiv_mcp::bookmark_read_tool(pixiv_mcp::BookmarkRead::NovelDetail),
+            pixiv_mcp::bookmark_read_tool(pixiv_mcp::BookmarkRead::ArtworkTags),
+            pixiv_mcp::bookmark_read_tool(pixiv_mcp::BookmarkRead::NovelTags),
+            pixiv_mcp::bookmark_read_tool(pixiv_mcp::BookmarkRead::AllTags),
         ])
     );
+    for (index, name) in [
+        "bookmark_detail",
+        "novel_bookmark_detail",
+        "bookmark_tags",
+        "novel_bookmark_tags",
+        "bookmark_tags_all",
+    ]
+    .into_iter()
+    .enumerate()
+    {
+        assert_eq!(
+            responses[1]["result"]["tools"][29 + index],
+            bookmark_contract["tools"][name]
+        );
+    }
 }

@@ -6,10 +6,8 @@
 
 | 操作群 | 既存 Rust の部品 | 残る範囲 |
 | --- | --- | --- |
-| user の作品一覧 | SDK・CLI・MCP の UserArtworks/UserNovels を今回比較 | 全 wire/通信/他 platform の検証は別に残す |
 | user の互換入口 | top-level detail/search の user mode、follow | `user detail`、`user search` の Go 入口。現在の同等 SDK 呼出しだけで入口互換としない |
 | user の関係・公開一覧 | following/followers/related/blocked の SDK・CLI・MCP を今回比較 | CurrentUser/Username の公開 SDK 契約、全通信と他 platform の検証 |
-| bookmark の読み取り | SDK artwork/novel list・detail/tag、CLI list全kind/user bookmarks・add/remove、MCP3list・add/remove | CLI detail/tags、MCP detail/tags/tag-all の入口と全共有検証 |
 | timeline・MyPixiv | artwork/novel/user DTO と cursor | following/latest、MyPixiv works/users の SDK・CLI・MCP |
 | comment・stamp | エラー、record、更新操作の commit 基盤 | artwork/novel のコメント一覧・作成・削除・返信・stamp、stamp 一覧と各入口 |
 | download・媒体処理 | SDK resource open/save、ugoira metadata、CLI metadata 試作 | Go の download 計画・進捗・record 入力・失敗/取消、MCP download/random recommendation、ugoira 取得/変換等の全 workflow |
@@ -21,10 +19,14 @@
 
 ## 実装済みの比較に残る未検証
 
+user作品一覧のSDK・CLI・MCPと、bookmarkのSDK list/detail/tag・CLI list/detail/tags全kind/user bookmarks・MCP list/detail/tags/tag-allの入口は実装済み。bookmark add/removeとfollow/unfollowも既存checkpointで接続した。これらを未移植機能数へ加えず、[比較範囲](contracts.md)と次の検証負債を区別する。
+
 - User/SearchUsers/4関係一覧以外の raw-wire 大小文字・重複・順序・null、不正 UTF-8、任意 JSON precision と cursor payload の境界
 - root parser の3差分、Linux 公開面 snapshot 不在、全 flag/help/TTY/OS startup hook
 - novel_content の複数未知 property の非決定的な診断順。固定 fixture は保持し、opt-in 検査でも exact order だけを未検証とする
 - UserArtworks/UserNovels の page0/limit-1 同時違反時の first diagnostic 選択。Go map 走査により page と limit が入れ替わる2行だけを隔離し、固定 expectation は保持する
+- Bookmark tag-all の複数schema違反2行のfirst diagnostic選択。固定期待値を保持し、Go opt-in検査は独立観測した完全messageだけを許容する
+- Bookmark readsのCobra leaf parser869行はRustの拒否のみを検査し、exact standalone診断/exitは未検証。実root startupの比較とは区別する
 - 全通信/Options、TLS/DNS/redirect、取消/deadline/concurrency/disconnect、正常実 HTTPS と実 resource
 - Windows/macOS/Linux の amd64/arm64、配布・更新の署名/信頼条件
 

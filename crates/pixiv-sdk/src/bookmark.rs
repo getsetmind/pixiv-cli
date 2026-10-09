@@ -161,6 +161,7 @@ impl<T: Transport> Client<T> {
         if offset > 0 {
             query.push(("offset".into(), offset.to_string()));
         }
+        query.sort();
         let body = self
             .get("/v1/user/bookmark-tags/illust", query, operation)
             .await?;
@@ -222,8 +223,8 @@ impl<T: Transport> Client<T> {
             .get(
                 "/v1/user/bookmark-tags/novel",
                 vec![
-                    ("user_id".into(), request.user_id.to_string()),
                     ("restrict".into(), request.restrict),
+                    ("user_id".into(), request.user_id.to_string()),
                 ],
                 operation,
             )

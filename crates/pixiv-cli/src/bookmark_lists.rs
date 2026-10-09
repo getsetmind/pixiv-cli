@@ -3,7 +3,7 @@ use pixiv_app::{
     execution::Execution, facade::UseOutcome, lifecycle::Context, scheduler::SchedulerError,
 };
 use pixiv_sdk::{
-    Client, Error, Reason,
+    Client,
     cursor::Cursor,
     models::{Artwork, Novel},
     transport::Transport,
@@ -110,45 +110,13 @@ impl BookmarkLists {
             Self::User(value) => {
                 crate::user_works::resolve_optional_source(&mut value.listing, input, terminal)
             }
-            Self::List(value) => {
-                if value.listing.sources.is_empty() && !terminal {
-                    let mut bytes = vec![];
-                    loop {
-                        let mut one = [0_u8];
-                        let count = input.read(&mut one).map_err(|error| {
-                            CommandError::Usage(format!("read stdin input: {error}"))
-                        })?;
-                        if count == 0 {
-                            break;
-                        }
-                        bytes.push(one[0]);
-                        if !matches!(one[0], b' ' | b'\t' | b'\n' | b'\r') {
-                            if one[0] == b'{' {
-                                value.input_record =
-                                    Some(String::from_utf8_lossy(&bytes).into_owned());
-                                value.record_pending = true;
-                                return Ok(());
-                            }
-                            input.read_to_end(&mut bytes).map_err(|error| {
-                                CommandError::Usage(format!("read stdin input: {error}"))
-                            })?;
-                            break;
-                        }
-                    }
-                    if bytes.ends_with(b"\r\n") {
-                        bytes.truncate(bytes.len() - 2);
-                    } else if bytes.ends_with(b"\n") {
-                        bytes.pop();
-                    }
-                    if !bytes.is_empty() {
-                        value
-                            .listing
-                            .sources
-                            .push(String::from_utf8_lossy(&bytes).into_owned());
-                    }
-                }
-                Ok(())
-            }
+            Self::List(value) => crate::record_input::resolve_source(
+                &mut value.listing.sources,
+                &mut value.input_record,
+                &mut value.record_pending,
+                input,
+                terminal,
+            ),
         }
     }
     pub fn resolve_target<R: Read>(&mut self, input: &mut R) -> Result<(), CommandError> {
@@ -161,15 +129,13 @@ impl BookmarkLists {
             }
             self.plan()?;
         }
-        if let Self::List(value) = self
-            && value.record_pending
-        {
-            let mut bytes = value.input_record.take().unwrap_or_default().into_bytes();
-            input.read_to_end(&mut bytes).map_err(|error| {
-                CommandError::MessageText(format!("read bookmark target record: {error}"))
-            })?;
-            value.input_record = Some(String::from_utf8_lossy(&bytes).into_owned());
-            value.record_pending = false;
+        if let Self::List(value) = self {
+            crate::record_input::read_pending(
+                &mut value.input_record,
+                &mut value.record_pending,
+                input,
+                "read bookmark target record",
+            )?;
         }
         Ok(())
     }
@@ -297,86 +263,13 @@ pub(crate) fn current_target<T: Transport>(
     }
     Ok(id)
 }
-fn invalid(detail: &str) -> CommandError {
-    Error::new(Reason::InvalidArgument, "bookmark list")
-        .with_detail(detail)
-        .into()
-}
 fn text_user(value: &str, entity: &str) -> Result<i64, CommandError> {
-    let value = value.trim();
-    if value.is_empty() {
-        return Err(invalid("input value is required"));
-    }
-    if let Ok(id) = value.parse::<i64>() {
-        return if id > 0 {
-            Ok(id)
-        } else {
-            Err(invalid("id must be a positive integer"))
-        };
-    }
-    let reference = pixiv_sdk::reference::parse_url(value)
-        .map_err(|_| invalid("input must be a positive ID or a supported Pixiv URL"))?;
-    match reference.kind.as_str() {
-        "user" => Ok(reference.id),
-        "user_bookmarks" if entity == "artwork" => Ok(reference.id),
-        "user_bookmarks" => Err(invalid("URL namespace conflicts with the selected type")),
-        _ => Err(invalid("URL kind is not allowed for this command")),
-    }
+    crate::record_input::bookmark_target(Some(value), None, entity, "bookmark list", false)
+        .map(|value| value.0)
 }
 fn record_user(value: &str, entity: &str) -> Result<i64, CommandError> {
-    let (id, typ, url) =
-        crate::record_input::parse_go(value.as_bytes()).map_err(CommandError::MessageText)?;
-    let id = id
-        .trim()
-        .parse::<i64>()
-        .ok()
-        .filter(|id| *id > 0)
-        .ok_or_else(|| invalid("record id must be a positive integer"))?;
-    let reference = pixiv_sdk::reference::parse_url(&url)
-        .map_err(|_| invalid("record url must be a supported Pixiv URL"))?;
-    if reference.id != id {
-        return Err(invalid("record id does not match record url"));
-    }
-    let visual = matches!(
-        typ.as_str(),
-        "artwork" | "illustration" | "illust" | "manga" | "ugoira"
-    );
-    if !visual && !matches!(typ.as_str(), "novel" | "user" | "series" | "user_bookmarks") {
-        return Err(invalid(
-            "record type is not a supported Pixiv namespace or subtype",
-        ));
-    }
-    let conflict = match reference.kind.as_str() {
-        "artwork" if !visual => Some("record type conflicts with artwork URL"),
-        "novel" if typ != "novel" => Some("record type conflicts with novel URL"),
-        "user" if typ != "user" => Some("record type conflicts with user URL"),
-        "user_bookmarks" if !visual && typ != "user_bookmarks" => {
-            Some("record type conflicts with user bookmarks URL")
-        }
-        "artwork_series" if !visual && typ != "series" => {
-            Some("record type conflicts with artwork series URL")
-        }
-        "novel_series" if typ != "novel" && typ != "series" => {
-            Some("record type conflicts with novel series URL")
-        }
-        _ => None,
-    };
-    if let Some(detail) = conflict {
-        return Err(invalid(detail));
-    }
-    match reference.kind.as_str() {
-        "user" => {}
-        "user_bookmarks" if entity == "artwork" => {}
-        "user_bookmarks" => return Err(invalid("URL namespace conflicts with the selected type")),
-        _ => return Err(invalid("URL type relation is not supported")),
-    }
-    if matches!(typ.as_str(), "illustration" | "illust" | "manga" | "ugoira") && entity != "artwork"
-    {
-        return Err(invalid(
-            "record artwork subtype conflicts with the selected type",
-        ));
-    }
-    Ok(id)
+    crate::record_input::bookmark_target(None, Some(value), entity, "bookmark list", false)
+        .map(|value| value.0)
 }
 enum Listing {
     Artwork(crate::artwork_list::Listing),
@@ -473,13 +366,13 @@ pub async fn saved_bookmark_lists<T: Transport + 'static, W: Write + Send + 'sta
     }
 }
 #[derive(Clone, Default)]
-struct StreamCursor {
-    upstream: Cursor,
-    consumed: usize,
+pub(crate) struct StreamCursor {
+    pub(crate) upstream: Cursor,
+    pub(crate) consumed: usize,
     text: String,
 }
 impl StreamCursor {
-    fn upstream(upstream: Cursor) -> Self {
+    pub(crate) fn upstream(upstream: Cursor) -> Self {
         let text = if upstream.is_zero() {
             String::new()
         } else {
@@ -597,20 +490,7 @@ async fn all_attempt<T: Transport, W: Write>(
                 ))
             },
             include: |_: &Item| Ok(true),
-            checkpoint: |cursor: StreamCursor, position: usize| {
-                if position == 0 {
-                    return Err(CommandError::Message(
-                        "bookmark checkpoint position must be positive",
-                    ));
-                }
-                let consumed = cursor.consumed + position;
-                let text = format!("{}#{consumed}", cursor.upstream.as_str());
-                Ok(StreamCursor {
-                    upstream: cursor.upstream,
-                    consumed,
-                    text,
-                })
-            },
+            checkpoint,
         })
         .collect::<Vec<_>>();
     let page = pixiv_app::pagination::collect_streams(
@@ -653,4 +533,22 @@ async fn all_attempt<T: Transport, W: Write>(
     }
     std::io::copy(&mut staged.as_slice(), out)?;
     Ok(())
+}
+
+pub(crate) fn checkpoint(
+    cursor: StreamCursor,
+    position: usize,
+) -> Result<StreamCursor, CommandError> {
+    if position == 0 {
+        return Err(CommandError::Message(
+            "bookmark checkpoint position must be positive",
+        ));
+    }
+    let consumed = cursor.consumed + position;
+    let text = format!("{}#{consumed}", cursor.upstream.as_str());
+    Ok(StreamCursor {
+        upstream: cursor.upstream,
+        consumed,
+        text,
+    })
 }

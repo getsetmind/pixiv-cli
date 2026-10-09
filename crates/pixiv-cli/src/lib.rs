@@ -1,5 +1,6 @@
 mod artwork_list;
 pub mod bookmark_lists;
+pub mod bookmark_reads;
 mod json_spool;
 pub mod mutation;
 mod novel_list;

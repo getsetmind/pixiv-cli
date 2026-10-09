@@ -1163,3 +1163,40 @@ text/record classificationはconfig初期化前に1byteずつ読み、`{`でreco
 最初の全Rust gateは既存userworks poolのwall-clock上限assertionで停止し、releaseへ到達しなかった。固定Go schedulerは attempt前currentとSDK absolute afterとの差を、attempt後freezeNowへ加えてepochを保存する。従来の `diagnostic_start +120` 上限はattempt中の経過時間を無視し、second境界で失敗する。invocation開始I・終了Dを実観測し、既存lowerを保って `floor(D + (D-I) +120)` をfull nanosecond精度から計算するtests/support helperを7pool比較へ再利用した。任意の秒の余裕、fixture変更、production clock/API変更は加えず、diagnostic retry-secondsの実start/end区間と全非timing断言を維持する。独立レビューで式を確認し、既存Go97 schedulerケースのadvancing-clock固定timestampによるexact freeze比較も根拠として保持する。7suiteの8対象testは再比較に成功した。最初の全gate失敗ログを再実行ログと分けて残す。
 
 Linux amd64 の最終 scripts/check-rust.ps1 は終了0で、Formatter、workspace all-target Clippy、233 passed・0 failed・既存3 ignored、release build が成功した。最終 Clippy build は約1秒、test build は約3秒、release build は約28秒で、全検証は約3分だった。Go SDK・MCP・CLI・bookmark/user command・migration、関連 vet/gofmt、本番Go/go.mod/go.sum固定参照無差分も確認した。Linux公開面snapshot不在の1検査除外と既知novel property-order/userworks violation-selectionのopt-in隔離を保持し、未検証を通過扱いにしていない。独立レビューと既存mutation/search-bookmark/catalog/detail/tag/OAuth/HTTP/関連poolの回帰比較を維持した。契約取得・接続・失敗修正・検証は約31分で、実Pixiv資格情報・ライブアクセスを使用していない。残る実機能入口は操作一覧に保持する。
+
+## Bookmark detail/tag の CLI・MCP 入口
+
+既存 SDK の artwork/novel bookmark detail、artwork/novel bookmark tags を再利用し、CLI `bookmark detail --type artwork|novel` と `bookmark tags --type artwork|novel|all`、MCP の5入口を追加する。既存MCP29 toolの順序を保持して末尾へ追加する。実アカウントや実Pixiv通信は使用しない。
+
+CLI固定入力はmain1,600、record7,315、body582、pool312とstartup835（実process830、reader failure5）に分ける。main/record/bodyの9,497行のうち869行はCobra leaf parser固有の未対応flag診断であり、RustのClap leaf parserによる拒否だけを検査する。残る8,628行は実処理の出力・診断・要求・入力消費を比較し、うち8,592行では合成保存済みアカウント境界も比較する。869行のexact leaf診断/終了値は未検証として固定Go証拠を保持する。Rustに存在しないCobra leaf rendererの期待値をroot実行へ翻訳しない。実際のGo Run/Rust executableの診断は独立startup fixtureと比較する。
+
+CLI detailのempty tagsはnull、tags allはartwork→novel順に`type`を付け、namespaceの異なる同名tagを統合しない。text/URL/record入力、既定kind、出力mode/false/config precedence、reader/writer失敗、autoと明示NDJSONのEPIPE境界を保持する。detailはlease解放後に出力し、tagsはwriter失敗前にcommitする。single tagsはidentityのtargetをreplay中に保持し、allは試行ごとに再解決する。pool固定312行では合成DB、revision、selection/freeze、要求、lease、commitとreplayを比較する。内部private commit値を観測するtest-only APIは追加せず、公開結果と実際のreplayから検査する。
+
+MCPは202 direct行と16 real-pool行を固定する。toolは`bookmark_detail`、`novel_bookmark_detail`、`bookmark_tags`、`novel_bookmark_tags`、`bookmark_tags_all`。single tagsは(name,count)全体でdedup、allは重複を保持して`content_type`を付ける。singleのidentity解決はplanより先、allはplanより後。既定targetは別Executionのidentity取得後にreplay中も保持する。
+
+Go artwork detailのempty tagsはnullで宣言schemaのarrayに違反し、実stdioのvalidation error RPC codeは0になる。この実在する挙動を保持する。novel detailのempty tagsは[]。複数schema違反を持つ`bookmark_tags_all-argument-25`と`-26`のfirst diagnosticはGo map走査で変動するため、exact choiceは未検証。固定期待値を変えず、Goの明示`-migration-mcp-bookmark-reads-allow-diagnostic-order`だけで、当該2行の独立観測済み完全message候補を受け入れる。code、result、要求等の他項目は厳密比較し、Rustは固定期待値を比較する。
+
+SDKのtag GET queryはGoのkey順に合わせてartworkのoffset/restrict/user_id、novelのrestrict/user_idとする。既存GET encoderのpair順/escapeとPOST form/OAuthは変更しない。既存SDK bookmark/detail/query回帰も実行する。
+
+行列は[監査記録](contract-matrix-audit.md)のとおり過剰な直積を含む。現在の固定証拠や失敗行は削除せず、以後は共有fixture/helperと関係する境界の組合せを使用する。row数をdistinct behavior数や移植率として示さない。
+
+User/SearchUsers/関係一覧以外のraw-wire casing/duplicates/order/null、不正UTF-8、arbitrary JSON precision、cursor payload、全通信、取消/parallel/disconnect、root parser既知3差分、Linux公開面snapshot、全flag/help/TTY/OS hook、他OS/archと署名配布は引き続き未検証。
+
+今回の対象Go replayは7.190秒、Rust main比較は9.88秒、実startup835行は15.42秒、pool312行は1.33秒、MCP direct202行は0.56秒、pool16行は0.13秒だった。fixture総量は14,329,126 bytes。速度はこのLinux cloudの観測値であり、他platformの検証や独立behavior数ではない。
+
+```text
+go test ./internal/cli -run '^TestMigrationBookmarkReads' -count=1
+go test ./sdk/... ./internal/cli/commands/pixiv/bookmark -count=1
+go test ./internal/cli -run '^TestMigration' -skip '^TestMigrationCLIContractKeepsCommandsAliasesAndFlags$' -count=1
+go test ./internal/mcpserver/pixiv -count=1 -args -migration-skip-nondeterministic-novel-property-order -migration-skip-nondeterministic-user-works-violation-selection -migration-mcp-bookmark-reads-allow-diagnostic-order
+go vet ./internal/cli ./internal/cli/commands/pixiv/bookmark ./internal/mcpserver/pixiv
+go test ./scripts/tests/migration -count=1
+cargo test -p pixiv-cli-rs --test bookmark_reads --test bookmark_reads_startup --locked
+cargo test -p pixiv-cli-rs --test bookmark_reads_pool --test mutations --locked
+cargo test -p pixiv-mcp --test bookmark_reads --test bookmark_reads_pool --locked
+cargo test -p pixiv-sdk --test artwork_bookmark_tags --test novel_bookmark_tags --test bookmark_detail --test bookmark_lists --test http_query --locked
+```
+
+Go broad regressionはSDK・bookmark command・CLI migration・MCP・vet・migration台帳検査が成功した。Linux公開面snapshot不在による1 testの除外、既知2scopeと今回2行の非決定的診断を明示しており、strict全scope成功とは扱わない。初回Rust比較ではleaf/rootの境界混同、saved fixtureのidentity42固定、raw responseのsend override不足が失敗した。境界を分離し、共有test helperとmockを実際のtransport動作へ合わせて修正した。固定Go期待値は変更せず、失敗ログと再検査ログを保持する。
+
+最終 `scripts/check-rust.ps1` はLinux amd64でexit0、210秒。Formatter、Clippy（全target、warnings denied）、workspace tests（239 passed、既存helper3 ignored）、workspace release（29.90秒）が成功した。初回formatter失敗と、旧29-tool catalog期待値の失敗も保存した。catalogは旧29全entryを変更せず5toolを追加し、各追加entryを固定Go metadataとも比較した。Go本番・go.mod・go.sumは参照commitから差分0。scoped確認の成功を全wire/通信/他platformや最終切替のverifiedとは扱わない。

@@ -1,0 +1,53 @@
+{
+  "description": "List artwork bookmark tags.",
+  "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "limit": {
+        "description": "maximum items; 0 returns all items",
+        "type": [
+          "null",
+          "integer"
+        ]
+      },
+      "page": {
+        "description": "1-based logical page; requires a positive limit",
+        "type": [
+          "null",
+          "integer"
+        ]
+      },
+      "restrict": {
+        "description": "public or private",
+        "type": "string"
+      },
+      "user_id": {
+        "description": "optional user ID; defaults to authenticated user",
+        "type": "integer"
+      }
+    },
+    "type": "object"
+  },
+  "name": "bookmark_tags",
+  "outputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "bookmark_tags": {
+        "items": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "type": "array"
+      },
+      "pagination": {
+        "additionalProperties": true,
+        "type": "object"
+      }
+    },
+    "required": [
+      "bookmark_tags",
+      "pagination"
+    ],
+    "type": "object"
+  }
+}

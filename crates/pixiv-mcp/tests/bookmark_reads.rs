@@ -5,7 +5,7 @@ use pixiv_sdk::{
 use serde::Deserialize;
 use serde_json::{Value, json};
 use std::sync::{Arc, Mutex};
-#[path = "support/saved_account.rs"]
+#[path = "support/user_works_saved.rs"]
 mod saved_account;
 #[derive(Deserialize)]
 struct Contract {
@@ -14,6 +14,8 @@ struct Contract {
 }
 #[derive(Deserialize)]
 struct Case {
+    #[serde(default)]
+    no_identity: bool,
     name: String,
     arguments: Value,
     tool_name: String,
@@ -22,23 +24,38 @@ struct Case {
     calls: usize,
     requests: usize,
     rpc_error: String,
+    rpc_code: i64,
+    queries: Option<Vec<String>>,
+    paths: Option<Vec<String>>,
 }
 #[derive(Clone)]
 struct Fixture {
     bodies: Vec<Value>,
+    queries: Vec<String>,
+    paths: Vec<String>,
     requests: Arc<Mutex<usize>>,
 }
 impl Transport for Fixture {
     async fn send(&self, request: Request) -> pixiv_sdk::Result<Response> {
+        if request.operation == "Open" {
+            return Ok(Response {
+                status: 200,
+                retry_after: None,
+                body: json!({"access_token":"fixture-access","refresh_token":"fixture-rotated","expires_in":3600,"user":{"id":42}}),
+            });
+        };
         assert_eq!(request.method.as_str(), "GET");
-        assert_eq!(request.url, "https://app-api.pixiv.net/v2/novel/series");
-        assert!(
-            request
-                .parameters
-                .contains(&("series_id".into(), "21".into()))
-                || request.parameters.iter().any(|(key, _)| key == "series_id")
-        );
         let mut requests = self.requests.lock().unwrap();
+        assert_eq!(
+            request.url,
+            format!("https://app-api.pixiv.net{}", self.paths[*requests])
+        );
+        let mut parameters = request.parameters.clone();
+        parameters.sort();
+        let query = url::form_urlencoded::Serializer::new(String::new())
+            .extend_pairs(parameters)
+            .finish();
+        assert_eq!(query, self.queries[*requests]);
         let body = self.bodies[*requests].clone();
         *requests += 1;
         Ok(Response {
@@ -49,46 +66,47 @@ impl Transport for Fixture {
     }
 }
 #[tokio::test]
-async fn novel_series_content_match_go_schemas_records_errors_and_saved_account_stdio() {
+async fn bookmark_reads_match_go_schemas_records_errors_defaults_and_saved_account_stdio() {
     let contract: Contract = serde_json::from_str(include_str!(
-        "../../../docs/migration/contracts/mcp-novel-series-content.json"
+        "../../../docs/migration/contracts/mcp-bookmark-reads.json"
     ))
     .unwrap();
-    assert_eq!(
-        pixiv_mcp::novel_series_tool(),
-        contract.tools["novel_series"]
-    );
-    assert_eq!(
-        pixiv_mcp::novel_content_tool(),
-        contract.tools["novel_content"]
-    );
-    assert_eq!(contract.cases.len(), 50);
+    for kind in [
+        pixiv_mcp::BookmarkRead::ArtworkDetail,
+        pixiv_mcp::BookmarkRead::NovelDetail,
+        pixiv_mcp::BookmarkRead::ArtworkTags,
+        pixiv_mcp::BookmarkRead::NovelTags,
+        pixiv_mcp::BookmarkRead::AllTags,
+    ] {
+        let tool = pixiv_mcp::bookmark_read_tool(kind);
+        assert_eq!(tool, contract.tools[tool["name"].as_str().unwrap()]);
+    }
+    assert_eq!(contract.cases.len(), 202);
     for case in contract.cases {
         let fixture = Fixture {
             bodies: case.bodies,
+            queries: case.queries.unwrap_or_default(),
+            paths: case.paths.unwrap_or_default(),
             requests: Arc::new(Mutex::new(0)),
         };
-        let client = Client::with_transport("fixture-access", fixture.clone());
-        if case.rpc_error.is_empty() {
-            let result = if case.tool_name == "novel_series" {
-                serde_json::to_value(
-                    pixiv_mcp::novel_series(
-                        &client,
-                        serde_json::from_value(case.arguments.clone()).unwrap(),
-                    )
-                    .await,
+        let credentials = pixiv_sdk::oauth::refresh(&fixture, "fixture-refresh")
+            .await
+            .unwrap();
+        let client = if case.no_identity {
+            Client::with_transport("fixture-access", fixture.clone())
+        } else {
+            Client::from_credentials(&credentials, fixture.clone())
+        };
+        if case.rpc_error.is_empty() && case.arguments.is_object() {
+            let result = serde_json::to_value(
+                pixiv_mcp::bookmark_read(
+                    &client,
+                    pixiv_mcp::BookmarkRead::from_name(&case.tool_name).unwrap(),
+                    serde_json::from_value(case.arguments.clone()).unwrap(),
                 )
-                .unwrap()
-            } else {
-                serde_json::to_value(
-                    pixiv_mcp::novel_content(
-                        &client,
-                        serde_json::from_value(case.arguments.clone()).unwrap(),
-                    )
-                    .await,
-                )
-                .unwrap()
-            };
+                .await,
+            )
+            .unwrap();
             assert_eq!(result, case.result, "{} direct", case.name);
             assert_eq!(
                 *fixture.requests.lock().unwrap(),
@@ -96,6 +114,28 @@ async fn novel_series_content_match_go_schemas_records_errors_and_saved_account_
                 "{} direct requests",
                 case.name
             );
+        }
+        if case.rpc_error.contains("validating tool output") {
+            let result = serde_json::to_value(
+                pixiv_mcp::bookmark_read(
+                    &client,
+                    pixiv_mcp::BookmarkRead::ArtworkDetail,
+                    serde_json::from_value(case.arguments.clone()).unwrap(),
+                )
+                .await,
+            )
+            .unwrap();
+            assert!(
+                result["structuredContent"]["tags"].is_null(),
+                "{} direct null contract",
+                case.name
+            );
+            assert_ne!(
+                result["isError"], true,
+                "{} direct successful result",
+                case.name
+            );
+            assert_eq!(*fixture.requests.lock().unwrap(), case.requests);
         }
         let messages = [
             json!({"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"fixture","version":"1"}}}),
@@ -106,6 +146,9 @@ async fn novel_series_content_match_go_schemas_records_errors_and_saved_account_
             .map(|message| message.to_string() + "\n")
             .collect::<String>();
         for saved in [false, true] {
+            if saved && case.no_identity {
+                continue;
+            }
             *fixture.requests.lock().unwrap() = 0;
             let mut output = vec![];
             if saved {
@@ -115,7 +158,7 @@ async fn novel_series_content_match_go_schemas_records_errors_and_saved_account_
                     .unwrap();
                 assert_eq!(
                     accounts._opens.load(std::sync::atomic::Ordering::SeqCst),
-                    usize::from(case.calls > 0),
+                    case.calls,
                     "{} saved account acquisition",
                     case.name
                 );
@@ -137,7 +180,7 @@ async fn novel_series_content_match_go_schemas_records_errors_and_saved_account_
                     case.name
                 );
             } else {
-                assert_eq!(response["error"]["code"], -32602, "{}", case.name);
+                assert_eq!(response["error"]["code"], case.rpc_code, "{}", case.name);
                 assert_eq!(
                     response["error"]["message"],
                     case.rpc_error
@@ -153,36 +196,27 @@ async fn novel_series_content_match_go_schemas_records_errors_and_saved_account_
                 "{} saved={saved}",
                 case.name
             );
-            assert_eq!(
-                case.calls,
-                usize::from(
-                    case.requests > 0
-                        || (case.tool_name == "novel_content"
-                            && case.rpc_error.is_empty()
-                            && case.arguments["novel_id"].as_i64().unwrap() > 0)
-                ),
-                "{}",
-                case.name
-            );
         }
     }
 }
 
 #[tokio::test]
-async fn stdio_lists_both_new_tools_and_retains_existing_tools() {
-    let contract: Contract = serde_json::from_str(include_str!(
-        "../../../docs/migration/contracts/mcp-novel-series-content.json"
-    ))
-    .unwrap();
+async fn bookmark_reads_append_catalog_without_reordering_existing_tools() {
     let fixture = Fixture {
         bodies: vec![],
+        queries: vec![],
+        paths: vec![],
         requests: Arc::new(Mutex::new(0)),
     };
-    let client = Client::with_transport("fixture-access", fixture.clone());
-    let input = concat!(
-        "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{\"protocolVersion\":\"2025-06-18\",\"capabilities\":{},\"clientInfo\":{\"name\":\"fixture\",\"version\":\"1\"}}}\n",
-        "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/list\",\"params\":{}}\n"
-    );
+    let client = Client::with_transport("fixture-access", fixture);
+    let messages = [
+        json!({"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"fixture","version":"1"}}}),
+        json!({"jsonrpc":"2.0","id":2,"method":"tools/list"}),
+    ];
+    let input = messages
+        .iter()
+        .map(|message| message.to_string() + "\n")
+        .collect::<String>();
     let mut output = vec![];
     pixiv_mcp::stdio::serve(&client, input.as_bytes(), &mut output)
         .await
@@ -192,26 +226,21 @@ async fn stdio_lists_both_new_tools_and_retains_existing_tools() {
         .lines()
         .map(|line| serde_json::from_str::<Value>(line).unwrap())
         .collect::<Vec<_>>();
-    let tools = responses
-        .iter()
-        .find(|response| response["id"] == 2)
-        .unwrap()["result"]["tools"]
+    let tools = responses.iter().find(|r| r["id"] == 2).unwrap()["result"]["tools"]
         .as_array()
         .unwrap();
     let names = tools
         .iter()
         .map(|tool| tool["name"].as_str().unwrap())
-        .collect::<std::collections::BTreeSet<_>>();
+        .collect::<Vec<_>>();
     assert_eq!(
         names,
-        std::collections::BTreeSet::from([
+        [
             "illust_detail",
             "search_illust",
             "trending_tags_illust",
             "illust_ranking",
             "novel_detail",
-            "novel_series",
-            "novel_content",
             "search_novel",
             "user_detail",
             "search_user",
@@ -221,6 +250,8 @@ async fn stdio_lists_both_new_tools_and_retains_existing_tools() {
             "remove_novel_bookmark",
             "follow_user",
             "unfollow_user",
+            "novel_series",
+            "novel_content",
             "illust_series",
             "illust_related",
             "illust_recommended",
@@ -239,18 +270,6 @@ async fn stdio_lists_both_new_tools_and_retains_existing_tools() {
             "bookmark_tags",
             "novel_bookmark_tags",
             "bookmark_tags_all"
-        ])
+        ]
     );
-    assert_eq!(tools.len(), 34);
-    assert_eq!(tools[19]["name"], "recommended");
-    assert_eq!(tools[14]["name"], "novel_series");
-    assert_eq!(tools[15]["name"], "novel_content");
-    assert_eq!(tools[16]["name"], "illust_series");
-    for (name, expected) in contract.tools {
-        assert_eq!(
-            *tools.iter().find(|tool| tool["name"] == name).unwrap(),
-            expected
-        );
-    }
-    assert_eq!(*fixture.requests.lock().unwrap(), 0);
 }

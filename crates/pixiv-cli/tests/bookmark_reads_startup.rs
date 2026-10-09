@@ -1,0 +1,92 @@
+use clap::Parser;
+use pixiv_cli_rs::{
+    bookmark_reads::{BookmarkDetailOptions, BookmarkTagsOptions},
+    finish_command,
+};
+#[path = "support/bookmark_reads_process.rs"]
+mod bookmark_reads_process;
+#[path = "support/json_object_order.rs"]
+mod json_object_order;
+
+#[derive(Parser)]
+#[command(args_override_self = true)]
+struct TagsArgs {
+    #[command(flatten)]
+    options: BookmarkTagsOptions,
+}
+#[derive(Parser)]
+#[command(args_override_self = true)]
+struct DetailArgs {
+    #[command(flatten)]
+    options: BookmarkDetailOptions,
+}
+struct Failed;
+impl std::io::Read for Failed {
+    fn read(&mut self, _: &mut [u8]) -> std::io::Result<usize> {
+        Err(std::io::Error::other("fixture read failed"))
+    }
+}
+#[test]
+fn bookmark_reads_startup_preserves_every_go_config_proxy_auth_and_input_order_row() {
+    let cases: Vec<serde_json::Value> = serde_json::from_str(include_str!(
+        "../../../docs/migration/contracts/cli-bookmark-reads-startup.json"
+    ))
+    .unwrap();
+    assert_eq!(cases.len(), 835);
+    let mut processes = 0;
+    let mut readers = 0;
+    for case in cases {
+        if case["read_error"] == true {
+            readers += 1;
+            let args = case["args"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|arg| arg.as_str().unwrap().to_owned());
+            let result = if case["operation"] == "detail" {
+                DetailArgs::try_parse_from(
+                    std::iter::once("pixiv".to_owned())
+                        .chain([format!("--type={}", case["kind"].as_str().unwrap())])
+                        .chain(args),
+                )
+                .unwrap()
+                .options
+                .resolve_source(&mut Failed, false)
+            } else {
+                assert_eq!(case["operation"], "tags");
+                TagsArgs::try_parse_from(
+                    std::iter::once("pixiv".to_owned())
+                        .chain([format!("--type={}", case["kind"].as_str().unwrap())])
+                        .chain(args),
+                )
+                .unwrap()
+                .options
+                .resolve_source(&mut Failed, false)
+            };
+            match result {
+                Err(error) => {
+                    let mut diagnostics = vec![];
+                    assert_eq!(
+                        finish_command(Err(error), false, false, &mut diagnostics),
+                        case["exit"].as_i64().unwrap() as i32
+                    );
+                    assert_eq!(diagnostics, case["stderr"].as_str().unwrap().as_bytes());
+                    assert_eq!(case["stdout"], "");
+                    assert_eq!(case["config"], false);
+                    assert_eq!(case["database"], false);
+                    assert_eq!(case["after"], "");
+                }
+                Ok(()) => {
+                    bookmark_reads_process::assert_startup(&case);
+                    processes += 1;
+                }
+            }
+        } else {
+            bookmark_reads_process::assert_startup(&case);
+            processes += 1;
+        }
+    }
+    // A process pipe cannot inject an arbitrary Read error; consumed-reader failures use the same public boundary.
+    assert_eq!(readers, 10);
+    assert_eq!(processes, 830);
+}
