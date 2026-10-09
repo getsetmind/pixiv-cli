@@ -1504,15 +1504,30 @@
     },
     {
       "id": "cli:pixiv user blocked",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv user blocked"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/user_relationships.rs",
+        "crates/pixiv-cli/src/user_works.rs",
+        "crates/pixiv-cli/src/main.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_user_relationships_test.go",
+        "internal/cli/migration_user_relationships_startup_test.go",
+        "internal/cli/migration_user_relationships_pool_test.go",
+        "crates/pixiv-cli/tests/user_relationships.rs",
+        "crates/pixiv-cli/tests/user_relationships_startup.rs",
+        "crates/pixiv-cli/tests/user_relationships_pool.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go790出力/window/writer、588 startup、189保存済みpoolケースを比較。followingだけauto NDJSONを使わず、relatedは必須ID。optional targetは最初のclientで解決しretryでも保持、CLI重複保持・human見出し・private JSON spool/lease後commit・明示falseと狭いrestrict検証順を保持。588 startup中584はprocess比較（explicit reader-failure4行はpublic boundaryでreader bypassも確認）、omitted reader-failure4行はpublic APIと固定診断を比較。共通text/ID helperをuserworksと再利用。root parser3差分・Linux公開面snapshot不在、全flag/help/TTY/OS hooks、全通信/取消/他platformは未検証。"
+      ]
     },
     {
       "id": "cli:pixiv user bookmarks",
@@ -1621,27 +1636,57 @@
     },
     {
       "id": "cli:pixiv user followers",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv user followers"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/user_relationships.rs",
+        "crates/pixiv-cli/src/user_works.rs",
+        "crates/pixiv-cli/src/main.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_user_relationships_test.go",
+        "internal/cli/migration_user_relationships_startup_test.go",
+        "internal/cli/migration_user_relationships_pool_test.go",
+        "crates/pixiv-cli/tests/user_relationships.rs",
+        "crates/pixiv-cli/tests/user_relationships_startup.rs",
+        "crates/pixiv-cli/tests/user_relationships_pool.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go790出力/window/writer、588 startup、189保存済みpoolケースを比較。followingだけauto NDJSONを使わず、relatedは必須ID。optional targetは最初のclientで解決しretryでも保持、CLI重複保持・human見出し・private JSON spool/lease後commit・明示falseと狭いrestrict検証順を保持。588 startup中584はprocess比較（explicit reader-failure4行はpublic boundaryでreader bypassも確認）、omitted reader-failure4行はpublic APIと固定診断を比較。共通text/ID helperをuserworksと再利用。root parser3差分・Linux公開面snapshot不在、全flag/help/TTY/OS hooks、全通信/取消/他platformは未検証。"
+      ]
     },
     {
       "id": "cli:pixiv user following",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv user following"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/user_relationships.rs",
+        "crates/pixiv-cli/src/user_works.rs",
+        "crates/pixiv-cli/src/main.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_user_relationships_test.go",
+        "internal/cli/migration_user_relationships_startup_test.go",
+        "internal/cli/migration_user_relationships_pool_test.go",
+        "crates/pixiv-cli/tests/user_relationships.rs",
+        "crates/pixiv-cli/tests/user_relationships_startup.rs",
+        "crates/pixiv-cli/tests/user_relationships_pool.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go790出力/window/writer、588 startup、189保存済みpoolケースを比較。followingだけauto NDJSONを使わず、relatedは必須ID。optional targetは最初のclientで解決しretryでも保持、CLI重複保持・human見出し・private JSON spool/lease後commit・明示falseと狭いrestrict検証順を保持。588 startup中584はprocess比較（explicit reader-failure4行はpublic boundaryでreader bypassも確認）、omitted reader-failure4行はpublic APIと固定診断を比較。共通text/ID helperをuserworksと再利用。root parser3差分・Linux公開面snapshot不在、全flag/help/TTY/OS hooks、全通信/取消/他platformは未検証。"
+      ]
     },
     {
       "id": "cli:pixiv user novels",
@@ -1674,15 +1719,30 @@
     },
     {
       "id": "cli:pixiv user related",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv user related"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/user_relationships.rs",
+        "crates/pixiv-cli/src/user_works.rs",
+        "crates/pixiv-cli/src/main.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_user_relationships_test.go",
+        "internal/cli/migration_user_relationships_startup_test.go",
+        "internal/cli/migration_user_relationships_pool_test.go",
+        "crates/pixiv-cli/tests/user_relationships.rs",
+        "crates/pixiv-cli/tests/user_relationships_startup.rs",
+        "crates/pixiv-cli/tests/user_relationships_pool.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go790出力/window/writer、588 startup、189保存済みpoolケースを比較。followingだけauto NDJSONを使わず、relatedは必須ID。optional targetは最初のclientで解決しretryでも保持、CLI重複保持・human見出し・private JSON spool/lease後commit・明示falseと狭いrestrict検証順を保持。588 startup中584はprocess比較（explicit reader-failure4行はpublic boundaryでreader bypassも確認）、omitted reader-failure4行はpublic APIと固定診断を比較。共通text/ID helperをuserworksと再利用。root parser3差分・Linux公開面snapshot不在、全flag/help/TTY/OS hooks、全通信/取消/他platformは未検証。"
+      ]
     },
     {
       "id": "cli:pixiv user search",
@@ -1878,15 +1938,27 @@
     },
     {
       "id": "mcp:pixiv:blocked_users",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "blocked_users"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/user_relationships.rs",
+        "crates/pixiv-mcp/src/stdio.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_user_relationships_test.go",
+        "internal/mcpserver/pixiv/migration_user_relationships_pool_test.go",
+        "crates/pixiv-mcp/tests/user_relationships.rs",
+        "crates/pixiv-mcp/tests/user_relationships_pool.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go560 schema/input/resultと16 real DB/poolケースを比較。tool別のfilter/plan/identity検証順、別executionのdefault ID保持、filter/dedup-before-window、replay/reset/state/lease、related/blockedの公開restrictを保持しqueryでは無視する。既存22 tool prefix/schemaを保持。非決定的診断選択の既知境界、raw-wire/cursorと全通信/取消/concurrency/disconnect/他platformは未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:bookmark_detail",
@@ -2373,15 +2445,27 @@
     },
     {
       "id": "mcp:pixiv:related_users",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "related_users"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/user_relationships.rs",
+        "crates/pixiv-mcp/src/stdio.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_user_relationships_test.go",
+        "internal/mcpserver/pixiv/migration_user_relationships_pool_test.go",
+        "crates/pixiv-mcp/tests/user_relationships.rs",
+        "crates/pixiv-mcp/tests/user_relationships_pool.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go560 schema/input/resultと16 real DB/poolケースを比較。tool別のfilter/plan/identity検証順、別executionのdefault ID保持、filter/dedup-before-window、replay/reset/state/lease、related/blockedの公開restrictを保持しqueryでは無視する。既存22 tool prefix/schemaを保持。非決定的診断選択の既知境界、raw-wire/cursorと全通信/取消/concurrency/disconnect/他platformは未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:remove_bookmark",
@@ -2769,27 +2853,51 @@
     },
     {
       "id": "mcp:pixiv:user_followers",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "user_followers"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/user_relationships.rs",
+        "crates/pixiv-mcp/src/stdio.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_user_relationships_test.go",
+        "internal/mcpserver/pixiv/migration_user_relationships_pool_test.go",
+        "crates/pixiv-mcp/tests/user_relationships.rs",
+        "crates/pixiv-mcp/tests/user_relationships_pool.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go560 schema/input/resultと16 real DB/poolケースを比較。tool別のfilter/plan/identity検証順、別executionのdefault ID保持、filter/dedup-before-window、replay/reset/state/lease、related/blockedの公開restrictを保持しqueryでは無視する。既存22 tool prefix/schemaを保持。非決定的診断選択の既知境界、raw-wire/cursorと全通信/取消/concurrency/disconnect/他platformは未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:user_following",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "user_following"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/user_relationships.rs",
+        "crates/pixiv-mcp/src/stdio.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_user_relationships_test.go",
+        "internal/mcpserver/pixiv/migration_user_relationships_pool_test.go",
+        "crates/pixiv-mcp/tests/user_relationships.rs",
+        "crates/pixiv-mcp/tests/user_relationships_pool.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go560 schema/input/resultと16 real DB/poolケースを比較。tool別のfilter/plan/identity検証順、別executionのdefault ID保持、filter/dedup-before-window、replay/reset/state/lease、related/blockedの公開restrictを保持しqueryでは無視する。既存22 tool prefix/schemaを保持。非決定的診断選択の既知境界、raw-wire/cursorと全通信/取消/concurrency/disconnect/他platformは未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:user_novel_bookmarks",
@@ -7298,15 +7406,26 @@
     },
     {
       "id": "sdk/pixiv:Client.RelatedUsers",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.RelatedUsers"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/user_relationships.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_user_relationships_test.go",
+        "crates/pixiv-sdk/tests/user_relationships.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "固定Go524ケースで4関係一覧のID/restrict検証順・literal query/path・DTO/resource・正offset・identity binding1/ephemeral cursorを比較。blockedはusers present優先、nested pointerとflat fallback、ordered duplicate merge/reset/null、known-field type/error保持とcasefoldをraw応答で固定。次URLのbase値不一致を拒否せず、request元queryを維持。blocked filter=for_androidはdigestに含めない。任意cursor payload/不正UTF8/precision、全通信/Options・取消/deadline/concurrency/disconnect・実HTTPS/resource・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.RemoveArtworkBookmark",
@@ -7777,39 +7896,72 @@
     },
     {
       "id": "sdk/pixiv:Client.UserBlockedUsers",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.UserBlockedUsers"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/user_relationships.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_user_relationships_test.go",
+        "crates/pixiv-sdk/tests/user_relationships.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "固定Go524ケースで4関係一覧のID/restrict検証順・literal query/path・DTO/resource・正offset・identity binding1/ephemeral cursorを比較。blockedはusers present優先、nested pointerとflat fallback、ordered duplicate merge/reset/null、known-field type/error保持とcasefoldをraw応答で固定。次URLのbase値不一致を拒否せず、request元queryを維持。blocked filter=for_androidはdigestに含めない。任意cursor payload/不正UTF8/precision、全通信/Options・取消/deadline/concurrency/disconnect・実HTTPS/resource・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.UserFollowers",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.UserFollowers"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/user_relationships.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_user_relationships_test.go",
+        "crates/pixiv-sdk/tests/user_relationships.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "固定Go524ケースで4関係一覧のID/restrict検証順・literal query/path・DTO/resource・正offset・identity binding1/ephemeral cursorを比較。blockedはusers present優先、nested pointerとflat fallback、ordered duplicate merge/reset/null、known-field type/error保持とcasefoldをraw応答で固定。次URLのbase値不一致を拒否せず、request元queryを維持。blocked filter=for_androidはdigestに含めない。任意cursor payload/不正UTF8/precision、全通信/Options・取消/deadline/concurrency/disconnect・実HTTPS/resource・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.UserFollowing",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.UserFollowing"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/user_relationships.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_user_relationships_test.go",
+        "crates/pixiv-sdk/tests/user_relationships.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "固定Go524ケースで4関係一覧のID/restrict検証順・literal query/path・DTO/resource・正offset・identity binding1/ephemeral cursorを比較。blockedはusers present優先、nested pointerとflat fallback、ordered duplicate merge/reset/null、known-field type/error保持とcasefoldをraw応答で固定。次URLのbase値不一致を拒否せず、request元queryを維持。blocked filter=for_androidはdigestに含めない。任意cursor payload/不正UTF8/precision、全通信/Options・取消/deadline/concurrency/disconnect・実HTTPS/resource・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.UserID",
@@ -10462,15 +10614,26 @@
     },
     {
       "id": "sdk/pixiv:RelatedUsersRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:RelatedUsersRequest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/user_relationships.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_user_relationships_test.go",
+        "crates/pixiv-sdk/tests/user_relationships.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "固定Go524ケースで4関係一覧のID/restrict検証順・literal query/path・DTO/resource・正offset・identity binding1/ephemeral cursorを比較。blockedはusers present優先、nested pointerとflat fallback、ordered duplicate merge/reset/null、known-field type/error保持とcasefoldをraw応答で固定。次URLのbase値不一致を拒否せず、request元queryを維持。blocked filter=for_androidはdigestに含めない。任意cursor payload/不正UTF8/precision、全通信/Options・取消/deadline/concurrency/disconnect・実HTTPS/resource・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:RemoveArtworkBookmarkRequest",
@@ -12401,15 +12564,26 @@
     },
     {
       "id": "sdk/pixiv:UserBlockedUsersRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:UserBlockedUsersRequest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/user_relationships.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_user_relationships_test.go",
+        "crates/pixiv-sdk/tests/user_relationships.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "固定Go524ケースで4関係一覧のID/restrict検証順・literal query/path・DTO/resource・正offset・identity binding1/ephemeral cursorを比較。blockedはusers present優先、nested pointerとflat fallback、ordered duplicate merge/reset/null、known-field type/error保持とcasefoldをraw応答で固定。次URLのbase値不一致を拒否せず、request元queryを維持。blocked filter=for_androidはdigestに含めない。任意cursor payload/不正UTF8/precision、全通信/Options・取消/deadline/concurrency/disconnect・実HTTPS/resource・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:UserDetail",
@@ -12507,27 +12681,49 @@
     },
     {
       "id": "sdk/pixiv:UserFollowersRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:UserFollowersRequest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/user_relationships.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_user_relationships_test.go",
+        "crates/pixiv-sdk/tests/user_relationships.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "固定Go524ケースで4関係一覧のID/restrict検証順・literal query/path・DTO/resource・正offset・identity binding1/ephemeral cursorを比較。blockedはusers present優先、nested pointerとflat fallback、ordered duplicate merge/reset/null、known-field type/error保持とcasefoldをraw応答で固定。次URLのbase値不一致を拒否せず、request元queryを維持。blocked filter=for_androidはdigestに含めない。任意cursor payload/不正UTF8/precision、全通信/Options・取消/deadline/concurrency/disconnect・実HTTPS/resource・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:UserFollowingRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:UserFollowingRequest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/user_relationships.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_user_relationships_test.go",
+        "crates/pixiv-sdk/tests/user_relationships.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "固定Go524ケースで4関係一覧のID/restrict検証順・literal query/path・DTO/resource・正offset・identity binding1/ephemeral cursorを比較。blockedはusers present優先、nested pointerとflat fallback、ordered duplicate merge/reset/null、known-field type/error保持とcasefoldをraw応答で固定。次URLのbase値不一致を拒否せず、request元queryを維持。blocked filter=for_androidはdigestに含めない。任意cursor payload/不正UTF8/precision、全通信/Options・取消/deadline/concurrency/disconnect・実HTTPS/resource・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:UserNovelBookmarksRequest",

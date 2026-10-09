@@ -15,6 +15,8 @@ enum Kind {
     Struct(&'static [Field]),
     RequiredStruct(&'static [Field]),
     RequiredList(&'static [Field]),
+    PointerStruct(&'static [Field]),
+    BlockedList,
     Visibility,
 }
 struct Field {
@@ -33,6 +35,12 @@ const USER: &[Field] = fields!(
 const PREVIEW: &[Field] = fields!("user" => Kind::Struct(USER));
 const SEARCH: &[Field] = fields!(
     "user_previews" => Kind::RequiredList(PREVIEW),
+    "next_url" => Kind::StringPointer,
+);
+const BLOCKED_ITEM: &[Field] = fields!("user" => Kind::PointerStruct(USER));
+const BLOCKED: &[Field] = fields!(
+    "users" => Kind::BlockedList,
+    "user_previews" => Kind::BlockedList,
     "next_url" => Kind::StringPointer,
 );
 const PROFILE: &[Field] = fields!(
@@ -159,6 +167,45 @@ fn apply(values: &mut Map<String, Value>, field: &Field, raw: &str) -> serde_jso
             )?;
             return Ok(());
         }
+        Kind::PointerStruct(fields) => {
+            if raw == "null" {
+                Value::Null
+            } else {
+                let value = values.entry(field.name).or_insert(Value::Null);
+                if value.is_null() {
+                    *value = Value::Object(Map::new());
+                }
+                object(
+                    raw,
+                    fields,
+                    value.as_object_mut().expect("pointer fields hold objects"),
+                )?;
+                return Ok(());
+            }
+        }
+        Kind::BlockedList => {
+            if raw == "null" {
+                Value::Null
+            } else {
+                let items: Vec<&RawValue> = serde_json::from_str(raw)?;
+                let mut decoded = Vec::with_capacity(items.len());
+                for item in items {
+                    let mut envelope = Map::new();
+                    object(item.get(), BLOCKED_ITEM, &mut envelope)?;
+                    let user = if let Some(user) =
+                        envelope.remove("user").filter(|user| !user.is_null())
+                    {
+                        user
+                    } else {
+                        let mut user = Map::new();
+                        object(item.get(), USER, &mut user)?;
+                        Value::Object(user)
+                    };
+                    decoded.push(Value::Object(Map::from_iter([("user".into(), user)])));
+                }
+                Value::Array(decoded)
+            }
+        }
         Kind::RequiredStruct(fields) => {
             if raw == "null" {
                 Value::Null
@@ -203,7 +250,11 @@ fn apply(values: &mut Map<String, Value>, field: &Field, raw: &str) -> serde_jso
 pub(crate) fn decode(raw: &[u8], operation: &'static str) -> Result<Value> {
     let malformed = || Error::new(Reason::MalformedUpstreamResponse, operation);
     let raw = crate::codec::normalize_json(raw).map_err(|_| malformed())?;
-    let schema = if operation == "User" { DETAIL } else { SEARCH };
+    let schema = match operation {
+        "User" => DETAIL,
+        "UserBlockedUsers" => BLOCKED,
+        _ => SEARCH,
+    };
     let mut value = Map::new();
     object(&raw, schema, &mut value).map_err(|_| malformed())?;
     Ok(Value::Object(value))

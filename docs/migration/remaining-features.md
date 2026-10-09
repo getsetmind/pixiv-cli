@@ -8,7 +8,7 @@
 | --- | --- | --- |
 | user の作品一覧 | SDK・CLI・MCP の UserArtworks/UserNovels を今回比較 | 全 wire/通信/他 platform の検証は別に残す |
 | user の互換入口 | top-level detail/search の user mode、follow | `user detail`、`user search` の Go 入口。現在の同等 SDK 呼出しだけで入口互換としない |
-| user の関係・公開一覧 | user DTO、共通 pagination/filter/account | following/followers/related/blocked の SDK・CLI・MCP、CurrentUser/Username の公開 SDK 契約 |
+| user の関係・公開一覧 | following/followers/related/blocked の SDK・CLI・MCP を今回比較 | CurrentUser/Username の公開 SDK 契約、全通信と他 platform の検証 |
 | bookmark の読み取り | SDK detail/tag、CLI/MCP add/remove | artwork/novel bookmark list、CLI detail/list/tags、MCP detail/tags/list-all/tag-all と user bookmark 入口 |
 | timeline・MyPixiv | artwork/novel/user DTO と cursor | following/latest、MyPixiv works/users の SDK・CLI・MCP |
 | comment・stamp | エラー、record、更新操作の commit 基盤 | artwork/novel のコメント一覧・作成・削除・返信・stamp、stamp 一覧と各入口 |
@@ -21,7 +21,7 @@
 
 ## 実装済みの比較に残る未検証
 
-- User/SearchUsers 以外の raw-wire 大小文字・重複・順序・null、不正 UTF-8、任意 JSON precision と cursor payload の境界
+- User/SearchUsers/4関係一覧以外の raw-wire 大小文字・重複・順序・null、不正 UTF-8、任意 JSON precision と cursor payload の境界
 - root parser の3差分、Linux 公開面 snapshot 不在、全 flag/help/TTY/OS startup hook
 - novel_content の複数未知 property の非決定的な診断順。固定 fixture は保持し、opt-in 検査でも exact order だけを未検証とする
 - UserArtworks/UserNovels の page0/limit-1 同時違反時の first diagnostic 選択。Go map 走査により page と limit が入れ替わる2行だけを隔離し、固定 expectation は保持する

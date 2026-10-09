@@ -1,0 +1,132 @@
+{
+  "description": "View user's followers list.",
+  "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "limit": {
+        "description": "Maximum logical results; 0 returns all; omit for one logical batch.",
+        "minimum": 0,
+        "type": "integer"
+      },
+      "page": {
+        "description": "1-based logical page; requires a positive limit.",
+        "minimum": 1,
+        "type": "integer"
+      },
+      "restrict": {
+        "description": "Follower visibility.",
+        "enum": [
+          "public",
+          "private"
+        ],
+        "type": "string"
+      },
+      "user_id": {
+        "description": "Optional positive Pixiv user ID; defaults to the authenticated user.",
+        "minimum": 1,
+        "type": "integer"
+      }
+    },
+    "required": null,
+    "type": "object"
+  },
+  "name": "user_followers",
+  "outputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "access_control": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "bookmark_tags": {
+        "items": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "type": "array"
+      },
+      "bookmarked": {
+        "type": "boolean"
+      },
+      "comments": {
+        "items": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "type": "array"
+      },
+      "content": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "filter": {
+        "additionalProperties": false,
+        "properties": {
+          "completeness": {
+            "type": "string"
+          },
+          "max": {
+            "type": "integer"
+          },
+          "membership": {
+            "type": "string"
+          },
+          "min": {
+            "type": "integer"
+          },
+          "strategy": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "pagination": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "records": {
+        "items": {
+          "additionalProperties": true,
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "type",
+            "url"
+          ],
+          "type": "object"
+        },
+        "type": "array"
+      },
+      "restrict": {
+        "type": "string"
+      },
+      "series": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "tags": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "total": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "records"
+    ],
+    "type": "object"
+  }
+}

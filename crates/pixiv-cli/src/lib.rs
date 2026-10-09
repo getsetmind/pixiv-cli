@@ -8,6 +8,7 @@ pub mod ranking;
 pub mod recommended;
 pub mod search;
 pub mod trending;
+pub mod user_relationships;
 pub mod user_search;
 pub mod user_works;
 

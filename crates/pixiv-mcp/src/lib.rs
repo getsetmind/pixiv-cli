@@ -210,3 +210,8 @@ pub use user_works::{
     UserArtworksInput, UserNovelsInput, user_artworks, user_artworks_tool, user_novels,
     user_novels_tool,
 };
+
+mod user_relationships;
+pub use user_relationships::{
+    UserRelationship, UserRelationshipInput, user_relationship, user_relationship_tool,
+};

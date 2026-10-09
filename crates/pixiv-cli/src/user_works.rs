@@ -57,22 +57,7 @@ impl UserWorks {
             Self::Artworks(options) => &mut options.listing,
             Self::Novels(options) => options,
         };
-        if options.sources.is_empty() && !terminal {
-            let mut bytes = vec![];
-            input
-                .read_to_end(&mut bytes)
-                .map_err(|error| CommandError::Usage(format!("read stdin value: {error}")))?;
-            if bytes.ends_with(b"\r\n") {
-                bytes.truncate(bytes.len() - 2);
-            } else if bytes.ends_with(b"\n") {
-                bytes.pop();
-            }
-            if !bytes.is_empty() {
-                options
-                    .sources
-                    .push(String::from_utf8_lossy(&bytes).into_owned());
-            }
-        }
+        resolve_optional_source(options, input, terminal)?;
         Ok(())
     }
     pub fn validate_arguments(&self) -> Result<(), CommandError> {
@@ -85,27 +70,10 @@ impl UserWorks {
         Ok(())
     }
     fn user_id(&self) -> Result<i64, CommandError> {
-        let Some(source) = self.options().sources.first() else {
-            return Ok(0);
-        };
-        let source = source.trim();
-        let invalid = |detail| {
-            CommandError::LabeledSdk(
-                "user_id",
-                Error::new(Reason::InvalidArgument, format!("user {}", self.name()))
-                    .with_detail(detail),
-            )
-        };
-        if let Ok(id) = source.parse::<i64>() {
-            return if id > 0 {
-                Ok(id)
-            } else {
-                Err(invalid("id must be a positive integer"))
-            };
-        }
-        pixiv_sdk::reference::parse_url(source)
-            .map_err(|_| invalid("input must be a positive ID or a supported Pixiv URL"))?;
-        Err(invalid("URL kind is not allowed for this command"))
+        resolved_user_id(
+            self.options().sources.first(),
+            &format!("user {}", self.name()),
+        )
     }
     pub fn validate(&self) -> Result<(), CommandError> {
         self.validate_arguments()?;
@@ -237,4 +205,53 @@ pub async fn saved_user_works<T: Transport + 'static, W: Write + Send + 'static>
             crate::novel_list::saved(execution, context, listing, proxy, mode, output).await
         }
     }
+}
+
+pub(crate) fn resolve_optional_source<R: Read>(
+    options: &mut UserWorksOptions,
+    input: &mut R,
+    terminal: bool,
+) -> Result<(), CommandError> {
+    if options.sources.is_empty() && !terminal {
+        let mut bytes = vec![];
+        input
+            .read_to_end(&mut bytes)
+            .map_err(|error| CommandError::Usage(format!("read stdin value: {error}")))?;
+        if bytes.ends_with(b"\r\n") {
+            bytes.truncate(bytes.len() - 2);
+        } else if bytes.ends_with(b"\n") {
+            bytes.pop();
+        }
+        if !bytes.is_empty() {
+            options
+                .sources
+                .push(String::from_utf8_lossy(&bytes).into_owned());
+        }
+    }
+    Ok(())
+}
+pub(crate) fn resolved_user_id(
+    source: Option<&String>,
+    operation: &str,
+) -> Result<i64, CommandError> {
+    let Some(source) = source else {
+        return Ok(0);
+    };
+    let source = source.trim();
+    let invalid = |detail| {
+        CommandError::LabeledSdk(
+            "user_id",
+            Error::new(Reason::InvalidArgument, operation).with_detail(detail),
+        )
+    };
+    if let Ok(id) = source.parse::<i64>() {
+        return if id > 0 {
+            Ok(id)
+        } else {
+            Err(invalid("id must be a positive integer"))
+        };
+    }
+    pixiv_sdk::reference::parse_url(source)
+        .map_err(|_| invalid("input must be a positive ID or a supported Pixiv URL"))?;
+    Err(invalid("URL kind is not allowed for this command"))
 }

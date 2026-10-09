@@ -69,6 +69,34 @@ enum UserCommand {
         #[command(flatten)]
         connection: ProxyOptions,
     },
+    #[command(args_override_self = true)]
+    Following {
+        #[command(flatten)]
+        options: Box<pixiv_cli_rs::user_relationships::UserFollowingOptions>,
+        #[command(flatten)]
+        connection: ProxyOptions,
+    },
+    #[command(args_override_self = true)]
+    Followers {
+        #[command(flatten)]
+        options: Box<pixiv_cli_rs::user_relationships::UserFollowingOptions>,
+        #[command(flatten)]
+        connection: ProxyOptions,
+    },
+    #[command(args_override_self = true)]
+    Related {
+        #[command(flatten)]
+        options: Box<pixiv_cli_rs::user_works::UserWorksOptions>,
+        #[command(flatten)]
+        connection: ProxyOptions,
+    },
+    #[command(args_override_self = true)]
+    Blocked {
+        #[command(flatten)]
+        options: Box<pixiv_cli_rs::user_works::UserWorksOptions>,
+        #[command(flatten)]
+        connection: ProxyOptions,
+    },
     Follow {
         #[command(subcommand)]
         command: pixiv_cli_rs::mutation::FollowCommand,
@@ -205,6 +233,12 @@ async fn main() {
         Command::User {
             command: UserCommand::Novels { options, .. },
         } => options.json.is_some() || options.ndjson,
+        Command::User {
+            command: UserCommand::Following { options, .. } | UserCommand::Followers { options, .. },
+        } => options.listing.json.is_some() || options.listing.ndjson,
+        Command::User {
+            command: UserCommand::Related { options, .. } | UserCommand::Blocked { options, .. },
+        } => options.json.is_some() || options.ndjson,
         Command::Novel { .. } => unreachable!("novel commands were resolved"),
         Command::Mcp { .. }
         | Command::Bookmark { .. }
@@ -226,6 +260,18 @@ async fn main() {
         }
         Command::User {
             command: UserCommand::Novels { options, .. },
+        } => options.ndjson || (options.json.is_none() && !io::stdout().is_terminal()),
+        Command::User {
+            command: UserCommand::Following { options, .. },
+        } => options.listing.ndjson,
+        Command::User {
+            command: UserCommand::Followers { options, .. },
+        } => {
+            options.listing.ndjson
+                || (options.listing.json.is_none() && !io::stdout().is_terminal())
+        }
+        Command::User {
+            command: UserCommand::Related { options, .. } | UserCommand::Blocked { options, .. },
         } => options.ndjson || (options.json.is_none() && !io::stdout().is_terminal()),
         Command::Novel { .. } => unreachable!("novel commands were resolved"),
         Command::Mcp { .. }
@@ -273,6 +319,36 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
         _ => None,
     };
     if let Some(options) = &mut user_works {
+        options.resolve_source(&mut io::stdin().lock(), io::stdin().is_terminal())?;
+    }
+    let mut user_relationships = match &args.command {
+        Command::User {
+            command: UserCommand::Following { options, .. },
+        } => Some(
+            pixiv_cli_rs::user_relationships::UserRelationships::Following(
+                options.as_ref().clone(),
+            ),
+        ),
+        Command::User {
+            command: UserCommand::Followers { options, .. },
+        } => Some(
+            pixiv_cli_rs::user_relationships::UserRelationships::Followers(
+                options.as_ref().clone(),
+            ),
+        ),
+        Command::User {
+            command: UserCommand::Related { options, .. },
+        } => Some(
+            pixiv_cli_rs::user_relationships::UserRelationships::Related(options.as_ref().clone()),
+        ),
+        Command::User {
+            command: UserCommand::Blocked { options, .. },
+        } => Some(
+            pixiv_cli_rs::user_relationships::UserRelationships::Blocked(options.as_ref().clone()),
+        ),
+        _ => None,
+    };
+    if let Some(options) = &mut user_relationships {
         options.resolve_source(&mut io::stdin().lock(), io::stdin().is_terminal())?;
     }
     if let Command::Recommended { options, .. } = &mut args.command {
@@ -361,6 +437,48 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
             std::sync::Arc::new(std::sync::Mutex::new(database)),
         );
         return pixiv_cli_rs::user_works::saved_user_works(
+            &execution,
+            &pixiv_app::lifecycle::Context::new(),
+            options,
+            proxy,
+            mode,
+            io::stdout(),
+        )
+        .await;
+    }
+    if let Some(options) = user_relationships {
+        let (directory, config) = account_config.expect("user relationships startup was resolved");
+        options.validate()?;
+        let connection = match &args.command {
+            Command::User {
+                command:
+                    UserCommand::Following { connection, .. }
+                    | UserCommand::Followers { connection, .. }
+                    | UserCommand::Related { connection, .. }
+                    | UserCommand::Blocked { connection, .. },
+            } => connection,
+            _ => unreachable!("user relationships route was resolved"),
+        };
+        let proxy = connection.override_value()?;
+        let configured_json = if options.options().ndjson {
+            options.output_mode(false, true)?;
+            false
+        } else {
+            config
+                .current()
+                .and_then(|snapshot| snapshot.runtime())
+                .map_err(pixiv_app::scheduler::SchedulerError::from)?
+                .output_json
+        };
+        let mode = options.output_mode(configured_json, io::stdout().is_terminal())?;
+        *ndjson_output = mode == DetailOutput::Ndjson;
+        let database = pixiv_app::database::Database::open(&directory)
+            .map_err(|error| CommandError::State(Box::new(error)))?;
+        let execution = pixiv_app::execution::Execution::http(
+            config,
+            std::sync::Arc::new(std::sync::Mutex::new(database)),
+        );
+        return pixiv_cli_rs::user_relationships::saved_user_relationships(
             &execution,
             &pixiv_app::lifecycle::Context::new(),
             options,

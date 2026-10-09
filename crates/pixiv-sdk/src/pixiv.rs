@@ -489,3 +489,7 @@ pub use crate::user_works::{
     USER_ARTWORK_KIND_ILLUST, USER_ARTWORK_KIND_ILLUSTRATION, USER_ARTWORK_KIND_MANGA,
     USER_ARTWORK_KIND_UGOIRA, UserArtworkKind, UserArtworksRequest, UserNovelsRequest,
 };
+
+pub use crate::user_relationships::{
+    RelatedUsersRequest, UserBlockedUsersRequest, UserFollowersRequest, UserFollowingRequest,
+};
