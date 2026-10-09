@@ -6,6 +6,8 @@ use pixiv_sdk::{
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 mod search;
+mod trending;
+pub use trending::{TrendingTags, trending_tags_illust, trending_tags_illust_tool};
 pub mod stdio;
 pub use search::{IllustFilter, SearchIllustInput, search_illust, search_illust_tool};
 
@@ -19,9 +21,9 @@ pub struct IllustReference {
 
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct CallToolResult {
+pub struct CallToolResult<T = Records> {
     pub content: Vec<TextContent>,
-    pub structured_content: Records,
+    pub structured_content: T,
     #[serde(skip_serializing_if = "std::ops::Not::not")]
     pub is_error: bool,
 }

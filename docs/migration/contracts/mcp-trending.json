@@ -1,0 +1,1640 @@
+{
+  "schema": {
+    "description": "Get currently trending illustration tags.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    },
+    "name": "trending_tags_illust",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "tags": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "artwork": {
+                "additionalProperties": false,
+                "properties": {
+                  "ai_type": {
+                    "type": "integer"
+                  },
+                  "caption": {
+                    "type": "string"
+                  },
+                  "cover": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "height": {
+                        "type": "integer"
+                      },
+                      "resource": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "ref": {
+                            "type": "string"
+                          },
+                          "requires_credentials": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "ref"
+                        ],
+                        "type": [
+                          "null",
+                          "object"
+                        ]
+                      },
+                      "variant": {
+                        "type": "string"
+                      },
+                      "width": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "resource",
+                      "variant",
+                      "width",
+                      "height"
+                    ],
+                    "type": "object"
+                  },
+                  "height": {
+                    "type": "integer"
+                  },
+                  "id": {
+                    "type": "integer"
+                  },
+                  "kind": {
+                    "type": "string"
+                  },
+                  "page_count": {
+                    "type": "integer"
+                  },
+                  "pages": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "height": {
+                          "type": "integer"
+                        },
+                        "image": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "height": {
+                              "type": "integer"
+                            },
+                            "resource": {
+                              "additionalProperties": false,
+                              "properties": {
+                                "ref": {
+                                  "type": "string"
+                                },
+                                "requires_credentials": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "required": [
+                                "ref"
+                              ],
+                              "type": [
+                                "null",
+                                "object"
+                              ]
+                            },
+                            "variant": {
+                              "type": "string"
+                            },
+                            "width": {
+                              "type": "integer"
+                            }
+                          },
+                          "required": [
+                            "resource",
+                            "variant",
+                            "width",
+                            "height"
+                          ],
+                          "type": "object"
+                        },
+                        "page_index": {
+                          "type": "integer"
+                        },
+                        "width": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "page_index",
+                        "image",
+                        "width",
+                        "height"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "published_at": {
+                    "type": "string"
+                  },
+                  "raw_kind": {
+                    "type": "string"
+                  },
+                  "tags": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "translated_name": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "translated_name"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "tools": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "total_bookmarks": {
+                    "type": "integer"
+                  },
+                  "total_views": {
+                    "type": "integer"
+                  },
+                  "updated_at": {
+                    "type": "string"
+                  },
+                  "user": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "account": {
+                        "type": "string"
+                      },
+                      "comment": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "is_followed": {
+                        "type": "boolean"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "profile_image": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "height": {
+                            "type": "integer"
+                          },
+                          "resource": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "ref": {
+                                "type": "string"
+                              },
+                              "requires_credentials": {
+                                "type": "boolean"
+                              }
+                            },
+                            "required": [
+                              "ref"
+                            ],
+                            "type": [
+                              "null",
+                              "object"
+                            ]
+                          },
+                          "variant": {
+                            "type": "string"
+                          },
+                          "width": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "resource",
+                          "variant",
+                          "width",
+                          "height"
+                        ],
+                        "type": "object"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "name",
+                      "account",
+                      "comment",
+                      "is_followed",
+                      "profile_image"
+                    ],
+                    "type": "object"
+                  },
+                  "width": {
+                    "type": "integer"
+                  },
+                  "x_restrict": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "id",
+                  "title",
+                  "caption",
+                  "kind",
+                  "raw_kind",
+                  "tags",
+                  "user",
+                  "published_at",
+                  "total_bookmarks",
+                  "total_views",
+                  "width",
+                  "height",
+                  "page_count",
+                  "x_restrict",
+                  "ai_type",
+                  "cover"
+                ],
+                "type": "object"
+              },
+              "tag": {
+                "type": "string"
+              },
+              "translated_name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "tag",
+              "translated_name",
+              "artwork"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "tags",
+        "text"
+      ],
+      "type": "object"
+    }
+  },
+  "cases": [
+    {
+      "body": {
+        "trend_tags": [
+          {
+            "illust": {
+              "ai_type": 1,
+              "caption": "\u003cp\u003efixture\u003c/p\u003e",
+              "create_date": "2026-01-02T03:04:05.123456789+09:00",
+              "height": 480,
+              "id": 1,
+              "illust_ai_type": 2,
+              "image_urls": {
+                "large": "https://i.pximg.net/large.jpg",
+                "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+              },
+              "meta_single_page": {
+                "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+              },
+              "page_count": 1,
+              "tags": [
+                {
+                  "name": "tag",
+                  "translated_name": "訳"
+                },
+                {
+                  "name": "untranslated"
+                }
+              ],
+              "title": "日本語 \u003ctitle\u003e",
+              "tools": [
+                "pen",
+                "brush"
+              ],
+              "total_bookmarks": 12,
+              "total_view": 34,
+              "type": "illust",
+              "user": {
+                "account": "fixture",
+                "comment": "profile",
+                "id": 7,
+                "is_followed": true,
+                "name": "author",
+                "profile_image_urls": {
+                  "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+                }
+              },
+              "width": 640,
+              "x_restrict": 0
+            },
+            "tag": "cat\n\u003ctag\u003e",
+            "translated_name": "猫\t訳"
+          },
+          {
+            "illust": {
+              "ai_type": 1,
+              "caption": "\u003cp\u003efixture\u003c/p\u003e",
+              "create_date": "2026-01-02T03:04:05.123456789+09:00",
+              "height": 480,
+              "id": 2,
+              "illust_ai_type": 2,
+              "image_urls": {
+                "large": "https://i.pximg.net/large.jpg",
+                "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+              },
+              "meta_single_page": {
+                "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+              },
+              "page_count": 1,
+              "tags": [
+                {
+                  "name": "tag",
+                  "translated_name": "訳"
+                },
+                {
+                  "name": "untranslated"
+                }
+              ],
+              "title": "日本語 \u003ctitle\u003e",
+              "tools": [
+                "pen",
+                "brush"
+              ],
+              "total_bookmarks": 12,
+              "total_view": 34,
+              "type": "manga",
+              "user": {
+                "account": "fixture",
+                "comment": "profile",
+                "id": 7,
+                "is_followed": true,
+                "name": "author",
+                "profile_image_urls": {
+                  "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+                }
+              },
+              "width": 640,
+              "x_restrict": 1
+            },
+            "tag": "cat",
+            "translated_name": ""
+          }
+        ]
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Trending tags:\n- cat\n\u003ctag\u003e (translation: 猫\t訳)\n- cat (translation: none)"
+          }
+        ],
+        "structuredContent": {
+          "tags": [
+            {
+              "artwork": {
+                "ai_type": 2,
+                "caption": "\u003cp\u003efixture\u003c/p\u003e",
+                "cover": {
+                  "height": 480,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpveExDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0"
+                  },
+                  "variant": "original",
+                  "width": 640
+                },
+                "height": 480,
+                "id": 1,
+                "kind": "illustration",
+                "page_count": 1,
+                "published_at": "2026-01-01T18:04:05.123456789Z",
+                "raw_kind": "illust",
+                "tags": [
+                  {
+                    "name": "tag",
+                    "translated_name": "訳"
+                  },
+                  {
+                    "name": "untranslated",
+                    "translated_name": ""
+                  }
+                ],
+                "title": "日本語 \u003ctitle\u003e",
+                "tools": [
+                  "pen",
+                  "brush"
+                ],
+                "total_bookmarks": 12,
+                "total_views": 34,
+                "user": {
+                  "account": "fixture",
+                  "comment": "profile",
+                  "id": 7,
+                  "is_followed": true,
+                  "name": "author",
+                  "profile_image": {
+                    "height": 0,
+                    "resource": {
+                      "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9"
+                    },
+                    "variant": "medium",
+                    "width": 0
+                  }
+                },
+                "width": 640,
+                "x_restrict": 0
+              },
+              "tag": "cat\n\u003ctag\u003e",
+              "translated_name": "猫\t訳"
+            },
+            {
+              "artwork": {
+                "ai_type": 2,
+                "caption": "\u003cp\u003efixture\u003c/p\u003e",
+                "cover": {
+                  "height": 480,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpveUxDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0"
+                  },
+                  "variant": "original",
+                  "width": 640
+                },
+                "height": 480,
+                "id": 2,
+                "kind": "manga",
+                "page_count": 1,
+                "published_at": "2026-01-01T18:04:05.123456789Z",
+                "raw_kind": "manga",
+                "tags": [
+                  {
+                    "name": "tag",
+                    "translated_name": "訳"
+                  },
+                  {
+                    "name": "untranslated",
+                    "translated_name": ""
+                  }
+                ],
+                "title": "日本語 \u003ctitle\u003e",
+                "tools": [
+                  "pen",
+                  "brush"
+                ],
+                "total_bookmarks": 12,
+                "total_views": 34,
+                "user": {
+                  "account": "fixture",
+                  "comment": "profile",
+                  "id": 7,
+                  "is_followed": true,
+                  "name": "author",
+                  "profile_image": {
+                    "height": 0,
+                    "resource": {
+                      "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9"
+                    },
+                    "variant": "medium",
+                    "width": 0
+                  }
+                },
+                "width": 640,
+                "x_restrict": 1
+              },
+              "tag": "cat",
+              "translated_name": ""
+            }
+          ],
+          "text": "Trending tags:\n- cat\n\u003ctag\u003e (translation: 猫\t訳)\n- cat (translation: none)"
+        }
+      },
+      "requests": 1
+    },
+    {
+      "body": {
+        "trend_tags": []
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "No trending tags found."
+          }
+        ],
+        "structuredContent": {
+          "tags": [],
+          "text": "No trending tags found."
+        }
+      },
+      "requests": 1
+    },
+    {
+      "body": {},
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:TrendingArtworkTags: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "tags": [],
+          "text": "Error: pixiv:TrendingArtworkTags: malformed_upstream_response"
+        },
+        "isError": true
+      },
+      "requests": 1
+    },
+    {
+      "body": {
+        "trend_tags": null
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:TrendingArtworkTags: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "tags": [],
+          "text": "Error: pixiv:TrendingArtworkTags: malformed_upstream_response"
+        },
+        "isError": true
+      },
+      "requests": 1
+    },
+    {
+      "body": {
+        "trend_tags": {}
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:TrendingArtworkTags: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "tags": [],
+          "text": "Error: pixiv:TrendingArtworkTags: malformed_upstream_response"
+        },
+        "isError": true
+      },
+      "requests": 1
+    },
+    {
+      "body": {
+        "trend_tags": [
+          null
+        ]
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:TrendingArtworkTags: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "tags": [],
+          "text": "Error: pixiv:TrendingArtworkTags: malformed_upstream_response"
+        },
+        "isError": true
+      },
+      "requests": 1
+    },
+    {
+      "body": {
+        "trend_tags": [
+          {
+            "tag": "cat"
+          }
+        ]
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:TrendingArtworkTags: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "tags": [],
+          "text": "Error: pixiv:TrendingArtworkTags: malformed_upstream_response"
+        },
+        "isError": true
+      },
+      "requests": 1
+    },
+    {
+      "body": {
+        "trend_tags": [
+          {
+            "tag": "cat",
+            "illust": null
+          }
+        ]
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:TrendingArtworkTags: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "tags": [],
+          "text": "Error: pixiv:TrendingArtworkTags: malformed_upstream_response"
+        },
+        "isError": true
+      },
+      "requests": 1
+    },
+    {
+      "body": {
+        "trend_tags": [
+          {
+            "tag": "cat",
+            "illust": {}
+          }
+        ]
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:TrendingArtworkTags: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "tags": [],
+          "text": "Error: pixiv:TrendingArtworkTags: malformed_upstream_response"
+        },
+        "isError": true
+      },
+      "requests": 1
+    },
+    {
+      "body": {
+        "trend_tags": [
+          {
+            "illust": {
+              "ai_type": 1,
+              "caption": "\u003cp\u003efixture\u003c/p\u003e",
+              "create_date": "2026-01-02T03:04:05.123456789+09:00",
+              "height": 480,
+              "id": 1,
+              "illust_ai_type": 2,
+              "image_urls": {
+                "large": "https://i.pximg.net/large.jpg",
+                "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+              },
+              "meta_single_page": {
+                "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+              },
+              "page_count": 1,
+              "tags": [
+                {
+                  "name": "tag",
+                  "translated_name": "訳"
+                },
+                {
+                  "name": "untranslated"
+                }
+              ],
+              "title": "日本語 \u003ctitle\u003e",
+              "tools": [
+                "pen",
+                "brush"
+              ],
+              "total_bookmarks": 12,
+              "total_view": 34,
+              "type": "illust",
+              "user": {
+                "account": "fixture",
+                "comment": "profile",
+                "id": 7,
+                "is_followed": true,
+                "name": "author",
+                "profile_image_urls": {
+                  "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+                }
+              },
+              "width": 640,
+              "x_restrict": 0
+            },
+            "tag": "",
+            "translated_name": "猫\t訳"
+          },
+          {
+            "illust": {
+              "ai_type": 1,
+              "caption": "\u003cp\u003efixture\u003c/p\u003e",
+              "create_date": "2026-01-02T03:04:05.123456789+09:00",
+              "height": 480,
+              "id": 2,
+              "illust_ai_type": 2,
+              "image_urls": {
+                "large": "https://i.pximg.net/large.jpg",
+                "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+              },
+              "meta_single_page": {
+                "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+              },
+              "page_count": 1,
+              "tags": [
+                {
+                  "name": "tag",
+                  "translated_name": "訳"
+                },
+                {
+                  "name": "untranslated"
+                }
+              ],
+              "title": "日本語 \u003ctitle\u003e",
+              "tools": [
+                "pen",
+                "brush"
+              ],
+              "total_bookmarks": 12,
+              "total_view": 34,
+              "type": "manga",
+              "user": {
+                "account": "fixture",
+                "comment": "profile",
+                "id": 7,
+                "is_followed": true,
+                "name": "author",
+                "profile_image_urls": {
+                  "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+                }
+              },
+              "width": 640,
+              "x_restrict": 1
+            },
+            "tag": "cat",
+            "translated_name": ""
+          }
+        ]
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:TrendingArtworkTags: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "tags": [],
+          "text": "Error: pixiv:TrendingArtworkTags: malformed_upstream_response"
+        },
+        "isError": true
+      },
+      "requests": 1
+    },
+    {
+      "body": {
+        "trend_tags": [
+          {
+            "illust": {
+              "ai_type": 1,
+              "caption": "\u003cp\u003efixture\u003c/p\u003e",
+              "create_date": "2026-01-02T03:04:05.123456789+09:00",
+              "height": 480,
+              "id": 1,
+              "illust_ai_type": 2,
+              "image_urls": {
+                "large": "https://i.pximg.net/large.jpg",
+                "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+              },
+              "meta_single_page": {
+                "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+              },
+              "page_count": 1,
+              "tags": [
+                {
+                  "name": "tag",
+                  "translated_name": "訳"
+                },
+                {
+                  "name": "untranslated"
+                }
+              ],
+              "title": "日本語 \u003ctitle\u003e",
+              "tools": [
+                "pen",
+                "brush"
+              ],
+              "total_bookmarks": 12,
+              "total_view": 34,
+              "type": "illust",
+              "user": {
+                "account": "fixture",
+                "comment": "profile",
+                "id": 7,
+                "is_followed": true,
+                "name": "author",
+                "profile_image_urls": {
+                  "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+                }
+              },
+              "width": 640,
+              "x_restrict": 0
+            },
+            "tag": 1,
+            "translated_name": "猫\t訳"
+          },
+          {
+            "illust": {
+              "ai_type": 1,
+              "caption": "\u003cp\u003efixture\u003c/p\u003e",
+              "create_date": "2026-01-02T03:04:05.123456789+09:00",
+              "height": 480,
+              "id": 2,
+              "illust_ai_type": 2,
+              "image_urls": {
+                "large": "https://i.pximg.net/large.jpg",
+                "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+              },
+              "meta_single_page": {
+                "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+              },
+              "page_count": 1,
+              "tags": [
+                {
+                  "name": "tag",
+                  "translated_name": "訳"
+                },
+                {
+                  "name": "untranslated"
+                }
+              ],
+              "title": "日本語 \u003ctitle\u003e",
+              "tools": [
+                "pen",
+                "brush"
+              ],
+              "total_bookmarks": 12,
+              "total_view": 34,
+              "type": "manga",
+              "user": {
+                "account": "fixture",
+                "comment": "profile",
+                "id": 7,
+                "is_followed": true,
+                "name": "author",
+                "profile_image_urls": {
+                  "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+                }
+              },
+              "width": 640,
+              "x_restrict": 1
+            },
+            "tag": "cat",
+            "translated_name": ""
+          }
+        ]
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:TrendingArtworkTags: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "tags": [],
+          "text": "Error: pixiv:TrendingArtworkTags: malformed_upstream_response"
+        },
+        "isError": true
+      },
+      "requests": 1
+    },
+    {
+      "body": {
+        "trend_tags": [
+          {
+            "illust": {
+              "ai_type": 1,
+              "caption": "\u003cp\u003efixture\u003c/p\u003e",
+              "create_date": "2026-01-02T03:04:05.123456789+09:00",
+              "height": 480,
+              "id": 1,
+              "illust_ai_type": 2,
+              "image_urls": {
+                "large": "https://i.pximg.net/large.jpg",
+                "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+              },
+              "meta_single_page": {
+                "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+              },
+              "page_count": 1,
+              "tags": [
+                {
+                  "name": "tag",
+                  "translated_name": "訳"
+                },
+                {
+                  "name": "untranslated"
+                }
+              ],
+              "title": "日本語 \u003ctitle\u003e",
+              "tools": [
+                "pen",
+                "brush"
+              ],
+              "total_bookmarks": 12,
+              "total_view": 34,
+              "type": "illust",
+              "user": {
+                "account": "fixture",
+                "comment": "profile",
+                "id": 7,
+                "is_followed": true,
+                "name": "author",
+                "profile_image_urls": {
+                  "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+                }
+              },
+              "width": 640,
+              "x_restrict": 0
+            },
+            "tag": "cat\n\u003ctag\u003e",
+            "translated_name": null
+          },
+          {
+            "illust": {
+              "ai_type": 1,
+              "caption": "\u003cp\u003efixture\u003c/p\u003e",
+              "create_date": "2026-01-02T03:04:05.123456789+09:00",
+              "height": 480,
+              "id": 2,
+              "illust_ai_type": 2,
+              "image_urls": {
+                "large": "https://i.pximg.net/large.jpg",
+                "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+              },
+              "meta_single_page": {
+                "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+              },
+              "page_count": 1,
+              "tags": [
+                {
+                  "name": "tag",
+                  "translated_name": "訳"
+                },
+                {
+                  "name": "untranslated"
+                }
+              ],
+              "title": "日本語 \u003ctitle\u003e",
+              "tools": [
+                "pen",
+                "brush"
+              ],
+              "total_bookmarks": 12,
+              "total_view": 34,
+              "type": "manga",
+              "user": {
+                "account": "fixture",
+                "comment": "profile",
+                "id": 7,
+                "is_followed": true,
+                "name": "author",
+                "profile_image_urls": {
+                  "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+                }
+              },
+              "width": 640,
+              "x_restrict": 1
+            },
+            "tag": "cat",
+            "translated_name": ""
+          }
+        ]
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Trending tags:\n- cat\n\u003ctag\u003e (translation: none)\n- cat (translation: none)"
+          }
+        ],
+        "structuredContent": {
+          "tags": [
+            {
+              "artwork": {
+                "ai_type": 2,
+                "caption": "\u003cp\u003efixture\u003c/p\u003e",
+                "cover": {
+                  "height": 480,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpveExDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0"
+                  },
+                  "variant": "original",
+                  "width": 640
+                },
+                "height": 480,
+                "id": 1,
+                "kind": "illustration",
+                "page_count": 1,
+                "published_at": "2026-01-01T18:04:05.123456789Z",
+                "raw_kind": "illust",
+                "tags": [
+                  {
+                    "name": "tag",
+                    "translated_name": "訳"
+                  },
+                  {
+                    "name": "untranslated",
+                    "translated_name": ""
+                  }
+                ],
+                "title": "日本語 \u003ctitle\u003e",
+                "tools": [
+                  "pen",
+                  "brush"
+                ],
+                "total_bookmarks": 12,
+                "total_views": 34,
+                "user": {
+                  "account": "fixture",
+                  "comment": "profile",
+                  "id": 7,
+                  "is_followed": true,
+                  "name": "author",
+                  "profile_image": {
+                    "height": 0,
+                    "resource": {
+                      "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9"
+                    },
+                    "variant": "medium",
+                    "width": 0
+                  }
+                },
+                "width": 640,
+                "x_restrict": 0
+              },
+              "tag": "cat\n\u003ctag\u003e",
+              "translated_name": ""
+            },
+            {
+              "artwork": {
+                "ai_type": 2,
+                "caption": "\u003cp\u003efixture\u003c/p\u003e",
+                "cover": {
+                  "height": 480,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpveUxDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0"
+                  },
+                  "variant": "original",
+                  "width": 640
+                },
+                "height": 480,
+                "id": 2,
+                "kind": "manga",
+                "page_count": 1,
+                "published_at": "2026-01-01T18:04:05.123456789Z",
+                "raw_kind": "manga",
+                "tags": [
+                  {
+                    "name": "tag",
+                    "translated_name": "訳"
+                  },
+                  {
+                    "name": "untranslated",
+                    "translated_name": ""
+                  }
+                ],
+                "title": "日本語 \u003ctitle\u003e",
+                "tools": [
+                  "pen",
+                  "brush"
+                ],
+                "total_bookmarks": 12,
+                "total_views": 34,
+                "user": {
+                  "account": "fixture",
+                  "comment": "profile",
+                  "id": 7,
+                  "is_followed": true,
+                  "name": "author",
+                  "profile_image": {
+                    "height": 0,
+                    "resource": {
+                      "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9"
+                    },
+                    "variant": "medium",
+                    "width": 0
+                  }
+                },
+                "width": 640,
+                "x_restrict": 1
+              },
+              "tag": "cat",
+              "translated_name": ""
+            }
+          ],
+          "text": "Trending tags:\n- cat\n\u003ctag\u003e (translation: none)\n- cat (translation: none)"
+        }
+      },
+      "requests": 1
+    },
+    {
+      "body": {
+        "trend_tags": [
+          {
+            "illust": {
+              "ai_type": 1,
+              "caption": "\u003cp\u003efixture\u003c/p\u003e",
+              "create_date": "2026-01-02T03:04:05.123456789+09:00",
+              "height": 480,
+              "id": 1,
+              "illust_ai_type": 2,
+              "image_urls": {
+                "large": "https://i.pximg.net/large.jpg",
+                "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+              },
+              "meta_single_page": {
+                "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+              },
+              "page_count": 1,
+              "tags": [
+                {
+                  "name": "tag",
+                  "translated_name": "訳"
+                },
+                {
+                  "name": "untranslated"
+                }
+              ],
+              "title": "日本語 \u003ctitle\u003e",
+              "tools": [
+                "pen",
+                "brush"
+              ],
+              "total_bookmarks": 12,
+              "total_view": 34,
+              "type": "illust",
+              "user": {
+                "account": "fixture",
+                "comment": "profile",
+                "id": 7,
+                "is_followed": true,
+                "name": "author",
+                "profile_image_urls": {
+                  "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+                }
+              },
+              "width": 640,
+              "x_restrict": 0
+            },
+            "tag": "cat\n\u003ctag\u003e",
+            "translated_name": 1
+          },
+          {
+            "illust": {
+              "ai_type": 1,
+              "caption": "\u003cp\u003efixture\u003c/p\u003e",
+              "create_date": "2026-01-02T03:04:05.123456789+09:00",
+              "height": 480,
+              "id": 2,
+              "illust_ai_type": 2,
+              "image_urls": {
+                "large": "https://i.pximg.net/large.jpg",
+                "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+              },
+              "meta_single_page": {
+                "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+              },
+              "page_count": 1,
+              "tags": [
+                {
+                  "name": "tag",
+                  "translated_name": "訳"
+                },
+                {
+                  "name": "untranslated"
+                }
+              ],
+              "title": "日本語 \u003ctitle\u003e",
+              "tools": [
+                "pen",
+                "brush"
+              ],
+              "total_bookmarks": 12,
+              "total_view": 34,
+              "type": "manga",
+              "user": {
+                "account": "fixture",
+                "comment": "profile",
+                "id": 7,
+                "is_followed": true,
+                "name": "author",
+                "profile_image_urls": {
+                  "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+                }
+              },
+              "width": 640,
+              "x_restrict": 1
+            },
+            "tag": "cat",
+            "translated_name": ""
+          }
+        ]
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:TrendingArtworkTags: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "tags": [],
+          "text": "Error: pixiv:TrendingArtworkTags: malformed_upstream_response"
+        },
+        "isError": true
+      },
+      "requests": 1
+    },
+    {
+      "body": {
+        "trend_tags": [
+          {
+            "illust": {
+              "ai_type": 1,
+              "caption": "\u003cp\u003efixture\u003c/p\u003e",
+              "create_date": "2026-01-02T03:04:05.123456789+09:00",
+              "height": 480,
+              "id": 1,
+              "illust_ai_type": 2,
+              "image_urls": {
+                "large": "https://i.pximg.net/large.jpg",
+                "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+              },
+              "meta_single_page": {
+                "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+              },
+              "page_count": 1,
+              "tags": [
+                {
+                  "name": "tag",
+                  "translated_name": "訳"
+                },
+                {
+                  "name": "untranslated"
+                }
+              ],
+              "title": 1,
+              "tools": [
+                "pen",
+                "brush"
+              ],
+              "total_bookmarks": 12,
+              "total_view": 34,
+              "type": "illust",
+              "user": {
+                "account": "fixture",
+                "comment": "profile",
+                "id": 7,
+                "is_followed": true,
+                "name": "author",
+                "profile_image_urls": {
+                  "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+                }
+              },
+              "width": 640,
+              "x_restrict": 0
+            },
+            "tag": "cat\n\u003ctag\u003e",
+            "translated_name": "猫\t訳"
+          },
+          {
+            "illust": {
+              "ai_type": 1,
+              "caption": "\u003cp\u003efixture\u003c/p\u003e",
+              "create_date": "2026-01-02T03:04:05.123456789+09:00",
+              "height": 480,
+              "id": 2,
+              "illust_ai_type": 2,
+              "image_urls": {
+                "large": "https://i.pximg.net/large.jpg",
+                "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+              },
+              "meta_single_page": {
+                "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+              },
+              "page_count": 1,
+              "tags": [
+                {
+                  "name": "tag",
+                  "translated_name": "訳"
+                },
+                {
+                  "name": "untranslated"
+                }
+              ],
+              "title": "日本語 \u003ctitle\u003e",
+              "tools": [
+                "pen",
+                "brush"
+              ],
+              "total_bookmarks": 12,
+              "total_view": 34,
+              "type": "manga",
+              "user": {
+                "account": "fixture",
+                "comment": "profile",
+                "id": 7,
+                "is_followed": true,
+                "name": "author",
+                "profile_image_urls": {
+                  "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+                }
+              },
+              "width": 640,
+              "x_restrict": 1
+            },
+            "tag": "cat",
+            "translated_name": ""
+          }
+        ]
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:TrendingArtworkTags: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "tags": [],
+          "text": "Error: pixiv:TrendingArtworkTags: malformed_upstream_response"
+        },
+        "isError": true
+      },
+      "requests": 1
+    },
+    {
+      "body": {
+        "trend_tags": [
+          {
+            "illust": {
+              "ai_type": 1,
+              "caption": "\u003cp\u003efixture\u003c/p\u003e",
+              "create_date": "invalid",
+              "height": 480,
+              "id": 1,
+              "illust_ai_type": 2,
+              "image_urls": {
+                "large": "https://i.pximg.net/large.jpg",
+                "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+              },
+              "meta_single_page": {
+                "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+              },
+              "page_count": 1,
+              "tags": [
+                {
+                  "name": "tag",
+                  "translated_name": "訳"
+                },
+                {
+                  "name": "untranslated"
+                }
+              ],
+              "title": "日本語 \u003ctitle\u003e",
+              "tools": [
+                "pen",
+                "brush"
+              ],
+              "total_bookmarks": 12,
+              "total_view": 34,
+              "type": "illust",
+              "user": {
+                "account": "fixture",
+                "comment": "profile",
+                "id": 7,
+                "is_followed": true,
+                "name": "author",
+                "profile_image_urls": {
+                  "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+                }
+              },
+              "width": 640,
+              "x_restrict": 0
+            },
+            "tag": "cat\n\u003ctag\u003e",
+            "translated_name": "猫\t訳"
+          },
+          {
+            "illust": {
+              "ai_type": 1,
+              "caption": "\u003cp\u003efixture\u003c/p\u003e",
+              "create_date": "2026-01-02T03:04:05.123456789+09:00",
+              "height": 480,
+              "id": 2,
+              "illust_ai_type": 2,
+              "image_urls": {
+                "large": "https://i.pximg.net/large.jpg",
+                "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+              },
+              "meta_single_page": {
+                "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+              },
+              "page_count": 1,
+              "tags": [
+                {
+                  "name": "tag",
+                  "translated_name": "訳"
+                },
+                {
+                  "name": "untranslated"
+                }
+              ],
+              "title": "日本語 \u003ctitle\u003e",
+              "tools": [
+                "pen",
+                "brush"
+              ],
+              "total_bookmarks": 12,
+              "total_view": 34,
+              "type": "manga",
+              "user": {
+                "account": "fixture",
+                "comment": "profile",
+                "id": 7,
+                "is_followed": true,
+                "name": "author",
+                "profile_image_urls": {
+                  "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+                }
+              },
+              "width": 640,
+              "x_restrict": 1
+            },
+            "tag": "cat",
+            "translated_name": ""
+          }
+        ]
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:Artwork: malformed_upstream_response: invalid publish time"
+          }
+        ],
+        "structuredContent": {
+          "tags": [],
+          "text": "Error: pixiv:Artwork: malformed_upstream_response: invalid publish time"
+        },
+        "isError": true
+      },
+      "requests": 1
+    },
+    {
+      "body": {
+        "trend_tags": [
+          {
+            "illust": {
+              "ai_type": 1,
+              "caption": "\u003cp\u003efixture\u003c/p\u003e",
+              "create_date": "2026-01-02T03:04:05.123456789+09:00",
+              "height": 480,
+              "id": 1,
+              "illust_ai_type": 2,
+              "image_urls": {
+                "large": "https://i.pximg.net/large.jpg",
+                "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+              },
+              "meta_single_page": {
+                "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+              },
+              "page_count": 1,
+              "tags": [
+                {
+                  "name": "tag",
+                  "translated_name": "訳"
+                },
+                {
+                  "name": "untranslated"
+                }
+              ],
+              "title": "日本語 \u003ctitle\u003e",
+              "tools": [
+                "pen",
+                "brush"
+              ],
+              "total_bookmarks": 12,
+              "total_view": 34,
+              "type": "illust",
+              "user": {
+                "account": "fixture",
+                "comment": 1,
+                "id": 7,
+                "is_followed": "invalid",
+                "name": "author",
+                "profile_image_urls": {
+                  "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+                }
+              },
+              "width": 640,
+              "x_restrict": 0
+            },
+            "tag": "cat\n\u003ctag\u003e",
+            "translated_name": "猫\t訳"
+          },
+          {
+            "illust": {
+              "ai_type": 1,
+              "caption": "\u003cp\u003efixture\u003c/p\u003e",
+              "create_date": "2026-01-02T03:04:05.123456789+09:00",
+              "height": 480,
+              "id": 2,
+              "illust_ai_type": 2,
+              "image_urls": {
+                "large": "https://i.pximg.net/large.jpg",
+                "original": "https://i.pximg.net/cover.jpg?fixture-signature=secret"
+              },
+              "meta_single_page": {
+                "original_image_url": "https://i.pximg.net/original.jpg?fixture-signature=secret"
+              },
+              "page_count": 1,
+              "tags": [
+                {
+                  "name": "tag",
+                  "translated_name": "訳"
+                },
+                {
+                  "name": "untranslated"
+                }
+              ],
+              "title": "日本語 \u003ctitle\u003e",
+              "tools": [
+                "pen",
+                "brush"
+              ],
+              "total_bookmarks": 12,
+              "total_view": 34,
+              "type": "manga",
+              "user": {
+                "account": "fixture",
+                "comment": "profile",
+                "id": 7,
+                "is_followed": true,
+                "name": "author",
+                "profile_image_urls": {
+                  "medium": "https://i.pximg.net/profile.jpg?fixture-signature=secret"
+                }
+              },
+              "width": 640,
+              "x_restrict": 1
+            },
+            "tag": "cat",
+            "translated_name": ""
+          }
+        ]
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:TrendingArtworkTags: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "tags": [],
+          "text": "Error: pixiv:TrendingArtworkTags: malformed_upstream_response"
+        },
+        "isError": true
+      },
+      "requests": 1
+    }
+  ]
+}

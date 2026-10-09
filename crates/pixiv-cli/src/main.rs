@@ -1,4 +1,4 @@
-use clap::{Args, Parser, Subcommand};
+use clap::{Args, CommandFactory, FromArgMatches, Parser, Subcommand};
 use pixiv_cli_rs::search::{SearchInput, SearchOptions};
 use pixiv_cli_rs::{
     CommandError, DetailOutput, detail_artwork_id, finish_command, saved_artwork_detail,
@@ -71,7 +71,15 @@ enum Command {
 
 #[tokio::main]
 async fn main() {
-    let args = Arguments::parse();
+    let matches = Arguments::command().get_matches();
+    let mut args = Arguments::from_arg_matches(&matches).unwrap_or_else(|error| error.exit());
+    if let Command::Search { input, .. } = &mut args.command {
+        input.record_flag_presence(
+            matches
+                .subcommand_matches("search")
+                .expect("search was parsed"),
+        );
+    }
     let machine_output = match &args.command {
         Command::Mcp { .. } => false,
         Command::Detail { json, ndjson, .. } => *json || *ndjson,
@@ -100,7 +108,12 @@ async fn main() {
 async fn execute(args: Arguments, ndjson_output: &mut bool) -> Result<(), CommandError> {
     let search_word = match &args.command {
         Command::Search { input, .. } => {
-            Some(input.resolve_word(&mut io::stdin().lock(), io::stdin().is_terminal())?)
+            if input.trending_tags {
+                input.validate_trending_arguments()?;
+                None
+            } else {
+                Some(input.resolve_word(&mut io::stdin().lock(), io::stdin().is_terminal())?)
+            }
         }
         _ => None,
     };
@@ -137,10 +150,25 @@ async fn execute(args: Arguments, ndjson_output: &mut bool) -> Result<(), Comman
         _ => None,
     };
     let search_request = match &args.command {
-        Command::Search { options, .. } => Some(options.request(
-            search_word.as_deref().expect("search input was resolved"),
-            chrono::Utc::now().fixed_offset(),
-        )?),
+        Command::Search { input, options, .. } if !input.trending_tags => {
+            if let Some(entity) = input
+                .entity
+                .as_deref()
+                .filter(|entity| *entity != "artwork")
+            {
+                return Err(CommandError::Message(
+                    if matches!(entity, "novel" | "user") {
+                        "novel and user search are not implemented yet"
+                    } else {
+                        "type must be one of artwork, novel, user"
+                    },
+                ));
+            }
+            Some(options.request(
+                search_word.as_deref().expect("search input was resolved"),
+                chrono::Utc::now().fixed_offset(),
+            )?)
+        }
         _ => None,
     };
     if let Command::Search {
@@ -151,21 +179,44 @@ async fn execute(args: Arguments, ndjson_output: &mut bool) -> Result<(), Comman
     } = &args.command
     {
         let (directory, config) = account_config.expect("search startup was resolved");
+        if input.trending_tags {
+            input.validate_trending_flags()?;
+        }
         let proxy = connection.override_value()?;
         let configured_json = config
             .current()
             .and_then(|snapshot| snapshot.runtime())
             .map_err(pixiv_app::scheduler::SchedulerError::from)?
             .output_json;
-        let mode = input.output_mode(configured_json, io::stdout().is_terminal())?;
+        let mode = if input.trending_tags {
+            if input.json.unwrap_or(configured_json) {
+                DetailOutput::Json
+            } else {
+                DetailOutput::Human
+            }
+        } else {
+            input.output_mode(configured_json, io::stdout().is_terminal())?
+        };
         *ndjson_output = mode == DetailOutput::Ndjson;
-        options.validate_bookmark_strategy()?;
+        if !input.trending_tags {
+            options.validate_bookmark_strategy()?;
+        }
         let database = pixiv_app::database::Database::open(&directory)
             .map_err(|error| CommandError::State(Box::new(error)))?;
         let execution = pixiv_app::execution::Execution::http(
             config,
             std::sync::Arc::new(std::sync::Mutex::new(database)),
         );
+        if input.trending_tags {
+            return pixiv_cli_rs::trending::saved_trending_tags(
+                &execution,
+                &pixiv_app::lifecycle::Context::new(),
+                proxy,
+                mode == DetailOutput::Json,
+                &mut io::stdout().lock(),
+            )
+            .await;
+        }
         return pixiv_cli_rs::search::saved_artwork_search(
             &execution,
             &pixiv_app::lifecycle::Context::new(),

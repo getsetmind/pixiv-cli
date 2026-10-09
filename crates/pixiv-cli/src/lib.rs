@@ -1,5 +1,6 @@
 mod json_spool;
 pub mod search;
+pub mod trending;
 
 use pixiv_app::{execution::Execution, lifecycle::Context, scheduler::SchedulerError};
 use pixiv_sdk::{Client, Error, Reason, transport::Transport};

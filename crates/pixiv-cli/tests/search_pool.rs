@@ -51,6 +51,7 @@ struct Observed {
     active: usize,
     under_lease: bool,
     output: Vec<u8>,
+    freeze_starts: Vec<(i64, i64)>,
 }
 struct Fixture {
     scenario: String,
@@ -133,6 +134,11 @@ impl Transport for Fixture {
         } else {
             200
         };
+        if status == 429 && count % 2 == 0 {
+            observed
+                .freeze_starts
+                .push((id, chrono::Utc::now().timestamp()));
+        }
         Ok(Response {
             status,
             retry_after: (status == 429)
@@ -247,6 +253,7 @@ async fn search_pool_matches_go_replay_state_commit_and_release_before_collected
         )
         .await;
         let mut diagnostics = vec![];
+        let diagnostic_start = chrono::Utc::now();
         assert_eq!(
             finish_command(
                 result,
@@ -260,6 +267,7 @@ async fn search_pool_matches_go_replay_state_commit_and_release_before_collected
             case.mode,
             case.filter
         );
+        let diagnostic_end = chrono::Utc::now();
         let observed = observed.lock().unwrap();
         assert_eq!(observed.opens, case.opens);
         assert_eq!(observed.requests, case.requests);
@@ -287,10 +295,48 @@ async fn search_pool_matches_go_replay_state_commit_and_release_before_collected
             assert_eq!(actual, case.stdout);
         }
         if mode != DetailOutput::Human && !diagnostics.is_empty() {
-            assert_eq!(
-                serde_json::from_slice::<Value>(&diagnostics).unwrap(),
-                serde_json::from_str::<Value>(&case.stderr).unwrap()
-            );
+            let actual: Value = serde_json::from_slice(&diagnostics).unwrap();
+            let mut expected: Value = serde_json::from_str(&case.stderr).unwrap();
+            if case.scenario == "all_rate_limited" {
+                for (id, start) in &observed.freeze_starts {
+                    let until = database
+                        .lock()
+                        .unwrap()
+                        .get_pixiv(*id)
+                        .unwrap()
+                        .pool_frozen_until
+                        .unwrap();
+                    assert!(until >= start + 120 && until <= diagnostic_start.timestamp() + 120);
+                }
+                let deadline = [42, 43]
+                    .into_iter()
+                    .filter_map(|id| {
+                        database
+                            .lock()
+                            .unwrap()
+                            .get_pixiv(id)
+                            .unwrap()
+                            .pool_frozen_until
+                    })
+                    .min()
+                    .unwrap();
+                let deadline = chrono::DateTime::from_timestamp(deadline, 0).unwrap();
+                let seconds = actual["error"]["retry_after_seconds"].as_i64().unwrap();
+                let remaining = |now| {
+                    deadline
+                        .signed_duration_since(now)
+                        .to_std()
+                        .unwrap()
+                        .as_secs_f64()
+                        .ceil() as i64
+                };
+                assert!(
+                    seconds >= remaining(diagnostic_end) && seconds <= remaining(diagnostic_start)
+                );
+                // A persisted epoch deadline loses elapsed seconds during real SQLite work.
+                expected["error"]["retry_after_seconds"] = seconds.into();
+            }
+            assert_eq!(actual, expected);
         } else {
             assert_eq!(diagnostics, case.stderr.as_bytes());
         }

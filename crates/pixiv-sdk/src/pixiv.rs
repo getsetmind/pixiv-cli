@@ -5,6 +5,7 @@ pub use crate::bookmark::{
 };
 pub use crate::mutation::*;
 pub use crate::search::SearchArtworksRequest;
+pub use crate::trending::TrendingArtworkTagsRequest;
 use crate::{
     Error, Reason, Result,
     models::{Artwork, ArtworkPage, UgoiraMetadata},

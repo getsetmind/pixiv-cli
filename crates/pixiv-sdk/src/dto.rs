@@ -8,6 +8,23 @@ use crate::{
 use chrono::{DateTime, Utc};
 use serde::Serialize;
 
+#[derive(Serialize)]
+pub struct TrendingTagDto<'a> {
+    pub tag: &'a str,
+    pub translated_name: &'a str,
+    pub artwork: ArtworkDto<'a>,
+}
+
+impl<'a> From<&'a crate::models::TrendingTag> for TrendingTagDto<'a> {
+    fn from(value: &'a crate::models::TrendingTag) -> Self {
+        Self {
+            tag: &value.tag,
+            translated_name: &value.translated_name,
+            artwork: ArtworkDto::from(&value.artwork),
+        }
+    }
+}
+
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 pub struct ArtworkBookmarkDetailDto {
     pub restrict: String,

@@ -18,6 +18,12 @@ use std::sync::{
 
 #[derive(Args, Clone, Debug)]
 pub struct SearchInput {
+    #[arg(long, action = clap::ArgAction::Set, num_args = 0..=1, require_equals = true, default_missing_value = "true", default_value = "false")]
+    pub trending_tags: bool,
+    #[arg(long = "type", short = 't')]
+    pub entity: Option<String>,
+    #[arg(skip)]
+    changed_flags: Vec<&'static str>,
     #[arg(num_args = 0..)]
     pub query: Vec<String>,
     #[arg(long, short = 'j', num_args = 0..=1, require_equals = true, default_missing_value = "true")]
@@ -27,6 +33,62 @@ pub struct SearchInput {
 }
 
 impl SearchInput {
+    pub fn record_flag_presence(&mut self, matches: &clap::ArgMatches) {
+        self.changed_flags = [
+            ("type", "entity"),
+            ("content-type", "content_type"),
+            ("search-by", "search_by"),
+            ("sort", "sort"),
+            ("period", "period"),
+            ("start-date", "start_date"),
+            ("end-date", "end_date"),
+            ("rating", "rating"),
+            ("resolution", "resolution"),
+            ("aspect-ratio", "aspect_ratio"),
+            ("draw-tool", "draw_tool"),
+            ("ai-mode", "ai_mode"),
+            ("bookmark-min", "bookmark_min"),
+            ("bookmark-max", "bookmark_max"),
+            ("bookmark-strategy", "bookmark_strategy"),
+            ("limit", "limit"),
+            ("page", "page"),
+            ("ndjson", "ndjson"),
+        ]
+        .into_iter()
+        .filter_map(|(name, id)| {
+            (matches.value_source(id) == Some(clap::parser::ValueSource::CommandLine))
+                .then_some(name)
+        })
+        .collect();
+    }
+
+    pub fn validate_trending_arguments(&self) -> Result<(), CommandError> {
+        if !self.query.is_empty() {
+            return Err(CommandError::Message(
+                "usage: pixiv search --trending-tags [options]",
+            ));
+        }
+        Ok(())
+    }
+
+    pub fn validate_trending_flags(&self) -> Result<(), CommandError> {
+        if self
+            .changed_flags
+            .iter()
+            .any(|name| matches!(*name, "type" | "content-type"))
+        {
+            return Err(CommandError::Message(
+                "--trending-tags cannot be combined with --type or --content-type",
+            ));
+        }
+        if let Some(name) = self.changed_flags.first() {
+            return Err(CommandError::MessageText(format!(
+                "--{name} is not supported with --trending-tags"
+            )));
+        }
+        Ok(())
+    }
+
     pub fn resolve_word<R: std::io::Read>(
         &self,
         input: &mut R,

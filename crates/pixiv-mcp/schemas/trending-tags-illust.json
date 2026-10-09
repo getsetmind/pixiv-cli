@@ -1,0 +1,303 @@
+{
+  "description": "Get currently trending illustration tags.",
+  "inputSchema": {
+    "additionalProperties": false,
+    "properties": {},
+    "type": "object"
+  },
+  "name": "trending_tags_illust",
+  "outputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "tags": {
+        "items": {
+          "additionalProperties": false,
+          "properties": {
+            "artwork": {
+              "additionalProperties": false,
+              "properties": {
+                "ai_type": {
+                  "type": "integer"
+                },
+                "caption": {
+                  "type": "string"
+                },
+                "cover": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "height": {
+                      "type": "integer"
+                    },
+                    "resource": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "ref": {
+                          "type": "string"
+                        },
+                        "requires_credentials": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "ref"
+                      ],
+                      "type": [
+                        "null",
+                        "object"
+                      ]
+                    },
+                    "variant": {
+                      "type": "string"
+                    },
+                    "width": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "resource",
+                    "variant",
+                    "width",
+                    "height"
+                  ],
+                  "type": "object"
+                },
+                "height": {
+                  "type": "integer"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "kind": {
+                  "type": "string"
+                },
+                "page_count": {
+                  "type": "integer"
+                },
+                "pages": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "height": {
+                        "type": "integer"
+                      },
+                      "image": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "height": {
+                            "type": "integer"
+                          },
+                          "resource": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "ref": {
+                                "type": "string"
+                              },
+                              "requires_credentials": {
+                                "type": "boolean"
+                              }
+                            },
+                            "required": [
+                              "ref"
+                            ],
+                            "type": [
+                              "null",
+                              "object"
+                            ]
+                          },
+                          "variant": {
+                            "type": "string"
+                          },
+                          "width": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "resource",
+                          "variant",
+                          "width",
+                          "height"
+                        ],
+                        "type": "object"
+                      },
+                      "page_index": {
+                        "type": "integer"
+                      },
+                      "width": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "page_index",
+                      "image",
+                      "width",
+                      "height"
+                    ],
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "published_at": {
+                  "type": "string"
+                },
+                "raw_kind": {
+                  "type": "string"
+                },
+                "tags": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "translated_name": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "translated_name"
+                    ],
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "tools": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "total_bookmarks": {
+                  "type": "integer"
+                },
+                "total_views": {
+                  "type": "integer"
+                },
+                "updated_at": {
+                  "type": "string"
+                },
+                "user": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "account": {
+                      "type": "string"
+                    },
+                    "comment": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "is_followed": {
+                      "type": "boolean"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "profile_image": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "height": {
+                          "type": "integer"
+                        },
+                        "resource": {
+                          "additionalProperties": false,
+                          "properties": {
+                            "ref": {
+                              "type": "string"
+                            },
+                            "requires_credentials": {
+                              "type": "boolean"
+                            }
+                          },
+                          "required": [
+                            "ref"
+                          ],
+                          "type": [
+                            "null",
+                            "object"
+                          ]
+                        },
+                        "variant": {
+                          "type": "string"
+                        },
+                        "width": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "resource",
+                        "variant",
+                        "width",
+                        "height"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "account",
+                    "comment",
+                    "is_followed",
+                    "profile_image"
+                  ],
+                  "type": "object"
+                },
+                "width": {
+                  "type": "integer"
+                },
+                "x_restrict": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "title",
+                "caption",
+                "kind",
+                "raw_kind",
+                "tags",
+                "user",
+                "published_at",
+                "total_bookmarks",
+                "total_views",
+                "width",
+                "height",
+                "page_count",
+                "x_restrict",
+                "ai_type",
+                "cover"
+              ],
+              "type": "object"
+            },
+            "tag": {
+              "type": "string"
+            },
+            "translated_name": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "tag",
+            "translated_name",
+            "artwork"
+          ],
+          "type": "object"
+        },
+        "type": "array"
+      },
+      "text": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "tags",
+      "text"
+    ],
+    "type": "object"
+  }
+}

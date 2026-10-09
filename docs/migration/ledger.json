@@ -1080,7 +1080,8 @@
         "crates/pixiv-sdk/src/transport.rs",
         "crates/pixiv-sdk/src/resource_transport.rs",
         "crates/pixiv-app/src/execution.rs",
-        "crates/pixiv-app/src/account_service.rs"
+        "crates/pixiv-app/src/account_service.rs",
+        "crates/pixiv-cli/src/trending.rs"
       ],
       "tests": [
         "internal/cli/commands/pixiv/search/migration_dates_test.go#TestMigrationQuickDateRangesMatchFrozenTokyoBoundaries",
@@ -1125,7 +1126,10 @@
         "crates/pixiv-cli/tests/search_stdin.rs#search_process_preserves_go_stdin_usage_and_startup_side_effects",
         "crates/pixiv-cli/tests/search_stdin.rs#search_stdin_read_failure_retains_go_usage_diagnostics_even_with_machine_output",
         "internal/cli/migration_search_pool_test.go#TestMigrationSearchPoolPreservesReplayCommitAndReleaseBeforeCollectedOutput",
-        "crates/pixiv-cli/tests/search_pool.rs#search_pool_matches_go_replay_state_commit_and_release_before_collected_output"
+        "crates/pixiv-cli/tests/search_pool.rs#search_pool_matches_go_replay_state_commit_and_release_before_collected_output",
+        "internal/cli/migration_trending_test.go#TestMigrationTrendingTagsPreservesSamplesErrorsAndFlagRestrictions",
+        "crates/pixiv-cli/tests/trending.rs#trending_data_and_output_match_go_through_sdk_and_saved_accounts",
+        "crates/pixiv-cli/tests/trending.rs#trending_process_matches_go_no_word_and_explicit_flag_restrictions"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -1144,7 +1148,9 @@
         "検索CLIを保存済みアカウントのExecutionへ接続。起動48ケースで設定初期化・保持、DB作成順、未認証・既定アカウント・空pool・proxyと入力のエラーをGoと比較。既存の出力120ケースを直接SDKと保存済みアカウント経路の双方で検証し、refresh結果の永続化とBearerの使用も確認。正常CLI子プロセスの実HTTPS、取消、entity等の残りflags、他OSは未検証または未実装。",
         "検索入力・出力指定をGoの64ケースで比較。複数語/空の語/日本語/--区切り、--json/-jのtrue/false・重複指定、--ndjsonのtrue/false・重複指定、設定output_jsonとパイプ自動NDJSONを確認。実CLI子プロセス64ケースで認証エラー、usageエラーの通常stderr/終了コード2、json=falseでも明示指定時のエラーenvelope、DB作成順と設定保持を比較。実TTY、正常CLI子プロセスのHTTPS経路、全flag構文/不正bool/help/entity等は未検証または未実装。",
         "検索stdinのTextValue経路を接続。Goの120ケースでLF/CRLFを末尾1つだけ除去し、空白・複数行・日本語・JSON文字列をそのまま検索語にすること、明示引数/ダッシュ指定ではstdinを読まないことを比較。実CLI子プロセス120ケースで空入力の診断/終了コード1・設定/DB未作成、非空入力後の起動エラーを確認。読み取り失敗3ケースの通常stderr/終了コード2もGoと一致。Goは不正UTF-8のバイト列も保持するがRustの検索語はStringであり、この入力は現在拒否する互換差分が残る。正常CLIのパイプから実HTTPS、実TTY、大容量、stdin中の取消、他OSは未検証。",
-        "保存済みアカウントの検索poolをGoの63ケースで比較。通常/sfw/bookmarkとhuman/NDJSON/JSONで、初回429・後続ページ429・全アカウント429・401・writer失敗/BrokenPipe/部分書き込み、OAuth refresh保存・全要求順・凍結/選択状態・解放数を確認。Goの再実行は同じ開始cursorから取り直す契約であり、失敗attemptの結果を混入させない。通常human/NDJSONは公開後に切り替えず、JSONとlocal/bookmark収集はaccount lease解放後に出力するよう修正。bookmark JSONもillusts/filterとmetadataのフィールド順をGoへ揃えた。正常CLI実HTTPS、取消・close失敗・record変換失敗、全pool戦略/境界・proxy設定変更・他OSは未検証。"
+        "保存済みアカウントの検索poolをGoの63ケースで比較。通常/sfw/bookmarkとhuman/NDJSON/JSONで、初回429・後続ページ429・全アカウント429・401・writer失敗/BrokenPipe/部分書き込み、OAuth refresh保存・全要求順・凍結/選択状態・解放数を確認。Goの再実行は同じ開始cursorから取り直す契約であり、失敗attemptの結果を混入させない。通常human/NDJSONは公開後に切り替えず、JSONとlocal/bookmark収集はaccount lease解放後に出力するよう修正。bookmark JSONもillusts/filterとmetadataのフィールド順をGoへ揃えた。正常CLI実HTTPS、取消・close失敗・record変換失敗、全pool戦略/境界・proxy設定変更・他OSは未検証。",
+        "search --trending-tags を SDK と保存済み account へ接続。Go の70ケースで JSON/human・sample DTO・空/不正応答、引数拒否、18種類の併用不可 flag（明示 default/false を含む）、stdin を読まないこと、実子プロセスの起動順を比較。--type の認識を追加したが通常の novel/user 検索は未実装。trending の実 HTTPS・pool/取消・全 flag 構文・他 OS は未検証。",
+        "既存pool比較の all_rate_limited は残り秒数が実時間で減るため、429応答から120秒のDB凍結期限と診断出力前後の時計で検証してから、その時刻依存項目だけを正規化する。他のenvelope項目とGo fixture、本番コードの時刻取得・retry計算は変更していない。"
       ]
     },
     {
@@ -2120,15 +2126,26 @@
     },
     {
       "id": "mcp:pixiv:trending_tags_illust",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "trending_tags_illust"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/trending.rs",
+        "crates/pixiv-mcp/src/stdio.rs",
+        "crates/pixiv-mcp/schemas/trending-tags-illust.json"
+      ],
+      "tests": [
+        "internal/cli/migration_mcp_trending_test.go#TestMigrationMCPTrendingTagsPreservesSchemaTextAndSamples",
+        "crates/pixiv-mcp/tests/trending.rs#trending_tool_schema_and_rpc_results_match_go"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "実 Go MCP session の schema と16応答を固定し、Rust の直接呼出し・stdio・保存済み account の OAuth refresh/CAS/Bearer 経路で比較。空リスト、未翻訳、制御文字、sample artwork の DTO、不正応答を確認。入力 schema 拒否の全条件、取消・pool replay・disconnect、実 HTTPS と他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:unfollow_user",
@@ -6779,15 +6796,30 @@
     },
     {
       "id": "sdk/pixiv:Client.TrendingArtworkTags",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.TrendingArtworkTags"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/trending.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_trending_test.go#TestMigrationTrendingTagsPreservesSamplesErrorsAndFlagRestrictions",
+        "crates/pixiv-cli/tests/trending.rs#trending_data_and_output_match_go_through_sdk_and_saved_accounts",
+        "internal/cli/migration_mcp_trending_test.go#TestMigrationMCPTrendingTagsPreservesSchemaTextAndSamples",
+        "crates/pixiv-mcp/tests/trending.rs#trending_tool_schema_and_rpc_results_match_go",
+        "crates/pixiv-cli/tests/trending.rs#trending_process_matches_go_no_word_and_explicit_flag_restrictions"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "trending tags の70 CLI ケースと16 MCP 応答を固定 Go と比較。型付き SDK、sample artwork の全 DTO、空リスト・不正応答・通信要求を直接 client と保存済み account で確認。公開 request の全条件、resource の全利用、HTTP 異常・取消・pool 全条件、他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.UgoiraMetadata",
@@ -9899,15 +9931,30 @@
     },
     {
       "id": "sdk/pixiv:ToTrendingTagDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ToTrendingTagDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/trending.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_trending_test.go#TestMigrationTrendingTagsPreservesSamplesErrorsAndFlagRestrictions",
+        "crates/pixiv-cli/tests/trending.rs#trending_data_and_output_match_go_through_sdk_and_saved_accounts",
+        "internal/cli/migration_mcp_trending_test.go#TestMigrationMCPTrendingTagsPreservesSchemaTextAndSamples",
+        "crates/pixiv-mcp/tests/trending.rs#trending_tool_schema_and_rpc_results_match_go",
+        "crates/pixiv-cli/tests/trending.rs#trending_process_matches_go_no_word_and_explicit_flag_restrictions"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "trending tags の70 CLI ケースと16 MCP 応答を固定 Go と比較。型付き SDK、sample artwork の全 DTO、空リスト・不正応答・通信要求を直接 client と保存済み account で確認。公開 request の全条件、resource の全利用、HTTP 異常・取消・pool 全条件、他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:ToUgoiraArchiveDTO",
@@ -10073,39 +10120,84 @@
     },
     {
       "id": "sdk/pixiv:TrendingArtworkTagsRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:TrendingArtworkTagsRequest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/trending.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_trending_test.go#TestMigrationTrendingTagsPreservesSamplesErrorsAndFlagRestrictions",
+        "crates/pixiv-cli/tests/trending.rs#trending_data_and_output_match_go_through_sdk_and_saved_accounts",
+        "internal/cli/migration_mcp_trending_test.go#TestMigrationMCPTrendingTagsPreservesSchemaTextAndSamples",
+        "crates/pixiv-mcp/tests/trending.rs#trending_tool_schema_and_rpc_results_match_go",
+        "crates/pixiv-cli/tests/trending.rs#trending_process_matches_go_no_word_and_explicit_flag_restrictions"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "trending tags の70 CLI ケースと16 MCP 応答を固定 Go と比較。型付き SDK、sample artwork の全 DTO、空リスト・不正応答・通信要求を直接 client と保存済み account で確認。公開 request の全条件、resource の全利用、HTTP 異常・取消・pool 全条件、他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:TrendingTag",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:TrendingTag"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/trending.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_trending_test.go#TestMigrationTrendingTagsPreservesSamplesErrorsAndFlagRestrictions",
+        "crates/pixiv-cli/tests/trending.rs#trending_data_and_output_match_go_through_sdk_and_saved_accounts",
+        "internal/cli/migration_mcp_trending_test.go#TestMigrationMCPTrendingTagsPreservesSchemaTextAndSamples",
+        "crates/pixiv-mcp/tests/trending.rs#trending_tool_schema_and_rpc_results_match_go",
+        "crates/pixiv-cli/tests/trending.rs#trending_process_matches_go_no_word_and_explicit_flag_restrictions"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "trending tags の70 CLI ケースと16 MCP 応答を固定 Go と比較。型付き SDK、sample artwork の全 DTO、空リスト・不正応答・通信要求を直接 client と保存済み account で確認。公開 request の全条件、resource の全利用、HTTP 異常・取消・pool 全条件、他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:TrendingTagDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:TrendingTagDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/trending.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_trending_test.go#TestMigrationTrendingTagsPreservesSamplesErrorsAndFlagRestrictions",
+        "crates/pixiv-cli/tests/trending.rs#trending_data_and_output_match_go_through_sdk_and_saved_accounts",
+        "internal/cli/migration_mcp_trending_test.go#TestMigrationMCPTrendingTagsPreservesSchemaTextAndSamples",
+        "crates/pixiv-mcp/tests/trending.rs#trending_tool_schema_and_rpc_results_match_go",
+        "crates/pixiv-cli/tests/trending.rs#trending_process_matches_go_no_word_and_explicit_flag_restrictions"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "trending tags の70 CLI ケースと16 MCP 応答を固定 Go と比較。型付き SDK、sample artwork の全 DTO、空リスト・不正応答・通信要求を直接 client と保存済み account で確認。公開 request の全条件、resource の全利用、HTTP 異常・取消・pool 全条件、他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:UgoiraArchive",

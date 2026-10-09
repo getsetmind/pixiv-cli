@@ -9,6 +9,13 @@ pub struct Tag {
     pub translated_name: String,
 }
 
+#[derive(Clone, Debug, PartialEq)]
+pub struct TrendingTag {
+    pub tag: String,
+    pub translated_name: String,
+    pub artwork: Artwork,
+}
+
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct User {
     pub id: i64,

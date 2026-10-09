@@ -878,3 +878,16 @@ rate limit の最初の応答には Retry-After=0、SDK の再試行後には120
 Rust は reqwest の型付き原因を辿り、入れ子の io::Error に含まれる rustls::Error も分類する。原始エラーの文字列を分類へ使わず、URL・資格情報・応答内容を公開エラーへ保持しない。JSON 読取は HTTP status を判定する前に body 全体を読み、途中切断は2xx/503の両方で Go と同じ通信エラーにする。完全に読み取れた不正 JSON は既存の malformed 分類を維持する。form も body 読取失敗を返す。
 
 この比較は Windows amd64 で実施した。DNS・proxyconnect の型付き分類、timeout の実測、Context deadline/取消の全条件、TLS certificate/alert の全種類、正常 HTTPS endpoint と実 CLI/MCP wire、ネットワーク診断イベント、他 OS/arch は未検証または未移植である。socket2 は dev-dependency に分離し、rustls は本番の型付き原因の識別に使う依存である。
+
+## Trending tags の SDK・CLI・MCP
+
+[trending-tags.json](contracts/trending-tags.json) は Go の70ケースである。`search --trending-tags` の JSON/human 出力、作品サンプルの DTO、空リスト・不正応答、検索語の拒否、18種類の併用不可フラグと明示した既定値・false、stdin を読まないことを固定する。実 Go Run/root の設定・DB 作成順と起動診断も比較する。
+
+Rust の CLI は保存済みアカウントから `Execution::read` で型付き SDK を呼ぶ。直接 client と保存済みアカウントの両方で同じ70ケースを比較し、OAuth refresh の CAS 保存後に Bearer を使うことを確認する。作品サンプルは一覧 DTO と同じく pages を持たず、作者の comment と is_followed は保持する。併用不可フラグは値だけでなく明示指定の有無で判定する。
+
+[mcp-trending.json](contracts/mcp-trending.json) は実 Go MCP session の `trending_tags_illust` schema と16応答を固定する。Rust の直接呼出し・stdio・保存済みアカウントの stdio で同じ structured content、text、isError と通信要求を比較する。CLI の行表示と異なり、MCP の text はタグの制御文字をそのまま保持する。空リストは `No trending tags found.` を返す。公開 schema は本番の `crates/pixiv-mcp/schemas/` に置き、テスト用の応答データは含めない。
+
+検証環境は Windows amd64 である。入力 schema 拒否の全条件、取消・pool replay・disconnect、正常 CLI の実 HTTPS、resource の全利用、他 OS/arch は未検証。通常の novel/user 検索も未移植であり、trending tags の接続で search 全体を完了扱いしない。
+
+
+全体検証で、既存の search pool 比較に実時間の秒境界による不安定さが見つかった。`all_rate_limited` の残り秒数は固定した120と直接比較せず、各429応答の時刻から120秒の範囲に DB の凍結期限があることと、出力前後の実時刻からその期限までの残り秒数が正しいことを検証する。その項目だけを比較用の値へ合わせ、他の envelope 項目は Go と完全に比較する。本番の時刻取得・retry 計算や Go fixture は変更していない。

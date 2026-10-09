@@ -17,6 +17,7 @@ mod resource_transport;
 mod save;
 mod search;
 pub mod transport;
+mod trending;
 mod ugoira;
 
 pub use error::{Error, Reason, Result};

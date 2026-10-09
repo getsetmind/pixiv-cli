@@ -622,7 +622,8 @@ async fn stdio_publishes_implemented_tool_metadata_and_preserves_request_ids() {
         responses[1]["result"]["tools"],
         json!([
             pixiv_mcp::illust_detail_tool(),
-            pixiv_mcp::search_illust_tool()
+            pixiv_mcp::search_illust_tool(),
+            pixiv_mcp::trending_tags_illust_tool()
         ])
     );
 }
