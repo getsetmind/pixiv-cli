@@ -1351,7 +1351,9 @@
         "crates/pixiv-cli/src/novel_series.rs",
         "crates/pixiv-cli/src/novel_list.rs",
         "crates/pixiv-cli/src/json_spool.rs",
-        "crates/pixiv-cli/src/main.rs"
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/artwork_list.rs",
+        "crates/pixiv-cli/src/ranking.rs"
       ],
       "tests": [
         "internal/cli/migration_novel_series_test.go#TestMigrationNovelSeriesPreservesMetadataLogicalPagesOutputsAndStartup",
@@ -1361,13 +1363,21 @@
         "crates/pixiv-cli/tests/novel_series.rs#series_process_preserves_go_validation_authentication_and_startup_order",
         "crates/pixiv-cli/tests/novel_series_stdin.rs#series_stdin_resolution_matches_go_without_trimming_splitting_or_reading_explicit_words",
         "crates/pixiv-cli/tests/novel_series_stdin.rs#series_process_preserves_go_stdin_usage_and_startup_side_effects",
-        "crates/pixiv-cli/tests/novel_series_pool.rs#series_pool_matches_go_discarded_metadata_items_replay_state_and_output_lease"
+        "crates/pixiv-cli/tests/novel_series_pool.rs#series_pool_matches_go_discarded_metadata_items_replay_state_and_output_lease",
+        "internal/cli/migration_artwork_series_test.go#TestMigrationArtworkSeriesPreservesLogicalPagesOutputsAndStartup",
+        "internal/cli/migration_artwork_series_startup_test.go",
+        "internal/cli/migration_artwork_series_stdin_test.go#TestMigrationArtworkSeriesStdinPreservesTextAndExplicitArguments",
+        "internal/cli/migration_artwork_series_pool_test.go#TestMigrationArtworkSeriesPoolPreservesCommitReplayWriterAndLease",
+        "crates/pixiv-cli/tests/artwork_series.rs",
+        "crates/pixiv-cli/tests/artwork_series_stdin.rs",
+        "crates/pixiv-cli/tests/artwork_series_pool.rs",
+        "crates/pixiv-cli/tests/json_object_order.rs"
       ],
       "verified_platforms": [
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "series --type novel を Go69出力/起動・99textstdin・3poolシナリオで比較。最初のmetadata、全取得後の出力、lease中JSONcommitと再実行時のmetadata/items破棄を維持。artwork series は未移植。共有raw-wire/root parser/Linux公開面snapshot、全flag/help/TTY/通信/取消/deadline・正常実HTTPS・他OS/archは未検証。"
+        "series --type novel を Go69出力/起動・99textstdin・3poolシナリオで比較。最初のmetadata、全取得後の出力、lease中JSONcommitと再実行時のmetadata/items破棄を維持。artwork seriesもGo69出力/起動・99textstdin・21pool/writerケースで比較。human/NDJSONのcommit、JSONの初期cursorからのreplayとlease解放後commitを維持。共有raw-wire/root parser/Linux公開面snapshot、全flag/help/TTY/通信/取消/deadline・正常実HTTPS・他OS/archは未検証。 pool JSON stderrは構造とretry deadline範囲を比較し、全字句表記は未検証。"
       ]
     },
     {
@@ -2076,15 +2086,30 @@
     },
     {
       "id": "mcp:pixiv:illust_series",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "illust_series"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/illust_series.rs",
+        "crates/pixiv-mcp/src/search.rs",
+        "crates/pixiv-mcp/src/stdio.rs",
+        "crates/pixiv-mcp/schemas/illust-series.json"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_artwork_series_test.go#TestMigrationMCPArtworkSeriesMatchesFrozenContracts",
+        "internal/mcpserver/pixiv/migration_artwork_series_pool_test.go#TestMigrationMCPArtworkSeriesPoolReplaysCompleteCollection",
+        "crates/pixiv-mcp/tests/artwork_series.rs",
+        "crates/pixiv-mcp/tests/artwork_series_pool.rs",
+        "crates/pixiv-cli/tests/mcp_stdio.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go34ケースと2account poolシナリオを直接・stdio・保存済みaccountで比較。kind+IDのdedup、論理pagination、失敗時の初期pagination、再実行時の全取得破棄を維持。既存16toolの順序を保持し17番目へ追加。共有raw-wire/root parser/Linux公開面snapshot、全JSON/通信/取消/deadline/disconnect・実HTTPS・他OS/archは未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:mypixiv_illusts",
@@ -6321,15 +6346,28 @@
     },
     {
       "id": "sdk/pixiv:ArtworkSeriesRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ArtworkSeriesRequest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/artwork_series.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_artwork_series_test.go#TestMigrationArtworkSeries",
+        "crates/pixiv-sdk/tests/artwork_series.rs#series_matches_go_metadata_dtos_pages_and_global_cursor_binding",
+        "crates/pixiv-sdk/tests/artwork_series.rs#series_remembers_cover_and_profile_without_expanding_list_pages"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go83ケースのseries query・offset/last_order・global cursor・必須metadata・DTO・resource登録をLinux amd64で比較。作品応答はValue decodeのため共有raw-wire大小文字/重複/順序の差が残る。全URL/JSON/通信/Options・取消/deadline・実HTTPS/resource・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:ArtworkVariantResource",
@@ -6541,14 +6579,18 @@
         "sdk/pixiv/migration_artwork_test.go#TestMigrationArtworkMatchesFrozenDTOAndRequests",
         "crates/pixiv-sdk/tests/artwork_detail.rs",
         "sdk/pixiv/migration_transport_failure_test.go#TestMigrationSDKTransportFailureClassificationAndBodyConsumption",
-        "crates/pixiv-sdk/tests/transport_failure.rs#sdk_transport_failures_match_go_classification_and_consume_error_bodies"
+        "crates/pixiv-sdk/tests/transport_failure.rs#sdk_transport_failures_match_go_classification_and_consume_error_bodies",
+        "sdk/pixiv/migration_artwork_series_test.go#TestMigrationArtworkNullTags",
+        "crates/pixiv-sdk/tests/artwork_series.rs#shared_artwork_tags_preserve_null_elements_and_reject_invalid_fields_like_go"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64 (partial)"
       ],
       "differences": [
         "作品詳細の19ケースを比較済み。CLI/MCP正常出力、resourceのregistry・再解決・open/save、JSON重複key・不正UTF-8・配列内null、日時の全変種と他の操作からのDTOは未移植または未検証。",
-        "通信失敗の DNS/proxyconnect 分類、timeout 実測、Context deadline/取消の全条件、TLS certificate/alert の全種類、正常 HTTPS endpoint の実 CLI/MCP wire、network 診断イベント、他 OS/arch は未検証または未移植。比較済み21ケースの範囲は contracts.md を参照。"
+        "通信失敗の DNS/proxyconnect 分類、timeout 実測、Context deadline/取消の全条件、TLS certificate/alert の全種類、正常 HTTPS endpoint の実 CLI/MCP wire、network 診断イベント、他 OS/arch は未検証または未移植。比較済み21ケースの範囲は contracts.md を参照。",
+        "共有tagsのnull配列要素をGo15ケースでdetail/ranking/searchから比較。null slotは空tagとして保持し、不正なnumeric tag/nameは拒否する。その他の配列null・共有raw-wire大小文字/重複/順序は未検証。"
       ]
     },
     {
@@ -6623,26 +6665,43 @@
       ],
       "tests": [
         "sdk/pixiv/migration_ranking_test.go#TestMigrationArtworkRankingPreservesModesDatesPagesAndCursorBinding",
-        "crates/pixiv-sdk/tests/artwork_ranking.rs#ranking_matches_go_modes_dates_dtos_pages_and_global_cursor_binding"
+        "crates/pixiv-sdk/tests/artwork_ranking.rs#ranking_matches_go_modes_dates_dtos_pages_and_global_cursor_binding",
+        "sdk/pixiv/migration_artwork_series_test.go#TestMigrationArtworkNullTags",
+        "crates/pixiv-sdk/tests/artwork_series.rs#shared_artwork_tags_preserve_null_elements_and_reject_invalid_fields_like_go"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64 (partial)"
       ],
       "differences": [
-        "固定 Go の71ケースで全16モード、日付、DTO、複数ページ、不正 next_url、cursor binding/payload を比較。作品ランキング cursor は binding=1 でアカウントを跨いで利用でき、mode/date の変更は拒否する。Rust RankingMode は String alias、Go の各定数は RANKING_MODE_* の &str 定数に対応する。小説ランキングへの適用、HTTP異常・取消・pool 全条件、全 URL 構文・resource 利用、他 OS/arch は未移植または未検証。"
+        "固定 Go の71ケースで全16モード、日付、DTO、複数ページ、不正 next_url、cursor binding/payload を比較。作品ランキング cursor は binding=1 でアカウントを跨いで利用でき、mode/date の変更は拒否する。Rust RankingMode は String alias、Go の各定数は RANKING_MODE_* の &str 定数に対応する。小説ランキングへの適用、HTTP異常・取消・pool 全条件、全 URL 構文・resource 利用、他 OS/arch は未移植または未検証。",
+        "共有tagsのnull配列要素をGo15ケースでdetail/ranking/searchから比較。null slotは空tagとして保持し、不正なnumeric tag/nameは拒否する。その他の配列null・共有raw-wire大小文字/重複/順序は未検証。"
       ]
     },
     {
       "id": "sdk/pixiv:Client.ArtworkSeries",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.ArtworkSeries"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/artwork_series.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_artwork_series_test.go#TestMigrationArtworkSeries",
+        "crates/pixiv-sdk/tests/artwork_series.rs#series_matches_go_metadata_dtos_pages_and_global_cursor_binding",
+        "crates/pixiv-sdk/tests/artwork_series.rs#series_remembers_cover_and_profile_without_expanding_list_pages"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go83ケースのseries query・offset/last_order・global cursor・必須metadata・DTO・resource登録をLinux amd64で比較。作品応答はValue decodeのため共有raw-wire大小文字/重複/順序の差が残る。全URL/JSON/通信/Options・取消/deadline・実HTTPS/resource・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.CheckpointSearchArtworks",
@@ -7240,13 +7299,17 @@
       ],
       "tests": [
         "sdk/pixiv/migration_search_test.go#TestMigrationSearchArtworksMatchesFrozenFiltersPagesAndCheckpoints",
-        "crates/pixiv-sdk/tests/search_artworks.rs#search_filters_pages_and_identity_bound_checkpoints_match_frozen_go"
+        "crates/pixiv-sdk/tests/search_artworks.rs#search_filters_pages_and_identity_bound_checkpoints_match_frozen_go",
+        "sdk/pixiv/migration_artwork_series_test.go#TestMigrationArtworkNullTags",
+        "crates/pixiv-sdk/tests/artwork_series.rs#shared_artwork_tags_preserve_null_elements_and_reject_invalid_fields_like_go"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64 (partial)"
       ],
       "differences": [
-        "型付き検索 request、全検索条件・AI only のローカルフィルター・全ページ・checkpoint・アカウント/client instance の cursor binding を118ケースで Go/Rust 比較した。CLI は先頭ページの試作。CLI の全条件・出力・ページ上限、MCP の残る境界、全 JSON wire 境界・cursor payload の大文字小文字/重複 key、複数不正値の全検証順、constructor の乱数生成失敗、通信・認証保存、他 OS は未実装または未検証。"
+        "型付き検索 request、全検索条件・AI only のローカルフィルター・全ページ・checkpoint・アカウント/client instance の cursor binding を118ケースで Go/Rust 比較した。CLI は先頭ページの試作。CLI の全条件・出力・ページ上限、MCP の残る境界、全 JSON wire 境界・cursor payload の大文字小文字/重複 key、複数不正値の全検証順、constructor の乱数生成失敗、通信・認証保存、他 OS は未実装または未検証。",
+        "共有tagsのnull配列要素をGo15ケースでdetail/ranking/searchから比較。null slotは空tagとして保持し、不正なnumeric tag/nameは拒否する。その他の配列null・共有raw-wire大小文字/重複/順序は未検証。"
       ]
     },
     {

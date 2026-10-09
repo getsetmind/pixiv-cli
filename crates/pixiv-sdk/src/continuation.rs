@@ -37,6 +37,14 @@ pub(crate) fn next_value(
     allowed_keys: &[&str],
     key: &str,
 ) -> Option<i64> {
+    next_keyed_value(raw, endpoint, allowed_keys, &[key]).map(|(_, value)| value)
+}
+pub(crate) fn next_keyed_value(
+    raw: &str,
+    endpoint: &str,
+    allowed_keys: &[&str],
+    keys: &[&str],
+) -> Option<(String, i64)> {
     let (scheme, remainder) = raw.split_once("://")?;
     if !scheme.eq_ignore_ascii_case("https") || raw.bytes().any(|byte| byte < 32 || byte == 127) {
         return None;
@@ -78,6 +86,11 @@ pub(crate) fn next_value(
             return None;
         }
     }
+    let mut selected = keys.iter().filter(|key| entries.contains_key(**key));
+    let key = *selected.next()?;
+    if selected.next().is_some() {
+        return None;
+    }
     let value = entries.get(key)?.parse::<i64>().ok()?;
-    (value > 0).then_some(value)
+    (value > 0).then_some((key.into(), value))
 }

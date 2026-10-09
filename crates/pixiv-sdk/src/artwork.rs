@@ -71,7 +71,7 @@ struct WireArtwork {
     caption: Option<String>,
     #[serde(rename = "type")]
     kind: Option<String>,
-    tags: Option<Vec<WireTag>>,
+    tags: Option<Vec<Option<WireTag>>>,
     user: Option<WireUser>,
     create_date: Option<String>,
     total_bookmarks: Option<i64>,
@@ -158,7 +158,7 @@ pub(crate) fn map(
             .tags
             .unwrap_or_default()
             .into_iter()
-            .map(WireTag::map)
+            .map(|tag| tag.unwrap_or_default().map())
             .collect(),
         user,
         published_at,

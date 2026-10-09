@@ -166,45 +166,7 @@ pub(crate) fn apply_value(
     expected_key: &str,
     positive_detail: &'static str,
 ) -> Result<()> {
-    if !cursor.is_zero() {
-        cursor
-            .validate("pixiv", operation, 1, digest)
-            .map_err(|_| {
-                ranking_error(
-                    operation,
-                    Reason::InvalidCursor,
-                    "cursor does not match this operation and query",
-                )
-            })?;
-        let payload = cursor.payload().map_err(|_| {
-            ranking_error(
-                operation,
-                Reason::InvalidCursor,
-                "cursor payload is unavailable",
-            )
-        })?;
-        let position: Option<Continuation> = serde_json::from_slice(&payload).map_err(|_| {
-            ranking_error(
-                operation,
-                Reason::InvalidCursor,
-                "cursor payload is malformed",
-            )
-        })?;
-        let position = position.unwrap_or_default();
-        let key = position.k.unwrap_or_default();
-        let value = position.v.unwrap_or_default();
-        let params = position.p.unwrap_or_default();
-        if value < 0
-            || position.s.unwrap_or_default() < 0
-            || (key.is_empty() && params.is_empty())
-            || (!key.is_empty() && !params.is_empty())
-        {
-            return Err(ranking_error(
-                operation,
-                Reason::InvalidCursor,
-                "cursor payload is malformed",
-            ));
-        }
+    if let Some((key, value)) = cursor_position(cursor, operation, digest)? {
         if key != expected_key {
             return Err(ranking_error(
                 operation,
@@ -223,6 +185,88 @@ pub(crate) fn apply_value(
     }
     Ok(())
 }
+pub(crate) fn apply_keyed_value(
+    cursor: &Cursor,
+    operation: &'static str,
+    digest: &str,
+    query: &mut BTreeMap<String, String>,
+    keys: &[&str],
+) -> Result<()> {
+    if let Some((key, value)) = cursor_position(cursor, operation, digest)? {
+        if value <= 0 {
+            return Err(ranking_error(
+                operation,
+                Reason::InvalidCursor,
+                "cursor continuation value must be positive",
+            ));
+        }
+        if !keys.contains(&key.as_str()) {
+            return Err(ranking_error(
+                operation,
+                Reason::InvalidCursor,
+                "cursor continuation kind mismatch",
+            ));
+        }
+        if key == "offset" && value > isize::MAX as i64 {
+            return Err(ranking_error(
+                operation,
+                Reason::InvalidCursor,
+                "cursor continuation offset is out of range",
+            ));
+        }
+        query.insert(key, value.to_string());
+    }
+    Ok(())
+}
+fn cursor_position(
+    cursor: &Cursor,
+    operation: &'static str,
+    digest: &str,
+) -> Result<Option<(String, i64)>> {
+    if cursor.is_zero() {
+        return Ok(None);
+    }
+    cursor
+        .validate("pixiv", operation, 1, digest)
+        .map_err(|_| {
+            ranking_error(
+                operation,
+                Reason::InvalidCursor,
+                "cursor does not match this operation and query",
+            )
+        })?;
+    let payload = cursor.payload().map_err(|_| {
+        ranking_error(
+            operation,
+            Reason::InvalidCursor,
+            "cursor payload is unavailable",
+        )
+    })?;
+    let position: Option<Continuation> = serde_json::from_slice(&payload).map_err(|_| {
+        ranking_error(
+            operation,
+            Reason::InvalidCursor,
+            "cursor payload is malformed",
+        )
+    })?;
+    let position = position.unwrap_or_default();
+    let key = position.k.unwrap_or_default();
+    let value = position.v.unwrap_or_default();
+    let params = position.p.unwrap_or_default();
+    if value < 0
+        || position.s.unwrap_or_default() < 0
+        || (key.is_empty() && params.is_empty())
+        || (!key.is_empty() && !params.is_empty())
+    {
+        return Err(ranking_error(
+            operation,
+            Reason::InvalidCursor,
+            "cursor payload is malformed",
+        ));
+    }
+    Ok(Some((key, value)))
+}
+
 pub(crate) fn next_cursor(
     operation: &'static str,
     digest: &str,

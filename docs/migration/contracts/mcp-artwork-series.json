@@ -1,0 +1,3702 @@
+{
+  "tools": {
+    "illust_series": {
+      "description": "Browse artworks in a Pixiv series.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "description": "maximum items; 0 returns all items",
+            "type": [
+              "null",
+              "integer"
+            ]
+          },
+          "page": {
+            "description": "1-based logical page; requires a positive limit",
+            "type": [
+              "null",
+              "integer"
+            ]
+          },
+          "series_id": {
+            "description": "positive Pixiv series ID",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "series_id"
+        ],
+        "type": "object"
+      },
+      "name": "illust_series",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "access_control": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "bookmark_tags": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "bookmarked": {
+            "type": "boolean"
+          },
+          "comments": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "content": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "filter": {
+            "additionalProperties": false,
+            "properties": {
+              "completeness": {
+                "type": "string"
+              },
+              "max": {
+                "type": "integer"
+              },
+              "membership": {
+                "type": "string"
+              },
+              "min": {
+                "type": "integer"
+              },
+              "strategy": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "pagination": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "records": {
+            "items": {
+              "additionalProperties": true,
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "type",
+                "url"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "restrict": {
+            "type": "string"
+          },
+          "series": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "total": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "records"
+        ],
+        "type": "object"
+      }
+    }
+  },
+  "cases": [
+    {
+      "name": "illust_series-argument-a",
+      "tool_name": "illust_series",
+      "arguments": {
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "illusts": [
+            {
+              "id": 22,
+              "type": "illust",
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v1/illust/series?illust_series_id=21\u0026last_order=9"
+        },
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "type": "manga",
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 2 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": true,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 2
+          },
+          "records": [
+            {
+              "ai_type": 0,
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "height": 0,
+              "id": "22",
+              "kind": "illustration",
+              "page_count": 0,
+              "published_at": "2024-01-02T03:04:05Z",
+              "raw_kind": "illust",
+              "tags": [],
+              "title": "one",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/22",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "width": 0,
+              "x_restrict": 0
+            },
+            {
+              "ai_type": 0,
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "height": 0,
+              "id": "23",
+              "kind": "illustration",
+              "page_count": 0,
+              "published_at": "2024-01-02T03:04:05Z",
+              "raw_kind": "illust",
+              "tags": [],
+              "title": "two",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/23",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "width": 0,
+              "x_restrict": 0
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "queries": [
+        "illust_series_id=21"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "illust_series-argument-b",
+      "tool_name": "illust_series",
+      "arguments": {},
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "illusts": [
+            {
+              "id": 22,
+              "type": "illust",
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v1/illust/series?illust_series_id=21\u0026last_order=9"
+        },
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "type": "manga",
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "queries": null,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: required: missing properties: [\"series_id\"]"
+    },
+    {
+      "name": "illust_series-argument-c",
+      "tool_name": "illust_series",
+      "arguments": {
+        "series_id": 0
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "illusts": [
+            {
+              "id": 22,
+              "type": "illust",
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v1/illust/series?illust_series_id=21\u0026last_order=9"
+        },
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "type": "manga",
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: series_id must be a positive integer"
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 0
+          },
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 0,
+      "requests": 0,
+      "queries": null,
+      "rpc_error": ""
+    },
+    {
+      "name": "illust_series-argument-d",
+      "tool_name": "illust_series",
+      "arguments": {
+        "series_id": -1
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "illusts": [
+            {
+              "id": 22,
+              "type": "illust",
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v1/illust/series?illust_series_id=21\u0026last_order=9"
+        },
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "type": "manga",
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: series_id must be a positive integer"
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 0
+          },
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 0,
+      "requests": 0,
+      "queries": null,
+      "rpc_error": ""
+    },
+    {
+      "name": "illust_series-argument-e",
+      "tool_name": "illust_series",
+      "arguments": {
+        "extra": true,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "illusts": [
+            {
+              "id": 22,
+              "type": "illust",
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v1/illust/series?illust_series_id=21\u0026last_order=9"
+        },
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "type": "manga",
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "queries": null,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: unexpected additional properties [\"extra\"]"
+    },
+    {
+      "name": "illust_series-argument-f",
+      "tool_name": "illust_series",
+      "arguments": {
+        "series_id": 9223372036854775807
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "illusts": [
+            {
+              "id": 22,
+              "type": "illust",
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v1/illust/series?illust_series_id=21\u0026last_order=9"
+        },
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "type": "manga",
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "queries": null,
+      "rpc_error": "calling \"tools/call\": invalid params: json: cannot unmarshal number 9223372036854776000 into Go struct field In.series_id of type int64"
+    },
+    {
+      "name": "illust_series-argument-g",
+      "tool_name": "illust_series",
+      "arguments": {
+        "series_id": "21"
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "illusts": [
+            {
+              "id": 22,
+              "type": "illust",
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v1/illust/series?illust_series_id=21\u0026last_order=9"
+        },
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "type": "manga",
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "queries": null,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/series_id: type: 21 has type \"string\", want \"integer\""
+    },
+    {
+      "name": "illust_series-argument-h",
+      "tool_name": "illust_series",
+      "arguments": {
+        "series_id": null
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "illusts": [
+            {
+              "id": 22,
+              "type": "illust",
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v1/illust/series?illust_series_id=21\u0026last_order=9"
+        },
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "type": "manga",
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "queries": null,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/series_id: type: \u003cinvalid reflect.Value\u003e has type \"null\", want \"integer\""
+    },
+    {
+      "name": "illust_series-argument-i",
+      "tool_name": "illust_series",
+      "arguments": {
+        "series_id": 1.5
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "illusts": [
+            {
+              "id": 22,
+              "type": "illust",
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v1/illust/series?illust_series_id=21\u0026last_order=9"
+        },
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "type": "manga",
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "queries": null,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/series_id: type: 1.5 has type \"number\", want \"integer\""
+    },
+    {
+      "name": "illust_series-argument-j",
+      "tool_name": "illust_series",
+      "arguments": {
+        "page": 2,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "illusts": [
+            {
+              "id": 22,
+              "type": "illust",
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v1/illust/series?illust_series_id=21\u0026last_order=9"
+        },
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "type": "manga",
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: page requires limit to be a positive integer"
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 0
+          },
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 0,
+      "requests": 0,
+      "queries": null,
+      "rpc_error": ""
+    },
+    {
+      "name": "illust_series-argument-k",
+      "tool_name": "illust_series",
+      "arguments": {
+        "limit": 1,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "illusts": [
+            {
+              "id": 22,
+              "type": "illust",
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v1/illust/series?illust_series_id=21\u0026last_order=9"
+        },
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "type": "manga",
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": true,
+            "limit": 1,
+            "next_page": 2,
+            "page": 1,
+            "returned": 1
+          },
+          "records": [
+            {
+              "ai_type": 0,
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "height": 0,
+              "id": "22",
+              "kind": "illustration",
+              "page_count": 0,
+              "published_at": "2024-01-02T03:04:05Z",
+              "raw_kind": "illust",
+              "tags": [],
+              "title": "one",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/22",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "width": 0,
+              "x_restrict": 0
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "queries": [
+        "illust_series_id=21"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "illust_series-argument-l",
+      "tool_name": "illust_series",
+      "arguments": {
+        "limit": -1,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "illusts": [
+            {
+              "id": 22,
+              "type": "illust",
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v1/illust/series?illust_series_id=21\u0026last_order=9"
+        },
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "type": "manga",
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: limit must be zero or a positive integer"
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 0
+          },
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 0,
+      "requests": 0,
+      "queries": null,
+      "rpc_error": ""
+    },
+    {
+      "name": "illust_series-argument-m",
+      "tool_name": "illust_series",
+      "arguments": {
+        "page": 0,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "illusts": [
+            {
+              "id": 22,
+              "type": "illust",
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v1/illust/series?illust_series_id=21\u0026last_order=9"
+        },
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "type": "manga",
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: page must be a positive integer"
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 0
+          },
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 0,
+      "requests": 0,
+      "queries": null,
+      "rpc_error": ""
+    },
+    {
+      "name": "illust_series-argument-n",
+      "tool_name": "illust_series",
+      "arguments": {
+        "page": -1,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "illusts": [
+            {
+              "id": 22,
+              "type": "illust",
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v1/illust/series?illust_series_id=21\u0026last_order=9"
+        },
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "type": "manga",
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: page must be a positive integer"
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 0
+          },
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 0,
+      "requests": 0,
+      "queries": null,
+      "rpc_error": ""
+    },
+    {
+      "name": "illust_series-argument-o",
+      "tool_name": "illust_series",
+      "arguments": {
+        "limit": 0,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "illusts": [
+            {
+              "id": 22,
+              "type": "illust",
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v1/illust/series?illust_series_id=21\u0026last_order=9"
+        },
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "type": "manga",
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 3 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": 0,
+            "next_page": null,
+            "page": 1,
+            "returned": 3
+          },
+          "records": [
+            {
+              "ai_type": 0,
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "height": 0,
+              "id": "22",
+              "kind": "illustration",
+              "page_count": 0,
+              "published_at": "2024-01-02T03:04:05Z",
+              "raw_kind": "illust",
+              "tags": [],
+              "title": "one",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/22",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "width": 0,
+              "x_restrict": 0
+            },
+            {
+              "ai_type": 0,
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "height": 0,
+              "id": "23",
+              "kind": "illustration",
+              "page_count": 0,
+              "published_at": "2024-01-02T03:04:05Z",
+              "raw_kind": "illust",
+              "tags": [],
+              "title": "two",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/23",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "width": 0,
+              "x_restrict": 0
+            },
+            {
+              "ai_type": 0,
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "height": 0,
+              "id": "24",
+              "kind": "manga",
+              "page_count": 0,
+              "published_at": "2024-01-02T03:04:05Z",
+              "raw_kind": "manga",
+              "tags": [],
+              "title": "three",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "manga",
+              "url": "https://www.pixiv.net/artworks/24",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "width": 0,
+              "x_restrict": 0
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 2,
+      "queries": [
+        "illust_series_id=21",
+        "illust_series_id=21\u0026last_order=9"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "illust_series-argument-p",
+      "tool_name": "illust_series",
+      "arguments": {
+        "limit": 1,
+        "page": 2,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "illusts": [
+            {
+              "id": 22,
+              "type": "illust",
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v1/illust/series?illust_series_id=21\u0026last_order=9"
+        },
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "type": "manga",
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": true,
+            "limit": 1,
+            "next_page": 3,
+            "page": 2,
+            "returned": 1
+          },
+          "records": [
+            {
+              "ai_type": 0,
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "height": 0,
+              "id": "23",
+              "kind": "illustration",
+              "page_count": 0,
+              "published_at": "2024-01-02T03:04:05Z",
+              "raw_kind": "illust",
+              "tags": [],
+              "title": "two",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/23",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "width": 0,
+              "x_restrict": 0
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "queries": [
+        "illust_series_id=21"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "illust_series-argument-q",
+      "tool_name": "illust_series",
+      "arguments": {
+        "page": 1.5,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "illusts": [
+            {
+              "id": 22,
+              "type": "illust",
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v1/illust/series?illust_series_id=21\u0026last_order=9"
+        },
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "type": "manga",
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "queries": null,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/page: type: 1.5 has type \"number\", want one of \"null, integer\""
+    },
+    {
+      "name": "illust_series-argument-r",
+      "tool_name": "illust_series",
+      "arguments": {
+        "limit": "2",
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "illusts": [
+            {
+              "id": 22,
+              "type": "illust",
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v1/illust/series?illust_series_id=21\u0026last_order=9"
+        },
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "type": "manga",
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "queries": null,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/limit: type: 2 has type \"string\", want one of \"null, integer\""
+    },
+    {
+      "name": "series-body-a",
+      "tool_name": "illust_series",
+      "arguments": {
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "illusts": []
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:ArtworkSeries: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 0
+          },
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "queries": [
+        "illust_series_id=21"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "series-body-b",
+      "tool_name": "illust_series",
+      "arguments": {
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "illust_series_detail": null,
+          "illusts": []
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:ArtworkSeries: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 0
+          },
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "queries": [
+        "illust_series_id=21"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "series-body-c",
+      "tool_name": "illust_series",
+      "arguments": {
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:ArtworkSeries: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 0
+          },
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "queries": [
+        "illust_series_id=21"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "series-body-d",
+      "tool_name": "illust_series",
+      "arguments": {
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [
+            {
+              "id": 0,
+              "user": {
+                "id": 7
+              }
+            }
+          ]
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:ArtworkSeries: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 0
+          },
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "queries": [
+        "illust_series_id=21"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "series-body-e",
+      "tool_name": "illust_series",
+      "arguments": {
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 0 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 0
+          },
+          "records": []
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "queries": [
+        "illust_series_id=21"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "empty-first-page",
+      "tool_name": "illust_series",
+      "arguments": {
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "empty first metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [],
+          "next_url": "https://app-api.pixiv.net/v1/illust/series?illust_series_id=21\u0026last_order=9"
+        },
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "terminal",
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [
+            {
+              "id": 22,
+              "type": "illust",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "type": "illust",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 2 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 2
+          },
+          "records": [
+            {
+              "ai_type": 0,
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "height": 0,
+              "id": "22",
+              "kind": "illustration",
+              "page_count": 0,
+              "published_at": "2024-01-02T03:04:05Z",
+              "raw_kind": "illust",
+              "tags": [],
+              "title": "",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/22",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "width": 0,
+              "x_restrict": 0
+            },
+            {
+              "ai_type": 0,
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "height": 0,
+              "id": "23",
+              "kind": "illustration",
+              "page_count": 0,
+              "published_at": "2024-01-02T03:04:05Z",
+              "raw_kind": "illust",
+              "tags": [],
+              "title": "",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/23",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "width": 0,
+              "x_restrict": 0
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 2,
+      "queries": [
+        "illust_series_id=21",
+        "illust_series_id=21\u0026last_order=9"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "terminal-truncation",
+      "tool_name": "illust_series",
+      "arguments": {
+        "limit": 1,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "terminal",
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [
+            {
+              "id": 22,
+              "type": "illust",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "type": "illust",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": true,
+            "limit": 1,
+            "next_page": 2,
+            "page": 1,
+            "returned": 1
+          },
+          "records": [
+            {
+              "ai_type": 0,
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "height": 0,
+              "id": "22",
+              "kind": "illustration",
+              "page_count": 0,
+              "published_at": "2024-01-02T03:04:05Z",
+              "raw_kind": "illust",
+              "tags": [],
+              "title": "",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/22",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "width": 0,
+              "x_restrict": 0
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "queries": [
+        "illust_series_id=21"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "later-page-malformed",
+      "tool_name": "illust_series",
+      "arguments": {
+        "limit": 0,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "illusts": [
+            {
+              "id": 22,
+              "type": "illust",
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v1/illust/series?illust_series_id=21\u0026last_order=9"
+        },
+        {
+          "illusts": []
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:ArtworkSeries: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 0
+          },
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 2,
+      "queries": [
+        "illust_series_id=21",
+        "illust_series_id=21\u0026last_order=9"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "offset-past-end",
+      "tool_name": "illust_series",
+      "arguments": {
+        "limit": 1,
+        "page": 9,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "illusts": [
+            {
+              "id": 22,
+              "type": "illust",
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v1/illust/series?illust_series_id=21\u0026last_order=9"
+        },
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "type": "manga",
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 0 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": 1,
+            "next_page": null,
+            "page": 9,
+            "returned": 0
+          },
+          "records": []
+        }
+      },
+      "calls": 1,
+      "requests": 2,
+      "queries": [
+        "illust_series_id=21",
+        "illust_series_id=21\u0026last_order=9"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "nullable-or-overflow-a",
+      "tool_name": "illust_series",
+      "arguments": {
+        "page": null,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "illusts": [
+            {
+              "id": 22,
+              "type": "illust",
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v1/illust/series?illust_series_id=21\u0026last_order=9"
+        },
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "type": "manga",
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 2 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": true,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 2
+          },
+          "records": [
+            {
+              "ai_type": 0,
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "height": 0,
+              "id": "22",
+              "kind": "illustration",
+              "page_count": 0,
+              "published_at": "2024-01-02T03:04:05Z",
+              "raw_kind": "illust",
+              "tags": [],
+              "title": "one",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/22",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "width": 0,
+              "x_restrict": 0
+            },
+            {
+              "ai_type": 0,
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "height": 0,
+              "id": "23",
+              "kind": "illustration",
+              "page_count": 0,
+              "published_at": "2024-01-02T03:04:05Z",
+              "raw_kind": "illust",
+              "tags": [],
+              "title": "two",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/23",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "width": 0,
+              "x_restrict": 0
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "queries": [
+        "illust_series_id=21"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "nullable-or-overflow-b",
+      "tool_name": "illust_series",
+      "arguments": {
+        "limit": null,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "illusts": [
+            {
+              "id": 22,
+              "type": "illust",
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v1/illust/series?illust_series_id=21\u0026last_order=9"
+        },
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "type": "manga",
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 2 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": true,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 2
+          },
+          "records": [
+            {
+              "ai_type": 0,
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "height": 0,
+              "id": "22",
+              "kind": "illustration",
+              "page_count": 0,
+              "published_at": "2024-01-02T03:04:05Z",
+              "raw_kind": "illust",
+              "tags": [],
+              "title": "one",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/22",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "width": 0,
+              "x_restrict": 0
+            },
+            {
+              "ai_type": 0,
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "height": 0,
+              "id": "23",
+              "kind": "illustration",
+              "page_count": 0,
+              "published_at": "2024-01-02T03:04:05Z",
+              "raw_kind": "illust",
+              "tags": [],
+              "title": "two",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/23",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "width": 0,
+              "x_restrict": 0
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "queries": [
+        "illust_series_id=21"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "nullable-or-overflow-c",
+      "tool_name": "illust_series",
+      "arguments": {
+        "limit": null,
+        "page": null,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "illusts": [
+            {
+              "id": 22,
+              "type": "illust",
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v1/illust/series?illust_series_id=21\u0026last_order=9"
+        },
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "type": "manga",
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 2 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": true,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 2
+          },
+          "records": [
+            {
+              "ai_type": 0,
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "height": 0,
+              "id": "22",
+              "kind": "illustration",
+              "page_count": 0,
+              "published_at": "2024-01-02T03:04:05Z",
+              "raw_kind": "illust",
+              "tags": [],
+              "title": "one",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/22",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "width": 0,
+              "x_restrict": 0
+            },
+            {
+              "ai_type": 0,
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "height": 0,
+              "id": "23",
+              "kind": "illustration",
+              "page_count": 0,
+              "published_at": "2024-01-02T03:04:05Z",
+              "raw_kind": "illust",
+              "tags": [],
+              "title": "two",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/23",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "width": 0,
+              "x_restrict": 0
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "queries": [
+        "illust_series_id=21"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "nullable-or-overflow-d",
+      "tool_name": "illust_series",
+      "arguments": {
+        "limit": 9223372036854775807,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "illusts": [
+            {
+              "id": 22,
+              "type": "illust",
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v1/illust/series?illust_series_id=21\u0026last_order=9"
+        },
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "type": "manga",
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "queries": null,
+      "rpc_error": "calling \"tools/call\": invalid params: json: cannot unmarshal number 9223372036854776000 into Go struct field In.limit of type int"
+    },
+    {
+      "name": "nullable-or-overflow-e",
+      "tool_name": "illust_series",
+      "arguments": {
+        "limit": 1,
+        "page": 9223372036854775807,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "illusts": [
+            {
+              "id": 22,
+              "type": "illust",
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v1/illust/series?illust_series_id=21\u0026last_order=9"
+        },
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "type": "manga",
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "queries": null,
+      "rpc_error": "calling \"tools/call\": invalid params: json: cannot unmarshal number 9223372036854776000 into Go struct field In.page of type int"
+    },
+    {
+      "name": "offset-continuation",
+      "tool_name": "illust_series",
+      "arguments": {
+        "limit": 0,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "illusts": [
+            {
+              "id": 22,
+              "type": "illust",
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v1/illust/series?illust_series_id=21\u0026offset=30"
+        },
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "type": "manga",
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 3 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": 0,
+            "next_page": null,
+            "page": 1,
+            "returned": 3
+          },
+          "records": [
+            {
+              "ai_type": 0,
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "height": 0,
+              "id": "22",
+              "kind": "illustration",
+              "page_count": 0,
+              "published_at": "2024-01-02T03:04:05Z",
+              "raw_kind": "illust",
+              "tags": [],
+              "title": "one",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/22",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "width": 0,
+              "x_restrict": 0
+            },
+            {
+              "ai_type": 0,
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "height": 0,
+              "id": "23",
+              "kind": "illustration",
+              "page_count": 0,
+              "published_at": "2024-01-02T03:04:05Z",
+              "raw_kind": "illust",
+              "tags": [],
+              "title": "two",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/23",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "width": 0,
+              "x_restrict": 0
+            },
+            {
+              "ai_type": 0,
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "height": 0,
+              "id": "24",
+              "kind": "manga",
+              "page_count": 0,
+              "published_at": "2024-01-02T03:04:05Z",
+              "raw_kind": "manga",
+              "tags": [],
+              "title": "three",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "manga",
+              "url": "https://www.pixiv.net/artworks/24",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "width": 0,
+              "x_restrict": 0
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 2,
+      "queries": [
+        "illust_series_id=21",
+        "illust_series_id=21\u0026offset=30"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "same-id-different-kind",
+      "tool_name": "illust_series",
+      "arguments": {
+        "limit": 0,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "illusts": [
+            {
+              "id": 22,
+              "type": "illust",
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v1/illust/series?illust_series_id=21\u0026last_order=9"
+        },
+        {
+          "illust_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "illusts": [
+            {
+              "id": 23,
+              "type": "illust",
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "type": "manga",
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 3 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": 0,
+            "next_page": null,
+            "page": 1,
+            "returned": 3
+          },
+          "records": [
+            {
+              "ai_type": 0,
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "height": 0,
+              "id": "22",
+              "kind": "illustration",
+              "page_count": 0,
+              "published_at": "2024-01-02T03:04:05Z",
+              "raw_kind": "illust",
+              "tags": [],
+              "title": "one",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/22",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "width": 0,
+              "x_restrict": 0
+            },
+            {
+              "ai_type": 0,
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "height": 0,
+              "id": "23",
+              "kind": "illustration",
+              "page_count": 0,
+              "published_at": "2024-01-02T03:04:05Z",
+              "raw_kind": "illust",
+              "tags": [],
+              "title": "two",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "illust",
+              "url": "https://www.pixiv.net/artworks/23",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "width": 0,
+              "x_restrict": 0
+            },
+            {
+              "ai_type": 0,
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "height": 0,
+              "id": "23",
+              "kind": "manga",
+              "page_count": 0,
+              "published_at": "2024-01-02T03:04:05Z",
+              "raw_kind": "manga",
+              "tags": [],
+              "title": "three",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "manga",
+              "url": "https://www.pixiv.net/artworks/23",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "width": 0,
+              "x_restrict": 0
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 2,
+      "queries": [
+        "illust_series_id=21",
+        "illust_series_id=21\u0026last_order=9"
+      ],
+      "rpc_error": ""
+    }
+  ]
+}

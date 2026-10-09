@@ -1,0 +1,818 @@
+[
+  {
+    "scenario": "after_page",
+    "mode": "human",
+    "filter": "all",
+    "opens": [
+      42
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": ""
+      },
+      {
+        "id": 42,
+        "offset": "9"
+      },
+      {
+        "id": 42,
+        "offset": "9"
+      }
+    ],
+    "closes": 1,
+    "under_lease": true,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      },
+      {
+        "id": 43,
+        "revision": 1,
+        "frozen": false,
+        "selected": false
+      }
+    ],
+    "stdout": "artworks in series 6001\n#1 https://www.pixiv.net/artworks/1\n1 \"item-account-42\" by author bookmarks:12 views:34 tags:tag,untranslated\n#2 https://www.pixiv.net/artworks/2\n2 \"item-account-42\" by author bookmarks:12 views:34 tags:tag,untranslated\n#3 https://www.pixiv.net/artworks/3\n3 \"item-account-42\" by author bookmarks:12 views:34 tags:tag,untranslated\n#4 https://www.pixiv.net/artworks/2\n2 \"item-account-42\" by author bookmarks:12 views:34 tags:tag,untranslated\n",
+    "stderr": "error: pixiv:ArtworkSeries: rate_limited\n",
+    "exit": 1
+  },
+  {
+    "scenario": "after_page",
+    "mode": "ndjson",
+    "filter": "all",
+    "opens": [
+      42
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": ""
+      },
+      {
+        "id": 42,
+        "offset": "9"
+      },
+      {
+        "id": 42,
+        "offset": "9"
+      }
+    ],
+    "closes": 1,
+    "under_lease": true,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      },
+      {
+        "id": 43,
+        "revision": 1,
+        "frozen": false,
+        "selected": false
+      }
+    ],
+    "stdout": "{\"ai_type\":2,\"caption\":\"\\u003cp\\u003efixture\\u003c/p\\u003e\",\"cover\":{\"height\":480,\"resource\":{\"ref\":\"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpveExDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0\"},\"variant\":\"original\",\"width\":640},\"height\":480,\"id\":\"1\",\"kind\":\"illustration\",\"page_count\":1,\"published_at\":\"2026-01-01T18:04:05.123456789Z\",\"raw_kind\":\"illust\",\"tags\":[{\"name\":\"tag\",\"translated_name\":\"訳\"},{\"name\":\"untranslated\",\"translated_name\":\"\"}],\"title\":\"item-account-42\",\"tools\":[\"pen\",\"brush\"],\"total_bookmarks\":12,\"total_views\":34,\"type\":\"illust\",\"url\":\"https://www.pixiv.net/artworks/1\",\"user\":{\"account\":\"fixture\",\"comment\":\"profile\",\"id\":7,\"is_followed\":true,\"name\":\"author\",\"profile_image\":{\"height\":0,\"resource\":{\"ref\":\"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9\"},\"variant\":\"medium\",\"width\":0}},\"width\":640,\"x_restrict\":0}\n{\"ai_type\":2,\"caption\":\"\\u003cp\\u003efixture\\u003c/p\\u003e\",\"cover\":{\"height\":480,\"resource\":{\"ref\":\"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpveUxDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0\"},\"variant\":\"original\",\"width\":640},\"height\":480,\"id\":\"2\",\"kind\":\"manga\",\"page_count\":1,\"published_at\":\"2026-01-01T18:04:05.123456789Z\",\"raw_kind\":\"manga\",\"tags\":[{\"name\":\"tag\",\"translated_name\":\"訳\"},{\"name\":\"untranslated\",\"translated_name\":\"\"}],\"title\":\"item-account-42\",\"tools\":[\"pen\",\"brush\"],\"total_bookmarks\":12,\"total_views\":34,\"type\":\"manga\",\"url\":\"https://www.pixiv.net/artworks/2\",\"user\":{\"account\":\"fixture\",\"comment\":\"profile\",\"id\":7,\"is_followed\":true,\"name\":\"author\",\"profile_image\":{\"height\":0,\"resource\":{\"ref\":\"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9\"},\"variant\":\"medium\",\"width\":0}},\"width\":640,\"x_restrict\":1}\n{\"ai_type\":2,\"caption\":\"\\u003cp\\u003efixture\\u003c/p\\u003e\",\"cover\":{\"height\":480,\"resource\":{\"ref\":\"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvekxDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0\"},\"variant\":\"original\",\"width\":640},\"height\":480,\"id\":\"3\",\"kind\":\"ugoira\",\"page_count\":1,\"published_at\":\"2026-01-01T18:04:05.123456789Z\",\"raw_kind\":\"ugoira\",\"tags\":[{\"name\":\"tag\",\"translated_name\":\"訳\"},{\"name\":\"untranslated\",\"translated_name\":\"\"}],\"title\":\"item-account-42\",\"tools\":[\"pen\",\"brush\"],\"total_bookmarks\":12,\"total_views\":34,\"type\":\"ugoira\",\"url\":\"https://www.pixiv.net/artworks/3\",\"user\":{\"account\":\"fixture\",\"comment\":\"profile\",\"id\":7,\"is_followed\":true,\"name\":\"author\",\"profile_image\":{\"height\":0,\"resource\":{\"ref\":\"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9\"},\"variant\":\"medium\",\"width\":0}},\"width\":640,\"x_restrict\":2}\n{\"ai_type\":2,\"caption\":\"\\u003cp\\u003efixture\\u003c/p\\u003e\",\"cover\":{\"height\":480,\"resource\":{\"ref\":\"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpveUxDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0\"},\"variant\":\"original\",\"width\":640},\"height\":480,\"id\":\"2\",\"kind\":\"manga\",\"page_count\":1,\"published_at\":\"2026-01-01T18:04:05.123456789Z\",\"raw_kind\":\"manga\",\"tags\":[{\"name\":\"tag\",\"translated_name\":\"訳\"},{\"name\":\"untranslated\",\"translated_name\":\"\"}],\"title\":\"item-account-42\",\"tools\":[\"pen\",\"brush\"],\"total_bookmarks\":12,\"total_views\":34,\"type\":\"manga\",\"url\":\"https://www.pixiv.net/artworks/2\",\"user\":{\"account\":\"fixture\",\"comment\":\"profile\",\"id\":7,\"is_followed\":true,\"name\":\"author\",\"profile_image\":{\"height\":0,\"resource\":{\"ref\":\"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9\"},\"variant\":\"medium\",\"width\":0}},\"width\":640,\"x_restrict\":1}\n",
+    "stderr": "{\"error\":{\"code\":\"rate_limited\",\"message\":\"pixiv:ArtworkSeries: rate_limited\",\"retry_after_seconds\":120}}\n",
+    "exit": 1
+  },
+  {
+    "scenario": "after_page",
+    "mode": "json",
+    "filter": "all",
+    "opens": [
+      42,
+      43
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": ""
+      },
+      {
+        "id": 42,
+        "offset": "9"
+      },
+      {
+        "id": 42,
+        "offset": "9"
+      },
+      {
+        "id": 43,
+        "offset": ""
+      },
+      {
+        "id": 43,
+        "offset": "9"
+      }
+    ],
+    "closes": 2,
+    "under_lease": false,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": true,
+        "selected": false
+      },
+      {
+        "id": 43,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      }
+    ],
+    "stdout": "{\n  \"illusts\": [\n    {\n      \"id\": 1,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\\u003cp\\u003efixture\\u003c/p\\u003e\",\n      \"kind\": \"illustration\",\n      \"raw_kind\": \"illust\",\n      \"tags\": [\n        {\n          \"name\": \"tag\",\n          \"translated_name\": \"訳\"\n        },\n        {\n          \"name\": \"untranslated\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 7,\n        \"name\": \"author\",\n        \"account\": \"fixture\",\n        \"comment\": \"profile\",\n        \"is_followed\": true,\n        \"profile_image\": {\n          \"resource\": {\n            \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9\"\n          },\n          \"variant\": \"medium\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2026-01-01T18:04:05.123456789Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 640,\n      \"height\": 480,\n      \"page_count\": 1,\n      \"x_restrict\": 0,\n      \"ai_type\": 2,\n      \"tools\": [\n        \"pen\",\n        \"brush\"\n      ],\n      \"cover\": {\n        \"resource\": {\n          \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpveExDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0\"\n        },\n        \"variant\": \"original\",\n        \"width\": 640,\n        \"height\": 480\n      }\n    },\n    {\n      \"id\": 2,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\\u003cp\\u003efixture\\u003c/p\\u003e\",\n      \"kind\": \"manga\",\n      \"raw_kind\": \"manga\",\n      \"tags\": [\n        {\n          \"name\": \"tag\",\n          \"translated_name\": \"訳\"\n        },\n        {\n          \"name\": \"untranslated\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 7,\n        \"name\": \"author\",\n        \"account\": \"fixture\",\n        \"comment\": \"profile\",\n        \"is_followed\": true,\n        \"profile_image\": {\n          \"resource\": {\n            \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9\"\n          },\n          \"variant\": \"medium\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2026-01-01T18:04:05.123456789Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 640,\n      \"height\": 480,\n      \"page_count\": 1,\n      \"x_restrict\": 1,\n      \"ai_type\": 2,\n      \"tools\": [\n        \"pen\",\n        \"brush\"\n      ],\n      \"cover\": {\n        \"resource\": {\n          \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpveUxDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0\"\n        },\n        \"variant\": \"original\",\n        \"width\": 640,\n        \"height\": 480\n      }\n    },\n    {\n      \"id\": 3,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\\u003cp\\u003efixture\\u003c/p\\u003e\",\n      \"kind\": \"ugoira\",\n      \"raw_kind\": \"ugoira\",\n      \"tags\": [\n        {\n          \"name\": \"tag\",\n          \"translated_name\": \"訳\"\n        },\n        {\n          \"name\": \"untranslated\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 7,\n        \"name\": \"author\",\n        \"account\": \"fixture\",\n        \"comment\": \"profile\",\n        \"is_followed\": true,\n        \"profile_image\": {\n          \"resource\": {\n            \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9\"\n          },\n          \"variant\": \"medium\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2026-01-01T18:04:05.123456789Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 640,\n      \"height\": 480,\n      \"page_count\": 1,\n      \"x_restrict\": 2,\n      \"ai_type\": 2,\n      \"tools\": [\n        \"pen\",\n        \"brush\"\n      ],\n      \"cover\": {\n        \"resource\": {\n          \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvekxDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0\"\n        },\n        \"variant\": \"original\",\n        \"width\": 640,\n        \"height\": 480\n      }\n    },\n    {\n      \"id\": 2,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\\u003cp\\u003efixture\\u003c/p\\u003e\",\n      \"kind\": \"manga\",\n      \"raw_kind\": \"manga\",\n      \"tags\": [\n        {\n          \"name\": \"tag\",\n          \"translated_name\": \"訳\"\n        },\n        {\n          \"name\": \"untranslated\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 7,\n        \"name\": \"author\",\n        \"account\": \"fixture\",\n        \"comment\": \"profile\",\n        \"is_followed\": true,\n        \"profile_image\": {\n          \"resource\": {\n            \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9\"\n          },\n          \"variant\": \"medium\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2026-01-01T18:04:05.123456789Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 640,\n      \"height\": 480,\n      \"page_count\": 1,\n      \"x_restrict\": 1,\n      \"ai_type\": 2,\n      \"tools\": [\n        \"pen\",\n        \"brush\"\n      ],\n      \"cover\": {\n        \"resource\": {\n          \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpveUxDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0\"\n        },\n        \"variant\": \"original\",\n        \"width\": 640,\n        \"height\": 480\n      }\n    },\n    {\n      \"id\": 1,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\\u003cp\\u003efixture\\u003c/p\\u003e\",\n      \"kind\": \"illustration\",\n      \"raw_kind\": \"illust\",\n      \"tags\": [\n        {\n          \"name\": \"tag\",\n          \"translated_name\": \"訳\"\n        },\n        {\n          \"name\": \"untranslated\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 7,\n        \"name\": \"author\",\n        \"account\": \"fixture\",\n        \"comment\": \"profile\",\n        \"is_followed\": true,\n        \"profile_image\": {\n          \"resource\": {\n            \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9\"\n          },\n          \"variant\": \"medium\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2026-01-01T18:04:05.123456789Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 640,\n      \"height\": 480,\n      \"page_count\": 1,\n      \"x_restrict\": 0,\n      \"ai_type\": 2,\n      \"tools\": [\n        \"pen\",\n        \"brush\"\n      ],\n      \"cover\": {\n        \"resource\": {\n          \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpveExDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0\"\n        },\n        \"variant\": \"original\",\n        \"width\": 640,\n        \"height\": 480\n      }\n    },\n    {\n      \"id\": 2,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\\u003cp\\u003efixture\\u003c/p\\u003e\",\n      \"kind\": \"manga\",\n      \"raw_kind\": \"manga\",\n      \"tags\": [\n        {\n          \"name\": \"tag\",\n          \"translated_name\": \"訳\"\n        },\n        {\n          \"name\": \"untranslated\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 7,\n        \"name\": \"author\",\n        \"account\": \"fixture\",\n        \"comment\": \"profile\",\n        \"is_followed\": true,\n        \"profile_image\": {\n          \"resource\": {\n            \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9\"\n          },\n          \"variant\": \"medium\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2026-01-01T18:04:05.123456789Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 640,\n      \"height\": 480,\n      \"page_count\": 1,\n      \"x_restrict\": 1,\n      \"ai_type\": 2,\n      \"tools\": [\n        \"pen\",\n        \"brush\"\n      ],\n      \"cover\": {\n        \"resource\": {\n          \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpveUxDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0\"\n        },\n        \"variant\": \"original\",\n        \"width\": 640,\n        \"height\": 480\n      }\n    },\n    {\n      \"id\": 3,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\\u003cp\\u003efixture\\u003c/p\\u003e\",\n      \"kind\": \"ugoira\",\n      \"raw_kind\": \"ugoira\",\n      \"tags\": [\n        {\n          \"name\": \"tag\",\n          \"translated_name\": \"訳\"\n        },\n        {\n          \"name\": \"untranslated\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 7,\n        \"name\": \"author\",\n        \"account\": \"fixture\",\n        \"comment\": \"profile\",\n        \"is_followed\": true,\n        \"profile_image\": {\n          \"resource\": {\n            \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9\"\n          },\n          \"variant\": \"medium\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2026-01-01T18:04:05.123456789Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 640,\n      \"height\": 480,\n      \"page_count\": 1,\n      \"x_restrict\": 2,\n      \"ai_type\": 2,\n      \"tools\": [\n        \"pen\",\n        \"brush\"\n      ],\n      \"cover\": {\n        \"resource\": {\n          \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvekxDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0\"\n        },\n        \"variant\": \"original\",\n        \"width\": 640,\n        \"height\": 480\n      }\n    },\n    {\n      \"id\": 2,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\\u003cp\\u003efixture\\u003c/p\\u003e\",\n      \"kind\": \"manga\",\n      \"raw_kind\": \"manga\",\n      \"tags\": [\n        {\n          \"name\": \"tag\",\n          \"translated_name\": \"訳\"\n        },\n        {\n          \"name\": \"untranslated\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 7,\n        \"name\": \"author\",\n        \"account\": \"fixture\",\n        \"comment\": \"profile\",\n        \"is_followed\": true,\n        \"profile_image\": {\n          \"resource\": {\n            \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9\"\n          },\n          \"variant\": \"medium\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2026-01-01T18:04:05.123456789Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 640,\n      \"height\": 480,\n      \"page_count\": 1,\n      \"x_restrict\": 1,\n      \"ai_type\": 2,\n      \"tools\": [\n        \"pen\",\n        \"brush\"\n      ],\n      \"cover\": {\n        \"resource\": {\n          \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpveUxDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0\"\n        },\n        \"variant\": \"original\",\n        \"width\": 640,\n        \"height\": 480\n      }\n    }\n  ]\n}\n",
+    "stderr": "",
+    "exit": 0
+  },
+  {
+    "scenario": "before_output",
+    "mode": "human",
+    "filter": "all",
+    "opens": [
+      42,
+      43
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": ""
+      },
+      {
+        "id": 42,
+        "offset": ""
+      },
+      {
+        "id": 43,
+        "offset": ""
+      },
+      {
+        "id": 43,
+        "offset": "9"
+      }
+    ],
+    "closes": 2,
+    "under_lease": true,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": true,
+        "selected": false
+      },
+      {
+        "id": 43,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      }
+    ],
+    "stdout": "artworks in series 6001\n#1 https://www.pixiv.net/artworks/1\n1 \"item-account-43\" by author bookmarks:12 views:34 tags:tag,untranslated\n#2 https://www.pixiv.net/artworks/2\n2 \"item-account-43\" by author bookmarks:12 views:34 tags:tag,untranslated\n#3 https://www.pixiv.net/artworks/3\n3 \"item-account-43\" by author bookmarks:12 views:34 tags:tag,untranslated\n#4 https://www.pixiv.net/artworks/2\n2 \"item-account-43\" by author bookmarks:12 views:34 tags:tag,untranslated\n#5 https://www.pixiv.net/artworks/1\n1 \"item-account-43\" by author bookmarks:12 views:34 tags:tag,untranslated\n#6 https://www.pixiv.net/artworks/2\n2 \"item-account-43\" by author bookmarks:12 views:34 tags:tag,untranslated\n#7 https://www.pixiv.net/artworks/3\n3 \"item-account-43\" by author bookmarks:12 views:34 tags:tag,untranslated\n#8 https://www.pixiv.net/artworks/2\n2 \"item-account-43\" by author bookmarks:12 views:34 tags:tag,untranslated\n",
+    "stderr": "",
+    "exit": 0
+  },
+  {
+    "scenario": "before_output",
+    "mode": "ndjson",
+    "filter": "all",
+    "opens": [
+      42,
+      43
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": ""
+      },
+      {
+        "id": 42,
+        "offset": ""
+      },
+      {
+        "id": 43,
+        "offset": ""
+      },
+      {
+        "id": 43,
+        "offset": "9"
+      }
+    ],
+    "closes": 2,
+    "under_lease": true,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": true,
+        "selected": false
+      },
+      {
+        "id": 43,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      }
+    ],
+    "stdout": "{\"ai_type\":2,\"caption\":\"\\u003cp\\u003efixture\\u003c/p\\u003e\",\"cover\":{\"height\":480,\"resource\":{\"ref\":\"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpveExDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0\"},\"variant\":\"original\",\"width\":640},\"height\":480,\"id\":\"1\",\"kind\":\"illustration\",\"page_count\":1,\"published_at\":\"2026-01-01T18:04:05.123456789Z\",\"raw_kind\":\"illust\",\"tags\":[{\"name\":\"tag\",\"translated_name\":\"訳\"},{\"name\":\"untranslated\",\"translated_name\":\"\"}],\"title\":\"item-account-43\",\"tools\":[\"pen\",\"brush\"],\"total_bookmarks\":12,\"total_views\":34,\"type\":\"illust\",\"url\":\"https://www.pixiv.net/artworks/1\",\"user\":{\"account\":\"fixture\",\"comment\":\"profile\",\"id\":7,\"is_followed\":true,\"name\":\"author\",\"profile_image\":{\"height\":0,\"resource\":{\"ref\":\"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9\"},\"variant\":\"medium\",\"width\":0}},\"width\":640,\"x_restrict\":0}\n{\"ai_type\":2,\"caption\":\"\\u003cp\\u003efixture\\u003c/p\\u003e\",\"cover\":{\"height\":480,\"resource\":{\"ref\":\"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpveUxDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0\"},\"variant\":\"original\",\"width\":640},\"height\":480,\"id\":\"2\",\"kind\":\"manga\",\"page_count\":1,\"published_at\":\"2026-01-01T18:04:05.123456789Z\",\"raw_kind\":\"manga\",\"tags\":[{\"name\":\"tag\",\"translated_name\":\"訳\"},{\"name\":\"untranslated\",\"translated_name\":\"\"}],\"title\":\"item-account-43\",\"tools\":[\"pen\",\"brush\"],\"total_bookmarks\":12,\"total_views\":34,\"type\":\"manga\",\"url\":\"https://www.pixiv.net/artworks/2\",\"user\":{\"account\":\"fixture\",\"comment\":\"profile\",\"id\":7,\"is_followed\":true,\"name\":\"author\",\"profile_image\":{\"height\":0,\"resource\":{\"ref\":\"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9\"},\"variant\":\"medium\",\"width\":0}},\"width\":640,\"x_restrict\":1}\n{\"ai_type\":2,\"caption\":\"\\u003cp\\u003efixture\\u003c/p\\u003e\",\"cover\":{\"height\":480,\"resource\":{\"ref\":\"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvekxDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0\"},\"variant\":\"original\",\"width\":640},\"height\":480,\"id\":\"3\",\"kind\":\"ugoira\",\"page_count\":1,\"published_at\":\"2026-01-01T18:04:05.123456789Z\",\"raw_kind\":\"ugoira\",\"tags\":[{\"name\":\"tag\",\"translated_name\":\"訳\"},{\"name\":\"untranslated\",\"translated_name\":\"\"}],\"title\":\"item-account-43\",\"tools\":[\"pen\",\"brush\"],\"total_bookmarks\":12,\"total_views\":34,\"type\":\"ugoira\",\"url\":\"https://www.pixiv.net/artworks/3\",\"user\":{\"account\":\"fixture\",\"comment\":\"profile\",\"id\":7,\"is_followed\":true,\"name\":\"author\",\"profile_image\":{\"height\":0,\"resource\":{\"ref\":\"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9\"},\"variant\":\"medium\",\"width\":0}},\"width\":640,\"x_restrict\":2}\n{\"ai_type\":2,\"caption\":\"\\u003cp\\u003efixture\\u003c/p\\u003e\",\"cover\":{\"height\":480,\"resource\":{\"ref\":\"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpveUxDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0\"},\"variant\":\"original\",\"width\":640},\"height\":480,\"id\":\"2\",\"kind\":\"manga\",\"page_count\":1,\"published_at\":\"2026-01-01T18:04:05.123456789Z\",\"raw_kind\":\"manga\",\"tags\":[{\"name\":\"tag\",\"translated_name\":\"訳\"},{\"name\":\"untranslated\",\"translated_name\":\"\"}],\"title\":\"item-account-43\",\"tools\":[\"pen\",\"brush\"],\"total_bookmarks\":12,\"total_views\":34,\"type\":\"manga\",\"url\":\"https://www.pixiv.net/artworks/2\",\"user\":{\"account\":\"fixture\",\"comment\":\"profile\",\"id\":7,\"is_followed\":true,\"name\":\"author\",\"profile_image\":{\"height\":0,\"resource\":{\"ref\":\"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9\"},\"variant\":\"medium\",\"width\":0}},\"width\":640,\"x_restrict\":1}\n{\"ai_type\":2,\"caption\":\"\\u003cp\\u003efixture\\u003c/p\\u003e\",\"cover\":{\"height\":480,\"resource\":{\"ref\":\"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpveExDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0\"},\"variant\":\"original\",\"width\":640},\"height\":480,\"id\":\"1\",\"kind\":\"illustration\",\"page_count\":1,\"published_at\":\"2026-01-01T18:04:05.123456789Z\",\"raw_kind\":\"illust\",\"tags\":[{\"name\":\"tag\",\"translated_name\":\"訳\"},{\"name\":\"untranslated\",\"translated_name\":\"\"}],\"title\":\"item-account-43\",\"tools\":[\"pen\",\"brush\"],\"total_bookmarks\":12,\"total_views\":34,\"type\":\"illust\",\"url\":\"https://www.pixiv.net/artworks/1\",\"user\":{\"account\":\"fixture\",\"comment\":\"profile\",\"id\":7,\"is_followed\":true,\"name\":\"author\",\"profile_image\":{\"height\":0,\"resource\":{\"ref\":\"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9\"},\"variant\":\"medium\",\"width\":0}},\"width\":640,\"x_restrict\":0}\n{\"ai_type\":2,\"caption\":\"\\u003cp\\u003efixture\\u003c/p\\u003e\",\"cover\":{\"height\":480,\"resource\":{\"ref\":\"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpveUxDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0\"},\"variant\":\"original\",\"width\":640},\"height\":480,\"id\":\"2\",\"kind\":\"manga\",\"page_count\":1,\"published_at\":\"2026-01-01T18:04:05.123456789Z\",\"raw_kind\":\"manga\",\"tags\":[{\"name\":\"tag\",\"translated_name\":\"訳\"},{\"name\":\"untranslated\",\"translated_name\":\"\"}],\"title\":\"item-account-43\",\"tools\":[\"pen\",\"brush\"],\"total_bookmarks\":12,\"total_views\":34,\"type\":\"manga\",\"url\":\"https://www.pixiv.net/artworks/2\",\"user\":{\"account\":\"fixture\",\"comment\":\"profile\",\"id\":7,\"is_followed\":true,\"name\":\"author\",\"profile_image\":{\"height\":0,\"resource\":{\"ref\":\"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9\"},\"variant\":\"medium\",\"width\":0}},\"width\":640,\"x_restrict\":1}\n{\"ai_type\":2,\"caption\":\"\\u003cp\\u003efixture\\u003c/p\\u003e\",\"cover\":{\"height\":480,\"resource\":{\"ref\":\"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvekxDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0\"},\"variant\":\"original\",\"width\":640},\"height\":480,\"id\":\"3\",\"kind\":\"ugoira\",\"page_count\":1,\"published_at\":\"2026-01-01T18:04:05.123456789Z\",\"raw_kind\":\"ugoira\",\"tags\":[{\"name\":\"tag\",\"translated_name\":\"訳\"},{\"name\":\"untranslated\",\"translated_name\":\"\"}],\"title\":\"item-account-43\",\"tools\":[\"pen\",\"brush\"],\"total_bookmarks\":12,\"total_views\":34,\"type\":\"ugoira\",\"url\":\"https://www.pixiv.net/artworks/3\",\"user\":{\"account\":\"fixture\",\"comment\":\"profile\",\"id\":7,\"is_followed\":true,\"name\":\"author\",\"profile_image\":{\"height\":0,\"resource\":{\"ref\":\"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9\"},\"variant\":\"medium\",\"width\":0}},\"width\":640,\"x_restrict\":2}\n{\"ai_type\":2,\"caption\":\"\\u003cp\\u003efixture\\u003c/p\\u003e\",\"cover\":{\"height\":480,\"resource\":{\"ref\":\"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpveUxDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0\"},\"variant\":\"original\",\"width\":640},\"height\":480,\"id\":\"2\",\"kind\":\"manga\",\"page_count\":1,\"published_at\":\"2026-01-01T18:04:05.123456789Z\",\"raw_kind\":\"manga\",\"tags\":[{\"name\":\"tag\",\"translated_name\":\"訳\"},{\"name\":\"untranslated\",\"translated_name\":\"\"}],\"title\":\"item-account-43\",\"tools\":[\"pen\",\"brush\"],\"total_bookmarks\":12,\"total_views\":34,\"type\":\"manga\",\"url\":\"https://www.pixiv.net/artworks/2\",\"user\":{\"account\":\"fixture\",\"comment\":\"profile\",\"id\":7,\"is_followed\":true,\"name\":\"author\",\"profile_image\":{\"height\":0,\"resource\":{\"ref\":\"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9\"},\"variant\":\"medium\",\"width\":0}},\"width\":640,\"x_restrict\":1}\n",
+    "stderr": "",
+    "exit": 0
+  },
+  {
+    "scenario": "before_output",
+    "mode": "json",
+    "filter": "all",
+    "opens": [
+      42,
+      43
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": ""
+      },
+      {
+        "id": 42,
+        "offset": ""
+      },
+      {
+        "id": 43,
+        "offset": ""
+      },
+      {
+        "id": 43,
+        "offset": "9"
+      }
+    ],
+    "closes": 2,
+    "under_lease": false,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": true,
+        "selected": false
+      },
+      {
+        "id": 43,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      }
+    ],
+    "stdout": "{\n  \"illusts\": [\n    {\n      \"id\": 1,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\\u003cp\\u003efixture\\u003c/p\\u003e\",\n      \"kind\": \"illustration\",\n      \"raw_kind\": \"illust\",\n      \"tags\": [\n        {\n          \"name\": \"tag\",\n          \"translated_name\": \"訳\"\n        },\n        {\n          \"name\": \"untranslated\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 7,\n        \"name\": \"author\",\n        \"account\": \"fixture\",\n        \"comment\": \"profile\",\n        \"is_followed\": true,\n        \"profile_image\": {\n          \"resource\": {\n            \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9\"\n          },\n          \"variant\": \"medium\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2026-01-01T18:04:05.123456789Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 640,\n      \"height\": 480,\n      \"page_count\": 1,\n      \"x_restrict\": 0,\n      \"ai_type\": 2,\n      \"tools\": [\n        \"pen\",\n        \"brush\"\n      ],\n      \"cover\": {\n        \"resource\": {\n          \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpveExDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0\"\n        },\n        \"variant\": \"original\",\n        \"width\": 640,\n        \"height\": 480\n      }\n    },\n    {\n      \"id\": 2,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\\u003cp\\u003efixture\\u003c/p\\u003e\",\n      \"kind\": \"manga\",\n      \"raw_kind\": \"manga\",\n      \"tags\": [\n        {\n          \"name\": \"tag\",\n          \"translated_name\": \"訳\"\n        },\n        {\n          \"name\": \"untranslated\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 7,\n        \"name\": \"author\",\n        \"account\": \"fixture\",\n        \"comment\": \"profile\",\n        \"is_followed\": true,\n        \"profile_image\": {\n          \"resource\": {\n            \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9\"\n          },\n          \"variant\": \"medium\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2026-01-01T18:04:05.123456789Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 640,\n      \"height\": 480,\n      \"page_count\": 1,\n      \"x_restrict\": 1,\n      \"ai_type\": 2,\n      \"tools\": [\n        \"pen\",\n        \"brush\"\n      ],\n      \"cover\": {\n        \"resource\": {\n          \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpveUxDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0\"\n        },\n        \"variant\": \"original\",\n        \"width\": 640,\n        \"height\": 480\n      }\n    },\n    {\n      \"id\": 3,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\\u003cp\\u003efixture\\u003c/p\\u003e\",\n      \"kind\": \"ugoira\",\n      \"raw_kind\": \"ugoira\",\n      \"tags\": [\n        {\n          \"name\": \"tag\",\n          \"translated_name\": \"訳\"\n        },\n        {\n          \"name\": \"untranslated\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 7,\n        \"name\": \"author\",\n        \"account\": \"fixture\",\n        \"comment\": \"profile\",\n        \"is_followed\": true,\n        \"profile_image\": {\n          \"resource\": {\n            \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9\"\n          },\n          \"variant\": \"medium\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2026-01-01T18:04:05.123456789Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 640,\n      \"height\": 480,\n      \"page_count\": 1,\n      \"x_restrict\": 2,\n      \"ai_type\": 2,\n      \"tools\": [\n        \"pen\",\n        \"brush\"\n      ],\n      \"cover\": {\n        \"resource\": {\n          \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvekxDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0\"\n        },\n        \"variant\": \"original\",\n        \"width\": 640,\n        \"height\": 480\n      }\n    },\n    {\n      \"id\": 2,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\\u003cp\\u003efixture\\u003c/p\\u003e\",\n      \"kind\": \"manga\",\n      \"raw_kind\": \"manga\",\n      \"tags\": [\n        {\n          \"name\": \"tag\",\n          \"translated_name\": \"訳\"\n        },\n        {\n          \"name\": \"untranslated\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 7,\n        \"name\": \"author\",\n        \"account\": \"fixture\",\n        \"comment\": \"profile\",\n        \"is_followed\": true,\n        \"profile_image\": {\n          \"resource\": {\n            \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9\"\n          },\n          \"variant\": \"medium\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2026-01-01T18:04:05.123456789Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 640,\n      \"height\": 480,\n      \"page_count\": 1,\n      \"x_restrict\": 1,\n      \"ai_type\": 2,\n      \"tools\": [\n        \"pen\",\n        \"brush\"\n      ],\n      \"cover\": {\n        \"resource\": {\n          \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpveUxDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0\"\n        },\n        \"variant\": \"original\",\n        \"width\": 640,\n        \"height\": 480\n      }\n    },\n    {\n      \"id\": 1,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\\u003cp\\u003efixture\\u003c/p\\u003e\",\n      \"kind\": \"illustration\",\n      \"raw_kind\": \"illust\",\n      \"tags\": [\n        {\n          \"name\": \"tag\",\n          \"translated_name\": \"訳\"\n        },\n        {\n          \"name\": \"untranslated\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 7,\n        \"name\": \"author\",\n        \"account\": \"fixture\",\n        \"comment\": \"profile\",\n        \"is_followed\": true,\n        \"profile_image\": {\n          \"resource\": {\n            \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9\"\n          },\n          \"variant\": \"medium\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2026-01-01T18:04:05.123456789Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 640,\n      \"height\": 480,\n      \"page_count\": 1,\n      \"x_restrict\": 0,\n      \"ai_type\": 2,\n      \"tools\": [\n        \"pen\",\n        \"brush\"\n      ],\n      \"cover\": {\n        \"resource\": {\n          \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpveExDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0\"\n        },\n        \"variant\": \"original\",\n        \"width\": 640,\n        \"height\": 480\n      }\n    },\n    {\n      \"id\": 2,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\\u003cp\\u003efixture\\u003c/p\\u003e\",\n      \"kind\": \"manga\",\n      \"raw_kind\": \"manga\",\n      \"tags\": [\n        {\n          \"name\": \"tag\",\n          \"translated_name\": \"訳\"\n        },\n        {\n          \"name\": \"untranslated\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 7,\n        \"name\": \"author\",\n        \"account\": \"fixture\",\n        \"comment\": \"profile\",\n        \"is_followed\": true,\n        \"profile_image\": {\n          \"resource\": {\n            \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9\"\n          },\n          \"variant\": \"medium\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2026-01-01T18:04:05.123456789Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 640,\n      \"height\": 480,\n      \"page_count\": 1,\n      \"x_restrict\": 1,\n      \"ai_type\": 2,\n      \"tools\": [\n        \"pen\",\n        \"brush\"\n      ],\n      \"cover\": {\n        \"resource\": {\n          \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpveUxDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0\"\n        },\n        \"variant\": \"original\",\n        \"width\": 640,\n        \"height\": 480\n      }\n    },\n    {\n      \"id\": 3,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\\u003cp\\u003efixture\\u003c/p\\u003e\",\n      \"kind\": \"ugoira\",\n      \"raw_kind\": \"ugoira\",\n      \"tags\": [\n        {\n          \"name\": \"tag\",\n          \"translated_name\": \"訳\"\n        },\n        {\n          \"name\": \"untranslated\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 7,\n        \"name\": \"author\",\n        \"account\": \"fixture\",\n        \"comment\": \"profile\",\n        \"is_followed\": true,\n        \"profile_image\": {\n          \"resource\": {\n            \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9\"\n          },\n          \"variant\": \"medium\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2026-01-01T18:04:05.123456789Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 640,\n      \"height\": 480,\n      \"page_count\": 1,\n      \"x_restrict\": 2,\n      \"ai_type\": 2,\n      \"tools\": [\n        \"pen\",\n        \"brush\"\n      ],\n      \"cover\": {\n        \"resource\": {\n          \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvekxDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0\"\n        },\n        \"variant\": \"original\",\n        \"width\": 640,\n        \"height\": 480\n      }\n    },\n    {\n      \"id\": 2,\n      \"title\": \"item-account-43\",\n      \"caption\": \"\\u003cp\\u003efixture\\u003c/p\\u003e\",\n      \"kind\": \"manga\",\n      \"raw_kind\": \"manga\",\n      \"tags\": [\n        {\n          \"name\": \"tag\",\n          \"translated_name\": \"訳\"\n        },\n        {\n          \"name\": \"untranslated\",\n          \"translated_name\": \"\"\n        }\n      ],\n      \"user\": {\n        \"id\": 7,\n        \"name\": \"author\",\n        \"account\": \"fixture\",\n        \"comment\": \"profile\",\n        \"is_followed\": true,\n        \"profile_image\": {\n          \"resource\": {\n            \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPamNzSW5BaU9pMHhMQ0oySWpvaWJXVmthWFZ0SW4wPSJ9\"\n          },\n          \"variant\": \"medium\",\n          \"width\": 0,\n          \"height\": 0\n        }\n      },\n      \"published_at\": \"2026-01-01T18:04:05.123456789Z\",\n      \"total_bookmarks\": 12,\n      \"total_views\": 34,\n      \"width\": 640,\n      \"height\": 480,\n      \"page_count\": 1,\n      \"x_restrict\": 1,\n      \"ai_type\": 2,\n      \"tools\": [\n        \"pen\",\n        \"brush\"\n      ],\n      \"cover\": {\n        \"resource\": {\n          \"ref\": \"eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpveUxDSndJam90TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0\"\n        },\n        \"variant\": \"original\",\n        \"width\": 640,\n        \"height\": 480\n      }\n    }\n  ]\n}\n",
+    "stderr": "",
+    "exit": 0
+  },
+  {
+    "scenario": "not_retryable",
+    "mode": "human",
+    "filter": "all",
+    "opens": [
+      42
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": ""
+      }
+    ],
+    "closes": 1,
+    "under_lease": false,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      },
+      {
+        "id": 43,
+        "revision": 1,
+        "frozen": false,
+        "selected": false
+      }
+    ],
+    "stdout": "",
+    "stderr": "error: pixiv:ArtworkSeries: credentials_expired\n",
+    "exit": 1
+  },
+  {
+    "scenario": "not_retryable",
+    "mode": "ndjson",
+    "filter": "all",
+    "opens": [
+      42
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": ""
+      }
+    ],
+    "closes": 1,
+    "under_lease": false,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      },
+      {
+        "id": 43,
+        "revision": 1,
+        "frozen": false,
+        "selected": false
+      }
+    ],
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"credentials_expired\",\"message\":\"pixiv:ArtworkSeries: credentials_expired\"}}\n",
+    "exit": 1
+  },
+  {
+    "scenario": "not_retryable",
+    "mode": "json",
+    "filter": "all",
+    "opens": [
+      42
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": ""
+      }
+    ],
+    "closes": 1,
+    "under_lease": false,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      },
+      {
+        "id": 43,
+        "revision": 1,
+        "frozen": false,
+        "selected": false
+      }
+    ],
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"credentials_expired\",\"message\":\"pixiv:ArtworkSeries: credentials_expired\"}}\n",
+    "exit": 1
+  },
+  {
+    "scenario": "all_rate_limited",
+    "mode": "human",
+    "filter": "all",
+    "opens": [
+      42,
+      43
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": ""
+      },
+      {
+        "id": 42,
+        "offset": ""
+      },
+      {
+        "id": 43,
+        "offset": ""
+      },
+      {
+        "id": 43,
+        "offset": ""
+      }
+    ],
+    "closes": 2,
+    "under_lease": false,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": true,
+        "selected": false
+      },
+      {
+        "id": 43,
+        "revision": 2,
+        "frozen": true,
+        "selected": true
+      }
+    ],
+    "stdout": "",
+    "stderr": "error: pixiv:account_pool: rate_limited: account_pool_all_frozen\n",
+    "exit": 1
+  },
+  {
+    "scenario": "all_rate_limited",
+    "mode": "ndjson",
+    "filter": "all",
+    "opens": [
+      42,
+      43
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": ""
+      },
+      {
+        "id": 42,
+        "offset": ""
+      },
+      {
+        "id": 43,
+        "offset": ""
+      },
+      {
+        "id": 43,
+        "offset": ""
+      }
+    ],
+    "closes": 2,
+    "under_lease": false,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": true,
+        "selected": false
+      },
+      {
+        "id": 43,
+        "revision": 2,
+        "frozen": true,
+        "selected": true
+      }
+    ],
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"rate_limited\",\"message\":\"pixiv:account_pool: rate_limited: account_pool_all_frozen\",\"retry_after_seconds\":120}}\n",
+    "exit": 1
+  },
+  {
+    "scenario": "all_rate_limited",
+    "mode": "json",
+    "filter": "all",
+    "opens": [
+      42,
+      43
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": ""
+      },
+      {
+        "id": 42,
+        "offset": ""
+      },
+      {
+        "id": 43,
+        "offset": ""
+      },
+      {
+        "id": 43,
+        "offset": ""
+      }
+    ],
+    "closes": 2,
+    "under_lease": false,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": true,
+        "selected": false
+      },
+      {
+        "id": 43,
+        "revision": 2,
+        "frozen": true,
+        "selected": true
+      }
+    ],
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"rate_limited\",\"message\":\"pixiv:account_pool: rate_limited: account_pool_all_frozen\",\"retry_after_seconds\":120}}\n",
+    "exit": 1
+  },
+  {
+    "scenario": "other",
+    "mode": "human",
+    "filter": "all",
+    "opens": [
+      42
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": ""
+      }
+    ],
+    "closes": 1,
+    "under_lease": true,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      },
+      {
+        "id": 43,
+        "revision": 1,
+        "frozen": false,
+        "selected": false
+      }
+    ],
+    "stdout": "",
+    "stderr": "error: fixture write failed\n",
+    "exit": 1
+  },
+  {
+    "scenario": "other",
+    "mode": "ndjson",
+    "filter": "all",
+    "opens": [
+      42
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": ""
+      }
+    ],
+    "closes": 1,
+    "under_lease": true,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      },
+      {
+        "id": 43,
+        "revision": 1,
+        "frozen": false,
+        "selected": false
+      }
+    ],
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"fixture write failed\"}}\n",
+    "exit": 1
+  },
+  {
+    "scenario": "other",
+    "mode": "json",
+    "filter": "all",
+    "opens": [
+      42
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": ""
+      },
+      {
+        "id": 42,
+        "offset": "9"
+      }
+    ],
+    "closes": 1,
+    "under_lease": false,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      },
+      {
+        "id": 43,
+        "revision": 1,
+        "frozen": false,
+        "selected": false
+      }
+    ],
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"fixture write failed\"}}\n",
+    "exit": 1
+  },
+  {
+    "scenario": "broken",
+    "mode": "human",
+    "filter": "all",
+    "opens": [
+      42
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": ""
+      }
+    ],
+    "closes": 1,
+    "under_lease": true,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      },
+      {
+        "id": 43,
+        "revision": 1,
+        "frozen": false,
+        "selected": false
+      }
+    ],
+    "stdout": "",
+    "stderr": "error: broken pipe\n",
+    "exit": 1
+  },
+  {
+    "scenario": "broken",
+    "mode": "ndjson",
+    "filter": "all",
+    "opens": [
+      42
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": ""
+      }
+    ],
+    "closes": 1,
+    "under_lease": true,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      },
+      {
+        "id": 43,
+        "revision": 1,
+        "frozen": false,
+        "selected": false
+      }
+    ],
+    "stdout": "",
+    "stderr": "",
+    "exit": 0
+  },
+  {
+    "scenario": "broken",
+    "mode": "json",
+    "filter": "all",
+    "opens": [
+      42
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": ""
+      },
+      {
+        "id": 42,
+        "offset": "9"
+      }
+    ],
+    "closes": 1,
+    "under_lease": false,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      },
+      {
+        "id": 43,
+        "revision": 1,
+        "frozen": false,
+        "selected": false
+      }
+    ],
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"broken pipe\"}}\n",
+    "exit": 1
+  },
+  {
+    "scenario": "short",
+    "mode": "human",
+    "filter": "all",
+    "opens": [
+      42
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": ""
+      }
+    ],
+    "closes": 1,
+    "under_lease": true,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      },
+      {
+        "id": 43,
+        "revision": 1,
+        "frozen": false,
+        "selected": false
+      }
+    ],
+    "stdout": "artworks i",
+    "stderr": "error: short write\n",
+    "exit": 1
+  },
+  {
+    "scenario": "short",
+    "mode": "ndjson",
+    "filter": "all",
+    "opens": [
+      42
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": ""
+      }
+    ],
+    "closes": 1,
+    "under_lease": true,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      },
+      {
+        "id": 43,
+        "revision": 1,
+        "frozen": false,
+        "selected": false
+      }
+    ],
+    "stdout": "{\"ai_type\"",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"short write\"}}\n",
+    "exit": 1
+  },
+  {
+    "scenario": "short",
+    "mode": "json",
+    "filter": "all",
+    "opens": [
+      42
+    ],
+    "requests": [
+      {
+        "id": 42,
+        "offset": ""
+      },
+      {
+        "id": 42,
+        "offset": "9"
+      }
+    ],
+    "closes": 1,
+    "under_lease": false,
+    "states": [
+      {
+        "id": 42,
+        "revision": 2,
+        "frozen": false,
+        "selected": true
+      },
+      {
+        "id": 43,
+        "revision": 1,
+        "frozen": false,
+        "selected": false
+      }
+    ],
+    "stdout": "{\n  \"illus",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"short write\"}}\n",
+    "exit": 1
+  }
+]

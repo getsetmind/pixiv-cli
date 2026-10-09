@@ -18,6 +18,11 @@ pub struct NovelSeriesOptions {
     #[arg(num_args=0..)]
     pub sources: Vec<String>,
 }
+enum Listing {
+    Novel(crate::novel_list::Listing),
+    Artwork(crate::artwork_list::Listing),
+}
+
 impl NovelSeriesOptions {
     pub fn resolve_source<R: std::io::Read>(
         &mut self,
@@ -43,7 +48,7 @@ impl NovelSeriesOptions {
         }
         Ok(())
     }
-    fn listing(&self) -> Result<crate::novel_list::Listing, CommandError> {
+    fn listing(&self) -> Result<Listing, CommandError> {
         self.validate_arguments()?;
         let entity = self
             .entity
@@ -77,17 +82,26 @@ impl NovelSeriesOptions {
             ..Default::default()
         }
         .plan()?;
-        if entity != "novel" {
-            return Err(CommandError::Message("artwork series is not implemented"));
+        if entity == "artwork" {
+            return Ok(Listing::Artwork(crate::artwork_list::Listing {
+                source: crate::artwork_list::Source::Series(
+                    pixiv_sdk::pixiv::ArtworkSeriesRequest {
+                        series_id: id,
+                        cursor: Cursor::default(),
+                    },
+                ),
+                heading: format!("artworks in series {id}"),
+                plan,
+            }));
         }
-        Ok(crate::novel_list::Listing {
+        Ok(Listing::Novel(crate::novel_list::Listing {
             source: crate::novel_list::Source::Series(pixiv_sdk::pixiv::NovelSeriesRequest {
                 series_id: id,
                 cursor: Cursor::default(),
             }),
             heading: String::new(),
             plan,
-        })
+        }))
     }
     pub fn validate(&self) -> Result<(), CommandError> {
         self.listing().map(|_| ())
@@ -119,9 +133,13 @@ pub async fn novel_series<T: Transport, W: Write>(
     mode: DetailOutput,
     out: &mut W,
 ) -> Result<(), CommandError> {
-    if let Some(mut spool) =
-        crate::novel_list::attempt(client, &options.listing()?, mode, out).await?
-    {
+    let spool = match options.listing()? {
+        Listing::Novel(listing) => crate::novel_list::attempt(client, &listing, mode, out).await?,
+        Listing::Artwork(listing) => {
+            crate::artwork_list::attempt(client, &listing, mode, out).await?
+        }
+    };
+    if let Some(mut spool) = spool {
         spool.commit(out)?;
     }
     Ok(())
@@ -134,5 +152,12 @@ pub async fn saved_novel_series<T: Transport + 'static, W: Write + Send + 'stati
     mode: DetailOutput,
     output: W,
 ) -> Result<(), CommandError> {
-    crate::novel_list::saved(execution, context, options.listing()?, proxy, mode, output).await
+    match options.listing()? {
+        Listing::Novel(listing) => {
+            crate::novel_list::saved(execution, context, listing, proxy, mode, output).await
+        }
+        Listing::Artwork(listing) => {
+            crate::artwork_list::saved(execution, context, listing, proxy, mode, output).await
+        }
+    }
 }

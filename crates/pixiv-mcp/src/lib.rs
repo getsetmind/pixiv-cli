@@ -192,3 +192,6 @@ mod novel_series;
 pub use novel_series::{NovelSeriesInput, novel_series, novel_series_tool};
 mod novel_content;
 pub use novel_content::{NovelContentInput, novel_content, novel_content_tool};
+
+mod illust_series;
+pub use illust_series::{IllustSeriesInput, illust_series, illust_series_tool};

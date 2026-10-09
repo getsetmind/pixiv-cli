@@ -1,17 +1,7 @@
 use crate::{CommandError, DetailOutput, json_spool::JsonSpool};
-use pixiv_app::{
-    execution::Execution, facade::UseOutcome, lifecycle::Context, scheduler::SchedulerError,
-};
-use pixiv_sdk::{
-    Client, cursor::Cursor, models::Artwork, pixiv::ArtworkRankingRequest, transport::Transport,
-};
-use std::{
-    io::Write,
-    sync::{
-        Arc, Mutex,
-        atomic::{AtomicBool, Ordering},
-    },
-};
+use pixiv_app::{execution::Execution, lifecycle::Context};
+use pixiv_sdk::{Client, cursor::Cursor, pixiv::ArtworkRankingRequest, transport::Transport};
+use std::io::Write;
 
 #[derive(clap::Args, Clone, Debug)]
 pub struct RankingOptions {
@@ -122,58 +112,28 @@ pub async fn saved_ranking<T: Transport + 'static, W: Write + Send + 'static>(
         .await;
     }
 
-    let output = Arc::new(Mutex::new(output));
-    let callback_output = output.clone();
-    let spool = Arc::new(Mutex::new(None));
-    let staged = spool.clone();
-    let terminal = Arc::new(Mutex::new(None));
-    let retained = terminal.clone();
-    let result = execution
-        .use_client(
-            Some(context),
-            0,
-            proxy,
-            Some(Arc::new(move |_, client| {
-                let options = options.clone();
-                let committed = Arc::new(AtomicBool::new(false));
-                let mut writer = crate::search::SearchWriter {
-                    output: callback_output.clone(),
-                    committed: committed.clone(),
-                };
-                let staged = staged.clone();
-                let retained = retained.clone();
-                Box::pin(async move {
-                    let error = match attempt(&client, &options, mode, &mut writer).await {
-                        Ok(value) => {
-                            *staged.lock().unwrap_or_else(|e| e.into_inner()) = value;
-                            None
-                        }
-                        Err(CommandError::Sdk(error)) => Some(SchedulerError::from(error)),
-                        Err(CommandError::App(error)) => Some(error),
-                        Err(error) => {
-                            let message = error.to_string();
-                            *retained.lock().unwrap_or_else(|e| e.into_inner()) = Some(error);
-                            Some(SchedulerError::Message(message))
-                        }
-                    };
-                    UseOutcome {
-                        committed: committed.load(Ordering::Acquire),
-                        error,
-                    }
-                })
-            })),
-        )
-        .await;
-    if let Some(error) = terminal.lock().unwrap_or_else(|e| e.into_inner()).take() {
-        return Err(error);
-    }
-    result?;
-    if let Some(mut spool) = spool.lock().unwrap_or_else(|e| e.into_inner()).take() {
-        spool.commit(&mut *output.lock().unwrap_or_else(|e| e.into_inner()))?;
-    }
-    Ok(())
+    crate::artwork_list::saved(
+        execution,
+        context,
+        artwork_listing(&options)?,
+        proxy,
+        mode,
+        output,
+    )
+    .await
 }
 
+fn artwork_listing(options: &RankingOptions) -> Result<crate::artwork_list::Listing, CommandError> {
+    Ok(crate::artwork_list::Listing {
+        source: crate::artwork_list::Source::Ranking(ArtworkRankingRequest {
+            mode: options.mode.clone(),
+            date: options.date.clone().unwrap_or_default(),
+            cursor: Cursor::default(),
+        }),
+        heading: format!("{} ranking", options.mode),
+        plan: options.plan()?,
+    })
+}
 async fn attempt<T: Transport, W: Write>(
     client: &Client<T>,
     options: &RankingOptions,
@@ -197,78 +157,5 @@ async fn attempt<T: Transport, W: Write>(
         )
         .await;
     }
-    let mut spool = if mode == DetailOutput::Json {
-        Some(JsonSpool::new()?)
-    } else {
-        None
-    };
-    let mut heading = false;
-    let mut position = plan.skip;
-    pixiv_app::pagination::traverse_pages(
-        pixiv_app::pagination::Plan {
-            skip: plan.skip as i64,
-            limit: plan.limit as i64,
-            one_batch: plan.one_batch,
-        },
-        Cursor::default(),
-        |cursor| {
-            let request = ArtworkRankingRequest {
-                mode: options.mode.clone(),
-                date: options.date.clone().unwrap_or_default(),
-                cursor,
-            };
-            async move {
-                let page = client
-                    .artwork_ranking(request)
-                    .await
-                    .map_err(CommandError::from)?;
-                Ok((page.items, page.next))
-            }
-        },
-        |_: &Artwork| Ok(true),
-        None::<fn(Cursor, usize) -> Result<Cursor, CommandError>>,
-        |items| {
-            if let Some(spool) = &mut spool {
-                return spool.append(&items);
-            }
-            if mode == DetailOutput::Ndjson {
-                return crate::search::present_search("", &items, mode, &mut false, out);
-            }
-            if !heading {
-                writeln!(out, "{} ranking", options.mode)?;
-                heading = true;
-            }
-            for item in &items {
-                position += 1;
-                writeln!(
-                    out,
-                    "#{position} https://www.pixiv.net/artworks/{}",
-                    item.id
-                )?;
-                let tags = item
-                    .tags
-                    .iter()
-                    .map(|tag| tag.name.as_str())
-                    .collect::<Vec<_>>()
-                    .join(",");
-                writeln!(
-                    out,
-                    "{} {} by {} bookmarks:{} views:{} tags:{}",
-                    item.id,
-                    crate::search::quote(&item.title),
-                    item.user.name,
-                    item.total_bookmarks,
-                    item.total_views,
-                    tags
-                )?;
-            }
-            Ok(())
-        },
-    )
-    .await
-    .map_err(|error| match error.cause {
-        pixiv_app::pagination::Cause::Source(error) => error,
-        pixiv_app::pagination::Cause::Message(message) => CommandError::MessageText(message),
-    })?;
-    Ok(spool)
+    crate::artwork_list::attempt(client, &artwork_listing(options)?, mode, out).await
 }

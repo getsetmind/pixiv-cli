@@ -1043,3 +1043,17 @@ CLI のシリーズ metadata は最初に取得したページから保持し、
 Linux amd64 の最終 scripts/check-rust.ps1 は終了0で、Formatter、workspace all-target Clippy、182 passed・0 failed・既存3 ignored、release build が成功した。Clippy build は約3秒、test build は約13秒、release build は約16秒で、最終全チェックは約115秒である。最初の全チェックは tool catalog の追加位置で既存 CLI の ordered-prefix 回帰テストが失敗した。旧14 tool の順序を保持して新2 tool を末尾へ追加し、必須チェック全体を再実行した。失敗ログと終了値は別に保存し、部分チェックを成功扱いにしていない。
 
 Go の CLI・series command・MCP・SDK・migration 台帳検査、関連 vet と gofmt は成功した。CLI 全体検査は、既知の cli.linux-amd64.json 不在による command surface 検査だけを除外し、この未検証を維持する。実装・契約取得・入口比較・独立レビュー・検証は約22分で、Go 本番コード・go.mod・go.sum は固定参照から変更していない。実 Pixiv 資格情報・ライブアクセスを使用せず、台帳の in_progress と最終切替条件を維持する。
+
+## 作品シリーズの SDK・CLI・MCP
+
+[artwork-series.json](../../crates/pixiv-sdk/tests/fixtures/artwork-series.json) は固定 Go の83ケースである。`/v1/illust/series` の `illust_series_id`、offset/last_order の continuation、global cursor binding、必須の series detail user、null/empty のリスト、DTO と要求を固定した。scalar cursor の正の s はこの操作では無視され、負数や混合 state は拒否される。両 continuation key を含む next_url を一方へ短縮しない。既存のランキング cursor helper を再利用し、作品一覧には detail の pages を追加しない。返された cover/profile の resource は記憶済み URL から取得でき、再取得を増やさない。
+
+[artwork-null-tags.json](../../crates/pixiv-sdk/tests/fixtures/artwork-null-tags.json) は detail/ranking/search の各5ケース、合計15ケースである。シリーズの固定契約で共有 decoder の null tag slot の差が見つかったため、Rust 変更前に既存3操作を追加で固定した。Go は null slot を空 tag として保持し、numeric tag/name は拒否する。Rust の共有 tag decode はこの動作だけを修正した。raw-wire 大小文字・重複・順序の修正へ範囲を広げていない。
+
+CLI は [cli-artwork-series.json](contracts/cli-artwork-series.json) の69出力/実起動、[cli-artwork-series-stdin.json](contracts/cli-artwork-series-stdin.json) の99入力、[cli-artwork-series-pool.json](contracts/cli-artwork-series-pool.json) の21 pool/writer ケースを比較する。69ケースには21成功、19非空成功出力が含まれ、成功 fixture が意図した必須 metadata と要求回数を持つことも Go 側で確認する。series --type artwork は既存の作品 ranking list engine を共有し、novel の入口と処理を保持する。human/NDJSON は出力後に replay せず、JSON は出力前の失敗で初期 cursor から再取得し、account lease 解放後に commit する。CLI は重複を保持する。valid JSON/NDJSON の比較は object entry 順だけを正規化し、scalar の escape/数値表記、配列順、whitespace と改行を保存する。不完全な writer 出力は byte 単位で比較する。pool の JSON stderr は構造比較であり、rate-limit の retry_after_seconds は実 SQLite 処理中の経過時間と保存 deadline から上下限を検証する。この診断の全字句表記は未検証である。
+
+MCP は [mcp-artwork-series.json](contracts/mcp-artwork-series.json) の34ケースと [mcp-artwork-series-pool.json](contracts/mcp-artwork-series-pool.json) の2 account pool シナリオで schema・直接呼出し・stdio・保存済み account を比較する。kind+ID の重複を論理 pagination 前に除き、再試行では全取得結果を破棄する。失敗 envelope の pagination は Go と同じ初期状態へ戻る。既存16 tool の順序と schema を保ち、illust_series を17番目へ追加した。
+
+Linux amd64 の最終 scripts/check-rust.ps1 は終了0で、Formatter、workspace all-target Clippy、193 passed・0 failed・既存3 ignored、release build が成功した。Clippy build は約6秒、test build は約25秒、release build は約18秒で、全チェックは約170秒だった。Go の SDK・MCP・CLI・series command・migration 台帳テスト、関連 vet と gofmt は成功した。CLI 全体検査では既知の cli.linux-amd64.json 不在の公開面検査だけを除外し、未検証として残した。補助チェックの初回には存在しない series package path を指定して失敗したが、実在する internal/cli/commands/pixiv/series に訂正して関連チェック全体を再実行した。失敗と成功の終了値を別に保存した。
+
+独立レビューと字句を保持する比較の追加確認を行い、Go 本番コード・go.mod・go.sum は固定参照から変更していない。実装・契約取得・入口比較・検証は約18分で、実 Pixiv 資格情報・ライブアクセスを使用していない。作品・小説の Value decode の raw-wire 差分、共有 root parser の3差分、Linux 公開面 snapshot、全 flag/help/TTY・通信/Options・取消/deadline/disconnect・実 HTTPS/resource、他 OS/arch は未検証である。台帳は in_progress を維持し、全体移植の完了や最終切替とは扱わない。

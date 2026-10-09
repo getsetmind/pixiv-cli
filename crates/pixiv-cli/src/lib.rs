@@ -1,3 +1,4 @@
+mod artwork_list;
 mod json_spool;
 pub mod mutation;
 mod novel_list;
