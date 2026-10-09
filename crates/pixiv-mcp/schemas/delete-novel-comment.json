@@ -1,0 +1,50 @@
+{
+  "description": "Delete a Pixiv novel comment by comment ID.",
+  "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "comment_id": {
+        "description": "Positive Pixiv comment ID.",
+        "minimum": 1,
+        "type": "integer"
+      }
+    },
+    "required": [
+      "comment_id"
+    ],
+    "type": "object"
+  },
+  "name": "delete_novel_comment",
+  "outputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "action": {
+        "type": "string"
+      },
+      "comment_id": {
+        "type": "integer"
+      },
+      "illust_id": {
+        "type": "integer"
+      },
+      "novel_id": {
+        "type": "integer"
+      },
+      "success": {
+        "type": "boolean"
+      },
+      "text": {
+        "type": "string"
+      },
+      "user_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "success",
+      "action",
+      "text"
+    ],
+    "type": "object"
+  }
+}

@@ -54,3 +54,6 @@ pub use dto::{CommentAccessControlDto, CommentDto, CommentPageDto, StampDto};
 pub use dto::{to_comment_access_control_dto, to_comment_dto, to_comment_page_dto, to_stamp_dto};
 pub use models::{Comment, CommentAccessControl, CommentPage, Stamp};
 pub use stamps::StampsRequest;
+
+mod comment_mutations;
+pub use comment_mutations::*;

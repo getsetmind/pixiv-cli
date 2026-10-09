@@ -1,6 +1,6 @@
 use serde_json::Value;
 
-const IMPLEMENTED_NAMES: [&str; 43] = [
+const IMPLEMENTED_NAMES: [&str; 51] = [
     "illust_detail",
     "search_illust",
     "trending_tags_illust",
@@ -44,6 +44,14 @@ const IMPLEMENTED_NAMES: [&str; 43] = [
     "mypixiv_users",
     "illust_comments",
     "novel_comments",
+    "create_artwork_comment",
+    "reply_artwork_comment",
+    "delete_artwork_comment",
+    "stamp_artwork_comment",
+    "create_novel_comment",
+    "reply_novel_comment",
+    "delete_novel_comment",
+    "stamp_novel_comment",
 ];
 
 pub fn assert_catalog(tools: &[Value]) {

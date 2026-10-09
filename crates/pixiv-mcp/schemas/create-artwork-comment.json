@@ -1,0 +1,56 @@
+{
+  "description": "Create a top-level comment on a Pixiv artwork.",
+  "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "comment": {
+        "description": "Non-empty comment body.",
+        "minLength": 1,
+        "type": "string"
+      },
+      "illust_id": {
+        "description": "Positive Pixiv artwork ID.",
+        "minimum": 1,
+        "type": "integer"
+      }
+    },
+    "required": [
+      "illust_id",
+      "comment"
+    ],
+    "type": "object"
+  },
+  "name": "create_artwork_comment",
+  "outputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "action": {
+        "type": "string"
+      },
+      "comment_id": {
+        "type": "integer"
+      },
+      "illust_id": {
+        "type": "integer"
+      },
+      "novel_id": {
+        "type": "integer"
+      },
+      "success": {
+        "type": "boolean"
+      },
+      "text": {
+        "type": "string"
+      },
+      "user_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "success",
+      "action",
+      "text"
+    ],
+    "type": "object"
+  }
+}

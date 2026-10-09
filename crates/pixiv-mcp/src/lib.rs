@@ -235,3 +235,8 @@ mod comment_reads;
 pub use comment_reads::{
     CommentRead, CommentReadInput, CommentReadOutput, comment_read, comment_read_tool,
 };
+
+mod comment_mutations;
+pub use comment_mutations::{
+    CommentMutation, CommentMutationInput, comment_mutation, comment_mutation_tool,
+};

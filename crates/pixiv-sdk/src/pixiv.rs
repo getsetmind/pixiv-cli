@@ -34,6 +34,7 @@ use tokio::{sync::Mutex, time::Instant};
 pub struct Client<T = HttpTransport> {
     transport: T,
     access_token: String,
+    accept_language: String,
     expires_at: Option<DateTime<Utc>>,
     interval: Duration,
     last_request: Mutex<Option<Instant>>,
@@ -68,6 +69,7 @@ impl<T: Transport> Client<T> {
         Self {
             transport,
             access_token: access_token.trim().to_owned(),
+            accept_language: String::new(),
             expires_at: None,
             interval: Duration::ZERO,
             last_request: Mutex::new(None),
@@ -92,6 +94,11 @@ impl<T: Transport> Client<T> {
 
     pub fn username(&self) -> &str {
         &self.username
+    }
+
+    pub fn with_accept_language(mut self, language: impl AsRef<str>) -> Self {
+        self.accept_language = language.as_ref().trim().to_owned();
+        self
     }
 
     pub fn with_pacing(mut self, interval: Duration) -> Self {
@@ -120,6 +127,9 @@ impl<T: Transport> Client<T> {
             return Err(Error::new(Reason::CredentialsExpired, operation));
         }
         let mut headers = headers(Some(&self.access_token));
+        if !self.accept_language.is_empty() {
+            headers.push(("Accept-Language".into(), self.accept_language.clone()));
+        }
         if self.user_id > 0 {
             headers.push(("X-User-Id".into(), self.user_id.to_string()));
         }
@@ -191,22 +201,23 @@ impl<T: Transport> Client<T> {
         parameters: Vec<(String, String)>,
         operation: &'static str,
     ) -> Result<()> {
-        if self.access_token.is_empty() {
-            return Err(Error::new(Reason::Unauthorized, operation));
-        }
-        if self.expires_at.is_some_and(|expiry| expiry <= Utc::now()) {
-            return Err(Error::new(Reason::CredentialsExpired, operation));
-        }
-        let request = Request {
-            method: Method::POST,
-            url: format!("https://app-api.pixiv.net{path}"),
-            headers: headers(Some(&self.access_token)),
-            parameters,
-            operation,
-        };
+        let mut request = self.content_request(path, parameters, operation)?;
+        request.method = Method::POST;
         self.pace().await;
         checked(self.transport.post_form(request).await?, operation)?;
         Ok(())
+    }
+
+    pub(crate) async fn post_form_json(
+        &self,
+        path: &str,
+        parameters: Vec<(String, String)>,
+        operation: &'static str,
+    ) -> Result<Vec<u8>> {
+        let mut request = self.content_request(path, parameters, operation)?;
+        request.method = Method::POST;
+        self.pace().await;
+        crate::transport::checked_json(self.transport.send_json(request).await?, operation)
     }
 
     pub async fn artwork(&self, id: i64) -> Result<Artwork> {
@@ -519,3 +530,5 @@ pub use crate::timeline::{
 
 pub use crate::comments::{ArtworkCommentsRequest, NovelCommentsRequest};
 pub use crate::stamps::StampsRequest;
+
+pub use crate::comment_mutations::*;

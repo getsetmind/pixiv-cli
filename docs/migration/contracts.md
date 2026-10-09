@@ -1327,3 +1327,27 @@ Go broad SDK/comment command・CLI migration40.551秒・MCP104.916秒とvet/gofm
 full Rust scriptは最初のFormatter差分で停止し、cargo fmt適用後の再実行はFormatter/Clippy通過・workspace test compilation中に、予期しないexternal telemetryの送信審査で拒否された。元の部分logには終了sentinelがなく、成功とは数えない。ユーザーの明示承認後、Microsoft公式のPOWERSHELL_TELEMETRY_OPTOUT=1をpwsh起動前に設定し、Cargo offline・既存network restriction・同じscripts/check-rust.ps1の全stageを維持して再実行した。終了sentinel0、263秒、Formatter/Clippy・workspace272passed/0failed/既存3ignored・release34.54秒を確認した。元の拒否/部分logと承認後のfresh log/終了sentinelを別に保存する。
 
 残る全wire/UTF8/precision/depth、other DTO時刻、URL normalization、root parser/Linux snapshot・全scalar/flag/help/TTY/OS hooks、全通信/header/Options/auth/取消/deadline/concurrency/disconnect、実HTTPS/resource、他OS/archと配布信頼を維持する。scoped比較・review成功でwhole migrationの完了や最終切替を宣言しない。
+
+## Comment・stamp mutation の SDK・CLI・MCP
+
+固定Goに実在するpost/reply/delete/stamp ×artwork/novelの8 SDK操作、CLI `comment create|reply|delete|stamp` の4leaf、同じ8 MCP toolを接続する。成功IDはupstream responseだけを返し、後続readbackから推測しない。既存read/list/resourceと旧43toolを維持し、8toolを末尾へ追加して51全metadataを独立Go基準と比較する。実アカウントへのwriteは行わず、全fixtureは合成transport/SQLite/local HTTPを使用する。
+
+SDK [136 targeted行](contracts/comment-mutations.json)はvalidation順target→body→parent、target→stamp、空文字だけのbody拒否とwhitespace維持、stamp_id/parent_comment_id分離、deleteのcomment_id-only formを固定する。mutation responseは既存ordered decoderのoperation-specific schemaで両known fieldをunusedでも検査する。nonnull top-level comment_idがnested comment.idより優先し、0/negativeでもfallbackせずmalformedとなる。duplicate pointer object merge/null clear・casefold・型/順序を対象例で比較する。全schema/UTF8/precision/depthへの外挿はしない。
+
+共有POSTは既存content_requestを再利用し、Goで先に固定したverified positive X-User-Idとtrimmed Accept-LanguageをGET/POSTへ反映する。空/token-only identityと空/whitespace languageのabsenceを保持し、OAuth/resource headerは変更しない。add/reply/stampの429 Retry-Afterを保持するJSON transportと、deleteのheader adviceを捨てるform transportを区別し、requestは1回だけとなる。Go401/403のsession refresh replayは既存共有authの未検証範囲として保持する。local HTTP例はcontent-type/form encoding・decoded値とduplicate response bytesの保持を確認し、実HTTPS/account operationの証明とは扱わない。
+
+CLI [146行](contracts/cli-comment-mutations.json)のうち140行はfull output/input/request/commitをexact比較する。6 isolated Cobra unknown-flag行はparser拒否・read/wire/output/commitなしだけを検査し、standalone rendererのexact診断は未検証として固定期待値を保持する。actual Go root childのunknown-optionは別rendererでexit2となるため、[46 startup行](contracts/cli-comment-mutations-startup.json)のexact executable stdout/stderr/exitと混同しない。expected messageを変換して合格にはしない。
+
+CLI mutationはhuman/jsonのみでlistingのNDJSONを継承しない。対応Pixiv URLを独自に受け付けず、single Writeの成功short count・writer error/partial prefixを維持する。parent/stamp数値flagはGo pflagのbase0/overflow/syntaxを既存timeline parserと共通化し、crate-private共有だけを追加する。hex/octal/malformed/forbidden cross-fieldとconfig/auth/DB順をstartupで固定する。root grammar・他family全flag/help/TTY/hookは未検証のまま保持する。
+
+[22 real CLI pool行](contracts/cli-comment-mutations-pool.json)と[8 real MCP pool行](contracts/mcp-comment-mutations-pool.json)は2account・SQLite/Facade/Schedulerでwriteの境界を固定する。全mutationはerrorでもcommittedとなる共有不変条件を維持する。realpoolの対象429例ではsecond accountへreplayしないことを観測する。refresh revisionは保存され、選択account42を保持しaccount43のstateは変更しない。CLI writer error後もlease解放/active0とoutputのlease外実行を比較する。MCP429後の別read probeでgate再利用を確認する。単なるcallback boolだけをpoolの証明と数えない。
+
+MCP [99 direct/saved行](contracts/mcp-comment-mutations.json)は8 schema/envelope/form/guardを比較する。deleteは失敗時もinput comment_idを保持するが、create/reply/stampはSDK成功後のreturned IDだけを出力する。parent/stamp/user IDをpayloadに推測追加しない。large returned ID9007199254740993のstructured wrapperはGo float64丸めを維持し、SDK整数結果とは区別する。既存tool全metadata/dispatch/cancel/panic経路を保存し、8入口を追加する。
+
+fixture6filesは457行・305,470 bytesで、451 exact比較行と6 rejection-only行を区別する。SDK header/retry/local HTTPの別testはfixture row件数へ加えない。common form/decoder、timeline parser、CLI output/account/pool/test helper、MCP schema/output/write machineryを再利用し、無意味な全直積を作らない。行数をdistinct behavior数・移植率と扱わない。
+
+SDK全97test、CLI focused3test（main0.29秒・pool0.05秒・startup0.95秒）、MCP focusedとstdio9test（main0.25秒・pool0.04秒・stdio0.08秒）が成功した。Go SDK/両endpoint/appapiとvet、CLI broad migration38.155秒とvetが成功した。CLIの既存Linux snapshot不在1testを除外する。MCP broadは既存bookmark複数違反のfirst diagnostic選択で93.399秒後に失敗し、独立再観測も別rowで選択が変わった。固定期待値と失敗logを維持し、既存3 opt-inでのscoped rerunは123.639秒・終了0となり、別結果として記録する。strict全Go passとは扱わない。
+
+full Rust gateはunused追加DTOを除いた後のtrailing blankのFormatter差分で一度停止し、cargo fmt適用後に同じscripts/check-rust.ps1を再実行した。POWERSHELL_TELEMETRY_OPTOUT=1をpwsh起動前に設定し、Cargo offlineと既存network restrictionを維持した。終了sentinel0、331秒、Formatter/Clippy・workspace280passed/0failed/既存3ignored・release36.00秒の完了を確認した。元Formatter失敗logと終了1を別に保持する。
+
+read checkpoint時点のmutation未実装という記録は、この新しい比較範囲で更新する。残るwire/UTF8/precision/depth、other DTO時刻/URL normalization、6standalone renderer/root parser/Linux snapshot、全flag/help/TTY/OS、Options/auth/TLS/取消/deadline/concurrency/disconnect、実HTTPS/resource、他OS/arch・配布信頼は保持し、whole migration完了や最終切替を宣言しない。

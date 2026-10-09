@@ -670,6 +670,14 @@ async fn stdio_publishes_implemented_tool_metadata_and_preserves_request_ids() {
             pixiv_mcp::my_pixiv_tool(pixiv_mcp::MyPixiv::Users),
             pixiv_mcp::comment_read_tool(pixiv_mcp::CommentRead::Artwork),
             pixiv_mcp::comment_read_tool(pixiv_mcp::CommentRead::Novel),
+            pixiv_mcp::comment_mutation_tool(pixiv_mcp::CommentMutation::CreateArtwork),
+            pixiv_mcp::comment_mutation_tool(pixiv_mcp::CommentMutation::ReplyArtwork),
+            pixiv_mcp::comment_mutation_tool(pixiv_mcp::CommentMutation::DeleteArtwork),
+            pixiv_mcp::comment_mutation_tool(pixiv_mcp::CommentMutation::StampArtwork),
+            pixiv_mcp::comment_mutation_tool(pixiv_mcp::CommentMutation::CreateNovel),
+            pixiv_mcp::comment_mutation_tool(pixiv_mcp::CommentMutation::ReplyNovel),
+            pixiv_mcp::comment_mutation_tool(pixiv_mcp::CommentMutation::DeleteNovel),
+            pixiv_mcp::comment_mutation_tool(pixiv_mcp::CommentMutation::StampNovel),
         ])
     );
     implemented_catalog::assert_catalog(responses[1]["result"]["tools"].as_array().unwrap());

@@ -288,3 +288,8 @@ pub struct Stamp {
     pub id: i64,
     pub image: ImageResource,
 }
+
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
+pub struct CommentMutationResult {
+    pub comment_id: i64,
+}

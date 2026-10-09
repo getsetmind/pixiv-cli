@@ -1,0 +1,60 @@
+{
+  "description": "Add a stamp comment to a Pixiv artwork.",
+  "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "comment": {
+        "description": "Optional comment body; empty is the sticker-only wire form.",
+        "type": "string"
+      },
+      "illust_id": {
+        "description": "Positive Pixiv artwork ID.",
+        "minimum": 1,
+        "type": "integer"
+      },
+      "stamp_id": {
+        "description": "Positive Pixiv stamp ID.",
+        "minimum": 1,
+        "type": "integer"
+      }
+    },
+    "required": [
+      "illust_id",
+      "stamp_id"
+    ],
+    "type": "object"
+  },
+  "name": "stamp_artwork_comment",
+  "outputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "action": {
+        "type": "string"
+      },
+      "comment_id": {
+        "type": "integer"
+      },
+      "illust_id": {
+        "type": "integer"
+      },
+      "novel_id": {
+        "type": "integer"
+      },
+      "success": {
+        "type": "boolean"
+      },
+      "text": {
+        "type": "string"
+      },
+      "user_id": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "success",
+      "action",
+      "text"
+    ],
+    "type": "object"
+  }
+}

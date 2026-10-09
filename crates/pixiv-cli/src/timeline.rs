@@ -200,7 +200,7 @@ pub async fn saved_timeline<T: Transport + 'static, W: Write + Send + 'static>(
     }
 }
 
-fn timeline_integer(value: &str) -> Result<i64, String> {
+pub(crate) fn timeline_integer(value: &str) -> Result<i64, String> {
     let (negative, unsigned) = if let Some(value) = value.strip_prefix('-') {
         (true, value)
     } else {
@@ -256,7 +256,7 @@ fn timeline_integer(value: &str) -> Result<i64, String> {
         magnitude as i64
     })
 }
-fn timeline_boolean(value: &str) -> Result<bool, String> {
+pub(crate) fn timeline_boolean(value: &str) -> Result<bool, String> {
     match value {
         "1" | "t" | "T" | "true" | "TRUE" | "True" => Ok(true),
         "0" | "f" | "F" | "false" | "FALSE" | "False" => Ok(false),

@@ -1,0 +1,3122 @@
+[
+  {
+    "name": "PostArtworkComment:wire",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "日本語 \u0026+\n",
+    "parent_id": 6,
+    "stamp_id": 9,
+    "status": 200,
+    "body": "{\"comment_id\":71,\"comment\":{\"id\":72}}",
+    "comment_id": 71,
+    "error": null,
+    "requests": [
+      "POST /v1/illust/comment/add comment=%E6%97%A5%E6%9C%AC%E8%AA%9E+%26%2B%0A\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:invalid-target",
+    "operation": "PostArtworkComment",
+    "id": 0,
+    "comment": "",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":71}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostArtworkComment",
+      "Reason": "invalid_argument",
+      "Detail": "artwork ID must be positive",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": []
+  },
+  {
+    "name": "PostArtworkComment:negative-target",
+    "operation": "PostArtworkComment",
+    "id": -1,
+    "comment": "valid",
+    "parent_id": 6,
+    "stamp_id": 9,
+    "status": 200,
+    "body": "{\"comment_id\":71}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostArtworkComment",
+      "Reason": "invalid_argument",
+      "Detail": "artwork ID must be positive",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": []
+  },
+  {
+    "name": "PostArtworkComment:empty-before-parent",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "",
+    "parent_id": 0,
+    "stamp_id": 9,
+    "status": 200,
+    "body": "{\"comment_id\":71}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostArtworkComment",
+      "Reason": "invalid_argument",
+      "Detail": "comment body must not be empty",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": []
+  },
+  {
+    "name": "PostArtworkComment:whitespace",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": " \t\n",
+    "parent_id": 6,
+    "stamp_id": 9,
+    "status": 201,
+    "body": "{\"comment\":{\"id\":73}}",
+    "comment_id": 73,
+    "error": null,
+    "requests": [
+      "POST /v1/illust/comment/add comment=+%09%0A\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "ReplyArtworkComment:wire",
+    "operation": "ReplyArtworkComment",
+    "id": 42,
+    "comment": "日本語 \u0026+\n",
+    "parent_id": 6,
+    "stamp_id": 9,
+    "status": 200,
+    "body": "{\"comment_id\":71,\"comment\":{\"id\":72}}",
+    "comment_id": 71,
+    "error": null,
+    "requests": [
+      "POST /v1/illust/comment/add comment=%E6%97%A5%E6%9C%AC%E8%AA%9E+%26%2B%0A\u0026illust_id=42\u0026parent_comment_id=6"
+    ]
+  },
+  {
+    "name": "ReplyArtworkComment:invalid-target",
+    "operation": "ReplyArtworkComment",
+    "id": 0,
+    "comment": "",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":71}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "ReplyArtworkComment",
+      "Reason": "invalid_argument",
+      "Detail": "artwork ID must be positive",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": []
+  },
+  {
+    "name": "ReplyArtworkComment:negative-target",
+    "operation": "ReplyArtworkComment",
+    "id": -1,
+    "comment": "valid",
+    "parent_id": 6,
+    "stamp_id": 9,
+    "status": 200,
+    "body": "{\"comment_id\":71}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "ReplyArtworkComment",
+      "Reason": "invalid_argument",
+      "Detail": "artwork ID must be positive",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": []
+  },
+  {
+    "name": "ReplyArtworkComment:empty-before-parent",
+    "operation": "ReplyArtworkComment",
+    "id": 42,
+    "comment": "",
+    "parent_id": 0,
+    "stamp_id": 9,
+    "status": 200,
+    "body": "{\"comment_id\":71}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "ReplyArtworkComment",
+      "Reason": "invalid_argument",
+      "Detail": "comment body must not be empty",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": []
+  },
+  {
+    "name": "ReplyArtworkComment:whitespace",
+    "operation": "ReplyArtworkComment",
+    "id": 42,
+    "comment": " \t\n",
+    "parent_id": 6,
+    "stamp_id": 9,
+    "status": 201,
+    "body": "{\"comment\":{\"id\":73}}",
+    "comment_id": 73,
+    "error": null,
+    "requests": [
+      "POST /v1/illust/comment/add comment=+%09%0A\u0026illust_id=42\u0026parent_comment_id=6"
+    ]
+  },
+  {
+    "name": "ReplyArtworkComment:invalid-parent",
+    "operation": "ReplyArtworkComment",
+    "id": 42,
+    "comment": "valid",
+    "parent_id": 0,
+    "stamp_id": 9,
+    "status": 200,
+    "body": "{\"comment_id\":71}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "ReplyArtworkComment",
+      "Reason": "invalid_argument",
+      "Detail": "parent comment ID must be positive",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": []
+  },
+  {
+    "name": "StampArtworkComment:wire",
+    "operation": "StampArtworkComment",
+    "id": 42,
+    "comment": "日本語 \u0026+\n",
+    "parent_id": 6,
+    "stamp_id": 9,
+    "status": 200,
+    "body": "{\"comment_id\":71,\"comment\":{\"id\":72}}",
+    "comment_id": 71,
+    "error": null,
+    "requests": [
+      "POST /v1/illust/comment/add comment=%E6%97%A5%E6%9C%AC%E8%AA%9E+%26%2B%0A\u0026illust_id=42\u0026stamp_id=9"
+    ]
+  },
+  {
+    "name": "StampArtworkComment:invalid-target",
+    "operation": "StampArtworkComment",
+    "id": 0,
+    "comment": "",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":71}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "StampArtworkComment",
+      "Reason": "invalid_argument",
+      "Detail": "artwork ID must be positive",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": []
+  },
+  {
+    "name": "StampArtworkComment:negative-target",
+    "operation": "StampArtworkComment",
+    "id": -1,
+    "comment": "valid",
+    "parent_id": 6,
+    "stamp_id": 9,
+    "status": 200,
+    "body": "{\"comment_id\":71}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "StampArtworkComment",
+      "Reason": "invalid_argument",
+      "Detail": "artwork ID must be positive",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": []
+  },
+  {
+    "name": "StampArtworkComment:empty-sticker",
+    "operation": "StampArtworkComment",
+    "id": 42,
+    "comment": "",
+    "parent_id": 6,
+    "stamp_id": 9,
+    "status": 200,
+    "body": "{\"comment\":{\"id\":74}}",
+    "comment_id": 74,
+    "error": null,
+    "requests": [
+      "POST /v1/illust/comment/add comment=\u0026illust_id=42\u0026stamp_id=9"
+    ]
+  },
+  {
+    "name": "StampArtworkComment:invalid-stamp",
+    "operation": "StampArtworkComment",
+    "id": 42,
+    "comment": "",
+    "parent_id": 6,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":71}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "StampArtworkComment",
+      "Reason": "invalid_argument",
+      "Detail": "stamp ID must be positive",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": []
+  },
+  {
+    "name": "DeleteArtworkComment:wire",
+    "operation": "DeleteArtworkComment",
+    "id": 42,
+    "comment": "日本語 \u0026+\n",
+    "parent_id": 6,
+    "stamp_id": 9,
+    "status": 200,
+    "body": "{\"comment_id\":71,\"comment\":{\"id\":72}}",
+    "comment_id": 0,
+    "error": null,
+    "requests": [
+      "POST /v1/illust/comment/delete comment_id=42"
+    ]
+  },
+  {
+    "name": "DeleteArtworkComment:invalid-target",
+    "operation": "DeleteArtworkComment",
+    "id": 0,
+    "comment": "",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":71}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "DeleteArtworkComment",
+      "Reason": "invalid_argument",
+      "Detail": "comment ID must be positive",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": []
+  },
+  {
+    "name": "DeleteArtworkComment:negative-target",
+    "operation": "DeleteArtworkComment",
+    "id": -1,
+    "comment": "valid",
+    "parent_id": 6,
+    "stamp_id": 9,
+    "status": 200,
+    "body": "{\"comment_id\":71}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "DeleteArtworkComment",
+      "Reason": "invalid_argument",
+      "Detail": "comment ID must be positive",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": []
+  },
+  {
+    "name": "DeleteArtworkComment:ignored:",
+    "operation": "DeleteArtworkComment",
+    "id": 42,
+    "comment": "",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 204,
+    "body": "",
+    "comment_id": 0,
+    "error": null,
+    "requests": [
+      "POST /v1/illust/comment/delete comment_id=42"
+    ]
+  },
+  {
+    "name": "DeleteArtworkComment:ignored:not JSON",
+    "operation": "DeleteArtworkComment",
+    "id": 42,
+    "comment": "",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 204,
+    "body": "not JSON",
+    "comment_id": 0,
+    "error": null,
+    "requests": [
+      "POST /v1/illust/comment/delete comment_id=42"
+    ]
+  },
+  {
+    "name": "DeleteArtworkComment:ignored:{\"error\":true}",
+    "operation": "DeleteArtworkComment",
+    "id": 42,
+    "comment": "",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 204,
+    "body": "{\"error\":true}",
+    "comment_id": 0,
+    "error": null,
+    "requests": [
+      "POST /v1/illust/comment/delete comment_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:wire",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "日本語 \u0026+\n",
+    "parent_id": 6,
+    "stamp_id": 9,
+    "status": 200,
+    "body": "{\"comment_id\":71,\"comment\":{\"id\":72}}",
+    "comment_id": 71,
+    "error": null,
+    "requests": [
+      "POST /v1/novel/comment/add comment=%E6%97%A5%E6%9C%AC%E8%AA%9E+%26%2B%0A\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:invalid-target",
+    "operation": "PostNovelComment",
+    "id": 0,
+    "comment": "",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":71}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostNovelComment",
+      "Reason": "invalid_argument",
+      "Detail": "novel ID must be positive",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": []
+  },
+  {
+    "name": "PostNovelComment:negative-target",
+    "operation": "PostNovelComment",
+    "id": -1,
+    "comment": "valid",
+    "parent_id": 6,
+    "stamp_id": 9,
+    "status": 200,
+    "body": "{\"comment_id\":71}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostNovelComment",
+      "Reason": "invalid_argument",
+      "Detail": "novel ID must be positive",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": []
+  },
+  {
+    "name": "PostNovelComment:empty-before-parent",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "",
+    "parent_id": 0,
+    "stamp_id": 9,
+    "status": 200,
+    "body": "{\"comment_id\":71}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostNovelComment",
+      "Reason": "invalid_argument",
+      "Detail": "comment body must not be empty",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": []
+  },
+  {
+    "name": "PostNovelComment:whitespace",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": " \t\n",
+    "parent_id": 6,
+    "stamp_id": 9,
+    "status": 201,
+    "body": "{\"comment\":{\"id\":73}}",
+    "comment_id": 73,
+    "error": null,
+    "requests": [
+      "POST /v1/novel/comment/add comment=+%09%0A\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "ReplyNovelComment:wire",
+    "operation": "ReplyNovelComment",
+    "id": 42,
+    "comment": "日本語 \u0026+\n",
+    "parent_id": 6,
+    "stamp_id": 9,
+    "status": 200,
+    "body": "{\"comment_id\":71,\"comment\":{\"id\":72}}",
+    "comment_id": 71,
+    "error": null,
+    "requests": [
+      "POST /v1/novel/comment/add comment=%E6%97%A5%E6%9C%AC%E8%AA%9E+%26%2B%0A\u0026novel_id=42\u0026parent_comment_id=6"
+    ]
+  },
+  {
+    "name": "ReplyNovelComment:invalid-target",
+    "operation": "ReplyNovelComment",
+    "id": 0,
+    "comment": "",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":71}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "ReplyNovelComment",
+      "Reason": "invalid_argument",
+      "Detail": "novel ID must be positive",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": []
+  },
+  {
+    "name": "ReplyNovelComment:negative-target",
+    "operation": "ReplyNovelComment",
+    "id": -1,
+    "comment": "valid",
+    "parent_id": 6,
+    "stamp_id": 9,
+    "status": 200,
+    "body": "{\"comment_id\":71}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "ReplyNovelComment",
+      "Reason": "invalid_argument",
+      "Detail": "novel ID must be positive",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": []
+  },
+  {
+    "name": "ReplyNovelComment:empty-before-parent",
+    "operation": "ReplyNovelComment",
+    "id": 42,
+    "comment": "",
+    "parent_id": 0,
+    "stamp_id": 9,
+    "status": 200,
+    "body": "{\"comment_id\":71}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "ReplyNovelComment",
+      "Reason": "invalid_argument",
+      "Detail": "comment body must not be empty",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": []
+  },
+  {
+    "name": "ReplyNovelComment:whitespace",
+    "operation": "ReplyNovelComment",
+    "id": 42,
+    "comment": " \t\n",
+    "parent_id": 6,
+    "stamp_id": 9,
+    "status": 201,
+    "body": "{\"comment\":{\"id\":73}}",
+    "comment_id": 73,
+    "error": null,
+    "requests": [
+      "POST /v1/novel/comment/add comment=+%09%0A\u0026novel_id=42\u0026parent_comment_id=6"
+    ]
+  },
+  {
+    "name": "ReplyNovelComment:invalid-parent",
+    "operation": "ReplyNovelComment",
+    "id": 42,
+    "comment": "valid",
+    "parent_id": 0,
+    "stamp_id": 9,
+    "status": 200,
+    "body": "{\"comment_id\":71}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "ReplyNovelComment",
+      "Reason": "invalid_argument",
+      "Detail": "parent comment ID must be positive",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": []
+  },
+  {
+    "name": "StampNovelComment:wire",
+    "operation": "StampNovelComment",
+    "id": 42,
+    "comment": "日本語 \u0026+\n",
+    "parent_id": 6,
+    "stamp_id": 9,
+    "status": 200,
+    "body": "{\"comment_id\":71,\"comment\":{\"id\":72}}",
+    "comment_id": 71,
+    "error": null,
+    "requests": [
+      "POST /v1/novel/comment/add comment=%E6%97%A5%E6%9C%AC%E8%AA%9E+%26%2B%0A\u0026novel_id=42\u0026stamp_id=9"
+    ]
+  },
+  {
+    "name": "StampNovelComment:invalid-target",
+    "operation": "StampNovelComment",
+    "id": 0,
+    "comment": "",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":71}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "StampNovelComment",
+      "Reason": "invalid_argument",
+      "Detail": "novel ID must be positive",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": []
+  },
+  {
+    "name": "StampNovelComment:negative-target",
+    "operation": "StampNovelComment",
+    "id": -1,
+    "comment": "valid",
+    "parent_id": 6,
+    "stamp_id": 9,
+    "status": 200,
+    "body": "{\"comment_id\":71}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "StampNovelComment",
+      "Reason": "invalid_argument",
+      "Detail": "novel ID must be positive",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": []
+  },
+  {
+    "name": "StampNovelComment:empty-sticker",
+    "operation": "StampNovelComment",
+    "id": 42,
+    "comment": "",
+    "parent_id": 6,
+    "stamp_id": 9,
+    "status": 200,
+    "body": "{\"comment\":{\"id\":74}}",
+    "comment_id": 74,
+    "error": null,
+    "requests": [
+      "POST /v1/novel/comment/add comment=\u0026novel_id=42\u0026stamp_id=9"
+    ]
+  },
+  {
+    "name": "StampNovelComment:invalid-stamp",
+    "operation": "StampNovelComment",
+    "id": 42,
+    "comment": "",
+    "parent_id": 6,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":71}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "StampNovelComment",
+      "Reason": "invalid_argument",
+      "Detail": "stamp ID must be positive",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": []
+  },
+  {
+    "name": "DeleteNovelComment:wire",
+    "operation": "DeleteNovelComment",
+    "id": 42,
+    "comment": "日本語 \u0026+\n",
+    "parent_id": 6,
+    "stamp_id": 9,
+    "status": 200,
+    "body": "{\"comment_id\":71,\"comment\":{\"id\":72}}",
+    "comment_id": 0,
+    "error": null,
+    "requests": [
+      "POST /v1/novel/comment/delete comment_id=42"
+    ]
+  },
+  {
+    "name": "DeleteNovelComment:invalid-target",
+    "operation": "DeleteNovelComment",
+    "id": 0,
+    "comment": "",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":71}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "DeleteNovelComment",
+      "Reason": "invalid_argument",
+      "Detail": "comment ID must be positive",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": []
+  },
+  {
+    "name": "DeleteNovelComment:negative-target",
+    "operation": "DeleteNovelComment",
+    "id": -1,
+    "comment": "valid",
+    "parent_id": 6,
+    "stamp_id": 9,
+    "status": 200,
+    "body": "{\"comment_id\":71}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "DeleteNovelComment",
+      "Reason": "invalid_argument",
+      "Detail": "comment ID must be positive",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": []
+  },
+  {
+    "name": "DeleteNovelComment:ignored:",
+    "operation": "DeleteNovelComment",
+    "id": 42,
+    "comment": "",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 204,
+    "body": "",
+    "comment_id": 0,
+    "error": null,
+    "requests": [
+      "POST /v1/novel/comment/delete comment_id=42"
+    ]
+  },
+  {
+    "name": "DeleteNovelComment:ignored:not JSON",
+    "operation": "DeleteNovelComment",
+    "id": 42,
+    "comment": "",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 204,
+    "body": "not JSON",
+    "comment_id": 0,
+    "error": null,
+    "requests": [
+      "POST /v1/novel/comment/delete comment_id=42"
+    ]
+  },
+  {
+    "name": "DeleteNovelComment:ignored:{\"error\":true}",
+    "operation": "DeleteNovelComment",
+    "id": 42,
+    "comment": "",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 204,
+    "body": "{\"error\":true}",
+    "comment_id": 0,
+    "error": null,
+    "requests": [
+      "POST /v1/novel/comment/delete comment_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:decode:{\"comment_id\":75}",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":75}",
+    "comment_id": 75,
+    "error": null,
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:decode:{\"comment\":{\"id\":76}}",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment\":{\"id\":76}}",
+    "comment_id": 76,
+    "error": null,
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:decode:{\"comment_id\":null,\"comment\":{\"id\":77}}",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":null,\"comment\":{\"id\":77}}",
+    "comment_id": 77,
+    "error": null,
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:decode:{\"comment_id\":0,\"comment\":{\"id\":78}}",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":0,\"comment\":{\"id\":78}}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostArtworkComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:decode:{\"comment_id\":-1,\"comment\":{\"id\":78}}",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":-1,\"comment\":{\"id\":78}}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostArtworkComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:decode:{}",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostArtworkComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:decode:null",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "null",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostArtworkComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:decode:[]",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "[]",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostArtworkComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:decode:",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostArtworkComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:decode:not JSON",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "not JSON",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostArtworkComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:decode:{\"comment_id\":79}{}",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":79}{}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostArtworkComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:decode:{\"comment_id\":\"79\",\"comment\":{\"id\":80}}",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":\"79\",\"comment\":{\"id\":80}}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostArtworkComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:decode:{\"comment_id\":79,\"comment\":{\"id\":\"80\"}}",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":79,\"comment\":{\"id\":\"80\"}}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostArtworkComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:decode:{\"comment_id\":79,\"comment\":false}",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":79,\"comment\":false}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostArtworkComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:decode:{\"comment_id\":79,\"unknown\":1e999}",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":79,\"unknown\":1e999}",
+    "comment_id": 79,
+    "error": null,
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:decode:{\"comment_id\":9223372036854775807}",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":9223372036854775807}",
+    "comment_id": 9223372036854775807,
+    "error": null,
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:decode:{\"comment_id\":9223372036854775808}",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":9223372036854775808}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostArtworkComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:decode:{\"comment_id\":79.0}",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":79.0}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostArtworkComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:decode:{\"comment_id\":79e0}",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":79e0}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostArtworkComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:decode:{\"comment_id\":79,\"COMMENT_ID\":80}",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":79,\"COMMENT_ID\":80}",
+    "comment_id": 80,
+    "error": null,
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:decode:{\"COMMENT_ID\":79,\"comment_id\":null,\"comment\":{\"id\":80}}",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"COMMENT_ID\":79,\"comment_id\":null,\"comment\":{\"id\":80}}",
+    "comment_id": 80,
+    "error": null,
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:decode:{\"comment\":{\"id\":81},\"COMMENT\":{\"unknown\":0}}",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment\":{\"id\":81},\"COMMENT\":{\"unknown\":0}}",
+    "comment_id": 81,
+    "error": null,
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:decode:{\"comment\":{\"id\":81},\"comment\":null}",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment\":{\"id\":81},\"comment\":null}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostArtworkComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:decode:{\"comment\":{\"id\":81},\"comment\":{\"id\":null}}",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment\":{\"id\":81},\"comment\":{\"id\":null}}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostArtworkComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:decode:{\"comment\":{\"id\":81},\"comment\":{\"id\":82}}",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment\":{\"id\":81},\"comment\":{\"id\":82}}",
+    "comment_id": 82,
+    "error": null,
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:decode:{\"comment_id\":\"bad\",\"comment_id\":83}",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":\"bad\",\"comment_id\":83}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostArtworkComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:status:",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 299,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 84,
+    "error": null,
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:status:Multiple Choices",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 300,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostArtworkComment",
+      "Reason": "upstream_error",
+      "Detail": "",
+      "HTTPStatus": 300,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:status:Bad Request",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 400,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostArtworkComment",
+      "Reason": "invalid_argument",
+      "Detail": "",
+      "HTTPStatus": 400,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:status:Unauthorized",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 401,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostArtworkComment",
+      "Reason": "credentials_expired",
+      "Detail": "",
+      "HTTPStatus": 401,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:status:Forbidden",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 403,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostArtworkComment",
+      "Reason": "forbidden",
+      "Detail": "",
+      "HTTPStatus": 403,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:status:Not Found",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 404,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostArtworkComment",
+      "Reason": "not_found",
+      "Detail": "",
+      "HTTPStatus": 404,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:status:Gone",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 410,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostArtworkComment",
+      "Reason": "content_unavailable",
+      "Detail": "",
+      "HTTPStatus": 410,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:status:Too Many Requests",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 429,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostArtworkComment",
+      "Reason": "rate_limited",
+      "Detail": "",
+      "HTTPStatus": 429,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:status:Internal Server Error",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 500,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostArtworkComment",
+      "Reason": "upstream_error",
+      "Detail": "",
+      "HTTPStatus": 500,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "PostArtworkComment:status:Service Unavailable",
+    "operation": "PostArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 503,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostArtworkComment",
+      "Reason": "upstream_error",
+      "Detail": "",
+      "HTTPStatus": 503,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/add comment=body\u0026illust_id=42"
+    ]
+  },
+  {
+    "name": "DeleteArtworkComment:status:",
+    "operation": "DeleteArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 299,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": null,
+    "requests": [
+      "POST /v1/illust/comment/delete comment_id=42"
+    ]
+  },
+  {
+    "name": "DeleteArtworkComment:status:Multiple Choices",
+    "operation": "DeleteArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 300,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "DeleteArtworkComment",
+      "Reason": "upstream_error",
+      "Detail": "",
+      "HTTPStatus": 300,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/delete comment_id=42"
+    ]
+  },
+  {
+    "name": "DeleteArtworkComment:status:Bad Request",
+    "operation": "DeleteArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 400,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "DeleteArtworkComment",
+      "Reason": "invalid_argument",
+      "Detail": "",
+      "HTTPStatus": 400,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/delete comment_id=42"
+    ]
+  },
+  {
+    "name": "DeleteArtworkComment:status:Unauthorized",
+    "operation": "DeleteArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 401,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "DeleteArtworkComment",
+      "Reason": "credentials_expired",
+      "Detail": "",
+      "HTTPStatus": 401,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/delete comment_id=42"
+    ]
+  },
+  {
+    "name": "DeleteArtworkComment:status:Forbidden",
+    "operation": "DeleteArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 403,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "DeleteArtworkComment",
+      "Reason": "forbidden",
+      "Detail": "",
+      "HTTPStatus": 403,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/delete comment_id=42"
+    ]
+  },
+  {
+    "name": "DeleteArtworkComment:status:Not Found",
+    "operation": "DeleteArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 404,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "DeleteArtworkComment",
+      "Reason": "not_found",
+      "Detail": "",
+      "HTTPStatus": 404,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/delete comment_id=42"
+    ]
+  },
+  {
+    "name": "DeleteArtworkComment:status:Gone",
+    "operation": "DeleteArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 410,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "DeleteArtworkComment",
+      "Reason": "content_unavailable",
+      "Detail": "",
+      "HTTPStatus": 410,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/delete comment_id=42"
+    ]
+  },
+  {
+    "name": "DeleteArtworkComment:status:Too Many Requests",
+    "operation": "DeleteArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 429,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "DeleteArtworkComment",
+      "Reason": "rate_limited",
+      "Detail": "",
+      "HTTPStatus": 429,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/delete comment_id=42"
+    ]
+  },
+  {
+    "name": "DeleteArtworkComment:status:Internal Server Error",
+    "operation": "DeleteArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 500,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "DeleteArtworkComment",
+      "Reason": "upstream_error",
+      "Detail": "",
+      "HTTPStatus": 500,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/delete comment_id=42"
+    ]
+  },
+  {
+    "name": "DeleteArtworkComment:status:Service Unavailable",
+    "operation": "DeleteArtworkComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 503,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "DeleteArtworkComment",
+      "Reason": "upstream_error",
+      "Detail": "",
+      "HTTPStatus": 503,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/illust/comment/delete comment_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:decode:{\"comment_id\":75}",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":75}",
+    "comment_id": 75,
+    "error": null,
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:decode:{\"comment\":{\"id\":76}}",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment\":{\"id\":76}}",
+    "comment_id": 76,
+    "error": null,
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:decode:{\"comment_id\":null,\"comment\":{\"id\":77}}",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":null,\"comment\":{\"id\":77}}",
+    "comment_id": 77,
+    "error": null,
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:decode:{\"comment_id\":0,\"comment\":{\"id\":78}}",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":0,\"comment\":{\"id\":78}}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostNovelComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:decode:{\"comment_id\":-1,\"comment\":{\"id\":78}}",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":-1,\"comment\":{\"id\":78}}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostNovelComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:decode:{}",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostNovelComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:decode:null",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "null",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostNovelComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:decode:[]",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "[]",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostNovelComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:decode:",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostNovelComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:decode:not JSON",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "not JSON",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostNovelComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:decode:{\"comment_id\":79}{}",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":79}{}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostNovelComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:decode:{\"comment_id\":\"79\",\"comment\":{\"id\":80}}",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":\"79\",\"comment\":{\"id\":80}}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostNovelComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:decode:{\"comment_id\":79,\"comment\":{\"id\":\"80\"}}",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":79,\"comment\":{\"id\":\"80\"}}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostNovelComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:decode:{\"comment_id\":79,\"comment\":false}",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":79,\"comment\":false}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostNovelComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:decode:{\"comment_id\":79,\"unknown\":1e999}",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":79,\"unknown\":1e999}",
+    "comment_id": 79,
+    "error": null,
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:decode:{\"comment_id\":9223372036854775807}",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":9223372036854775807}",
+    "comment_id": 9223372036854775807,
+    "error": null,
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:decode:{\"comment_id\":9223372036854775808}",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":9223372036854775808}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostNovelComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:decode:{\"comment_id\":79.0}",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":79.0}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostNovelComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:decode:{\"comment_id\":79e0}",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":79e0}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostNovelComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:decode:{\"comment_id\":79,\"COMMENT_ID\":80}",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":79,\"COMMENT_ID\":80}",
+    "comment_id": 80,
+    "error": null,
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:decode:{\"COMMENT_ID\":79,\"comment_id\":null,\"comment\":{\"id\":80}}",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"COMMENT_ID\":79,\"comment_id\":null,\"comment\":{\"id\":80}}",
+    "comment_id": 80,
+    "error": null,
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:decode:{\"comment\":{\"id\":81},\"COMMENT\":{\"unknown\":0}}",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment\":{\"id\":81},\"COMMENT\":{\"unknown\":0}}",
+    "comment_id": 81,
+    "error": null,
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:decode:{\"comment\":{\"id\":81},\"comment\":null}",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment\":{\"id\":81},\"comment\":null}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostNovelComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:decode:{\"comment\":{\"id\":81},\"comment\":{\"id\":null}}",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment\":{\"id\":81},\"comment\":{\"id\":null}}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostNovelComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:decode:{\"comment\":{\"id\":81},\"comment\":{\"id\":82}}",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment\":{\"id\":81},\"comment\":{\"id\":82}}",
+    "comment_id": 82,
+    "error": null,
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:decode:{\"comment_id\":\"bad\",\"comment_id\":83}",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 200,
+    "body": "{\"comment_id\":\"bad\",\"comment_id\":83}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostNovelComment",
+      "Reason": "malformed_upstream_response",
+      "Detail": "",
+      "HTTPStatus": 0,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:status:",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 299,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 84,
+    "error": null,
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:status:Multiple Choices",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 300,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostNovelComment",
+      "Reason": "upstream_error",
+      "Detail": "",
+      "HTTPStatus": 300,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:status:Bad Request",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 400,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostNovelComment",
+      "Reason": "invalid_argument",
+      "Detail": "",
+      "HTTPStatus": 400,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:status:Unauthorized",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 401,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostNovelComment",
+      "Reason": "credentials_expired",
+      "Detail": "",
+      "HTTPStatus": 401,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:status:Forbidden",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 403,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostNovelComment",
+      "Reason": "forbidden",
+      "Detail": "",
+      "HTTPStatus": 403,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:status:Not Found",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 404,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostNovelComment",
+      "Reason": "not_found",
+      "Detail": "",
+      "HTTPStatus": 404,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:status:Gone",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 410,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostNovelComment",
+      "Reason": "content_unavailable",
+      "Detail": "",
+      "HTTPStatus": 410,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:status:Too Many Requests",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 429,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostNovelComment",
+      "Reason": "rate_limited",
+      "Detail": "",
+      "HTTPStatus": 429,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:status:Internal Server Error",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 500,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostNovelComment",
+      "Reason": "upstream_error",
+      "Detail": "",
+      "HTTPStatus": 500,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "PostNovelComment:status:Service Unavailable",
+    "operation": "PostNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 503,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "PostNovelComment",
+      "Reason": "upstream_error",
+      "Detail": "",
+      "HTTPStatus": 503,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/add comment=body\u0026novel_id=42"
+    ]
+  },
+  {
+    "name": "DeleteNovelComment:status:",
+    "operation": "DeleteNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 299,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": null,
+    "requests": [
+      "POST /v1/novel/comment/delete comment_id=42"
+    ]
+  },
+  {
+    "name": "DeleteNovelComment:status:Multiple Choices",
+    "operation": "DeleteNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 300,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "DeleteNovelComment",
+      "Reason": "upstream_error",
+      "Detail": "",
+      "HTTPStatus": 300,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/delete comment_id=42"
+    ]
+  },
+  {
+    "name": "DeleteNovelComment:status:Bad Request",
+    "operation": "DeleteNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 400,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "DeleteNovelComment",
+      "Reason": "invalid_argument",
+      "Detail": "",
+      "HTTPStatus": 400,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/delete comment_id=42"
+    ]
+  },
+  {
+    "name": "DeleteNovelComment:status:Unauthorized",
+    "operation": "DeleteNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 401,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "DeleteNovelComment",
+      "Reason": "credentials_expired",
+      "Detail": "",
+      "HTTPStatus": 401,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/delete comment_id=42"
+    ]
+  },
+  {
+    "name": "DeleteNovelComment:status:Forbidden",
+    "operation": "DeleteNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 403,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "DeleteNovelComment",
+      "Reason": "forbidden",
+      "Detail": "",
+      "HTTPStatus": 403,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/delete comment_id=42"
+    ]
+  },
+  {
+    "name": "DeleteNovelComment:status:Not Found",
+    "operation": "DeleteNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 404,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "DeleteNovelComment",
+      "Reason": "not_found",
+      "Detail": "",
+      "HTTPStatus": 404,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/delete comment_id=42"
+    ]
+  },
+  {
+    "name": "DeleteNovelComment:status:Gone",
+    "operation": "DeleteNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 410,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "DeleteNovelComment",
+      "Reason": "content_unavailable",
+      "Detail": "",
+      "HTTPStatus": 410,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/delete comment_id=42"
+    ]
+  },
+  {
+    "name": "DeleteNovelComment:status:Too Many Requests",
+    "operation": "DeleteNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 429,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "DeleteNovelComment",
+      "Reason": "rate_limited",
+      "Detail": "",
+      "HTTPStatus": 429,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/delete comment_id=42"
+    ]
+  },
+  {
+    "name": "DeleteNovelComment:status:Internal Server Error",
+    "operation": "DeleteNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 500,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "DeleteNovelComment",
+      "Reason": "upstream_error",
+      "Detail": "",
+      "HTTPStatus": 500,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/delete comment_id=42"
+    ]
+  },
+  {
+    "name": "DeleteNovelComment:status:Service Unavailable",
+    "operation": "DeleteNovelComment",
+    "id": 42,
+    "comment": "body",
+    "parent_id": 0,
+    "stamp_id": 0,
+    "status": 503,
+    "body": "{\"comment_id\":84}",
+    "comment_id": 0,
+    "error": {
+      "Product": "pixiv",
+      "Operation": "DeleteNovelComment",
+      "Reason": "upstream_error",
+      "Detail": "",
+      "HTTPStatus": 503,
+      "Transport": "",
+      "Retry": {
+        "Safe": false,
+        "After": "0001-01-01T00:00:00Z",
+        "HasAfter": false
+      }
+    },
+    "requests": [
+      "POST /v1/novel/comment/delete comment_id=42"
+    ]
+  }
+]

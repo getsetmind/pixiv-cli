@@ -190,6 +190,8 @@ enum TimelineCommand {
 
 #[derive(Subcommand)]
 enum CommentCommand {
+    #[command(flatten)]
+    Mutation(pixiv_cli_rs::comment_mutations::CommentMutation),
     #[command(args_override_self = true)]
     Stamps {
         #[command(flatten)]
@@ -314,6 +316,13 @@ async fn main() {
                 Some("timeline" | "mypixiv")
             ) {
                 pixiv_cli_rs::timeline::argument_error(&error)
+            } else if std::env::args().nth(1).as_deref() == Some("comment")
+                && matches!(
+                    std::env::args().nth(2).as_deref(),
+                    Some("create" | "delete" | "reply" | "stamp")
+                )
+            {
+                pixiv_cli_rs::comment_mutations::argument_error(&error)
             } else if mutation_route {
                 pixiv_cli_rs::mutation::argument_error(&error)
             } else {
@@ -372,6 +381,7 @@ async fn main() {
         Command::Comment {
             options, command, ..
         } => match command {
+            Some(CommentCommand::Mutation(action)) => action.input().json.is_some(),
             Some(CommentCommand::Stamps { options, .. }) => {
                 options.json.is_some() || options.ndjson
             }
@@ -434,6 +444,7 @@ async fn main() {
         Command::Comment {
             options, command, ..
         } => match command {
+            Some(CommentCommand::Mutation(_)) => false,
             Some(CommentCommand::Stamps { options, .. }) => {
                 options.ndjson || (options.json.is_none() && !io::stdout().is_terminal())
             }
@@ -526,6 +537,9 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
     } = &mut args.command
     {
         match command {
+            Some(CommentCommand::Mutation(action)) => {
+                action.resolve_source(&mut io::stdin().lock(), io::stdin().is_terminal())?
+            }
             Some(CommentCommand::Stamps { options, .. }) => options.validate_arguments()?,
             None => options.resolve_source(&mut io::stdin().lock(), io::stdin().is_terminal())?,
         }
@@ -823,8 +837,36 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
     } = &args.command
     {
         let (directory, config) = account_config.expect("comment startup was resolved");
+        if let Some(CommentCommand::Mutation(action)) = command {
+            action.validate()?;
+            action.proxy_override()?;
+            let json = action.input().json.unwrap_or(
+                config
+                    .current()
+                    .and_then(|snapshot| snapshot.runtime())
+                    .map_err(pixiv_app::scheduler::SchedulerError::from)?
+                    .output_json,
+            );
+            *ndjson_output = false;
+            let database = pixiv_app::database::Database::open(&directory)
+                .map_err(|error| CommandError::State(Box::new(error)))?;
+            let execution = pixiv_app::execution::Execution::http(
+                config,
+                std::sync::Arc::new(std::sync::Mutex::new(database)),
+            );
+            return pixiv_cli_rs::comment_mutations::saved_mutation(
+                &execution,
+                &pixiv_app::lifecycle::Context::new(),
+                action.clone(),
+                json,
+                &mut io::stdout(),
+            )
+            .await;
+        }
+
         let (json, ndjson) = match command {
             Some(CommentCommand::Stamps { options, .. }) => (options.json, options.ndjson),
+            Some(CommentCommand::Mutation(_)) => unreachable!("mutation was handled"),
             None => (options.listing.json, options.listing.ndjson),
         };
         if command.is_none() {
@@ -832,6 +874,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
         }
         let connection = match command {
             Some(CommentCommand::Stamps { connection, .. }) => connection,
+            Some(CommentCommand::Mutation(_)) => unreachable!("mutation was handled"),
             None => connection,
         };
         let proxy = connection.override_value()?;
@@ -848,6 +891,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
             Some(CommentCommand::Stamps { options, .. }) => {
                 options.output_mode(configured, io::stdout().is_terminal())?
             }
+            Some(CommentCommand::Mutation(_)) => unreachable!("mutation was handled"),
             None => options.output_mode(configured, io::stdout().is_terminal())?,
         };
         *ndjson_output = ndjson || (json.is_none() && !configured && !io::stdout().is_terminal());
@@ -869,6 +913,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
                 )
                 .await
             }
+            Some(CommentCommand::Mutation(_)) => unreachable!("mutation was handled"),
             None => {
                 pixiv_cli_rs::comment_reads::saved_comments(
                     &execution,

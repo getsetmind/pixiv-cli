@@ -1,0 +1,2544 @@
+{
+  "tools": {
+    "create_artwork_comment": {
+      "description": "Create a top-level comment on a Pixiv artwork.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "comment": {
+            "description": "Non-empty comment body.",
+            "minLength": 1,
+            "type": "string"
+          },
+          "illust_id": {
+            "description": "Positive Pixiv artwork ID.",
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "illust_id",
+          "comment"
+        ],
+        "type": "object"
+      },
+      "name": "create_artwork_comment",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "comment_id": {
+            "type": "integer"
+          },
+          "illust_id": {
+            "type": "integer"
+          },
+          "novel_id": {
+            "type": "integer"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "text": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "success",
+          "action",
+          "text"
+        ],
+        "type": "object"
+      }
+    },
+    "create_novel_comment": {
+      "description": "Create a top-level comment on a Pixiv novel.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "comment": {
+            "description": "Non-empty comment body.",
+            "minLength": 1,
+            "type": "string"
+          },
+          "novel_id": {
+            "description": "Positive Pixiv novel ID.",
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "novel_id",
+          "comment"
+        ],
+        "type": "object"
+      },
+      "name": "create_novel_comment",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "comment_id": {
+            "type": "integer"
+          },
+          "illust_id": {
+            "type": "integer"
+          },
+          "novel_id": {
+            "type": "integer"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "text": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "success",
+          "action",
+          "text"
+        ],
+        "type": "object"
+      }
+    },
+    "delete_artwork_comment": {
+      "description": "Delete a Pixiv artwork comment by comment ID.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "comment_id": {
+            "description": "Positive Pixiv comment ID.",
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "comment_id"
+        ],
+        "type": "object"
+      },
+      "name": "delete_artwork_comment",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "comment_id": {
+            "type": "integer"
+          },
+          "illust_id": {
+            "type": "integer"
+          },
+          "novel_id": {
+            "type": "integer"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "text": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "success",
+          "action",
+          "text"
+        ],
+        "type": "object"
+      }
+    },
+    "delete_novel_comment": {
+      "description": "Delete a Pixiv novel comment by comment ID.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "comment_id": {
+            "description": "Positive Pixiv comment ID.",
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "comment_id"
+        ],
+        "type": "object"
+      },
+      "name": "delete_novel_comment",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "comment_id": {
+            "type": "integer"
+          },
+          "illust_id": {
+            "type": "integer"
+          },
+          "novel_id": {
+            "type": "integer"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "text": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "success",
+          "action",
+          "text"
+        ],
+        "type": "object"
+      }
+    },
+    "reply_artwork_comment": {
+      "description": "Reply to a comment on a Pixiv artwork.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "comment": {
+            "description": "Non-empty comment body.",
+            "minLength": 1,
+            "type": "string"
+          },
+          "illust_id": {
+            "description": "Positive Pixiv artwork ID.",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "parent_comment_id": {
+            "description": "Positive parent comment ID.",
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "illust_id",
+          "comment",
+          "parent_comment_id"
+        ],
+        "type": "object"
+      },
+      "name": "reply_artwork_comment",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "comment_id": {
+            "type": "integer"
+          },
+          "illust_id": {
+            "type": "integer"
+          },
+          "novel_id": {
+            "type": "integer"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "text": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "success",
+          "action",
+          "text"
+        ],
+        "type": "object"
+      }
+    },
+    "reply_novel_comment": {
+      "description": "Reply to a comment on a Pixiv novel.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "comment": {
+            "description": "Non-empty comment body.",
+            "minLength": 1,
+            "type": "string"
+          },
+          "novel_id": {
+            "description": "Positive Pixiv novel ID.",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "parent_comment_id": {
+            "description": "Positive parent comment ID.",
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "novel_id",
+          "comment",
+          "parent_comment_id"
+        ],
+        "type": "object"
+      },
+      "name": "reply_novel_comment",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "comment_id": {
+            "type": "integer"
+          },
+          "illust_id": {
+            "type": "integer"
+          },
+          "novel_id": {
+            "type": "integer"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "text": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "success",
+          "action",
+          "text"
+        ],
+        "type": "object"
+      }
+    },
+    "stamp_artwork_comment": {
+      "description": "Add a stamp comment to a Pixiv artwork.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "comment": {
+            "description": "Optional comment body; empty is the sticker-only wire form.",
+            "type": "string"
+          },
+          "illust_id": {
+            "description": "Positive Pixiv artwork ID.",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "stamp_id": {
+            "description": "Positive Pixiv stamp ID.",
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "illust_id",
+          "stamp_id"
+        ],
+        "type": "object"
+      },
+      "name": "stamp_artwork_comment",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "comment_id": {
+            "type": "integer"
+          },
+          "illust_id": {
+            "type": "integer"
+          },
+          "novel_id": {
+            "type": "integer"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "text": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "success",
+          "action",
+          "text"
+        ],
+        "type": "object"
+      }
+    },
+    "stamp_novel_comment": {
+      "description": "Add a stamp comment to a Pixiv novel.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "comment": {
+            "description": "Optional comment body; empty is the sticker-only wire form.",
+            "type": "string"
+          },
+          "novel_id": {
+            "description": "Positive Pixiv novel ID.",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "stamp_id": {
+            "description": "Positive Pixiv stamp ID.",
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "novel_id",
+          "stamp_id"
+        ],
+        "type": "object"
+      },
+      "name": "stamp_novel_comment",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "comment_id": {
+            "type": "integer"
+          },
+          "illust_id": {
+            "type": "integer"
+          },
+          "novel_id": {
+            "type": "integer"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "text": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "success",
+          "action",
+          "text"
+        ],
+        "type": "object"
+      }
+    }
+  },
+  "cases": [
+    {
+      "name": "create_artwork_comment:success",
+      "tool": "create_artwork_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "illust_id": 42
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Created comment on artwork 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "create_artwork_comment",
+          "comment_id": 63,
+          "illust_id": 42,
+          "success": true,
+          "text": "Created comment on artwork 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/comment/add comment=+%E6%97%A5%E6%9C%AC%E8%AA%9E+%26%2B%0A+\u0026illust_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "create_artwork_comment:large-returned-id",
+      "tool": "create_artwork_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "illust_id": 42
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":9007199254740993}}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Created comment on artwork 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "create_artwork_comment",
+          "comment_id": 9007199254740992,
+          "illust_id": 42,
+          "success": true,
+          "text": "Created comment on artwork 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/comment/add comment=+%E6%97%A5%E6%9C%AC%E8%AA%9E+%26%2B%0A+\u0026illust_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "create_artwork_comment:invalid-id",
+      "tool": "create_artwork_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "illust_id": 0
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/illust_id: minimum: 0/1 is less than 1.000000"
+    },
+    {
+      "name": "create_artwork_comment:invalid-id",
+      "tool": "create_artwork_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "illust_id": "42"
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/illust_id: type: 42 has type \"string\", want \"integer\""
+    },
+    {
+      "name": "create_artwork_comment:invalid-id",
+      "tool": "create_artwork_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "illust_id": null
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/illust_id: type: \u003cinvalid reflect.Value\u003e has type \"null\", want \"integer\""
+    },
+    {
+      "name": "create_artwork_comment:invalid-id",
+      "tool": "create_artwork_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "illust_id": 1.5
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/illust_id: type: 1.5 has type \"number\", want \"integer\""
+    },
+    {
+      "name": "create_artwork_comment:missing-id",
+      "tool": "create_artwork_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n "
+      },
+      "status": 200,
+      "body": "{}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: required: missing properties: [\"illust_id\"]"
+    },
+    {
+      "name": "create_artwork_comment:extra",
+      "tool": "create_artwork_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "extra": true,
+        "illust_id": 42
+      },
+      "status": 200,
+      "body": "{}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: unexpected additional properties [\"extra\"]"
+    },
+    {
+      "name": "create_artwork_comment:empty-comment",
+      "tool": "create_artwork_comment",
+      "arguments": {
+        "comment": "",
+        "illust_id": 42
+      },
+      "status": 200,
+      "body": "{}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/comment: minLength: \"\" contains 0 Unicode code points, fewer than 1"
+    },
+    {
+      "name": "create_artwork_comment:blank-comment",
+      "tool": "create_artwork_comment",
+      "arguments": {
+        "comment": " ",
+        "illust_id": 42
+      },
+      "status": 200,
+      "body": "{}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:PostArtworkComment: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "action": "create_artwork_comment",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:PostArtworkComment: malformed_upstream_response"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/comment/add comment=+\u0026illust_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "create_artwork_comment:missing-returned-id",
+      "tool": "create_artwork_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "illust_id": 42
+      },
+      "status": 200,
+      "body": "{\"comment\":{}}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:PostArtworkComment: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "action": "create_artwork_comment",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:PostArtworkComment: malformed_upstream_response"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/comment/add comment=+%E6%97%A5%E6%9C%AC%E8%AA%9E+%26%2B%0A+\u0026illust_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "create_artwork_comment:malformed-response",
+      "tool": "create_artwork_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "illust_id": 42
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:PostArtworkComment: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "action": "create_artwork_comment",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:PostArtworkComment: malformed_upstream_response"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/comment/add comment=+%E6%97%A5%E6%9C%AC%E8%AA%9E+%26%2B%0A+\u0026illust_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "create_artwork_comment:upstream-error",
+      "tool": "create_artwork_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "illust_id": 42
+      },
+      "status": 403,
+      "body": "private fixture body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:PostArtworkComment: forbidden"
+          }
+        ],
+        "structuredContent": {
+          "action": "create_artwork_comment",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:PostArtworkComment: forbidden"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/comment/add comment=+%E6%97%A5%E6%9C%AC%E8%AA%9E+%26%2B%0A+\u0026illust_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "create_artwork_comment:rate-limited",
+      "tool": "create_artwork_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "illust_id": 42
+      },
+      "status": 429,
+      "body": "{}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:PostArtworkComment: rate_limited"
+          }
+        ],
+        "structuredContent": {
+          "action": "create_artwork_comment",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:PostArtworkComment: rate_limited"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/comment/add comment=+%E6%97%A5%E6%9C%AC%E8%AA%9E+%26%2B%0A+\u0026illust_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "reply_artwork_comment:success",
+      "tool": "reply_artwork_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "illust_id": 42,
+        "parent_comment_id": 9
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Replied to comment 9 on artwork 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "reply_artwork_comment",
+          "comment_id": 63,
+          "illust_id": 42,
+          "success": true,
+          "text": "Replied to comment 9 on artwork 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/comment/add comment=+%E6%97%A5%E6%9C%AC%E8%AA%9E+%26%2B%0A+\u0026illust_id=42\u0026parent_comment_id=9"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "reply_artwork_comment:invalid-id",
+      "tool": "reply_artwork_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "illust_id": 0,
+        "parent_comment_id": 9
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/illust_id: minimum: 0/1 is less than 1.000000"
+    },
+    {
+      "name": "reply_artwork_comment:invalid-id",
+      "tool": "reply_artwork_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "illust_id": "42",
+        "parent_comment_id": 9
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/illust_id: type: 42 has type \"string\", want \"integer\""
+    },
+    {
+      "name": "reply_artwork_comment:invalid-id",
+      "tool": "reply_artwork_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "illust_id": null,
+        "parent_comment_id": 9
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/illust_id: type: \u003cinvalid reflect.Value\u003e has type \"null\", want \"integer\""
+    },
+    {
+      "name": "reply_artwork_comment:invalid-id",
+      "tool": "reply_artwork_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "illust_id": 1.5,
+        "parent_comment_id": 9
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/illust_id: type: 1.5 has type \"number\", want \"integer\""
+    },
+    {
+      "name": "reply_artwork_comment:missing-id",
+      "tool": "reply_artwork_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "parent_comment_id": 9
+      },
+      "status": 200,
+      "body": "{}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: required: missing properties: [\"illust_id\"]"
+    },
+    {
+      "name": "reply_artwork_comment:extra",
+      "tool": "reply_artwork_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "extra": true,
+        "illust_id": 42,
+        "parent_comment_id": 9
+      },
+      "status": 200,
+      "body": "{}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: unexpected additional properties [\"extra\"]"
+    },
+    {
+      "name": "reply_artwork_comment:empty-comment",
+      "tool": "reply_artwork_comment",
+      "arguments": {
+        "comment": "",
+        "illust_id": 42,
+        "parent_comment_id": 9
+      },
+      "status": 200,
+      "body": "{}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/comment: minLength: \"\" contains 0 Unicode code points, fewer than 1"
+    },
+    {
+      "name": "reply_artwork_comment:blank-comment",
+      "tool": "reply_artwork_comment",
+      "arguments": {
+        "comment": " ",
+        "illust_id": 42,
+        "parent_comment_id": 9
+      },
+      "status": 200,
+      "body": "{}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:ReplyArtworkComment: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "action": "reply_artwork_comment",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:ReplyArtworkComment: malformed_upstream_response"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/comment/add comment=+\u0026illust_id=42\u0026parent_comment_id=9"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "reply_artwork_comment:invalid-parent",
+      "tool": "reply_artwork_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "illust_id": 42,
+        "parent_comment_id": 0
+      },
+      "status": 200,
+      "body": "{}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/parent_comment_id: minimum: 0/1 is less than 1.000000"
+    },
+    {
+      "name": "reply_artwork_comment:missing-returned-id",
+      "tool": "reply_artwork_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "illust_id": 42,
+        "parent_comment_id": 9
+      },
+      "status": 200,
+      "body": "{\"comment\":{}}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:ReplyArtworkComment: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "action": "reply_artwork_comment",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:ReplyArtworkComment: malformed_upstream_response"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/comment/add comment=+%E6%97%A5%E6%9C%AC%E8%AA%9E+%26%2B%0A+\u0026illust_id=42\u0026parent_comment_id=9"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "reply_artwork_comment:malformed-response",
+      "tool": "reply_artwork_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "illust_id": 42,
+        "parent_comment_id": 9
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:ReplyArtworkComment: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "action": "reply_artwork_comment",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:ReplyArtworkComment: malformed_upstream_response"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/comment/add comment=+%E6%97%A5%E6%9C%AC%E8%AA%9E+%26%2B%0A+\u0026illust_id=42\u0026parent_comment_id=9"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "reply_artwork_comment:upstream-error",
+      "tool": "reply_artwork_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "illust_id": 42,
+        "parent_comment_id": 9
+      },
+      "status": 403,
+      "body": "private fixture body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:ReplyArtworkComment: forbidden"
+          }
+        ],
+        "structuredContent": {
+          "action": "reply_artwork_comment",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:ReplyArtworkComment: forbidden"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/comment/add comment=+%E6%97%A5%E6%9C%AC%E8%AA%9E+%26%2B%0A+\u0026illust_id=42\u0026parent_comment_id=9"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "reply_artwork_comment:rate-limited",
+      "tool": "reply_artwork_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "illust_id": 42,
+        "parent_comment_id": 9
+      },
+      "status": 429,
+      "body": "{}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:ReplyArtworkComment: rate_limited"
+          }
+        ],
+        "structuredContent": {
+          "action": "reply_artwork_comment",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:ReplyArtworkComment: rate_limited"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/comment/add comment=+%E6%97%A5%E6%9C%AC%E8%AA%9E+%26%2B%0A+\u0026illust_id=42\u0026parent_comment_id=9"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "delete_artwork_comment:success",
+      "tool": "delete_artwork_comment",
+      "arguments": {
+        "comment_id": 22
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Deleted comment 22."
+          }
+        ],
+        "structuredContent": {
+          "action": "delete_artwork_comment",
+          "comment_id": 22,
+          "success": true,
+          "text": "Deleted comment 22."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/comment/delete comment_id=22"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "delete_artwork_comment:invalid-id",
+      "tool": "delete_artwork_comment",
+      "arguments": {
+        "comment_id": 0
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/comment_id: minimum: 0/1 is less than 1.000000"
+    },
+    {
+      "name": "delete_artwork_comment:invalid-id",
+      "tool": "delete_artwork_comment",
+      "arguments": {
+        "comment_id": "42"
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/comment_id: type: 42 has type \"string\", want \"integer\""
+    },
+    {
+      "name": "delete_artwork_comment:invalid-id",
+      "tool": "delete_artwork_comment",
+      "arguments": {
+        "comment_id": null
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/comment_id: type: \u003cinvalid reflect.Value\u003e has type \"null\", want \"integer\""
+    },
+    {
+      "name": "delete_artwork_comment:invalid-id",
+      "tool": "delete_artwork_comment",
+      "arguments": {
+        "comment_id": 1.5
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/comment_id: type: 1.5 has type \"number\", want \"integer\""
+    },
+    {
+      "name": "delete_artwork_comment:missing-id",
+      "tool": "delete_artwork_comment",
+      "arguments": {},
+      "status": 200,
+      "body": "{}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: required: missing properties: [\"comment_id\"]"
+    },
+    {
+      "name": "delete_artwork_comment:extra",
+      "tool": "delete_artwork_comment",
+      "arguments": {
+        "comment_id": 22,
+        "extra": true
+      },
+      "status": 200,
+      "body": "{}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: unexpected additional properties [\"extra\"]"
+    },
+    {
+      "name": "delete_artwork_comment:upstream-error",
+      "tool": "delete_artwork_comment",
+      "arguments": {
+        "comment_id": 22
+      },
+      "status": 403,
+      "body": "private fixture body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:DeleteArtworkComment: forbidden"
+          }
+        ],
+        "structuredContent": {
+          "action": "delete_artwork_comment",
+          "comment_id": 22,
+          "success": false,
+          "text": "Error: pixiv:DeleteArtworkComment: forbidden"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/comment/delete comment_id=22"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "delete_artwork_comment:rate-limited",
+      "tool": "delete_artwork_comment",
+      "arguments": {
+        "comment_id": 22
+      },
+      "status": 429,
+      "body": "{}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:DeleteArtworkComment: rate_limited"
+          }
+        ],
+        "structuredContent": {
+          "action": "delete_artwork_comment",
+          "comment_id": 22,
+          "success": false,
+          "text": "Error: pixiv:DeleteArtworkComment: rate_limited"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/comment/delete comment_id=22"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "stamp_artwork_comment:success",
+      "tool": "stamp_artwork_comment",
+      "arguments": {
+        "illust_id": 42,
+        "stamp_id": 7
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Added stamp comment to artwork 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "stamp_artwork_comment",
+          "comment_id": 63,
+          "illust_id": 42,
+          "success": true,
+          "text": "Added stamp comment to artwork 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/comment/add comment=\u0026illust_id=42\u0026stamp_id=7"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "stamp_artwork_comment:invalid-id",
+      "tool": "stamp_artwork_comment",
+      "arguments": {
+        "illust_id": 0,
+        "stamp_id": 7
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/illust_id: minimum: 0/1 is less than 1.000000"
+    },
+    {
+      "name": "stamp_artwork_comment:invalid-id",
+      "tool": "stamp_artwork_comment",
+      "arguments": {
+        "illust_id": "42",
+        "stamp_id": 7
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/illust_id: type: 42 has type \"string\", want \"integer\""
+    },
+    {
+      "name": "stamp_artwork_comment:invalid-id",
+      "tool": "stamp_artwork_comment",
+      "arguments": {
+        "illust_id": null,
+        "stamp_id": 7
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/illust_id: type: \u003cinvalid reflect.Value\u003e has type \"null\", want \"integer\""
+    },
+    {
+      "name": "stamp_artwork_comment:invalid-id",
+      "tool": "stamp_artwork_comment",
+      "arguments": {
+        "illust_id": 1.5,
+        "stamp_id": 7
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/illust_id: type: 1.5 has type \"number\", want \"integer\""
+    },
+    {
+      "name": "stamp_artwork_comment:missing-id",
+      "tool": "stamp_artwork_comment",
+      "arguments": {
+        "stamp_id": 7
+      },
+      "status": 200,
+      "body": "{}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: required: missing properties: [\"illust_id\"]"
+    },
+    {
+      "name": "stamp_artwork_comment:extra",
+      "tool": "stamp_artwork_comment",
+      "arguments": {
+        "extra": true,
+        "illust_id": 42,
+        "stamp_id": 7
+      },
+      "status": 200,
+      "body": "{}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: unexpected additional properties [\"extra\"]"
+    },
+    {
+      "name": "stamp_artwork_comment:invalid-stamp",
+      "tool": "stamp_artwork_comment",
+      "arguments": {
+        "illust_id": 42,
+        "stamp_id": 0
+      },
+      "status": 200,
+      "body": "{}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/stamp_id: minimum: 0/1 is less than 1.000000"
+    },
+    {
+      "name": "stamp_artwork_comment:stamp-text",
+      "tool": "stamp_artwork_comment",
+      "arguments": {
+        "comment": " optional ",
+        "illust_id": 42,
+        "stamp_id": 7
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":64}}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Added stamp comment to artwork 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "stamp_artwork_comment",
+          "comment_id": 64,
+          "illust_id": 42,
+          "success": true,
+          "text": "Added stamp comment to artwork 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/comment/add comment=+optional+\u0026illust_id=42\u0026stamp_id=7"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "stamp_artwork_comment:missing-returned-id",
+      "tool": "stamp_artwork_comment",
+      "arguments": {
+        "illust_id": 42,
+        "stamp_id": 7
+      },
+      "status": 200,
+      "body": "{\"comment\":{}}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:StampArtworkComment: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "action": "stamp_artwork_comment",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:StampArtworkComment: malformed_upstream_response"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/comment/add comment=\u0026illust_id=42\u0026stamp_id=7"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "stamp_artwork_comment:malformed-response",
+      "tool": "stamp_artwork_comment",
+      "arguments": {
+        "illust_id": 42,
+        "stamp_id": 7
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:StampArtworkComment: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "action": "stamp_artwork_comment",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:StampArtworkComment: malformed_upstream_response"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/comment/add comment=\u0026illust_id=42\u0026stamp_id=7"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "stamp_artwork_comment:upstream-error",
+      "tool": "stamp_artwork_comment",
+      "arguments": {
+        "illust_id": 42,
+        "stamp_id": 7
+      },
+      "status": 403,
+      "body": "private fixture body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:StampArtworkComment: forbidden"
+          }
+        ],
+        "structuredContent": {
+          "action": "stamp_artwork_comment",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:StampArtworkComment: forbidden"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/comment/add comment=\u0026illust_id=42\u0026stamp_id=7"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "stamp_artwork_comment:rate-limited",
+      "tool": "stamp_artwork_comment",
+      "arguments": {
+        "illust_id": 42,
+        "stamp_id": 7
+      },
+      "status": 429,
+      "body": "{}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:StampArtworkComment: rate_limited"
+          }
+        ],
+        "structuredContent": {
+          "action": "stamp_artwork_comment",
+          "illust_id": 42,
+          "success": false,
+          "text": "Error: pixiv:StampArtworkComment: rate_limited"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/illust/comment/add comment=\u0026illust_id=42\u0026stamp_id=7"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "create_novel_comment:success",
+      "tool": "create_novel_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "novel_id": 42
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Created comment on novel 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "create_novel_comment",
+          "comment_id": 63,
+          "novel_id": 42,
+          "success": true,
+          "text": "Created comment on novel 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/comment/add comment=+%E6%97%A5%E6%9C%AC%E8%AA%9E+%26%2B%0A+\u0026novel_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "create_novel_comment:invalid-id",
+      "tool": "create_novel_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "novel_id": 0
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/novel_id: minimum: 0/1 is less than 1.000000"
+    },
+    {
+      "name": "create_novel_comment:invalid-id",
+      "tool": "create_novel_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "novel_id": "42"
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/novel_id: type: 42 has type \"string\", want \"integer\""
+    },
+    {
+      "name": "create_novel_comment:invalid-id",
+      "tool": "create_novel_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "novel_id": null
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/novel_id: type: \u003cinvalid reflect.Value\u003e has type \"null\", want \"integer\""
+    },
+    {
+      "name": "create_novel_comment:invalid-id",
+      "tool": "create_novel_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "novel_id": 1.5
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/novel_id: type: 1.5 has type \"number\", want \"integer\""
+    },
+    {
+      "name": "create_novel_comment:missing-id",
+      "tool": "create_novel_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n "
+      },
+      "status": 200,
+      "body": "{}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: required: missing properties: [\"novel_id\"]"
+    },
+    {
+      "name": "create_novel_comment:extra",
+      "tool": "create_novel_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "extra": true,
+        "novel_id": 42
+      },
+      "status": 200,
+      "body": "{}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: unexpected additional properties [\"extra\"]"
+    },
+    {
+      "name": "create_novel_comment:empty-comment",
+      "tool": "create_novel_comment",
+      "arguments": {
+        "comment": "",
+        "novel_id": 42
+      },
+      "status": 200,
+      "body": "{}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/comment: minLength: \"\" contains 0 Unicode code points, fewer than 1"
+    },
+    {
+      "name": "create_novel_comment:blank-comment",
+      "tool": "create_novel_comment",
+      "arguments": {
+        "comment": " ",
+        "novel_id": 42
+      },
+      "status": 200,
+      "body": "{}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:PostNovelComment: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "action": "create_novel_comment",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:PostNovelComment: malformed_upstream_response"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/comment/add comment=+\u0026novel_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "create_novel_comment:missing-returned-id",
+      "tool": "create_novel_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "novel_id": 42
+      },
+      "status": 200,
+      "body": "{\"comment\":{}}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:PostNovelComment: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "action": "create_novel_comment",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:PostNovelComment: malformed_upstream_response"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/comment/add comment=+%E6%97%A5%E6%9C%AC%E8%AA%9E+%26%2B%0A+\u0026novel_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "create_novel_comment:malformed-response",
+      "tool": "create_novel_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "novel_id": 42
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:PostNovelComment: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "action": "create_novel_comment",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:PostNovelComment: malformed_upstream_response"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/comment/add comment=+%E6%97%A5%E6%9C%AC%E8%AA%9E+%26%2B%0A+\u0026novel_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "create_novel_comment:upstream-error",
+      "tool": "create_novel_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "novel_id": 42
+      },
+      "status": 403,
+      "body": "private fixture body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:PostNovelComment: forbidden"
+          }
+        ],
+        "structuredContent": {
+          "action": "create_novel_comment",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:PostNovelComment: forbidden"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/comment/add comment=+%E6%97%A5%E6%9C%AC%E8%AA%9E+%26%2B%0A+\u0026novel_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "create_novel_comment:rate-limited",
+      "tool": "create_novel_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "novel_id": 42
+      },
+      "status": 429,
+      "body": "{}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:PostNovelComment: rate_limited"
+          }
+        ],
+        "structuredContent": {
+          "action": "create_novel_comment",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:PostNovelComment: rate_limited"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/comment/add comment=+%E6%97%A5%E6%9C%AC%E8%AA%9E+%26%2B%0A+\u0026novel_id=42"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "reply_novel_comment:success",
+      "tool": "reply_novel_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "novel_id": 42,
+        "parent_comment_id": 9
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Replied to comment 9 on novel 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "reply_novel_comment",
+          "comment_id": 63,
+          "novel_id": 42,
+          "success": true,
+          "text": "Replied to comment 9 on novel 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/comment/add comment=+%E6%97%A5%E6%9C%AC%E8%AA%9E+%26%2B%0A+\u0026novel_id=42\u0026parent_comment_id=9"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "reply_novel_comment:invalid-id",
+      "tool": "reply_novel_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "novel_id": 0,
+        "parent_comment_id": 9
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/novel_id: minimum: 0/1 is less than 1.000000"
+    },
+    {
+      "name": "reply_novel_comment:invalid-id",
+      "tool": "reply_novel_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "novel_id": "42",
+        "parent_comment_id": 9
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/novel_id: type: 42 has type \"string\", want \"integer\""
+    },
+    {
+      "name": "reply_novel_comment:invalid-id",
+      "tool": "reply_novel_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "novel_id": null,
+        "parent_comment_id": 9
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/novel_id: type: \u003cinvalid reflect.Value\u003e has type \"null\", want \"integer\""
+    },
+    {
+      "name": "reply_novel_comment:invalid-id",
+      "tool": "reply_novel_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "novel_id": 1.5,
+        "parent_comment_id": 9
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/novel_id: type: 1.5 has type \"number\", want \"integer\""
+    },
+    {
+      "name": "reply_novel_comment:missing-id",
+      "tool": "reply_novel_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "parent_comment_id": 9
+      },
+      "status": 200,
+      "body": "{}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: required: missing properties: [\"novel_id\"]"
+    },
+    {
+      "name": "reply_novel_comment:extra",
+      "tool": "reply_novel_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "extra": true,
+        "novel_id": 42,
+        "parent_comment_id": 9
+      },
+      "status": 200,
+      "body": "{}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: unexpected additional properties [\"extra\"]"
+    },
+    {
+      "name": "reply_novel_comment:empty-comment",
+      "tool": "reply_novel_comment",
+      "arguments": {
+        "comment": "",
+        "novel_id": 42,
+        "parent_comment_id": 9
+      },
+      "status": 200,
+      "body": "{}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/comment: minLength: \"\" contains 0 Unicode code points, fewer than 1"
+    },
+    {
+      "name": "reply_novel_comment:blank-comment",
+      "tool": "reply_novel_comment",
+      "arguments": {
+        "comment": " ",
+        "novel_id": 42,
+        "parent_comment_id": 9
+      },
+      "status": 200,
+      "body": "{}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:ReplyNovelComment: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "action": "reply_novel_comment",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:ReplyNovelComment: malformed_upstream_response"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/comment/add comment=+\u0026novel_id=42\u0026parent_comment_id=9"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "reply_novel_comment:invalid-parent",
+      "tool": "reply_novel_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "novel_id": 42,
+        "parent_comment_id": 0
+      },
+      "status": 200,
+      "body": "{}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/parent_comment_id: minimum: 0/1 is less than 1.000000"
+    },
+    {
+      "name": "reply_novel_comment:missing-returned-id",
+      "tool": "reply_novel_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "novel_id": 42,
+        "parent_comment_id": 9
+      },
+      "status": 200,
+      "body": "{\"comment\":{}}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:ReplyNovelComment: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "action": "reply_novel_comment",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:ReplyNovelComment: malformed_upstream_response"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/comment/add comment=+%E6%97%A5%E6%9C%AC%E8%AA%9E+%26%2B%0A+\u0026novel_id=42\u0026parent_comment_id=9"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "reply_novel_comment:malformed-response",
+      "tool": "reply_novel_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "novel_id": 42,
+        "parent_comment_id": 9
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:ReplyNovelComment: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "action": "reply_novel_comment",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:ReplyNovelComment: malformed_upstream_response"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/comment/add comment=+%E6%97%A5%E6%9C%AC%E8%AA%9E+%26%2B%0A+\u0026novel_id=42\u0026parent_comment_id=9"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "reply_novel_comment:upstream-error",
+      "tool": "reply_novel_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "novel_id": 42,
+        "parent_comment_id": 9
+      },
+      "status": 403,
+      "body": "private fixture body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:ReplyNovelComment: forbidden"
+          }
+        ],
+        "structuredContent": {
+          "action": "reply_novel_comment",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:ReplyNovelComment: forbidden"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/comment/add comment=+%E6%97%A5%E6%9C%AC%E8%AA%9E+%26%2B%0A+\u0026novel_id=42\u0026parent_comment_id=9"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "reply_novel_comment:rate-limited",
+      "tool": "reply_novel_comment",
+      "arguments": {
+        "comment": " 日本語 \u0026+\n ",
+        "novel_id": 42,
+        "parent_comment_id": 9
+      },
+      "status": 429,
+      "body": "{}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:ReplyNovelComment: rate_limited"
+          }
+        ],
+        "structuredContent": {
+          "action": "reply_novel_comment",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:ReplyNovelComment: rate_limited"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/comment/add comment=+%E6%97%A5%E6%9C%AC%E8%AA%9E+%26%2B%0A+\u0026novel_id=42\u0026parent_comment_id=9"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "delete_novel_comment:success",
+      "tool": "delete_novel_comment",
+      "arguments": {
+        "comment_id": 22
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Deleted comment 22."
+          }
+        ],
+        "structuredContent": {
+          "action": "delete_novel_comment",
+          "comment_id": 22,
+          "success": true,
+          "text": "Deleted comment 22."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/comment/delete comment_id=22"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "delete_novel_comment:invalid-id",
+      "tool": "delete_novel_comment",
+      "arguments": {
+        "comment_id": 0
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/comment_id: minimum: 0/1 is less than 1.000000"
+    },
+    {
+      "name": "delete_novel_comment:invalid-id",
+      "tool": "delete_novel_comment",
+      "arguments": {
+        "comment_id": "42"
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/comment_id: type: 42 has type \"string\", want \"integer\""
+    },
+    {
+      "name": "delete_novel_comment:invalid-id",
+      "tool": "delete_novel_comment",
+      "arguments": {
+        "comment_id": null
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/comment_id: type: \u003cinvalid reflect.Value\u003e has type \"null\", want \"integer\""
+    },
+    {
+      "name": "delete_novel_comment:invalid-id",
+      "tool": "delete_novel_comment",
+      "arguments": {
+        "comment_id": 1.5
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/comment_id: type: 1.5 has type \"number\", want \"integer\""
+    },
+    {
+      "name": "delete_novel_comment:missing-id",
+      "tool": "delete_novel_comment",
+      "arguments": {},
+      "status": 200,
+      "body": "{}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: required: missing properties: [\"comment_id\"]"
+    },
+    {
+      "name": "delete_novel_comment:extra",
+      "tool": "delete_novel_comment",
+      "arguments": {
+        "comment_id": 22,
+        "extra": true
+      },
+      "status": 200,
+      "body": "{}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: unexpected additional properties [\"extra\"]"
+    },
+    {
+      "name": "delete_novel_comment:upstream-error",
+      "tool": "delete_novel_comment",
+      "arguments": {
+        "comment_id": 22
+      },
+      "status": 403,
+      "body": "private fixture body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:DeleteNovelComment: forbidden"
+          }
+        ],
+        "structuredContent": {
+          "action": "delete_novel_comment",
+          "comment_id": 22,
+          "success": false,
+          "text": "Error: pixiv:DeleteNovelComment: forbidden"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/comment/delete comment_id=22"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "delete_novel_comment:rate-limited",
+      "tool": "delete_novel_comment",
+      "arguments": {
+        "comment_id": 22
+      },
+      "status": 429,
+      "body": "{}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:DeleteNovelComment: rate_limited"
+          }
+        ],
+        "structuredContent": {
+          "action": "delete_novel_comment",
+          "comment_id": 22,
+          "success": false,
+          "text": "Error: pixiv:DeleteNovelComment: rate_limited"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/comment/delete comment_id=22"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "stamp_novel_comment:success",
+      "tool": "stamp_novel_comment",
+      "arguments": {
+        "novel_id": 42,
+        "stamp_id": 7
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Added stamp comment to novel 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "stamp_novel_comment",
+          "comment_id": 63,
+          "novel_id": 42,
+          "success": true,
+          "text": "Added stamp comment to novel 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/comment/add comment=\u0026novel_id=42\u0026stamp_id=7"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "stamp_novel_comment:invalid-id",
+      "tool": "stamp_novel_comment",
+      "arguments": {
+        "novel_id": 0,
+        "stamp_id": 7
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/novel_id: minimum: 0/1 is less than 1.000000"
+    },
+    {
+      "name": "stamp_novel_comment:invalid-id",
+      "tool": "stamp_novel_comment",
+      "arguments": {
+        "novel_id": "42",
+        "stamp_id": 7
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/novel_id: type: 42 has type \"string\", want \"integer\""
+    },
+    {
+      "name": "stamp_novel_comment:invalid-id",
+      "tool": "stamp_novel_comment",
+      "arguments": {
+        "novel_id": null,
+        "stamp_id": 7
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/novel_id: type: \u003cinvalid reflect.Value\u003e has type \"null\", want \"integer\""
+    },
+    {
+      "name": "stamp_novel_comment:invalid-id",
+      "tool": "stamp_novel_comment",
+      "arguments": {
+        "novel_id": 1.5,
+        "stamp_id": 7
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":63}}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/novel_id: type: 1.5 has type \"number\", want \"integer\""
+    },
+    {
+      "name": "stamp_novel_comment:missing-id",
+      "tool": "stamp_novel_comment",
+      "arguments": {
+        "stamp_id": 7
+      },
+      "status": 200,
+      "body": "{}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: required: missing properties: [\"novel_id\"]"
+    },
+    {
+      "name": "stamp_novel_comment:extra",
+      "tool": "stamp_novel_comment",
+      "arguments": {
+        "extra": true,
+        "novel_id": 42,
+        "stamp_id": 7
+      },
+      "status": 200,
+      "body": "{}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: unexpected additional properties [\"extra\"]"
+    },
+    {
+      "name": "stamp_novel_comment:invalid-stamp",
+      "tool": "stamp_novel_comment",
+      "arguments": {
+        "novel_id": 42,
+        "stamp_id": 0
+      },
+      "status": 200,
+      "body": "{}",
+      "result": null,
+      "calls": 0,
+      "requests": [],
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/stamp_id: minimum: 0/1 is less than 1.000000"
+    },
+    {
+      "name": "stamp_novel_comment:stamp-text",
+      "tool": "stamp_novel_comment",
+      "arguments": {
+        "comment": " optional ",
+        "novel_id": 42,
+        "stamp_id": 7
+      },
+      "status": 200,
+      "body": "{\"comment\":{\"id\":64}}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Added stamp comment to novel 42."
+          }
+        ],
+        "structuredContent": {
+          "action": "stamp_novel_comment",
+          "comment_id": 64,
+          "novel_id": 42,
+          "success": true,
+          "text": "Added stamp comment to novel 42."
+        }
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/comment/add comment=+optional+\u0026novel_id=42\u0026stamp_id=7"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "stamp_novel_comment:missing-returned-id",
+      "tool": "stamp_novel_comment",
+      "arguments": {
+        "novel_id": 42,
+        "stamp_id": 7
+      },
+      "status": 200,
+      "body": "{\"comment\":{}}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:StampNovelComment: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "action": "stamp_novel_comment",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:StampNovelComment: malformed_upstream_response"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/comment/add comment=\u0026novel_id=42\u0026stamp_id=7"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "stamp_novel_comment:malformed-response",
+      "tool": "stamp_novel_comment",
+      "arguments": {
+        "novel_id": 42,
+        "stamp_id": 7
+      },
+      "status": 200,
+      "body": "not JSON",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:StampNovelComment: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "action": "stamp_novel_comment",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:StampNovelComment: malformed_upstream_response"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/comment/add comment=\u0026novel_id=42\u0026stamp_id=7"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "stamp_novel_comment:upstream-error",
+      "tool": "stamp_novel_comment",
+      "arguments": {
+        "novel_id": 42,
+        "stamp_id": 7
+      },
+      "status": 403,
+      "body": "private fixture body",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:StampNovelComment: forbidden"
+          }
+        ],
+        "structuredContent": {
+          "action": "stamp_novel_comment",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:StampNovelComment: forbidden"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/comment/add comment=\u0026novel_id=42\u0026stamp_id=7"
+      ],
+      "rpc_error": ""
+    },
+    {
+      "name": "stamp_novel_comment:rate-limited",
+      "tool": "stamp_novel_comment",
+      "arguments": {
+        "novel_id": 42,
+        "stamp_id": 7
+      },
+      "status": 429,
+      "body": "{}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:StampNovelComment: rate_limited"
+          }
+        ],
+        "structuredContent": {
+          "action": "stamp_novel_comment",
+          "novel_id": 42,
+          "success": false,
+          "text": "Error: pixiv:StampNovelComment: rate_limited"
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": [
+        "POST /v1/novel/comment/add comment=\u0026novel_id=42\u0026stamp_id=7"
+      ],
+      "rpc_error": ""
+    }
+  ]
+}

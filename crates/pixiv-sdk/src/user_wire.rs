@@ -310,3 +310,9 @@ fn decode_schema(raw: &[u8], operation: &'static str, schema: &'static [Field]) 
     object(&raw, schema, &mut value).map_err(|_| malformed())?;
     Ok(Value::Object(value))
 }
+
+const MUTATION_COMMENT: &[Field] = fields!("id" => Kind::IntegerPointer);
+const COMMENT_MUTATION: &[Field] = fields!("comment_id" => Kind::IntegerPointer, "comment" => Kind::PointerStruct(MUTATION_COMMENT));
+pub(crate) fn decode_comment_mutation(raw: &[u8], operation: &'static str) -> Result<Value> {
+    decode_schema(raw, operation, COMMENT_MUTATION)
+}
