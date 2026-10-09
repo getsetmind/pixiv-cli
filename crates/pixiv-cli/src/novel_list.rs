@@ -13,6 +13,7 @@ use std::{
 #[derive(Clone)]
 pub(crate) enum Source {
     Ranking(pixiv_sdk::pixiv::NovelRankingRequest),
+    Series(pixiv_sdk::pixiv::NovelSeriesRequest),
     Search(pixiv_sdk::pixiv::SearchNovelsRequest),
 }
 #[derive(Clone)]
@@ -87,6 +88,9 @@ pub(crate) async fn attempt<T: Transport, W: Write>(
     mode: DetailOutput,
     out: &mut W,
 ) -> Result<Option<JsonSpool>, CommandError> {
+    if let Source::Series(request) = &listing.source {
+        return series_attempt(client, request, &listing.plan, mode, out).await;
+    }
     let plan = &listing.plan;
     let mut spool = if mode == DetailOutput::Json {
         Some(JsonSpool::with_key("novels")?)
@@ -105,6 +109,7 @@ pub(crate) async fn attempt<T: Transport, W: Write>(
             let source = listing.source.clone();
             async move {
                 let page = match source {
+                    Source::Series(_) => unreachable!("series uses collected presentation"),
                     Source::Ranking(mut request) => {
                         request.cursor = cursor;
                         client.novel_ranking(request).await
@@ -149,4 +154,79 @@ pub(crate) async fn attempt<T: Transport, W: Write>(
         pixiv_app::pagination::Cause::Message(message) => CommandError::MessageText(message),
     })?;
     Ok(spool)
+}
+
+async fn series_attempt<T: Transport, W: Write>(
+    client: &Client<T>,
+    request: &pixiv_sdk::pixiv::NovelSeriesRequest,
+    plan: &crate::search::SearchPlan,
+    mode: DetailOutput,
+    out: &mut W,
+) -> Result<Option<JsonSpool>, CommandError> {
+    let metadata = Mutex::new(pixiv_sdk::models::NovelSeries::default());
+    let mut novels = vec![];
+    pixiv_app::pagination::traverse_pages(
+        pixiv_app::pagination::Plan {
+            skip: plan.skip as i64,
+            limit: plan.limit as i64,
+            one_batch: plan.one_batch,
+        },
+        Cursor::default(),
+        |cursor| {
+            let mut request = request.clone();
+            request.cursor = cursor;
+            let metadata = &metadata;
+            async move {
+                let result = client
+                    .novel_series(request)
+                    .await
+                    .map_err(CommandError::from)?;
+                let mut metadata = metadata.lock().unwrap_or_else(|error| error.into_inner());
+                if metadata.id == 0 {
+                    *metadata = result.series;
+                }
+                Ok((result.novels.items, result.novels.next))
+            }
+        },
+        |_: &pixiv_sdk::models::Novel| Ok(true),
+        None::<fn(Cursor, usize) -> Result<Cursor, CommandError>>,
+        |items| {
+            novels.extend(items);
+            Ok(())
+        },
+    )
+    .await
+    .map_err(|error| match error.cause {
+        pixiv_app::pagination::Cause::Source(error) => error,
+        pixiv_app::pagination::Cause::Message(message) => CommandError::MessageText(message),
+    })?;
+    let metadata = metadata
+        .into_inner()
+        .unwrap_or_else(|error| error.into_inner());
+    if mode == DetailOutput::Json {
+        let mut spool = JsonSpool::with_key("novels")?;
+        spool.append_novels(&novels)?;
+        spool.add_field("series", &pixiv_sdk::dto::NovelSeriesDto::from(&metadata))?;
+        spool.commit(out)?;
+        return Ok(None);
+    }
+    if mode == DetailOutput::Ndjson {
+        for item in &novels {
+            let record = pixiv_record::from_novel(item)
+                .map_err(|error| CommandError::Message(error.message()))?;
+            writeln!(
+                out,
+                "{}",
+                crate::go_json_escape(
+                    serde_json::to_string(&record).map_err(std::io::Error::other)?
+                )
+            )?;
+        }
+    } else {
+        writeln!(out, "series {}: {}", metadata.id, metadata.title)?;
+        for item in &novels {
+            writeln!(out, "{} {} — {}", item.id, item.title, item.user.name)?;
+        }
+    }
+    Ok(None)
 }

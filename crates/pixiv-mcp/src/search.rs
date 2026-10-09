@@ -152,8 +152,23 @@ pub(crate) fn validate_schema_with_bindings<'a>(
     context: &str,
     binding: &impl Fn(&str) -> (&'a str, &'a str),
 ) -> Result<(), String> {
-    let expected = schema["type"].as_str().unwrap_or_default();
     let actual = crate::stdio::value_type(value);
+    let expected = if let Some(types) = schema["type"].as_array() {
+        if !types.iter().any(|kind| kind.as_str() == Some(actual)) {
+            let kinds = types
+                .iter()
+                .filter_map(Value::as_str)
+                .collect::<Vec<_>>()
+                .join(", ");
+            return Err(format!(
+                "{context}: type: {} has type {actual:?}, want one of {kinds:?}",
+                display(value)
+            ));
+        }
+        actual
+    } else {
+        schema["type"].as_str().unwrap_or_default()
+    };
     if actual != expected {
         return Err(format!(
             "{context}: type: {} has type {actual:?}, want {expected:?}",

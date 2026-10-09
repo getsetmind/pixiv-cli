@@ -1,0 +1,73 @@
+{
+  "description": "Browse novels in a Pixiv series.",
+  "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "limit": {
+        "description": "maximum items; 0 returns all items",
+        "type": [
+          "null",
+          "integer"
+        ]
+      },
+      "page": {
+        "description": "1-based logical page; requires a positive limit",
+        "type": [
+          "null",
+          "integer"
+        ]
+      },
+      "series_id": {
+        "description": "positive Pixiv series ID",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "series_id"
+    ],
+    "type": "object"
+  },
+  "name": "novel_series",
+  "outputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "pagination": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "records": {
+        "items": {
+          "additionalProperties": true,
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "type",
+            "url"
+          ],
+          "type": "object"
+        },
+        "type": "array"
+      },
+      "series": {
+        "additionalProperties": true,
+        "type": "object"
+      }
+    },
+    "required": [
+      "series",
+      "records",
+      "pagination"
+    ],
+    "type": "object"
+  }
+}

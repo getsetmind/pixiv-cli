@@ -10,6 +10,7 @@ pub(crate) struct JsonSpool {
     file: Option<File>,
     path: PathBuf,
     first: bool,
+    fields: Vec<String>,
 }
 
 impl JsonSpool {
@@ -36,6 +37,7 @@ impl JsonSpool {
             file: Some(file),
             path,
             first: true,
+            fields: Vec::new(),
         };
         spool
             .file
@@ -83,9 +85,30 @@ impl JsonSpool {
         Ok(())
     }
 
+    pub(crate) fn add_field<T: serde::Serialize>(
+        &mut self,
+        key: &str,
+        value: &T,
+    ) -> Result<(), CommandError> {
+        self.fields.push(format!(
+            ",\n  {}: {}",
+            serde_json::to_string(key).map_err(io::Error::other)?,
+            crate::go_json_escape(serde_json::to_string_pretty(value).map_err(io::Error::other)?)
+                .replace('\n', "\n  ")
+        ));
+        Ok(())
+    }
     pub(crate) fn commit<W: Write>(&mut self, out: &mut W) -> Result<(), CommandError> {
         let file = self.file.as_mut().expect("spool file is open");
-        file.write_all(b"\n  ]\n}\n")?;
+        if self.first && !self.fields.is_empty() {
+            file.write_all(b"]")?;
+        } else {
+            file.write_all(b"\n  ]")?;
+        }
+        for field in &self.fields {
+            file.write_all(field.as_bytes())?;
+        }
+        file.write_all(b"\n}\n")?;
         file.seek(SeekFrom::Start(0))?;
         io::copy(file, out)?;
         Ok(())

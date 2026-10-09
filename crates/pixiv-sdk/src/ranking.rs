@@ -149,6 +149,23 @@ pub(crate) fn apply_offset(
     digest: &str,
     query: &mut BTreeMap<String, String>,
 ) -> Result<()> {
+    apply_value(
+        cursor,
+        operation,
+        digest,
+        query,
+        "offset",
+        "cursor continuation offset must be positive",
+    )
+}
+pub(crate) fn apply_value(
+    cursor: &Cursor,
+    operation: &'static str,
+    digest: &str,
+    query: &mut BTreeMap<String, String>,
+    expected_key: &str,
+    positive_detail: &'static str,
+) -> Result<()> {
     if !cursor.is_zero() {
         cursor
             .validate("pixiv", operation, 1, digest)
@@ -188,21 +205,21 @@ pub(crate) fn apply_offset(
                 "cursor payload is malformed",
             ));
         }
-        if key != "offset" {
+        if key != expected_key {
             return Err(ranking_error(
                 operation,
                 Reason::InvalidCursor,
                 "cursor continuation kind mismatch",
             ));
         }
-        if value <= 0 || value > isize::MAX as i64 {
+        if value <= 0 || (expected_key == "offset" && value > isize::MAX as i64) {
             return Err(ranking_error(
                 operation,
                 Reason::InvalidCursor,
-                "cursor continuation offset must be positive",
+                positive_detail,
             ));
         }
-        query.insert("offset".into(), value.to_string());
+        query.insert(expected_key.into(), value.to_string());
     }
     Ok(())
 }
@@ -211,13 +228,19 @@ pub(crate) fn next_cursor(
     digest: &str,
     offset: Option<i64>,
 ) -> Result<Cursor> {
+    value_cursor(operation, digest, "offset", offset)
+}
+pub(crate) fn value_cursor(
+    operation: &'static str,
+    digest: &str,
+    key: &str,
+    offset: Option<i64>,
+) -> Result<Cursor> {
     match offset {
         Some(offset) => {
-            let payload = serde_json::to_vec(&Position {
-                k: "offset",
-                v: offset,
-            })
-            .map_err(|_| ranking_error(operation, Reason::UpstreamError, "cannot encode cursor"))?;
+            let payload = serde_json::to_vec(&Position { k: key, v: offset }).map_err(|_| {
+                ranking_error(operation, Reason::UpstreamError, "cannot encode cursor")
+            })?;
             Cursor::new(
                 "pixiv",
                 operation,

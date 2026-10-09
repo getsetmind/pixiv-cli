@@ -1,0 +1,4809 @@
+{
+  "tools": {
+    "novel_content": {
+      "description": "Read the complete structured content of one Pixiv novel.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "novel_id": {
+            "description": "positive Pixiv novel ID",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "novel_id"
+        ],
+        "type": "object"
+      },
+      "name": "novel_content",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "content": {
+            "additionalProperties": true,
+            "type": "object"
+          }
+        },
+        "required": [
+          "content"
+        ],
+        "type": "object"
+      }
+    },
+    "novel_series": {
+      "description": "Browse novels in a Pixiv series.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "description": "maximum items; 0 returns all items",
+            "type": [
+              "null",
+              "integer"
+            ]
+          },
+          "page": {
+            "description": "1-based logical page; requires a positive limit",
+            "type": [
+              "null",
+              "integer"
+            ]
+          },
+          "series_id": {
+            "description": "positive Pixiv series ID",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "series_id"
+        ],
+        "type": "object"
+      },
+      "name": "novel_series",
+      "outputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "pagination": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "records": {
+            "items": {
+              "additionalProperties": true,
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "type",
+                "url"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "series": {
+            "additionalProperties": true,
+            "type": "object"
+          }
+        },
+        "required": [
+          "series",
+          "records",
+          "pagination"
+        ],
+        "type": "object"
+      }
+    }
+  },
+  "cases": [
+    {
+      "name": "novel_series-argument-a",
+      "tool_name": "novel_series",
+      "arguments": {
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 2 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": true,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 2
+          },
+          "records": [
+            {
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "id": "22",
+              "is_original": false,
+              "published_at": "2024-01-02T03:04:05Z",
+              "tags": [],
+              "text_length": 0,
+              "title": "one",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "novel",
+              "updated_at": null,
+              "url": "https://www.pixiv.net/novel/show.php?id=22",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "x_restrict": 0
+            },
+            {
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "id": "23",
+              "is_original": false,
+              "published_at": "2024-01-02T03:04:05Z",
+              "tags": [],
+              "text_length": 0,
+              "title": "two",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "novel",
+              "updated_at": null,
+              "url": "https://www.pixiv.net/novel/show.php?id=23",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "x_restrict": 0
+            }
+          ],
+          "series": {
+            "caption": "caption",
+            "id": 21,
+            "is_concluded": true,
+            "title": "first metadata",
+            "user": {
+              "account": "",
+              "comment": "",
+              "id": 7,
+              "is_followed": false,
+              "name": "writer",
+              "profile_image": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              }
+            }
+          }
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "novel_series-argument-b",
+      "tool_name": "novel_series",
+      "arguments": {},
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: required: missing properties: [\"series_id\"]"
+    },
+    {
+      "name": "novel_series-argument-c",
+      "tool_name": "novel_series",
+      "arguments": {
+        "series_id": 0
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: series_id must be a positive integer"
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 0,
+            "returned": 0
+          },
+          "records": [],
+          "series": {
+            "caption": "",
+            "id": 0,
+            "is_concluded": false,
+            "title": "",
+            "user": {
+              "account": "",
+              "comment": "",
+              "id": 0,
+              "is_followed": false,
+              "name": "",
+              "profile_image": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              }
+            }
+          }
+        },
+        "isError": true
+      },
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": ""
+    },
+    {
+      "name": "novel_series-argument-d",
+      "tool_name": "novel_series",
+      "arguments": {
+        "series_id": -1
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: series_id must be a positive integer"
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 0,
+            "returned": 0
+          },
+          "records": [],
+          "series": {
+            "caption": "",
+            "id": 0,
+            "is_concluded": false,
+            "title": "",
+            "user": {
+              "account": "",
+              "comment": "",
+              "id": 0,
+              "is_followed": false,
+              "name": "",
+              "profile_image": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              }
+            }
+          }
+        },
+        "isError": true
+      },
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": ""
+    },
+    {
+      "name": "novel_series-argument-e",
+      "tool_name": "novel_series",
+      "arguments": {
+        "extra": true,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: unexpected additional properties [\"extra\"]"
+    },
+    {
+      "name": "novel_series-argument-f",
+      "tool_name": "novel_series",
+      "arguments": {
+        "series_id": 9223372036854775807
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: json: cannot unmarshal number 9223372036854776000 into Go struct field In.series_id of type int64"
+    },
+    {
+      "name": "novel_series-argument-g",
+      "tool_name": "novel_series",
+      "arguments": {
+        "series_id": "21"
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/series_id: type: 21 has type \"string\", want \"integer\""
+    },
+    {
+      "name": "novel_series-argument-h",
+      "tool_name": "novel_series",
+      "arguments": {
+        "series_id": null
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/series_id: type: \u003cinvalid reflect.Value\u003e has type \"null\", want \"integer\""
+    },
+    {
+      "name": "novel_series-argument-i",
+      "tool_name": "novel_series",
+      "arguments": {
+        "series_id": 1.5
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/series_id: type: 1.5 has type \"number\", want \"integer\""
+    },
+    {
+      "name": "novel_series-argument-j",
+      "tool_name": "novel_series",
+      "arguments": {
+        "page": 2,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: page requires limit to be a positive integer"
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 0,
+            "returned": 0
+          },
+          "records": [],
+          "series": {
+            "caption": "",
+            "id": 0,
+            "is_concluded": false,
+            "title": "",
+            "user": {
+              "account": "",
+              "comment": "",
+              "id": 0,
+              "is_followed": false,
+              "name": "",
+              "profile_image": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              }
+            }
+          }
+        },
+        "isError": true
+      },
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": ""
+    },
+    {
+      "name": "novel_series-argument-k",
+      "tool_name": "novel_series",
+      "arguments": {
+        "limit": 1,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": true,
+            "limit": 1,
+            "next_page": 2,
+            "page": 1,
+            "returned": 1
+          },
+          "records": [
+            {
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "id": "22",
+              "is_original": false,
+              "published_at": "2024-01-02T03:04:05Z",
+              "tags": [],
+              "text_length": 0,
+              "title": "one",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "novel",
+              "updated_at": null,
+              "url": "https://www.pixiv.net/novel/show.php?id=22",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "x_restrict": 0
+            }
+          ],
+          "series": {
+            "caption": "caption",
+            "id": 21,
+            "is_concluded": true,
+            "title": "first metadata",
+            "user": {
+              "account": "",
+              "comment": "",
+              "id": 7,
+              "is_followed": false,
+              "name": "writer",
+              "profile_image": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              }
+            }
+          }
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "novel_series-argument-l",
+      "tool_name": "novel_series",
+      "arguments": {
+        "limit": -1,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: limit must be zero or a positive integer"
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 0,
+            "returned": 0
+          },
+          "records": [],
+          "series": {
+            "caption": "",
+            "id": 0,
+            "is_concluded": false,
+            "title": "",
+            "user": {
+              "account": "",
+              "comment": "",
+              "id": 0,
+              "is_followed": false,
+              "name": "",
+              "profile_image": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              }
+            }
+          }
+        },
+        "isError": true
+      },
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": ""
+    },
+    {
+      "name": "novel_series-argument-m",
+      "tool_name": "novel_series",
+      "arguments": {
+        "page": 0,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: page must be a positive integer"
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 0,
+            "returned": 0
+          },
+          "records": [],
+          "series": {
+            "caption": "",
+            "id": 0,
+            "is_concluded": false,
+            "title": "",
+            "user": {
+              "account": "",
+              "comment": "",
+              "id": 0,
+              "is_followed": false,
+              "name": "",
+              "profile_image": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              }
+            }
+          }
+        },
+        "isError": true
+      },
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": ""
+    },
+    {
+      "name": "novel_series-argument-n",
+      "tool_name": "novel_series",
+      "arguments": {
+        "page": -1,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: page must be a positive integer"
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 0,
+            "returned": 0
+          },
+          "records": [],
+          "series": {
+            "caption": "",
+            "id": 0,
+            "is_concluded": false,
+            "title": "",
+            "user": {
+              "account": "",
+              "comment": "",
+              "id": 0,
+              "is_followed": false,
+              "name": "",
+              "profile_image": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              }
+            }
+          }
+        },
+        "isError": true
+      },
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": ""
+    },
+    {
+      "name": "novel_series-argument-o",
+      "tool_name": "novel_series",
+      "arguments": {
+        "limit": 0,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 3 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": 0,
+            "next_page": null,
+            "page": 1,
+            "returned": 3
+          },
+          "records": [
+            {
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "id": "22",
+              "is_original": false,
+              "published_at": "2024-01-02T03:04:05Z",
+              "tags": [],
+              "text_length": 0,
+              "title": "one",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "novel",
+              "updated_at": null,
+              "url": "https://www.pixiv.net/novel/show.php?id=22",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "x_restrict": 0
+            },
+            {
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "id": "23",
+              "is_original": false,
+              "published_at": "2024-01-02T03:04:05Z",
+              "tags": [],
+              "text_length": 0,
+              "title": "two",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "novel",
+              "updated_at": null,
+              "url": "https://www.pixiv.net/novel/show.php?id=23",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "x_restrict": 0
+            },
+            {
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "id": "24",
+              "is_original": false,
+              "published_at": "2024-01-02T03:04:05Z",
+              "tags": [],
+              "text_length": 0,
+              "title": "three",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "novel",
+              "updated_at": null,
+              "url": "https://www.pixiv.net/novel/show.php?id=24",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "x_restrict": 0
+            }
+          ],
+          "series": {
+            "caption": "caption",
+            "id": 21,
+            "is_concluded": true,
+            "title": "first metadata",
+            "user": {
+              "account": "",
+              "comment": "",
+              "id": 7,
+              "is_followed": false,
+              "name": "writer",
+              "profile_image": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              }
+            }
+          }
+        }
+      },
+      "calls": 1,
+      "requests": 2,
+      "rpc_error": ""
+    },
+    {
+      "name": "novel_series-argument-p",
+      "tool_name": "novel_series",
+      "arguments": {
+        "limit": 1,
+        "page": 2,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": true,
+            "limit": 1,
+            "next_page": 3,
+            "page": 2,
+            "returned": 1
+          },
+          "records": [
+            {
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "id": "23",
+              "is_original": false,
+              "published_at": "2024-01-02T03:04:05Z",
+              "tags": [],
+              "text_length": 0,
+              "title": "two",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "novel",
+              "updated_at": null,
+              "url": "https://www.pixiv.net/novel/show.php?id=23",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "x_restrict": 0
+            }
+          ],
+          "series": {
+            "caption": "caption",
+            "id": 21,
+            "is_concluded": true,
+            "title": "first metadata",
+            "user": {
+              "account": "",
+              "comment": "",
+              "id": 7,
+              "is_followed": false,
+              "name": "writer",
+              "profile_image": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              }
+            }
+          }
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "novel_series-argument-q",
+      "tool_name": "novel_series",
+      "arguments": {
+        "page": 1.5,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/page: type: 1.5 has type \"number\", want one of \"null, integer\""
+    },
+    {
+      "name": "novel_series-argument-r",
+      "tool_name": "novel_series",
+      "arguments": {
+        "limit": "2",
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/limit: type: 2 has type \"string\", want one of \"null, integer\""
+    },
+    {
+      "name": "novel_content-argument-a",
+      "tool_name": "novel_content",
+      "arguments": {
+        "novel_id": 21
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:NovelContent: content_unavailable: novel content is unsupported by the v1 App API"
+          }
+        ],
+        "structuredContent": {
+          "content": {
+            "blocks": [],
+            "caption": "",
+            "novel_id": 0,
+            "title": ""
+          }
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 0,
+      "rpc_error": ""
+    },
+    {
+      "name": "novel_content-argument-b",
+      "tool_name": "novel_content",
+      "arguments": {},
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: required: missing properties: [\"novel_id\"]"
+    },
+    {
+      "name": "novel_content-argument-c",
+      "tool_name": "novel_content",
+      "arguments": {
+        "novel_id": 0
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: novel_id must be a positive integer"
+          }
+        ],
+        "structuredContent": {
+          "content": {
+            "blocks": [],
+            "caption": "",
+            "novel_id": 0,
+            "title": ""
+          }
+        },
+        "isError": true
+      },
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": ""
+    },
+    {
+      "name": "novel_content-argument-d",
+      "tool_name": "novel_content",
+      "arguments": {
+        "novel_id": -1
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: novel_id must be a positive integer"
+          }
+        ],
+        "structuredContent": {
+          "content": {
+            "blocks": [],
+            "caption": "",
+            "novel_id": 0,
+            "title": ""
+          }
+        },
+        "isError": true
+      },
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": ""
+    },
+    {
+      "name": "novel_content-argument-e",
+      "tool_name": "novel_content",
+      "arguments": {
+        "extra": true,
+        "novel_id": 21
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: unexpected additional properties [\"extra\"]"
+    },
+    {
+      "name": "novel_content-argument-f",
+      "tool_name": "novel_content",
+      "arguments": {
+        "novel_id": 9223372036854775807
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: json: cannot unmarshal number 9223372036854776000 into Go struct field In.novel_id of type int64"
+    },
+    {
+      "name": "novel_content-argument-g",
+      "tool_name": "novel_content",
+      "arguments": {
+        "novel_id": "21"
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/novel_id: type: 21 has type \"string\", want \"integer\""
+    },
+    {
+      "name": "novel_content-argument-h",
+      "tool_name": "novel_content",
+      "arguments": {
+        "novel_id": null
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/novel_id: type: \u003cinvalid reflect.Value\u003e has type \"null\", want \"integer\""
+    },
+    {
+      "name": "novel_content-argument-i",
+      "tool_name": "novel_content",
+      "arguments": {
+        "novel_id": 1.5
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/novel_id: type: 1.5 has type \"number\", want \"integer\""
+    },
+    {
+      "name": "novel_content-argument-j",
+      "tool_name": "novel_content",
+      "arguments": {
+        "novel_id": 21,
+        "page": 2
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: unexpected additional properties [\"page\"]"
+    },
+    {
+      "name": "novel_content-argument-k",
+      "tool_name": "novel_content",
+      "arguments": {
+        "limit": 1,
+        "novel_id": 21
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: unexpected additional properties [\"limit\"]"
+    },
+    {
+      "name": "novel_content-argument-l",
+      "tool_name": "novel_content",
+      "arguments": {
+        "limit": -1,
+        "novel_id": 21
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: unexpected additional properties [\"limit\"]"
+    },
+    {
+      "name": "novel_content-argument-m",
+      "tool_name": "novel_content",
+      "arguments": {
+        "novel_id": 21,
+        "page": 0
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: unexpected additional properties [\"page\"]"
+    },
+    {
+      "name": "novel_content-argument-n",
+      "tool_name": "novel_content",
+      "arguments": {
+        "novel_id": 21,
+        "page": -1
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: unexpected additional properties [\"page\"]"
+    },
+    {
+      "name": "novel_content-argument-o",
+      "tool_name": "novel_content",
+      "arguments": {
+        "limit": 0,
+        "novel_id": 21
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: unexpected additional properties [\"limit\"]"
+    },
+    {
+      "name": "novel_content-argument-p",
+      "tool_name": "novel_content",
+      "arguments": {
+        "limit": 1,
+        "novel_id": 21,
+        "page": 2
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: unexpected additional properties [\"limit\" \"page\"]"
+    },
+    {
+      "name": "novel_content-argument-q",
+      "tool_name": "novel_content",
+      "arguments": {
+        "novel_id": 21,
+        "page": 1.5
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: unexpected additional properties [\"page\"]"
+    },
+    {
+      "name": "novel_content-argument-r",
+      "tool_name": "novel_content",
+      "arguments": {
+        "limit": "2",
+        "novel_id": 21
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: unexpected additional properties [\"limit\"]"
+    },
+    {
+      "name": "series-body-a",
+      "tool_name": "novel_series",
+      "arguments": {
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "novels": []
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:NovelSeries: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 0,
+            "returned": 0
+          },
+          "records": [],
+          "series": {
+            "caption": "",
+            "id": 0,
+            "is_concluded": false,
+            "title": "",
+            "user": {
+              "account": "",
+              "comment": "",
+              "id": 0,
+              "is_followed": false,
+              "name": "",
+              "profile_image": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              }
+            }
+          }
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "series-body-b",
+      "tool_name": "novel_series",
+      "arguments": {
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "novel_series_detail": null,
+          "novels": []
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:NovelSeries: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 0,
+            "returned": 0
+          },
+          "records": [],
+          "series": {
+            "caption": "",
+            "id": 0,
+            "is_concluded": false,
+            "title": "",
+            "user": {
+              "account": "",
+              "comment": "",
+              "id": 0,
+              "is_followed": false,
+              "name": "",
+              "profile_image": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              }
+            }
+          }
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "series-body-c",
+      "tool_name": "novel_series",
+      "arguments": {
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:NovelSeries: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 0,
+            "returned": 0
+          },
+          "records": [],
+          "series": {
+            "caption": "",
+            "id": 0,
+            "is_concluded": false,
+            "title": "",
+            "user": {
+              "account": "",
+              "comment": "",
+              "id": 0,
+              "is_followed": false,
+              "name": "",
+              "profile_image": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              }
+            }
+          }
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "series-body-d",
+      "tool_name": "novel_series",
+      "arguments": {
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 0,
+              "user": {
+                "id": 7
+              }
+            }
+          ]
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:NovelSeries: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 0,
+            "returned": 0
+          },
+          "records": [],
+          "series": {
+            "caption": "",
+            "id": 0,
+            "is_concluded": false,
+            "title": "",
+            "user": {
+              "account": "",
+              "comment": "",
+              "id": 0,
+              "is_followed": false,
+              "name": "",
+              "profile_image": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              }
+            }
+          }
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "series-body-e",
+      "tool_name": "novel_series",
+      "arguments": {
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 0 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 0
+          },
+          "records": [],
+          "series": {
+            "caption": "",
+            "id": 21,
+            "is_concluded": false,
+            "title": "",
+            "user": {
+              "account": "",
+              "comment": "",
+              "id": 7,
+              "is_followed": false,
+              "name": "",
+              "profile_image": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              }
+            }
+          }
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "empty-first-page",
+      "tool_name": "novel_series",
+      "arguments": {
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "empty first metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "terminal",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 2 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 2
+          },
+          "records": [
+            {
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "id": "22",
+              "is_original": false,
+              "published_at": "2024-01-02T03:04:05Z",
+              "tags": [],
+              "text_length": 0,
+              "title": "",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "novel",
+              "updated_at": null,
+              "url": "https://www.pixiv.net/novel/show.php?id=22",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "x_restrict": 0
+            },
+            {
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "id": "23",
+              "is_original": false,
+              "published_at": "2024-01-02T03:04:05Z",
+              "tags": [],
+              "text_length": 0,
+              "title": "",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "novel",
+              "updated_at": null,
+              "url": "https://www.pixiv.net/novel/show.php?id=23",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "x_restrict": 0
+            }
+          ],
+          "series": {
+            "caption": "",
+            "id": 21,
+            "is_concluded": false,
+            "title": "empty first metadata",
+            "user": {
+              "account": "",
+              "comment": "",
+              "id": 7,
+              "is_followed": false,
+              "name": "",
+              "profile_image": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              }
+            }
+          }
+        }
+      },
+      "calls": 1,
+      "requests": 2,
+      "rpc_error": ""
+    },
+    {
+      "name": "terminal-truncation",
+      "tool_name": "novel_series",
+      "arguments": {
+        "limit": 1,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "terminal",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": true,
+            "limit": 1,
+            "next_page": 2,
+            "page": 1,
+            "returned": 1
+          },
+          "records": [
+            {
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "id": "22",
+              "is_original": false,
+              "published_at": "2024-01-02T03:04:05Z",
+              "tags": [],
+              "text_length": 0,
+              "title": "",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "novel",
+              "updated_at": null,
+              "url": "https://www.pixiv.net/novel/show.php?id=22",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "x_restrict": 0
+            }
+          ],
+          "series": {
+            "caption": "",
+            "id": 21,
+            "is_concluded": false,
+            "title": "terminal",
+            "user": {
+              "account": "",
+              "comment": "",
+              "id": 7,
+              "is_followed": false,
+              "name": "",
+              "profile_image": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              }
+            }
+          }
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "later-page-malformed",
+      "tool_name": "novel_series",
+      "arguments": {
+        "limit": 0,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novels": []
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:NovelSeries: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 0,
+            "returned": 0
+          },
+          "records": [],
+          "series": {
+            "caption": "",
+            "id": 0,
+            "is_concluded": false,
+            "title": "",
+            "user": {
+              "account": "",
+              "comment": "",
+              "id": 0,
+              "is_followed": false,
+              "name": "",
+              "profile_image": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              }
+            }
+          }
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 2,
+      "rpc_error": ""
+    },
+    {
+      "name": "offset-past-end",
+      "tool_name": "novel_series",
+      "arguments": {
+        "limit": 1,
+        "page": 9,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 0 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": 1,
+            "next_page": null,
+            "page": 9,
+            "returned": 0
+          },
+          "records": [],
+          "series": {
+            "caption": "caption",
+            "id": 21,
+            "is_concluded": true,
+            "title": "first metadata",
+            "user": {
+              "account": "",
+              "comment": "",
+              "id": 7,
+              "is_followed": false,
+              "name": "writer",
+              "profile_image": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              }
+            }
+          }
+        }
+      },
+      "calls": 1,
+      "requests": 2,
+      "rpc_error": ""
+    },
+    {
+      "name": "nullable-or-overflow-a",
+      "tool_name": "novel_series",
+      "arguments": {
+        "page": null,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 2 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": true,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 2
+          },
+          "records": [
+            {
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "id": "22",
+              "is_original": false,
+              "published_at": "2024-01-02T03:04:05Z",
+              "tags": [],
+              "text_length": 0,
+              "title": "one",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "novel",
+              "updated_at": null,
+              "url": "https://www.pixiv.net/novel/show.php?id=22",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "x_restrict": 0
+            },
+            {
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "id": "23",
+              "is_original": false,
+              "published_at": "2024-01-02T03:04:05Z",
+              "tags": [],
+              "text_length": 0,
+              "title": "two",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "novel",
+              "updated_at": null,
+              "url": "https://www.pixiv.net/novel/show.php?id=23",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "x_restrict": 0
+            }
+          ],
+          "series": {
+            "caption": "caption",
+            "id": 21,
+            "is_concluded": true,
+            "title": "first metadata",
+            "user": {
+              "account": "",
+              "comment": "",
+              "id": 7,
+              "is_followed": false,
+              "name": "writer",
+              "profile_image": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              }
+            }
+          }
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "nullable-or-overflow-b",
+      "tool_name": "novel_series",
+      "arguments": {
+        "limit": null,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 2 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": true,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 2
+          },
+          "records": [
+            {
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "id": "22",
+              "is_original": false,
+              "published_at": "2024-01-02T03:04:05Z",
+              "tags": [],
+              "text_length": 0,
+              "title": "one",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "novel",
+              "updated_at": null,
+              "url": "https://www.pixiv.net/novel/show.php?id=22",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "x_restrict": 0
+            },
+            {
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "id": "23",
+              "is_original": false,
+              "published_at": "2024-01-02T03:04:05Z",
+              "tags": [],
+              "text_length": 0,
+              "title": "two",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "novel",
+              "updated_at": null,
+              "url": "https://www.pixiv.net/novel/show.php?id=23",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "x_restrict": 0
+            }
+          ],
+          "series": {
+            "caption": "caption",
+            "id": 21,
+            "is_concluded": true,
+            "title": "first metadata",
+            "user": {
+              "account": "",
+              "comment": "",
+              "id": 7,
+              "is_followed": false,
+              "name": "writer",
+              "profile_image": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              }
+            }
+          }
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "nullable-or-overflow-c",
+      "tool_name": "novel_series",
+      "arguments": {
+        "limit": null,
+        "page": null,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 2 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": true,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 2
+          },
+          "records": [
+            {
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "id": "22",
+              "is_original": false,
+              "published_at": "2024-01-02T03:04:05Z",
+              "tags": [],
+              "text_length": 0,
+              "title": "one",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "novel",
+              "updated_at": null,
+              "url": "https://www.pixiv.net/novel/show.php?id=22",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "x_restrict": 0
+            },
+            {
+              "caption": "",
+              "cover": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              },
+              "id": "23",
+              "is_original": false,
+              "published_at": "2024-01-02T03:04:05Z",
+              "tags": [],
+              "text_length": 0,
+              "title": "two",
+              "total_bookmarks": 0,
+              "total_views": 0,
+              "type": "novel",
+              "updated_at": null,
+              "url": "https://www.pixiv.net/novel/show.php?id=23",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 7,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "x_restrict": 0
+            }
+          ],
+          "series": {
+            "caption": "caption",
+            "id": 21,
+            "is_concluded": true,
+            "title": "first metadata",
+            "user": {
+              "account": "",
+              "comment": "",
+              "id": 7,
+              "is_followed": false,
+              "name": "writer",
+              "profile_image": {
+                "height": 0,
+                "resource": null,
+                "variant": "",
+                "width": 0
+              }
+            }
+          }
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "nullable-or-overflow-d",
+      "tool_name": "novel_series",
+      "arguments": {
+        "limit": 9223372036854775807,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: json: cannot unmarshal number 9223372036854776000 into Go struct field In.limit of type int"
+    },
+    {
+      "name": "nullable-or-overflow-e",
+      "tool_name": "novel_series",
+      "arguments": {
+        "limit": 1,
+        "page": 9223372036854775807,
+        "series_id": 21
+      },
+      "bodies": [
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "first metadata",
+            "caption": "caption",
+            "is_concluded": true,
+            "user": {
+              "id": 7,
+              "name": "writer"
+            }
+          },
+          "novels": [
+            {
+              "id": 22,
+              "title": "one",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 23,
+              "title": "two",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": "https://app-api.pixiv.net/v2/novel/series?series_id=21\u0026last_order=9"
+        },
+        {
+          "novel_series_detail": {
+            "id": 21,
+            "title": "second metadata",
+            "user": {
+              "id": 7
+            }
+          },
+          "novels": [
+            {
+              "id": 23,
+              "title": "duplicate",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            },
+            {
+              "id": 24,
+              "title": "three",
+              "user": {
+                "id": 7
+              },
+              "create_date": "2024-01-02T03:04:05+00:00"
+            }
+          ],
+          "next_url": null
+        }
+      ],
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: json: cannot unmarshal number 9223372036854776000 into Go struct field In.page of type int"
+    }
+  ]
+}

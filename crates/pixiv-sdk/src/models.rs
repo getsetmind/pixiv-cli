@@ -185,3 +185,79 @@ pub struct UserPreview {
     pub illusts: Vec<Artwork>,
     pub novels: Vec<Novel>,
 }
+
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct NovelSeries {
+    pub id: i64,
+    pub title: String,
+    pub caption: String,
+    pub user: User,
+    pub is_concluded: bool,
+}
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct NovelSeriesResult {
+    pub series: NovelSeries,
+    pub novels: crate::cursor::Page<Novel>,
+}
+pub type NovelBlockKind = String;
+pub const NOVEL_BLOCK_PARAGRAPH: &str = "paragraph";
+pub const NOVEL_BLOCK_HEADER: &str = "header";
+pub const NOVEL_BLOCK_IMAGE: &str = "image";
+pub const NOVEL_BLOCK_FILE: &str = "file";
+pub const NOVEL_BLOCK_UNKNOWN: &str = "unknown";
+pub type NovelMarkKind = String;
+pub const NOVEL_MARK_STRONG: &str = "strong";
+pub const NOVEL_MARK_EMPHASIS: &str = "emphasis";
+pub const NOVEL_MARK_DELETE: &str = "delete";
+pub const NOVEL_MARK_RUBY: &str = "ruby";
+pub const NOVEL_MARK_LINK: &str = "link";
+pub const NOVEL_MARK_CUSTOM: &str = "custom";
+pub const NOVEL_MARK_UNKNOWN: &str = "unknown";
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct NovelRuby {
+    pub text: String,
+    pub furigana: String,
+}
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct NovelMark {
+    pub kind: NovelMarkKind,
+    pub text: String,
+    pub ruby: Option<NovelRuby>,
+    pub href: String,
+    pub class: String,
+}
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct NovelImageBlock {
+    pub resource: Resource,
+    pub caption: String,
+    pub width: i64,
+    pub height: i64,
+}
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct NovelFileBlock {
+    pub resource: Resource,
+    pub filename: String,
+    pub caption: String,
+    pub size: i64,
+}
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct NovelUnknownBlock {
+    pub raw_type: String,
+    pub payload: std::collections::BTreeMap<String, String>,
+}
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct NovelBlock {
+    pub kind: NovelBlockKind,
+    pub text: String,
+    pub marks: Vec<NovelMark>,
+    pub image: Option<NovelImageBlock>,
+    pub file: Option<NovelFileBlock>,
+    pub unknown: Option<NovelUnknownBlock>,
+}
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct NovelContent {
+    pub novel_id: i64,
+    pub title: String,
+    pub caption: String,
+    pub blocks: Vec<NovelBlock>,
+}

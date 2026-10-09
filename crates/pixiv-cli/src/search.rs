@@ -232,22 +232,12 @@ impl SearchInput {
         if !self.query.is_empty() {
             return Ok(self.word());
         }
-        if !terminal {
-            let mut bytes = Vec::new();
-            input
-                .read_to_end(&mut bytes)
-                .map_err(|error| CommandError::Usage(format!("read stdin value: {error}")))?;
-            if bytes.ends_with(b"\r\n") {
-                bytes.truncate(bytes.len() - 2);
-            } else if bytes.ends_with(b"\n") {
-                bytes.pop();
-            }
-            if !bytes.is_empty() {
-                return String::from_utf8(bytes)
-                    .map_err(|_| CommandError::Message("stdin search word is not valid UTF-8"));
-            }
-        }
-        Err(CommandError::Message("usage: pixiv search [options] WORD"))
+        read_text_value(
+            input,
+            terminal,
+            "usage: pixiv search [options] WORD",
+            "stdin search word is not valid UTF-8",
+        )
     }
 
     pub fn word(&self) -> String {
@@ -1041,4 +1031,27 @@ fn valid_date(raw: &str) -> bool {
             }
         })
         && NaiveDate::parse_from_str(raw, "%Y-%m-%d").is_ok()
+}
+
+pub(crate) fn read_text_value<R: std::io::Read>(
+    input: &mut R,
+    terminal: bool,
+    usage: &'static str,
+    invalid_utf8: &'static str,
+) -> Result<String, CommandError> {
+    if !terminal {
+        let mut bytes = Vec::new();
+        input
+            .read_to_end(&mut bytes)
+            .map_err(|error| CommandError::Usage(format!("read stdin value: {error}")))?;
+        if bytes.ends_with(b"\r\n") {
+            bytes.truncate(bytes.len() - 2);
+        } else if bytes.ends_with(b"\n") {
+            bytes.pop();
+        }
+        if !bytes.is_empty() {
+            return String::from_utf8(bytes).map_err(|_| CommandError::Message(invalid_utf8));
+        }
+    }
+    Err(CommandError::Message(usage))
 }

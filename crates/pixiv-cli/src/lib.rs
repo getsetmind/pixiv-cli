@@ -2,6 +2,7 @@ mod json_spool;
 pub mod mutation;
 mod novel_list;
 pub mod novel_search;
+pub mod novel_series;
 pub mod ranking;
 pub mod search;
 pub mod trending;

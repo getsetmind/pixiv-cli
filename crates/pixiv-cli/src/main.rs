@@ -114,6 +114,13 @@ enum Command {
         #[command(flatten)]
         connection: ProxyOptions,
     },
+    #[command(args_override_self = true)]
+    Series {
+        #[command(flatten)]
+        options: Box<pixiv_cli_rs::novel_series::NovelSeriesOptions>,
+        #[command(flatten)]
+        connection: ProxyOptions,
+    },
     Ugoira {
         source: String,
         #[arg(long)]
@@ -180,6 +187,7 @@ async fn main() {
         Command::Ugoira { json, .. } => *json,
         Command::Search { input, .. } => input.machine_output(),
         Command::Ranking { options, .. } => options.json.is_some() || options.ndjson,
+        Command::Series { options, .. } => options.json.is_some() || options.ndjson,
     };
     let mut ndjson_output = match &args.command {
         Command::Novel { .. } => unreachable!("novel commands were resolved"),
@@ -195,6 +203,9 @@ async fn main() {
         Command::Ranking { options, .. } => {
             options.ndjson || (options.json.is_none() && !io::stdout().is_terminal())
         }
+        Command::Series { options, .. } => {
+            options.ndjson || (options.json.is_none() && !io::stdout().is_terminal())
+        }
     };
     let exit = finish_command(
         execute(args, &mut ndjson_output).await,
@@ -207,9 +218,12 @@ async fn main() {
     }
 }
 
-async fn execute(args: Arguments, ndjson_output: &mut bool) -> Result<(), CommandError> {
+async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), CommandError> {
     if let Command::Ranking { options, .. } = &args.command {
         options.validate_arguments()?;
+    }
+    if let Command::Series { options, .. } = &mut args.command {
+        options.resolve_source(&mut io::stdin().lock(), io::stdin().is_terminal())?;
     }
     let search_word = match &args.command {
         Command::Search { input, .. } => {
@@ -228,6 +242,7 @@ async fn execute(args: Arguments, ndjson_output: &mut bool) -> Result<(), Comman
             | Command::Mcp { .. }
             | Command::Search { .. }
             | Command::Ranking { .. }
+            | Command::Series { .. }
             | Command::Bookmark { .. }
             | Command::Follow { .. }
             | Command::User { .. }
@@ -492,6 +507,37 @@ async fn execute(args: Arguments, ndjson_output: &mut bool) -> Result<(), Comman
         )
         .await;
     }
+    if let Command::Series {
+        options,
+        connection,
+    } = &args.command
+    {
+        let (directory, config) = account_config.expect("series startup was resolved");
+        options.validate()?;
+        let proxy = connection.override_value()?;
+        let configured_json = config
+            .current()
+            .and_then(|snapshot| snapshot.runtime())
+            .map_err(pixiv_app::scheduler::SchedulerError::from)?
+            .output_json;
+        let mode = options.output_mode(configured_json, io::stdout().is_terminal())?;
+        *ndjson_output = mode == DetailOutput::Ndjson;
+        let database = pixiv_app::database::Database::open(&directory)
+            .map_err(|error| CommandError::State(Box::new(error)))?;
+        let execution = pixiv_app::execution::Execution::http(
+            config,
+            std::sync::Arc::new(std::sync::Mutex::new(database)),
+        );
+        return pixiv_cli_rs::novel_series::saved_novel_series(
+            &execution,
+            &pixiv_app::lifecycle::Context::new(),
+            options.as_ref().clone(),
+            proxy,
+            mode,
+            io::stdout(),
+        )
+        .await;
+    }
     if let Command::Detail {
         json,
         ndjson,
@@ -598,6 +644,7 @@ async fn execute(args: Arguments, ndjson_output: &mut bool) -> Result<(), Comman
         Command::Detail { .. } => unreachable!("detail uses saved account execution"),
         Command::Search { .. } => unreachable!("search uses saved account execution"),
         Command::Ranking { .. } => unreachable!("ranking uses saved account execution"),
+        Command::Series { .. } => unreachable!("series uses saved account execution"),
         Command::Ugoira { source, json } => {
             let metadata = client.ugoira_metadata(artwork_id(&source)?).await?;
             if json {

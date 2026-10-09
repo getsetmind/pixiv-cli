@@ -288,3 +288,161 @@ impl<'a> From<&'a crate::models::UserPreview> for UserPreviewDto<'a> {
         }
     }
 }
+
+#[derive(Serialize)]
+pub struct NovelSeriesDto<'a> {
+    pub id: i64,
+    pub title: &'a str,
+    pub caption: &'a str,
+    pub user: UserDto<'a>,
+    pub is_concluded: bool,
+}
+impl<'a> From<&'a crate::models::NovelSeries> for NovelSeriesDto<'a> {
+    fn from(value: &'a crate::models::NovelSeries) -> Self {
+        Self {
+            id: value.id,
+            title: &value.title,
+            caption: &value.caption,
+            user: (&value.user).into(),
+            is_concluded: value.is_concluded,
+        }
+    }
+}
+#[derive(Serialize)]
+pub struct NovelPageDto<'a> {
+    pub items: Vec<NovelDto<'a>>,
+    pub next: &'a str,
+}
+#[derive(Serialize)]
+pub struct NovelSeriesResultDto<'a> {
+    pub series: NovelSeriesDto<'a>,
+    pub novels: NovelPageDto<'a>,
+}
+impl<'a> From<&'a crate::models::NovelSeriesResult> for NovelSeriesResultDto<'a> {
+    fn from(value: &'a crate::models::NovelSeriesResult) -> Self {
+        Self {
+            series: (&value.series).into(),
+            novels: NovelPageDto {
+                items: value.novels.items.iter().map(Into::into).collect(),
+                next: value.novels.next.as_str(),
+            },
+        }
+    }
+}
+#[derive(Serialize)]
+pub struct NovelRubyDto<'a> {
+    pub text: &'a str,
+    pub furigana: &'a str,
+}
+impl<'a> From<&'a crate::models::NovelRuby> for NovelRubyDto<'a> {
+    fn from(value: &'a crate::models::NovelRuby) -> Self {
+        Self {
+            text: &value.text,
+            furigana: &value.furigana,
+        }
+    }
+}
+#[derive(Serialize)]
+pub struct NovelMarkDto<'a> {
+    pub kind: &'a str,
+    pub text: &'a str,
+    pub ruby: Option<NovelRubyDto<'a>>,
+    pub href: &'a str,
+    pub class: &'a str,
+}
+impl<'a> From<&'a crate::models::NovelMark> for NovelMarkDto<'a> {
+    fn from(value: &'a crate::models::NovelMark) -> Self {
+        Self {
+            kind: &value.kind,
+            text: &value.text,
+            ruby: value.ruby.as_ref().map(Into::into),
+            href: &value.href,
+            class: &value.class,
+        }
+    }
+}
+#[derive(Serialize)]
+pub struct NovelImageBlockDto<'a> {
+    pub resource: Option<ResourceDto<'a>>,
+    pub caption: &'a str,
+    pub width: i64,
+    pub height: i64,
+}
+impl<'a> From<&'a crate::models::NovelImageBlock> for NovelImageBlockDto<'a> {
+    fn from(value: &'a crate::models::NovelImageBlock) -> Self {
+        Self {
+            resource: ResourceDto::from_resource(&value.resource),
+            caption: &value.caption,
+            width: value.width,
+            height: value.height,
+        }
+    }
+}
+#[derive(Serialize)]
+pub struct NovelFileBlockDto<'a> {
+    pub resource: Option<ResourceDto<'a>>,
+    pub filename: &'a str,
+    pub caption: &'a str,
+    pub size: i64,
+}
+impl<'a> From<&'a crate::models::NovelFileBlock> for NovelFileBlockDto<'a> {
+    fn from(value: &'a crate::models::NovelFileBlock) -> Self {
+        Self {
+            resource: ResourceDto::from_resource(&value.resource),
+            filename: &value.filename,
+            caption: &value.caption,
+            size: value.size,
+        }
+    }
+}
+#[derive(Serialize)]
+pub struct NovelUnknownBlockDto<'a> {
+    pub raw_type: &'a str,
+    pub payload: std::collections::BTreeMap<String, String>,
+}
+impl<'a> From<&'a crate::models::NovelUnknownBlock> for NovelUnknownBlockDto<'a> {
+    fn from(value: &'a crate::models::NovelUnknownBlock) -> Self {
+        Self {
+            raw_type: &value.raw_type,
+            payload: value.payload.clone(),
+        }
+    }
+}
+#[derive(Serialize)]
+pub struct NovelBlockDto<'a> {
+    pub kind: &'a str,
+    pub text: &'a str,
+    pub marks: Vec<NovelMarkDto<'a>>,
+    pub image: Option<NovelImageBlockDto<'a>>,
+    pub file: Option<NovelFileBlockDto<'a>>,
+    pub unknown: Option<NovelUnknownBlockDto<'a>>,
+}
+impl<'a> From<&'a crate::models::NovelBlock> for NovelBlockDto<'a> {
+    fn from(value: &'a crate::models::NovelBlock) -> Self {
+        Self {
+            kind: &value.kind,
+            text: &value.text,
+            marks: value.marks.iter().map(Into::into).collect(),
+            image: value.image.as_ref().map(Into::into),
+            file: value.file.as_ref().map(Into::into),
+            unknown: value.unknown.as_ref().map(Into::into),
+        }
+    }
+}
+#[derive(Serialize)]
+pub struct NovelContentDto<'a> {
+    pub novel_id: i64,
+    pub title: &'a str,
+    pub caption: &'a str,
+    pub blocks: Vec<NovelBlockDto<'a>>,
+}
+impl<'a> From<&'a crate::models::NovelContent> for NovelContentDto<'a> {
+    fn from(value: &'a crate::models::NovelContent) -> Self {
+        Self {
+            novel_id: value.novel_id,
+            title: &value.title,
+            caption: &value.caption,
+            blocks: value.blocks.iter().map(Into::into).collect(),
+        }
+    }
+}

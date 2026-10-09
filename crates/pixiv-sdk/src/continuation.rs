@@ -29,6 +29,14 @@ pub(crate) fn query_digest(query: &BTreeMap<String, String>) -> String {
     format!("{:x}", Sha256::digest(canonical.as_bytes()))
 }
 pub(crate) fn next_offset(raw: &str, endpoint: &str, allowed_keys: &[&str]) -> Option<i64> {
+    next_value(raw, endpoint, allowed_keys, "offset")
+}
+pub(crate) fn next_value(
+    raw: &str,
+    endpoint: &str,
+    allowed_keys: &[&str],
+    key: &str,
+) -> Option<i64> {
     let (scheme, remainder) = raw.split_once("://")?;
     if !scheme.eq_ignore_ascii_case("https") || raw.bytes().any(|byte| byte < 32 || byte == 127) {
         return None;
@@ -70,6 +78,6 @@ pub(crate) fn next_offset(raw: &str, endpoint: &str, allowed_keys: &[&str]) -> O
             return None;
         }
     }
-    let value = entries.get("offset")?.parse::<i64>().ok()?;
+    let value = entries.get(key)?.parse::<i64>().ok()?;
     (value > 0).then_some(value)
 }

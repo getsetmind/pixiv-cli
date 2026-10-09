@@ -78,7 +78,7 @@ fn mcp_process_exchanges_jsonrpc_without_stdout_diagnostics_or_credentials() {
     );
     assert_eq!(
         by_id("list")["result"]["tools"].as_array().unwrap().len(),
-        14
+        16
     );
     for (index, name) in [
         "add_bookmark",
@@ -95,6 +95,17 @@ fn mcp_process_exchanges_jsonrpc_without_stdout_diagnostics_or_credentials() {
         assert_eq!(
             by_id("list")["result"]["tools"][index + 8]["inputSchema"]["type"],
             "object"
+        );
+    }
+    let contract: Value = serde_json::from_str(include_str!(
+        "../../../docs/migration/contracts/mcp-novel-series-content.json"
+    ))
+    .unwrap();
+    for (index, name) in [(14, "novel_series"), (15, "novel_content")] {
+        assert_eq!(by_id("list")["result"]["tools"][index]["name"], name);
+        assert_eq!(
+            by_id("list")["result"]["tools"][index],
+            contract["tools"][name]
         );
     }
     assert_eq!(

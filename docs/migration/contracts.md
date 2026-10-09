@@ -1021,3 +1021,25 @@ Rust の実 CLI 子プロセスでは、278件の startup 入力のうち275件�
 Linux amd64 の最終 scripts/check-rust.ps1 は終了0で、Formatter、workspace all-target Clippy、169 passed・0 failed・既存3 ignored、release build が成功した。Clippy build は約21秒、test build は約25秒、release build は約13秒で、全チェックは約150秒である。Go の CLI・pipeline・bookmark/follow command・MCP・SDK・services・migration 台帳検査も成功し、関連 vet と gofmt を確認した。CLI の全体テストは既知の cli.linux-amd64.json 不在の command surface 検査だけを除外し、この未実行項目を成功扱いにしない。実装・契約取得・入口比較・レビュー・検証は約19分であった。
 
 Go 本番コード・go.mod・go.sum は固定参照コミットから変更せず、実 Pixiv 資格情報とライブ mutation を使用していない。台帳は全体の verified へ変更せず、前述の3 parser差分と他の共有検証・OS/arch・実状態変更の未完了範囲を維持する。
+
+## 小説シリーズと公開 content 契約
+
+[novel-series.json](../../crates/pixiv-sdk/tests/fixtures/novel-series.json) は、Go SDK の NovelSeries 49ケース、NovelContent の4エラー入力、3種類の公開 content DTO の比較である。series metadata、novels の必須 field・null/不正型、next_url と last_order、query-bound cursor、整数境界、資源 DTO を固定する。継続 URL の series_id は未指定や異なる値でも受け入れる Go の条件を維持し、次の要求には元の series_id と last_order を使う。既存 offset cursor の wrapper は変更せず、同じ処理を key 指定で使う。
+
+固定 Go の NovelContent は、非正 ID に invalid_argument、正 ID に content_unavailable を返し、HTTP を実行しない。これは現行 App API の公開契約であり、Rust でも明示的に維持する。block/mark の kind は開いた文字列型として未知の値を保存し、公開 model・DTO と変換を追加する。空 blocks/marks は []、省略された image/file/unknown/ruby とゼロ resource は null となる。非ゼロ opaque resource の image/file、同時に存在する optional variant、未知 payload の copy も Go と比較し、DTO へ URL・request headers・期限・資格情報の要否を出さない。
+
+[cli-novel-series.json](contracts/cli-novel-series.json) は、実 Go CLI の69ケースである。series --type novel の human/JSON/NDJSON、logical page/limit、空シリーズ、後続エラーで部分出力しない条件、URL/type と入力検証、実起動の stdout/stderr・終了コード・config/DB を比較する。[cli-novel-series-stdin.json](contracts/cli-novel-series-stdin.json) の99ケースでは text stdin の ID/URL・LF/CRLF・空・multiline・不正入力と、明示引数がある場合の no-read を確認する。検索と同じ text reader の処理を共用し、trim や複数行の分割を追加しない。
+
+CLI のシリーズ metadata は最初に取得したページから保持し、--page 2 でも後続ページの値へ置き換えない。全対象 novel を収集した後に出力し、JSON も account lease の中で commit する。[cli-novel-series-pool.json](contracts/cli-novel-series-pool.json) の3シナリオでは後続429で最初の account の metadata/items を破棄して全体を再実行し、後続 malformed、refresh 保存、gate 再利用と出力時の lease を比較する。JSON object key 順は方針に従って正規化するが、array 順・null・値・empty array と本文の表現は維持する。
+
+[cli-novel-content.json](contracts/cli-novel-content.json) の36ケースは、detail --type novel --content を ID/URL/record 解釈・設定・DB・account・HTTP より先に拒否する Go の既存順序を固定する。Rust の既存早期拒否を維持し、content の成功や余分な fetch を作らない。
+
+[mcp-novel-series-content.json](contracts/mcp-novel-series-content.json) は、実 Go MCP の2 schema と50ケースである。novel_series の最初の cursor-zero metadata、dedup、logical paging、空の先頭ページ、batch 内の切り詰めによる has_more、後続エラーの全体失敗、nullable page/limit と int/int64 binding を比較する。novel_content は ID 検証の後に保存済み account を取得し、SDK の content_unavailable を返す。CLI の早期拒否とこの順序を意図的に区別する。
+
+[mcp-novel-series-pool.json](contracts/mcp-novel-series-pool.json) の2シナリオは、後続429から account を切り替えて metadata/items を最初から取り直す場合と、後続 malformed で全 records を破棄する場合を固定する。続けて呼び出しても refresh/account 状態と gate を再利用できることを比較した。stdio の既存14 tool と新たな novel_series/novel_content の16 tool を保持する。共有 schema validator の追加は nullable integer union に限定し、既存 scalar schema の検証順と診断を変えない。
+
+今回の範囲は小説シリーズと現行 content 公開契約である。artwork series は別の未移植操作として残し、series 全体の完成とは扱わない。NovelSeries envelope と埋め込まれた Novel/User を含む従来の Value decode の大小文字・重複・順序、resource 再解決、共有 root parser の3差分、Linux command surface snapshot 不在、全 input/flag/help・TTY・通信/取消/deadline/disconnect、実 HTTPS/資源/状態変更、他 OS/arch の未検証も維持する。
+
+Linux amd64 の最終 scripts/check-rust.ps1 は終了0で、Formatter、workspace all-target Clippy、182 passed・0 failed・既存3 ignored、release build が成功した。Clippy build は約3秒、test build は約13秒、release build は約16秒で、最終全チェックは約115秒である。最初の全チェックは tool catalog の追加位置で既存 CLI の ordered-prefix 回帰テストが失敗した。旧14 tool の順序を保持して新2 tool を末尾へ追加し、必須チェック全体を再実行した。失敗ログと終了値は別に保存し、部分チェックを成功扱いにしていない。
+
+Go の CLI・series command・MCP・SDK・migration 台帳検査、関連 vet と gofmt は成功した。CLI 全体検査は、既知の cli.linux-amd64.json 不在による command surface 検査だけを除外し、この未検証を維持する。実装・契約取得・入口比較・独立レビュー・検証は約22分で、Go 本番コード・go.mod・go.sum は固定参照から変更していない。実 Pixiv 資格情報・ライブアクセスを使用せず、台帳の in_progress と最終切替条件を維持する。

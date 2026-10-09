@@ -711,7 +711,9 @@
         "crates/pixiv-cli/tests/user_startup.rs#user_detail_startup_matches_go_initialization_input_order_and_database_creation",
         "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserWirePreservesRawFieldMatchingOrderAndValidation",
         "crates/pixiv-sdk/tests/user_wire.rs#user_wire_matches_go_case_folding_ordered_merges_nulls_and_validation",
-        "crates/pixiv-sdk/tests/user_wire_transport.rs"
+        "crates/pixiv-sdk/tests/user_wire_transport.rs",
+        "internal/cli/migration_novel_content_cli_test.go#TestMigrationNovelContentCLIRejectsBeforeRequestAccountAndFetch",
+        "crates/pixiv-cli/tests/novel_content.rs#content_process_preserves_go_prefetch_validation_and_startup_order"
       ],
       "verified_platforms": [
         "windows-amd64",
@@ -725,7 +727,8 @@
         "小説詳細を SDK・保存済みアカウントへ接続。Go 出力126ケース、ID/URL 入力122ケース、設定・DB 作成順と --content の拒否24ケースを比較。小説メタデータの human/JSON/NDJSON と refresh CAS/Bearer は確認済み。小説の record/text パイプ、全 flag 構文・TTY/出力 override、部分 writer 失敗・取消・実 HTTPS・他 OS は未検証。",
         "detail --type user を SDK と保存済みアカウントへ接続。Go の66ケースで human/JSON/NDJSON、プロフィール・作業環境、Web ページ表示の user-info/query/fragment 除去と不正 URL の拒否を比較し、refresh CAS/Bearer も確認。実子プロセス24ケースでユーザー URL、入力/type/content、設定不正の優先順と DB 作成順を比較。全 ID/URL 構文・record/text パイプ・aggregate JSON・TTY/全 flag・部分 writer 失敗・取消・実 HTTPS と他 OS/arch は未検証。",
         "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。",
-        "Go CLI 公開面の Linux amd64 snapshot は未取得で、TestMigrationCLIContractKeepsCommandsAliasesAndFlags は cli.linux-amd64.json 不在で失敗する。対象 raw wire 比較と Go vet、同 snapshot 検査以外の CLI 検証は成功したが、Linux 公開面全体の検証とは扱わない。"
+        "Go CLI 公開面の Linux amd64 snapshot は未取得で、TestMigrationCLIContractKeepsCommandsAliasesAndFlags は cli.linux-amd64.json 不在で失敗する。対象 raw wire 比較と Go vet、同 snapshot 検査以外の CLI 検証は成功したが、Linux 公開面全体の検証とは扱わない。",
+        "novel --content の固定Go早期拒否を追加36ケースで比較。ID/URL/record/設定/DB/account/HTTPの前に失敗し、余分なfetchを行わない。本文取得を成功として実装しない。"
       ]
     },
     {
@@ -1339,15 +1342,33 @@
     },
     {
       "id": "cli:pixiv series",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv series"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/novel_series.rs",
+        "crates/pixiv-cli/src/novel_list.rs",
+        "crates/pixiv-cli/src/json_spool.rs",
+        "crates/pixiv-cli/src/main.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_novel_series_test.go#TestMigrationNovelSeriesPreservesMetadataLogicalPagesOutputsAndStartup",
+        "internal/cli/migration_novel_series_stdin_test.go#TestMigrationNovelSeriesStdinPreservesTextAndExplicitArguments",
+        "internal/cli/migration_novel_series_pool_test.go#TestMigrationNovelSeriesPoolDiscardsMetadataAndItemsBeforeReplay",
+        "crates/pixiv-cli/tests/novel_series.rs#series_preserves_go_output_windows_errors_and_saved_account_execution",
+        "crates/pixiv-cli/tests/novel_series.rs#series_process_preserves_go_validation_authentication_and_startup_order",
+        "crates/pixiv-cli/tests/novel_series_stdin.rs#series_stdin_resolution_matches_go_without_trimming_splitting_or_reading_explicit_words",
+        "crates/pixiv-cli/tests/novel_series_stdin.rs#series_process_preserves_go_stdin_usage_and_startup_side_effects",
+        "crates/pixiv-cli/tests/novel_series_pool.rs#series_pool_matches_go_discarded_metadata_items_replay_state_and_output_lease"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "series --type novel を Go69出力/起動・99textstdin・3poolシナリオで比較。最初のmetadata、全取得後の出力、lease中JSONcommitと再実行時のmetadata/items破棄を維持。artwork series は未移植。共有raw-wire/root parser/Linux公開面snapshot、全flag/help/TTY/通信/取消/deadline・正常実HTTPS・他OS/archは未検証。"
+      ]
     },
     {
       "id": "cli:pixiv timeline",
@@ -2139,15 +2160,25 @@
     },
     {
       "id": "mcp:pixiv:novel_content",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "novel_content"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/novel_content.rs",
+        "crates/pixiv-mcp/src/stdio.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_novel_series_content_test.go#TestMigrationMCPNovelSeriesContentMatchesFrozenContracts",
+        "crates/pixiv-mcp/tests/novel_series_content.rs#novel_series_content_match_go_schemas_records_errors_and_saved_account_stdio"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "正IDは保存account取得後に固定Goと同じcontent_unavailableとなり、endpoint HTTPは0回。非正ID/schemaと完全なfailureenvelopeをGo比較。WebView本文は固定Goの契約外。全JSON/認証/取消/deadline/disconnect・他OS/archは未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:novel_detail",
@@ -2177,15 +2208,28 @@
     },
     {
       "id": "mcp:pixiv:novel_series",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "novel_series"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/novel_series.rs",
+        "crates/pixiv-mcp/src/stdio.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_novel_series_content_test.go#TestMigrationMCPNovelSeriesContentMatchesFrozenContracts",
+        "internal/mcpserver/pixiv/migration_novel_series_pool_test.go#TestMigrationMCPNovelSeriesPoolReplaysCompleteCollection",
+        "crates/pixiv-mcp/tests/novel_series_content.rs#novel_series_content_match_go_schemas_records_errors_and_saved_account_stdio",
+        "crates/pixiv-mcp/tests/novel_series_content.rs#stdio_lists_both_new_tools_and_retains_the_fourteen_existing_tools",
+        "crates/pixiv-mcp/tests/novel_series_pool.rs#novel_series_pool_matches_go_restarted_metadata_records_and_release"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "novel_series/novel_content の2schema・Go50ケースをdirect/stdio/保存accountで比較。cursor-zero metadata・dedup・emptybatch・logicalpage・nullable int binding、2poolシナリオのmetadata/items再取得とgate再利用を維持。共有raw-wire・全JSON/通信/取消/deadline/disconnect・実HTTPS/資源・他OS/archは未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:recommended",
@@ -6844,15 +6888,28 @@
     },
     {
       "id": "sdk/pixiv:Client.NovelContent",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.NovelContent"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.NovelRanking",
@@ -6881,15 +6938,26 @@
     },
     {
       "id": "sdk/pixiv:Client.NovelSeries",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.NovelSeries"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_series.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#series_matches_go_metadata_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "NovelSeries の metadata/list・last_order・query-bound cursor・resource DTO を Go 49ケースで比較し、CLI/MCPへ接続。既存 offset helper は wrapper を保持する。Value decode の大小文字/重複/順序と埋め込まれた Novel/User、resource再解決、全通信/取消/deadline/Options・実HTTPS/資源・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.OpenResource",
@@ -8229,99 +8297,203 @@
     },
     {
       "id": "sdk/pixiv:NovelBlock",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelBlock"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelBlockDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelBlockDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelBlockFile",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelBlockFile"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelBlockHeader",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelBlockHeader"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelBlockImage",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelBlockImage"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelBlockKind",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelBlockKind"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelBlockParagraph",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelBlockParagraph"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelBlockUnknown",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelBlockUnknown"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelBookmarkDetail",
@@ -8409,39 +8581,78 @@
     },
     {
       "id": "sdk/pixiv:NovelContent",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelContent"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelContentDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelContentDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelContentRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelContentRequest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelDTO",
@@ -8472,171 +8683,353 @@
     },
     {
       "id": "sdk/pixiv:NovelFileBlock",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelFileBlock"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelFileBlockDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelFileBlockDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelImageBlock",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelImageBlock"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelImageBlockDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelImageBlockDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelMark",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelMark"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelMarkCustom",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelMarkCustom"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelMarkDelete",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelMarkDelete"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelMarkDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelMarkDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelMarkEmphasis",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelMarkEmphasis"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelMarkKind",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelMarkKind"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelMarkLink",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelMarkLink"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelMarkRuby",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelMarkRuby"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelMarkStrong",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelMarkStrong"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelMarkUnknown",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelMarkUnknown"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelRankingRequest",
@@ -8688,111 +9081,218 @@
     },
     {
       "id": "sdk/pixiv:NovelRuby",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelRuby"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelRubyDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelRubyDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelSeries",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelSeries"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_series.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#series_matches_go_metadata_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "NovelSeries の metadata/list・last_order・query-bound cursor・resource DTO を Go 49ケースで比較し、CLI/MCPへ接続。既存 offset helper は wrapper を保持する。Value decode の大小文字/重複/順序と埋め込まれた Novel/User、resource再解決、全通信/取消/deadline/Options・実HTTPS/資源・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelSeriesDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelSeriesDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_series.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#series_matches_go_metadata_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "NovelSeries の metadata/list・last_order・query-bound cursor・resource DTO を Go 49ケースで比較し、CLI/MCPへ接続。既存 offset helper は wrapper を保持する。Value decode の大小文字/重複/順序と埋め込まれた Novel/User、resource再解決、全通信/取消/deadline/Options・実HTTPS/資源・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelSeriesRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelSeriesRequest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_series.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#series_matches_go_metadata_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "NovelSeries の metadata/list・last_order・query-bound cursor・resource DTO を Go 49ケースで比較し、CLI/MCPへ接続。既存 offset helper は wrapper を保持する。Value decode の大小文字/重複/順序と埋め込まれた Novel/User、resource再解決、全通信/取消/deadline/Options・実HTTPS/資源・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelSeriesResult",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelSeriesResult"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_series.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#series_matches_go_metadata_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "NovelSeries の metadata/list・last_order・query-bound cursor・resource DTO を Go 49ケースで比較し、CLI/MCPへ接続。既存 offset helper は wrapper を保持する。Value decode の大小文字/重複/順序と埋め込まれた Novel/User、resource再解決、全通信/取消/deadline/Options・実HTTPS/資源・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelSeriesResultDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelSeriesResultDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_series.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#series_matches_go_metadata_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "NovelSeries の metadata/list・last_order・query-bound cursor・resource DTO を Go 49ケースで比較し、CLI/MCPへ接続。既存 offset helper は wrapper を保持する。Value decode の大小文字/重複/順序と埋め込まれた Novel/User、resource再解決、全通信/取消/deadline/Options・実HTTPS/資源・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelUnknownBlock",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelUnknownBlock"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelUnknownBlockDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelUnknownBlockDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Open",
@@ -9571,13 +10071,16 @@
       ],
       "tests": [
         "sdk/pixiv/migration_reference_test.go#TestMigrationPageReferencesMatchFrozenParsingAndCanonicalURLs",
-        "crates/pixiv-sdk/tests/page_references.rs#page_reference_kinds_ids_owners_canonical_urls_and_errors_match_go"
+        "crates/pixiv-sdk/tests/page_references.rs#page_reference_kinds_ids_owners_canonical_urls_and_errors_match_go",
+        "internal/cli/migration_novel_series_test.go#TestMigrationNovelSeriesPreservesMetadataLogicalPagesOutputsAndStartup",
+        "crates/pixiv-cli/tests/novel_series.rs#series_preserves_go_output_windows_errors_and_saved_account_execution"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64 (partial)"
       ],
       "differences": [
-        "68 fixed Go cases compare all six page kinds, IDs/owners, locale/host/path/query, canonical URLs and classified errors. Rust ReferenceKind is String; constants use REFERENCE_KIND names. Full URL syntax differences, Unicode whitespace/invalid UTF-8, all command integrations and other platforms remain unverified."
+        "既存68 Go page referenceケースと novel series CLI の ID/URL/type比較を追加。ReferenceKindはString、constantsはREFERENCE_KIND名として対応。全URL構文・Unicode/invalid UTF-8・他command integration・他OS/archは未検証。"
       ]
     },
     {
@@ -10573,15 +11076,28 @@
     },
     {
       "id": "sdk/pixiv:ToNovelBlockDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ToNovelBlockDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:ToNovelBookmarkDetailDTO",
@@ -10609,15 +11125,28 @@
     },
     {
       "id": "sdk/pixiv:ToNovelContentDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ToNovelContentDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:ToNovelDTO",
@@ -10648,87 +11177,174 @@
     },
     {
       "id": "sdk/pixiv:ToNovelFileBlockDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ToNovelFileBlockDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:ToNovelImageBlockDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ToNovelImageBlockDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:ToNovelMarkDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ToNovelMarkDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:ToNovelRubyDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ToNovelRubyDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:ToNovelSeriesDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ToNovelSeriesDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_series.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#series_matches_go_metadata_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "NovelSeries の metadata/list・last_order・query-bound cursor・resource DTO を Go 49ケースで比較し、CLI/MCPへ接続。既存 offset helper は wrapper を保持する。Value decode の大小文字/重複/順序と埋め込まれた Novel/User、resource再解決、全通信/取消/deadline/Options・実HTTPS/資源・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:ToNovelSeriesResultDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ToNovelSeriesResultDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_series.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#series_matches_go_metadata_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "NovelSeries の metadata/list・last_order・query-bound cursor・resource DTO を Go 49ケースで比較し、CLI/MCPへ接続。既存 offset helper は wrapper を保持する。Value decode の大小文字/重複/順序と埋め込まれた Novel/User、resource再解決、全通信/取消/deadline/Options・実HTTPS/資源・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:ToNovelUnknownBlockDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ToNovelUnknownBlockDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_content.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_series_test.go#TestMigrationNovelSeriesAndContent",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_matches_go_validation_and_unavailable_without_http",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_dtos_match_go_empty_arrays_optional_variants_and_future_kinds",
+        "crates/pixiv-sdk/tests/novel_series.rs#content_resource_dtos_match_go_opaque_references_and_all_optional_variants"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go の NovelContent は非正ID invalid_argument、正ID content_unavailable をHTTPなしで返す契約を維持。4エラー入力と3公開DTO例で model/From変換・空array/null・未知kind・全optionalvariant・非ゼロresourceのruntime情報除外・payload copyを比較。CLI早期拒否とMCP account取得後の失敗も別途比較。WebView本文取得は固定Goの契約外。全認証/取消/deadline・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:ToStampDTO",

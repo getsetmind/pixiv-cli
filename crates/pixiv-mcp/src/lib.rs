@@ -187,3 +187,8 @@ pub use user_search::{SearchUserInput, UserFilter, search_user, search_user_tool
 
 mod mutation;
 pub use mutation::{MutationAction, MutationInput, mutate, mutation_tool};
+
+mod novel_series;
+pub use novel_series::{NovelSeriesInput, novel_series, novel_series_tool};
+mod novel_content;
+pub use novel_content::{NovelContentInput, novel_content, novel_content_tool};
