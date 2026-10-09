@@ -12,6 +12,11 @@ pub trait AccountPrompts {
     fn can_prompt(&self) -> bool;
     fn select(&mut self, message: &str, options: &[String]) -> Result<String, CommandError>;
     fn confirm(&mut self, message: &str, default: bool) -> Result<bool, CommandError>;
+    fn secret(&mut self, _message: &str) -> Result<String, CommandError> {
+        Err(CommandError::Message(
+            "interactive prompt is only available on a TTY",
+        ))
+    }
 }
 struct Noninteractive;
 impl AccountPrompts for Noninteractive {
@@ -26,6 +31,7 @@ impl AccountPrompts for Noninteractive {
     }
 }
 pub enum AuthCommand {
+    Transfer(crate::auth_transfer::TransferCommand),
     Help(String),
     List {
         json: bool,
@@ -53,6 +59,10 @@ impl AuthCommand {
         input: &mut R,
         terminal: bool,
     ) -> Result<Self, CommandError> {
+        if crate::auth_transfer::TransferCommand::discover(args).is_some() {
+            return crate::auth_transfer::TransferCommand::parse(args, input, terminal)
+                .map(Self::Transfer);
+        }
         let mut values = Vec::new();
         let mut json = false;
         let mut all = false;
@@ -230,6 +240,9 @@ impl AuthCommand {
         })
     }
     pub fn machine_output(&self) -> bool {
+        if let Self::Transfer(command) = self {
+            return command.machine_output();
+        }
         matches!(
             self,
             Self::List { json: true }
@@ -239,6 +252,9 @@ impl AuthCommand {
         )
     }
     pub fn requires_config(&self) -> bool {
+        if let Self::Transfer(command) = self {
+            return command.requires_config();
+        }
         matches!(
             self,
             Self::List { .. } | Self::Status { .. } | Self::Change { .. } | Self::Select { .. }
@@ -260,6 +276,7 @@ impl AuthCommand {
         prompts: &mut dyn AccountPrompts,
     ) -> Result<(), CommandError> {
         match self {
+            Self::Transfer(command) => return command.execute_offline(store, out),
             Self::Help(text) => {
                 let _ = out.write_all(text.as_bytes());
                 return Ok(());
@@ -553,7 +570,7 @@ impl AccountSelection<'_> {
     }
 }
 
-fn boolean(raw: &str, name: &str) -> Result<bool, CommandError> {
+pub(crate) fn boolean(raw: &str, name: &str) -> Result<bool, CommandError> {
     match raw {
         "1" | "t" | "T" | "TRUE" | "true" | "True" => Ok(true),
         "0" | "f" | "F" | "FALSE" | "false" | "False" => Ok(false),
@@ -667,6 +684,9 @@ _=>unreachable!(),}
 }
 
 pub fn machine_output_requested(args: &[String]) -> bool {
+    if let Some(op) = crate::auth_transfer::TransferCommand::discover(args) {
+        return op == "import" && crate::auth_transfer::machine_output_requested(args);
+    }
     let mut discovered = Vec::new();
     let mut index = 0;
     while index < args.len() {

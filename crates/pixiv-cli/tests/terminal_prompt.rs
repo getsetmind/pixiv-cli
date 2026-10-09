@@ -19,7 +19,15 @@ fn terminal_prompt_child() {
     };
     let mut prompt = TerminalPrompts::new(std::io::stdin(), std::io::stdout(), std::io::stderr());
     assert!(prompt.can_prompt());
-    let result = if kind == "select-page" {
+    if let Some(expected) = kind.strip_prefix("secret:") {
+        let answer = prompt.secret("Refresh token").unwrap();
+        assert_eq!(answer, expected);
+        eprintln!("SECRET_OK");
+        return;
+    }
+    let result = if kind == "secret-error" {
+        prompt.secret("Refresh token")
+    } else if kind == "select-page" {
         prompt.select(
             "Select account",
             &(1..=8).map(|value| value.to_string()).collect::<Vec<_>>(),
@@ -105,7 +113,11 @@ fn run_terminal(mut command: Command, input: &[u8], expected: &str, success: boo
             }
         }
         let text = String::from_utf8_lossy(&output);
-        if !sent && (text.contains("Use arrows") || text.contains("(y/N)")) {
+        if !sent
+            && (text.contains("Use arrows")
+                || text.contains("(y/N)")
+                || text.contains("Refresh token"))
+        {
             if input.starts_with(b"\x1bj") || input.starts_with(b"\x1bk") {
                 master.write_all(&input[..1]).unwrap();
                 std::thread::sleep(Duration::from_millis(60));
@@ -289,4 +301,27 @@ fn genuine_cli_terminal_selection_and_confirmation_persist_synthetic_state() {
         }
         auth_support::assert_states(&case, home.path());
     }
+}
+
+#[test]
+fn secret_preserves_frozen_survey_masking_editing_and_validation() {
+    for (input, answer) in [
+        ("synthetic-secret\r", "synthetic-secret"),
+        ("  synthetic-secret  \r", "synthetic-secret"),
+        ("合成x\x7f-token\r", "合成-token"),
+        ("synthetc\x1b[Di\r", "synthetic"),
+        ("xsynthetic\x1b[H\x1b[3~\r", "synthetic"),
+        ("\rsynthetic-secret\r", "synthetic-secret"),
+        (" \rsynthetic-secret\r", "synthetic-secret"),
+        ("synthetic\x17\x18\x15-secret\r", "synthetic-secret"),
+        ("synthetic-secret\x04", "synthetic-secret"),
+    ] {
+        let output = terminal_case(&format!("secret:{answer}"), input.as_bytes(), "SECRET_OK");
+        assert!(
+            !output.contains("synthetic") && !output.contains("合成"),
+            "secret leaked: {output:?}"
+        );
+        assert!(output.contains('*'), "input must be masked: {output:?}");
+    }
+    terminal_case("secret-error", b"\x03", "ERROR=interrupt");
 }

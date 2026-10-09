@@ -299,7 +299,7 @@ enum Command {
 #[tokio::main]
 async fn main() {
     if std::env::args().nth(1).as_deref() == Some("auth") {
-        let (result, machine) = execute_auth();
+        let (result, machine) = execute_auth().await;
         let exit = finish_command(result, false, machine, &mut io::stderr().lock());
         if exit != 0 {
             std::process::exit(exit);
@@ -1640,15 +1640,18 @@ fn execute_config() -> Result<(), CommandError> {
     )
 }
 
-fn execute_auth() -> (Result<(), CommandError>, bool) {
+async fn execute_auth() -> (Result<(), CommandError>, bool) {
     let args: Vec<String> = std::env::args().skip(2).collect();
     let machine = pixiv_cli_rs::auth_accounts::machine_output_requested(&args);
-    let result = (|| {
+    let result = async {
         let mut input = io::stdin().lock();
         let command = pixiv_cli_rs::auth_accounts::AuthCommand::parse(
             &args,
             &mut input,
-            io::stdin().is_terminal(),
+            io::stdin().is_terminal()
+                && (pixiv_cli_rs::auth_transfer::TransferCommand::discover(&args)
+                    != Some("import")
+                    || io::stdout().is_terminal()),
         )?;
         let path = if command.requires_config() {
             let name = if cfg!(windows) { "USERPROFILE" } else { "HOME" };
@@ -1674,12 +1677,23 @@ fn execute_auth() -> (Result<(), CommandError>, bool) {
             io::stdout(),
             io::stderr(),
         );
+        if let pixiv_cli_rs::auth_accounts::AuthCommand::Transfer(transfer) = &command {
+            return transfer
+                .execute_http(
+                    &pixiv_app::config::Store::new(path),
+                    &pixiv_app::lifecycle::Context::new(),
+                    &mut io::stdout().lock(),
+                    &mut prompts,
+                )
+                .await;
+        }
         command.execute_with_prompts(
             &pixiv_app::config::Store::new(path),
             &pixiv_app::lifecycle::Context::new(),
             &mut io::stdout().lock(),
             &mut prompts,
         )
-    })();
+    }
+    .await;
     (result, machine)
 }

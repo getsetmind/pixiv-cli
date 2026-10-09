@@ -1,6 +1,8 @@
 pub mod account_management;
 pub mod account_service;
+pub mod account_transfer;
 pub mod account_views;
+pub mod auth_bundle;
 pub mod config;
 pub mod connection;
 pub mod database;
@@ -14,4 +16,5 @@ pub mod lifecycle;
 pub mod pagination;
 pub mod scheduler;
 pub mod search_filter;
+pub mod secret_file;
 pub mod sessions;

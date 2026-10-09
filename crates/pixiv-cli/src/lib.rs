@@ -1,5 +1,6 @@
 mod artwork_list;
 pub mod auth_accounts;
+pub mod auth_transfer;
 pub mod bookmark_lists;
 pub mod bookmark_reads;
 pub mod comment_mutations;

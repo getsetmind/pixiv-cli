@@ -143,7 +143,7 @@ fn temporary_file(directory: &Path) -> Result<(PathBuf, fs::File), ConfigError> 
 }
 
 #[cfg(unix)]
-pub(super) fn close(file: fs::File) -> io::Result<()> {
+pub(crate) fn close(file: fs::File) -> io::Result<()> {
     use std::os::fd::IntoRawFd;
     let descriptor = file.into_raw_fd();
     if unsafe { libc::close(descriptor) } == 0 {
@@ -154,7 +154,7 @@ pub(super) fn close(file: fs::File) -> io::Result<()> {
 }
 
 #[cfg(windows)]
-pub(super) fn close(file: fs::File) -> io::Result<()> {
+pub(crate) fn close(file: fs::File) -> io::Result<()> {
     use std::os::windows::io::IntoRawHandle;
     let handle = file.into_raw_handle();
     if unsafe { windows_sys::Win32::Foundation::CloseHandle(handle) } != 0 {
@@ -165,7 +165,7 @@ pub(super) fn close(file: fs::File) -> io::Result<()> {
 }
 
 #[cfg(not(any(unix, windows)))]
-pub(super) fn close(file: fs::File) -> io::Result<()> {
+pub(crate) fn close(file: fs::File) -> io::Result<()> {
     drop(file);
     Ok(())
 }

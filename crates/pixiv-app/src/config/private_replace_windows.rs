@@ -9,7 +9,7 @@ use windows_sys::Win32::{
     Storage::FileSystem::{MoveFileExW, ReplaceFileW},
 };
 
-pub(super) fn replace(
+pub(crate) fn replace(
     source: &Path,
     target: &Path,
 ) -> Result<(), (PrivateWriteOutcome, ConfigError)> {

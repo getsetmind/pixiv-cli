@@ -14,6 +14,25 @@ use std::sync::{Arc, Mutex};
 pub use crate::account_views::AccountSummary;
 
 pub trait AccountRepository: Send + Sync {
+    fn save_credential(
+        &self,
+        _context: &Context,
+        _account: &PixivAccount,
+    ) -> Result<(), SchedulerError> {
+        Err(SchedulerError::Message(
+            "pixiv credential repository is not configured".into(),
+        ))
+    }
+    fn save_credentials(
+        &self,
+        _context: &Context,
+        _accounts: &[PixivAccount],
+    ) -> Result<(), SchedulerError> {
+        Err(SchedulerError::Message(
+            "pixiv credential repository is not configured".into(),
+        ))
+    }
+
     fn remove(&self, _context: &Context, _user_id: i64) -> Result<(), SchedulerError> {
         Err(SchedulerError::Message(
             "pixiv account management repository is not configured".into(),
@@ -56,6 +75,33 @@ pub trait AccountRepository: Send + Sync {
 }
 
 impl AccountRepository for Mutex<Database> {
+    fn save_credential(
+        &self,
+        context: &Context,
+        account: &PixivAccount,
+    ) -> Result<(), SchedulerError> {
+        if let Some(error) = context.error() {
+            return Err(error.into());
+        }
+        self.lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner())
+            .save_pixiv_credential(account)
+            .map_err(SchedulerError::Account)
+    }
+    fn save_credentials(
+        &self,
+        context: &Context,
+        accounts: &[PixivAccount],
+    ) -> Result<(), SchedulerError> {
+        if let Some(error) = context.error() {
+            return Err(error.into());
+        }
+        self.lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner())
+            .save_pixiv_credentials(accounts)
+            .map_err(SchedulerError::Account)
+    }
+
     fn remove(&self, context: &Context, user_id: i64) -> Result<(), SchedulerError> {
         if let Some(error) = context.error() {
             return Err(error.into());

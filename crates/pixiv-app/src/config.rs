@@ -2,9 +2,9 @@ mod document;
 mod duration;
 mod initialization;
 mod mutations;
-mod private_file;
+pub(crate) mod private_file;
 #[cfg(windows)]
-mod private_replace_windows;
+pub(crate) mod private_replace_windows;
 
 pub use mutations::{
     ConfigMutationResult, cli_setting_aliases, public_setting_text, valid_setting_aliases,

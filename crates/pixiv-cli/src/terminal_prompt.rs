@@ -162,6 +162,71 @@ impl TerminalPrompts {
         }
     }
 
+    fn read_line(&mut self, prefix: &str, secret: bool) -> Result<String, CommandError> {
+        let mut line = Vec::<char>::new();
+        let mut position = 0usize;
+        loop {
+            let text = if secret {
+                "*".repeat(line.len())
+            } else {
+                line.iter().collect()
+            };
+            self.draw(&format!("{prefix}{text}"))?;
+            let remaining: usize = if secret {
+                line.len() - position
+            } else {
+                line[position..]
+                    .iter()
+                    .map(|character| {
+                        unicode_width::UnicodeWidthChar::width(*character)
+                            .unwrap_or(0)
+                            .max(1)
+                    })
+                    .sum()
+            };
+            if remaining > 0 {
+                write!(self.output, "\x1b[{remaining}D")?;
+                self.output.flush()?;
+            }
+            match platform::read_key(&mut self.input)? {
+                '\x03' => return Err(CommandError::Message("interrupt")),
+                '\r' | '\n' | '\x04' => return Ok(line.iter().collect()),
+                '\x08' | '\x7f' if position > 0 => {
+                    position -= 1;
+                    line.remove(position);
+                }
+                '\x02' if position > 0 => position -= 1,
+                '\x06' if position < line.len() => position += 1,
+                '\x01' => position = 0,
+                '\x11' => position = line.len(),
+                '\x12' if position < line.len() => {
+                    line.remove(position);
+                }
+                key if !key.is_control() => {
+                    line.insert(position, key);
+                    position += 1;
+                }
+                _ => {}
+            }
+        }
+    }
+
+    fn ask_secret(&mut self, message: &str) -> Result<String, CommandError> {
+        let prefix = format!("\x1b[1;92m? \x1b[0m\x1b[1;99m{message} \x1b[0m");
+        let mut validation = String::new();
+        loop {
+            let answer = self.read_line(&format!("{validation}{prefix}"), true)?;
+            if answer.trim().is_empty() {
+                validation =
+                    "\x1b[31mX Sorry, your reply was invalid: value cannot be empty\x1b[0m\n"
+                        .into();
+                continue;
+            }
+            self.draw(&format!("{prefix}{}\n", "*".repeat(answer.chars().count())))?;
+            return Ok(answer.trim().to_owned());
+        }
+    }
+
     fn ask_confirmation(&mut self, message: &str, default: bool) -> Result<bool, CommandError> {
         let mut validation = String::new();
         loop {
@@ -169,46 +234,7 @@ impl TerminalPrompts {
                 "\x1b[1;92m? \x1b[0m\x1b[1;99m{message} \x1b[0m\x1b[37m{} \x1b[0m",
                 if default { "(Y/n)" } else { "(y/N)" }
             );
-            let mut line = Vec::<char>::new();
-            let mut position = 0usize;
-            loop {
-                let text: String = line.iter().collect();
-                self.draw(&format!("{validation}{prefix}{text}"))?;
-                let remaining: usize = line[position..]
-                    .iter()
-                    .map(|character| {
-                        unicode_width::UnicodeWidthChar::width(*character)
-                            .unwrap_or(0)
-                            .max(1)
-                    })
-                    .sum();
-                if remaining > 0 {
-                    write!(self.output, "\x1b[{remaining}D")?;
-                    self.output.flush()?;
-                }
-                let key = platform::read_key(&mut self.input)?;
-                match key {
-                    '\x03' => return Err(CommandError::Message("interrupt")),
-                    '\r' | '\n' | '\x04' => break,
-                    '\x08' | '\x7f' if position > 0 => {
-                        position -= 1;
-                        line.remove(position);
-                    }
-                    '\x02' if position > 0 => position -= 1,
-                    '\x06' if position < line.len() => position += 1,
-                    '\x01' => position = 0,
-                    '\x11' => position = line.len(),
-                    '\x12' if position < line.len() => {
-                        line.remove(position);
-                    }
-                    key if !key.is_control() => {
-                        line.insert(position, key);
-                        position += 1;
-                    }
-                    _ => {}
-                }
-            }
-            let text: String = line.iter().collect();
+            let text = self.read_line(&format!("{validation}{prefix}"), false)?;
             let answer = match text.to_ascii_lowercase().as_str() {
                 "" => default,
                 "y" | "yes" => true,
@@ -254,6 +280,11 @@ impl AccountPrompts for TerminalPrompts {
         }
         let mode = self.begin()?;
         let result = self.choose(message, options);
+        self.finish(mode, result)
+    }
+    fn secret(&mut self, message: &str) -> Result<String, CommandError> {
+        let mode = self.begin()?;
+        let result = self.ask_secret(message);
         self.finish(mode, result)
     }
     fn confirm(&mut self, message: &str, default: bool) -> Result<bool, CommandError> {
