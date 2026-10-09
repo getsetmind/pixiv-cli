@@ -37,7 +37,22 @@ impl ProxyOptions {
 }
 
 #[derive(Subcommand)]
+enum NovelCommand {
+    #[command(args_override_self = true)]
+    Search {
+        #[command(flatten)]
+        options: Box<pixiv_cli_rs::novel_search::NovelSearchOptions>,
+        #[command(flatten)]
+        connection: ProxyOptions,
+    },
+}
+
+#[derive(Subcommand)]
 enum Command {
+    Novel {
+        #[command(subcommand)]
+        command: NovelCommand,
+    },
     #[command(args_override_self = true)]
     Mcp {
         #[command(flatten)]
@@ -82,7 +97,19 @@ enum Command {
 
 #[tokio::main]
 async fn main() {
-    let matches = Arguments::command().get_matches();
+    let matches = Arguments::command()
+        .try_get_matches()
+        .unwrap_or_else(|error| {
+            if let Some(error) = pixiv_cli_rs::argument_error(&error) {
+                std::process::exit(finish_command(
+                    Err(error),
+                    false,
+                    false,
+                    &mut io::stderr().lock(),
+                ));
+            }
+            error.exit()
+        });
     let mut args = Arguments::from_arg_matches(&matches).unwrap_or_else(|error| error.exit());
     if let Command::Search { input, .. } = &mut args.command {
         input.record_flag_presence(
@@ -91,7 +118,25 @@ async fn main() {
                 .expect("search was parsed"),
         );
     }
+    args.command = match args.command {
+        Command::Novel {
+            command:
+                NovelCommand::Search {
+                    options,
+                    connection,
+                },
+        } => {
+            let (input, options) = options.into_search();
+            Command::Search {
+                input,
+                options: Box::new(options),
+                connection,
+            }
+        }
+        command => command,
+    };
     let machine_output = match &args.command {
+        Command::Novel { .. } => unreachable!("novel commands were resolved"),
         Command::Mcp { .. } => false,
         Command::Detail { json, ndjson, .. } => *json || *ndjson,
         Command::Ugoira { json, .. } => *json,
@@ -99,6 +144,7 @@ async fn main() {
         Command::Ranking { options, .. } => options.json.is_some() || options.ndjson,
     };
     let mut ndjson_output = match &args.command {
+        Command::Novel { .. } => unreachable!("novel commands were resolved"),
         Command::Mcp { .. } => false,
         Command::Detail { ndjson, .. } => *ndjson,
         Command::Search { input, .. } => {
@@ -425,6 +471,7 @@ async fn execute(args: Arguments, ndjson_output: &mut bool) -> Result<(), Comman
         .ok();
     let client = Client::new(&token, proxy.as_deref())?;
     match args.command {
+        Command::Novel { .. } => unreachable!("novel commands were resolved"),
         Command::Mcp { .. } => unreachable!("MCP uses saved account execution"),
         Command::Detail { .. } => unreachable!("detail uses saved account execution"),
         Command::Search { .. } => unreachable!("search uses saved account execution"),

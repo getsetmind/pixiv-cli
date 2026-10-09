@@ -1023,28 +1023,52 @@
     },
     {
       "id": "cli:pixiv novel",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv novel"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/novel_search.rs",
+        "crates/pixiv-cli/src/search.rs",
+        "crates/pixiv-cli/src/lib.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_novel_search_compat_test.go#TestMigrationNovelSearchCompatibilityPreservesFlagsOutputsAndStartup",
+        "crates/pixiv-cli/tests/novel_search_compat.rs#novel_search_compatibility_preserves_go_flags_outputs_and_startup_order",
+        "crates/pixiv-cli/tests/novel_search.rs#novel_search_compatibility_preserves_go_outputs_through_saved_accounts"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "pixiv novel search を既存の小説検索・保存済みアカウントへ接続。Go の99ケースで検索条件、論理ページ、human/JSON/NDJSON、引数拒否、実子プロセスの診断と設定・DB 起動順を比較。うち構文を受理する90ケースは直接 SDK・保存済みアカウントの出力も比較し、未公開の type/rating/trending-tags の拒否9ケースは実子プロセスで比較する。グループ単体の入力/help、全 flag 構文と診断順、全 bool/整数境界、実 TTY/HTTPS、取消・pool replay と他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "cli:pixiv novel search",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv novel search"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
+      "rust_sources": [
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/novel_search.rs",
+        "crates/pixiv-cli/src/search.rs",
+        "crates/pixiv-cli/src/lib.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_novel_search_compat_test.go#TestMigrationNovelSearchCompatibilityPreservesFlagsOutputsAndStartup",
+        "crates/pixiv-cli/tests/novel_search_compat.rs#novel_search_compatibility_preserves_go_flags_outputs_and_startup_order",
+        "crates/pixiv-cli/tests/novel_search.rs#novel_search_compatibility_preserves_go_outputs_through_saved_accounts"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
       "differences": [
-        "search --type novel の経路は cli:pixiv search で追跡する。この互換コマンド自体は未接続。"
+        "pixiv novel search を既存の小説検索・保存済みアカウントへ接続。Go の99ケースで検索条件、論理ページ、human/JSON/NDJSON、引数拒否、実子プロセスの診断と設定・DB 起動順を比較。うち構文を受理する90ケースは直接 SDK・保存済みアカウントの出力も比較し、未公開の type/rating/trending-tags の拒否9ケースは実子プロセスで比較する。グループ単体の入力/help、全 flag 構文と診断順、全 bool/整数境界、実 TTY/HTTPS、取消・pool replay と他 OS/arch は未検証。"
       ]
     },
     {
@@ -1190,7 +1214,7 @@
         "保存済みアカウントの検索poolをGoの63ケースで比較。通常/sfw/bookmarkとhuman/NDJSON/JSONで、初回429・後続ページ429・全アカウント429・401・writer失敗/BrokenPipe/部分書き込み、OAuth refresh保存・全要求順・凍結/選択状態・解放数を確認。Goの再実行は同じ開始cursorから取り直す契約であり、失敗attemptの結果を混入させない。通常human/NDJSONは公開後に切り替えず、JSONとlocal/bookmark収集はaccount lease解放後に出力するよう修正。bookmark JSONもillusts/filterとmetadataのフィールド順をGoへ揃えた。正常CLI実HTTPS、取消・close失敗・record変換失敗、全pool戦略/境界・proxy設定変更・他OSは未検証。",
         "search --trending-tags を SDK と保存済み account へ接続。Go の70ケースで JSON/human・sample DTO・空/不正応答、引数拒否、18種類の併用不可 flag（明示 default/false を含む）、stdin を読まないこと、実子プロセスの起動順を比較。--type の認識を追加したが通常の user 検索は未実装。trending の実 HTTPS・pool/取消・全 flag 構文・他 OS は未検証。",
         "既存pool比較の all_rate_limited は残り秒数が実時間で減るため、429応答から120秒のDB凍結期限と診断出力前後の時計で検証してから、その時刻依存項目だけを正規化する。他のenvelope項目とGo fixture、本番コードの時刻取得・retry計算は変更していない。",
-        "search --type novel を SDK と保存済みアカウントへ接続。Go の273ケースで human/JSON/NDJSON、論理ページ、入力と明示フラグ拒否、実子プロセスの起動順を比較。NUL を含む検索語も Go・Rust の実起動では stdin 経由で比較。小説ランキングと一覧・JSON spool・lease 解放後の JSON 出力を共有する。pixiv novel search の互換コマンド、部分 writer 失敗・取消・pool replay、全 flag 構文/help・TTY、実 HTTPS と他 OS/arch は未検証または未移植。"
+        "search --type novel を SDK と保存済みアカウントへ接続。Go の273ケースで human/JSON/NDJSON、論理ページ、入力と明示フラグ拒否、実子プロセスの起動順を比較。NUL を含む検索語も Go・Rust の実起動では stdin 経由で比較。小説ランキングと一覧・JSON spool・lease 解放後の JSON 出力を共有する。部分 writer 失敗・取消・pool replay、全 flag 構文/help・TTY、実 HTTPS と他 OS/arch は未検証または未移植。"
       ]
     },
     {

@@ -33,6 +33,17 @@ pub struct SearchInput {
 }
 
 impl SearchInput {
+    pub(crate) fn for_novel(query: Vec<String>, json: Option<bool>, ndjson: bool) -> Self {
+        Self {
+            trending_tags: false,
+            entity: Some("novel".into()),
+            changed_flags: vec![],
+            query,
+            json,
+            ndjson,
+        }
+    }
+
     pub fn record_flag_presence(&mut self, matches: &clap::ArgMatches) {
         self.changed_flags = [
             ("type", "entity"),

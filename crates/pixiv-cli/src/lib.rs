@@ -387,3 +387,13 @@ fn detail_entity_id(source: &str, entity: &str, kind: &str) -> pixiv_sdk::Result
     }
     Ok(reference.id)
 }
+
+pub fn argument_error(error: &clap::Error) -> Option<CommandError> {
+    if error.kind() != clap::error::ErrorKind::UnknownArgument {
+        return None;
+    }
+    let value = error.get(clap::error::ContextKind::InvalidArg)?.to_string();
+    let name = value.split('=').next()?;
+    name.starts_with("--")
+        .then(|| CommandError::Usage(format!("unknown option '{name}'")))
+}

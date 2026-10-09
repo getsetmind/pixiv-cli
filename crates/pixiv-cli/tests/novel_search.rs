@@ -82,13 +82,57 @@ async fn novel_search_preserves_go_output_windows_errors_and_saved_account_execu
     ))
     .unwrap();
     assert_eq!(cases.len(), 273);
+    compare_output(cases, false).await;
+}
+
+#[tokio::test]
+async fn novel_search_compatibility_preserves_go_outputs_through_saved_accounts() {
+    let cases: Vec<Case> = serde_json::from_str(include_str!(
+        "../../../docs/migration/contracts/cli-novel-search-compat.json"
+    ))
+    .unwrap();
+    assert_eq!(cases.len(), 99);
+    let accepted: Vec<_> = cases
+        .into_iter()
+        .filter(|case| {
+            !case.args.iter().any(|arg| {
+                matches!(
+                    arg.as_str(),
+                    "--type=novel" | "--rating=" | "--trending-tags"
+                )
+            })
+        })
+        .collect();
+    assert_eq!(accepted.len(), 90);
+    compare_output(accepted, true).await;
+}
+
+async fn compare_output(cases: Vec<Case>, compatibility: bool) {
+    #[derive(Parser)]
+    #[command(args_override_self = true)]
+    struct CompatibilityArguments {
+        #[command(flatten)]
+        options: pixiv_cli_rs::novel_search::NovelSearchOptions,
+    }
     for case in cases {
         for saved in [false, true] {
-            let matches = Arguments::command()
-                .try_get_matches_from(std::iter::once("pixiv".to_owned()).chain(case.args.clone()))
+            let args = if compatibility {
+                let args = CompatibilityArguments::try_parse_from(
+                    std::iter::once("pixiv".to_owned()).chain(case.args.clone()),
+                )
                 .unwrap();
-            let mut args = Arguments::from_arg_matches(&matches).unwrap();
-            args.input.record_flag_presence(&matches);
+                let (input, options) = args.options.into_search();
+                Arguments { input, options }
+            } else {
+                let matches = Arguments::command()
+                    .try_get_matches_from(
+                        std::iter::once("pixiv".to_owned()).chain(case.args.clone()),
+                    )
+                    .unwrap();
+                let mut args = Arguments::from_arg_matches(&matches).unwrap();
+                args.input.record_flag_presence(&matches);
+                args
+            };
             let input = args.input;
             let options = args.options;
             let word = input.word();

@@ -931,4 +931,12 @@ Rust の CLI は保存済みアカウントから `Execution::read` で型付き
 
 [mcp-novel-search.json](contracts/mcp-novel-search.json) は実 Go MCP session の schema と74ケースである。直接呼出し・stdio・保存済みアカウント stdio で result と query を比較する。ID・全タグ・最小閲覧数の判定後に論理ページと重複除去を適用し、refresh CAS 保存と Bearer 使用も確認する。公開カタログに search_novel を追加する。
 
-検証環境は Windows amd64。`pixiv novel search` の互換コマンドは未接続。部分 writer 失敗、取消/deadline、pool replay、全 flag 構文/help・TTY、全 schema 拒否・整数型診断・数値精度、実 HTTPS と他 OS/arch は未検証である。
+検証環境は Windows amd64。`pixiv novel search` の互換入口は次節の範囲で接続した。部分 writer 失敗、取消/deadline、pool replay、全 flag 構文/help・TTY、全 schema 拒否・整数型診断・数値精度、実 HTTPS と他 OS/arch は未検証である。
+
+## 小説検索の互換コマンド
+
+[cli-novel-search-compat.json](contracts/cli-novel-search-compat.json) は Go の99ケースである。`pixiv novel search` の検索条件・論理ページ・human/JSON/NDJSON、複数語と stdin、実子プロセスの診断と設定・DB 起動順を固定する。構文を受理する90ケースでは直接 SDK・保存済みアカウントからの出力も同じテスト処理で比較する。互換入口にない type/rating/trending-tags の明示指定を拒否する9ケースは実子プロセスで比較する。
+
+Rust の互換入口は受理したオプションを共通の SearchInput/SearchOptions へ変換し、既存の小説検索へ渡す。公開するフラグを Go の互換入口に限定し、未知の長いオプションは起動時に Go と同じ usage 診断へ変換する。NUL を含む検索語も実起動では stdin 経由で比較する。
+
+検証環境は Windows amd64。グループ単体の入力/help、全 flag 構文と診断順、全 bool/整数境界、実 TTY/HTTPS、部分 writer 失敗・取消・pool replay と他 OS/arch は未検証である。
