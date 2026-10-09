@@ -18,12 +18,15 @@ import (
 
 var migrationUpdateUserOutput = flag.Bool("migration-update-user-output", false, "capture fixed Go user detail output")
 
+type migrationUserDetailOutputInput struct {
+	Name     string          `json:"name"`
+	ID       int64           `json:"id"`
+	Body     json.RawMessage `json:"body"`
+	WireBody string          `json:"wire_body,omitempty"`
+}
+
 func TestMigrationUserDetailOutputMatchesFrozenModes(t *testing.T) {
-	var inputs []struct {
-		Name string          `json:"name"`
-		ID   int64           `json:"id"`
-		Body json.RawMessage `json:"body"`
-	}
+	var inputs []migrationUserDetailOutputInput
 	path := filepath.Join("..", "..", "..", "..", "..", "docs", "migration", "contracts")
 	data, err := os.ReadFile(filepath.Join(path, "user-detail.json"))
 	if err != nil {
@@ -49,16 +52,43 @@ func TestMigrationUserDetailOutputMatchesFrozenModes(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		inputs = append(inputs, struct {
-			Name string          `json:"name"`
-			ID   int64           `json:"id"`
-			Body json.RawMessage `json:"body"`
-		}{webpage, 42, encoded})
+		inputs = append(inputs, migrationUserDetailOutputInput{Name: webpage, ID: 42, Body: encoded})
+	}
+	wireData, err := os.ReadFile(filepath.Join(path, "user-wire.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var wireInputs []struct {
+		Name      string `json:"name"`
+		Operation string `json:"operation"`
+		Body      string `json:"body"`
+	}
+	if err := json.Unmarshal(wireData, &wireInputs); err != nil {
+		t.Fatal(err)
+	}
+	selectedWire := map[string]bool{
+		"uppercase_known_user_fields":                       true,
+		"unicode_long_s_matches_known_fields":               true,
+		"ordinary_nested_image_objects_merge":               true,
+		"later_image_pointer_null_clears_value":             true,
+		"later_scalar_null_preserves_value":                 true,
+		"invalid_scalar_then_valid_scalar":                  true,
+		"unknown_complex_fields_ignored":                    true,
+		"duplicate_user_objects_merge_or_replace":           true,
+		"duplicate_profile:empty_object_resets":             true,
+		"invalid_then_valid_visibility_recovers":            true,
+		"invalid_profile_field_then_new_valid_object_fails": true,
+	}
+	for _, input := range wireInputs {
+		if input.Operation == "User" && selectedWire[input.Name] {
+			inputs = append(inputs, migrationUserDetailOutputInput{Name: "wire:" + input.Name, ID: 31, WireBody: input.Body})
+		}
 	}
 	type row struct {
 		Name     string          `json:"name"`
 		ID       int64           `json:"id"`
 		Body     json.RawMessage `json:"body"`
+		WireBody string          `json:"wire_body,omitempty"`
 		Mode     string          `json:"mode"`
 		Output   string          `json:"output"`
 		Error    string          `json:"error"`
@@ -70,11 +100,18 @@ func TestMigrationUserDetailOutputMatchesFrozenModes(t *testing.T) {
 			continue
 		}
 		for _, mode := range []string{"human", "json", "ndjson"} {
-			row := row{Name: input.Name, ID: input.ID, Body: input.Body, Mode: mode}
+			row := row{Name: input.Name, ID: input.ID, Body: input.Body, WireBody: input.WireBody, Mode: mode}
+			body := input.Body
+			if input.WireBody != "" {
+				body = []byte(input.WireBody)
+			}
 			var out bytes.Buffer
 			client, err := pixiv.NewWith("fixture-access", pixiv.Options{HTTPClient: &http.Client{Transport: migrationOutputTransport(func(req *http.Request) (*http.Response, error) {
+				if req.Method != "GET" || req.URL.Path != "/v1/user/detail" || req.URL.Query().Get("user_id") != strconv.FormatInt(input.ID, 10) || req.Header.Get("Authorization") != "Bearer fixture-access" {
+					t.Fatal("unexpected user detail CLI request")
+				}
 				row.Requests++
-				return &http.Response{StatusCode: 200, Header: http.Header{"Content-Type": {"application/json"}}, Body: io.NopCloser(bytes.NewReader(input.Body)), Request: req}, nil
+				return &http.Response{StatusCode: 200, Header: http.Header{"Content-Type": {"application/json"}}, Body: io.NopCloser(bytes.NewReader(body)), Request: req}, nil
 			})}})
 			if err != nil {
 				t.Fatal(err)

@@ -1,6 +1,6 @@
 use pixiv_sdk::{
     Client,
-    transport::{Request, Response, Transport},
+    transport::{JsonResponse, Request, Response, Transport},
 };
 use serde::Deserialize;
 use serde_json::{Value, json};
@@ -19,6 +19,8 @@ struct Case {
     name: String,
     arguments: Value,
     bodies: Vec<Value>,
+    #[serde(default)]
+    wire_bodies: Vec<String>,
     result: Value,
     queries: Vec<BTreeMap<String, Vec<String>>>,
     calls: usize,
@@ -27,11 +29,14 @@ struct Case {
 type Queries = Arc<std::sync::Mutex<Vec<BTreeMap<String, Vec<String>>>>>;
 #[derive(Clone)]
 struct Fixture {
-    bodies: Vec<Value>,
+    bodies: Vec<Vec<u8>>,
     queries: Queries,
 }
 impl Transport for Fixture {
-    async fn send(&self, request: Request) -> pixiv_sdk::Result<Response> {
+    async fn send(&self, _: Request) -> pixiv_sdk::Result<Response> {
+        panic!("user search must use the lossless JSON transport")
+    }
+    async fn send_json(&self, request: Request) -> pixiv_sdk::Result<JsonResponse> {
         assert_eq!(request.method.as_str(), "GET");
         assert_eq!(request.url, "https://app-api.pixiv.net/v1/search/user");
         let mut query = BTreeMap::<String, Vec<String>>::new();
@@ -42,7 +47,7 @@ impl Transport for Fixture {
             .get("offset")
             .map_or(0, |values| values[0].parse::<usize>().unwrap() / 30);
         self.queries.lock().unwrap().push(query);
-        Ok(Response {
+        Ok(JsonResponse {
             status: 200,
             retry_after: None,
             body: self.bodies[index].clone(),
@@ -80,10 +85,20 @@ async fn user_search_preserves_go_schema_records_filters_pages_and_saved_account
     ))
     .unwrap();
     assert_eq!(pixiv_mcp::search_user_tool(), contract.schema);
-    assert_eq!(contract.cases.len(), 182);
+    assert_eq!(contract.cases.len(), 192);
     for case in contract.cases {
         let fixture = Fixture {
-            bodies: case.bodies.clone(),
+            bodies: if case.wire_bodies.is_empty() {
+                case.bodies
+                    .iter()
+                    .map(|body| serde_json::to_vec(body).unwrap())
+                    .collect()
+            } else {
+                case.wire_bodies
+                    .iter()
+                    .map(|body| body.as_bytes().to_vec())
+                    .collect()
+            },
             queries: Arc::new(std::sync::Mutex::new(vec![])),
         };
         let client = Client::with_transport("fixture-access", fixture.clone());

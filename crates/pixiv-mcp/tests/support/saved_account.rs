@@ -3,7 +3,7 @@ use pixiv_app::{
     database::{Database, PixivAccount},
     execution::Execution,
 };
-use pixiv_sdk::transport::{Request, Response, Transport};
+use pixiv_sdk::transport::{JsonResponse, Request, Response, Transport};
 use std::sync::{Arc, Mutex};
 
 #[derive(Clone)]
@@ -29,6 +29,26 @@ impl<T: Transport> Transport for SavedTransport<T> {
                 body: serde_json::json!({"access_token":"fixture-access-42","refresh_token":"fixture-rotated-42","expires_in":3600,"user":{"id":42}}),
             });
         }
+        self.assert_saved_credentials(&request);
+        self.inner.send(request).await
+    }
+
+    async fn send_json(&self, request: Request) -> pixiv_sdk::Result<JsonResponse> {
+        if request.operation == "Open" {
+            let response = self.send(request).await?;
+            return Ok(JsonResponse {
+                status: response.status,
+                retry_after: response.retry_after,
+                body: serde_json::to_vec(&response.body).unwrap(),
+            });
+        }
+        self.assert_saved_credentials(&request);
+        self.inner.send_json(request).await
+    }
+}
+
+impl<T> SavedTransport<T> {
+    fn assert_saved_credentials(&self, request: &Request) {
         let account = self.database.lock().unwrap().get_pixiv(42).unwrap();
         assert_eq!(account.credential_revision, 2);
         assert_eq!(account.refresh_token_copy(), b"fixture-rotated-42");
@@ -39,7 +59,6 @@ impl<T: Transport> Transport for SavedTransport<T> {
                 .any(|(key, value)| key.eq_ignore_ascii_case("authorization")
                     && value == "Bearer fixture-access-42")
         );
-        self.inner.send(request).await
     }
 }
 

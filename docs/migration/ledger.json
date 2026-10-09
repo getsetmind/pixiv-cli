@@ -625,7 +625,8 @@
         "crates/pixiv-app/src/config/initialization.rs",
         "crates/pixiv-sdk/src/novel.rs",
         "crates/pixiv-cli/src/user_detail.rs",
-        "crates/pixiv-record/src/lib.rs"
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
       ],
       "tests": [
         "internal/cli/migration_detail_input_test.go#TestMigrationDetailInputMatchesFrozenErrorsBeforeAccountAccess",
@@ -662,10 +663,14 @@
         "internal/cli/commands/pixiv/detail/migration_user_output_test.go#TestMigrationUserDetailOutputMatchesFrozenModes",
         "crates/pixiv-cli/tests/user_detail.rs#user_detail_modes_match_go_dtos_records_profiles_and_failures",
         "internal/cli/migration_user_startup_test.go#TestMigrationUserStartupInitializesConfigurationBeforeInputAndAccountAccess",
-        "crates/pixiv-cli/tests/user_startup.rs#user_detail_startup_matches_go_initialization_input_order_and_database_creation"
+        "crates/pixiv-cli/tests/user_startup.rs#user_detail_startup_matches_go_initialization_input_order_and_database_creation",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserWirePreservesRawFieldMatchingOrderAndValidation",
+        "crates/pixiv-sdk/tests/user_wire.rs#user_wire_matches_go_case_folding_ordered_merges_nulls_and_validation",
+        "crates/pixiv-sdk/tests/user_wire_transport.rs"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64"
       ],
       "differences": [
         "正常系の実 CLI 子プロセスから HTTPS までの接続、実 HTTP/SOCKS proxy wire、TLS と通常 App API redirect の残る HTTPS/URL 条件・通信エラーの互換性は未検証または未実装。HTTP transport constructor が Go の facade 呼び出し前に対して Rust では Gate 取得後となる順序差、HTTP idle cleanup の差が残る。",
@@ -673,7 +678,9 @@
         "OS/process BrokenPipe・stderr 失敗、全 HTML/Unicode・JSON 重複 key/不正 UTF-8/null・日時変種、取消/deadline/並行競合の全条件、全 SDK Options の再構築と所有期間は未検証。既存の writer・DTO・pacing 比較を全条件の証明とはしない。",
         "設定の Close エラー報告は未移植。filesystem の失敗・symlink・並行初期化、startup hooks、URL handler、他 OS/arch は未検証または未実行。auth 管理や config コマンド全体は別の未完了操作として追跡する。",
         "小説詳細を SDK・保存済みアカウントへ接続。Go 出力126ケース、ID/URL 入力122ケース、設定・DB 作成順と --content の拒否24ケースを比較。小説メタデータの human/JSON/NDJSON と refresh CAS/Bearer は確認済み。小説の record/text パイプ、全 flag 構文・TTY/出力 override、部分 writer 失敗・取消・実 HTTPS・他 OS は未検証。",
-        "detail --type user を SDK と保存済みアカウントへ接続。Go の66ケースで human/JSON/NDJSON、プロフィール・作業環境、Web ページ表示の user-info/query/fragment 除去と不正 URL の拒否を比較し、refresh CAS/Bearer も確認。実子プロセス24ケースでユーザー URL、入力/type/content、設定不正の優先順と DB 作成順を比較。全 ID/URL 構文・record/text パイプ・aggregate JSON・TTY/全 flag・部分 writer 失敗・取消・実 HTTPS と他 OS/arch は未検証。"
+        "detail --type user を SDK と保存済みアカウントへ接続。Go の66ケースで human/JSON/NDJSON、プロフィール・作業環境、Web ページ表示の user-info/query/fragment 除去と不正 URL の拒否を比較し、refresh CAS/Bearer も確認。実子プロセス24ケースでユーザー URL、入力/type/content、設定不正の優先順と DB 作成順を比較。全 ID/URL 構文・record/text パイプ・aggregate JSON・TTY/全 flag・部分 writer 失敗・取消・実 HTTPS と他 OS/arch は未検証。",
+        "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。",
+        "Go CLI 公開面の Linux amd64 snapshot は未取得で、TestMigrationCLIContractKeepsCommandsAliasesAndFlags は cli.linux-amd64.json 不在で失敗する。対象 raw wire 比較と Go vet、同 snapshot 検査以外の CLI 検証は成功したが、Linux 公開面全体の検証とは扱わない。"
       ]
     },
     {
@@ -1149,7 +1156,9 @@
         "crates/pixiv-cli/src/trending.rs",
         "crates/pixiv-cli/src/novel_search.rs",
         "crates/pixiv-cli/src/novel_list.rs",
-        "crates/pixiv-cli/src/user_search.rs"
+        "crates/pixiv-cli/src/user_search.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
       ],
       "tests": [
         "internal/cli/commands/pixiv/search/migration_dates_test.go#TestMigrationQuickDateRangesMatchFrozenTokyoBoundaries",
@@ -1205,7 +1214,10 @@
         "crates/pixiv-cli/tests/user_search.rs#user_search_preserves_go_output_windows_errors_and_saved_account_execution",
         "crates/pixiv-cli/tests/user_search.rs#user_search_process_preserves_go_validation_authentication_and_startup_order",
         "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserSearchPreservesCaseInsensitiveFieldsAndOrderedDuplicateMerges",
-        "internal/cli/migration_search_options_test.go#TestMigrationSearchSelectorsPreserveRealStartupScope"
+        "internal/cli/migration_search_options_test.go#TestMigrationSearchSelectorsPreserveRealStartupScope",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserWirePreservesRawFieldMatchingOrderAndValidation",
+        "crates/pixiv-sdk/tests/user_wire.rs#user_wire_matches_go_case_folding_ordered_merges_nulls_and_validation",
+        "crates/pixiv-sdk/tests/user_wire_transport.rs"
       ],
       "verified_platforms": [
         "windows-amd64",
@@ -1229,9 +1241,10 @@
         "search --trending-tags を SDK と保存済み account へ接続。Go の70ケースで JSON/human・sample DTO・空/不正応答、引数拒否、18種類の併用不可 flag（明示 default/false を含む）、stdin を読まないこと、実子プロセスの起動順を比較。--type の認識を追加し、通常の user 検索の SDK・保存済み account・実起動の比較も279ケースで確認した。trending の実 HTTPS・pool/取消・全 flag 構文・他 OS は未検証。",
         "既存pool比較の all_rate_limited は残り秒数が実時間で減るため、429応答から120秒のDB凍結期限と診断出力前後の時計で検証してから、その時刻依存項目だけを正規化する。他のenvelope項目とGo fixture、本番コードの時刻取得・retry計算は変更していない。",
         "search --type novel を SDK と保存済みアカウントへ接続。Go の273ケースで human/JSON/NDJSON、論理ページ、入力と明示フラグ拒否、実子プロセスの起動順を比較。NUL を含む検索語も Go・Rust の実起動では stdin 経由で比較。小説ランキングと一覧・JSON spool・lease 解放後の JSON 出力を共有する。部分 writer 失敗・取消・pool replay、全 flag 構文/help・TTY、実 HTTPS と他 OS/arch は未検証または未移植。",
-        "search --type user の279ケースで直接 SDK・保存済み account・実子プロセスの入力、出力、論理ページ、writer 失敗、禁止 flag と起動順を Linux amd64 で比較。pixiv user search の互換入口、全 flag/help・TTY、実 HTTPS・取消/deadline・pool と他 OS/arch は未移植または未検証。workspace の必須チェック（Formatter・Clippy・158 tests・release build）は Linux amd64 で成功。",
-        "共有 wire JSON の既知差分: Go は大小文字を区別せず USER_PREVIEWS/USER/ID/NAME 等を受理し、case が異なる重複キーでも入力順の後勝ちと duplicate object の既存 field への merge を行う。Go の5ケースで固定したが Rust Serde/Value は同じ契約を満たさず、NAME の値の欠落等が残る。正しい共有 wire decoder の移植と Rust の同一比較は次工程で行う。任意の map lowercasing では重複/順序を維持できないため代替しない。",
-        "selector の従来 fixture は認証済み owner/SDK を注入した比較であり、SDK 内の sort validation error を実起動へ流用していた差を解消。既存の SDK error/envelope の比較を維持し、別の Go real-startup 99ケースで隔離 HOME の未認証診断と config/DB 作成順を比較する。bookmark/date/options/page の子プロセスを一時 HOME/USERPROFILE へ隔離し、実ホームは参照しない。"
+        "search --type user の309ケースで直接 SDK・保存済み account・実子プロセスの入力、出力、論理ページ、writer 失敗、禁止 flag と起動順を Linux amd64 で比較。pixiv user search の互換入口、全 flag/help・TTY、実 HTTPS・取消/deadline・pool と他 OS/arch は未移植または未検証。workspace の必須チェック（Formatter・Clippy・162 tests・release build）は Linux amd64 で成功。",
+        "selector の従来 fixture は認証済み owner/SDK を注入した比較であり、SDK 内の sort validation error を実起動へ流用していた差を解消。既存の SDK error/envelope の比較を維持し、別の Go real-startup 99ケースで隔離 HOME の未認証診断と config/DB 作成順を比較する。bookmark/date/options/page の子プロセスを一時 HOME/USERPROFILE へ隔離し、実ホームは参照しない。",
+        "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。",
+        "Go CLI 公開面の Linux amd64 snapshot は未取得で、TestMigrationCLIContractKeepsCommandsAliasesAndFlags は cli.linux-amd64.json 不在で失敗する。対象 raw wire 比較と Go vet、同 snapshot 検査以外の CLI 検証は成功したが、Linux 公開面全体の検証とは扱わない。"
       ]
     },
     {
@@ -2174,19 +2187,26 @@
         "crates/pixiv-mcp/src/stdio.rs",
         "crates/pixiv-mcp/src/search.rs",
         "crates/pixiv-mcp/schemas/search-user.json",
-        "crates/pixiv-record/src/lib.rs"
+        "crates/pixiv-record/src/lib.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
       ],
       "tests": [
         "internal/mcpserver/pixiv/migration_user_search_test.go#TestMigrationMCPUserSearchPreservesSchemaFiltersLogicalPagesAndValidation",
         "crates/pixiv-mcp/tests/user_search.rs#user_search_preserves_go_schema_records_filters_pages_and_saved_account_validation",
-        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserSearchPreservesCaseInsensitiveFieldsAndOrderedDuplicateMerges"
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserSearchPreservesCaseInsensitiveFieldsAndOrderedDuplicateMerges",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserWirePreservesRawFieldMatchingOrderAndValidation",
+        "crates/pixiv-sdk/tests/user_wire.rs#user_wire_matches_go_case_folding_ordered_merges_nulls_and_validation",
+        "crates/pixiv-sdk/tests/user_wire_transport.rs"
       ],
       "verified_platforms": [
         "linux-amd64"
       ],
       "differences": [
-        "Go の182ケースと schema を Linux amd64 で直接呼出し・stdio・保存済み account stdio から比較。workspace の必須チェック（Formatter・Clippy・158 tests・release build）は Linux amd64 で成功。全 schema/数値構文、取消/deadline・pool replay・disconnect、実 HTTPS、共有通信と他 OS/arch は未検証。",
-        "共有 wire JSON の既知差分: Go は大小文字を区別せず USER_PREVIEWS/USER/ID/NAME 等を受理し、case が異なる重複キーでも入力順の後勝ちと duplicate object の既存 field への merge を行う。Go の5ケースで固定したが Rust Serde/Value は同じ契約を満たさず、NAME の値の欠落等が残る。正しい共有 wire decoder の移植と Rust の同一比較は次工程で行う。任意の map lowercasing では重複/順序を維持できないため代替しない。"
+        "Go の182ケースと schema を Linux amd64 で直接呼出し・stdio・保存済み account stdio から比較。workspace の必須チェック（Formatter・Clippy・162 tests・release build）は Linux amd64 で成功。全 schema/数値構文、取消/deadline・pool replay・disconnect、実 HTTPS、共有通信と他 OS/arch は未検証。",
+        "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。",
+        "Go CLI 公開面の Linux amd64 snapshot は未取得で、TestMigrationCLIContractKeepsCommandsAliasesAndFlags は cli.linux-amd64.json 不在で失敗する。対象 raw wire 比較と Go vet、同 snapshot 検査以外の CLI 検証は成功したが、Linux 公開面全体の検証とは扱わない。"
       ]
     },
     {
@@ -2331,17 +2351,26 @@
         "crates/pixiv-mcp/src/user.rs",
         "crates/pixiv-mcp/src/stdio.rs",
         "crates/pixiv-mcp/schemas/user-detail.json",
-        "crates/pixiv-record/src/lib.rs"
+        "crates/pixiv-record/src/lib.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
       ],
       "tests": [
         "internal/mcpserver/pixiv/migration_user_detail_test.go#TestMigrationMCPUserDetailMatchesFrozenSchemaRecordsAndValidation",
-        "crates/pixiv-mcp/tests/user_detail.rs#user_detail_matches_go_schema_records_errors_and_saved_account_stdio"
+        "crates/pixiv-mcp/tests/user_detail.rs#user_detail_matches_go_schema_records_errors_and_saved_account_stdio",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserWirePreservesRawFieldMatchingOrderAndValidation",
+        "crates/pixiv-sdk/tests/user_wire.rs#user_wire_matches_go_case_folding_ordered_merges_nulls_and_validation",
+        "crates/pixiv-sdk/tests/user_wire_transport.rs"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64"
       ],
       "differences": [
-        "実 Go MCP の schema と14ケースを直接呼出し・stdio・保存済みアカウント stdio で比較。完全な user detail envelope を canonical user record にし、required user_id、未知 key、非整数、float64 経由の int64 overflow と不正応答を拒否する。refresh CAS/Bearer と要求数も比較。全 schema/数値/JSON 構文、取消/deadline・pool replay・disconnect、実 HTTPS と他 OS/arch は未検証。"
+        "実 Go MCP の schema と25ケースを直接呼出し・stdio・保存済みアカウント stdio で比較。完全な user detail envelope を canonical user record にし、required user_id、未知 key、非整数、float64 経由の int64 overflow と不正応答を拒否する。refresh CAS/Bearer と要求数も比較。全 schema/数値/JSON 構文、取消/deadline・pool replay・disconnect、実 HTTPS と他 OS/arch は未検証。",
+        "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。",
+        "Go CLI 公開面の Linux amd64 snapshot は未取得で、TestMigrationCLIContractKeepsCommandsAliasesAndFlags は cli.linux-amd64.json 不在で失敗する。対象 raw wire 比較と Go vet、同 snapshot 検査以外の CLI 検証は成功したが、Linux 公開面全体の検証とは扱わない。"
       ]
     },
     {
@@ -6940,19 +6969,24 @@
         "crates/pixiv-sdk/src/user_search.rs",
         "crates/pixiv-sdk/src/models.rs",
         "crates/pixiv-sdk/src/dto.rs",
-        "crates/pixiv-sdk/src/pixiv.rs"
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/transport.rs"
       ],
       "tests": [
         "sdk/pixiv/migration_user_search_test.go#TestMigrationUserSearchPreservesConditionsDTOsPagesAndCursorBinding",
         "crates/pixiv-sdk/tests/search_users.rs#user_search_matches_go_conditions_dtos_pages_and_global_cursor_binding",
-        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserSearchPreservesCaseInsensitiveFieldsAndOrderedDuplicateMerges"
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserSearchPreservesCaseInsensitiveFieldsAndOrderedDuplicateMerges",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserWirePreservesRawFieldMatchingOrderAndValidation",
+        "crates/pixiv-sdk/tests/user_wire.rs#user_wire_matches_go_case_folding_ordered_merges_nulls_and_validation",
+        "crates/pixiv-sdk/tests/user_wire_transport.rs"
       ],
       "verified_platforms": [
         "linux-amd64"
       ],
       "differences": [
-        "Go の64ケースと Rust SDK を Linux amd64 で比較。MCP の182ケースも比較済み、CLI の279ケースも比較済み。workspace の必須チェック（Formatter・Clippy・158 tests・release build）は Linux amd64 で成功。共有通信、取消/deadline・pool、resource の実取得、実 HTTPS、全 SDK Options と他 OS/arch は未検証。",
-        "共有 wire JSON の既知差分: Go は大小文字を区別せず USER_PREVIEWS/USER/ID/NAME 等を受理し、case が異なる重複キーでも入力順の後勝ちと duplicate object の既存 field への merge を行う。Go の5ケースで固定したが Rust Serde/Value は同じ契約を満たさず、NAME の値の欠落等が残る。正しい共有 wire decoder の移植と Rust の同一比較は次工程で行う。任意の map lowercasing では重複/順序を維持できないため代替しない。"
+        "Go の64ケースと Rust SDK を Linux amd64 で比較。MCP の192ケースも比較済み、CLI の309ケースも比較済み。workspace の必須チェック（Formatter・Clippy・162 tests・release build）は Linux amd64 で成功。共有通信、取消/deadline・pool、resource の実取得、実 HTTPS、全 SDK Options と他 OS/arch は未検証。",
+        "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。"
       ]
     },
     {
@@ -7100,17 +7134,25 @@
       "rust_sources": [
         "crates/pixiv-sdk/src/user_detail.rs",
         "crates/pixiv-sdk/src/models.rs",
-        "crates/pixiv-sdk/src/dto.rs"
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
       ],
       "tests": [
         "sdk/pixiv/migration_user_detail_test.go#TestMigrationUserDetailPreservesFieldsVisibilityAndRequests",
-        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests"
+        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserWirePreservesRawFieldMatchingOrderAndValidation",
+        "crates/pixiv-sdk/tests/user_wire.rs#user_wire_matches_go_case_folding_ordered_merges_nulls_and_validation",
+        "crates/pixiv-sdk/tests/user_wire_transport.rs"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64"
       ],
       "differences": [
-        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。"
+        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。",
+        "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。"
       ]
     },
     {
@@ -9892,19 +9934,24 @@
         "crates/pixiv-sdk/src/user_search.rs",
         "crates/pixiv-sdk/src/models.rs",
         "crates/pixiv-sdk/src/dto.rs",
-        "crates/pixiv-sdk/src/pixiv.rs"
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/transport.rs"
       ],
       "tests": [
         "sdk/pixiv/migration_user_search_test.go#TestMigrationUserSearchPreservesConditionsDTOsPagesAndCursorBinding",
         "crates/pixiv-sdk/tests/search_users.rs#user_search_matches_go_conditions_dtos_pages_and_global_cursor_binding",
-        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserSearchPreservesCaseInsensitiveFieldsAndOrderedDuplicateMerges"
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserSearchPreservesCaseInsensitiveFieldsAndOrderedDuplicateMerges",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserWirePreservesRawFieldMatchingOrderAndValidation",
+        "crates/pixiv-sdk/tests/user_wire.rs#user_wire_matches_go_case_folding_ordered_merges_nulls_and_validation",
+        "crates/pixiv-sdk/tests/user_wire_transport.rs"
       ],
       "verified_platforms": [
         "linux-amd64"
       ],
       "differences": [
-        "Go の64ケースと Rust SDK を Linux amd64 で比較。MCP の182ケースも比較済み、CLI の279ケースも比較済み。workspace の必須チェック（Formatter・Clippy・158 tests・release build）は Linux amd64 で成功。共有通信、取消/deadline・pool、resource の実取得、実 HTTPS、全 SDK Options と他 OS/arch は未検証。",
-        "共有 wire JSON の既知差分: Go は大小文字を区別せず USER_PREVIEWS/USER/ID/NAME 等を受理し、case が異なる重複キーでも入力順の後勝ちと duplicate object の既存 field への merge を行う。Go の5ケースで固定したが Rust Serde/Value は同じ契約を満たさず、NAME の値の欠落等が残る。正しい共有 wire decoder の移植と Rust の同一比較は次工程で行う。任意の map lowercasing では重複/順序を維持できないため代替しない。"
+        "Go の64ケースと Rust SDK を Linux amd64 で比較。MCP の192ケースも比較済み、CLI の309ケースも比較済み。workspace の必須チェック（Formatter・Clippy・162 tests・release build）は Linux amd64 で成功。共有通信、取消/deadline・pool、resource の実取得、実 HTTPS、全 SDK Options と他 OS/arch は未検証。",
+        "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。"
       ]
     },
     {
@@ -10556,17 +10603,25 @@
       "rust_sources": [
         "crates/pixiv-sdk/src/user_detail.rs",
         "crates/pixiv-sdk/src/models.rs",
-        "crates/pixiv-sdk/src/dto.rs"
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
       ],
       "tests": [
         "sdk/pixiv/migration_user_detail_test.go#TestMigrationUserDetailPreservesFieldsVisibilityAndRequests",
-        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests"
+        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserWirePreservesRawFieldMatchingOrderAndValidation",
+        "crates/pixiv-sdk/tests/user_wire.rs#user_wire_matches_go_case_folding_ordered_merges_nulls_and_validation",
+        "crates/pixiv-sdk/tests/user_wire_transport.rs"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64"
       ],
       "differences": [
-        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。"
+        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。",
+        "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。"
       ]
     },
     {
@@ -10580,17 +10635,25 @@
         "crates/pixiv-sdk/src/artwork.rs",
         "crates/pixiv-sdk/src/models.rs",
         "crates/pixiv-sdk/src/dto.rs",
-        "crates/pixiv-sdk/src/resource.rs"
+        "crates/pixiv-sdk/src/resource.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
       ],
       "tests": [
         "sdk/pixiv/migration_artwork_test.go#TestMigrationArtworkMatchesFrozenDTOAndRequests",
-        "crates/pixiv-sdk/tests/artwork_detail.rs"
+        "crates/pixiv-sdk/tests/artwork_detail.rs",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserWirePreservesRawFieldMatchingOrderAndValidation",
+        "crates/pixiv-sdk/tests/user_wire.rs#user_wire_matches_go_case_folding_ordered_merges_nulls_and_validation",
+        "crates/pixiv-sdk/tests/user_wire_transport.rs"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64"
       ],
       "differences": [
-        "作品詳細の19ケースを比較済み。CLI/MCP正常出力、resourceのregistry・再解決・open/save、JSON重複key・不正UTF-8・配列内null、日時の全変種と他の操作からのDTOは未移植または未検証。"
+        "作品詳細の19ケースを比較済み。CLI/MCP正常出力、resourceのregistry・再解決・open/save、JSON重複key・不正UTF-8・配列内null、日時の全変種と他の操作からのDTOは未移植または未検証。",
+        "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。"
       ]
     },
     {
@@ -10604,19 +10667,24 @@
         "crates/pixiv-sdk/src/user_search.rs",
         "crates/pixiv-sdk/src/models.rs",
         "crates/pixiv-sdk/src/dto.rs",
-        "crates/pixiv-sdk/src/pixiv.rs"
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/transport.rs"
       ],
       "tests": [
         "sdk/pixiv/migration_user_search_test.go#TestMigrationUserSearchPreservesConditionsDTOsPagesAndCursorBinding",
         "crates/pixiv-sdk/tests/search_users.rs#user_search_matches_go_conditions_dtos_pages_and_global_cursor_binding",
-        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserSearchPreservesCaseInsensitiveFieldsAndOrderedDuplicateMerges"
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserSearchPreservesCaseInsensitiveFieldsAndOrderedDuplicateMerges",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserWirePreservesRawFieldMatchingOrderAndValidation",
+        "crates/pixiv-sdk/tests/user_wire.rs#user_wire_matches_go_case_folding_ordered_merges_nulls_and_validation",
+        "crates/pixiv-sdk/tests/user_wire_transport.rs"
       ],
       "verified_platforms": [
         "linux-amd64"
       ],
       "differences": [
-        "Go の64ケースと Rust SDK を Linux amd64 で比較。MCP の182ケースも比較済み、CLI の279ケースも比較済み。workspace の必須チェック（Formatter・Clippy・158 tests・release build）は Linux amd64 で成功。共有通信、取消/deadline・pool、resource の実取得、実 HTTPS、全 SDK Options と他 OS/arch は未検証。",
-        "共有 wire JSON の既知差分: Go は大小文字を区別せず USER_PREVIEWS/USER/ID/NAME 等を受理し、case が異なる重複キーでも入力順の後勝ちと duplicate object の既存 field への merge を行う。Go の5ケースで固定したが Rust Serde/Value は同じ契約を満たさず、NAME の値の欠落等が残る。正しい共有 wire decoder の移植と Rust の同一比較は次工程で行う。任意の map lowercasing では重複/順序を維持できないため代替しない。"
+        "Go の64ケースと Rust SDK を Linux amd64 で比較。MCP の192ケースも比較済み、CLI の309ケースも比較済み。workspace の必須チェック（Formatter・Clippy・162 tests・release build）は Linux amd64 で成功。共有通信、取消/deadline・pool、resource の実取得、実 HTTPS、全 SDK Options と他 OS/arch は未検証。",
+        "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。"
       ]
     },
     {
@@ -10629,17 +10697,25 @@
       "rust_sources": [
         "crates/pixiv-sdk/src/user_detail.rs",
         "crates/pixiv-sdk/src/models.rs",
-        "crates/pixiv-sdk/src/dto.rs"
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
       ],
       "tests": [
         "sdk/pixiv/migration_user_detail_test.go#TestMigrationUserDetailPreservesFieldsVisibilityAndRequests",
-        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests"
+        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserWirePreservesRawFieldMatchingOrderAndValidation",
+        "crates/pixiv-sdk/tests/user_wire.rs#user_wire_matches_go_case_folding_ordered_merges_nulls_and_validation",
+        "crates/pixiv-sdk/tests/user_wire_transport.rs"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64"
       ],
       "differences": [
-        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。"
+        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。",
+        "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。"
       ]
     },
     {
@@ -10652,17 +10728,25 @@
       "rust_sources": [
         "crates/pixiv-sdk/src/user_detail.rs",
         "crates/pixiv-sdk/src/models.rs",
-        "crates/pixiv-sdk/src/dto.rs"
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
       ],
       "tests": [
         "sdk/pixiv/migration_user_detail_test.go#TestMigrationUserDetailPreservesFieldsVisibilityAndRequests",
-        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests"
+        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserWirePreservesRawFieldMatchingOrderAndValidation",
+        "crates/pixiv-sdk/tests/user_wire.rs#user_wire_matches_go_case_folding_ordered_merges_nulls_and_validation",
+        "crates/pixiv-sdk/tests/user_wire_transport.rs"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64"
       ],
       "differences": [
-        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。"
+        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。",
+        "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。"
       ]
     },
     {
@@ -10675,17 +10759,25 @@
       "rust_sources": [
         "crates/pixiv-sdk/src/user_detail.rs",
         "crates/pixiv-sdk/src/models.rs",
-        "crates/pixiv-sdk/src/dto.rs"
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
       ],
       "tests": [
         "sdk/pixiv/migration_user_detail_test.go#TestMigrationUserDetailPreservesFieldsVisibilityAndRequests",
-        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests"
+        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserWirePreservesRawFieldMatchingOrderAndValidation",
+        "crates/pixiv-sdk/tests/user_wire.rs#user_wire_matches_go_case_folding_ordered_merges_nulls_and_validation",
+        "crates/pixiv-sdk/tests/user_wire_transport.rs"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64"
       ],
       "differences": [
-        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。"
+        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。",
+        "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。"
       ]
     },
     {
@@ -11007,17 +11099,25 @@
         "crates/pixiv-sdk/src/artwork.rs",
         "crates/pixiv-sdk/src/models.rs",
         "crates/pixiv-sdk/src/dto.rs",
-        "crates/pixiv-sdk/src/resource.rs"
+        "crates/pixiv-sdk/src/resource.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
       ],
       "tests": [
         "sdk/pixiv/migration_artwork_test.go#TestMigrationArtworkMatchesFrozenDTOAndRequests",
-        "crates/pixiv-sdk/tests/artwork_detail.rs"
+        "crates/pixiv-sdk/tests/artwork_detail.rs",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserWirePreservesRawFieldMatchingOrderAndValidation",
+        "crates/pixiv-sdk/tests/user_wire.rs#user_wire_matches_go_case_folding_ordered_merges_nulls_and_validation",
+        "crates/pixiv-sdk/tests/user_wire_transport.rs"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64"
       ],
       "differences": [
-        "作品詳細の19ケースを比較済み。CLI/MCP正常出力、resourceのregistry・再解決・open/save、JSON重複key・不正UTF-8・配列内null、日時の全変種と他の操作からのDTOは未移植または未検証。"
+        "作品詳細の19ケースを比較済み。CLI/MCP正常出力、resourceのregistry・再解決・open/save、JSON重複key・不正UTF-8・配列内null、日時の全変種と他の操作からのDTOは未移植または未検証。",
+        "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。"
       ]
     },
     {
@@ -11089,17 +11189,25 @@
       "rust_sources": [
         "crates/pixiv-sdk/src/user_detail.rs",
         "crates/pixiv-sdk/src/models.rs",
-        "crates/pixiv-sdk/src/dto.rs"
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
       ],
       "tests": [
         "sdk/pixiv/migration_user_detail_test.go#TestMigrationUserDetailPreservesFieldsVisibilityAndRequests",
-        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests"
+        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserWirePreservesRawFieldMatchingOrderAndValidation",
+        "crates/pixiv-sdk/tests/user_wire.rs#user_wire_matches_go_case_folding_ordered_merges_nulls_and_validation",
+        "crates/pixiv-sdk/tests/user_wire_transport.rs"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64"
       ],
       "differences": [
-        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。"
+        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。",
+        "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。"
       ]
     },
     {
@@ -11112,17 +11220,25 @@
       "rust_sources": [
         "crates/pixiv-sdk/src/user_detail.rs",
         "crates/pixiv-sdk/src/models.rs",
-        "crates/pixiv-sdk/src/dto.rs"
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
       ],
       "tests": [
         "sdk/pixiv/migration_user_detail_test.go#TestMigrationUserDetailPreservesFieldsVisibilityAndRequests",
-        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests"
+        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserWirePreservesRawFieldMatchingOrderAndValidation",
+        "crates/pixiv-sdk/tests/user_wire.rs#user_wire_matches_go_case_folding_ordered_merges_nulls_and_validation",
+        "crates/pixiv-sdk/tests/user_wire_transport.rs"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64"
       ],
       "differences": [
-        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。"
+        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。",
+        "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。"
       ]
     },
     {
@@ -11136,17 +11252,25 @@
         "crates/pixiv-sdk/src/artwork.rs",
         "crates/pixiv-sdk/src/models.rs",
         "crates/pixiv-sdk/src/dto.rs",
-        "crates/pixiv-sdk/src/resource.rs"
+        "crates/pixiv-sdk/src/resource.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
       ],
       "tests": [
         "sdk/pixiv/migration_artwork_test.go#TestMigrationArtworkMatchesFrozenDTOAndRequests",
-        "crates/pixiv-sdk/tests/artwork_detail.rs"
+        "crates/pixiv-sdk/tests/artwork_detail.rs",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserWirePreservesRawFieldMatchingOrderAndValidation",
+        "crates/pixiv-sdk/tests/user_wire.rs#user_wire_matches_go_case_folding_ordered_merges_nulls_and_validation",
+        "crates/pixiv-sdk/tests/user_wire_transport.rs"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64"
       ],
       "differences": [
-        "作品詳細の19ケースを比較済み。CLI/MCP正常出力、resourceのregistry・再解決・open/save、JSON重複key・不正UTF-8・配列内null、日時の全変種と他の操作からのDTOは未移植または未検証。"
+        "作品詳細の19ケースを比較済み。CLI/MCP正常出力、resourceのregistry・再解決・open/save、JSON重複key・不正UTF-8・配列内null、日時の全変種と他の操作からのDTOは未移植または未検証。",
+        "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。"
       ]
     },
     {
@@ -11233,19 +11357,24 @@
         "crates/pixiv-sdk/src/user_search.rs",
         "crates/pixiv-sdk/src/models.rs",
         "crates/pixiv-sdk/src/dto.rs",
-        "crates/pixiv-sdk/src/pixiv.rs"
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/transport.rs"
       ],
       "tests": [
         "sdk/pixiv/migration_user_search_test.go#TestMigrationUserSearchPreservesConditionsDTOsPagesAndCursorBinding",
         "crates/pixiv-sdk/tests/search_users.rs#user_search_matches_go_conditions_dtos_pages_and_global_cursor_binding",
-        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserSearchPreservesCaseInsensitiveFieldsAndOrderedDuplicateMerges"
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserSearchPreservesCaseInsensitiveFieldsAndOrderedDuplicateMerges",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserWirePreservesRawFieldMatchingOrderAndValidation",
+        "crates/pixiv-sdk/tests/user_wire.rs#user_wire_matches_go_case_folding_ordered_merges_nulls_and_validation",
+        "crates/pixiv-sdk/tests/user_wire_transport.rs"
       ],
       "verified_platforms": [
         "linux-amd64"
       ],
       "differences": [
-        "Go の64ケースと Rust SDK を Linux amd64 で比較。MCP の182ケースも比較済み、CLI の279ケースも比較済み。workspace の必須チェック（Formatter・Clippy・158 tests・release build）は Linux amd64 で成功。共有通信、取消/deadline・pool、resource の実取得、実 HTTPS、全 SDK Options と他 OS/arch は未検証。",
-        "共有 wire JSON の既知差分: Go は大小文字を区別せず USER_PREVIEWS/USER/ID/NAME 等を受理し、case が異なる重複キーでも入力順の後勝ちと duplicate object の既存 field への merge を行う。Go の5ケースで固定したが Rust Serde/Value は同じ契約を満たさず、NAME の値の欠落等が残る。正しい共有 wire decoder の移植と Rust の同一比較は次工程で行う。任意の map lowercasing では重複/順序を維持できないため代替しない。"
+        "Go の64ケースと Rust SDK を Linux amd64 で比較。MCP の192ケースも比較済み、CLI の309ケースも比較済み。workspace の必須チェック（Formatter・Clippy・162 tests・release build）は Linux amd64 で成功。共有通信、取消/deadline・pool、resource の実取得、実 HTTPS、全 SDK Options と他 OS/arch は未検証。",
+        "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。"
       ]
     },
     {
@@ -11259,19 +11388,24 @@
         "crates/pixiv-sdk/src/user_search.rs",
         "crates/pixiv-sdk/src/models.rs",
         "crates/pixiv-sdk/src/dto.rs",
-        "crates/pixiv-sdk/src/pixiv.rs"
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/transport.rs"
       ],
       "tests": [
         "sdk/pixiv/migration_user_search_test.go#TestMigrationUserSearchPreservesConditionsDTOsPagesAndCursorBinding",
         "crates/pixiv-sdk/tests/search_users.rs#user_search_matches_go_conditions_dtos_pages_and_global_cursor_binding",
-        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserSearchPreservesCaseInsensitiveFieldsAndOrderedDuplicateMerges"
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserSearchPreservesCaseInsensitiveFieldsAndOrderedDuplicateMerges",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserWirePreservesRawFieldMatchingOrderAndValidation",
+        "crates/pixiv-sdk/tests/user_wire.rs#user_wire_matches_go_case_folding_ordered_merges_nulls_and_validation",
+        "crates/pixiv-sdk/tests/user_wire_transport.rs"
       ],
       "verified_platforms": [
         "linux-amd64"
       ],
       "differences": [
-        "Go の64ケースと Rust SDK を Linux amd64 で比較。MCP の182ケースも比較済み、CLI の279ケースも比較済み。workspace の必須チェック（Formatter・Clippy・158 tests・release build）は Linux amd64 で成功。共有通信、取消/deadline・pool、resource の実取得、実 HTTPS、全 SDK Options と他 OS/arch は未検証。",
-        "共有 wire JSON の既知差分: Go は大小文字を区別せず USER_PREVIEWS/USER/ID/NAME 等を受理し、case が異なる重複キーでも入力順の後勝ちと duplicate object の既存 field への merge を行う。Go の5ケースで固定したが Rust Serde/Value は同じ契約を満たさず、NAME の値の欠落等が残る。正しい共有 wire decoder の移植と Rust の同一比較は次工程で行う。任意の map lowercasing では重複/順序を維持できないため代替しない。"
+        "Go の64ケースと Rust SDK を Linux amd64 で比較。MCP の192ケースも比較済み、CLI の309ケースも比較済み。workspace の必須チェック（Formatter・Clippy・162 tests・release build）は Linux amd64 で成功。共有通信、取消/deadline・pool、resource の実取得、実 HTTPS、全 SDK Options と他 OS/arch は未検証。",
+        "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。"
       ]
     },
     {
@@ -11284,17 +11418,25 @@
       "rust_sources": [
         "crates/pixiv-sdk/src/user_detail.rs",
         "crates/pixiv-sdk/src/models.rs",
-        "crates/pixiv-sdk/src/dto.rs"
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
       ],
       "tests": [
         "sdk/pixiv/migration_user_detail_test.go#TestMigrationUserDetailPreservesFieldsVisibilityAndRequests",
-        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests"
+        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserWirePreservesRawFieldMatchingOrderAndValidation",
+        "crates/pixiv-sdk/tests/user_wire.rs#user_wire_matches_go_case_folding_ordered_merges_nulls_and_validation",
+        "crates/pixiv-sdk/tests/user_wire_transport.rs"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64"
       ],
       "differences": [
-        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。"
+        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。",
+        "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。"
       ]
     },
     {
@@ -11307,17 +11449,25 @@
       "rust_sources": [
         "crates/pixiv-sdk/src/user_detail.rs",
         "crates/pixiv-sdk/src/models.rs",
-        "crates/pixiv-sdk/src/dto.rs"
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
       ],
       "tests": [
         "sdk/pixiv/migration_user_detail_test.go#TestMigrationUserDetailPreservesFieldsVisibilityAndRequests",
-        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests"
+        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserWirePreservesRawFieldMatchingOrderAndValidation",
+        "crates/pixiv-sdk/tests/user_wire.rs#user_wire_matches_go_case_folding_ordered_merges_nulls_and_validation",
+        "crates/pixiv-sdk/tests/user_wire_transport.rs"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64"
       ],
       "differences": [
-        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。"
+        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。",
+        "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。"
       ]
     },
     {
@@ -11330,17 +11480,25 @@
       "rust_sources": [
         "crates/pixiv-sdk/src/user_detail.rs",
         "crates/pixiv-sdk/src/models.rs",
-        "crates/pixiv-sdk/src/dto.rs"
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
       ],
       "tests": [
         "sdk/pixiv/migration_user_detail_test.go#TestMigrationUserDetailPreservesFieldsVisibilityAndRequests",
-        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests"
+        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserWirePreservesRawFieldMatchingOrderAndValidation",
+        "crates/pixiv-sdk/tests/user_wire.rs#user_wire_matches_go_case_folding_ordered_merges_nulls_and_validation",
+        "crates/pixiv-sdk/tests/user_wire_transport.rs"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64"
       ],
       "differences": [
-        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。"
+        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。",
+        "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。"
       ]
     },
     {
@@ -11353,17 +11511,25 @@
       "rust_sources": [
         "crates/pixiv-sdk/src/user_detail.rs",
         "crates/pixiv-sdk/src/models.rs",
-        "crates/pixiv-sdk/src/dto.rs"
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
       ],
       "tests": [
         "sdk/pixiv/migration_user_detail_test.go#TestMigrationUserDetailPreservesFieldsVisibilityAndRequests",
-        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests"
+        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserWirePreservesRawFieldMatchingOrderAndValidation",
+        "crates/pixiv-sdk/tests/user_wire.rs#user_wire_matches_go_case_folding_ordered_merges_nulls_and_validation",
+        "crates/pixiv-sdk/tests/user_wire_transport.rs"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64"
       ],
       "differences": [
-        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。"
+        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。",
+        "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。"
       ]
     },
     {
@@ -11376,17 +11542,25 @@
       "rust_sources": [
         "crates/pixiv-sdk/src/user_detail.rs",
         "crates/pixiv-sdk/src/models.rs",
-        "crates/pixiv-sdk/src/dto.rs"
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
       ],
       "tests": [
         "sdk/pixiv/migration_user_detail_test.go#TestMigrationUserDetailPreservesFieldsVisibilityAndRequests",
-        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests"
+        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserWirePreservesRawFieldMatchingOrderAndValidation",
+        "crates/pixiv-sdk/tests/user_wire.rs#user_wire_matches_go_case_folding_ordered_merges_nulls_and_validation",
+        "crates/pixiv-sdk/tests/user_wire_transport.rs"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64"
       ],
       "differences": [
-        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。"
+        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。",
+        "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。"
       ]
     },
     {
@@ -11399,17 +11573,25 @@
       "rust_sources": [
         "crates/pixiv-sdk/src/user_detail.rs",
         "crates/pixiv-sdk/src/models.rs",
-        "crates/pixiv-sdk/src/dto.rs"
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
       ],
       "tests": [
         "sdk/pixiv/migration_user_detail_test.go#TestMigrationUserDetailPreservesFieldsVisibilityAndRequests",
-        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests"
+        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserWirePreservesRawFieldMatchingOrderAndValidation",
+        "crates/pixiv-sdk/tests/user_wire.rs#user_wire_matches_go_case_folding_ordered_merges_nulls_and_validation",
+        "crates/pixiv-sdk/tests/user_wire_transport.rs"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64"
       ],
       "differences": [
-        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。"
+        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。",
+        "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。"
       ]
     },
     {
@@ -11422,17 +11604,25 @@
       "rust_sources": [
         "crates/pixiv-sdk/src/user_detail.rs",
         "crates/pixiv-sdk/src/models.rs",
-        "crates/pixiv-sdk/src/dto.rs"
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
       ],
       "tests": [
         "sdk/pixiv/migration_user_detail_test.go#TestMigrationUserDetailPreservesFieldsVisibilityAndRequests",
-        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests"
+        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserWirePreservesRawFieldMatchingOrderAndValidation",
+        "crates/pixiv-sdk/tests/user_wire.rs#user_wire_matches_go_case_folding_ordered_merges_nulls_and_validation",
+        "crates/pixiv-sdk/tests/user_wire_transport.rs"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64"
       ],
       "differences": [
-        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。"
+        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。",
+        "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。"
       ]
     }
   ]

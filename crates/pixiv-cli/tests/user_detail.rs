@@ -3,7 +3,7 @@ mod saved_account;
 use pixiv_cli_rs::{DetailOutput, saved_user_detail, user_detail};
 use pixiv_sdk::{
     Client, Result,
-    transport::{Request, Response, Transport},
+    transport::{JsonResponse, Request, Response, Transport},
 };
 use serde::Deserialize;
 use serde_json::Value;
@@ -13,6 +13,7 @@ struct Case {
     name: String,
     id: i64,
     body: Value,
+    wire_body: Option<String>,
     mode: String,
     output: String,
     error: String,
@@ -20,13 +21,23 @@ struct Case {
 }
 #[derive(Clone)]
 struct Fixture {
-    body: Value,
+    user_id: i64,
+    body: Vec<u8>,
     requests: Arc<Mutex<usize>>,
 }
 impl Transport for Fixture {
     async fn send(&self, _: Request) -> Result<Response> {
+        panic!("user detail must use the lossless JSON transport")
+    }
+    async fn send_json(&self, request: Request) -> Result<JsonResponse> {
+        assert_eq!(request.method.as_str(), "GET");
+        assert_eq!(request.url, "https://app-api.pixiv.net/v1/user/detail");
+        assert_eq!(
+            request.parameters,
+            [("user_id".into(), self.user_id.to_string())]
+        );
         *self.requests.lock().unwrap() += 1;
-        Ok(Response {
+        Ok(JsonResponse {
             status: 200,
             retry_after: None,
             body: self.body.clone(),
@@ -39,14 +50,19 @@ async fn user_detail_modes_match_go_dtos_records_profiles_and_failures() {
         "../../../docs/migration/contracts/user-output.json"
     ))
     .unwrap();
-    assert_eq!(cases.len(), 66);
+    assert_eq!(cases.len(), 99);
     for case in cases {
+        let body = case.wire_body.as_ref().map_or_else(
+            || serde_json::to_vec(&case.body).unwrap(),
+            |body| body.as_bytes().to_vec(),
+        );
         for saved in [false, true] {
             let requests = Arc::new(Mutex::new(0));
             let client = Client::with_transport(
                 "fixture-access",
                 Fixture {
-                    body: case.body.clone(),
+                    user_id: case.id,
+                    body: body.clone(),
                     requests: requests.clone(),
                 },
             );
@@ -58,7 +74,8 @@ async fn user_detail_modes_match_go_dtos_records_profiles_and_failures() {
             let mut out = vec![];
             let result = if saved {
                 let application = saved_account::saved_execution(Fixture {
-                    body: case.body.clone(),
+                    user_id: case.id,
+                    body: body.clone(),
                     requests: requests.clone(),
                 });
                 saved_user_detail(

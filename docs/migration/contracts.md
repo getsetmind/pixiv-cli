@@ -945,9 +945,9 @@ Rust の互換入口は受理したオプションを共通の SearchInput/Searc
 
 [user-detail.json](contracts/user-detail.json) は Go の145ケースである。user/profile/profile_publicity/workspace の必須オブジェクト、正の ID、profile/workspace の全フィールドの null と不正型、公開範囲の bool/public/private、profile image、method/path/query を固定する。DTO に出さない birth/address_id/job_id も型を検証する。Rust の Profile/Workspace DTO はモデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。
 
-[user-output.json](contracts/user-output.json) は Go の66ケースである。human の全 profile/workspace 表示、完全な JSON envelope、canonical user record の NDJSON、空・不正応答、Web ページ URL の user-info/query/fragment 除去と16種類の入力を比較する。直接 SDK と保存済みアカウントの両経路を使い、refresh CAS 保存と Bearer 使用を確認する。[user-startup.json](contracts/user-startup.json) の24ケースは実 Rust 子プロセスで入力と設定の優先順、ユーザー URL、content/type の拒否、設定・DB 作成順を比較する。
+[user-output.json](contracts/user-output.json) は Go の99ケースである。human の全 profile/workspace 表示、完全な JSON envelope、canonical user record の NDJSON、空・不正応答、Web ページ URL の user-info/query/fragment 除去と16種類の入力を比較する。直接 SDK と保存済みアカウントの両経路を使い、refresh CAS 保存と Bearer 使用を確認する。[user-startup.json](contracts/user-startup.json) の24ケースは実 Rust 子プロセスで入力と設定の優先順、ユーザー URL、content/type の拒否、設定・DB 作成順を比較する。
 
-[mcp-user-detail.json](contracts/mcp-user-detail.json) は実 Go MCP の schema と14ケースである。直接呼出し・stdio・保存済みアカウント stdio で complete envelope を持つ user record、要求数、required user_id、未知 key、非整数と float64 経由の int64 overflow、不正応答を比較する。公開カタログへ user_detail を追加する。
+[mcp-user-detail.json](contracts/mcp-user-detail.json) は実 Go MCP の schema と25ケースである。直接呼出し・stdio・保存済みアカウント stdio で complete envelope を持つ user record、要求数、required user_id、未知 key、非整数と float64 経由の int64 overflow、不正応答を比較する。公開カタログへ user_detail を追加する。
 
 検証環境は Windows amd64。全 ID/URL 構文・JSON/数値構文、record/text 入力パイプ・aggregate JSON、TTY/出力 override/全 flag、部分 writer 失敗、取消/deadline・pool replay・disconnect、resource の実取得、実 HTTPS と他 OS/arch は未検証である。
 
@@ -958,11 +958,11 @@ Rust の互換入口は受理したオプションを共通の SearchInput/Searc
 
 これに対応する Rust SDK の `search_users` は、既存の cursor・継続 URL・User mapper と resource registry を使う。型付きの UserPreview と UserPreviewDto を追加し、Linux amd64 で同じ64ケースを比較した。canonical user record の preview envelope と正の ID も外部テストで確認した。
 
-[cli-user-search.json](../../crates/pixiv-cli/tests/fixtures/cli-user-search.json) は Go の実 CLI から取得した279ケースである。human/JSON/NDJSON、論理ページ、空の batch の補充、重複、後続ページの失敗、writer 失敗、禁止フラグと実子プロセスの起動順を固定する。Rust の `search --type user` は既存の stdin・設定・認証・proxy・ページ処理・JSON spool・NDJSON・writer commit 処理へ接続し、直接 SDK・保存済みアカウント・実子プロセスの各比較が通った。`pixiv user search` の互換入口は今回の範囲に含めず、未移植として残す。
+[cli-user-search.json](../../crates/pixiv-cli/tests/fixtures/cli-user-search.json) は Go の実 CLI から取得した309ケースである。human/JSON/NDJSON、論理ページ、空の batch の補充、重複、後続ページの失敗、writer 失敗、禁止フラグと実子プロセスの起動順を固定する。Rust の `search --type user` は既存の stdin・設定・認証・proxy・ページ処理・JSON spool・NDJSON・writer commit 処理へ接続し、直接 SDK・保存済みアカウント・実子プロセスの各比較が通った。`pixiv user search` の互換入口は今回の範囲に含めず、未移植として残す。
 
-[mcp-user-search.json](contracts/mcp-user-search.json) は実 Go MCP の schema と182ケースである。SDK 応答、ローカル ID filter、重複の除去、filter で空になる batch の補充、論理ページ、部分取得後の失敗、schema と validation の順序を固定した。Rust の直接呼出し・stdio・保存済みアカウント stdio から同じ182ケースを比較し、既存の list/pagination/record と schema の数値 binding を使う。
+[mcp-user-search.json](contracts/mcp-user-search.json) は実 Go MCP の schema と192ケースである。SDK 応答、ローカル ID filter、重複の除去、filter で空になる batch の補充、論理ページ、部分取得後の失敗、schema と validation の順序を固定した。Rust の直接呼出し・stdio・保存済みアカウント stdio から同じ192ケースを比較し、既存の list/pagination/record と schema の数値 binding を使う。
 
-Go の大小文字・重複キー処理は、Rust の共有 wire decoder に既知の差分がある。Go の追加5ケースで、大文字・大小混在の USER_PREVIEWS/USER/ID/NAME/ACCOUNT、case が異なる同名フィールドの入力順による後勝ち、重複 user オブジェクトの field merge を固定した。Rust では NAME の値が欠落するなど、同じ契約を満たしていない。対応する Rust 比較は未実装であり、共有 wire の次工程で修正する。単純な map の小文字化では、重複キーと入力順の契約を維持できない。
+当初の Go の追加5ケースで、Rust の大小文字・重複キー処理に差を確認した。後述の raw wire 比較では User と SearchUsers の取得を生の応答へ接続し、既知の NAME 欠落と重複処理の差を解消した。作品・小説と未キャッシュの resource 再解決は従来の Value 処理を使い、この変更の範囲に含めない。
 
 検証環境は Linux amd64。共有通信、全 input/flag/help・TTY、CLI 正常子プロセスの実 HTTPS、取消/deadline・pool replay・disconnect、resource の実取得、他 OS/arch は未検証である。全契約の検証状態は引き続き in_progress とする。
 
@@ -981,4 +981,23 @@ selector の従来 fixture は認証済み owner/SDK を注入した比較であ
 
 最終の `scripts/check-rust.ps1` は Linux amd64 で終了0となり、本番ソースのテスト属性検査、Formatter、workspace all-target Clippy、workspace テスト（158 passed、0 failed、3 ignored）、release build が成功した。3 ignored は既存の Go account/DB 相互テスト用の入口2件と、親テストから実行する spool 子プロセス用の入口1件であり、新たな skip/ignore は追加していない。最終チェックは約134秒、初回の release build は約61秒だった。Go の参照テスト、Rust のテストと本番 build を実 Pixiv 資格情報・ライブアクセスなしで実行した。
 
-今回の実装・比較・環境回復は約33分で、その中には依存取得と実行取消の調査、既存テストの隔離 HOME と実行条件の修正も含む。最終の検証時間だけから工程全体の遅延原因を断定しない。ユーザー検索の入口は接続済みだが、大小文字・重複キーの共有 wire 差分と前述の未検証範囲があるため、全契約の verified や Rust への最終切替とは扱わない。
+今回の実装・比較・環境回復は約33分で、その中には依存取得と実行取消の調査、既存テストの隔離 HOME と実行条件の修正も含む。最終の検証時間だけから工程全体の遅延原因を断定しない。このユーザー検索の接続時点では、大小文字・重複キーの共有 wire 差分と前述の未検証範囲があったため、全契約の verified や Rust への最終切替とは扱わない。
+
+
+## ユーザー詳細・検索の raw wire JSON
+
+[user-wire.json](contracts/user-wire.json) は、Go の raw JSON 177ケース（SearchUsers 82、User 95）である。応答を文字列として保存し、重複キーと入力順を維持した。既知フィールドの ASCII 大小文字、Unicode SimpleFold の ſ/K、escape されたキー、整数の構文と範囲、未知の 9e999、null と重複の順序、DTO・cursor・要求を固定した。未知の配列の総深さ10000を受理し、10001と末尾の余分な JSON を拒否する場合も比較した。
+
+Go のオブジェクト処理はフィールドの型で異なる。検索 preview の user と profile_image_urls は値 struct のため、後続オブジェクトを既存フィールドへ merge し、null では以前の値を保持する。detail の必須4 section と search の必須リストは各出現でリセットする。scalar の null は保持、pointer の null は解除となる。既知 scalar の型エラーは後の正常値でも解消せず、publicity の custom decoder が記録した無効値は後の正常値で解消する。
+
+Rust の Transport に JsonResponse と既定の send_json を追加し、既存の send・Response の構築を維持した。既定の adapter は既存 Value を JSON 化するため、既に失われた重複と順序は復元できない。実 HttpTransport は生の応答を渡す。User と SearchUsers だけがこの取得を使い、認証・ヘッダー・status/retry・pacing を既存処理と共用する。
+
+対応する decoder は、宣言済みの schema に一致するキーを入力順で処理し、必要な reset/merge/null と型検証を適用する。未知の値は IgnoredAny で読み飛ばし、raw フィールドは借用する。任意の map の小文字化や、未知フィールドを含む全体の Value 化は行わない。既存の WireUser と profile/workspace/DTO mapper を使い、本番ソースにテスト用分岐・helper は追加しない。
+
+CLI/MCP の比較にも raw 文字列の入力を追加した。従来の User CLI 66・SearchUsers CLI 279・User MCP 14・SearchUsers MCP 182ケースは各 JSON 行の byte を維持し、schema も変更していない。新たに User の11入力と SearchUsers の10入力を追加した結果、CLI の3 mode は99/309行、MCP は25/192行となった。直接呼出し・保存済み account・stdio で Go の出力を比較し、保存用テスト transport の send_json も refresh CAS/Bearer 検証後に転送する。
+
+Linux amd64 の最終 scripts/check-rust.ps1 は終了0で、Formatter、workspace all-target Clippy、162 passed・0 failed・既存3 ignored、release build が成功した。実 HTTP reader の重複/未知数値、旧 Value transport の adapter、raw status/retry と秘匿性のテストも通った。最終検証の Clippy は約6秒、test build は約23秒、release build は約17秒である。実装・Go 契約の取得・入口の比較・検証は約24分で、Go 本番コード・go.mod・go.sum は変更していない。
+
+Go の対象契約と vet は成功し、detail/MCP の全体検証も通った。CLI の全体検証は、従来の command surface 検査が cli.linux-amd64.json 不在で失敗したことを記録する。同テスト以外は通ったが、Linux の公開面 snapshot の取得・検証を成功扱いにはしない。
+
+この変更の対象は User と SearchUsers の応答 decode である。作品・小説の detail/search/ranking/trending に埋め込まれた User、未キャッシュ user_profile resource の metadata 再取得は Value 処理を使い、大小文字・重複・順序の差が残る。全 JSON/通信/SDK Options、取消/deadline・pool replay・disconnect、live HTTPS・実 resource・TTY、他 OS/arch も未検証であり、台帳の in_progress と最終切替の条件を維持する。

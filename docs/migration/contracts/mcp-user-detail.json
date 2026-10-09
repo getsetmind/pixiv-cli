@@ -1156,6 +1156,777 @@
       "calls": 0,
       "requests": 0,
       "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/user_id: type: 1.5 has type \"number\", want \"integer\""
+    },
+    {
+      "name": "wire:uppercase_known_user_fields",
+      "arguments": {
+        "user_id": 31
+      },
+      "body": null,
+      "wire_body": "{\"USER\":{\"ID\":31,\"NAME\":\"artist\",\"ACCOUNT\":\"account\",\"COMMENT\":\"comment\",\"IS_FOLLOWED\":true,\"PROFILE_IMAGE_URLS\":{\"MEDIUM\":\"https://i.pximg.net/profile.jpg\"}},\"profile\":{},\"profile_publicity\":{},\"workspace\":{}}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "id": "31",
+              "profile": {
+                "background_image_url": "",
+                "birth_day": "",
+                "birth_year": 0,
+                "country_code": "",
+                "gender": "",
+                "is_premium": false,
+                "is_using_custom_profile_image": false,
+                "job": "",
+                "pawoo_url": "",
+                "region": "",
+                "total_follow_users": 0,
+                "total_illust_bookmarks": 0,
+                "total_illust_series": 0,
+                "total_illusts": 0,
+                "total_manga": 0,
+                "total_my_pixiv_users": 0,
+                "total_novel_series": 0,
+                "total_novels": 0,
+                "twitter_account": "",
+                "twitter_url": "",
+                "webpage": ""
+              },
+              "profile_publicity": {
+                "birth_day": false,
+                "birth_year": false,
+                "gender": false,
+                "job": false,
+                "pawoo": false,
+                "region": false
+              },
+              "type": "user",
+              "url": "https://www.pixiv.net/users/31",
+              "user": {
+                "account": "account",
+                "comment": "comment",
+                "id": 31,
+                "is_followed": true,
+                "name": "artist",
+                "profile_image": {
+                  "height": 0,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPak14TENKd0lqb3RNU3dpZGlJNkltMWxaR2wxYlNKOSJ9"
+                  },
+                  "variant": "medium",
+                  "width": 0
+                }
+              },
+              "workspace": {
+                "chair": "",
+                "comment": "",
+                "desk": "",
+                "desktop": "",
+                "monitor": "",
+                "mouse": "",
+                "music": "",
+                "pc": "",
+                "printer": "",
+                "scanner": "",
+                "tablet": "",
+                "tool": "",
+                "workspace_image_url": ""
+              }
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "wire:unicode_long_s_matches_known_fields",
+      "arguments": {
+        "user_id": 31
+      },
+      "body": null,
+      "wire_body": "{\"uſer\":{\"id\":31,\"iſ_followed\":true,\"profile_image_urlſ\":{\"medium\":\"https://i.pximg.net/profile.jpg\"}},\"profile\":{},\"profile_publicity\":{},\"workspace\":{}}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "id": "31",
+              "profile": {
+                "background_image_url": "",
+                "birth_day": "",
+                "birth_year": 0,
+                "country_code": "",
+                "gender": "",
+                "is_premium": false,
+                "is_using_custom_profile_image": false,
+                "job": "",
+                "pawoo_url": "",
+                "region": "",
+                "total_follow_users": 0,
+                "total_illust_bookmarks": 0,
+                "total_illust_series": 0,
+                "total_illusts": 0,
+                "total_manga": 0,
+                "total_my_pixiv_users": 0,
+                "total_novel_series": 0,
+                "total_novels": 0,
+                "twitter_account": "",
+                "twitter_url": "",
+                "webpage": ""
+              },
+              "profile_publicity": {
+                "birth_day": false,
+                "birth_year": false,
+                "gender": false,
+                "job": false,
+                "pawoo": false,
+                "region": false
+              },
+              "type": "user",
+              "url": "https://www.pixiv.net/users/31",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 31,
+                "is_followed": true,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPak14TENKd0lqb3RNU3dpZGlJNkltMWxaR2wxYlNKOSJ9"
+                  },
+                  "variant": "medium",
+                  "width": 0
+                }
+              },
+              "workspace": {
+                "chair": "",
+                "comment": "",
+                "desk": "",
+                "desktop": "",
+                "monitor": "",
+                "mouse": "",
+                "music": "",
+                "pc": "",
+                "printer": "",
+                "scanner": "",
+                "tablet": "",
+                "tool": "",
+                "workspace_image_url": ""
+              }
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "wire:later_scalar_null_preserves_value",
+      "arguments": {
+        "user_id": 31
+      },
+      "body": null,
+      "wire_body": "{\"user\":{\"id\":31,\"ID\":null,\"name\":\"artist\",\"NAME\":null,\"account\":\"account\",\"ACCOUNT\":null,\"comment\":\"comment\",\"COMMENT\":null,\"is_followed\":true,\"IS_FOLLOWED\":null},\"profile\":{},\"profile_publicity\":{},\"workspace\":{}}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "id": "31",
+              "profile": {
+                "background_image_url": "",
+                "birth_day": "",
+                "birth_year": 0,
+                "country_code": "",
+                "gender": "",
+                "is_premium": false,
+                "is_using_custom_profile_image": false,
+                "job": "",
+                "pawoo_url": "",
+                "region": "",
+                "total_follow_users": 0,
+                "total_illust_bookmarks": 0,
+                "total_illust_series": 0,
+                "total_illusts": 0,
+                "total_manga": 0,
+                "total_my_pixiv_users": 0,
+                "total_novel_series": 0,
+                "total_novels": 0,
+                "twitter_account": "",
+                "twitter_url": "",
+                "webpage": ""
+              },
+              "profile_publicity": {
+                "birth_day": false,
+                "birth_year": false,
+                "gender": false,
+                "job": false,
+                "pawoo": false,
+                "region": false
+              },
+              "type": "user",
+              "url": "https://www.pixiv.net/users/31",
+              "user": {
+                "account": "account",
+                "comment": "comment",
+                "id": 31,
+                "is_followed": true,
+                "name": "artist",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "workspace": {
+                "chair": "",
+                "comment": "",
+                "desk": "",
+                "desktop": "",
+                "monitor": "",
+                "mouse": "",
+                "music": "",
+                "pc": "",
+                "printer": "",
+                "scanner": "",
+                "tablet": "",
+                "tool": "",
+                "workspace_image_url": ""
+              }
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "wire:ordinary_nested_image_objects_merge",
+      "arguments": {
+        "user_id": 31
+      },
+      "body": null,
+      "wire_body": "{\"user\":{\"id\":31,\"profile_image_urls\":{\"medium\":\"https://i.pximg.net/profile.jpg\"},\"PROFILE_IMAGE_URLS\":{}},\"profile\":{},\"profile_publicity\":{},\"workspace\":{}}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "id": "31",
+              "profile": {
+                "background_image_url": "",
+                "birth_day": "",
+                "birth_year": 0,
+                "country_code": "",
+                "gender": "",
+                "is_premium": false,
+                "is_using_custom_profile_image": false,
+                "job": "",
+                "pawoo_url": "",
+                "region": "",
+                "total_follow_users": 0,
+                "total_illust_bookmarks": 0,
+                "total_illust_series": 0,
+                "total_illusts": 0,
+                "total_manga": 0,
+                "total_my_pixiv_users": 0,
+                "total_novel_series": 0,
+                "total_novels": 0,
+                "twitter_account": "",
+                "twitter_url": "",
+                "webpage": ""
+              },
+              "profile_publicity": {
+                "birth_day": false,
+                "birth_year": false,
+                "gender": false,
+                "job": false,
+                "pawoo": false,
+                "region": false
+              },
+              "type": "user",
+              "url": "https://www.pixiv.net/users/31",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 31,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPak14TENKd0lqb3RNU3dpZGlJNkltMWxaR2wxYlNKOSJ9"
+                  },
+                  "variant": "medium",
+                  "width": 0
+                }
+              },
+              "workspace": {
+                "chair": "",
+                "comment": "",
+                "desk": "",
+                "desktop": "",
+                "monitor": "",
+                "mouse": "",
+                "music": "",
+                "pc": "",
+                "printer": "",
+                "scanner": "",
+                "tablet": "",
+                "tool": "",
+                "workspace_image_url": ""
+              }
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "wire:later_image_pointer_null_clears_value",
+      "arguments": {
+        "user_id": 31
+      },
+      "body": null,
+      "wire_body": "{\"user\":{\"id\":31,\"profile_image_urls\":{\"medium\":\"https://i.pximg.net/profile.jpg\",\"MEDIUM\":null}},\"profile\":{},\"profile_publicity\":{},\"workspace\":{}}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "id": "31",
+              "profile": {
+                "background_image_url": "",
+                "birth_day": "",
+                "birth_year": 0,
+                "country_code": "",
+                "gender": "",
+                "is_premium": false,
+                "is_using_custom_profile_image": false,
+                "job": "",
+                "pawoo_url": "",
+                "region": "",
+                "total_follow_users": 0,
+                "total_illust_bookmarks": 0,
+                "total_illust_series": 0,
+                "total_illusts": 0,
+                "total_manga": 0,
+                "total_my_pixiv_users": 0,
+                "total_novel_series": 0,
+                "total_novels": 0,
+                "twitter_account": "",
+                "twitter_url": "",
+                "webpage": ""
+              },
+              "profile_publicity": {
+                "birth_day": false,
+                "birth_year": false,
+                "gender": false,
+                "job": false,
+                "pawoo": false,
+                "region": false
+              },
+              "type": "user",
+              "url": "https://www.pixiv.net/users/31",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 31,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "workspace": {
+                "chair": "",
+                "comment": "",
+                "desk": "",
+                "desktop": "",
+                "monitor": "",
+                "mouse": "",
+                "music": "",
+                "pc": "",
+                "printer": "",
+                "scanner": "",
+                "tablet": "",
+                "tool": "",
+                "workspace_image_url": ""
+              }
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "wire:duplicate_user_objects_merge_or_replace",
+      "arguments": {
+        "user_id": 31
+      },
+      "body": null,
+      "wire_body": "{\"user\":{\"id\":31,\"name\":\"first\",\"account\":\"account\"},\"USER\":{\"name\":\"last\"},\"profile\":{},\"profile_publicity\":{},\"workspace\":{}}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:User: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "wire:invalid_scalar_then_valid_scalar",
+      "arguments": {
+        "user_id": 31
+      },
+      "body": null,
+      "wire_body": "{\"user\":{\"id\":31,\"name\":7,\"NAME\":\"artist\"},\"profile\":{},\"profile_publicity\":{},\"workspace\":{}}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:User: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "wire:unknown_complex_fields_ignored",
+      "arguments": {
+        "user_id": 31
+      },
+      "body": null,
+      "wire_body": "{\"user\":{\"id\":31,\"unknown\":{\"name\":false,\"id\":9e999},\"UNKNOWN\":[false,null,{}]},\"unknown\":{\"user\":false},\"profile\":{},\"profile_publicity\":{},\"workspace\":{}}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "id": "31",
+              "profile": {
+                "background_image_url": "",
+                "birth_day": "",
+                "birth_year": 0,
+                "country_code": "",
+                "gender": "",
+                "is_premium": false,
+                "is_using_custom_profile_image": false,
+                "job": "",
+                "pawoo_url": "",
+                "region": "",
+                "total_follow_users": 0,
+                "total_illust_bookmarks": 0,
+                "total_illust_series": 0,
+                "total_illusts": 0,
+                "total_manga": 0,
+                "total_my_pixiv_users": 0,
+                "total_novel_series": 0,
+                "total_novels": 0,
+                "twitter_account": "",
+                "twitter_url": "",
+                "webpage": ""
+              },
+              "profile_publicity": {
+                "birth_day": false,
+                "birth_year": false,
+                "gender": false,
+                "job": false,
+                "pawoo": false,
+                "region": false
+              },
+              "type": "user",
+              "url": "https://www.pixiv.net/users/31",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 31,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "workspace": {
+                "chair": "",
+                "comment": "",
+                "desk": "",
+                "desktop": "",
+                "monitor": "",
+                "mouse": "",
+                "music": "",
+                "pc": "",
+                "printer": "",
+                "scanner": "",
+                "tablet": "",
+                "tool": "",
+                "workspace_image_url": ""
+              }
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "wire:duplicate_profile:empty_object_resets",
+      "arguments": {
+        "user_id": 31
+      },
+      "body": null,
+      "wire_body": "{\"user\":{\"id\":31},\"profile\":{},\"profile_publicity\":{},\"workspace\":{},\"profile\":{\"gender\":\"gender\",\"webpage\":\"web\"},\"PROFILE\":{}}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "id": "31",
+              "profile": {
+                "background_image_url": "",
+                "birth_day": "",
+                "birth_year": 0,
+                "country_code": "",
+                "gender": "",
+                "is_premium": false,
+                "is_using_custom_profile_image": false,
+                "job": "",
+                "pawoo_url": "",
+                "region": "",
+                "total_follow_users": 0,
+                "total_illust_bookmarks": 0,
+                "total_illust_series": 0,
+                "total_illusts": 0,
+                "total_manga": 0,
+                "total_my_pixiv_users": 0,
+                "total_novel_series": 0,
+                "total_novels": 0,
+                "twitter_account": "",
+                "twitter_url": "",
+                "webpage": ""
+              },
+              "profile_publicity": {
+                "birth_day": false,
+                "birth_year": false,
+                "gender": false,
+                "job": false,
+                "pawoo": false,
+                "region": false
+              },
+              "type": "user",
+              "url": "https://www.pixiv.net/users/31",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 31,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "workspace": {
+                "chair": "",
+                "comment": "",
+                "desk": "",
+                "desktop": "",
+                "monitor": "",
+                "mouse": "",
+                "music": "",
+                "pc": "",
+                "printer": "",
+                "scanner": "",
+                "tablet": "",
+                "tool": "",
+                "workspace_image_url": ""
+              }
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "wire:invalid_then_valid_visibility_recovers",
+      "arguments": {
+        "user_id": 31
+      },
+      "body": null,
+      "wire_body": "{\"user\":{\"id\":31},\"profile\":{},\"profile_publicity\":{},\"workspace\":{},\"profile_publicity\":{\"gender\":\"bad\",\"GENDER\":\"public\"}}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "id": "31",
+              "profile": {
+                "background_image_url": "",
+                "birth_day": "",
+                "birth_year": 0,
+                "country_code": "",
+                "gender": "",
+                "is_premium": false,
+                "is_using_custom_profile_image": false,
+                "job": "",
+                "pawoo_url": "",
+                "region": "",
+                "total_follow_users": 0,
+                "total_illust_bookmarks": 0,
+                "total_illust_series": 0,
+                "total_illusts": 0,
+                "total_manga": 0,
+                "total_my_pixiv_users": 0,
+                "total_novel_series": 0,
+                "total_novels": 0,
+                "twitter_account": "",
+                "twitter_url": "",
+                "webpage": ""
+              },
+              "profile_publicity": {
+                "birth_day": false,
+                "birth_year": false,
+                "gender": true,
+                "job": false,
+                "pawoo": false,
+                "region": false
+              },
+              "type": "user",
+              "url": "https://www.pixiv.net/users/31",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 31,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "workspace": {
+                "chair": "",
+                "comment": "",
+                "desk": "",
+                "desktop": "",
+                "monitor": "",
+                "mouse": "",
+                "music": "",
+                "pc": "",
+                "printer": "",
+                "scanner": "",
+                "tablet": "",
+                "tool": "",
+                "workspace_image_url": ""
+              }
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "wire:invalid_profile_field_then_new_valid_object_fails",
+      "arguments": {
+        "user_id": 31
+      },
+      "body": null,
+      "wire_body": "{\"user\":{\"id\":31},\"profile\":{},\"profile_publicity\":{},\"workspace\":{},\"profile\":{\"birth_year\":\"bad\"},\"PROFILE\":{}}",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:User: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
     }
   ]
 }

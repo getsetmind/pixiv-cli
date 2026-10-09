@@ -40,10 +40,12 @@ impl<T: Transport> Client<T> {
         let digest = crate::continuation::query_digest(&query);
         apply_offset(&request.cursor, OPERATION, &digest, &mut query)?;
         let body = self
-            .get("/v1/search/user", query.into_iter().collect(), OPERATION)
+            .get_json("/v1/search/user", query.into_iter().collect(), OPERATION)
             .await?;
         let malformed = || Error::new(Reason::MalformedUpstreamResponse, OPERATION);
-        let envelope: Envelope = serde_json::from_value(body).map_err(|_| malformed())?;
+        let envelope: Envelope =
+            serde_json::from_value(crate::user_wire::decode(&body, OPERATION)?)
+                .map_err(|_| malformed())?;
         let previews = envelope.user_previews.ok_or_else(malformed)?;
         let mut users = Vec::with_capacity(previews.len());
         for preview in previews {

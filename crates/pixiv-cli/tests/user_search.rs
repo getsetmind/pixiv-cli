@@ -6,7 +6,7 @@ use pixiv_cli_rs::{
 };
 use pixiv_sdk::{
     Client,
-    transport::{Request, Response, Transport},
+    transport::{JsonResponse, Request, Response, Transport},
 };
 use serde::Deserialize;
 use serde_json::Value;
@@ -31,6 +31,8 @@ struct Case {
     writer: String,
     args: Vec<String>,
     bodies: Vec<Value>,
+    #[serde(default)]
+    wire_bodies: Vec<String>,
     queries: Vec<BTreeMap<String, Vec<String>>>,
     error: String,
     stdout: String,
@@ -46,11 +48,14 @@ struct Case {
 type Queries = Arc<Mutex<Vec<BTreeMap<String, Vec<String>>>>>;
 #[derive(Clone)]
 struct Fixture {
-    bodies: Vec<Value>,
+    bodies: Vec<Vec<u8>>,
     queries: Queries,
 }
 impl Transport for Fixture {
-    async fn send(&self, request: Request) -> pixiv_sdk::Result<Response> {
+    async fn send(&self, _: Request) -> pixiv_sdk::Result<Response> {
+        panic!("user search must use the lossless JSON transport")
+    }
+    async fn send_json(&self, request: Request) -> pixiv_sdk::Result<JsonResponse> {
         assert_eq!(request.method.as_str(), "GET");
         assert_eq!(request.url, "https://app-api.pixiv.net/v1/search/user");
         let mut query = BTreeMap::<String, Vec<String>>::new();
@@ -59,7 +64,7 @@ impl Transport for Fixture {
         }
         let index = usize::from(self.bodies.len() > 1 && query.contains_key("offset"));
         self.queries.lock().unwrap().push(query);
-        Ok(Response {
+        Ok(JsonResponse {
             status: 200,
             retry_after: None,
             body: self.bodies[index].clone(),
@@ -88,7 +93,7 @@ fn user_search_cases() -> Vec<Case> {
 #[tokio::test]
 async fn user_search_preserves_go_output_windows_errors_and_saved_account_execution() {
     let cases = user_search_cases();
-    assert_eq!(cases.len(), 279);
+    assert_eq!(cases.len(), 309);
     compare_output(cases).await;
 }
 
@@ -105,7 +110,17 @@ async fn compare_output(cases: Vec<Case>) {
             let word = input.word();
             let queries = Arc::new(Mutex::new(vec![]));
             let transport = Fixture {
-                bodies: case.bodies.clone(),
+                bodies: if case.wire_bodies.is_empty() {
+                    case.bodies
+                        .iter()
+                        .map(|body| serde_json::to_vec(body).unwrap())
+                        .collect()
+                } else {
+                    case.wire_bodies
+                        .iter()
+                        .map(|body| body.as_bytes().to_vec())
+                        .collect()
+                },
                 queries: queries.clone(),
             };
             let mode = if input.ndjson {
@@ -208,8 +223,11 @@ async fn compare_output(cases: Vec<Case>) {
 #[test]
 fn user_search_process_preserves_go_validation_authentication_and_startup_order() {
     let cases = user_search_cases();
-    assert_eq!(cases.len(), 279);
+    assert_eq!(cases.len(), 309);
     for case in cases {
+        if !case.wire_bodies.is_empty() {
+            continue;
+        }
         let home = tempfile::tempdir().unwrap();
         let mut command = Command::new(env!("CARGO_BIN_EXE_pixiv"));
         command

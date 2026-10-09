@@ -91,25 +91,34 @@ impl<T: Transport> Client<T> {
         self
     }
 
-    pub(crate) async fn get(
+    fn content_request(
         &self,
         path: &str,
         parameters: Vec<(String, String)>,
         operation: &'static str,
-    ) -> Result<Value> {
+    ) -> Result<Request> {
         if self.access_token.is_empty() {
             return Err(Error::new(Reason::Unauthorized, operation));
         }
         if self.expires_at.is_some_and(|expiry| expiry <= Utc::now()) {
             return Err(Error::new(Reason::CredentialsExpired, operation));
         }
-        let request = Request {
+        Ok(Request {
             method: Method::GET,
             url: format!("https://app-api.pixiv.net{path}"),
             headers: headers(Some(&self.access_token)),
             parameters,
             operation,
-        };
+        })
+    }
+
+    pub(crate) async fn get(
+        &self,
+        path: &str,
+        parameters: Vec<(String, String)>,
+        operation: &'static str,
+    ) -> Result<Value> {
+        let request = self.content_request(path, parameters, operation)?;
         let response = self.send(request.clone()).await?;
         if response.status == 429
             && let Some(delay) = response.retry_after
@@ -118,6 +127,28 @@ impl<T: Transport> Client<T> {
             return checked(self.send(request).await?, operation);
         }
         checked(response, operation)
+    }
+
+    pub(crate) async fn get_json(
+        &self,
+        path: &str,
+        parameters: Vec<(String, String)>,
+        operation: &'static str,
+    ) -> Result<Vec<u8>> {
+        let request = self.content_request(path, parameters, operation)?;
+        self.pace().await;
+        let response = self.transport.send_json(request.clone()).await?;
+        if response.status == 429
+            && let Some(delay) = response.retry_after
+        {
+            tokio::time::sleep(delay.to_std().unwrap_or_default()).await;
+            self.pace().await;
+            return crate::transport::checked_json(
+                self.transport.send_json(request).await?,
+                operation,
+            );
+        }
+        crate::transport::checked_json(response, operation)
     }
 
     async fn send(&self, request: Request) -> Result<Response> {

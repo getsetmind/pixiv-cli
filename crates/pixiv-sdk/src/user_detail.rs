@@ -134,14 +134,15 @@ impl<T: Transport> Client<T> {
             );
         }
         let body = self
-            .get(
+            .get_json(
                 "/v1/user/detail",
                 vec![("user_id".into(), request.user_id.to_string())],
                 "User",
             )
             .await?;
         let malformed = || Error::new(Reason::MalformedUpstreamResponse, "User");
-        let envelope: Envelope = serde_json::from_value(body).map_err(|_| malformed())?;
+        let envelope: Envelope = serde_json::from_value(crate::user_wire::decode(&body, "User")?)
+            .map_err(|_| malformed())?;
         let user = envelope.user.ok_or_else(malformed)?;
         if user.id.is_none_or(|id| id <= 0) {
             return Err(malformed());

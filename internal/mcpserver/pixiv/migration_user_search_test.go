@@ -38,13 +38,14 @@ func TestMigrationMCPUserSearchPreservesSchemaFiltersLogicalPagesAndValidation(t
 		t.Fatal(err)
 	}
 	type row struct {
-		Name      string            `json:"name"`
-		Arguments any               `json:"arguments"`
-		Bodies    []json.RawMessage `json:"bodies"`
-		Result    json.RawMessage   `json:"result"`
-		Queries   []url.Values      `json:"queries"`
-		Calls     int               `json:"calls"`
-		RPCError  string            `json:"rpc_error"`
+		Name       string            `json:"name"`
+		Arguments  any               `json:"arguments"`
+		Bodies     []json.RawMessage `json:"bodies"`
+		WireBodies []string          `json:"wire_bodies,omitempty"`
+		Result     json.RawMessage   `json:"result"`
+		Queries    []url.Values      `json:"queries"`
+		Calls      int               `json:"calls"`
+		RPCError   string            `json:"rpc_error"`
 	}
 	var rows []row
 	for _, source := range sources {
@@ -137,12 +138,41 @@ func TestMigrationMCPUserSearchPreservesSchemaFiltersLogicalPagesAndValidation(t
 	} {
 		rows = append(rows, row{Name: fmt.Sprintf("argument:%02d", index), Arguments: arguments, Bodies: bodies})
 	}
+	wireData, err := os.ReadFile(filepath.Join(path, "user-wire.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var wireInputs []struct {
+		Name      string `json:"name"`
+		Operation string `json:"operation"`
+		Body      string `json:"body"`
+	}
+	if err := json.Unmarshal(wireData, &wireInputs); err != nil {
+		t.Fatal(err)
+	}
+	selectedWire := map[string]bool{
+		"uppercase_known_user_fields":             true,
+		"unicode_long_s_matches_known_fields":     true,
+		"ordinary_nested_image_objects_merge":     true,
+		"later_image_pointer_null_clears_value":   true,
+		"later_scalar_null_preserves_value":       true,
+		"invalid_scalar_then_valid_scalar":        true,
+		"unknown_complex_fields_ignored":          true,
+		"duplicate_user_objects_merge_or_replace": true,
+		"long_s_envelope":                         true,
+		"duplicate_list_null_invalidates":         true,
+	}
+	for _, input := range wireInputs {
+		if input.Operation == "SearchUsers" && selectedWire[input.Name] {
+			rows = append(rows, row{Name: "wire:" + input.Name, Arguments: map[string]any{"word": "artist"}, Bodies: []json.RawMessage{}, WireBodies: []string{input.Body}})
+		}
+	}
 	var schema json.RawMessage
 	for index := range rows {
 		current := &rows[index]
 		current.Queries = []url.Values{}
 		client, err := pixiv.NewWith("fixture-access", pixiv.Options{HTTPClient: &http.Client{Transport: migrationMCPTransport(func(request *http.Request) (*http.Response, error) {
-			if request.Method != "GET" || request.URL.String() != "https://app-api.pixiv.net/v1/search/user?"+request.URL.RawQuery {
+			if request.Method != "GET" || request.URL.String() != "https://app-api.pixiv.net/v1/search/user?"+request.URL.RawQuery || request.Header.Get("Authorization") != "Bearer fixture-access" {
 				t.Fatal("unexpected user search MCP request")
 			}
 			current.Queries = append(current.Queries, request.URL.Query())
@@ -154,10 +184,14 @@ func TestMigrationMCPUserSearchPreservesSchemaFiltersLogicalPagesAndValidation(t
 				}
 				page = parsed / 30
 			}
-			if page >= len(current.Bodies) {
+			bodies := current.Bodies
+			if len(current.WireBodies) != 0 {
+				bodies = []json.RawMessage{json.RawMessage(current.WireBodies[0])}
+			}
+			if page >= len(bodies) {
 				t.Fatalf("unexpected page %d in %s", page, current.Name)
 			}
-			return &http.Response{StatusCode: 200, Header: http.Header{"Content-Type": {"application/json"}}, Body: io.NopCloser(bytes.NewReader(current.Bodies[page])), Request: request}, nil
+			return &http.Response{StatusCode: 200, Header: http.Header{"Content-Type": {"application/json"}}, Body: io.NopCloser(bytes.NewReader(bodies[page])), Request: request}, nil
 		})}})
 		if err != nil {
 			t.Fatal(err)

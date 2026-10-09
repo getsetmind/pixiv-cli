@@ -1,6 +1,6 @@
 use pixiv_sdk::{
     Client,
-    transport::{Request, Response, Transport},
+    transport::{JsonResponse, Request, Response, Transport},
 };
 use serde::Deserialize;
 use serde_json::{Value, json};
@@ -17,6 +17,7 @@ struct Case {
     name: String,
     arguments: Value,
     body: Value,
+    wire_body: Option<String>,
     result: Value,
     calls: usize,
     requests: usize,
@@ -24,15 +25,18 @@ struct Case {
 }
 #[derive(Clone)]
 struct Fixture {
-    body: Value,
+    body: Vec<u8>,
     requests: Arc<Mutex<usize>>,
 }
 impl Transport for Fixture {
-    async fn send(&self, request: Request) -> pixiv_sdk::Result<Response> {
+    async fn send(&self, _: Request) -> pixiv_sdk::Result<Response> {
+        panic!("user detail must use the lossless JSON transport")
+    }
+    async fn send_json(&self, request: Request) -> pixiv_sdk::Result<JsonResponse> {
         assert_eq!(request.method.as_str(), "GET");
         assert_eq!(request.url, "https://app-api.pixiv.net/v1/user/detail");
         *self.requests.lock().unwrap() += 1;
-        Ok(Response {
+        Ok(JsonResponse {
             status: 200,
             retry_after: None,
             body: self.body.clone(),
@@ -46,10 +50,14 @@ async fn user_detail_matches_go_schema_records_errors_and_saved_account_stdio() 
     ))
     .unwrap();
     assert_eq!(pixiv_mcp::user_detail_tool(), contract.tool);
-    assert_eq!(contract.cases.len(), 14);
+    assert_eq!(contract.cases.len(), 25);
     for case in contract.cases {
+        let body = case.wire_body.as_ref().map_or_else(
+            || serde_json::to_vec(&case.body).unwrap(),
+            |body| body.as_bytes().to_vec(),
+        );
         let fixture = Fixture {
-            body: case.body,
+            body,
             requests: Arc::new(Mutex::new(0)),
         };
         let client = Client::with_transport("fixture-access", fixture.clone());

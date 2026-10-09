@@ -36,6 +36,21 @@ pub struct Response {
     pub body: Value,
 }
 
+pub struct JsonResponse {
+    pub status: u16,
+    pub retry_after: Option<TimeDelta>,
+    pub body: Vec<u8>,
+}
+
+impl fmt::Debug for JsonResponse {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("JsonResponse")
+            .field("status", &self.status)
+            .field("retry_after", &self.retry_after)
+            .finish_non_exhaustive()
+    }
+}
+
 impl fmt::Debug for Response {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("Response")
@@ -47,6 +62,22 @@ impl fmt::Debug for Response {
 
 pub trait Transport: Send + Sync {
     fn send(&self, request: Request) -> impl std::future::Future<Output = Result<Response>> + Send;
+    fn send_json(
+        &self,
+        request: Request,
+    ) -> impl std::future::Future<Output = Result<JsonResponse>> + Send {
+        async move {
+            let operation = request.operation;
+            let response = self.send(request).await?;
+            let body = serde_json::to_vec(&response.body)
+                .map_err(|_| Error::new(Reason::MalformedUpstreamResponse, operation))?;
+            Ok(JsonResponse {
+                status: response.status,
+                retry_after: response.retry_after,
+                body,
+            })
+        }
+    }
     fn post_form(
         &self,
         request: Request,
@@ -97,6 +128,9 @@ impl Transport for HttpTransport {
     async fn send(&self, request: Request) -> Result<Response> {
         self.send_request(request, true).await
     }
+    async fn send_json(&self, request: Request) -> Result<JsonResponse> {
+        self.send_response(request).await
+    }
     async fn post_form(&self, request: Request) -> Result<Response> {
         self.send_request(request, false).await
     }
@@ -104,6 +138,26 @@ impl Transport for HttpTransport {
 
 impl HttpTransport {
     async fn send_request(&self, request: Request, decode_json: bool) -> Result<Response> {
+        let operation = request.operation;
+        let response = self.send_response(request).await?;
+        let body = if decode_json && (200..300).contains(&response.status) {
+            serde_json::from_slice(&response.body)
+                .map_err(|_| Error::new(Reason::MalformedUpstreamResponse, operation))?
+        } else {
+            Value::Null
+        };
+        Ok(Response {
+            status: response.status,
+            retry_after: if decode_json {
+                response.retry_after
+            } else {
+                None
+            },
+            body,
+        })
+    }
+
+    async fn send_response(&self, request: Request) -> Result<JsonResponse> {
         let mut builder = self.client.request(request.method.clone(), &request.url);
         for (name, value) in &request.headers {
             builder = builder.header(name, value);
@@ -127,26 +181,10 @@ impl HttpTransport {
             .bytes()
             .await
             .map_err(|error| request_failure(&error, request.operation))?;
-        if !decode_json {
-            return Ok(Response {
-                status,
-                retry_after: None,
-                body: Value::Null,
-            });
-        }
-        if !(200..300).contains(&status) {
-            return Ok(Response {
-                status,
-                retry_after,
-                body: Value::Null,
-            });
-        }
-        let body = serde_json::from_slice(&bytes)
-            .map_err(|_| Error::new(Reason::MalformedUpstreamResponse, request.operation))?;
-        Ok(Response {
+        Ok(JsonResponse {
             status,
             retry_after,
-            body,
+            body: bytes.to_vec(),
         })
     }
 
@@ -305,6 +343,18 @@ impl ResourceTransport for HttpTransport {
 
 pub(crate) fn checked(response: Response, operation: &'static str) -> Result<Value> {
     checked_status(response, operation, false)
+}
+
+pub(crate) fn checked_json(response: JsonResponse, operation: &'static str) -> Result<Vec<u8>> {
+    checked(
+        Response {
+            status: response.status,
+            retry_after: response.retry_after,
+            body: Value::Null,
+        },
+        operation,
+    )?;
+    Ok(response.body)
 }
 
 pub(crate) fn checked_oauth(mut response: Response, operation: &'static str) -> Result<Value> {

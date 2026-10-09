@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"flag"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -36,6 +37,7 @@ func TestMigrationMCPUserDetailMatchesFrozenSchemaRecordsAndValidation(t *testin
 		Name      string          `json:"name"`
 		Arguments map[string]any  `json:"arguments"`
 		Body      json.RawMessage `json:"body"`
+		WireBody  string          `json:"wire_body,omitempty"`
 		Result    json.RawMessage `json:"result"`
 		Calls     int             `json:"calls"`
 		Requests  int             `json:"requests"`
@@ -50,12 +52,49 @@ func TestMigrationMCPUserDetailMatchesFrozenSchemaRecordsAndValidation(t *testin
 	for index, args := range []map[string]any{{}, {"user_id": 0}, {"user_id": -1}, {"user_id": 42, "url": "https://www.pixiv.net/user/show.php?id=42"}, {"user_id": int64(9223372036854775807)}, {"user_id": "42"}, {"user_id": nil}, {"user_id": 1.5}} {
 		rows = append(rows, row{Name: "argument-" + string(rune('a'+index)), Arguments: args, Body: inputs[0].Body})
 	}
+	wireData, err := os.ReadFile(filepath.Join(path, "user-wire.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var wireInputs []struct {
+		Name      string `json:"name"`
+		Operation string `json:"operation"`
+		Body      string `json:"body"`
+	}
+	if err := json.Unmarshal(wireData, &wireInputs); err != nil {
+		t.Fatal(err)
+	}
+	selectedWire := map[string]bool{
+		"uppercase_known_user_fields":                       true,
+		"unicode_long_s_matches_known_fields":               true,
+		"ordinary_nested_image_objects_merge":               true,
+		"later_image_pointer_null_clears_value":             true,
+		"later_scalar_null_preserves_value":                 true,
+		"invalid_scalar_then_valid_scalar":                  true,
+		"unknown_complex_fields_ignored":                    true,
+		"duplicate_user_objects_merge_or_replace":           true,
+		"duplicate_profile:empty_object_resets":             true,
+		"invalid_then_valid_visibility_recovers":            true,
+		"invalid_profile_field_then_new_valid_object_fails": true,
+	}
+	for _, input := range wireInputs {
+		if input.Operation == "User" && selectedWire[input.Name] {
+			rows = append(rows, row{Name: "wire:" + input.Name, Arguments: map[string]any{"user_id": 31}, WireBody: input.Body})
+		}
+	}
 	var tool json.RawMessage
 	for index := range rows {
 		row := &rows[index]
+		body := row.Body
+		if row.WireBody != "" {
+			body = []byte(row.WireBody)
+		}
 		client, err := pixiv.NewWith("fixture-access", pixiv.Options{HTTPClient: &http.Client{Transport: migrationMCPTransport(func(req *http.Request) (*http.Response, error) {
+			if req.Method != "GET" || req.URL.Path != "/v1/user/detail" || req.URL.Query().Get("user_id") != fmt.Sprint(row.Arguments["user_id"]) || req.Header.Get("Authorization") != "Bearer fixture-access" {
+				t.Fatal("unexpected user detail MCP request")
+			}
 			row.Requests++
-			return &http.Response{StatusCode: 200, Header: http.Header{"Content-Type": {"application/json"}}, Body: io.NopCloser(bytes.NewReader(row.Body)), Request: req}, nil
+			return &http.Response{StatusCode: 200, Header: http.Header{"Content-Type": {"application/json"}}, Body: io.NopCloser(bytes.NewReader(body)), Request: req}, nil
 		})}})
 		if err != nil {
 			t.Fatal(err)

@@ -33,9 +33,10 @@ func TestMigrationUserSearchPreservesLogicalPagesOutputsAndStartup(t *testing.T)
 		t.Fatal(err)
 	}
 	type source struct {
-		Name   string            `json:"name"`
-		Word   string            `json:"word"`
-		Bodies []json.RawMessage `json:"bodies"`
+		Name       string            `json:"name"`
+		Word       string            `json:"word"`
+		Bodies     []json.RawMessage `json:"bodies"`
+		WireBodies []string          `json:"wire_bodies,omitempty"`
 	}
 	var sources []source
 	if err := json.Unmarshal(data, &sources); err != nil {
@@ -53,6 +54,35 @@ func TestMigrationUserSearchPreservesLogicalPagesOutputsAndStartup(t *testing.T)
 		}
 		candidates = append(candidates, candidate{Source: source})
 	}
+	wireData, err := os.ReadFile(filepath.Join(path, "user-wire.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var wireInputs []struct {
+		Name      string `json:"name"`
+		Operation string `json:"operation"`
+		Body      string `json:"body"`
+	}
+	if err := json.Unmarshal(wireData, &wireInputs); err != nil {
+		t.Fatal(err)
+	}
+	selectedWire := map[string]bool{
+		"uppercase_known_user_fields":             true,
+		"unicode_long_s_matches_known_fields":     true,
+		"ordinary_nested_image_objects_merge":     true,
+		"later_image_pointer_null_clears_value":   true,
+		"later_scalar_null_preserves_value":       true,
+		"invalid_scalar_then_valid_scalar":        true,
+		"unknown_complex_fields_ignored":          true,
+		"duplicate_user_objects_merge_or_replace": true,
+		"long_s_envelope":                         true,
+		"duplicate_list_null_invalidates":         true,
+	}
+	for _, input := range wireInputs {
+		if input.Operation == "SearchUsers" && selectedWire[input.Name] {
+			candidates = append(candidates, candidate{Source: source{Name: "wire:" + input.Name, Word: "artist", Bodies: []json.RawMessage{}, WireBodies: []string{input.Body}}})
+		}
+	}
 	for _, extra := range [][]string{{"--limit=0"}, {"--limit=1"}, {"--limit=2", "--page=2"}, {"--limit=-1"}, {"--page=0"}, {"--page=1"}, {"--limit=0", "--page=2"}, {"--limit=3", "--page=4000000000000000000"}, {"--type=invalid"}, {"extra"}} {
 		candidates = append(candidates, candidate{Source: sources[0], Extra: extra})
 	}
@@ -66,6 +96,7 @@ func TestMigrationUserSearchPreservesLogicalPagesOutputsAndStartup(t *testing.T)
 		Writer        string            `json:"writer"`
 		Args          []string          `json:"args"`
 		Bodies        []json.RawMessage `json:"bodies"`
+		WireBodies    []string          `json:"wire_bodies,omitempty"`
 		Queries       []url.Values      `json:"queries"`
 		Error         string            `json:"error"`
 		Stdout        string            `json:"stdout"`
@@ -98,7 +129,7 @@ func TestMigrationUserSearchPreservesLogicalPagesOutputsAndStartup(t *testing.T)
 	rows := []row{}
 	for _, candidate := range candidates {
 		for _, mode := range []string{"human", "json", "ndjson"} {
-			current := row{Writer: candidate.Writer, Args: []string{"--type=user"}, Bodies: candidate.Source.Bodies, Queries: []url.Values{}}
+			current := row{Writer: candidate.Writer, Args: []string{"--type=user"}, Bodies: candidate.Source.Bodies, WireBodies: candidate.Source.WireBodies, Queries: []url.Values{}}
 			current.Args = append(current.Args, candidate.Extra...)
 			current.Args = append(current.Args, candidate.Source.Word)
 			if mode == "json" {
@@ -114,13 +145,18 @@ func TestMigrationUserSearchPreservesLogicalPagesOutputsAndStartup(t *testing.T)
 			}
 			command := searchcmd.New(searchcmd.Dependencies{Input: migrationSearchFailedRead{}, Output: writer, ErrorOutput: &diagnostics, UsageError: newUsageError, JSONOut: func(*bool) (bool, error) { return mode == "json", nil }, Pooled: func(ctx context.Context, _ searchcmd.Request, invoke func(context.Context, *pixiv.Client) (bool, error)) error {
 				client, err := pixiv.NewWith("fixture-access", pixiv.Options{HTTPClient: &http.Client{Transport: migrationDateTransport(func(req *http.Request) (*http.Response, error) {
-					if req.Method != "GET" || req.URL.Path != "/v1/search/user" {
+					if req.Method != "GET" || req.URL.Path != "/v1/search/user" || req.Header.Get("Authorization") != "Bearer fixture-access" {
 						t.Fatal("unexpected user search CLI route")
 					}
 					current.Queries = append(current.Queries, req.URL.Query())
-					body := current.Bodies[0]
-					if len(current.Bodies) > 1 && req.URL.Query().Get("offset") != "" {
-						body = current.Bodies[1]
+					var body []byte
+					if len(current.WireBodies) != 0 {
+						body = []byte(current.WireBodies[0])
+					} else {
+						body = current.Bodies[0]
+						if len(current.Bodies) > 1 && req.URL.Query().Get("offset") != "" {
+							body = current.Bodies[1]
+						}
 					}
 					return &http.Response{StatusCode: 200, Header: http.Header{"Content-Type": {"application/json"}}, Body: io.NopCloser(bytes.NewReader(body)), Request: req}, nil
 				})}})
@@ -141,6 +177,11 @@ func TestMigrationUserSearchPreservesLogicalPagesOutputsAndStartup(t *testing.T)
 			}
 			current.Exit = (app{out: &output, errOut: &diagnostics}).exitWithNDJSONScope(err, mode == "ndjson", mode != "human")
 			current.Stdout, current.Stderr = output.String(), diagnostics.String()
+			if len(current.WireBodies) != 0 {
+				current.StartupArgs = []string{}
+				rows = append(rows, current)
+				continue
+			}
 			home := t.TempDir()
 			t.Setenv("HOME", home)
 			t.Setenv("USERPROFILE", home)

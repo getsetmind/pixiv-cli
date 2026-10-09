@@ -30781,6 +30781,552 @@
       "queries": [],
       "calls": 0,
       "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/user_filter: unexpected additional properties [\"tags\"]"
+    },
+    {
+      "name": "wire:uppercase_known_user_fields",
+      "arguments": {
+        "word": "artist"
+      },
+      "bodies": [],
+      "wire_bodies": [
+        "{\"user_previews\":[{\"USER\":{\"ID\":31,\"NAME\":\"artist\",\"ACCOUNT\":\"account\",\"COMMENT\":\"comment\",\"IS_FOLLOWED\":true,\"PROFILE_IMAGE_URLS\":{\"MEDIUM\":\"https://i.pximg.net/profile.jpg\"}}}]}"
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 1
+          },
+          "records": [
+            {
+              "id": "31",
+              "illusts": [],
+              "novels": [],
+              "type": "user",
+              "url": "https://www.pixiv.net/users/31",
+              "user": {
+                "account": "account",
+                "comment": "comment",
+                "id": 31,
+                "is_followed": true,
+                "name": "artist",
+                "profile_image": {
+                  "height": 0,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPak14TENKd0lqb3RNU3dpZGlJNkltMWxaR2wxYlNKOSJ9"
+                  },
+                  "variant": "medium",
+                  "width": 0
+                }
+              }
+            }
+          ]
+        }
+      },
+      "queries": [
+        {
+          "word": [
+            "artist"
+          ]
+        }
+      ],
+      "calls": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "wire:unicode_long_s_matches_known_fields",
+      "arguments": {
+        "word": "artist"
+      },
+      "bodies": [],
+      "wire_bodies": [
+        "{\"user_previews\":[{\"uſer\":{\"id\":31,\"iſ_followed\":true,\"profile_image_urlſ\":{\"medium\":\"https://i.pximg.net/profile.jpg\"}}}]}"
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 1
+          },
+          "records": [
+            {
+              "id": "31",
+              "illusts": [],
+              "novels": [],
+              "type": "user",
+              "url": "https://www.pixiv.net/users/31",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 31,
+                "is_followed": true,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPak14TENKd0lqb3RNU3dpZGlJNkltMWxaR2wxYlNKOSJ9"
+                  },
+                  "variant": "medium",
+                  "width": 0
+                }
+              }
+            }
+          ]
+        }
+      },
+      "queries": [
+        {
+          "word": [
+            "artist"
+          ]
+        }
+      ],
+      "calls": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "wire:later_scalar_null_preserves_value",
+      "arguments": {
+        "word": "artist"
+      },
+      "bodies": [],
+      "wire_bodies": [
+        "{\"user_previews\":[{\"user\":{\"id\":31,\"ID\":null,\"name\":\"artist\",\"NAME\":null,\"account\":\"account\",\"ACCOUNT\":null,\"comment\":\"comment\",\"COMMENT\":null,\"is_followed\":true,\"IS_FOLLOWED\":null}}]}"
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 1
+          },
+          "records": [
+            {
+              "id": "31",
+              "illusts": [],
+              "novels": [],
+              "type": "user",
+              "url": "https://www.pixiv.net/users/31",
+              "user": {
+                "account": "account",
+                "comment": "comment",
+                "id": 31,
+                "is_followed": true,
+                "name": "artist",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              }
+            }
+          ]
+        }
+      },
+      "queries": [
+        {
+          "word": [
+            "artist"
+          ]
+        }
+      ],
+      "calls": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "wire:ordinary_nested_image_objects_merge",
+      "arguments": {
+        "word": "artist"
+      },
+      "bodies": [],
+      "wire_bodies": [
+        "{\"user_previews\":[{\"user\":{\"id\":31,\"profile_image_urls\":{\"medium\":\"https://i.pximg.net/profile.jpg\"},\"PROFILE_IMAGE_URLS\":{}}}]}"
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 1
+          },
+          "records": [
+            {
+              "id": "31",
+              "illusts": [],
+              "novels": [],
+              "type": "user",
+              "url": "https://www.pixiv.net/users/31",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 31,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPak14TENKd0lqb3RNU3dpZGlJNkltMWxaR2wxYlNKOSJ9"
+                  },
+                  "variant": "medium",
+                  "width": 0
+                }
+              }
+            }
+          ]
+        }
+      },
+      "queries": [
+        {
+          "word": [
+            "artist"
+          ]
+        }
+      ],
+      "calls": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "wire:later_image_pointer_null_clears_value",
+      "arguments": {
+        "word": "artist"
+      },
+      "bodies": [],
+      "wire_bodies": [
+        "{\"user_previews\":[{\"user\":{\"id\":31,\"profile_image_urls\":{\"medium\":\"https://i.pximg.net/profile.jpg\",\"MEDIUM\":null}}}]}"
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 1
+          },
+          "records": [
+            {
+              "id": "31",
+              "illusts": [],
+              "novels": [],
+              "type": "user",
+              "url": "https://www.pixiv.net/users/31",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 31,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              }
+            }
+          ]
+        }
+      },
+      "queries": [
+        {
+          "word": [
+            "artist"
+          ]
+        }
+      ],
+      "calls": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "wire:duplicate_user_objects_merge_or_replace",
+      "arguments": {
+        "word": "artist"
+      },
+      "bodies": [],
+      "wire_bodies": [
+        "{\"user_previews\":[{\"user\":{\"id\":31,\"name\":\"first\",\"account\":\"account\"},\"USER\":{\"name\":\"last\"}}]}"
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 1
+          },
+          "records": [
+            {
+              "id": "31",
+              "illusts": [],
+              "novels": [],
+              "type": "user",
+              "url": "https://www.pixiv.net/users/31",
+              "user": {
+                "account": "account",
+                "comment": "",
+                "id": 31,
+                "is_followed": false,
+                "name": "last",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              }
+            }
+          ]
+        }
+      },
+      "queries": [
+        {
+          "word": [
+            "artist"
+          ]
+        }
+      ],
+      "calls": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "wire:invalid_scalar_then_valid_scalar",
+      "arguments": {
+        "word": "artist"
+      },
+      "bodies": [],
+      "wire_bodies": [
+        "{\"user_previews\":[{\"user\":{\"id\":31,\"name\":7,\"NAME\":\"artist\"}}]}"
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:SearchUsers: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 0
+          },
+          "records": []
+        },
+        "isError": true
+      },
+      "queries": [
+        {
+          "word": [
+            "artist"
+          ]
+        }
+      ],
+      "calls": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "wire:unknown_complex_fields_ignored",
+      "arguments": {
+        "word": "artist"
+      },
+      "bodies": [],
+      "wire_bodies": [
+        "{\"user_previews\":[{\"user\":{\"id\":31,\"unknown\":{\"name\":false,\"id\":9e999},\"UNKNOWN\":[false,null,{}]},\"unknown\":{\"user\":false}}]}"
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 1
+          },
+          "records": [
+            {
+              "id": "31",
+              "illusts": [],
+              "novels": [],
+              "type": "user",
+              "url": "https://www.pixiv.net/users/31",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 31,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              }
+            }
+          ]
+        }
+      },
+      "queries": [
+        {
+          "word": [
+            "artist"
+          ]
+        }
+      ],
+      "calls": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "wire:long_s_envelope",
+      "arguments": {
+        "word": "artist"
+      },
+      "bodies": [],
+      "wire_bodies": [
+        "{\"uſer_previewſ\":[{\"uſer\":{\"id\":31}}]}"
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 1
+          },
+          "records": [
+            {
+              "id": "31",
+              "illusts": [],
+              "novels": [],
+              "type": "user",
+              "url": "https://www.pixiv.net/users/31",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 31,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              }
+            }
+          ]
+        }
+      },
+      "queries": [
+        {
+          "word": [
+            "artist"
+          ]
+        }
+      ],
+      "calls": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "wire:duplicate_list_null_invalidates",
+      "arguments": {
+        "word": "artist"
+      },
+      "bodies": [],
+      "wire_bodies": [
+        "{\"user_previews\":[{\"user\":{\"id\":31}}],\"USER_PREVIEWS\":null}"
+      ],
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:SearchUsers: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "pagination": {
+            "has_more": false,
+            "limit": null,
+            "next_page": null,
+            "page": 1,
+            "returned": 0
+          },
+          "records": []
+        },
+        "isError": true
+      },
+      "queries": [
+        {
+          "word": [
+            "artist"
+          ]
+        }
+      ],
+      "calls": 1,
+      "rpc_error": ""
     }
   ]
 }
