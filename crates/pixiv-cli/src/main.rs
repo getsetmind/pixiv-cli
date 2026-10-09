@@ -1,5 +1,5 @@
 use clap::{Args, Parser, Subcommand};
-use pixiv_cli_rs::search::SearchOptions;
+use pixiv_cli_rs::search::{SearchInput, SearchOptions};
 use pixiv_cli_rs::{
     CommandError, DetailOutput, detail_artwork_id, finish_command, saved_artwork_detail,
 };
@@ -55,15 +55,12 @@ enum Command {
     },
     #[command(args_override_self = true)]
     Search {
-        query: String,
+        #[command(flatten)]
+        input: SearchInput,
         #[command(flatten)]
         connection: ProxyOptions,
         #[command(flatten)]
         options: Box<SearchOptions>,
-        #[arg(long, conflicts_with = "ndjson")]
-        json: bool,
-        #[arg(long)]
-        ndjson: bool,
     },
     Ugoira {
         source: String,
@@ -79,16 +76,18 @@ async fn main() {
         Command::Mcp { .. } => false,
         Command::Detail { json, ndjson, .. } => *json || *ndjson,
         Command::Ugoira { json, .. } => *json,
-        Command::Search { json, ndjson, .. } => *json || *ndjson,
+        Command::Search { input, .. } => input.machine_output(),
     };
-    let ndjson_output = match &args.command {
+    let mut ndjson_output = match &args.command {
         Command::Mcp { .. } => false,
         Command::Detail { ndjson, .. } => *ndjson,
-        Command::Search { json, ndjson, .. } => *ndjson || (!*json && !io::stdout().is_terminal()),
+        Command::Search { input, .. } => {
+            input.ndjson || (input.json.is_none() && !io::stdout().is_terminal())
+        }
         Command::Ugoira { .. } => false,
     };
     let exit = finish_command(
-        execute(args).await,
+        execute(args, &mut ndjson_output).await,
         ndjson_output,
         machine_output,
         &mut io::stderr().lock(),
@@ -98,7 +97,7 @@ async fn main() {
     }
 }
 
-async fn execute(args: Arguments) -> Result<(), CommandError> {
+async fn execute(args: Arguments, ndjson_output: &mut bool) -> Result<(), CommandError> {
     let account_config = if matches!(
         &args.command,
         Command::Detail { .. } | Command::Mcp { .. } | Command::Search { .. }
@@ -132,43 +131,34 @@ async fn execute(args: Arguments) -> Result<(), CommandError> {
         _ => None,
     };
     let search_request = match &args.command {
-        Command::Search { query, options, .. } => {
-            Some(options.request(query, chrono::Utc::now().fixed_offset())?)
+        Command::Search { input, options, .. } => {
+            Some(options.request(&input.word(), chrono::Utc::now().fixed_offset())?)
         }
         _ => None,
     };
     if let Command::Search {
         options,
         connection,
-        json,
-        ndjson,
+        input,
         ..
     } = &args.command
     {
         let (directory, config) = account_config.expect("search startup was resolved");
         let proxy = connection.override_value()?;
+        let configured_json = config
+            .current()
+            .and_then(|snapshot| snapshot.runtime())
+            .map_err(pixiv_app::scheduler::SchedulerError::from)?
+            .output_json;
+        let mode = input.output_mode(configured_json, io::stdout().is_terminal())?;
+        *ndjson_output = mode == DetailOutput::Ndjson;
         options.validate_bookmark_strategy()?;
-        let json_output = *json
-            || config
-                .current()
-                .and_then(|snapshot| snapshot.runtime())
-                .map_err(pixiv_app::scheduler::SchedulerError::from)?
-                .output_json;
         let database = pixiv_app::database::Database::open(&directory)
             .map_err(|error| CommandError::State(Box::new(error)))?;
         let execution = pixiv_app::execution::Execution::http(
             config,
             std::sync::Arc::new(std::sync::Mutex::new(database)),
         );
-        let mode = if *ndjson {
-            DetailOutput::Ndjson
-        } else if json_output {
-            DetailOutput::Json
-        } else if !io::stdout().is_terminal() {
-            DetailOutput::Ndjson
-        } else {
-            DetailOutput::Human
-        };
         return pixiv_cli_rs::search::saved_artwork_search(
             &execution,
             &pixiv_app::lifecycle::Context::new(),

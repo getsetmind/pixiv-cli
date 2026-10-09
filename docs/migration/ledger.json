@@ -1115,7 +1115,10 @@
         "crates/pixiv-sdk/tests/pacing.rs#default_http_transport_keeps_a_pending_response_after_the_prototype_sixty_second_limit",
         "crates/pixiv-sdk/tests/pacing.rs#aborting_a_resource_pacing_wait_releases_the_queue_without_consuming_a_request_start",
         "internal/cli/migration_search_accounts_test.go#TestMigrationSearchStartupAndSavedAccountErrors",
-        "crates/pixiv-cli/tests/search_accounts.rs#search_startup_preserves_go_account_errors_settings_and_validation_order"
+        "crates/pixiv-cli/tests/search_accounts.rs#search_startup_preserves_go_account_errors_settings_and_validation_order",
+        "internal/cli/migration_search_input_test.go#TestMigrationSearchWordsAndOutputSelection",
+        "crates/pixiv-cli/tests/search_input.rs#search_words_and_output_overrides_match_go_for_terminal_and_pipe",
+        "crates/pixiv-cli/tests/search_input.rs#search_process_accepts_go_words_boolean_overrides_and_usage_diagnostics"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -1131,7 +1134,8 @@
         "共通単一流paginationをGoの840ケースで比較。skip/limit/one-batch、循環、predicate/checkpoint/consume/fetch失敗、zero checkpoint、通常streamの部分結果/進捗とfiltered collectionの破棄を確認。CLI通常/rating/bookmarkとMCPに接続し既存90/120/393/144ケースを変更なしで再検証。2流の合成StreamState/nonzero initialと再開は別途3072ケースで比較。実SDK cursorの循環/checkpoint失敗/再開、取消/pool、他OSは未検証。",
         "複数流engineをGoの3072ケースで比較。2流順序/重複/global skip/limit/one-batch、8初期state、非零ページ内cursor、checkpoint、初回返却stateからの2回目収集、後続流失敗時の全破棄を確認。checkpointのある単一流もengineへ接続しCLI rating/bookmarkとMCPの既存比較を維持。実SDK複数操作の公開コマンド接続/保存再開/binding、0流/3流以上、全境界、callback不在対応、取消/pool/account、他OSは未検証または未実装。",
         "CommandConnectionの25ケースでproxy/interval/errorと実HTTP transport構築可否を比較し、選択したintervalをtransportへ渡す。共有HTTP pacingをGoのOpenWith後のcontent/resource redirect/mutation 5通信とRust実socketで比較（観測差5ms）。clone間でlast startを共有する。Goのdefault SDK HTTP timeout=0を再現しRust試作の60秒制限を削除。仮想61秒で保留responseが存続し、pacing待機task abort後も残り時間で次requestが再開することを確認。SDK Options全体/client再構築/pool replayの寿命/context取消/deadline/全競合/App API redirect/TLS/SOCKS wire/pool/idle cleanup/CLI/MCP bootstrap/他OSは未完了または未検証。",
-        "検索CLIを保存済みアカウントのExecutionへ接続。起動48ケースで設定初期化・保持、DB作成順、未認証・既定アカウント・空pool・proxyと入力のエラーをGoと比較。既存の出力120ケースを直接SDKと保存済みアカウント経路の双方で検証し、refresh結果の永続化とBearerの使用も確認。正常CLI子プロセスの実HTTPS、JSON/local出力とlease解放の順序、複数アカウントの429切替・checkpoint再開、取消、明示json=false/複数語/entity等の残りflags、他OSは未検証または未実装。"
+        "検索CLIを保存済みアカウントのExecutionへ接続。起動48ケースで設定初期化・保持、DB作成順、未認証・既定アカウント・空pool・proxyと入力のエラーをGoと比較。既存の出力120ケースを直接SDKと保存済みアカウント経路の双方で検証し、refresh結果の永続化とBearerの使用も確認。正常CLI子プロセスの実HTTPS、JSON/local出力とlease解放の順序、複数アカウントの429切替・checkpoint再開、取消、entity等の残りflags、他OSは未検証または未実装。",
+        "検索入力・出力指定をGoの64ケースで比較。複数語/空の語/日本語/--区切り、--json/-jのtrue/false・重複指定、--ndjsonのtrue/false・重複指定、設定output_jsonとパイプ自動NDJSONを確認。実CLI子プロセス64ケースで認証エラー、usageエラーの通常stderr/終了コード2、json=falseでも明示指定時のエラーenvelope、DB作成順と設定保持を比較。実TTY、正常CLI子プロセスのHTTPS経路、全flag構文/不正bool/help/入力パイプ/entity等は未検証または未実装。"
       ]
     },
     {

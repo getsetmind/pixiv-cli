@@ -19,6 +19,7 @@ pub enum DetailOutput {
 pub enum CommandError {
     Sdk(Error),
     Message(&'static str),
+    Usage(&'static str),
     MessageText(String),
     Output(io::Error),
     App(SchedulerError),
@@ -43,7 +44,7 @@ impl fmt::Display for CommandError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Sdk(error) => error.fmt(f),
-            Self::Message(message) => f.write_str(message),
+            Self::Message(message) | Self::Usage(message) => f.write_str(message),
             Self::MessageText(message) => f.write_str(message),
             Self::Output(error) => error.fmt(f),
             Self::App(error) => error.fmt(f),
@@ -58,7 +59,7 @@ impl std::error::Error for CommandError {
             Self::Output(error) => Some(error),
             Self::App(error) => Some(error),
             Self::State(error) => Some(error.as_ref()),
-            Self::Message(_) | Self::MessageText(_) => None,
+            Self::Message(_) | Self::Usage(_) | Self::MessageText(_) => None,
         }
     }
 }
@@ -72,7 +73,11 @@ impl CommandError {
         match self {
             Self::Sdk(error) => Some(error),
             Self::App(error) => error.classified(),
-            Self::Message(_) | Self::MessageText(_) | Self::Output(_) | Self::State(_) => None,
+            Self::Message(_)
+            | Self::Usage(_)
+            | Self::MessageText(_)
+            | Self::Output(_)
+            | Self::State(_) => None,
         }
     }
 }
@@ -86,6 +91,10 @@ pub fn finish_command<W: Write>(
     let Err(error) = result else {
         return 0;
     };
+    if matches!(error, CommandError::Usage(_)) {
+        let _ = writeln!(diagnostics, "error: {error}");
+        return 2;
+    }
     if ndjson_output
         && matches!(&error, CommandError::Output(cause) if cause.kind() == io::ErrorKind::BrokenPipe)
     {

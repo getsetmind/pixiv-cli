@@ -16,6 +16,45 @@ use std::sync::{
     atomic::{AtomicBool, Ordering},
 };
 
+#[derive(Args, Clone, Debug)]
+pub struct SearchInput {
+    #[arg(required = true, num_args = 1..)]
+    pub query: Vec<String>,
+    #[arg(long, short = 'j', num_args = 0..=1, require_equals = true, default_missing_value = "true")]
+    pub json: Option<bool>,
+    #[arg(long, action = clap::ArgAction::Set, num_args = 0..=1, require_equals = true, default_missing_value = "true", default_value = "false")]
+    pub ndjson: bool,
+}
+
+impl SearchInput {
+    pub fn word(&self) -> String {
+        self.query.join(" ")
+    }
+
+    pub fn machine_output(&self) -> bool {
+        self.json.is_some() || self.ndjson
+    }
+
+    pub fn output_mode(
+        &self,
+        configured_json: bool,
+        terminal: bool,
+    ) -> Result<crate::DetailOutput, CommandError> {
+        if self.ndjson && self.json.is_some() {
+            return Err(CommandError::Usage("--ndjson cannot be used with --json"));
+        }
+        if self.ndjson {
+            Ok(crate::DetailOutput::Ndjson)
+        } else if self.json.unwrap_or(configured_json) {
+            Ok(crate::DetailOutput::Json)
+        } else if self.json.is_none() && !terminal {
+            Ok(crate::DetailOutput::Ndjson)
+        } else {
+            Ok(crate::DetailOutput::Human)
+        }
+    }
+}
+
 struct SearchWriter<W> {
     output: Arc<Mutex<W>>,
     committed: Arc<AtomicBool>,
