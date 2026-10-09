@@ -1,0 +1,871 @@
+{
+  "reference": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "source_sha256": "c7586a3889e5616c8ede815911726886531cc7b5ba755673695f01c4151c2383",
+  "delegate_source_sha256": "17a4b6801773cbbb5a790f0f51e7dc3d85d02ef36f911394ec1aa0ce66b72e94",
+  "evidence": "Frozen Go install source with os/exec mock and injected shell port; native ShellExecuteExW behavior is separately source-frozen; native Windows compilation, reg.exe, ShellExecuteExW, ACLs and CommandContext cancellation unverified",
+  "registry_key": "HKCU\\Software\\Classes\\pixiv",
+  "previous_registry_key": "HKCU\\Software\\Classes\\pixiv-cli.previous-pixiv",
+  "previous_prog_id": "pixiv-cli.previous-pixiv",
+  "executable": "C:\\Program Files\\pixiv\\pixiv.exe",
+  "callback_url": "pixiv://unrelated/path?value=private-code&state=a b;$(false)&quoted=\"yes\"",
+  "endpoint_url": "http://127.0.0.1:41871/callback",
+  "command_cases": [
+    {
+      "name": "space",
+      "executable": "C:\\Program Files\\pixiv\\pixiv.exe",
+      "command": "\"C:\\Program Files\\pixiv\\pixiv.exe\" auth _callback \"%1\""
+    },
+    {
+      "name": "embedded-quotes",
+      "executable": "C:\\path\\\"quoted\"\\pixiv.exe",
+      "command": "\"C:\\path\\\\\"quoted\\\"\\pixiv.exe\" auth _callback \"%1\""
+    },
+    {
+      "name": "trailing-backslash",
+      "executable": "C:\\pixiv\\",
+      "command": "\"C:\\pixiv\\\" auth _callback \"%1\""
+    },
+    {
+      "name": "shell-metacharacters",
+      "executable": "C:\\a & b;$(false)\\pixiv.exe",
+      "command": "\"C:\\a & b;$(false)\\pixiv.exe\" auth _callback \"%1\""
+    },
+    {
+      "name": "empty",
+      "executable": "",
+      "command": "\"\" auth _callback \"%1\""
+    }
+  ],
+  "key_cases": [
+    {
+      "name": "present",
+      "failure": "",
+      "exists": true,
+      "error": ""
+    },
+    {
+      "name": "exit-absence",
+      "failure": "exit",
+      "exists": false,
+      "error": ""
+    },
+    {
+      "name": "wrapped-exit-absence",
+      "failure": "wrapped-exit",
+      "exists": false,
+      "error": ""
+    },
+    {
+      "name": "native-error",
+      "failure": "native",
+      "exists": false,
+      "error": "run Windows registry command: synthetic native"
+    }
+  ],
+  "owner_cases": [
+    {
+      "name": "lowercase",
+      "output": " REG_SZ \"pixiv.exe\" auth _callback \"%1\"",
+      "failure": "",
+      "ours": true,
+      "error": ""
+    },
+    {
+      "name": "uppercase",
+      "output": " REG_SZ \"pixiv.exe\" AUTH _CALLBACK \"%1\"",
+      "failure": "",
+      "ours": true,
+      "error": ""
+    },
+    {
+      "name": "substring",
+      "output": "prefix auth _callback suffix",
+      "failure": "",
+      "ours": true,
+      "error": ""
+    },
+    {
+      "name": "missing-space",
+      "output": "auth _callback",
+      "failure": "",
+      "ours": false,
+      "error": ""
+    },
+    {
+      "name": "other-command",
+      "output": " REG_SZ \"other.exe\" \"%1\"",
+      "failure": "",
+      "ours": false,
+      "error": ""
+    },
+    {
+      "name": "exit-absence",
+      "output": "",
+      "failure": "exit",
+      "ours": false,
+      "error": ""
+    },
+    {
+      "name": "wrapped-exit-absence",
+      "output": "",
+      "failure": "wrapped-exit",
+      "ours": false,
+      "error": ""
+    },
+    {
+      "name": "native-error",
+      "output": "",
+      "failure": "native",
+      "ours": false,
+      "error": "synthetic native"
+    }
+  ],
+  "cases": [
+    {
+      "name": "ensure-first-with-previous",
+      "operation": "ensure",
+      "previous": true,
+      "initial_manifest": false,
+      "current": "",
+      "failure": "",
+      "trace": [
+        "query",
+        "copy-previous",
+        "add-protocol",
+        "add-url",
+        "add-command"
+      ],
+      "error": "",
+      "manifest_exists": true,
+      "endpoint_exists": false,
+      "current_tree": "ours",
+      "previous_tree": true
+    },
+    {
+      "name": "ensure-first-without-previous",
+      "operation": "ensure",
+      "previous": false,
+      "initial_manifest": false,
+      "current": "",
+      "failure": "",
+      "trace": [
+        "query",
+        "add-protocol",
+        "add-url",
+        "add-command"
+      ],
+      "error": "",
+      "manifest_exists": true,
+      "endpoint_exists": false,
+      "current_tree": "ours",
+      "previous_tree": false
+    },
+    {
+      "name": "ensure-repeat-keeps-original-previous",
+      "operation": "repeat",
+      "previous": true,
+      "initial_manifest": false,
+      "current": "",
+      "failure": "",
+      "trace": [
+        "add-protocol",
+        "add-url",
+        "add-command"
+      ],
+      "error": "",
+      "manifest_exists": true,
+      "endpoint_exists": false,
+      "current_tree": "ours",
+      "previous_tree": true
+    },
+    {
+      "name": "ensure-repeat-without-previous",
+      "operation": "repeat",
+      "previous": false,
+      "initial_manifest": false,
+      "current": "",
+      "failure": "",
+      "trace": [
+        "add-protocol",
+        "add-url",
+        "add-command"
+      ],
+      "error": "",
+      "manifest_exists": true,
+      "endpoint_exists": false,
+      "current_tree": "ours",
+      "previous_tree": false
+    },
+    {
+      "name": "ensure-existing-manifest-does-not-query-or-copy",
+      "operation": "ensure",
+      "previous": true,
+      "initial_manifest": true,
+      "current": "",
+      "failure": "",
+      "trace": [
+        "add-protocol",
+        "add-url",
+        "add-command"
+      ],
+      "error": "",
+      "manifest_exists": true,
+      "endpoint_exists": false,
+      "current_tree": "ours",
+      "previous_tree": true
+    },
+    {
+      "name": "ensure-resolve-failure",
+      "operation": "ensure",
+      "previous": false,
+      "initial_manifest": false,
+      "current": "",
+      "failure": "resolve",
+      "trace": [],
+      "error": "synthetic executable",
+      "manifest_exists": false,
+      "endpoint_exists": false,
+      "current_tree": "absent",
+      "previous_tree": false
+    },
+    {
+      "name": "ensure-query-native-failure",
+      "operation": "ensure",
+      "previous": true,
+      "initial_manifest": false,
+      "current": "",
+      "failure": "query",
+      "trace": [
+        "query"
+      ],
+      "error": "run Windows registry command: synthetic query",
+      "manifest_exists": false,
+      "endpoint_exists": false,
+      "current_tree": "previous",
+      "previous_tree": false
+    },
+    {
+      "name": "ensure-copy-failure",
+      "operation": "ensure",
+      "previous": true,
+      "initial_manifest": false,
+      "current": "",
+      "failure": "copy-previous",
+      "trace": [
+        "query",
+        "copy-previous"
+      ],
+      "error": "run Windows registry command: synthetic copy-previous",
+      "manifest_exists": false,
+      "endpoint_exists": false,
+      "current_tree": "previous",
+      "previous_tree": false
+    },
+    {
+      "name": "ensure-add-protocol-failure",
+      "operation": "ensure",
+      "previous": true,
+      "initial_manifest": false,
+      "current": "",
+      "failure": "add-protocol",
+      "trace": [
+        "query",
+        "copy-previous",
+        "add-protocol"
+      ],
+      "error": "run Windows registry command: synthetic add-protocol",
+      "manifest_exists": false,
+      "endpoint_exists": false,
+      "current_tree": "previous",
+      "previous_tree": true
+    },
+    {
+      "name": "ensure-add-url-failure",
+      "operation": "ensure",
+      "previous": true,
+      "initial_manifest": false,
+      "current": "",
+      "failure": "add-url",
+      "trace": [
+        "query",
+        "copy-previous",
+        "add-protocol",
+        "add-url"
+      ],
+      "error": "run Windows registry command: synthetic add-url",
+      "manifest_exists": false,
+      "endpoint_exists": false,
+      "current_tree": "ours",
+      "previous_tree": true
+    },
+    {
+      "name": "ensure-add-command-failure",
+      "operation": "ensure",
+      "previous": true,
+      "initial_manifest": false,
+      "current": "",
+      "failure": "add-command",
+      "trace": [
+        "query",
+        "copy-previous",
+        "add-protocol",
+        "add-url",
+        "add-command"
+      ],
+      "error": "run Windows registry command: synthetic add-command",
+      "manifest_exists": false,
+      "endpoint_exists": false,
+      "current_tree": "ours",
+      "previous_tree": true
+    },
+    {
+      "name": "ensure-save-failure-does-not-restore-registry",
+      "operation": "ensure",
+      "previous": true,
+      "initial_manifest": false,
+      "current": "",
+      "failure": "save",
+      "trace": [
+        "query",
+        "copy-previous",
+        "add-protocol",
+        "add-url",
+        "add-command"
+      ],
+      "error": "filesystem",
+      "manifest_exists": true,
+      "endpoint_exists": false,
+      "error_kind": "filesystem",
+      "current_tree": "ours",
+      "previous_tree": true
+    },
+    {
+      "name": "ensure-invalid-manifest",
+      "operation": "ensure",
+      "previous": true,
+      "initial_manifest": false,
+      "current": "",
+      "failure": "invalid-manifest",
+      "trace": [],
+      "error": "Pixiv URL handler manifest is invalid",
+      "manifest_exists": true,
+      "endpoint_exists": false,
+      "current_tree": "previous",
+      "previous_tree": false
+    },
+    {
+      "name": "disable-missing-manifest",
+      "operation": "disable",
+      "previous": false,
+      "initial_manifest": false,
+      "current": "",
+      "failure": "",
+      "trace": [],
+      "error": "",
+      "manifest_exists": false,
+      "endpoint_exists": false,
+      "current_tree": "absent",
+      "previous_tree": false
+    },
+    {
+      "name": "disable-ours-restores-original-tree",
+      "operation": "disable",
+      "previous": true,
+      "initial_manifest": true,
+      "current": "ours",
+      "failure": "",
+      "trace": [
+        "query-owner",
+        "delete-current",
+        "restore-previous",
+        "delete-previous"
+      ],
+      "error": "",
+      "manifest_exists": false,
+      "endpoint_exists": false,
+      "current_tree": "previous",
+      "previous_tree": false
+    },
+    {
+      "name": "disable-ours-no-previous",
+      "operation": "disable",
+      "previous": false,
+      "initial_manifest": true,
+      "current": "ours",
+      "failure": "",
+      "trace": [
+        "query-owner",
+        "delete-current"
+      ],
+      "error": "",
+      "manifest_exists": false,
+      "endpoint_exists": false,
+      "current_tree": "absent",
+      "previous_tree": false
+    },
+    {
+      "name": "disable-user-changed-handler",
+      "operation": "disable",
+      "previous": true,
+      "initial_manifest": true,
+      "current": "other",
+      "failure": "",
+      "trace": [
+        "query-owner",
+        "delete-previous"
+      ],
+      "error": "",
+      "manifest_exists": false,
+      "endpoint_exists": false,
+      "current_tree": "other",
+      "previous_tree": false
+    },
+    {
+      "name": "disable-owner-exit-absence",
+      "operation": "disable",
+      "previous": true,
+      "initial_manifest": true,
+      "current": "absent",
+      "failure": "",
+      "trace": [
+        "query-owner",
+        "delete-previous"
+      ],
+      "error": "",
+      "manifest_exists": false,
+      "endpoint_exists": false,
+      "current_tree": "absent",
+      "previous_tree": false
+    },
+    {
+      "name": "disable-owner-native-error",
+      "operation": "disable",
+      "previous": true,
+      "initial_manifest": true,
+      "current": "ours",
+      "failure": "query-owner",
+      "trace": [
+        "query-owner"
+      ],
+      "error": "synthetic query-owner",
+      "manifest_exists": true,
+      "endpoint_exists": false,
+      "current_tree": "ours",
+      "previous_tree": true
+    },
+    {
+      "name": "disable-delete-current-failure",
+      "operation": "disable",
+      "previous": true,
+      "initial_manifest": true,
+      "current": "ours",
+      "failure": "delete-current",
+      "trace": [
+        "query-owner",
+        "delete-current"
+      ],
+      "error": "run Windows registry command: synthetic delete-current",
+      "manifest_exists": true,
+      "endpoint_exists": false,
+      "current_tree": "ours",
+      "previous_tree": true
+    },
+    {
+      "name": "disable-restore-previous-failure",
+      "operation": "disable",
+      "previous": true,
+      "initial_manifest": true,
+      "current": "ours",
+      "failure": "restore-previous",
+      "trace": [
+        "query-owner",
+        "delete-current",
+        "restore-previous"
+      ],
+      "error": "run Windows registry command: synthetic restore-previous",
+      "manifest_exists": true,
+      "endpoint_exists": false,
+      "current_tree": "absent",
+      "previous_tree": true
+    },
+    {
+      "name": "disable-delete-previous-failure",
+      "operation": "disable",
+      "previous": true,
+      "initial_manifest": true,
+      "current": "ours",
+      "failure": "delete-previous",
+      "trace": [
+        "query-owner",
+        "delete-current",
+        "restore-previous",
+        "delete-previous"
+      ],
+      "error": "run Windows registry command: synthetic delete-previous",
+      "manifest_exists": true,
+      "endpoint_exists": false,
+      "current_tree": "previous",
+      "previous_tree": true
+    },
+    {
+      "name": "delegate-raw-url",
+      "operation": "delegate",
+      "previous": true,
+      "initial_manifest": true,
+      "current": "",
+      "failure": "",
+      "trace": [
+        "open"
+      ],
+      "error": "",
+      "manifest_exists": true,
+      "endpoint_exists": false,
+      "current_tree": "previous",
+      "previous_tree": true
+    },
+    {
+      "name": "delegate-missing-manifest",
+      "operation": "delegate",
+      "previous": false,
+      "initial_manifest": false,
+      "current": "",
+      "failure": "",
+      "trace": [],
+      "error": "no previous Pixiv URL handler is available",
+      "manifest_exists": false,
+      "endpoint_exists": false,
+      "current_tree": "absent",
+      "previous_tree": false
+    },
+    {
+      "name": "delegate-no-previous",
+      "operation": "delegate",
+      "previous": false,
+      "initial_manifest": true,
+      "current": "",
+      "failure": "",
+      "trace": [],
+      "error": "no previous Pixiv URL handler is available",
+      "manifest_exists": true,
+      "endpoint_exists": false,
+      "current_tree": "absent",
+      "previous_tree": false
+    },
+    {
+      "name": "delegate-native-error-is-redacted",
+      "operation": "delegate",
+      "previous": true,
+      "initial_manifest": true,
+      "current": "",
+      "failure": "open",
+      "trace": [
+        "open"
+      ],
+      "error": "could not open previous Pixiv URL handler",
+      "manifest_exists": true,
+      "endpoint_exists": false,
+      "current_tree": "previous",
+      "previous_tree": true
+    },
+    {
+      "name": "temporary-existing-tree-restore",
+      "operation": "install",
+      "previous": true,
+      "initial_manifest": false,
+      "current": "",
+      "failure": "",
+      "trace": [
+        "query",
+        "export",
+        "add-protocol",
+        "add-url",
+        "add-command",
+        "delete-current",
+        "import"
+      ],
+      "error": "",
+      "manifest_exists": false,
+      "endpoint_exists": false,
+      "current_tree": "previous",
+      "previous_tree": false
+    },
+    {
+      "name": "temporary-no-existing-tree",
+      "operation": "install",
+      "previous": false,
+      "initial_manifest": false,
+      "current": "",
+      "failure": "",
+      "trace": [
+        "query",
+        "add-protocol",
+        "add-url",
+        "add-command",
+        "delete-current"
+      ],
+      "error": "",
+      "manifest_exists": false,
+      "endpoint_exists": false,
+      "current_tree": "absent",
+      "previous_tree": false
+    },
+    {
+      "name": "temporary-resolve-failure-cleans-endpoint",
+      "operation": "install",
+      "previous": false,
+      "initial_manifest": false,
+      "current": "",
+      "failure": "resolve",
+      "trace": [],
+      "error": "synthetic executable",
+      "manifest_exists": false,
+      "endpoint_exists": false,
+      "current_tree": "absent",
+      "previous_tree": false
+    },
+    {
+      "name": "temporary-private-dir-failure-cleans-endpoint",
+      "operation": "install",
+      "previous": false,
+      "initial_manifest": false,
+      "current": "",
+      "failure": "tempdir",
+      "trace": [],
+      "error": "filesystem",
+      "manifest_exists": false,
+      "endpoint_exists": false,
+      "error_kind": "filesystem",
+      "current_tree": "absent",
+      "previous_tree": false
+    },
+    {
+      "name": "temporary-query-failure-cleans-backup-and-endpoint",
+      "operation": "install",
+      "previous": true,
+      "initial_manifest": false,
+      "current": "",
+      "failure": "query",
+      "trace": [
+        "query"
+      ],
+      "error": "run Windows registry command: synthetic query",
+      "manifest_exists": false,
+      "endpoint_exists": false,
+      "current_tree": "previous",
+      "previous_tree": false
+    },
+    {
+      "name": "temporary-export-failure-cleans-backup-and-endpoint",
+      "operation": "install",
+      "previous": true,
+      "initial_manifest": false,
+      "current": "",
+      "failure": "export",
+      "trace": [
+        "query",
+        "export"
+      ],
+      "error": "run Windows registry command: synthetic export",
+      "manifest_exists": false,
+      "endpoint_exists": false,
+      "current_tree": "previous",
+      "previous_tree": false
+    },
+    {
+      "name": "temporary-export-missing-file-cleans-backup-and-endpoint",
+      "operation": "install",
+      "previous": true,
+      "initial_manifest": false,
+      "current": "",
+      "failure": "export-no-file",
+      "trace": [
+        "query",
+        "export"
+      ],
+      "error": "filesystem",
+      "manifest_exists": false,
+      "endpoint_exists": false,
+      "error_kind": "filesystem",
+      "current_tree": "previous",
+      "previous_tree": false
+    },
+    {
+      "name": "temporary-add-protocol-failure-restores-tree",
+      "operation": "install",
+      "previous": true,
+      "initial_manifest": false,
+      "current": "",
+      "failure": "add-protocol",
+      "trace": [
+        "query",
+        "export",
+        "add-protocol",
+        "delete-current",
+        "import"
+      ],
+      "error": "run Windows registry command: synthetic add-protocol",
+      "manifest_exists": false,
+      "endpoint_exists": false,
+      "current_tree": "previous",
+      "previous_tree": false
+    },
+    {
+      "name": "temporary-add-url-failure-restores-tree",
+      "operation": "install",
+      "previous": true,
+      "initial_manifest": false,
+      "current": "",
+      "failure": "add-url",
+      "trace": [
+        "query",
+        "export",
+        "add-protocol",
+        "add-url",
+        "delete-current",
+        "import"
+      ],
+      "error": "run Windows registry command: synthetic add-url",
+      "manifest_exists": false,
+      "endpoint_exists": false,
+      "current_tree": "previous",
+      "previous_tree": false
+    },
+    {
+      "name": "temporary-add-command-failure-restores-tree",
+      "operation": "install",
+      "previous": true,
+      "initial_manifest": false,
+      "current": "",
+      "failure": "add-command",
+      "trace": [
+        "query",
+        "export",
+        "add-protocol",
+        "add-url",
+        "add-command",
+        "delete-current",
+        "import"
+      ],
+      "error": "run Windows registry command: synthetic add-command",
+      "manifest_exists": false,
+      "endpoint_exists": false,
+      "current_tree": "previous",
+      "previous_tree": false
+    },
+    {
+      "name": "temporary-delete-cleanup-error-still-imports",
+      "operation": "install",
+      "previous": true,
+      "initial_manifest": false,
+      "current": "",
+      "failure": "delete-current",
+      "trace": [
+        "query",
+        "export",
+        "add-protocol",
+        "add-url",
+        "add-command",
+        "delete-current",
+        "import"
+      ],
+      "error": "",
+      "manifest_exists": false,
+      "endpoint_exists": false,
+      "current_tree": "previous",
+      "previous_tree": false
+    },
+    {
+      "name": "temporary-import-cleanup-error-is-ignored",
+      "operation": "install",
+      "previous": true,
+      "initial_manifest": false,
+      "current": "",
+      "failure": "import",
+      "trace": [
+        "query",
+        "export",
+        "add-protocol",
+        "add-url",
+        "add-command",
+        "delete-current",
+        "import"
+      ],
+      "error": "",
+      "manifest_exists": false,
+      "endpoint_exists": false,
+      "current_tree": "absent",
+      "previous_tree": false
+    },
+    {
+      "name": "temporary-repeated-cleanup-attempts-restoration-again",
+      "operation": "install",
+      "previous": true,
+      "initial_manifest": false,
+      "current": "",
+      "failure": "",
+      "trace": [
+        "query",
+        "export",
+        "add-protocol",
+        "add-url",
+        "add-command",
+        "delete-current",
+        "import",
+        "delete-current",
+        "import"
+      ],
+      "error": "",
+      "manifest_exists": false,
+      "endpoint_exists": false,
+      "cleanup_count": 2,
+      "current_tree": "absent",
+      "previous_tree": false
+    },
+    {
+      "name": "temporary-empty-endpoint-directory-removed",
+      "operation": "install",
+      "previous": true,
+      "initial_manifest": false,
+      "current": "",
+      "failure": "",
+      "trace": [
+        "query",
+        "export",
+        "add-protocol",
+        "add-url",
+        "add-command",
+        "delete-current",
+        "import"
+      ],
+      "error": "",
+      "manifest_exists": false,
+      "endpoint_exists": false,
+      "endpoint_replacement": "empty-directory",
+      "current_tree": "previous",
+      "previous_tree": false
+    },
+    {
+      "name": "temporary-nonempty-endpoint-directory-retained",
+      "operation": "install",
+      "previous": true,
+      "initial_manifest": false,
+      "current": "",
+      "failure": "",
+      "trace": [
+        "query",
+        "export",
+        "add-protocol",
+        "add-url",
+        "add-command",
+        "delete-current",
+        "import"
+      ],
+      "error": "",
+      "manifest_exists": false,
+      "endpoint_exists": true,
+      "endpoint_replacement": "nonempty-directory",
+      "current_tree": "previous",
+      "previous_tree": false
+    }
+  ]
+}

@@ -35,3 +35,5 @@ pub mod scheduler;
 pub mod search_filter;
 pub mod secret_file;
 pub mod sessions;
+pub mod windows_handler;
+pub mod windows_shell;

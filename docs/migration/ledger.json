@@ -219,7 +219,9 @@
         "crates/pixiv-app/src/host_process.rs",
         "crates/pixiv-app/src/native_browser.rs",
         "crates/pixiv-app/src/linux_handler.rs",
-        "crates/pixiv-app/src/host_context.rs"
+        "crates/pixiv-app/src/host_context.rs",
+        "crates/pixiv-app/src/windows_handler.rs",
+        "crates/pixiv-app/src/windows_shell.rs"
       ],
       "tests": [
         "internal/cli/commands/pixiv/auth/loginhelper/migration_protocol_test.go",
@@ -253,12 +255,23 @@
         "internal/cli/commands/pixiv/auth/loginhelper/migration_host_context_test.go",
         "crates/pixiv-app/tests/linux_handler.rs",
         "crates/pixiv-app/tests/host_context.rs",
-        "crates/pixiv-app/tests/fixtures/linux_handler.json"
+        "crates/pixiv-app/tests/fixtures/linux_handler.json",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_windows_source_test.go",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_windows_contract_payload_test.go",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_windows_mock_payload_test.go",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_windows_shell_source_test.go",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_windows_shell_contract_payload_test.go",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_windows_shell_mock_payload_test.go",
+        "crates/pixiv-app/tests/windows_handler.rs",
+        "crates/pixiv-app/tests/windows_shell.rs",
+        "crates/pixiv-app/tests/support/windows_shell_native.rs",
+        "crates/pixiv-app/tests/fixtures/windows_handler.json"
       ],
       "verified_platforms": [],
       "differences": [
-        "CLI login/hidden callback入口は未接続。input/pages/local bridge・remote protocol/private state/streaming client・relay session/context HTTP1/TLS・default paths/private endpoint/callback action・manifest/native browser・Linux XDG/context process依存は対象例で実装する。full CLI state wiring/startup/options/TTY/native hooks・Darwin/Windows association/ShellExecuteExWは未移植。Windows/macOS/BSD native compile/run・全PATHEXT/lookup/env/error/ACLとDarwin combined compiler-output orderingは未検証または未実装。Windows NULはGo panicをnative call前にsourceで維持するがLinux gateでnative実行証明へ数えない。Go TLS serverはHTTP/2 negotiation/servingを持つがRust relayはHTTP/1のみで、HTTP/2は実際の未移植transport capability。synthetic local TLS trustはtest限定でhost trustを変更しない。Go stateにTTLは無く追加しない。nonUTF8 URL/環境値対String、全URL/JSON/native header・Go native exact診断・TLS/proxy実通信/IDNA/IPv6zone/unknown proxy scheme・gzip/wire data+error chunking・全concurrency/cancel/clock/socket flush/backpressureとWindows/native platformは未検証または差分。HandoffReadの0None=EOFはarbitrary Go Readerの0nil/data+EOFを表せずsynthetic n+nonEOF read-error例を全native wireへ外挿しない。SDK owned HTTP/context/idle lifecycle・blocked prompt cleanup・全並行scheduleの既存debtも保持する。 native reqwest0.13.5がAccept: */*を追加する具体差分はGoのAccept不在と別々にcaptureし未解消とする。native header parityを宣言しない。",
-        "Linux実desktop registration/外部gioは未実行。native IO DisplayはGo PathError書式との差分を保持し、全filesystem/race/privilege/env/cancel/platformは未検証。raw native XDG/executable/temp snapshotは対象例で保持するが、persistent JSON pathの不正UTF8はGo同様per-byte replacementへ変換し、そのGo restore結果をhardeningで変更しない。Context stderr32KiB prefix/suffixはbounded capture、SIGKILL/lookup-before-cancel/descendant EOFの対象例を比較し、successful-exit cancel race・任意signal/native pipe faultを未検証とする。"
+        "CLI login/hidden callback入口は未接続。input/pages/local bridge・remote protocol/private state/streaming client・relay session/context HTTP1/TLS・default paths/private endpoint/callback action・manifest/native browser・Linux XDG/context process依存は対象例で実装する。full CLI state wiring/startup/options/TTY/native hooksは未移植。Darwin/Windows association/ShellExecuteExWの対象例は後続のsource-driven mock比較で実装するがnative OS executionは未検証。Windows/macOS/BSD native compile/run・全PATHEXT/lookup/env/error/ACLは未検証。Darwin combined compiler-output orderingは後続のsame-kernel-pipe対象例で実装するが全native post-start faultは未検証。Windows NULはGo panicをnative call前にsourceで維持するがLinux gateでnative実行証明へ数えない。Go TLS serverはHTTP/2 negotiation/servingを持つがRust relayはHTTP/1のみで、HTTP/2は実際の未移植transport capability。synthetic local TLS trustはtest限定でhost trustを変更しない。Go stateにTTLは無く追加しない。nonUTF8 URL/環境値対String、全URL/JSON/native header・Go native exact診断・TLS/proxy実通信/IDNA/IPv6zone/unknown proxy scheme・gzip/wire data+error chunking・全concurrency/cancel/clock/socket flush/backpressureとWindows/native platformは未検証または差分。HandoffReadの0None=EOFはarbitrary Go Readerの0nil/data+EOFを表せずsynthetic n+nonEOF read-error例を全native wireへ外挿しない。SDK owned HTTP/context/idle lifecycle・blocked prompt cleanup・全並行scheduleの既存debtも保持する。 native reqwest0.13.5がAccept: */*を追加する具体差分はGoのAccept不在と別々にcaptureし未解消とする。native header parityを宣言しない。",
+        "Linux実desktop registration/外部gioは未実行。native IO DisplayはGo PathError書式との差分を保持し、全filesystem/race/privilege/env/cancel/platformは未検証。raw native XDG/executable/temp snapshotは対象例で保持するが、persistent JSON pathの不正UTF8はGo同様per-byte replacementへ変換し、そのGo restore結果をhardeningで変更しない。Context stderr32KiB prefix/suffixはbounded capture、SIGKILL/lookup-before-cancel/descendant EOFの対象例を比較し、successful-exit cancel race・任意signal/native pipe faultを未検証とする。",
+        "Windows associationは固定Go source SHA確認とbuild tag/importだけのmock変換で対象41flow・5command・4key・8ownerを比較する。persistent first/repeat・copy/export/import full tree・failure residue・private backup・endpoint-first・wrapped exit-only absence・fresh background restoreとprevious ProgID/raw callbackのredacted delegationを保持する。ShellExecuteExWのfull ABI/mask/null/show・context→class→URL UTF16・BOOL/GetLastError orderingはsource-driven mock検査。temporary cleanupの2回目が復元済みtreeを消してmissing backup importを無視する破壊的Go挙動を保持するが、explicit cleanup後のowned Dropは再実行しない。後続CLIの自動cleanupは所有権で1回に限定する必要がある。native Windows compile/run・live HKCU/実Shell/loader・ACL・全IO/random/native path/privilege/raceは未検証。CLI login/hidden callback/install-handler/startup入口は未接続のまま。 executable ED A0 80 FF+quoteはGo sourceで先に固定し、native command OsStringはlossless、manifest JSONは4つのU+FFFDにする対象例を別々に比較する。Windows surrogate testのnative compile/runは未実施。 初回fullgateは環境restartで中断し成功へ数えない。最終unchanged scriptはexit0・269秒・top-level495/raw496passed/8ignored・release38.24秒、Go full auth/helperとouter/nested vet、ledger validatorもexit0。操作入口はpendingのままで全verifiedへ引き上げない。"
       ]
     },
     {
@@ -274,7 +287,9 @@
         "crates/pixiv-app/src/native_browser.rs",
         "crates/pixiv-app/src/linux_handler.rs",
         "crates/pixiv-app/src/host_context.rs",
-        "crates/pixiv-app/src/callback_handler.rs"
+        "crates/pixiv-app/src/callback_handler.rs",
+        "crates/pixiv-app/src/windows_handler.rs",
+        "crates/pixiv-app/src/windows_shell.rs"
       ],
       "tests": [
         "internal/cli/commands/pixiv/auth/loginhelper/migration_handler_manifest_test.go",
@@ -289,12 +304,23 @@
         "internal/cli/commands/pixiv/auth/loginhelper/migration_host_context_test.go",
         "crates/pixiv-app/tests/linux_handler.rs",
         "crates/pixiv-app/tests/host_context.rs",
-        "crates/pixiv-app/tests/fixtures/linux_handler.json"
+        "crates/pixiv-app/tests/fixtures/linux_handler.json",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_windows_source_test.go",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_windows_contract_payload_test.go",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_windows_mock_payload_test.go",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_windows_shell_source_test.go",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_windows_shell_contract_payload_test.go",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_windows_shell_mock_payload_test.go",
+        "crates/pixiv-app/tests/windows_handler.rs",
+        "crates/pixiv-app/tests/windows_shell.rs",
+        "crates/pixiv-app/tests/support/windows_shell_native.rs",
+        "crates/pixiv-app/tests/fixtures/windows_handler.json"
       ],
       "verified_platforms": [],
       "differences": [
-        "shared manifest/snapshot storageとnative browser/argv process依存は対象例で実装するが、Linux XDG persistent ensure/disable・temporary install/restore・previous-handler delegationとcontext process依存も対象例で実装するが、Darwin/Windows association/ShellExecuteExW・hidden install CLI/startup wiringは未移植。Linuxのsynthetic provider/tempfileとhost-mocked dispatch以外のWindows/macOS/BSD native compile/run・ACL・全error/lookup/env/cancel/restore scheduleは未検証。",
-        "Linux実desktop registration/外部gioは未実行。native IO DisplayはGo PathError書式との差分を保持し、全filesystem/race/privilege/env/cancel/platformは未検証。raw native XDG/executable/temp snapshotは対象例で保持するが、persistent JSON pathの不正UTF8はGo同様per-byte replacementへ変換し、そのGo restore結果をhardeningで変更しない。Context stderr32KiB prefix/suffixはbounded capture、SIGKILL/lookup-before-cancel/descendant EOFの対象例を比較し、successful-exit cancel race・任意signal/native pipe faultを未検証とする。"
+        "shared manifest/snapshot storageとnative browser/argv process依存は対象例で実装するが、Linux XDG persistent ensure/disable・temporary install/restore・previous-handler delegationとcontext process依存も対象例で実装するが、Darwin/Windows association/ShellExecuteExWはsource-driven mock比較で対象例を実装するが、hidden install CLI/startup wiringは未移植。Linuxのsynthetic provider/tempfileとhost-mocked dispatch以外のWindows/macOS/BSD native compile/run・ACL・全error/lookup/env/cancel/restore scheduleは未検証。",
+        "Linux実desktop registration/外部gioは未実行。native IO DisplayはGo PathError書式との差分を保持し、全filesystem/race/privilege/env/cancel/platformは未検証。raw native XDG/executable/temp snapshotは対象例で保持するが、persistent JSON pathの不正UTF8はGo同様per-byte replacementへ変換し、そのGo restore結果をhardeningで変更しない。Context stderr32KiB prefix/suffixはbounded capture、SIGKILL/lookup-before-cancel/descendant EOFの対象例を比較し、successful-exit cancel race・任意signal/native pipe faultを未検証とする。",
+        "Windows associationは固定Go source SHA確認とbuild tag/importだけのmock変換で対象41flow・5command・4key・8ownerを比較する。persistent first/repeat・copy/export/import full tree・failure residue・private backup・endpoint-first・wrapped exit-only absence・fresh background restoreとprevious ProgID/raw callbackのredacted delegationを保持する。ShellExecuteExWのfull ABI/mask/null/show・context→class→URL UTF16・BOOL/GetLastError orderingはsource-driven mock検査。temporary cleanupの2回目が復元済みtreeを消してmissing backup importを無視する破壊的Go挙動を保持するが、explicit cleanup後のowned Dropは再実行しない。後続CLIの自動cleanupは所有権で1回に限定する必要がある。native Windows compile/run・live HKCU/実Shell/loader・ACL・全IO/random/native path/privilege/raceは未検証。CLI login/hidden callback/install-handler/startup入口は未接続のまま。 executable ED A0 80 FF+quoteはGo sourceで先に固定し、native command OsStringはlossless、manifest JSONは4つのU+FFFDにする対象例を別々に比較する。Windows surrogate testのnative compile/runは未実施。 初回fullgateは環境restartで中断し成功へ数えない。最終unchanged scriptはexit0・269秒・top-level495/raw496passed/8ignored・release38.24秒、Go full auth/helperとouter/nested vet、ledger validatorもexit0。操作入口はpendingのままで全verifiedへ引き上げない。"
       ]
     },
     {
@@ -480,7 +506,9 @@
         "crates/pixiv-app/src/linux_handler.rs",
         "crates/pixiv-app/src/host_context.rs",
         "crates/pixiv-app/src/darwin_handler.rs",
-        "crates/pixiv-app/src/config/private_file.rs"
+        "crates/pixiv-app/src/config/private_file.rs",
+        "crates/pixiv-app/src/windows_handler.rs",
+        "crates/pixiv-app/src/windows_shell.rs"
       ],
       "tests": [
         "internal/cli/commands/pixiv/auth/migration_input_test.go",
@@ -531,13 +559,24 @@
         "crates/pixiv-app/tests/darwin_handler.rs",
         "crates/pixiv-app/tests/merged_process_output.rs",
         "crates/pixiv-app/tests/fixtures/darwin_handler.json",
-        "crates/pixiv-app/tests/fixtures/merged_process_output.json"
+        "crates/pixiv-app/tests/fixtures/merged_process_output.json",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_windows_source_test.go",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_windows_contract_payload_test.go",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_windows_mock_payload_test.go",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_windows_shell_source_test.go",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_windows_shell_contract_payload_test.go",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_windows_shell_mock_payload_test.go",
+        "crates/pixiv-app/tests/windows_handler.rs",
+        "crates/pixiv-app/tests/windows_shell.rs",
+        "crates/pixiv-app/tests/support/windows_shell_native.rs",
+        "crates/pixiv-app/tests/fixtures/windows_handler.json"
       ],
       "verified_platforms": [],
       "differences": [
-        "CLI login/hidden callback入口は未接続。input/pages/local bridge・remote protocol/private state/streaming client・relay session/context HTTP1/TLS・default paths/private endpoint/callback action・manifest/native browser・Linux XDG/Darwin association/context process依存は対象例で実装する。full CLI state wiring/startup/options/TTY/native hooks・Windows association/ShellExecuteExWは未移植。Windows/macOS/BSD native compile/run・全PATHEXT/lookup/env/error/ACL・全merged-output post-start faultは未検証。Windows NULはGo panicをnative call前にsourceで維持するがLinux gateでnative実行証明へ数えない。Go TLS serverはHTTP/2 negotiation/servingを持つがRust relayはHTTP/1のみで、HTTP/2は実際の未移植transport capability。synthetic local TLS trustはtest限定でhost trustを変更しない。Go stateにTTLは無く追加しない。nonUTF8 URL/環境値対String、全URL/JSON/native header・Go native exact診断・TLS/proxy実通信/IDNA/IPv6zone/unknown proxy scheme・gzip/wire data+error chunking・全concurrency/cancel/clock/socket flush/backpressureとWindows/native platformは未検証または差分。HandoffReadの0None=EOFはarbitrary Go Readerの0nil/data+EOFを表せずsynthetic n+nonEOF read-error例を全native wireへ外挿しない。SDK owned HTTP/context/idle lifecycle・blocked prompt cleanup・全並行scheduleの既存debtも保持する。 native reqwest0.13.5がAccept: */*を追加する具体差分はGoのAccept不在と別々にcaptureし未解消とする。native header parityを宣言しない。",
+        "CLI login/hidden callback入口は未接続。input/pages/local bridge・remote protocol/private state/streaming client・relay session/context HTTP1/TLS・default paths/private endpoint/callback action・manifest/native browser・Linux XDG/Darwin association/context process依存は対象例で実装する。full CLI state wiring/startup/options/TTY/native hooksは未移植。Windows association/ShellExecuteExWの対象例はsource-driven mock比較で実装するがnative Windows executionは未検証。Windows/macOS/BSD native compile/run・全PATHEXT/lookup/env/error/ACL・全merged-output post-start faultは未検証。Windows NULはGo panicをnative call前にsourceで維持するがLinux gateでnative実行証明へ数えない。Go TLS serverはHTTP/2 negotiation/servingを持つがRust relayはHTTP/1のみで、HTTP/2は実際の未移植transport capability。synthetic local TLS trustはtest限定でhost trustを変更しない。Go stateにTTLは無く追加しない。nonUTF8 URL/環境値対String、全URL/JSON/native header・Go native exact診断・TLS/proxy実通信/IDNA/IPv6zone/unknown proxy scheme・gzip/wire data+error chunking・全concurrency/cancel/clock/socket flush/backpressureとWindows/native platformは未検証または差分。HandoffReadの0None=EOFはarbitrary Go Readerの0nil/data+EOFを表せずsynthetic n+nonEOF read-error例を全native wireへ外挿しない。SDK owned HTTP/context/idle lifecycle・blocked prompt cleanup・全並行scheduleの既存debtも保持する。 native reqwest0.13.5がAccept: */*を追加する具体差分はGoのAccept不在と別々にcaptureし未解消とする。native header parityを宣言しない。",
         "Linux実desktop registration/外部gioは未実行。native IO DisplayはGo PathError書式との差分を保持し、全filesystem/race/privilege/env/cancel/platformは未検証。raw native XDG/executable/temp snapshotは対象例で保持するが、persistent JSON pathの不正UTF8はGo同様per-byte replacementへ変換し、そのGo restore結果をhardeningで変更しない。Context stderr32KiB prefix/suffixはbounded capture、SIGKILL/lookup-before-cancel/descendant EOFの対象例を比較し、successful-exit cancel race・任意signal/native pipe faultを未検証とする。",
-        "Darwin associationは固定Go sourceのbuild tag除去とos/exec importだけをmock化したcontrol-flow比較。27flow・5cache/file-kind・2script・bundle version0・endpoint replacement empty/nonempty directory cleanup・private compiler source/assetsを固定し、Swift/plist bytesを共用fixtureと比較する。実Darwin Swift compile/LaunchServices・native process cancellation・全IO/permission/random faultは未検証。Combinedは同じkernel pipeでraw binaryを保持するが、構築したCaptured error accessor testを全native post-start faultの実行証明としない。Darwin query/diagnostic Stringの不正UTF8はGo raw bytes対Rust replacementの具体差分を保持し、typed captured bytesと混同しない。Go同様temporary cleanupがlater external choiceを上書きし、query failureを無視し、cache時permissionを修復しない。"
+        "Darwin associationは固定Go sourceのbuild tag除去とos/exec importだけをmock化したcontrol-flow比較。27flow・5cache/file-kind・2script・bundle version0・endpoint replacement empty/nonempty directory cleanup・private compiler source/assetsを固定し、Swift/plist bytesを共用fixtureと比較する。実Darwin Swift compile/LaunchServices・native process cancellation・全IO/permission/random faultは未検証。Combinedは同じkernel pipeでraw binaryを保持するが、構築したCaptured error accessor testを全native post-start faultの実行証明としない。Darwin query/diagnostic Stringの不正UTF8はGo raw bytes対Rust replacementの具体差分を保持し、typed captured bytesと混同しない。Go同様temporary cleanupがlater external choiceを上書きし、query failureを無視し、cache時permissionを修復しない。",
+        "Windows associationは固定Go source SHA確認とbuild tag/importだけのmock変換で対象41flow・5command・4key・8ownerを比較する。persistent first/repeat・copy/export/import full tree・failure residue・private backup・endpoint-first・wrapped exit-only absence・fresh background restoreとprevious ProgID/raw callbackのredacted delegationを保持する。ShellExecuteExWのfull ABI/mask/null/show・context→class→URL UTF16・BOOL/GetLastError orderingはsource-driven mock検査。temporary cleanupの2回目が復元済みtreeを消してmissing backup importを無視する破壊的Go挙動を保持するが、explicit cleanup後のowned Dropは再実行しない。後続CLIの自動cleanupは所有権で1回に限定する必要がある。native Windows compile/run・live HKCU/実Shell/loader・ACL・全IO/random/native path/privilege/raceは未検証。CLI login/hidden callback/install-handler/startup入口は未接続のまま。 executable ED A0 80 FF+quoteはGo sourceで先に固定し、native command OsStringはlossless、manifest JSONは4つのU+FFFDにする対象例を別々に比較する。Windows surrogate testのnative compile/runは未実施。 初回fullgateは環境restartで中断し成功へ数えない。最終unchanged scriptはexit0・269秒・top-level495/raw496passed/8ignored・release38.24秒、Go full auth/helperとouter/nested vet、ledger validatorもexit0。操作入口はpendingのままで全verifiedへ引き上げない。"
       ]
     },
     {

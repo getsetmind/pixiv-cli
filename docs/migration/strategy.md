@@ -89,7 +89,7 @@ cursor と resource reference は不透明なデータでも外部契約であ�
 
 ### 現在の login OS 依存の境界
 
-Linux XDGとDarwin associationのensure/disable/temp restore/delegateを共有manifest/processに接続する。Darwinは固定Go sourceのSHAを確認し、temporary packageでbuild tag除去とos/exec importのmock置換だけを行う比較とする。native Darwin compile/LaunchServices実行とは区別し、Windows backend・full CLI login/hidden callback/startup wiring、relay HTTP/2、Accept header差分とpublic client lifecycleを次の実装・検証へ残す。実browser/registration/host security changesは行わず、native検証は別環境の明示された工程で扱う。
+Linux XDG・Darwin・Windows associationのensure/disable/temp restore/delegateを共有manifest/processに接続する。Darwinは固定Go sourceのSHAを確認し、temporary packageでbuild tag除去とos/exec importのmock置換だけを行う比較とする。native Darwin compile/LaunchServices実行とは区別し、Windows backend/ShellExecuteExWは固定Go source-driven mock比較とし、native Windows compile/run・full CLI login/hidden callback/startup wiring、relay HTTP/2、Accept header差分とpublic client lifecycleを次の実装・検証へ残す。temporary Windows cleanupの明示的な2回実行は復元済みtreeを削除するGo挙動を保持するが、自動cleanupは所有権で1回に限定する。実browser/registration/host security changesは行わず、native検証は別環境の明示された工程で扱う。
 
 ### 作業範囲と調査の制御
 
