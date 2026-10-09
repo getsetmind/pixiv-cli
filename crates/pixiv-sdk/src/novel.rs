@@ -79,3 +79,52 @@ impl WireNovel {
         })
     }
 }
+
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
+pub struct NovelRequest {
+    pub novel_id: i64,
+}
+#[derive(Deserialize)]
+struct DetailEnvelope {
+    novel: Option<Value>,
+    series_next: Option<SeriesReference>,
+    series_prev: Option<SeriesReference>,
+}
+#[derive(Deserialize)]
+struct SeriesReference {
+    id: Option<i64>,
+    #[serde(rename = "title")]
+    _title: Option<String>,
+}
+impl<T: crate::transport::Transport> crate::Client<T> {
+    pub async fn novel(&self, request: NovelRequest) -> Result<Novel> {
+        if request.novel_id <= 0 {
+            return Err(Error::new(Reason::InvalidArgument, "Novel")
+                .with_detail("novel ID must be positive"));
+        }
+        let body = self
+            .get(
+                "/v2/novel/detail",
+                vec![("novel_id".into(), request.novel_id.to_string())],
+                "Novel",
+            )
+            .await?;
+        let malformed = || Error::new(Reason::MalformedUpstreamResponse, "Novel");
+        let envelope: DetailEnvelope = serde_json::from_value(body).map_err(|_| malformed())?;
+        let mut wire = decode_list(vec![envelope.novel.ok_or_else(malformed)?], "Novel")?;
+        if [envelope.series_next, envelope.series_prev]
+            .into_iter()
+            .flatten()
+            .any(|series| series.id.unwrap_or_default() <= 0)
+        {
+            return Err(malformed());
+        }
+        let novel = wire
+            .pop()
+            .ok_or_else(malformed)?
+            .map(&self.resource_policy)?;
+        self.remember_resource(&novel.cover.resource);
+        self.remember_resource(&novel.user.profile_image.resource);
+        Ok(novel)
+    }
+}

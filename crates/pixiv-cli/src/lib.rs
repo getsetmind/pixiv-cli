@@ -200,21 +200,13 @@ fn local() -> Error {
 }
 
 pub fn detail_artwork_id(source: &str) -> pixiv_sdk::Result<i64> {
-    if let Ok(id) = source.trim().parse::<i64>()
-        && id > 0
-    {
-        return Ok(id);
-    }
-    let reference = pixiv_sdk::reference::parse_url(source).map_err(|_| {
-        Error::new(Reason::InvalidArgument, "detail")
-            .with_detail("argument must be an entity ID or a supported Pixiv URL")
-    })?;
-    if reference.kind != pixiv_sdk::reference::REFERENCE_KIND_ARTWORK {
-        return Err(Error::new(Reason::InvalidArgument, "detail")
-            .with_detail("URL does not name a supported Pixiv artwork"));
-    }
-    Ok(reference.id)
+    detail_entity_id(
+        source,
+        "artwork",
+        pixiv_sdk::reference::REFERENCE_KIND_ARTWORK,
+    )
 }
+
 fn go_json_escape(value: String) -> String {
     value
         .replace('<', "\\u003c")
@@ -318,4 +310,78 @@ fn graphic(ch: char) -> bool {
             | C::LineSeparator
             | C::ParagraphSeparator
     )
+}
+
+pub async fn novel_detail<T: Transport, W: Write>(
+    client: &Client<T>,
+    id: i64,
+    mode: DetailOutput,
+    out: &mut W,
+) -> Result<(), CommandError> {
+    let novel = client
+        .novel(pixiv_sdk::pixiv::NovelRequest { novel_id: id })
+        .await?;
+    write_novel_detail(&novel, mode, out)
+}
+pub async fn saved_novel_detail<T: Transport + 'static, W: Write>(
+    execution: &Execution<T>,
+    context: &Context,
+    id: i64,
+    user_id: i64,
+    proxy: Option<&str>,
+    mode: DetailOutput,
+    out: &mut W,
+) -> Result<(), CommandError> {
+    let novel = execution
+        .read(context, user_id, proxy, move |_, client| async move {
+            client
+                .novel(pixiv_sdk::pixiv::NovelRequest { novel_id: id })
+                .await
+                .map_err(Into::into)
+        })
+        .await?;
+    write_novel_detail(&novel, mode, out)
+}
+fn write_novel_detail<W: Write>(
+    novel: &pixiv_sdk::models::Novel,
+    mode: DetailOutput,
+    out: &mut W,
+) -> Result<(), CommandError> {
+    match mode {
+        DetailOutput::Human => writeln!(out, "{} {} — {}", novel.id, novel.title, novel.user.name)?,
+        DetailOutput::Json => {
+            let encoded = serde_json::to_string_pretty(&pixiv_sdk::dto::NovelDto::from(novel))
+                .map_err(|_| local())?;
+            writeln!(out, "{}", go_json_escape(encoded))?;
+        }
+        DetailOutput::Ndjson => {
+            let record = pixiv_record::from_novel(novel)
+                .map_err(|error| CommandError::Message(error.message()))?;
+            writeln!(
+                out,
+                "{}",
+                go_json_escape(serde_json::to_string(&record).map_err(|_| local())?)
+            )?;
+        }
+    }
+    Ok(())
+}
+pub fn detail_novel_id(source: &str) -> pixiv_sdk::Result<i64> {
+    detail_entity_id(source, "novel", pixiv_sdk::reference::REFERENCE_KIND_NOVEL)
+}
+fn detail_entity_id(source: &str, entity: &str, kind: &str) -> pixiv_sdk::Result<i64> {
+    if let Ok(id) = source.trim().parse::<i64>()
+        && id > 0
+    {
+        return Ok(id);
+    }
+    let reference = pixiv_sdk::reference::parse_url(source).map_err(|_| {
+        Error::new(Reason::InvalidArgument, "detail")
+            .with_detail("argument must be an entity ID or a supported Pixiv URL")
+    })?;
+    if reference.kind != kind {
+        return Err(Error::new(Reason::InvalidArgument, "detail")
+            .with_detail(format!("URL does not name a supported Pixiv {entity}")));
+    }
+    Ok(reference.id)
 }

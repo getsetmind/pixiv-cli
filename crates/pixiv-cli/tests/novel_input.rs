@@ -1,0 +1,93 @@
+use serde::Deserialize;
+use serde_json::Value;
+use std::process::Command;
+#[derive(Deserialize)]
+struct Case {
+    input: String,
+    json: bool,
+    id: i64,
+    builds: u32,
+    stdout: String,
+    stderr: String,
+    exit: i32,
+}
+#[test]
+fn detail_inputs_match_go_process_errors_and_validate_before_client_configuration() {
+    let cases: Vec<Case> = serde_json::from_str(include_str!(
+        "../../../docs/migration/contracts/novel-input.json"
+    ))
+    .unwrap();
+    assert_eq!(cases.len(), 122);
+    let accounts: Vec<Value> = serde_json::from_str(include_str!(
+        "../../../docs/migration/contracts/detail-accounts.json"
+    ))
+    .unwrap();
+    for case in cases {
+        assert_eq!(case.builds > 0, case.id > 0);
+        if case.builds > 0 {
+            assert_eq!(pixiv_cli_rs::detail_novel_id(&case.input).unwrap(), case.id);
+        }
+        let home = tempfile::tempdir().unwrap();
+        let directory = home.path().join(".pixiv-cli");
+        std::fs::create_dir(&directory).unwrap();
+        std::fs::write(directory.join("config.toml"), "").unwrap();
+        let stderr = if case.builds > 0 {
+            accounts
+                .iter()
+                .find(|row| row["name"] == "no_account" && row["json"] == case.json)
+                .unwrap()["stderr"]
+                .as_str()
+                .unwrap()
+        } else {
+            &case.stderr
+        };
+        let mut command = Command::new(env!("CARGO_BIN_EXE_pixiv"));
+        command
+            .env("HOME", home.path())
+            .env("USERPROFILE", home.path())
+            .env("REQUEST_INTERVAL", "0");
+        command.args(["detail", "--type=novel"]);
+        if case.json {
+            command.arg("--json");
+        }
+        command
+            .args(["--", &case.input])
+            .env("PIXIV_ACCESS_TOKEN", "")
+            .env_remove("https_proxy")
+            .env_remove("HTTPS_PROXY");
+        if case.builds == 0 {
+            command.env("https_proxy", "invalid proxy fixture");
+        }
+        let output = command.output().unwrap();
+        assert_eq!(
+            output.status.code(),
+            Some(case.exit),
+            "input={}",
+            case.input
+        );
+        assert_eq!(String::from_utf8(output.stdout).unwrap(), case.stdout);
+        if case.json {
+            assert_eq!(
+                serde_json::from_slice::<Value>(&output.stderr).unwrap(),
+                serde_json::from_str::<Value>(stderr).unwrap(),
+                "input={}",
+                case.input
+            );
+            assert_eq!(
+                output.stderr.iter().filter(|byte| **byte == b'\n').count(),
+                1
+            );
+        } else {
+            assert_eq!(
+                String::from_utf8(output.stderr).unwrap(),
+                stderr,
+                "input={}",
+                case.input
+            );
+        }
+        if case.builds == 0 {
+            assert!(!directory.join("pixiv-cli.db").exists());
+        }
+        assert_eq!(std::fs::read(directory.join("config.toml")).unwrap(), b"");
+    }
+}

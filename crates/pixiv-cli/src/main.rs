@@ -46,6 +46,10 @@ enum Command {
     #[command(args_override_self = true)]
     Detail {
         source: String,
+        #[arg(long = "type", short = 't', default_value = "artwork")]
+        entity: String,
+        #[arg(long,action=clap::ArgAction::Set,num_args=0..=1,require_equals=true,default_missing_value="true",default_value="false")]
+        content: bool,
         #[command(flatten)]
         connection: ProxyOptions,
         #[arg(long, short = 'j', conflicts_with = "ndjson")]
@@ -163,7 +167,38 @@ async fn execute(args: Arguments, ndjson_output: &mut bool) -> Result<(), Comman
         None
     };
     let detail_id = match &args.command {
-        Command::Detail { source, .. } => Some(detail_artwork_id(source)?),
+        Command::Detail {
+            source,
+            entity,
+            content,
+            ..
+        } => {
+            let entity = match entity.as_str() {
+                "artwork" | "illust" | "manga" | "ugoira" => "artwork",
+                "novel" => "novel",
+                "user" => return Err(CommandError::Message("user detail is not implemented yet")),
+                _ => {
+                    return Err(CommandError::Message(
+                        "type must be one of artwork, novel, user",
+                    ));
+                }
+            };
+            if *content {
+                if entity != "novel" {
+                    return Err(CommandError::Message(
+                        "--content is only supported when --type novel",
+                    ));
+                }
+                return Err(Error::new(Reason::ContentUnavailable, "NovelContent")
+                    .with_detail("novel content is unsupported by the v1 App API")
+                    .into());
+            }
+            Some(if entity == "novel" {
+                pixiv_cli_rs::detail_novel_id(source)?
+            } else {
+                detail_artwork_id(source)?
+            })
+        }
         _ => None,
     };
     let search_request = match &args.command {
@@ -280,6 +315,7 @@ async fn execute(args: Arguments, ndjson_output: &mut bool) -> Result<(), Comman
         json,
         ndjson,
         connection,
+        entity,
         ..
     } = &args.command
     {
@@ -306,6 +342,18 @@ async fn execute(args: Arguments, ndjson_output: &mut bool) -> Result<(), Comman
         } else {
             DetailOutput::Human
         };
+        if entity == "novel" {
+            return pixiv_cli_rs::saved_novel_detail(
+                &execution,
+                &pixiv_app::lifecycle::Context::new(),
+                detail_id.expect("detail input was resolved"),
+                0,
+                connection.override_value()?,
+                mode,
+                &mut io::stdout().lock(),
+            )
+            .await;
+        }
         return saved_artwork_detail(
             &execution,
             &pixiv_app::lifecycle::Context::new(),

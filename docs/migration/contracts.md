@@ -912,3 +912,13 @@ Rust の CLI は保存済みアカウントから `Execution::read` で型付き
 作品と小説は mode 定数、cursor の検証と生成、作者・画像のマッピング、account pool と private JSON spool を共有する。JSON は全取得成功と lease 解放後に出力する。Go MCP に小説ランキングの登録はないため、公開ツールを追加しない。
 
 検証環境は Windows amd64。部分 writer 失敗、取消、pool replay、全 flag 構文/help・proxy・出力 override/TTY、実 HTTPS と他 OS/arch の全条件は未検証である。小説の detail/search/text やシリーズ操作は別の未移植項目として残る。
+
+## 小説詳細の SDK・CLI・MCP
+
+[novel-detail.json](contracts/novel-detail.json) は Go の37ケースである。`/v2/novel/detail` と novel_id、ヘッダー、Novel DTO、画像、正の小説・作者 ID、series_next/series_prev の型と正の ID、不正応答と入力拒否を固定する。詳細はランキングと同じ小説・作者・画像のマッピングを使い、resource reference に対応する URL を client 内に保持する。
+
+[novel-output.json](contracts/novel-output.json) の126ケースを直接 SDK と保存済みアカウントの両経路で比較する。human は ID/title/author の1行、JSON は NovelDto、NDJSON は canonical novel record を出力する。[novel-input.json](contracts/novel-input.json) の122ケースと [novel-startup.json](contracts/novel-startup.json) の24ケースは実 Rust バイナリで比較する。ID/URL の entity 判定、初回設定と DB 作成順、設定不正の優先順を確認する。`--content` は Go と同じ ContentUnavailable を ID の解析と account 取得より先に返し、非 novel では flag の使用を拒否する。
+
+[mcp-novel-detail.json](contracts/mcp-novel-detail.json) は実 Go MCP session の schema と43ケースである。Rust の直接呼出し、stdio、保存済みアカウントの stdio で record/result と要求数を比較する。required novel_id、未知 key、非整数、float64 経由の int64 overflow の拒否を含む。整数の schema 検証は既存検索と共有し、Go の構造体名と整数型に対応する診断を操作ごとに保持する。公開カタログに novel_detail を追加し、既存4ツールも維持する。
+
+検証環境は Windows amd64。小説の record/text 入力パイプ、aggregate JSON、全 flag 構文/help・TTY/出力 override、部分 writer 失敗、取消/deadline、全数値/JSON 構文、実 HTTPS と他 OS/arch は未検証。小説検索・シリーズ・ユーザー詳細は別の未移植項目として残る。

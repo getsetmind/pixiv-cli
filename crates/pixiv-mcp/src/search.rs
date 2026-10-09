@@ -134,6 +134,15 @@ pub(crate) fn validate_schema(
     path: &str,
     context: &str,
 ) -> Result<(), String> {
+    validate_schema_with_integer_binding(value, schema, path, context, ("searchIllustIn", "int"))
+}
+pub(crate) fn validate_schema_with_integer_binding(
+    value: &mut Value,
+    schema: &Value,
+    path: &str,
+    context: &str,
+    binding: (&str, &str),
+) -> Result<(), String> {
     let expected = schema["type"].as_str().unwrap_or_default();
     let actual = crate::stdio::value_type(value);
     if actual != expected {
@@ -203,26 +212,28 @@ pub(crate) fn validate_schema(
         }
         for (key, value) in map {
             let nested = format!("{path}/properties/{key}");
-            validate_schema(
+            validate_schema_with_integer_binding(
                 value,
                 &properties[key],
                 &nested,
                 &format!("{context}: validating {nested}"),
+                binding,
             )?;
         }
     } else if let Some(values) = value.as_array_mut() {
         for value in values {
             let nested = format!("{path}/items");
-            validate_schema(
+            validate_schema_with_integer_binding(
                 value,
                 &schema["items"],
                 &nested,
                 &format!("{context}: validating {nested}"),
+                binding,
             )?;
         }
     } else if expected == "integer" {
         let decimal = value.as_f64().expect("integer fits float64").to_string();
-        let integer: i64 = decimal.parse().map_err(|_|format!("invalid params: json: cannot unmarshal number {decimal} into Go struct field searchIllustIn.{} of type int",path.strip_prefix("/properties/").unwrap_or(path)))?;
+        let integer: i64 = decimal.parse().map_err(|_|format!("invalid params: json: cannot unmarshal number {decimal} into Go struct field {}.{} of type {}",binding.0,path.strip_prefix("/properties/").unwrap_or(path),binding.1))?;
         *value = json!(integer);
     }
     Ok(())

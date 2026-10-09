@@ -1,0 +1,2523 @@
+{
+  "tool": {
+    "description": "Get detailed information for one Pixiv novel.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "novel_id": {
+          "description": "positive Pixiv novel ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "novel_id"
+      ],
+      "type": "object"
+    },
+    "name": "novel_detail",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "type": "object"
+    }
+  },
+  "cases": [
+    {
+      "name": "mode:",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/novel.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+              "cover": {
+                "height": 0,
+                "resource": {
+                  "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2libTkyWld4ZlkyOTJaWElpTENKcFpDSTZPVE13TVN3aWNDSTZMVEVzSW5ZaU9pSnZjbWxuYVc1aGJDSjkifQ"
+                },
+                "variant": "original",
+                "width": 0
+              },
+              "id": "9301",
+              "is_original": true,
+              "published_at": "2026-08-31T18:04:05.123456789Z",
+              "tags": [
+                {
+                  "name": "novel",
+                  "translated_name": "小説"
+                }
+              ],
+              "text_length": 1234,
+              "title": "小説\nfirst",
+              "total_bookmarks": 12,
+              "total_views": 34,
+              "type": "novel",
+              "updated_at": null,
+              "url": "https://www.pixiv.net/novel/show.php?id=9301",
+              "user": {
+                "account": "author",
+                "comment": "hello",
+                "id": 31,
+                "is_followed": true,
+                "name": "writer",
+                "profile_image": {
+                  "height": 0,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPak14TENKd0lqb3RNU3dpZGlJNkltMWxaR2wxYlNKOSJ9"
+                  },
+                  "variant": "medium",
+                  "width": 0
+                }
+              },
+              "x_restrict": 1
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "body:{}",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": null
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:Novel: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "body:{\"novels\":null}",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": null
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:Novel: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "body:{\"novels\":{}}",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": null
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:Novel: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "body:{\"novels\":[]}",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": null
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:Novel: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "body:{\"novels\":[null]}",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": null
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:Novel: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "body:{\"novels\":[{}]}",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": {}
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:Novel: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "body:{\"novels\":[{\"id\":-1}]}",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": {
+          "id": -1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:Novel: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "body:{\"novels\":[{\"id\":1,\"title\":1}]}",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": {
+          "id": 1,
+          "title": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:Novel: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "body:{\"novels\":[{\"id\":1,\"create_date\":\"invalid\"}]}",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": {
+          "create_date": "invalid",
+          "id": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:Novel: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "field:id:0",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 0,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/novel.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:Novel: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "field:user:\u003cnil\u003e",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/novel.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": null,
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:Novel: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "field:create_date:invalid",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "invalid",
+          "id": 9301,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/novel.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:Novel: malformed_upstream_response: invalid publish time"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "field:tags:[\u003cnil\u003e]",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/novel.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            null
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+              "cover": {
+                "height": 0,
+                "resource": {
+                  "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2libTkyWld4ZlkyOTJaWElpTENKcFpDSTZPVE13TVN3aWNDSTZMVEVzSW5ZaU9pSnZjbWxuYVc1aGJDSjkifQ"
+                },
+                "variant": "original",
+                "width": 0
+              },
+              "id": "9301",
+              "is_original": true,
+              "published_at": "2026-08-31T18:04:05.123456789Z",
+              "tags": [
+                {
+                  "name": "",
+                  "translated_name": ""
+                }
+              ],
+              "text_length": 1234,
+              "title": "小説\nfirst",
+              "total_bookmarks": 12,
+              "total_views": 34,
+              "type": "novel",
+              "updated_at": null,
+              "url": "https://www.pixiv.net/novel/show.php?id=9301",
+              "user": {
+                "account": "author",
+                "comment": "hello",
+                "id": 31,
+                "is_followed": true,
+                "name": "writer",
+                "profile_image": {
+                  "height": 0,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPak14TENKd0lqb3RNU3dpZGlJNkltMWxaR2wxYlNKOSJ9"
+                  },
+                  "variant": "medium",
+                  "width": 0
+                }
+              },
+              "x_restrict": 1
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "field:tags:\u003cnil\u003e",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/novel.jpg"
+          },
+          "is_original": true,
+          "tags": null,
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+              "cover": {
+                "height": 0,
+                "resource": {
+                  "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2libTkyWld4ZlkyOTJaWElpTENKcFpDSTZPVE13TVN3aWNDSTZMVEVzSW5ZaU9pSnZjbWxuYVc1aGJDSjkifQ"
+                },
+                "variant": "original",
+                "width": 0
+              },
+              "id": "9301",
+              "is_original": true,
+              "published_at": "2026-08-31T18:04:05.123456789Z",
+              "tags": [],
+              "text_length": 1234,
+              "title": "小説\nfirst",
+              "total_bookmarks": 12,
+              "total_views": 34,
+              "type": "novel",
+              "updated_at": null,
+              "url": "https://www.pixiv.net/novel/show.php?id=9301",
+              "user": {
+                "account": "author",
+                "comment": "hello",
+                "id": 31,
+                "is_followed": true,
+                "name": "writer",
+                "profile_image": {
+                  "height": 0,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPak14TENKd0lqb3RNU3dpZGlJNkltMWxaR2wxYlNKOSJ9"
+                  },
+                  "variant": "medium",
+                  "width": 0
+                }
+              },
+              "x_restrict": 1
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "field:title:7",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/novel.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": 7,
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:Novel: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "field:x_restrict:1",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/novel.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": "1"
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:Novel: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "field:is_original:true",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/novel.jpg"
+          },
+          "is_original": "true",
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:Novel: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "field:image_urls:map[large:https://i.pximg.net/large.jpg]",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+              "cover": {
+                "height": 0,
+                "resource": {
+                  "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2libTkyWld4ZlkyOTJaWElpTENKcFpDSTZPVE13TVN3aWNDSTZMVEVzSW5ZaU9pSnNZWEpuWlNKOSJ9"
+                },
+                "variant": "large",
+                "width": 0
+              },
+              "id": "9301",
+              "is_original": true,
+              "published_at": "2026-08-31T18:04:05.123456789Z",
+              "tags": [
+                {
+                  "name": "novel",
+                  "translated_name": "小説"
+                }
+              ],
+              "text_length": 1234,
+              "title": "小説\nfirst",
+              "total_bookmarks": 12,
+              "total_views": 34,
+              "type": "novel",
+              "updated_at": null,
+              "url": "https://www.pixiv.net/novel/show.php?id=9301",
+              "user": {
+                "account": "author",
+                "comment": "hello",
+                "id": 31,
+                "is_followed": true,
+                "name": "writer",
+                "profile_image": {
+                  "height": 0,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPak14TENKd0lqb3RNU3dpZGlJNkltMWxaR2wxYlNKOSJ9"
+                  },
+                  "variant": "medium",
+                  "width": 0
+                }
+              },
+              "x_restrict": 1
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "field:image_urls:map[medium:https://i.pximg.net/medium.jpg]",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "medium": "https://i.pximg.net/medium.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+              "cover": {
+                "height": 0,
+                "resource": {
+                  "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2libTkyWld4ZlkyOTJaWElpTENKcFpDSTZPVE13TVN3aWNDSTZMVEVzSW5ZaU9pSnRaV1JwZFcwaWZRPT0ifQ"
+                },
+                "variant": "medium",
+                "width": 0
+              },
+              "id": "9301",
+              "is_original": true,
+              "published_at": "2026-08-31T18:04:05.123456789Z",
+              "tags": [
+                {
+                  "name": "novel",
+                  "translated_name": "小説"
+                }
+              ],
+              "text_length": 1234,
+              "title": "小説\nfirst",
+              "total_bookmarks": 12,
+              "total_views": 34,
+              "type": "novel",
+              "updated_at": null,
+              "url": "https://www.pixiv.net/novel/show.php?id=9301",
+              "user": {
+                "account": "author",
+                "comment": "hello",
+                "id": 31,
+                "is_followed": true,
+                "name": "writer",
+                "profile_image": {
+                  "height": 0,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPak14TENKd0lqb3RNU3dpZGlJNkltMWxaR2wxYlNKOSJ9"
+                  },
+                  "variant": "medium",
+                  "width": 0
+                }
+              },
+              "x_restrict": 1
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "field:image_urls:map[square_medium:https://i.pximg.net/square.jpg]",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "square_medium": "https://i.pximg.net/square.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+              "cover": {
+                "height": 0,
+                "resource": {
+                  "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2libTkyWld4ZlkyOTJaWElpTENKcFpDSTZPVE13TVN3aWNDSTZMVEVzSW5ZaU9pSnpjWFZoY21WZmJXVmthWFZ0SW4wPSJ9"
+                },
+                "variant": "square_medium",
+                "width": 0
+              },
+              "id": "9301",
+              "is_original": true,
+              "published_at": "2026-08-31T18:04:05.123456789Z",
+              "tags": [
+                {
+                  "name": "novel",
+                  "translated_name": "小説"
+                }
+              ],
+              "text_length": 1234,
+              "title": "小説\nfirst",
+              "total_bookmarks": 12,
+              "total_views": 34,
+              "type": "novel",
+              "updated_at": null,
+              "url": "https://www.pixiv.net/novel/show.php?id=9301",
+              "user": {
+                "account": "author",
+                "comment": "hello",
+                "id": 31,
+                "is_followed": true,
+                "name": "writer",
+                "profile_image": {
+                  "height": 0,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPak14TENKd0lqb3RNU3dpZGlJNkltMWxaR2wxYlNKOSJ9"
+                  },
+                  "variant": "medium",
+                  "width": 0
+                }
+              },
+              "x_restrict": 1
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "field:image_urls:map[original:https://evil.example/cover.jpg]",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "original": "https://evil.example/cover.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:resource: resource_forbidden: resource host is not allowed"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "field:user:map[id:31 profile_image_urls:map[medium:https://evil.example/profile.jpg]]",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/novel.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "id": 31,
+            "profile_image_urls": {
+              "medium": "https://evil.example/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+              "cover": {
+                "height": 0,
+                "resource": {
+                  "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2libTkyWld4ZlkyOTJaWElpTENKcFpDSTZPVE13TVN3aWNDSTZMVEVzSW5ZaU9pSnZjbWxuYVc1aGJDSjkifQ"
+                },
+                "variant": "original",
+                "width": 0
+              },
+              "id": "9301",
+              "is_original": true,
+              "published_at": "2026-08-31T18:04:05.123456789Z",
+              "tags": [
+                {
+                  "name": "novel",
+                  "translated_name": "小説"
+                }
+              ],
+              "text_length": 1234,
+              "title": "小説\nfirst",
+              "total_bookmarks": 12,
+              "total_views": 34,
+              "type": "novel",
+              "updated_at": null,
+              "url": "https://www.pixiv.net/novel/show.php?id=9301",
+              "user": {
+                "account": "",
+                "comment": "",
+                "id": 31,
+                "is_followed": false,
+                "name": "",
+                "profile_image": {
+                  "height": 0,
+                  "resource": null,
+                  "variant": "",
+                  "width": 0
+                }
+              },
+              "x_restrict": 1
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "series_next:\u003cnil\u003e",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/novel.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        },
+        "series_next": null
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+              "cover": {
+                "height": 0,
+                "resource": {
+                  "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2libTkyWld4ZlkyOTJaWElpTENKcFpDSTZPVE13TVN3aWNDSTZMVEVzSW5ZaU9pSnZjbWxuYVc1aGJDSjkifQ"
+                },
+                "variant": "original",
+                "width": 0
+              },
+              "id": "9301",
+              "is_original": true,
+              "published_at": "2026-08-31T18:04:05.123456789Z",
+              "tags": [
+                {
+                  "name": "novel",
+                  "translated_name": "小説"
+                }
+              ],
+              "text_length": 1234,
+              "title": "小説\nfirst",
+              "total_bookmarks": 12,
+              "total_views": 34,
+              "type": "novel",
+              "updated_at": null,
+              "url": "https://www.pixiv.net/novel/show.php?id=9301",
+              "user": {
+                "account": "author",
+                "comment": "hello",
+                "id": 31,
+                "is_followed": true,
+                "name": "writer",
+                "profile_image": {
+                  "height": 0,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPak14TENKd0lqb3RNU3dpZGlJNkltMWxaR2wxYlNKOSJ9"
+                  },
+                  "variant": "medium",
+                  "width": 0
+                }
+              },
+              "x_restrict": 1
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "series_next:map[id:5 title:next]",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/novel.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        },
+        "series_next": {
+          "id": 5,
+          "title": "next"
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+              "cover": {
+                "height": 0,
+                "resource": {
+                  "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2libTkyWld4ZlkyOTJaWElpTENKcFpDSTZPVE13TVN3aWNDSTZMVEVzSW5ZaU9pSnZjbWxuYVc1aGJDSjkifQ"
+                },
+                "variant": "original",
+                "width": 0
+              },
+              "id": "9301",
+              "is_original": true,
+              "published_at": "2026-08-31T18:04:05.123456789Z",
+              "tags": [
+                {
+                  "name": "novel",
+                  "translated_name": "小説"
+                }
+              ],
+              "text_length": 1234,
+              "title": "小説\nfirst",
+              "total_bookmarks": 12,
+              "total_views": 34,
+              "type": "novel",
+              "updated_at": null,
+              "url": "https://www.pixiv.net/novel/show.php?id=9301",
+              "user": {
+                "account": "author",
+                "comment": "hello",
+                "id": 31,
+                "is_followed": true,
+                "name": "writer",
+                "profile_image": {
+                  "height": 0,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPak14TENKd0lqb3RNU3dpZGlJNkltMWxaR2wxYlNKOSJ9"
+                  },
+                  "variant": "medium",
+                  "width": 0
+                }
+              },
+              "x_restrict": 1
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "series_next:map[id:0]",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/novel.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        },
+        "series_next": {
+          "id": 0
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:Novel: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "series_next:map[id:-1]",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/novel.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        },
+        "series_next": {
+          "id": -1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:Novel: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "series_next:map[id:5]",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/novel.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        },
+        "series_next": {
+          "id": "5"
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:Novel: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "series_next:map[id:5 title:7]",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/novel.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        },
+        "series_next": {
+          "id": 5,
+          "title": 7
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:Novel: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "series_prev:\u003cnil\u003e",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/novel.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        },
+        "series_prev": null
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+              "cover": {
+                "height": 0,
+                "resource": {
+                  "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2libTkyWld4ZlkyOTJaWElpTENKcFpDSTZPVE13TVN3aWNDSTZMVEVzSW5ZaU9pSnZjbWxuYVc1aGJDSjkifQ"
+                },
+                "variant": "original",
+                "width": 0
+              },
+              "id": "9301",
+              "is_original": true,
+              "published_at": "2026-08-31T18:04:05.123456789Z",
+              "tags": [
+                {
+                  "name": "novel",
+                  "translated_name": "小説"
+                }
+              ],
+              "text_length": 1234,
+              "title": "小説\nfirst",
+              "total_bookmarks": 12,
+              "total_views": 34,
+              "type": "novel",
+              "updated_at": null,
+              "url": "https://www.pixiv.net/novel/show.php?id=9301",
+              "user": {
+                "account": "author",
+                "comment": "hello",
+                "id": 31,
+                "is_followed": true,
+                "name": "writer",
+                "profile_image": {
+                  "height": 0,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPak14TENKd0lqb3RNU3dpZGlJNkltMWxaR2wxYlNKOSJ9"
+                  },
+                  "variant": "medium",
+                  "width": 0
+                }
+              },
+              "x_restrict": 1
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "series_prev:map[id:5 title:next]",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/novel.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        },
+        "series_prev": {
+          "id": 5,
+          "title": "next"
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+              "cover": {
+                "height": 0,
+                "resource": {
+                  "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2libTkyWld4ZlkyOTJaWElpTENKcFpDSTZPVE13TVN3aWNDSTZMVEVzSW5ZaU9pSnZjbWxuYVc1aGJDSjkifQ"
+                },
+                "variant": "original",
+                "width": 0
+              },
+              "id": "9301",
+              "is_original": true,
+              "published_at": "2026-08-31T18:04:05.123456789Z",
+              "tags": [
+                {
+                  "name": "novel",
+                  "translated_name": "小説"
+                }
+              ],
+              "text_length": 1234,
+              "title": "小説\nfirst",
+              "total_bookmarks": 12,
+              "total_views": 34,
+              "type": "novel",
+              "updated_at": null,
+              "url": "https://www.pixiv.net/novel/show.php?id=9301",
+              "user": {
+                "account": "author",
+                "comment": "hello",
+                "id": 31,
+                "is_followed": true,
+                "name": "writer",
+                "profile_image": {
+                  "height": 0,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPak14TENKd0lqb3RNU3dpZGlJNkltMWxaR2wxYlNKOSJ9"
+                  },
+                  "variant": "medium",
+                  "width": 0
+                }
+              },
+              "x_restrict": 1
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "series_prev:map[id:0]",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/novel.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        },
+        "series_prev": {
+          "id": 0
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:Novel: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "series_prev:map[id:-1]",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/novel.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        },
+        "series_prev": {
+          "id": -1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:Novel: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "series_prev:map[id:5]",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/novel.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        },
+        "series_prev": {
+          "id": "5"
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:Novel: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "series_prev:map[id:5 title:7]",
+      "arguments": {
+        "novel_id": 42
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/novel.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        },
+        "series_prev": {
+          "id": 5,
+          "title": 7
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:Novel: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "argument-a",
+      "arguments": {},
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/novel.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        }
+      },
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: required: missing properties: [\"novel_id\"]"
+    },
+    {
+      "name": "argument-b",
+      "arguments": {
+        "novel_id": 0
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/novel.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: novel_id must be a positive integer"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": ""
+    },
+    {
+      "name": "argument-c",
+      "arguments": {
+        "novel_id": -1
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/novel.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: novel_id must be a positive integer"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": ""
+    },
+    {
+      "name": "argument-d",
+      "arguments": {
+        "novel_id": 42,
+        "url": "https://www.pixiv.net/novel/show.php?id=42"
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/novel.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        }
+      },
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: unexpected additional properties [\"url\"]"
+    },
+    {
+      "name": "argument-e",
+      "arguments": {
+        "novel_id": 9223372036854775807
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/novel.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        }
+      },
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: json: cannot unmarshal number 9223372036854776000 into Go struct field In.novel_id of type int64"
+    },
+    {
+      "name": "argument-f",
+      "arguments": {
+        "novel_id": "42"
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/novel.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        }
+      },
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/novel_id: type: 42 has type \"string\", want \"integer\""
+    },
+    {
+      "name": "argument-g",
+      "arguments": {
+        "novel_id": null
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/novel.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        }
+      },
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/novel_id: type: \u003cinvalid reflect.Value\u003e has type \"null\", want \"integer\""
+    },
+    {
+      "name": "argument-h",
+      "arguments": {
+        "novel_id": 1.5
+      },
+      "body": {
+        "novel": {
+          "caption": "\u003cp\u003ecaption\u003c/p\u003e",
+          "create_date": "2026-09-01T03:04:05.123456789+09:00",
+          "id": 9301,
+          "image_urls": {
+            "large": "https://i.pximg.net/large.jpg",
+            "original": "https://i.pximg.net/novel.jpg"
+          },
+          "is_original": true,
+          "tags": [
+            {
+              "name": "novel",
+              "translated_name": "小説"
+            }
+          ],
+          "text_length": 1234,
+          "title": "小説\nfirst",
+          "total_bookmarks": 12,
+          "total_view": 34,
+          "user": {
+            "account": "author",
+            "comment": "hello",
+            "id": 31,
+            "is_followed": true,
+            "name": "writer",
+            "profile_image_urls": {
+              "medium": "https://i.pximg.net/profile.jpg"
+            }
+          },
+          "x_restrict": 1
+        }
+      },
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/novel_id: type: 1.5 has type \"number\", want \"integer\""
+    }
+  ]
+}

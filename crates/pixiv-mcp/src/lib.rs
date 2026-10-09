@@ -5,7 +5,9 @@ use pixiv_sdk::{
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
+mod novel;
 mod ranking;
+pub use novel::{NovelDetailInput, novel_detail, novel_detail_tool};
 mod search;
 mod trending;
 pub use ranking::{IllustRankingInput, illust_ranking, illust_ranking_tool};
@@ -105,7 +107,10 @@ pub(crate) async fn saved_illust_detail_with_proxy<T: Transport + 'static>(
 }
 
 fn artwork_result(artwork: &pixiv_sdk::models::Artwork) -> CallToolResult {
-    match pixiv_record::from_artwork(artwork) {
+    record_result(pixiv_record::from_artwork(artwork))
+}
+pub(crate) fn record_result(record: Result<Value, pixiv_record::RecordError>) -> CallToolResult {
+    match record {
         Ok(mut record) => {
             structured_wire_numbers(&mut record);
             CallToolResult {
