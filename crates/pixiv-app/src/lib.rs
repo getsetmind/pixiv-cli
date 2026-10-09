@@ -13,6 +13,7 @@ pub mod diagnostics;
 pub mod execution;
 pub mod facade;
 pub mod gate;
+pub mod handoff_client;
 pub mod handoff_protocol;
 pub mod handoff_state;
 mod lease;

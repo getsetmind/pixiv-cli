@@ -1,0 +1,439 @@
+{
+  "authorization_url": "https://app-api.pixiv.net/web/v1/login?client=pixiv-android&code_challenge_method=S256&code_challenge=synthetic&state=synthetic",
+  "start": [
+    {
+      "name": "success",
+      "body": "{\"authorization_url\":\"https://app-api.pixiv.net/web/v1/login?client=pixiv-android&code_challenge_method=S256&code_challenge=synthetic&state=synthetic\"}",
+      "error": "",
+      "read_error": false
+    },
+    {
+      "name": "casefold",
+      "body": "{\"AUTHORIZATION_URL\":\"https://app-api.pixiv.net/web/v1/login?client=pixiv-android&code_challenge_method=S256&code_challenge=synthetic&state=synthetic\"}",
+      "error": "",
+      "read_error": false
+    },
+    {
+      "name": "duplicate_null",
+      "body": "{\"authorization_url\":\"https://app-api.pixiv.net/web/v1/login?client=pixiv-android&code_challenge_method=S256&code_challenge=synthetic&state=synthetic\",\"authorization_url\":null}",
+      "error": "",
+      "read_error": false
+    },
+    {
+      "name": "duplicate_repair",
+      "body": "{\"authorization_url\":\"bad\",\"AUTHORIZATION_URL\":\"https://app-api.pixiv.net/web/v1/login?client=pixiv-android&code_challenge_method=S256&code_challenge=synthetic&state=synthetic\"}",
+      "error": "",
+      "read_error": false
+    },
+    {
+      "name": "wrong_type_sticky",
+      "body": "{\"authorization_url\":false,\"authorization_url\":\"https://app-api.pixiv.net/web/v1/login?client=pixiv-android&code_challenge_method=S256&code_challenge=synthetic&state=synthetic\"}",
+      "error": "remote Pixiv login relay returned an invalid sign-in address",
+      "read_error": false
+    },
+    {
+      "name": "null",
+      "body": "null",
+      "error": "remote Pixiv login relay returned an invalid sign-in address",
+      "read_error": false
+    },
+    {
+      "name": "malformed",
+      "body": "{",
+      "error": "remote Pixiv login relay returned an invalid sign-in address",
+      "read_error": false
+    },
+    {
+      "name": "trailing",
+      "body": "{\"authorization_url\":\"https://app-api.pixiv.net/web/v1/login?client=pixiv-android&code_challenge_method=S256&code_challenge=synthetic&state=synthetic\"} null",
+      "error": "remote Pixiv login relay returned an invalid sign-in address",
+      "read_error": false
+    },
+    {
+      "name": "initial_read_error",
+      "body": "",
+      "error": "remote Pixiv login relay returned an invalid sign-in address",
+      "read_error": true
+    },
+    {
+      "name": "trailing_read_error",
+      "body": "{\"authorization_url\":\"https://app-api.pixiv.net/web/v1/login?client=pixiv-android&code_challenge_method=S256&code_challenge=synthetic&state=synthetic\"}",
+      "error": "remote Pixiv login relay returned an invalid sign-in address",
+      "read_error": true
+    },
+    {
+      "name": "data_and_error_complete",
+      "body": "{\"authorization_url\": \"https://app-api.pixiv.net/web/v1/login?client=pixiv-android&code_challenge_method=S256&code_challenge=synthetic&state=synthetic\"}",
+      "error": "",
+      "read_error": false,
+      "data_error": true
+    },
+    {
+      "name": "data_and_error_partial",
+      "body": "{\"authorization_url\":\"",
+      "error": "remote Pixiv login relay returned an invalid sign-in address",
+      "read_error": false,
+      "data_error": true
+    }
+  ],
+  "completion": [
+    {
+      "name": "success",
+      "body": "{\"success\":true}",
+      "error": "",
+      "read_error": false
+    },
+    {
+      "name": "casefold",
+      "body": "{\"SuCcEsS\":true}",
+      "error": "",
+      "read_error": false
+    },
+    {
+      "name": "unicode_casefold",
+      "body": "{\"ſucceſſ\":true}",
+      "error": "",
+      "read_error": false
+    },
+    {
+      "name": "duplicate_last_false",
+      "body": "{\"success\":true,\"SUCCESS\":false}",
+      "error": "remote Pixiv login relay reported that login failed",
+      "read_error": false
+    },
+    {
+      "name": "duplicate_last_true",
+      "body": "{\"success\":false,\"SUCCESS\":true}",
+      "error": "",
+      "read_error": false
+    },
+    {
+      "name": "null_preserves",
+      "body": "{\"success\":true,\"success\":null}",
+      "error": "",
+      "read_error": false
+    },
+    {
+      "name": "null_default",
+      "body": "{\"success\":null}",
+      "error": "remote Pixiv login relay reported that login failed",
+      "read_error": false
+    },
+    {
+      "name": "root_null",
+      "body": "null",
+      "error": "remote Pixiv login relay reported that login failed",
+      "read_error": false
+    },
+    {
+      "name": "unknown_fields",
+      "body": "{\"unknown\":{\"n\":1e9999},\"success\":true}",
+      "error": "",
+      "read_error": false
+    },
+    {
+      "name": "wrong_type_sticky",
+      "body": "{\"success\":\"bad\",\"success\":true}",
+      "error": "remote Pixiv login relay did not return a final result",
+      "read_error": false
+    },
+    {
+      "name": "wrong_type",
+      "body": "{\"success\":1}",
+      "error": "remote Pixiv login relay did not return a final result",
+      "read_error": false
+    },
+    {
+      "name": "array",
+      "body": "[]",
+      "error": "remote Pixiv login relay did not return a final result",
+      "read_error": false
+    },
+    {
+      "name": "empty",
+      "body": "",
+      "error": "remote Pixiv login relay did not return a final result",
+      "read_error": false
+    },
+    {
+      "name": "malformed",
+      "body": "{\"success\":true",
+      "error": "remote Pixiv login relay did not return a final result",
+      "read_error": false
+    },
+    {
+      "name": "trailing_whitespace",
+      "body": "{\"success\":true} \r\n\t",
+      "error": "",
+      "read_error": false
+    },
+    {
+      "name": "trailing_object",
+      "body": "{\"success\":true} {}",
+      "error": "remote Pixiv login relay returned an invalid final result",
+      "read_error": false
+    },
+    {
+      "name": "trailing_null",
+      "body": "{\"success\":true} null",
+      "error": "remote Pixiv login relay returned an invalid final result",
+      "read_error": false
+    },
+    {
+      "name": "trailing_malformed",
+      "body": "{\"success\":true} !",
+      "error": "remote Pixiv login relay returned an invalid final result",
+      "read_error": false
+    },
+    {
+      "name": "false_trailing_priority",
+      "body": "{\"success\":false} {}",
+      "error": "remote Pixiv login relay returned an invalid final result",
+      "read_error": false
+    },
+    {
+      "name": "initial_read_error",
+      "body": "",
+      "error": "remote Pixiv login relay did not return a final result",
+      "read_error": true
+    },
+    {
+      "name": "trailing_read_error",
+      "body": "{\"success\":true}",
+      "error": "remote Pixiv login relay returned an invalid final result",
+      "read_error": true
+    },
+    {
+      "name": "data_and_error_complete",
+      "body": "{\"success\":true}",
+      "error": "",
+      "read_error": false,
+      "data_error": true
+    },
+    {
+      "name": "data_and_error_partial",
+      "body": "{\"success\":tru",
+      "error": "remote Pixiv login relay did not return a final result",
+      "read_error": false,
+      "data_error": true
+    },
+    {
+      "name": "null_adjacent_invalid",
+      "body": "null!",
+      "error": "remote Pixiv login relay returned an invalid final result",
+      "read_error": false
+    },
+    {
+      "name": "null_adjacent_true",
+      "body": "nulltrue",
+      "error": "remote Pixiv login relay returned an invalid final result",
+      "read_error": false
+    }
+  ],
+  "proxy": [
+    {
+      "name": "upper_precedence",
+      "url": "http://public.example/resource",
+      "env": {
+        "HTTP_PROXY": "http://upper.example:8080",
+        "http_proxy": "http://lower.example:8081"
+      },
+      "proxy": "http://upper.example:8080",
+      "error": ""
+    },
+    {
+      "name": "lower_fallback",
+      "url": "http://public.example/resource",
+      "env": {
+        "http_proxy": "lower.example:8081"
+      },
+      "proxy": "http://lower.example:8081",
+      "error": ""
+    },
+    {
+      "name": "https_selector",
+      "url": "https://public.example/resource",
+      "env": {
+        "HTTP_PROXY": "http://http.example:80",
+        "HTTPS_PROXY": "http://https.example:443"
+      },
+      "proxy": "http://https.example:443",
+      "error": ""
+    },
+    {
+      "name": "all_proxy_ignored",
+      "url": "https://public.example/resource",
+      "env": {
+        "ALL_PROXY": "http://all.example:8080"
+      },
+      "proxy": "",
+      "error": ""
+    },
+    {
+      "name": "loopback",
+      "url": "http://127.0.0.1:321/resource",
+      "env": {
+        "HTTP_PROXY": "http://proxy.example:8080"
+      },
+      "proxy": "",
+      "error": ""
+    },
+    {
+      "name": "localhost",
+      "url": "http://localhost:321/resource",
+      "env": {
+        "HTTP_PROXY": "http://proxy.example:8080"
+      },
+      "proxy": "",
+      "error": ""
+    },
+    {
+      "name": "no_proxy_cidr",
+      "url": "http://192.0.2.10/resource",
+      "env": {
+        "HTTP_PROXY": "http://proxy.example:8080",
+        "NO_PROXY": "192.0.2.0/24"
+      },
+      "proxy": "",
+      "error": ""
+    },
+    {
+      "name": "no_proxy_domain",
+      "url": "http://sub.example.org/resource",
+      "env": {
+        "HTTP_PROXY": "http://proxy.example:8080",
+        "NO_PROXY": ".example.org"
+      },
+      "proxy": "",
+      "error": ""
+    },
+    {
+      "name": "no_proxy_domain_root",
+      "url": "http://example.org/resource",
+      "env": {
+        "HTTP_PROXY": "http://proxy.example:8080",
+        "NO_PROXY": ".example.org"
+      },
+      "proxy": "http://proxy.example:8080",
+      "error": ""
+    },
+    {
+      "name": "no_proxy_port_matches",
+      "url": "http://public.example:123/resource",
+      "env": {
+        "HTTP_PROXY": "http://proxy.example:8080",
+        "NO_PROXY": "public.example:123"
+      },
+      "proxy": "",
+      "error": ""
+    },
+    {
+      "name": "no_proxy_port_differs",
+      "url": "http://public.example:124/resource",
+      "env": {
+        "HTTP_PROXY": "http://proxy.example:8080",
+        "NO_PROXY": "public.example:123"
+      },
+      "proxy": "http://proxy.example:8080",
+      "error": ""
+    },
+    {
+      "name": "lower_no_proxy",
+      "url": "http://public.example/resource",
+      "env": {
+        "HTTP_PROXY": "http://proxy.example:8080",
+        "no_proxy": "*"
+      },
+      "proxy": "",
+      "error": ""
+    },
+    {
+      "name": "upper_no_proxy_precedence",
+      "url": "http://public.example/resource",
+      "env": {
+        "HTTP_PROXY": "http://proxy.example:8080",
+        "NO_PROXY": "other.example",
+        "no_proxy": "*"
+      },
+      "proxy": "http://proxy.example:8080",
+      "error": ""
+    },
+    {
+      "name": "cgi_http_rejected",
+      "url": "http://public.example/resource",
+      "env": {
+        "HTTP_PROXY": "http://proxy.example:8080",
+        "REQUEST_METHOD": "GET"
+      },
+      "proxy": "",
+      "error": "refusing to use HTTP_PROXY value in CGI environment; see golang.org/s/cgihttpproxy"
+    },
+    {
+      "name": "ipv6_loopback",
+      "url": "http://[::1]:321/resource",
+      "env": {
+        "HTTP_PROXY": "http://proxy.example:8080"
+      },
+      "proxy": "",
+      "error": ""
+    },
+    {
+      "name": "empty_request_port_default",
+      "url": "http://public.example:/resource",
+      "env": {
+        "HTTP_PROXY": "http://proxy.example:8080",
+        "NO_PROXY": "public.example:80"
+      },
+      "proxy": "",
+      "error": ""
+    },
+    {
+      "name": "empty_no_proxy_port_wildcard",
+      "url": "http://public.example:123/resource",
+      "env": {
+        "HTTP_PROXY": "http://proxy.example:8080",
+        "NO_PROXY": "public.example:"
+      },
+      "proxy": "",
+      "error": ""
+    },
+    {
+      "name": "mapped_ipv4_cidr",
+      "url": "http://[::ffff:192.0.2.10]/resource",
+      "env": {
+        "HTTP_PROXY": "http://proxy.example:8080",
+        "NO_PROXY": "::ffff:192.0.2.10/128"
+      },
+      "proxy": "",
+      "error": ""
+    },
+    {
+      "name": "repeated_leading_dot",
+      "url": "http://public.example/resource",
+      "env": {
+        "HTTP_PROXY": "http://proxy.example:8080",
+        "NO_PROXY": "..public.example"
+      },
+      "proxy": "http://proxy.example:8080",
+      "error": ""
+    },
+    {
+      "name": "upper_proxy_scheme",
+      "url": "http://public.example/resource",
+      "env": {
+        "HTTP_PROXY": "HTTP://proxy.example:8080"
+      },
+      "proxy": "http://proxy.example:8080",
+      "error": ""
+    },
+    {
+      "name": "ipv6_loopback_no_port",
+      "url": "http://[::1]/resource",
+      "env": {
+        "HTTP_PROXY": "http://proxy.example:8080"
+      },
+      "proxy": "",
+      "error": ""
+    }
+  ]
+}

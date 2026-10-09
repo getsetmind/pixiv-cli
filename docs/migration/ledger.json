@@ -207,18 +207,24 @@
       "rust_sources": [
         "crates/pixiv-app/src/handoff_protocol.rs",
         "crates/pixiv-app/src/handoff_state.rs",
-        "crates/pixiv-app/src/private_lock.rs"
+        "crates/pixiv-app/src/private_lock.rs",
+        "crates/pixiv-app/src/handoff_client.rs",
+        "crates/pixiv-app/src/handoff_client/http.rs",
+        "crates/pixiv-app/src/handoff_client/json.rs"
       ],
       "tests": [
         "internal/cli/commands/pixiv/auth/loginhelper/migration_protocol_test.go",
         "internal/cli/commands/pixiv/auth/loginhelper/migration_state_test.go",
         "crates/pixiv-app/tests/handoff_protocol.rs",
         "crates/pixiv-app/tests/handoff_state.rs",
-        "crates/pixiv-app/tests/fixtures/handoff_protocol.json"
+        "crates/pixiv-app/tests/fixtures/handoff_protocol.json",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_client_test.go",
+        "crates/pixiv-app/tests/handoff_client.rs",
+        "crates/pixiv-app/tests/fixtures/handoff_client.json"
       ],
       "verified_platforms": [],
       "differences": [
-        "CLI login/hidden callback入口は未接続。入力/pages/local HTTP bridgeとremote handoffのpure protocol/private capability state依存は対象例で実装するが、streaming Start/Forward/Complete・relay server期限/context・default state path・full startup/options/TTY/browser/OS handler adapterは未移植。Go stateにTTLは無く追加しない。nonUTF8 URL components対Rust String、全URL/raw-wire/HTTP/MIME/parser/clock/backpressure/socket flush・native hostname/service-port/Go native exact診断・SDK owned HTTP/context/idle lifecycle・blocked prompt cleanup・全platformは未検証または差分。sidecar process lock/取消/duplicate waiterの対象scheduleは全並行scheduleの証明ではなく、Windows lock compile/run/ACL/native errorsも未検証。"
+        "CLI login/hidden callback入口は未接続。input/pages/local bridge・remote pure protocol/private state/streaming Start/Forward/Complete/Abort依存は対象例で実装するが、relay server期限/context・default state path・full startup/options/TTY/browser/OS handler adapterは未移植。Go stateにTTLは無く追加しない。nonUTF8 URL/環境値対String、全URL/JSON/native header・Go native exact診断・TLS/proxy実通信/IDNA/IPv6zone/unknown proxy scheme・gzip/wire data+error chunking・全concurrency/cancel/clock/socket flush/backpressureとWindows/native platformは未検証または差分。HandoffReadの0None=EOFはarbitrary Go Readerの0nil/data+EOFを表せずsynthetic n+nonEOF read-error例を全native wireへ外挿しない。SDK owned HTTP/context/idle lifecycle・blocked prompt cleanup・全並行scheduleの既存debtも保持する。 native reqwest0.13.5がAccept: */*を追加する具体差分はGoのAccept不在と別々にcaptureし未解消とする。native header parityを宣言しない。"
       ]
     },
     {
@@ -402,7 +408,10 @@
         "crates/pixiv-app/src/login_bridge.rs",
         "crates/pixiv-app/src/handoff_protocol.rs",
         "crates/pixiv-app/src/handoff_state.rs",
-        "crates/pixiv-app/src/private_lock.rs"
+        "crates/pixiv-app/src/private_lock.rs",
+        "crates/pixiv-app/src/handoff_client.rs",
+        "crates/pixiv-app/src/handoff_client/http.rs",
+        "crates/pixiv-app/src/handoff_client/json.rs"
       ],
       "tests": [
         "internal/cli/commands/pixiv/auth/migration_input_test.go",
@@ -418,11 +427,14 @@
         "internal/cli/commands/pixiv/auth/loginhelper/migration_state_test.go",
         "crates/pixiv-app/tests/handoff_protocol.rs",
         "crates/pixiv-app/tests/handoff_state.rs",
-        "crates/pixiv-app/tests/fixtures/handoff_protocol.json"
+        "crates/pixiv-app/tests/fixtures/handoff_protocol.json",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_client_test.go",
+        "crates/pixiv-app/tests/handoff_client.rs",
+        "crates/pixiv-app/tests/fixtures/handoff_client.json"
       ],
       "verified_platforms": [],
       "differences": [
-        "CLI login/hidden callback入口は未接続。入力/pages/local HTTP bridgeとremote handoffのpure protocol/private capability state依存は対象例で実装するが、streaming Start/Forward/Complete・relay server期限/context・default state path・full startup/options/TTY/browser/OS handler adapterは未移植。Go stateにTTLは無く追加しない。nonUTF8 URL components対Rust String、全URL/raw-wire/HTTP/MIME/parser/clock/backpressure/socket flush・native hostname/service-port/Go native exact診断・SDK owned HTTP/context/idle lifecycle・blocked prompt cleanup・全platformは未検証または差分。sidecar process lock/取消/duplicate waiterの対象scheduleは全並行scheduleの証明ではなく、Windows lock compile/run/ACL/native errorsも未検証。"
+        "CLI login/hidden callback入口は未接続。input/pages/local bridge・remote pure protocol/private state/streaming Start/Forward/Complete/Abort依存は対象例で実装するが、relay server期限/context・default state path・full startup/options/TTY/browser/OS handler adapterは未移植。Go stateにTTLは無く追加しない。nonUTF8 URL/環境値対String、全URL/JSON/native header・Go native exact診断・TLS/proxy実通信/IDNA/IPv6zone/unknown proxy scheme・gzip/wire data+error chunking・全concurrency/cancel/clock/socket flush/backpressureとWindows/native platformは未検証または差分。HandoffReadの0None=EOFはarbitrary Go Readerの0nil/data+EOFを表せずsynthetic n+nonEOF read-error例を全native wireへ外挿しない。SDK owned HTTP/context/idle lifecycle・blocked prompt cleanup・全並行scheduleの既存debtも保持する。 native reqwest0.13.5がAccept: */*を追加する具体差分はGoのAccept不在と別々にcaptureし未解消とする。native header parityを宣言しない。"
       ]
     },
     {

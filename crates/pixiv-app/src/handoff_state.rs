@@ -115,13 +115,9 @@ pub fn save_active_remote_login_at(
     path: &Path,
     session: &ActiveRemoteLogin,
 ) -> Result<(), HandoffStateError> {
-    let body = serde_json::to_string(session)
-        .map_err(|_| HandoffStateError::Invalid)?
-        .replace('&', "\\u0026")
-        .replace('<', "\\u003c")
-        .replace('>', "\\u003e")
-        .replace('\u{2028}', "\\u2028")
-        .replace('\u{2029}', "\\u2029");
+    let body = crate::auth_bundle::escape_json_html(
+        serde_json::to_string(session).map_err(|_| HandoffStateError::Invalid)?,
+    );
     private_file::write(path, body.as_bytes()).map_err(Into::into)
 }
 
@@ -145,7 +141,7 @@ pub fn load_active_remote_login_at(path: &Path) -> Result<ActiveRemoteLogin, Han
     Ok(session)
 }
 
-fn validate_json_depth(body: &str) -> Result<(), HandoffStateError> {
+pub(crate) fn validate_json_depth(body: &str) -> Result<(), HandoffStateError> {
     let mut depth = 0_u32;
     let mut in_string = false;
     let mut escaped = false;

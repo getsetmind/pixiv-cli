@@ -44,13 +44,15 @@ pub fn encode(bundle: &AuthExportBundle) -> Result<Vec<u8>, AuthBundleError> {
     }
     let json =
         serde_json::to_string(bundle).map_err(|_| error("auth export bundle encoding failed"))?;
-    Ok(json
-        .replace('&', "\\u0026")
+    Ok(escape_json_html(json).into_bytes())
+}
+
+pub(crate) fn escape_json_html(json: String) -> String {
+    json.replace('&', "\\u0026")
         .replace('<', "\\u003c")
         .replace('>', "\\u003e")
         .replace('\u{2028}', "\\u2028")
         .replace('\u{2029}', "\\u2029")
-        .into_bytes())
 }
 
 enum Node {
@@ -127,7 +129,7 @@ impl<'de> Deserialize<'de> for Node {
     }
 }
 
-fn folded(key: &str, name: &str) -> bool {
+pub(crate) fn folded(key: &str, name: &str) -> bool {
     key.chars()
         .map(|c| match c {
             '\u{017f}' => 'S',
