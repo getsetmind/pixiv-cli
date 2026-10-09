@@ -445,7 +445,7 @@ pub(crate) fn go_utf8(raw: &[u8]) -> String {
     }
     text
 }
-fn normalize_strings(raw: &[u8]) -> String {
+pub(crate) fn normalize_strings(raw: &[u8]) -> String {
     let text = go_utf8(raw);
     let bytes = text.as_bytes();
     let mut normalized = Vec::with_capacity(bytes.len());

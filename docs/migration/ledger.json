@@ -204,10 +204,22 @@
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv auth _callback"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-app/src/handoff_protocol.rs",
+        "crates/pixiv-app/src/handoff_state.rs",
+        "crates/pixiv-app/src/private_lock.rs"
+      ],
+      "tests": [
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_protocol_test.go",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_state_test.go",
+        "crates/pixiv-app/tests/handoff_protocol.rs",
+        "crates/pixiv-app/tests/handoff_state.rs",
+        "crates/pixiv-app/tests/fixtures/handoff_protocol.json"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "CLI login/hidden callback入口は未接続。入力/pages/local HTTP bridgeとremote handoffのpure protocol/private capability state依存は対象例で実装するが、streaming Start/Forward/Complete・relay server期限/context・default state path・full startup/options/TTY/browser/OS handler adapterは未移植。Go stateにTTLは無く追加しない。nonUTF8 URL components対Rust String、全URL/raw-wire/HTTP/MIME/parser/clock/backpressure/socket flush・native hostname/service-port/Go native exact診断・SDK owned HTTP/context/idle lifecycle・blocked prompt cleanup・全platformは未検証または差分。sidecar process lock/取消/duplicate waiterの対象scheduleは全並行scheduleの証明ではなく、Windows lock compile/run/ACL/native errorsも未検証。"
+      ]
     },
     {
       "id": "cli:pixiv auth _install-handler",
@@ -387,7 +399,10 @@
         "crates/pixiv-app/src/login_input.rs",
         "crates/pixiv-app/src/login_page.rs",
         "crates/pixiv-sdk/src/oauth.rs",
-        "crates/pixiv-app/src/login_bridge.rs"
+        "crates/pixiv-app/src/login_bridge.rs",
+        "crates/pixiv-app/src/handoff_protocol.rs",
+        "crates/pixiv-app/src/handoff_state.rs",
+        "crates/pixiv-app/src/private_lock.rs"
       ],
       "tests": [
         "internal/cli/commands/pixiv/auth/migration_input_test.go",
@@ -398,11 +413,16 @@
         "crates/pixiv-app/tests/fixtures/login_page_writer_errors.json",
         "internal/cli/commands/pixiv/auth/migration_local_login_test.go",
         "crates/pixiv-app/tests/login_bridge.rs",
-        "crates/pixiv-app/tests/fixtures/local_login_http.json"
+        "crates/pixiv-app/tests/fixtures/local_login_http.json",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_protocol_test.go",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_state_test.go",
+        "crates/pixiv-app/tests/handoff_protocol.rs",
+        "crates/pixiv-app/tests/handoff_state.rs",
+        "crates/pixiv-app/tests/fixtures/handoff_protocol.json"
       ],
       "verified_platforms": [],
       "differences": [
-        "login入力/relay/pages/local HTTP bridge依存は実装するが、CLI login leafのstartup/options/TTY/browser実adapter・remote relay/handoff・hidden callback/OS handlerは未接続。native hostname/service-port resolutionとGo net.OpError/AddrError exact診断、全HTTP/MIME/parser/wire/Date clock/backpressure/socket flush・blocked native prompt cleanup・全platformは未検証。duplicate waiterの30ms registration/pending観測は全scheduleの証明ではない。nonUTF8 URL/query/form String差分・SDK owned HTTP/context/lifecycleも保持する。"
+        "CLI login/hidden callback入口は未接続。入力/pages/local HTTP bridgeとremote handoffのpure protocol/private capability state依存は対象例で実装するが、streaming Start/Forward/Complete・relay server期限/context・default state path・full startup/options/TTY/browser/OS handler adapterは未移植。Go stateにTTLは無く追加しない。nonUTF8 URL components対Rust String、全URL/raw-wire/HTTP/MIME/parser/clock/backpressure/socket flush・native hostname/service-port/Go native exact診断・SDK owned HTTP/context/idle lifecycle・blocked prompt cleanup・全platformは未検証または差分。sidecar process lock/取消/duplicate waiterの対象scheduleは全並行scheduleの証明ではなく、Windows lock compile/run/ACL/native errorsも未検証。"
       ]
     },
     {

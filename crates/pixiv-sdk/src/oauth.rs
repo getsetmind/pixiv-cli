@@ -191,6 +191,10 @@ pub struct LoginUrl<'a> {
     host: String,
     path: String,
     query: &'a str,
+    raw_path: &'a str,
+    fragment: String,
+    userinfo: bool,
+    force_query: bool,
 }
 
 impl<'a> LoginUrl<'a> {
@@ -216,7 +220,7 @@ impl<'a> LoginUrl<'a> {
             return None;
         }
         let (input, fragment) = input.split_once('#').unwrap_or((input, ""));
-        decode_url_component(fragment, false)?;
+        let fragment = decode_url_component(fragment, false)?;
         let colon = input.find(':');
         let (scheme, remainder) = match colon {
             Some(index) if !input[..index].contains(['/', '?']) => {
@@ -233,11 +237,14 @@ impl<'a> LoginUrl<'a> {
             }
             _ => ("", input),
         };
+        let force_query = remainder.ends_with('?') && remainder.matches('?').count() == 1;
         let (remainder, query) = remainder.split_once('?').unwrap_or((remainder, ""));
+        let mut userinfo_present = false;
         let (host, path) = if let Some(authority) = remainder.strip_prefix("//") {
             let boundary = authority.find('/').unwrap_or(authority.len());
             let (authority, path) = authority.split_at(boundary);
             let host = if let Some((userinfo, host)) = authority.rsplit_once('@') {
+                userinfo_present = true;
                 if !userinfo
                     .bytes()
                     .all(|b| b.is_ascii_alphanumeric() || b"-._:~!$&'()*+,;=%@".contains(&b))
@@ -254,7 +261,9 @@ impl<'a> LoginUrl<'a> {
         } else {
             (String::new(), remainder)
         };
-        let path = if !scheme.is_empty() && !remainder.starts_with('/') {
+        let opaque = !scheme.is_empty() && !remainder.starts_with('/');
+        let raw_path = if opaque { "" } else { path };
+        let path = if opaque {
             String::new()
         } else {
             decode_url_component(path, false)?
@@ -264,7 +273,58 @@ impl<'a> LoginUrl<'a> {
             host,
             path,
             query,
+            raw_path,
+            fragment,
+            userinfo: userinfo_present,
+            force_query,
         })
+    }
+
+    pub fn has_userinfo(&self) -> bool {
+        self.userinfo
+    }
+
+    pub fn fragment(&self) -> &str {
+        &self.fragment
+    }
+
+    pub fn force_query(&self) -> bool {
+        self.force_query
+    }
+
+    /// Decodes every query entry, rejecting malformed escapes and unescaped semicolons.
+    pub fn query_values(&self) -> Option<std::collections::BTreeMap<String, Vec<String>>> {
+        use crate::reference::decode_url_component;
+        let mut values = std::collections::BTreeMap::<String, Vec<String>>::new();
+        for entry in self.query.split('&').filter(|entry| !entry.is_empty()) {
+            if entry.contains(';') {
+                return None;
+            }
+            let (key, value) = entry.split_once('=').unwrap_or((entry, ""));
+            values
+                .entry(decode_url_component(key, true)?)
+                .or_default()
+                .push(decode_url_component(value, true)?);
+        }
+        Some(values)
+    }
+
+    pub fn escaped_path(&self) -> String {
+        self.escaped_replacement_path(&self.path)
+    }
+
+    /// Preserves the original escaped path only while it still represents the replacement path.
+    pub fn escaped_replacement_path(&self, path: &str) -> String {
+        if path == self.path
+            && self
+                .raw_path
+                .bytes()
+                .all(|b| b.is_ascii_alphanumeric() || b"-._~!$&'()*+,;=:@/[]%".contains(&b))
+        {
+            self.raw_path.to_owned()
+        } else {
+            escape_login_path(path)
+        }
     }
 
     pub fn query_value(&self, name: &str) -> String {
@@ -622,4 +682,17 @@ fn decode_login(body: serde_json::Value, operation: &'static str) -> Result<Cred
         username: payload.user.name,
         expires_at,
     })
+}
+
+fn escape_login_path(path: &str) -> String {
+    let mut output = String::new();
+    for byte in path.bytes() {
+        if byte.is_ascii_alphanumeric() || b"-._~$&+,/:;=@".contains(&byte) {
+            output.push(byte as char);
+        } else {
+            use std::fmt::Write;
+            let _ = write!(output, "%{byte:02X}");
+        }
+    }
+    output
 }

@@ -1,0 +1,1076 @@
+[
+  {
+    "name": "origin-000",
+    "operation": "origin",
+    "input": " https://RELAY.Example.test/root/../relay// ",
+    "output": "https://relay.example.test/relay",
+    "error": ""
+  },
+  {
+    "name": "origin-001",
+    "operation": "origin",
+    "input": "HTTP://RELAY.Example.test",
+    "output": "http://relay.example.test",
+    "error": ""
+  },
+  {
+    "name": "origin-002",
+    "operation": "origin",
+    "input": "https://RELAY.Example.test/",
+    "output": "https://relay.example.test",
+    "error": ""
+  },
+  {
+    "name": "origin-003",
+    "operation": "origin",
+    "input": "https://RELAY.Example.test/%72elay",
+    "output": "https://relay.example.test/%72elay",
+    "error": ""
+  },
+  {
+    "name": "origin-004",
+    "operation": "origin",
+    "input": "https://RELAY.Example.test/a%2fb",
+    "output": "https://relay.example.test/a%2fb",
+    "error": ""
+  },
+  {
+    "name": "origin-005",
+    "operation": "origin",
+    "input": "https://RELAY.Example.test/a%2F../b",
+    "output": "https://relay.example.test/b",
+    "error": ""
+  },
+  {
+    "name": "origin-006",
+    "operation": "origin",
+    "input": "https://relay.example.test?",
+    "output": "https://relay.example.test?",
+    "error": ""
+  },
+  {
+    "name": "origin-007",
+    "operation": "origin",
+    "input": "https://relay.example.test#",
+    "output": "https://relay.example.test",
+    "error": ""
+  },
+  {
+    "name": "origin-008",
+    "operation": "origin",
+    "input": "https://relay.example.test/?x=1",
+    "output": null,
+    "error": "invalid remote login relay URL"
+  },
+  {
+    "name": "origin-009",
+    "operation": "origin",
+    "input": "https://u@relay.example.test",
+    "output": null,
+    "error": "invalid remote login relay URL"
+  },
+  {
+    "name": "origin-010",
+    "operation": "origin",
+    "input": "https://@relay.example.test",
+    "output": null,
+    "error": "invalid remote login relay URL"
+  },
+  {
+    "name": "origin-011",
+    "operation": "origin",
+    "input": "https://relay.example.test/#x",
+    "output": null,
+    "error": "invalid remote login relay URL"
+  },
+  {
+    "name": "origin-012",
+    "operation": "origin",
+    "input": "ftp://relay.example.test",
+    "output": null,
+    "error": "invalid remote login relay URL"
+  },
+  {
+    "name": "origin-013",
+    "operation": "origin",
+    "input": "//relay.example.test",
+    "output": null,
+    "error": "invalid remote login relay URL"
+  },
+  {
+    "name": "origin-014",
+    "operation": "origin",
+    "input": "https:opaque",
+    "output": null,
+    "error": "invalid remote login relay URL"
+  },
+  {
+    "name": "origin-015",
+    "operation": "origin",
+    "input": "https://relay.example.test:",
+    "output": "https://relay.example.test:",
+    "error": ""
+  },
+  {
+    "name": "origin-016",
+    "operation": "origin",
+    "input": "https://relay.example.test:443",
+    "output": "https://relay.example.test:443",
+    "error": ""
+  },
+  {
+    "name": "origin-017",
+    "operation": "origin",
+    "input": "https://[::1]:12/a",
+    "output": "https://[::1]:12/a",
+    "error": ""
+  },
+  {
+    "name": "origin-018",
+    "operation": "origin",
+    "input": "https://relay.example.test/a b",
+    "output": "https://relay.example.test/a%20b",
+    "error": ""
+  },
+  {
+    "name": "origin-019",
+    "operation": "origin",
+    "input": "https://relay.example.test/a%zz",
+    "output": null,
+    "error": "invalid remote login relay URL"
+  },
+  {
+    "name": "origin-020",
+    "operation": "origin",
+    "input": "https://relay.example.test/é",
+    "output": "https://relay.example.test/%C3%A9",
+    "error": ""
+  },
+  {
+    "name": "origin-021",
+    "operation": "origin",
+    "input": "https://relay.example.test/!$\u0026'()*+,;=:@",
+    "output": "https://relay.example.test/!$\u0026'()*+,;=:@",
+    "error": ""
+  },
+  {
+    "name": "origin-022",
+    "operation": "origin",
+    "input": "https://relay.example.test/%25",
+    "output": "https://relay.example.test/%25",
+    "error": ""
+  },
+  {
+    "name": "origin-023",
+    "operation": "origin",
+    "input": "https://relay.example.test/./",
+    "output": "https://relay.example.test",
+    "error": ""
+  },
+  {
+    "name": "origin-024",
+    "operation": "origin",
+    "input": "https://relay.example.test/..",
+    "output": "https://relay.example.test",
+    "error": ""
+  },
+  {
+    "name": "endpoint-025",
+    "operation": "endpoint",
+    "input": " https://RELAY.Example.test/root/../relay// ",
+    "suffix": "start",
+    "session": "opaque session",
+    "output": "https://RELAY.Example.test/relay/start/opaque%20session",
+    "error": ""
+  },
+  {
+    "name": "endpoint-026",
+    "operation": "endpoint",
+    "input": "HTTP://RELAY.Example.test",
+    "suffix": "start",
+    "session": "opaque session",
+    "output": "http://RELAY.Example.test/start/opaque%20session",
+    "error": ""
+  },
+  {
+    "name": "endpoint-027",
+    "operation": "endpoint",
+    "input": "https://RELAY.Example.test/",
+    "suffix": "start",
+    "session": "opaque session",
+    "output": "https://RELAY.Example.test/start/opaque%20session",
+    "error": ""
+  },
+  {
+    "name": "endpoint-028",
+    "operation": "endpoint",
+    "input": "https://RELAY.Example.test/%72elay",
+    "suffix": "start",
+    "session": "opaque session",
+    "output": "https://RELAY.Example.test/relay/start/opaque%20session",
+    "error": ""
+  },
+  {
+    "name": "endpoint-029",
+    "operation": "endpoint",
+    "input": "https://RELAY.Example.test/a%2fb",
+    "suffix": "start",
+    "session": "opaque session",
+    "output": "https://RELAY.Example.test/a/b/start/opaque%20session",
+    "error": ""
+  },
+  {
+    "name": "endpoint-030",
+    "operation": "endpoint",
+    "input": "https://RELAY.Example.test/a%2F../b",
+    "suffix": "start",
+    "session": "opaque session",
+    "output": "https://RELAY.Example.test/b/start/opaque%20session",
+    "error": ""
+  },
+  {
+    "name": "endpoint-031",
+    "operation": "endpoint",
+    "input": "https://relay.example.test?",
+    "suffix": "start",
+    "session": "opaque session",
+    "output": "https://relay.example.test/start/opaque%20session?",
+    "error": ""
+  },
+  {
+    "name": "endpoint-032",
+    "operation": "endpoint",
+    "input": "https://relay.example.test#",
+    "suffix": "start",
+    "session": "opaque session",
+    "output": "https://relay.example.test/start/opaque%20session",
+    "error": ""
+  },
+  {
+    "name": "endpoint-033",
+    "operation": "endpoint",
+    "input": "https://relay.example.test/?x=1",
+    "suffix": "start",
+    "session": "opaque session",
+    "output": null,
+    "error": "invalid remote login relay URL"
+  },
+  {
+    "name": "endpoint-034",
+    "operation": "endpoint",
+    "input": "https://u@relay.example.test",
+    "suffix": "start",
+    "session": "opaque session",
+    "output": null,
+    "error": "invalid remote login relay URL"
+  },
+  {
+    "name": "endpoint-035",
+    "operation": "endpoint",
+    "input": "https://@relay.example.test",
+    "suffix": "start",
+    "session": "opaque session",
+    "output": null,
+    "error": "invalid remote login relay URL"
+  },
+  {
+    "name": "endpoint-036",
+    "operation": "endpoint",
+    "input": "https://relay.example.test/#x",
+    "suffix": "start",
+    "session": "opaque session",
+    "output": null,
+    "error": "invalid remote login relay URL"
+  },
+  {
+    "name": "endpoint-037",
+    "operation": "endpoint",
+    "input": "https://RELAY.Example.test/relay",
+    "suffix": "callback",
+    "output": null,
+    "error": "invalid remote login relay URL"
+  },
+  {
+    "name": "endpoint-038",
+    "operation": "endpoint",
+    "input": "https://RELAY.Example.test/relay",
+    "suffix": "callback",
+    "session": " ",
+    "output": null,
+    "error": "invalid remote login relay URL"
+  },
+  {
+    "name": "endpoint-039",
+    "operation": "endpoint",
+    "input": "https://RELAY.Example.test/relay",
+    "suffix": "callback",
+    "session": "a/b",
+    "output": "https://RELAY.Example.test/relay/callback/a/b",
+    "error": ""
+  },
+  {
+    "name": "endpoint-040",
+    "operation": "endpoint",
+    "input": "https://RELAY.Example.test/relay",
+    "suffix": "callback",
+    "session": "../x",
+    "output": "https://RELAY.Example.test/relay/x",
+    "error": ""
+  },
+  {
+    "name": "endpoint-041",
+    "operation": "endpoint",
+    "input": "https://RELAY.Example.test/relay",
+    "suffix": "callback",
+    "session": "/x",
+    "output": "https://RELAY.Example.test/relay/callback/x",
+    "error": ""
+  },
+  {
+    "name": "endpoint-042",
+    "operation": "endpoint",
+    "input": "https://RELAY.Example.test/relay",
+    "suffix": "callback",
+    "session": "a?b#c",
+    "output": "https://RELAY.Example.test/relay/callback/a%3Fb%23c",
+    "error": ""
+  },
+  {
+    "name": "endpoint-043",
+    "operation": "endpoint",
+    "input": "https://RELAY.Example.test/relay",
+    "suffix": "callback",
+    "session": "a%2Fb",
+    "output": "https://RELAY.Example.test/relay/callback/a%252Fb",
+    "error": ""
+  },
+  {
+    "name": "endpoint-044",
+    "operation": "endpoint",
+    "input": "https://RELAY.Example.test/relay",
+    "suffix": "callback",
+    "session": "é",
+    "output": "https://RELAY.Example.test/relay/callback/%C3%A9",
+    "error": ""
+  },
+  {
+    "name": "endpoint-045",
+    "operation": "endpoint",
+    "input": "https://RELAY.Example.test/relay",
+    "suffix": "callback",
+    "session": "a\\b",
+    "output": "https://RELAY.Example.test/relay/callback/a%5Cb",
+    "error": ""
+  },
+  {
+    "name": "endpoint-046",
+    "operation": "endpoint",
+    "input": "https://RELAY.Example.test/relay",
+    "suffix": "callback",
+    "session": "a:;@+$\u0026=",
+    "output": "https://RELAY.Example.test/relay/callback/a:;@+$\u0026=",
+    "error": ""
+  },
+  {
+    "name": "endpoint-047",
+    "operation": "endpoint",
+    "input": "https://RELAY.Example.test/relay",
+    "suffix": "callback",
+    "session": "  opaque  ",
+    "output": "https://RELAY.Example.test/relay/callback/%20%20opaque%20%20",
+    "error": ""
+  },
+  {
+    "name": "result-048",
+    "operation": "result",
+    "input": "https://relay.example.test/relay/result/YQ",
+    "base": "https://relay.example.test/relay",
+    "output": null,
+    "error": ""
+  },
+  {
+    "name": "result-049",
+    "operation": "result",
+    "input": "https://relay.example.test/relay/result/YR",
+    "base": "https://relay.example.test/relay",
+    "output": null,
+    "error": ""
+  },
+  {
+    "name": "result-050",
+    "operation": "result",
+    "input": "https://relay.example.test/relay/result/YQ==",
+    "base": "https://relay.example.test/relay",
+    "output": null,
+    "error": "invalid remote login relay result URL"
+  },
+  {
+    "name": "result-051",
+    "operation": "result",
+    "input": "https://relay.example.test/relay/result/a",
+    "base": "https://relay.example.test/relay",
+    "output": null,
+    "error": "invalid remote login relay result URL"
+  },
+  {
+    "name": "result-052",
+    "operation": "result",
+    "input": "https://relay.example.test/relay/result/ab",
+    "base": "https://relay.example.test/relay",
+    "output": null,
+    "error": ""
+  },
+  {
+    "name": "result-053",
+    "operation": "result",
+    "input": "https://relay.example.test/relay/result/abc",
+    "base": "https://relay.example.test/relay",
+    "output": null,
+    "error": ""
+  },
+  {
+    "name": "result-054",
+    "operation": "result",
+    "input": "https://relay.example.test/relay/result/abcd",
+    "base": "https://relay.example.test/relay",
+    "output": null,
+    "error": ""
+  },
+  {
+    "name": "result-055",
+    "operation": "result",
+    "input": "https://relay.example.test/relay/result/-___",
+    "base": "https://relay.example.test/relay",
+    "output": null,
+    "error": ""
+  },
+  {
+    "name": "result-056",
+    "operation": "result",
+    "input": "https://relay.example.test/relay/result/a/b",
+    "base": "https://relay.example.test/relay",
+    "output": null,
+    "error": "invalid remote login relay result URL"
+  },
+  {
+    "name": "result-057",
+    "operation": "result",
+    "input": "https://relay.example.test/relay/result/..",
+    "base": "https://relay.example.test/relay",
+    "output": null,
+    "error": "invalid remote login relay result URL"
+  },
+  {
+    "name": "result-058",
+    "operation": "result",
+    "input": "https://relay.example.test/relay/result/.",
+    "base": "https://relay.example.test/relay",
+    "output": null,
+    "error": "invalid remote login relay result URL"
+  },
+  {
+    "name": "result-059",
+    "operation": "result",
+    "input": "https://relay.example.test/relay/result/YQ/",
+    "base": "https://relay.example.test/relay",
+    "output": null,
+    "error": "invalid remote login relay result URL"
+  },
+  {
+    "name": "result-060",
+    "operation": "result",
+    "input": "https://relay.example.test/relay/result/%59Q",
+    "base": "https://relay.example.test/relay",
+    "output": null,
+    "error": ""
+  },
+  {
+    "name": "result-061",
+    "operation": "result",
+    "input": "https://relay.example.test/relay/result/YQ%0A",
+    "base": "https://relay.example.test/relay",
+    "output": null,
+    "error": ""
+  },
+  {
+    "name": "result-062",
+    "operation": "result",
+    "input": "https://relay.example.test/relay/result/YQ%0D",
+    "base": "https://relay.example.test/relay",
+    "output": null,
+    "error": ""
+  },
+  {
+    "name": "result-063",
+    "operation": "result",
+    "input": "https://relay.example.test/relay/result/YQ%20",
+    "base": "https://relay.example.test/relay",
+    "output": null,
+    "error": "invalid remote login relay result URL"
+  },
+  {
+    "name": "result-064",
+    "operation": "result",
+    "input": "https://relay.example.test/relay/result/",
+    "base": "https://relay.example.test/relay",
+    "output": null,
+    "error": "invalid remote login relay result URL"
+  },
+  {
+    "name": "result-065",
+    "operation": "result",
+    "input": "https://RELAY.example.test/relay/result/YQ",
+    "base": "https://relay.example.test/relay",
+    "output": null,
+    "error": "invalid remote login relay result URL"
+  },
+  {
+    "name": "result-066",
+    "operation": "result",
+    "input": "HTTP://relay.example.test/relay/result/YQ",
+    "base": "https://relay.example.test/relay",
+    "output": null,
+    "error": "invalid remote login relay result URL"
+  },
+  {
+    "name": "result-067",
+    "operation": "result",
+    "input": "https://relay.example.test:443/relay/result/YQ",
+    "base": "https://relay.example.test/relay",
+    "output": null,
+    "error": "invalid remote login relay result URL"
+  },
+  {
+    "name": "result-068",
+    "operation": "result",
+    "input": "https://u@relay.example.test/relay/result/YQ",
+    "base": "https://relay.example.test/relay",
+    "output": null,
+    "error": "invalid remote login relay result URL"
+  },
+  {
+    "name": "result-069",
+    "operation": "result",
+    "input": "https://relay.example.test/relay/result/YQ?",
+    "base": "https://relay.example.test/relay",
+    "output": null,
+    "error": ""
+  },
+  {
+    "name": "result-070",
+    "operation": "result",
+    "input": "https://relay.example.test/relay/result/YQ#",
+    "base": "https://relay.example.test/relay",
+    "output": null,
+    "error": ""
+  },
+  {
+    "name": "result-071",
+    "operation": "result",
+    "input": "https://relay.example.test/relay/result/YQ?x=1",
+    "base": "https://relay.example.test/relay",
+    "output": null,
+    "error": "invalid remote login relay result URL"
+  },
+  {
+    "name": "result-072",
+    "operation": "result",
+    "input": "https://relay.example.test/relay/result/YQ#x",
+    "base": "https://relay.example.test/relay",
+    "output": null,
+    "error": "invalid remote login relay result URL"
+  },
+  {
+    "name": "result-073",
+    "operation": "result",
+    "input": "https://relay.example.test/relay/result//YQ",
+    "base": "https://relay.example.test/relay",
+    "output": null,
+    "error": "invalid remote login relay result URL"
+  },
+  {
+    "name": "result-074",
+    "operation": "result",
+    "input": "https://relay.example.test/relay/result/./YQ",
+    "base": "https://relay.example.test/relay",
+    "output": null,
+    "error": "invalid remote login relay result URL"
+  },
+  {
+    "name": "authorization-075",
+    "operation": "authorization",
+    "input": "https://app-api.pixiv.net/web/v1/login?client=pixiv-android\u0026code_challenge_method=S256\u0026code_challenge=challenge\u0026state=state",
+    "output": null,
+    "error": ""
+  },
+  {
+    "name": "authorization-076",
+    "operation": "authorization",
+    "input": " https://app-api.pixiv.net/web/v1/login?client=pixiv-android\u0026code_challenge_method=S256\u0026code_challenge=challenge\u0026state=state ",
+    "output": null,
+    "error": ""
+  },
+  {
+    "name": "authorization-077",
+    "operation": "authorization",
+    "input": "HTTPS://APP-API.pixiv.net/web/v1/login?client=pixiv-android\u0026code_challenge_method=S256\u0026code_challenge=challenge\u0026state=state",
+    "output": null,
+    "error": ""
+  },
+  {
+    "name": "authorization-078",
+    "operation": "authorization",
+    "input": "https://app-api.pixiv.net:/web/v1/login?client=pixiv-android\u0026code_challenge_method=S256\u0026code_challenge=challenge\u0026state=state",
+    "output": null,
+    "error": ""
+  },
+  {
+    "name": "authorization-079",
+    "operation": "authorization",
+    "input": "https://app-api.pixiv.net:443/web/v1/login?client=pixiv-android\u0026code_challenge_method=S256\u0026code_challenge=challenge\u0026state=state",
+    "output": null,
+    "error": "remote Pixiv login relay returned an invalid sign-in address"
+  },
+  {
+    "name": "authorization-080",
+    "operation": "authorization",
+    "input": "https://app-api.pixiv.net/%77eb/v1/login?client=pixiv-android\u0026code_challenge_method=S256\u0026code_challenge=challenge\u0026state=state",
+    "output": null,
+    "error": "remote Pixiv login relay returned an invalid sign-in address"
+  },
+  {
+    "name": "authorization-081",
+    "operation": "authorization",
+    "input": "https://u@app-api.pixiv.net/web/v1/login?client=pixiv-android\u0026code_challenge_method=S256\u0026code_challenge=challenge\u0026state=state",
+    "output": null,
+    "error": "remote Pixiv login relay returned an invalid sign-in address"
+  },
+  {
+    "name": "authorization-082",
+    "operation": "authorization",
+    "input": "https://app-api.pixiv.net/web/v1/login?client=pixiv-android\u0026code_challenge_method=S256\u0026code_challenge=challenge\u0026state=state#",
+    "output": null,
+    "error": ""
+  },
+  {
+    "name": "authorization-083",
+    "operation": "authorization",
+    "input": "https://app-api.pixiv.net/web/v1/login?client=pixiv-android\u0026code_challenge_method=S256\u0026code_challenge=challenge\u0026state=state#x",
+    "output": null,
+    "error": "remote Pixiv login relay returned an invalid sign-in address"
+  },
+  {
+    "name": "authorization-084",
+    "operation": "authorization",
+    "input": "https://app-api.pixiv.net/web/v1/login?client=pixiv-android\u0026code_challenge_method=S256\u0026code_challenge=challenge\u0026state=state\u0026state=other",
+    "output": null,
+    "error": "remote Pixiv login relay returned an invalid sign-in address"
+  },
+  {
+    "name": "authorization-085",
+    "operation": "authorization",
+    "input": "https://app-api.pixiv.net/web/v1/login?client=pixiv-android\u0026code_challenge_method=S256\u0026code_challenge=challenge\u0026state=state\u0026extra=x",
+    "output": null,
+    "error": "remote Pixiv login relay returned an invalid sign-in address"
+  },
+  {
+    "name": "authorization-086",
+    "operation": "authorization",
+    "input": "https://app-api.pixiv.net/web/v1/login?client=pixiv-android\u0026code_challenge_method=S256\u0026code_challenge=challenge\u0026state=state\u0026bad=%zz",
+    "output": null,
+    "error": "remote Pixiv login relay returned an invalid sign-in address"
+  },
+  {
+    "name": "authorization-087",
+    "operation": "authorization",
+    "input": "https://app-api.pixiv.net/web/v1/login?client=pixiv-android\u0026code_challenge_method=S256\u0026code_challenge=challenge\u0026state=state\u0026bad=x;y",
+    "output": null,
+    "error": "remote Pixiv login relay returned an invalid sign-in address"
+  },
+  {
+    "name": "authorization-088",
+    "operation": "authorization",
+    "input": "https://app-api.pixiv.net/web/v1/login?client=pixiv-android\u0026code_challenge_method=S256\u0026code_challenge=challenge\u0026state=%20",
+    "output": null,
+    "error": "remote Pixiv login relay returned an invalid sign-in address"
+  },
+  {
+    "name": "authorization-089",
+    "operation": "authorization",
+    "input": "https://app-api.pixiv.net/web/v1/login?client=pixiv-android\u0026code_challenge_method=S256\u0026code_challenge=%20opaque%20\u0026state=state",
+    "output": null,
+    "error": ""
+  },
+  {
+    "name": "authorization-090",
+    "operation": "authorization",
+    "input": "https://app-api.pixiv.net/web/v1/login?client=pixiv%2Dandroid\u0026code_challenge_method=S256\u0026code_challenge=challenge\u0026state=state",
+    "output": null,
+    "error": ""
+  },
+  {
+    "name": "authorization-091",
+    "operation": "authorization",
+    "input": "https://app-api.pixiv.net/web/v1/login?client=pixiv-android\u0026code_challenge_method=S256\u0026code_challenge=challenge\u0026state=state\u0026\u0026",
+    "output": null,
+    "error": ""
+  },
+  {
+    "name": "authorization-092",
+    "operation": "authorization",
+    "input": "https://app-api.pixiv.net/web/v1/login?client=pixiv-android\u0026code_challenge_method=S256\u0026code_challenge=challenge\u0026state=state;bad=x",
+    "output": null,
+    "error": "remote Pixiv login relay returned an invalid sign-in address"
+  },
+  {
+    "name": "link-093",
+    "operation": "link",
+    "input": "pixiv://account/remote-login?origin=https%3A%2F%2Frelay.example.test%2Frelay\u0026session=opaque\u0026access=proof",
+    "output": {
+      "origin": "https://relay.example.test/relay",
+      "proof": "proof",
+      "session_id": "opaque"
+    },
+    "error": ""
+  },
+  {
+    "name": "link-094",
+    "operation": "link",
+    "input": " pixiv://account/remote-login?origin=https%3A%2F%2Frelay.example.test%2Frelay\u0026session=opaque\u0026access=proof ",
+    "output": {
+      "origin": "https://relay.example.test/relay",
+      "proof": "proof",
+      "session_id": "opaque"
+    },
+    "error": ""
+  },
+  {
+    "name": "link-095",
+    "operation": "link",
+    "input": "PIXIV://ACCOUNT/remote-login?origin=https%3A%2F%2Frelay.example.test%2Frelay\u0026session=opaque\u0026access=proof",
+    "output": {
+      "origin": "https://relay.example.test/relay",
+      "proof": "proof",
+      "session_id": "opaque"
+    },
+    "error": ""
+  },
+  {
+    "name": "link-096",
+    "operation": "link",
+    "input": "pixiv://account/%72emote-login?origin=https%3A%2F%2Frelay.example.test%2Frelay\u0026session=opaque\u0026access=proof",
+    "output": {
+      "origin": "https://relay.example.test/relay",
+      "proof": "proof",
+      "session_id": "opaque"
+    },
+    "error": ""
+  },
+  {
+    "name": "link-097",
+    "operation": "link",
+    "input": "pixiv://u@account/remote-login?origin=https%3A%2F%2Frelay.example.test%2Frelay\u0026session=opaque\u0026access=proof",
+    "output": null,
+    "error": "invalid remote login start link"
+  },
+  {
+    "name": "link-098",
+    "operation": "link",
+    "input": "pixiv://account/remote-login?origin=https%3A%2F%2Frelay.example.test%2Frelay\u0026session=opaque\u0026access=proof#",
+    "output": {
+      "origin": "https://relay.example.test/relay",
+      "proof": "proof",
+      "session_id": "opaque"
+    },
+    "error": ""
+  },
+  {
+    "name": "link-099",
+    "operation": "link",
+    "input": "pixiv://account/remote-login?origin=https%3A%2F%2Frelay.example.test%2Frelay\u0026session=opaque\u0026access=proof#x",
+    "output": null,
+    "error": "invalid remote login start link"
+  },
+  {
+    "name": "link-100",
+    "operation": "link",
+    "input": "pixiv://account/remote-login?origin=https%3A%2F%2Frelay.example.test%2Frelay\u0026session=opaque\u0026access=proof\u0026extra=x",
+    "output": null,
+    "error": "invalid remote login start link"
+  },
+  {
+    "name": "link-101",
+    "operation": "link",
+    "input": "pixiv://account/remote-login?origin=https%3A%2F%2Frelay.example.test%2Frelay\u0026session=opaque\u0026access=proof\u0026session=second",
+    "output": null,
+    "error": "invalid remote login start link"
+  },
+  {
+    "name": "link-102",
+    "operation": "link",
+    "input": "pixiv://account/remote-login?origin=https%3A%2F%2Frelay.example.test%2Frelay\u0026session=%20opaque%20\u0026access=proof",
+    "output": {
+      "origin": "https://relay.example.test/relay",
+      "proof": "proof",
+      "session_id": " opaque "
+    },
+    "error": ""
+  },
+  {
+    "name": "link-103",
+    "operation": "link",
+    "input": "pixiv://account/remote-login?origin=https%3A%2F%2Frelay.example.test%2Frelay\u0026session=opaque\u0026access=%20",
+    "output": null,
+    "error": "invalid remote login start link"
+  },
+  {
+    "name": "link-104",
+    "operation": "link",
+    "input": "pixiv://account/remote-login?origin=https%3A%2F%2Frelay.example.test%2Frelay\u0026session=opaque\u0026access=proof\u0026bad=%zz",
+    "output": null,
+    "error": "invalid remote login start link"
+  },
+  {
+    "name": "link-105",
+    "operation": "link",
+    "input": "pixiv://account/remote-login?origin=https%3A%2F%2Frelay.example.test%2Frelay\u0026session=opaque\u0026access=proof\u0026bad=x;y",
+    "output": null,
+    "error": "invalid remote login start link"
+  },
+  {
+    "name": "link-106",
+    "operation": "link",
+    "input": "pixiv://account/remote-login?origin=HTTPS%3A%2F%2FRELAY.Example.test%2F.%2Frelay\u0026session=opaque\u0026access=proof",
+    "output": {
+      "origin": "https://relay.example.test/relay",
+      "proof": "proof",
+      "session_id": "opaque"
+    },
+    "error": ""
+  },
+  {
+    "name": "link-107",
+    "operation": "link",
+    "input": "pixiv://account/remote-login?origin=https%3A%2F%2Frelay.example.test%2Frelay\u0026session=opaque\u0026access=proof\u0026\u0026",
+    "output": {
+      "origin": "https://relay.example.test/relay",
+      "proof": "proof",
+      "session_id": "opaque"
+    },
+    "error": ""
+  },
+  {
+    "name": "link-108",
+    "operation": "link",
+    "input": "pixiv://account/remote-login?%6Frigin=https%3A%2F%2Frelay.example.test%2Frelay\u0026session=opaque\u0026access=proof",
+    "output": {
+      "origin": "https://relay.example.test/relay",
+      "proof": "proof",
+      "session_id": "opaque"
+    },
+    "error": ""
+  },
+  {
+    "name": "callback-109",
+    "operation": "callback",
+    "input": "pixiv://account/login?code=synthetic",
+    "output": true,
+    "error": ""
+  },
+  {
+    "name": "callback-110",
+    "operation": "callback",
+    "input": "PIXIV://ACCOUNT/login?code=synthetic",
+    "output": true,
+    "error": ""
+  },
+  {
+    "name": "callback-111",
+    "operation": "callback",
+    "input": "pixiv://u@account/login?code=synthetic",
+    "output": true,
+    "error": ""
+  },
+  {
+    "name": "callback-112",
+    "operation": "callback",
+    "input": "pixiv://account/%6cogin?code=synthetic",
+    "output": true,
+    "error": ""
+  },
+  {
+    "name": "callback-113",
+    "operation": "callback",
+    "input": "pixiv://account/login?code=synthetic#fragment",
+    "output": true,
+    "error": ""
+  },
+  {
+    "name": "callback-114",
+    "operation": "callback",
+    "input": "pixiv://account/login?code=\u0026code=second",
+    "output": false,
+    "error": ""
+  },
+  {
+    "name": "callback-115",
+    "operation": "callback",
+    "input": "pixiv://account/login?code=first\u0026code=",
+    "output": true,
+    "error": ""
+  },
+  {
+    "name": "callback-116",
+    "operation": "callback",
+    "input": "pixiv://account/login?code=%20",
+    "output": false,
+    "error": ""
+  },
+  {
+    "name": "callback-117",
+    "operation": "callback",
+    "input": "pixiv://account/login?code=%zz\u0026code=second",
+    "output": true,
+    "error": ""
+  },
+  {
+    "name": "callback-118",
+    "operation": "callback",
+    "input": "pixiv://account/login?code=first;bad=x\u0026code=second",
+    "output": true,
+    "error": ""
+  },
+  {
+    "name": "callback-119",
+    "operation": "callback",
+    "input": "pixiv://account/login?code=synthetic\u0026bad=%zz",
+    "output": true,
+    "error": ""
+  },
+  {
+    "name": "callback-120",
+    "operation": "callback",
+    "input": "https://app-api.pixiv.net/web/v1/users/auth/pixiv/callback?code=synthetic",
+    "output": false,
+    "error": ""
+  },
+  {
+    "name": "origin-121",
+    "operation": "origin",
+    "input": "https://[not-ip]/relay",
+    "output": null,
+    "error": "invalid remote login relay URL"
+  },
+  {
+    "name": "origin-122",
+    "operation": "origin",
+    "input": "https://[fe80::1%25zone]/relay",
+    "output": "https://[fe80::1%25zone]/relay",
+    "error": ""
+  },
+  {
+    "name": "origin-123",
+    "operation": "origin",
+    "input": "https://[not-ip%25zone]/relay",
+    "output": null,
+    "error": "invalid remote login relay URL"
+  },
+  {
+    "name": "origin-124",
+    "operation": "origin",
+    "input": "https://İ.EXAMPLE.test/a",
+    "output": "https://i.example.test/a",
+    "error": ""
+  },
+  {
+    "name": "origin-125",
+    "operation": "origin",
+    "input": "https://RELAY.Example.test/![]",
+    "output": "https://relay.example.test/![]",
+    "error": ""
+  },
+  {
+    "name": "origin-126",
+    "operation": "origin",
+    "input": "https://RELAY.Example.test/a%2F..%2F",
+    "output": "https://relay.example.test",
+    "error": ""
+  },
+  {
+    "name": "endpoint-127",
+    "operation": "endpoint",
+    "input": "https://RELAY.Example.test/%72elay",
+    "session": ".",
+    "output": "https://RELAY.Example.test/%72elay",
+    "error": ""
+  },
+  {
+    "name": "endpoint-128",
+    "operation": "endpoint",
+    "input": "https://RELAY.Example.test/relay",
+    "suffix": "start",
+    "session": "!'()*[]",
+    "output": "https://RELAY.Example.test/relay/start/%21%27%28%29%2A%5B%5D",
+    "error": ""
+  },
+  {
+    "name": "result-129",
+    "operation": "result",
+    "input": "https://relay.example.test/relay/result/%0A",
+    "base": "https://relay.example.test/relay",
+    "output": null,
+    "error": ""
+  },
+  {
+    "name": "result-130",
+    "operation": "result",
+    "input": "HTTPS://relay.example.test/relay/result/YQ",
+    "base": "https://relay.example.test/relay",
+    "output": null,
+    "error": ""
+  },
+  {
+    "name": "origin-131",
+    "operation": "origin",
+    "input": "https://a:b:443/relay",
+    "output": null,
+    "error": "invalid remote login relay URL"
+  },
+  {
+    "name": "origin-132",
+    "operation": "origin",
+    "input": "https://a:b:/relay",
+    "output": null,
+    "error": "invalid remote login relay URL"
+  },
+  {
+    "name": "origin-133",
+    "operation": "origin",
+    "input": "https://a:b/relay",
+    "output": null,
+    "error": "invalid remote login relay URL"
+  },
+  {
+    "name": "origin-134",
+    "operation": "origin",
+    "input": "https://[not-ip]:443/relay",
+    "output": null,
+    "error": "invalid remote login relay URL"
+  },
+  {
+    "name": "origin-135",
+    "operation": "origin",
+    "input": "http://a:b:80/relay",
+    "output": null,
+    "error": "invalid remote login relay URL"
+  },
+  {
+    "name": "endpoint-136",
+    "operation": "endpoint",
+    "input": "http://a:b:80/relay",
+    "suffix": "start",
+    "session": "opaque",
+    "output": null,
+    "error": "invalid remote login relay URL"
+  }
+]

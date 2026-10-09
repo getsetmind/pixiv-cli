@@ -5,13 +5,13 @@ use std::{
     path::{Path, PathBuf},
 };
 
-pub(super) fn directory(path: &Path) -> &Path {
+pub(crate) fn directory(path: &Path) -> &Path {
     path.parent()
         .filter(|parent| !parent.as_os_str().is_empty())
         .unwrap_or_else(|| Path::new("."))
 }
 
-pub(super) fn ensure_directory(directory: &Path) -> Result<(), ConfigError> {
+pub(crate) fn ensure_directory(directory: &Path) -> Result<(), ConfigError> {
     let mut builder = fs::DirBuilder::new();
     builder.recursive(true);
     #[cfg(unix)]
@@ -45,7 +45,7 @@ pub(super) fn write_body(file: &mut fs::File, body: &[u8]) -> io::Result<()> {
     }
 }
 
-pub(super) fn write(path: &Path, body: &[u8]) -> Result<(), ConfigError> {
+pub(crate) fn write(path: &Path, body: &[u8]) -> Result<(), ConfigError> {
     let mut outcome = PrivateWriteOutcome::NotCommitted;
     write_inner(path, body, &mut outcome)
         .map_err(|error| ConfigError::PrivateWrite(outcome, Box::new(error)))
