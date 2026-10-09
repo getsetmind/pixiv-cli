@@ -6,6 +6,8 @@ use pixiv_sdk::{
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 mod novel;
+mod novel_search;
+pub use novel_search::{NovelFilter, SearchNovelInput, search_novel, search_novel_tool};
 mod ranking;
 pub use novel::{NovelDetailInput, novel_detail, novel_detail_tool};
 mod search;

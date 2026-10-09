@@ -9,6 +9,7 @@ pub mod models;
 mod mutation;
 mod novel;
 mod novel_ranking;
+mod novel_search;
 pub mod oauth;
 mod pacing;
 pub mod pixiv;

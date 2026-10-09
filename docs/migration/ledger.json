@@ -1043,7 +1043,9 @@
       "rust_sources": [],
       "tests": [],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "search --type novel の経路は cli:pixiv search で追跡する。この互換コマンド自体は未接続。"
+      ]
     },
     {
       "id": "cli:pixiv ranking",
@@ -1113,7 +1115,9 @@
         "crates/pixiv-sdk/src/resource_transport.rs",
         "crates/pixiv-app/src/execution.rs",
         "crates/pixiv-app/src/account_service.rs",
-        "crates/pixiv-cli/src/trending.rs"
+        "crates/pixiv-cli/src/trending.rs",
+        "crates/pixiv-cli/src/novel_search.rs",
+        "crates/pixiv-cli/src/novel_list.rs"
       ],
       "tests": [
         "internal/cli/commands/pixiv/search/migration_dates_test.go#TestMigrationQuickDateRangesMatchFrozenTokyoBoundaries",
@@ -1161,7 +1165,10 @@
         "crates/pixiv-cli/tests/search_pool.rs#search_pool_matches_go_replay_state_commit_and_release_before_collected_output",
         "internal/cli/migration_trending_test.go#TestMigrationTrendingTagsPreservesSamplesErrorsAndFlagRestrictions",
         "crates/pixiv-cli/tests/trending.rs#trending_data_and_output_match_go_through_sdk_and_saved_accounts",
-        "crates/pixiv-cli/tests/trending.rs#trending_process_matches_go_no_word_and_explicit_flag_restrictions"
+        "crates/pixiv-cli/tests/trending.rs#trending_process_matches_go_no_word_and_explicit_flag_restrictions",
+        "internal/cli/migration_novel_search_test.go#TestMigrationNovelSearchPreservesLogicalPagesOutputsAndStartup",
+        "crates/pixiv-cli/tests/novel_search.rs#novel_search_preserves_go_output_windows_errors_and_saved_account_execution",
+        "crates/pixiv-cli/tests/novel_search.rs#novel_search_process_preserves_go_validation_authentication_and_startup_order"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -1181,8 +1188,9 @@
         "検索入力・出力指定をGoの64ケースで比較。複数語/空の語/日本語/--区切り、--json/-jのtrue/false・重複指定、--ndjsonのtrue/false・重複指定、設定output_jsonとパイプ自動NDJSONを確認。実CLI子プロセス64ケースで認証エラー、usageエラーの通常stderr/終了コード2、json=falseでも明示指定時のエラーenvelope、DB作成順と設定保持を比較。実TTY、正常CLI子プロセスのHTTPS経路、全flag構文/不正bool/help/entity等は未検証または未実装。",
         "検索stdinのTextValue経路を接続。Goの120ケースでLF/CRLFを末尾1つだけ除去し、空白・複数行・日本語・JSON文字列をそのまま検索語にすること、明示引数/ダッシュ指定ではstdinを読まないことを比較。実CLI子プロセス120ケースで空入力の診断/終了コード1・設定/DB未作成、非空入力後の起動エラーを確認。読み取り失敗3ケースの通常stderr/終了コード2もGoと一致。Goは不正UTF-8のバイト列も保持するがRustの検索語はStringであり、この入力は現在拒否する互換差分が残る。正常CLIのパイプから実HTTPS、実TTY、大容量、stdin中の取消、他OSは未検証。",
         "保存済みアカウントの検索poolをGoの63ケースで比較。通常/sfw/bookmarkとhuman/NDJSON/JSONで、初回429・後続ページ429・全アカウント429・401・writer失敗/BrokenPipe/部分書き込み、OAuth refresh保存・全要求順・凍結/選択状態・解放数を確認。Goの再実行は同じ開始cursorから取り直す契約であり、失敗attemptの結果を混入させない。通常human/NDJSONは公開後に切り替えず、JSONとlocal/bookmark収集はaccount lease解放後に出力するよう修正。bookmark JSONもillusts/filterとmetadataのフィールド順をGoへ揃えた。正常CLI実HTTPS、取消・close失敗・record変換失敗、全pool戦略/境界・proxy設定変更・他OSは未検証。",
-        "search --trending-tags を SDK と保存済み account へ接続。Go の70ケースで JSON/human・sample DTO・空/不正応答、引数拒否、18種類の併用不可 flag（明示 default/false を含む）、stdin を読まないこと、実子プロセスの起動順を比較。--type の認識を追加したが通常の novel/user 検索は未実装。trending の実 HTTPS・pool/取消・全 flag 構文・他 OS は未検証。",
-        "既存pool比較の all_rate_limited は残り秒数が実時間で減るため、429応答から120秒のDB凍結期限と診断出力前後の時計で検証してから、その時刻依存項目だけを正規化する。他のenvelope項目とGo fixture、本番コードの時刻取得・retry計算は変更していない。"
+        "search --trending-tags を SDK と保存済み account へ接続。Go の70ケースで JSON/human・sample DTO・空/不正応答、引数拒否、18種類の併用不可 flag（明示 default/false を含む）、stdin を読まないこと、実子プロセスの起動順を比較。--type の認識を追加したが通常の user 検索は未実装。trending の実 HTTPS・pool/取消・全 flag 構文・他 OS は未検証。",
+        "既存pool比較の all_rate_limited は残り秒数が実時間で減るため、429応答から120秒のDB凍結期限と診断出力前後の時計で検証してから、その時刻依存項目だけを正規化する。他のenvelope項目とGo fixture、本番コードの時刻取得・retry計算は変更していない。",
+        "search --type novel を SDK と保存済みアカウントへ接続。Go の273ケースで human/JSON/NDJSON、論理ページ、入力と明示フラグ拒否、実子プロセスの起動順を比較。NUL を含む検索語も Go・Rust の実起動では stdin 経由で比較。小説ランキングと一覧・JSON spool・lease 解放後の JSON 出力を共有する。pixiv novel search の互換コマンド、部分 writer 失敗・取消・pool replay、全 flag 構文/help・TTY、実 HTTPS と他 OS/arch は未検証または未移植。"
       ]
     },
     {
@@ -2091,15 +2099,27 @@
     },
     {
       "id": "mcp:pixiv:search_novel",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "search_novel"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/novel_search.rs",
+        "crates/pixiv-mcp/src/search.rs",
+        "crates/pixiv-mcp/src/stdio.rs",
+        "crates/pixiv-mcp/schemas/search-novel.json"
+      ],
+      "tests": [
+        "internal/cli/migration_mcp_novel_search_test.go#TestMigrationMCPNovelSearchPreservesFiltersPagesAndSchema",
+        "crates/pixiv-mcp/tests/novel_search.rs#novel_search_tool_preserves_go_schema_filters_pages_and_saved_accounts"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "実 Go MCP の schema と74ケースを直接呼出し・stdio・保存済みアカウント stdio で比較。小説 ID・全タグ・閲覧数の判定後に論理 page/limit と重複除去を行い、refresh CAS 保存と Bearer 使用を確認。全 schema 拒否・整数型診断（filter ID は int64）・数値精度、取消/deadline・pool replay・disconnect、実 HTTPS と他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:search_user",
@@ -6820,15 +6840,26 @@
     },
     {
       "id": "sdk/pixiv:Client.SearchNovels",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.SearchNovels"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_search.rs",
+        "crates/pixiv-sdk/src/novel.rs",
+        "crates/pixiv-sdk/src/ranking.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_search_test.go#TestMigrationNovelSearchPreservesConditionsDTOsPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/search_novels.rs#search_matches_go_conditions_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "Go の76ケースで検索条件、必須フィールド、Novel DTO、複数ページ、継続 URL、global cursor の検索語 binding を比較。正の consumed は Go と同じく無視する。実 HTTPS、取消/deadline、全応答構文と他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.SearchUsers",
@@ -9616,15 +9647,26 @@
     },
     {
       "id": "sdk/pixiv:SearchNovelsRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:SearchNovelsRequest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_search.rs",
+        "crates/pixiv-sdk/src/novel.rs",
+        "crates/pixiv-sdk/src/ranking.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_search_test.go#TestMigrationNovelSearchPreservesConditionsDTOsPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/search_novels.rs#search_matches_go_conditions_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "Go の76ケースで検索条件、必須フィールド、Novel DTO、複数ページ、継続 URL、global cursor の検索語 binding を比較。正の consumed は Go と同じく無視する。実 HTTPS、取消/deadline、全応答構文と他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:SearchResolution",

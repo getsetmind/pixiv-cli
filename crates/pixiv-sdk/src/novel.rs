@@ -128,3 +128,15 @@ impl<T: crate::transport::Transport> crate::Client<T> {
         Ok(novel)
     }
 }
+
+pub(crate) fn validate_search(items: &[WireNovel]) -> Result<()> {
+    if items.iter().any(|item| {
+        item.x_restrict.is_none() || item.text_length.is_none() || item.is_original.is_none()
+    }) {
+        return Err(Error::new(
+            Reason::MalformedUpstreamResponse,
+            "SearchNovels",
+        ));
+    }
+    Ok(())
+}

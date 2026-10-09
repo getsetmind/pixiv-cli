@@ -103,6 +103,25 @@ pub async fn saved_ranking<T: Transport + 'static, W: Write + Send + 'static>(
     output: W,
 ) -> Result<(), CommandError> {
     options.validate()?;
+    if options.entity == "novel" {
+        return crate::novel_list::saved(
+            execution,
+            context,
+            crate::novel_list::Listing {
+                source: crate::novel_list::Source::Ranking(pixiv_sdk::pixiv::NovelRankingRequest {
+                    mode: options.mode.clone(),
+                    cursor: Cursor::default(),
+                }),
+                heading: format!("{} novel ranking", options.mode),
+                plan: options.plan()?,
+            },
+            proxy,
+            mode,
+            output,
+        )
+        .await;
+    }
+
     let output = Arc::new(Mutex::new(output));
     let callback_output = output.clone();
     let spool = Arc::new(Mutex::new(None));
@@ -163,7 +182,20 @@ async fn attempt<T: Transport, W: Write>(
 ) -> Result<Option<JsonSpool>, CommandError> {
     let plan = options.plan()?;
     if options.entity == "novel" {
-        return novel_attempt(client, options, mode, out, plan).await;
+        return crate::novel_list::attempt(
+            client,
+            &crate::novel_list::Listing {
+                source: crate::novel_list::Source::Ranking(pixiv_sdk::pixiv::NovelRankingRequest {
+                    mode: options.mode.clone(),
+                    cursor: Cursor::default(),
+                }),
+                heading: format!("{} novel ranking", options.mode),
+                plan,
+            },
+            mode,
+            out,
+        )
+        .await;
     }
     let mut spool = if mode == DetailOutput::Json {
         Some(JsonSpool::new()?)
@@ -229,72 +261,6 @@ async fn attempt<T: Transport, W: Write>(
                     item.total_views,
                     tags
                 )?;
-            }
-            Ok(())
-        },
-    )
-    .await
-    .map_err(|error| match error.cause {
-        pixiv_app::pagination::Cause::Source(error) => error,
-        pixiv_app::pagination::Cause::Message(message) => CommandError::MessageText(message),
-    })?;
-    Ok(spool)
-}
-
-async fn novel_attempt<T: Transport, W: Write>(
-    client: &Client<T>,
-    options: &RankingOptions,
-    mode: DetailOutput,
-    out: &mut W,
-    plan: crate::search::SearchPlan,
-) -> Result<Option<JsonSpool>, CommandError> {
-    let mut spool = if mode == DetailOutput::Json {
-        Some(JsonSpool::with_key("novels")?)
-    } else {
-        None
-    };
-    let mut heading = false;
-    pixiv_app::pagination::traverse_pages(
-        pixiv_app::pagination::Plan {
-            skip: plan.skip as i64,
-            limit: plan.limit as i64,
-            one_batch: plan.one_batch,
-        },
-        Cursor::default(),
-        |cursor| {
-            let request = pixiv_sdk::pixiv::NovelRankingRequest {
-                mode: options.mode.clone(),
-                cursor,
-            };
-            async move {
-                let page = client
-                    .novel_ranking(request)
-                    .await
-                    .map_err(CommandError::from)?;
-                Ok((page.items, page.next))
-            }
-        },
-        |_: &pixiv_sdk::models::Novel| Ok(true),
-        None::<fn(Cursor, usize) -> Result<Cursor, CommandError>>,
-        |items| {
-            if let Some(spool) = &mut spool {
-                return spool.append_novels(&items);
-            }
-            if mode == DetailOutput::Ndjson {
-                for item in &items {
-                    let record = pixiv_record::from_novel(item)
-                        .map_err(|error| CommandError::Message(error.message()))?;
-                    let encoded = serde_json::to_string(&record).map_err(std::io::Error::other)?;
-                    writeln!(out, "{}", crate::go_json_escape(encoded))?;
-                }
-                return Ok(());
-            }
-            if !heading {
-                writeln!(out, "{} novel ranking", options.mode)?;
-                heading = true;
-            }
-            for item in &items {
-                writeln!(out, "{} {} — {}", item.id, item.title, item.user.name)?;
             }
             Ok(())
         },

@@ -887,7 +887,7 @@ Rust の CLI は保存済みアカウントから `Execution::read` で型付き
 
 [mcp-trending.json](contracts/mcp-trending.json) は実 Go MCP session の `trending_tags_illust` schema と16応答を固定する。Rust の直接呼出し・stdio・保存済みアカウントの stdio で同じ structured content、text、isError と通信要求を比較する。CLI の行表示と異なり、MCP の text はタグの制御文字をそのまま保持する。空リストは `No trending tags found.` を返す。公開 schema は本番の `crates/pixiv-mcp/schemas/` に置き、テスト用の応答データは含めない。
 
-検証環境は Windows amd64 である。入力 schema 拒否の全条件、取消・pool replay・disconnect、正常 CLI の実 HTTPS、resource の全利用、他 OS/arch は未検証。通常の novel/user 検索も未移植であり、trending tags の接続で search 全体を完了扱いしない。
+検証環境は Windows amd64 である。入力 schema 拒否の全条件、取消・pool replay・disconnect、正常 CLI の実 HTTPS、resource の全利用、他 OS/arch は未検証。通常の user 検索は未移植であり、trending tags の接続で search 全体を完了扱いしない。
 
 
 全体検証で、既存の search pool 比較に実時間の秒境界による不安定さが見つかった。`all_rate_limited` の残り秒数は固定した120と直接比較せず、各429応答の時刻から120秒の範囲に DB の凍結期限があることと、出力前後の実時刻からその期限までの残り秒数が正しいことを検証する。その項目だけを比較用の値へ合わせ、他の envelope 項目は Go と完全に比較する。本番の時刻取得・retry 計算や Go fixture は変更していない。
@@ -911,7 +911,7 @@ Rust の CLI は保存済みアカウントから `Execution::read` で型付き
 
 作品と小説は mode 定数、cursor の検証と生成、作者・画像のマッピング、account pool と private JSON spool を共有する。JSON は全取得成功と lease 解放後に出力する。Go MCP に小説ランキングの登録はないため、公開ツールを追加しない。
 
-検証環境は Windows amd64。部分 writer 失敗、取消、pool replay、全 flag 構文/help・proxy・出力 override/TTY、実 HTTPS と他 OS/arch の全条件は未検証である。小説の detail/search/text やシリーズ操作は別の未移植項目として残る。
+検証環境は Windows amd64。部分 writer 失敗、取消、pool replay、全 flag 構文/help・proxy・出力 override/TTY、実 HTTPS と他 OS/arch の全条件は未検証である。小説の詳細・検索は次節の範囲で接続した。text やシリーズ操作は別の未移植項目として残る。
 
 ## 小説詳細の SDK・CLI・MCP
 
@@ -921,4 +921,14 @@ Rust の CLI は保存済みアカウントから `Execution::read` で型付き
 
 [mcp-novel-detail.json](contracts/mcp-novel-detail.json) は実 Go MCP session の schema と43ケースである。Rust の直接呼出し、stdio、保存済みアカウントの stdio で record/result と要求数を比較する。required novel_id、未知 key、非整数、float64 経由の int64 overflow の拒否を含む。整数の schema 検証は既存検索と共有し、Go の構造体名と整数型に対応する診断を操作ごとに保持する。公開カタログに novel_detail を追加し、既存4ツールも維持する。
 
-検証環境は Windows amd64。小説の record/text 入力パイプ、aggregate JSON、全 flag 構文/help・TTY/出力 override、部分 writer 失敗、取消/deadline、全数値/JSON 構文、実 HTTPS と他 OS/arch は未検証。小説検索・シリーズ・ユーザー詳細は別の未移植項目として残る。
+検証環境は Windows amd64。小説の record/text 入力パイプ、aggregate JSON、全 flag 構文/help・TTY/出力 override、部分 writer 失敗、取消/deadline、全数値/JSON 構文、実 HTTPS と他 OS/arch は未検証。小説検索は次節の範囲で接続した。シリーズ・ユーザー詳細は別の未移植項目として残る。
+
+## 小説検索の SDK・CLI・MCP
+
+[novel-search.json](contracts/novel-search.json) は Go の76ケースである。検索語、target/sort/duration、必須フィールド、Novel DTO、複数ページ、next_url と検索語に結び付く global cursor を固定する。空白だけの語は拒否し、受理した語は加工せず query と digest に使う。正の consumed は Go と同じく無視する。
+
+[cli-novel-search.json](contracts/cli-novel-search.json) は Go の273ケースである。`search --type novel` の human/JSON/NDJSON、論理 limit/page、複数語、入力/type 拒否、作品専用フラグの明示指定と起動順を固定する。直接 SDK・保存済みアカウント・実 Rust 子プロセスで比較する。NUL を含む語は OS の argv に渡せないため、Go・Rust の起動比較では stdin を使う。小説ランキングと実際の一覧取得・ページ処理・JSON spool を共有し、JSON は全取得成功と lease 解放後に出力する。
+
+[mcp-novel-search.json](contracts/mcp-novel-search.json) は実 Go MCP session の schema と74ケースである。直接呼出し・stdio・保存済みアカウント stdio で result と query を比較する。ID・全タグ・最小閲覧数の判定後に論理ページと重複除去を適用し、refresh CAS 保存と Bearer 使用も確認する。公開カタログに search_novel を追加する。
+
+検証環境は Windows amd64。`pixiv novel search` の互換コマンドは未接続。部分 writer 失敗、取消/deadline、pool replay、全 flag 構文/help・TTY、全 schema 拒否・整数型診断・数値精度、実 HTTPS と他 OS/arch は未検証である。

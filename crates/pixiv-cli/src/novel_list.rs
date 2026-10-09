@@ -1,0 +1,152 @@
+use crate::{CommandError, DetailOutput, json_spool::JsonSpool};
+use pixiv_app::{
+    execution::Execution, facade::UseOutcome, lifecycle::Context, scheduler::SchedulerError,
+};
+use pixiv_sdk::{Client, cursor::Cursor, transport::Transport};
+use std::{
+    io::Write,
+    sync::{
+        Arc, Mutex,
+        atomic::{AtomicBool, Ordering},
+    },
+};
+#[derive(Clone)]
+pub(crate) enum Source {
+    Ranking(pixiv_sdk::pixiv::NovelRankingRequest),
+    Search(pixiv_sdk::pixiv::SearchNovelsRequest),
+}
+#[derive(Clone)]
+pub(crate) struct Listing {
+    pub(crate) source: Source,
+    pub(crate) heading: String,
+    pub(crate) plan: crate::search::SearchPlan,
+}
+pub(crate) async fn saved<T: Transport + 'static, W: Write + Send + 'static>(
+    execution: &Execution<T>,
+    context: &Context,
+    listing: Listing,
+    proxy: Option<&str>,
+    mode: DetailOutput,
+    output: W,
+) -> Result<(), CommandError> {
+    let output = Arc::new(Mutex::new(output));
+    let callback_output = output.clone();
+    let spool = Arc::new(Mutex::new(None));
+    let staged = spool.clone();
+    let terminal = Arc::new(Mutex::new(None));
+    let retained = terminal.clone();
+    let result = execution
+        .use_client(
+            Some(context),
+            0,
+            proxy,
+            Some(Arc::new(move |_, client| {
+                let listing = listing.clone();
+                let committed = Arc::new(AtomicBool::new(false));
+                let mut writer = crate::search::SearchWriter {
+                    output: callback_output.clone(),
+                    committed: committed.clone(),
+                };
+                let staged = staged.clone();
+                let retained = retained.clone();
+                Box::pin(async move {
+                    let error = match attempt(&client, &listing, mode, &mut writer).await {
+                        Ok(value) => {
+                            *staged.lock().unwrap_or_else(|e| e.into_inner()) = value;
+                            None
+                        }
+                        Err(CommandError::Sdk(error)) => Some(SchedulerError::from(error)),
+                        Err(CommandError::App(error)) => Some(error),
+                        Err(error) => {
+                            let message = error.to_string();
+                            *retained.lock().unwrap_or_else(|e| e.into_inner()) = Some(error);
+                            Some(SchedulerError::Message(message))
+                        }
+                    };
+                    UseOutcome {
+                        committed: committed.load(Ordering::Acquire),
+                        error,
+                    }
+                })
+            })),
+        )
+        .await;
+    if let Some(error) = terminal.lock().unwrap_or_else(|e| e.into_inner()).take() {
+        return Err(error);
+    }
+    result?;
+    if let Some(mut spool) = spool.lock().unwrap_or_else(|e| e.into_inner()).take() {
+        spool.commit(&mut *output.lock().unwrap_or_else(|e| e.into_inner()))?;
+    }
+    Ok(())
+}
+
+pub(crate) async fn attempt<T: Transport, W: Write>(
+    client: &Client<T>,
+    listing: &Listing,
+    mode: DetailOutput,
+    out: &mut W,
+) -> Result<Option<JsonSpool>, CommandError> {
+    let plan = &listing.plan;
+    let mut spool = if mode == DetailOutput::Json {
+        Some(JsonSpool::with_key("novels")?)
+    } else {
+        None
+    };
+    let mut heading = false;
+    pixiv_app::pagination::traverse_pages(
+        pixiv_app::pagination::Plan {
+            skip: plan.skip as i64,
+            limit: plan.limit as i64,
+            one_batch: plan.one_batch,
+        },
+        Cursor::default(),
+        |cursor| {
+            let source = listing.source.clone();
+            async move {
+                let page = match source {
+                    Source::Ranking(mut request) => {
+                        request.cursor = cursor;
+                        client.novel_ranking(request).await
+                    }
+                    Source::Search(mut request) => {
+                        request.cursor = cursor;
+                        client.search_novels(request).await
+                    }
+                }
+                .map_err(CommandError::from)?;
+                Ok((page.items, page.next))
+            }
+        },
+        |_: &pixiv_sdk::models::Novel| Ok(true),
+        None::<fn(Cursor, usize) -> Result<Cursor, CommandError>>,
+        |items| {
+            if let Some(spool) = &mut spool {
+                return spool.append_novels(&items);
+            }
+            if mode == DetailOutput::Ndjson {
+                for item in &items {
+                    let record = pixiv_record::from_novel(item)
+                        .map_err(|error| CommandError::Message(error.message()))?;
+                    let encoded = serde_json::to_string(&record).map_err(std::io::Error::other)?;
+                    writeln!(out, "{}", crate::go_json_escape(encoded))?;
+                }
+                return Ok(());
+            }
+            if !heading {
+                writeln!(out, "{}", listing.heading)?;
+                heading = true;
+            }
+            for item in &items {
+                writeln!(out, "{} {} — {}", item.id, item.title, item.user.name)?;
+            }
+            Ok(())
+        },
+    )
+    .await
+    .map_err(|error| match error.cause {
+        pixiv_app::pagination::Cause::Source(error) => error,
+        pixiv_app::pagination::Cause::Message(message) => CommandError::MessageText(message),
+    })?;
+    Ok(spool)
+}

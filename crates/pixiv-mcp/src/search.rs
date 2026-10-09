@@ -413,20 +413,7 @@ pub(crate) fn search_result(
                     Err(error) => return failure(error.to_string()),
                 }
             }
-            let mut pagination = pagination(plan, input.limit, records.len(), more);
-            crate::structured_wire_numbers(&mut pagination);
-            CallToolResult {
-                content: vec![TextContent {
-                    kind: "text",
-                    text: format!("Retrieved {} records.", records.len()),
-                }],
-                structured_content: Records {
-                    records,
-                    pagination: Some(pagination),
-                    filter,
-                },
-                is_error: false,
-            }
+            list_result(records, more, filter, input.limit, plan)
         }
         Err(error) => failure(error.to_string()),
     }
@@ -581,4 +568,27 @@ async fn collect<T: Transport>(
         None
     };
     Ok((items, more, filter))
+}
+
+pub(crate) fn list_result(
+    records: Vec<Value>,
+    more: bool,
+    filter: Option<Value>,
+    limit: Option<i64>,
+    plan: &Plan,
+) -> CallToolResult {
+    let mut pagination = pagination(plan, limit, records.len(), more);
+    crate::structured_wire_numbers(&mut pagination);
+    CallToolResult {
+        content: vec![TextContent {
+            kind: "text",
+            text: format!("Retrieved {} records.", records.len()),
+        }],
+        structured_content: Records {
+            records,
+            pagination: Some(pagination),
+            filter,
+        },
+        is_error: false,
+    }
 }

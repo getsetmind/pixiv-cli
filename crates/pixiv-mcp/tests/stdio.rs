@@ -625,7 +625,8 @@ async fn stdio_publishes_implemented_tool_metadata_and_preserves_request_ids() {
             pixiv_mcp::search_illust_tool(),
             pixiv_mcp::trending_tags_illust_tool(),
             pixiv_mcp::illust_ranking_tool(),
-            pixiv_mcp::novel_detail_tool()
+            pixiv_mcp::novel_detail_tool(),
+            pixiv_mcp::search_novel_tool()
         ])
     );
 }

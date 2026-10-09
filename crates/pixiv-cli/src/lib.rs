@@ -1,4 +1,6 @@
 mod json_spool;
+mod novel_list;
+pub mod novel_search;
 pub mod ranking;
 pub mod search;
 pub mod trending;

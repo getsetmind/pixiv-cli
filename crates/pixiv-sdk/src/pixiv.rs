@@ -6,6 +6,7 @@ pub use crate::bookmark::{
 pub use crate::mutation::*;
 pub use crate::novel::NovelRequest;
 pub use crate::novel_ranking::NovelRankingRequest;
+pub use crate::novel_search::SearchNovelsRequest;
 pub use crate::ranking::*;
 pub use crate::search::SearchArtworksRequest;
 pub use crate::trending::TrendingArtworkTagsRequest;

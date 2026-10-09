@@ -201,8 +201,21 @@ async fn execute(args: Arguments, ndjson_output: &mut bool) -> Result<(), Comman
         }
         _ => None,
     };
+    let novel_search_request = match &args.command {
+        Command::Search { input, options, .. }
+            if !input.trending_tags && input.entity.as_deref() == Some("novel") =>
+        {
+            Some(input.novel_request(
+                options,
+                search_word.as_deref().expect("search input was resolved"),
+            )?)
+        }
+        _ => None,
+    };
     let search_request = match &args.command {
-        Command::Search { input, options, .. } if !input.trending_tags => {
+        Command::Search { input, options, .. }
+            if !input.trending_tags && novel_search_request.is_none() =>
+        {
             if let Some(entity) = input
                 .entity
                 .as_deref()
@@ -210,7 +223,7 @@ async fn execute(args: Arguments, ndjson_output: &mut bool) -> Result<(), Comman
             {
                 return Err(CommandError::Message(
                     if matches!(entity, "novel" | "user") {
-                        "novel and user search are not implemented yet"
+                        "user search is not implemented yet"
                     } else {
                         "type must be one of artwork, novel, user"
                     },
@@ -266,6 +279,21 @@ async fn execute(args: Arguments, ndjson_output: &mut bool) -> Result<(), Comman
                 proxy,
                 mode == DetailOutput::Json,
                 &mut io::stdout().lock(),
+            )
+            .await;
+        }
+        if novel_search_request.is_some() {
+            return pixiv_cli_rs::novel_search::saved_novel_search(
+                &execution,
+                &pixiv_app::lifecycle::Context::new(),
+                (
+                    input,
+                    options.as_ref(),
+                    search_word.as_deref().expect("search input was resolved"),
+                ),
+                proxy,
+                mode,
+                io::stdout(),
             )
             .await;
         }

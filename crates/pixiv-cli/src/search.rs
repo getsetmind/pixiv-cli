@@ -62,6 +62,79 @@ impl SearchInput {
         .collect();
     }
 
+    pub fn novel_request(
+        &self,
+        options: &SearchOptions,
+        word: &str,
+    ) -> Result<pixiv_sdk::pixiv::SearchNovelsRequest, CommandError> {
+        if self
+            .entity
+            .as_deref()
+            .is_some_and(|entity| !matches!(entity, "novel" | "artwork" | "user"))
+        {
+            return Err(CommandError::Message(
+                "type must be one of artwork, novel, user",
+            ));
+        }
+        for name in [
+            "content-type",
+            "resolution",
+            "aspect-ratio",
+            "draw-tool",
+            "ai-mode",
+            "bookmark-min",
+            "bookmark-max",
+            "bookmark-strategy",
+        ] {
+            if self.changed_flags.contains(&name) {
+                return Err(CommandError::MessageText(format!(
+                    "--{name} is only supported when --type artwork"
+                )));
+            }
+        }
+        for name in ["start-date", "end-date", "rating"] {
+            if self.changed_flags.contains(&name) {
+                return Err(CommandError::MessageText(format!(
+                    "--{name} is not supported when --type novel"
+                )));
+            }
+        }
+        let target = match options.search_by.as_str() {
+            "tag-partial" => "partial_match_for_tags",
+            "tag-exact" => "exact_match_for_tags",
+            "title-caption" => "title_and_caption",
+            _ => {
+                return Err(CommandError::Message(
+                    "search-by must be one of tag-partial, tag-exact, title-caption",
+                ));
+            }
+        };
+        let duration = match options.dates.period.as_str() {
+            "" => "",
+            "day" => "within_last_day",
+            "week" => "within_last_week",
+            "month" => "within_last_month",
+            "half-year" | "year" => {
+                return Err(CommandError::Message(
+                    "novel period must be one of day, week, month",
+                ));
+            }
+            _ => {
+                return Err(CommandError::Message(
+                    "period must be one of day, week, month, half-year, year",
+                ));
+            }
+        };
+        options.plan()?;
+        Ok(pixiv_sdk::pixiv::SearchNovelsRequest {
+            word: word.into(),
+            target: target.into(),
+            sort: options.sort.clone(),
+            duration: duration.into(),
+            ..Default::default()
+        })
+    }
+
     pub fn validate_trending_arguments(&self) -> Result<(), CommandError> {
         if !self.query.is_empty() {
             return Err(CommandError::Message(
@@ -421,6 +494,7 @@ impl SearchOptions {
     }
 }
 
+#[derive(Clone)]
 pub(crate) struct SearchPlan {
     pub(crate) limit: usize,
     pub(crate) skip: usize,
