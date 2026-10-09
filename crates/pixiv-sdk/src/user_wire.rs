@@ -10,6 +10,9 @@ use std::fmt;
 enum Kind {
     String,
     Integer,
+    IntegerPointer,
+    AnyPointer,
+    CommentPointer,
     Boolean,
     StringPointer,
     Struct(&'static [Field]),
@@ -32,6 +35,22 @@ const USER: &[Field] = fields!(
     "comment" => Kind::String, "is_followed" => Kind::Boolean,
     "profile_image_urls" => Kind::Struct(IMAGES),
 );
+const COMMENT: &[Field] = fields!(
+    "id" => Kind::Integer, "user" => Kind::Struct(USER),
+    "comment" => Kind::String, "caption" => Kind::String,
+    "date" => Kind::String, "created_at" => Kind::String,
+    "parent_comment" => Kind::CommentPointer,
+);
+const ACCESS: &[Field] = fields!("can_comment" => Kind::Boolean, "is_locked" => Kind::Boolean);
+const COMMENTS: &[Field] = fields!(
+    "comments" => Kind::RequiredList(COMMENT), "next_url" => Kind::StringPointer,
+    "total_comments" => Kind::IntegerPointer,
+    "comment_access_control" => Kind::IntegerPointer,
+    "access_control" => Kind::PointerStruct(ACCESS),
+);
+const STAMP: &[Field] = fields!("stamp_id" => Kind::Integer, "stamp_url" => Kind::String);
+const STAMPS: &[Field] =
+    fields!("stamps" => Kind::RequiredList(STAMP), "next_url" => Kind::AnyPointer);
 const PREVIEW: &[Field] = fields!("user" => Kind::Struct(USER));
 const SEARCH: &[Field] = fields!(
     "user_previews" => Kind::RequiredList(PREVIEW),
@@ -148,6 +167,30 @@ fn apply(values: &mut Map<String, Value>, field: &Field, raw: &str) -> serde_jso
         }
         Kind::StringPointer => Value::Null,
         Kind::Integer => Value::from(raw.parse::<i64>().map_err(|_| invalid())?),
+        Kind::IntegerPointer => {
+            if raw == "null" {
+                Value::Null
+            } else {
+                Value::from(raw.parse::<i64>().map_err(|_| invalid())?)
+            }
+        }
+        Kind::AnyPointer => {
+            if raw == "null" {
+                Value::Null
+            } else {
+                Value::Bool(true)
+            }
+        }
+        Kind::CommentPointer => {
+            return apply(
+                values,
+                &Field {
+                    name: field.name,
+                    kind: Kind::PointerStruct(COMMENT),
+                },
+                raw,
+            );
+        }
         Kind::Boolean => match raw {
             "true" => Value::Bool(true),
             "false" => Value::Bool(false),
@@ -248,13 +291,21 @@ fn apply(values: &mut Map<String, Value>, field: &Field, raw: &str) -> serde_jso
     Ok(())
 }
 pub(crate) fn decode(raw: &[u8], operation: &'static str) -> Result<Value> {
-    let malformed = || Error::new(Reason::MalformedUpstreamResponse, operation);
-    let raw = crate::codec::normalize_json(raw).map_err(|_| malformed())?;
     let schema = match operation {
+        "ArtworkComments" | "NovelComments" => COMMENTS,
+        "Stamps" => STAMPS,
         "User" | "CurrentUser" => DETAIL,
         "UserBlockedUsers" => BLOCKED,
         _ => SEARCH,
     };
+    decode_schema(raw, operation, schema)
+}
+pub(crate) fn decode_stamps(raw: &[u8], operation: &'static str) -> Result<Value> {
+    decode_schema(raw, operation, STAMPS)
+}
+fn decode_schema(raw: &[u8], operation: &'static str, schema: &'static [Field]) -> Result<Value> {
+    let malformed = || Error::new(Reason::MalformedUpstreamResponse, operation);
+    let raw = crate::codec::normalize_json(raw).map_err(|_| malformed())?;
     let mut value = Map::new();
     object(&raw, schema, &mut value).map_err(|_| malformed())?;
     Ok(Value::Object(value))

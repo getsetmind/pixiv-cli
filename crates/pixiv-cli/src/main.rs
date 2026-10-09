@@ -189,7 +189,27 @@ enum TimelineCommand {
 }
 
 #[derive(Subcommand)]
+enum CommentCommand {
+    #[command(args_override_self = true)]
+    Stamps {
+        #[command(flatten)]
+        options: pixiv_cli_rs::comment_reads::StampsOptions,
+        #[command(flatten)]
+        connection: ProxyOptions,
+    },
+}
+
+#[derive(Subcommand)]
 enum Command {
+    #[command(args_override_self = true)]
+    Comment {
+        #[command(flatten)]
+        options: pixiv_cli_rs::comment_reads::CommentOptions,
+        #[command(flatten)]
+        connection: ProxyOptions,
+        #[command(subcommand)]
+        command: Option<CommentCommand>,
+    },
     Mypixiv {
         #[command(subcommand)]
         command: MyPixivCommand,
@@ -349,6 +369,14 @@ async fn main() {
         command => command,
     };
     let machine_output = match &args.command {
+        Command::Comment {
+            options, command, ..
+        } => match command {
+            Some(CommentCommand::Stamps { options, .. }) => {
+                options.json.is_some() || options.ndjson
+            }
+            None => options.listing.json.is_some() || options.listing.ndjson,
+        },
         Command::User {
             command: UserCommand::Detail { options, .. },
         } => options.json.is_some(),
@@ -403,6 +431,17 @@ async fn main() {
         Command::Series { options, .. } => options.json.is_some() || options.ndjson,
     };
     let mut ndjson_output = match &args.command {
+        Command::Comment {
+            options, command, ..
+        } => match command {
+            Some(CommentCommand::Stamps { options, .. }) => {
+                options.ndjson || (options.json.is_none() && !io::stdout().is_terminal())
+            }
+            None => {
+                options.listing.ndjson
+                    || (options.listing.json.is_none() && !io::stdout().is_terminal())
+            }
+        },
         Command::Mypixiv { command } => match command {
             MyPixivCommand::Users { options, .. } => options.ndjson,
             MyPixivCommand::Works { options, .. } => {
@@ -482,6 +521,15 @@ async fn main() {
 }
 
 async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), CommandError> {
+    if let Command::Comment {
+        options, command, ..
+    } = &mut args.command
+    {
+        match command {
+            Some(CommentCommand::Stamps { options, .. }) => options.validate_arguments()?,
+            None => options.resolve_source(&mut io::stdin().lock(), io::stdin().is_terminal())?,
+        }
+    }
     match &mut args.command {
         Command::Bookmark {
             command: BookmarkGroupCommand::Detail { options, .. },
@@ -616,6 +664,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
     let account_config = if matches!(
         &args.command,
         Command::Mypixiv { .. }
+            | Command::Comment { .. }
             | Command::Timeline { .. }
             | Command::Detail { .. }
             | Command::Mcp { .. }
@@ -766,6 +815,72 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
             .await;
         }
         _ => {}
+    }
+    if let Command::Comment {
+        options,
+        connection,
+        command,
+    } = &args.command
+    {
+        let (directory, config) = account_config.expect("comment startup was resolved");
+        let (json, ndjson) = match command {
+            Some(CommentCommand::Stamps { options, .. }) => (options.json, options.ndjson),
+            None => (options.listing.json, options.listing.ndjson),
+        };
+        if command.is_none() {
+            options.validate()?;
+        }
+        let connection = match command {
+            Some(CommentCommand::Stamps { connection, .. }) => connection,
+            None => connection,
+        };
+        let proxy = connection.override_value()?;
+        let configured = if ndjson {
+            false
+        } else {
+            config
+                .current()
+                .and_then(|snapshot| snapshot.runtime())
+                .map_err(pixiv_app::scheduler::SchedulerError::from)?
+                .output_json
+        };
+        let mode = match command {
+            Some(CommentCommand::Stamps { options, .. }) => {
+                options.output_mode(configured, io::stdout().is_terminal())?
+            }
+            None => options.output_mode(configured, io::stdout().is_terminal())?,
+        };
+        *ndjson_output = ndjson || (json.is_none() && !configured && !io::stdout().is_terminal());
+        let database = pixiv_app::database::Database::open(&directory)
+            .map_err(|error| CommandError::State(Box::new(error)))?;
+        let execution = pixiv_app::execution::Execution::http(
+            config,
+            std::sync::Arc::new(std::sync::Mutex::new(database)),
+        );
+        let context = pixiv_app::lifecycle::Context::new();
+        return match command {
+            Some(CommentCommand::Stamps { .. }) => {
+                pixiv_cli_rs::comment_reads::saved_stamps(
+                    &execution,
+                    &context,
+                    proxy,
+                    mode,
+                    &mut io::stdout(),
+                )
+                .await
+            }
+            None => {
+                pixiv_cli_rs::comment_reads::saved_comments(
+                    &execution,
+                    &context,
+                    options.clone(),
+                    proxy,
+                    mode,
+                    io::stdout(),
+                )
+                .await
+            }
+        };
     }
     if let Some(mut options) = bookmark_lists {
         let (directory, config) = account_config.expect("bookmark lists startup was resolved");
@@ -1377,6 +1492,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
         Command::Timeline { .. } => unreachable!("timeline uses saved account execution"),
         Command::Mypixiv { .. } => unreachable!("mypixiv uses saved account execution"),
         Command::Novel { .. } => unreachable!("novel commands were resolved"),
+        Command::Comment { .. } => unreachable!("comment command was handled"),
         Command::Mcp { .. } => unreachable!("MCP uses saved account execution"),
         Command::Bookmark { .. } | Command::Follow { .. } | Command::User { .. } => {
             unreachable!("mutations use saved account execution")

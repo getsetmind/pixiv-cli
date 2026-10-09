@@ -403,7 +403,12 @@ impl<T: Transport + ResourceTransport> Client<T> {
                         .with_detail("resource kind is unsupported"));
                 }
             };
-            let body = self.get(endpoint, parameters, operation).await?;
+            let body = if kind == "stamp" {
+                let raw = self.get_json(endpoint, parameters, operation).await?;
+                crate::user_wire::decode_stamps(&raw, operation)?
+            } else {
+                self.get(endpoint, parameters, operation).await?
+            };
             let url = if kind == "artwork" {
                 crate::artwork::resource_url(
                     body.get("illust")
@@ -511,3 +516,6 @@ pub use crate::timeline::{
     FollowingArtworksRequest, FollowingNovelsRequest, LatestArtworksRequest, LatestNovelsRequest,
     MyPixivArtworksRequest, MyPixivNovelsRequest,
 };
+
+pub use crate::comments::{ArtworkCommentsRequest, NovelCommentsRequest};
+pub use crate::stamps::StampsRequest;

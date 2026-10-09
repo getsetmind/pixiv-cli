@@ -41,3 +41,7 @@ MyPixivはSDK195、MCP135+pool6、CLI main77+startup25+scalar33+pool18の489行�
 ### User compatibility checkpoint
 
 新fixtureはCurrentUser9、専用user profile8、実startup61の3files・78行・48,205 bytes。owner searchの共通fixtureは255行を再利用し、新規copy/matrixは作らない。root-only flagの54行をowner選択から除くが既存rootテスト/期待値は維持する。Go owner225行と既存shared raw-wire30行の証拠を区別し、255件全てが今回Go ownerで再実行されたとは記さない。専用detailのtext入力/safe表示/empty error、CurrentUserのidentity/query/error/headerとcached Usernameが今回の新しい境界である。
+
+### Comment/stamp read checkpoint
+
+SDK144、CLI98 main+81 pool+30実startup、MCP72+4 poolの429行を8files・672,579 bytesに固定する。全CLI行はexact比較で、leaf renderer拒否のみの行はない。pool81は9scenario×3mode×3operationで、comment lease内buffer/metadata/replayとstamps lease外writer、namespace DTO/query、mode別empty commit/EPIPE/partial prefixを区別する。shared bodiesと既存pool/saved helpersを再利用し、その他のbody/input/schema dimensionは無条件に交差させない。1 duplicate-resource unitと4 raw-resolution unit例は行数へ加えない。成功short writerはhuman1例だけ追加し、全mode/kindへ直積拡張しない。fullgate未完了のtelemetry拒否をscoped比較成功から分けて保持する。

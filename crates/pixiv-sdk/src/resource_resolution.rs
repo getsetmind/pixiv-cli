@@ -1,4 +1,4 @@
-use crate::{Error, Reason, Result, pixiv::ResourcePolicy};
+use crate::{Error, Reason, Result};
 use serde_json::Value;
 use std::collections::BTreeSet;
 
@@ -157,26 +157,12 @@ pub(crate) fn resolve(
                 .map(str::to_owned)
                 .ok_or_else(unavailable)
         }
-        "stamp" => {
-            let items = body
-                .get("stamps")
-                .and_then(Value::as_array)
-                .ok_or_else(malformed)?;
-            if body.get("next_url").is_some_and(|value| !value.is_null()) {
-                return Err(malformed());
-            }
-            let policy = ResourcePolicy::default();
-            let mut selected = None;
-            for item in items {
-                let stamp_id = positive(item, "stamp_id").ok_or_else(malformed)?;
-                let url = text(Some(item), "stamp_url").ok_or_else(malformed)?;
-                policy.validate(url).map_err(|_| malformed())?;
-                if stamp_id == id && selected.is_none() {
-                    selected = Some(url.to_owned());
-                }
-            }
-            selected.ok_or_else(unavailable)
-        }
+        "stamp" => crate::stamps::validated_stamps(body, operation)?
+            .into_iter()
+            .find(|(stamp_id, _)| *stamp_id == id)
+            .map(|(_, url)| url.to_owned())
+            .ok_or_else(unavailable),
+
         _ => Err(Error::new(Reason::InvalidArgument, operation)
             .with_detail("resource kind is unsupported")),
     }

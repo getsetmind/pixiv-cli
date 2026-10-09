@@ -668,6 +668,8 @@ async fn stdio_publishes_implemented_tool_metadata_and_preserves_request_ids() {
             pixiv_mcp::my_pixiv_tool(pixiv_mcp::MyPixiv::Artworks),
             pixiv_mcp::my_pixiv_tool(pixiv_mcp::MyPixiv::Novels),
             pixiv_mcp::my_pixiv_tool(pixiv_mcp::MyPixiv::Users),
+            pixiv_mcp::comment_read_tool(pixiv_mcp::CommentRead::Artwork),
+            pixiv_mcp::comment_read_tool(pixiv_mcp::CommentRead::Novel),
         ])
     );
     implemented_catalog::assert_catalog(responses[1]["result"]["tools"].as_array().unwrap());

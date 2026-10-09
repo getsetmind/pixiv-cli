@@ -1,0 +1,56 @@
+{
+  "description": "Read comments for a Pixiv novel.",
+  "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "id": {
+        "description": "Positive artwork or novel ID.",
+        "minimum": 1,
+        "type": "integer"
+      },
+      "limit": {
+        "description": "Maximum comments; 0 returns all; omitted reads one upstream batch.",
+        "minimum": 0,
+        "type": "integer"
+      },
+      "page": {
+        "description": "1-based logical page; requires a positive limit.",
+        "minimum": 1,
+        "type": "integer"
+      }
+    },
+    "required": [
+      "id"
+    ],
+    "type": "object"
+  },
+  "name": "novel_comments",
+  "outputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "access_control": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "comments": {
+        "items": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "type": "array"
+      },
+      "pagination": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "total": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "comments",
+      "pagination"
+    ],
+    "type": "object"
+  }
+}

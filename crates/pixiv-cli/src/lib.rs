@@ -1,6 +1,7 @@
 mod artwork_list;
 pub mod bookmark_lists;
 pub mod bookmark_reads;
+pub mod comment_reads;
 mod json_spool;
 pub mod mutation;
 pub mod mypixiv;

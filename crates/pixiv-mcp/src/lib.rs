@@ -230,3 +230,8 @@ pub use timeline::{Timeline, TimelineInput, timeline, timeline_tool};
 
 mod mypixiv;
 pub use mypixiv::{MyPixiv, MyPixivInput, my_pixiv, my_pixiv_tool};
+
+mod comment_reads;
+pub use comment_reads::{
+    CommentRead, CommentReadInput, CommentReadOutput, comment_read, comment_read_tool,
+};

@@ -446,3 +446,97 @@ impl<'a> From<&'a crate::models::NovelContent> for NovelContentDto<'a> {
         }
     }
 }
+
+#[derive(Serialize)]
+pub struct CommentDto<'a> {
+    pub id: i64,
+    pub user: UserDto<'a>,
+    pub comment: &'a str,
+    #[serde(serialize_with = "serialize_comment_time")]
+    pub created_at: DateTime<Utc>,
+    pub parent_comment: Option<Box<CommentDto<'a>>>,
+}
+fn serialize_comment_time<S: serde::Serializer>(
+    value: &DateTime<Utc>,
+    serializer: S,
+) -> Result<S::Ok, S::Error> {
+    let mut encoded = value.to_rfc3339_opts(chrono::SecondsFormat::Nanos, true);
+    if let Some(point) = encoded.find('.') {
+        let end = encoded.len() - 1;
+        let trimmed = encoded[point + 1..end].trim_end_matches('0');
+        let keep = if trimmed.is_empty() {
+            point
+        } else {
+            point + 1 + trimmed.len()
+        };
+        encoded.truncate(keep);
+        encoded.push('Z');
+    }
+    serializer.serialize_str(&encoded)
+}
+pub fn to_comment_dto(value: &crate::models::Comment) -> CommentDto<'_> {
+    CommentDto {
+        id: value.id,
+        user: UserDto::from(&value.user),
+        comment: &value.body,
+        created_at: value.created_at,
+        parent_comment: value
+            .parent
+            .as_deref()
+            .map(|parent| Box::new(to_comment_dto(parent))),
+    }
+}
+#[derive(Serialize)]
+#[serde(untagged)]
+pub enum CommentAccessControlDto {
+    Numeric { comment_access_control: i64 },
+    Object { can_comment: bool, is_locked: bool },
+}
+pub fn to_comment_access_control_dto(
+    value: &crate::models::CommentAccessControl,
+) -> CommentAccessControlDto {
+    match value.numeric_value {
+        Some(comment_access_control) => CommentAccessControlDto::Numeric {
+            comment_access_control,
+        },
+        None => CommentAccessControlDto::Object {
+            can_comment: value.can_comment,
+            is_locked: value.is_locked,
+        },
+    }
+}
+#[derive(Serialize)]
+pub struct CommentItemsDto<'a> {
+    pub items: Vec<CommentDto<'a>>,
+    pub next: &'a str,
+}
+#[derive(Serialize)]
+pub struct CommentPageDto<'a> {
+    pub page: CommentItemsDto<'a>,
+    pub total: Option<i64>,
+    pub access_control: Option<CommentAccessControlDto>,
+}
+pub fn to_comment_page_dto(value: &crate::models::CommentPage) -> CommentPageDto<'_> {
+    CommentPageDto {
+        page: CommentItemsDto {
+            items: value.items.iter().map(to_comment_dto).collect(),
+            next: value.next.as_str(),
+        },
+        total: value.total,
+        access_control: value
+            .access_control
+            .as_ref()
+            .map(to_comment_access_control_dto),
+    }
+}
+#[derive(Serialize)]
+pub struct StampDto<'a> {
+    pub id: i64,
+    pub image: ImageResourceDto<'a>,
+}
+pub fn to_stamp_dto(value: &crate::models::Stamp) -> StampDto<'_> {
+    StampDto {
+        id: value.id,
+        image: ImageResourceDto::from(&value.image),
+    }
+}

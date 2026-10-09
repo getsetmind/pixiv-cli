@@ -530,15 +530,29 @@
     },
     {
       "id": "cli:pixiv comment",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv comment"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/comment_reads.rs",
+        "crates/pixiv-cli/src/main.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_comment_reads_test.go",
+        "internal/cli/migration_comment_reads_pool_test.go",
+        "internal/cli/migration_comment_reads_startup_test.go",
+        "crates/pixiv-cli/tests/comment_reads.rs",
+        "crates/pixiv-cli/tests/comment_reads_pool.rs",
+        "crates/pixiv-cli/tests/comment_reads_startup.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go98 exact direct/saved・81 real-pool・30 actual startup行でread全kind/stampsのDTO/metadata/input/output/要求/stateを比較。commentは全logical traversalをbufferしてlease内output、stampsはRead解放後output。human single Write/short success・Go URL拒否・config/DB stageを維持。create/reply/delete/stamp mutationは未実装。full Rust gateは承認後のtask-local telemetry opt-out・offline再実行で終了0、272passed/既存3ignored、release成功。全flag/help/TTY/OS hooks、root parser/Linux snapshot、全通信/取消/並行/他platform・配布は未検証。"
+      ]
     },
     {
       "id": "cli:pixiv comment create",
@@ -590,15 +604,29 @@
     },
     {
       "id": "cli:pixiv comment stamps",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv comment stamps"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/comment_reads.rs",
+        "crates/pixiv-cli/src/main.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_comment_reads_test.go",
+        "internal/cli/migration_comment_reads_pool_test.go",
+        "internal/cli/migration_comment_reads_startup_test.go",
+        "crates/pixiv-cli/tests/comment_reads.rs",
+        "crates/pixiv-cli/tests/comment_reads_pool.rs",
+        "crates/pixiv-cli/tests/comment_reads_startup.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go98 exact direct/saved・81 real-pool・30 actual startup行でread全kind/stampsのDTO/metadata/input/output/要求/stateを比較。commentは全logical traversalをbufferしてlease内output、stampsはRead解放後output。human single Write/short success・Go URL拒否・config/DB stageを維持。create/reply/delete/stamp mutationは未実装。full Rust gateは承認後のtask-local telemetry opt-out・offline再実行で終了0、272passed/既存3ignored、release成功。全flag/help/TTY/OS hooks、root parser/Linux snapshot、全通信/取消/並行/他platform・配布は未検証。"
+      ]
     },
     {
       "id": "cli:pixiv config",
@@ -2377,15 +2405,28 @@
     },
     {
       "id": "mcp:pixiv:illust_comments",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "illust_comments"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/comment_reads.rs",
+        "crates/pixiv-mcp/src/stdio.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_comment_reads_test.go",
+        "internal/mcpserver/pixiv/migration_comment_reads_pool_test.go",
+        "crates/pixiv-mcp/tests/comment_reads.rs",
+        "crates/pixiv-mcp/tests/comment_reads_pool.rs",
+        "crates/pixiv-mcp/tests/stdio.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go72 direct/raw/savedと4 real-pool行でschema/comments/metadata/pageとwhole replayを比較。parent pointer/runtime image URL/raw whitespace collisionを含むGo formatted-value dedupe keyを固定。旧41toolを保持し2追加、43全metadataを独立Go基準比較。standalone stamps-list toolはGoに存在せず追加しない。mutationは未実装。full Rust gateは承認後のtask-local telemetry opt-out・offline再実行で終了0、272passed/既存3ignored、release成功。全通信/取消/concurrency/disconnect/他platform・配布は未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:illust_detail",
@@ -2670,15 +2711,28 @@
     },
     {
       "id": "mcp:pixiv:novel_comments",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "novel_comments"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/comment_reads.rs",
+        "crates/pixiv-mcp/src/stdio.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_comment_reads_test.go",
+        "internal/mcpserver/pixiv/migration_comment_reads_pool_test.go",
+        "crates/pixiv-mcp/tests/comment_reads.rs",
+        "crates/pixiv-mcp/tests/comment_reads_pool.rs",
+        "crates/pixiv-mcp/tests/stdio.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go72 direct/raw/savedと4 real-pool行でschema/comments/metadata/pageとwhole replayを比較。parent pointer/runtime image URL/raw whitespace collisionを含むGo formatted-value dedupe keyを固定。旧41toolを保持し2追加、43全metadataを独立Go基準比較。standalone stamps-list toolはGoに存在せず追加しない。mutationは未実装。full Rust gateは承認後のtask-local telemetry opt-out・offline再実行で終了0、272passed/既存3ignored、release成功。全通信/取消/concurrency/disconnect/他platform・配布は未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:novel_content",
@@ -6749,15 +6803,32 @@
     },
     {
       "id": "sdk/pixiv:ArtworkCommentsRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ArtworkCommentsRequest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/comments.rs",
+        "crates/pixiv-sdk/src/stamps.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_comment_reads_test.go",
+        "crates/pixiv-sdk/tests/comment_reads.rs",
+        "crates/pixiv-sdk/tests/user_wire.rs",
+        "crates/pixiv-sdk/tests/resource_io.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go144 targeted行とactual-Go stamp cache/raw-resolution4例を比較。recursive comment/date-caption precedence/nullable-zero-negative metadata/global cursor/型/orderを保持。CommentDTO fractional日時はGo RFC3339Nanoに合わせ他DTOは変更しない。Stamps/fresh resourceは共有exact decoder/全item validator、cache last duplicate/new client firstを維持。full Rust gateは承認後のtask-local telemetry opt-out・offline再実行で終了0、272passed/既存3ignored、release成功。全schema/UTF8/precision/URL normalization、他DTO fractional日時、全通信/Options/auth/取消/並行/他platform・配布は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:ArtworkDTO",
@@ -7283,15 +7354,32 @@
     },
     {
       "id": "sdk/pixiv:Client.ArtworkComments",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.ArtworkComments"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/comments.rs",
+        "crates/pixiv-sdk/src/stamps.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_comment_reads_test.go",
+        "crates/pixiv-sdk/tests/comment_reads.rs",
+        "crates/pixiv-sdk/tests/user_wire.rs",
+        "crates/pixiv-sdk/tests/resource_io.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go144 targeted行とactual-Go stamp cache/raw-resolution4例を比較。recursive comment/date-caption precedence/nullable-zero-negative metadata/global cursor/型/orderを保持。CommentDTO fractional日時はGo RFC3339Nanoに合わせ他DTOは変更しない。Stamps/fresh resourceは共有exact decoder/全item validator、cache last duplicate/new client firstを維持。full Rust gateは承認後のtask-local telemetry opt-out・offline再実行で終了0、272passed/既存3ignored、release成功。全schema/UTF8/precision/URL normalization、他DTO fractional日時、全通信/Options/auth/取消/並行/他platform・配布は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.ArtworkPages",
@@ -7694,15 +7782,32 @@
     },
     {
       "id": "sdk/pixiv:Client.NovelComments",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.NovelComments"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/comments.rs",
+        "crates/pixiv-sdk/src/stamps.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_comment_reads_test.go",
+        "crates/pixiv-sdk/tests/comment_reads.rs",
+        "crates/pixiv-sdk/tests/user_wire.rs",
+        "crates/pixiv-sdk/tests/resource_io.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go144 targeted行とactual-Go stamp cache/raw-resolution4例を比較。recursive comment/date-caption precedence/nullable-zero-negative metadata/global cursor/型/orderを保持。CommentDTO fractional日時はGo RFC3339Nanoに合わせ他DTOは変更しない。Stamps/fresh resourceは共有exact decoder/全item validator、cache last duplicate/new client firstを維持。full Rust gateは承認後のtask-local telemetry opt-out・offline再実行で終了0、272passed/既存3ignored、release成功。全schema/UTF8/precision/URL normalization、他DTO fractional日時、全通信/Options/auth/取消/並行/他platform・配布は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.NovelContent",
@@ -8233,15 +8338,32 @@
     },
     {
       "id": "sdk/pixiv:Client.Stamps",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.Stamps"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/comments.rs",
+        "crates/pixiv-sdk/src/stamps.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_comment_reads_test.go",
+        "crates/pixiv-sdk/tests/comment_reads.rs",
+        "crates/pixiv-sdk/tests/user_wire.rs",
+        "crates/pixiv-sdk/tests/resource_io.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go144 targeted行とactual-Go stamp cache/raw-resolution4例を比較。recursive comment/date-caption precedence/nullable-zero-negative metadata/global cursor/型/orderを保持。CommentDTO fractional日時はGo RFC3339Nanoに合わせ他DTOは変更しない。Stamps/fresh resourceは共有exact decoder/全item validator、cache last duplicate/new client firstを維持。full Rust gateは承認後のtask-local telemetry opt-out・offline再実行で終了0、272passed/既存3ignored、release成功。全schema/UTF8/precision/URL normalization、他DTO fractional日時、全通信/Options/auth/取消/並行/他platform・配布は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.TrendingArtworkTags",
@@ -8620,63 +8742,148 @@
     },
     {
       "id": "sdk/pixiv:Comment",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Comment"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/comments.rs",
+        "crates/pixiv-sdk/src/stamps.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_comment_reads_test.go",
+        "crates/pixiv-sdk/tests/comment_reads.rs",
+        "crates/pixiv-sdk/tests/user_wire.rs",
+        "crates/pixiv-sdk/tests/resource_io.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go144 targeted行とactual-Go stamp cache/raw-resolution4例を比較。recursive comment/date-caption precedence/nullable-zero-negative metadata/global cursor/型/orderを保持。CommentDTO fractional日時はGo RFC3339Nanoに合わせ他DTOは変更しない。Stamps/fresh resourceは共有exact decoder/全item validator、cache last duplicate/new client firstを維持。full Rust gateは承認後のtask-local telemetry opt-out・offline再実行で終了0、272passed/既存3ignored、release成功。全schema/UTF8/precision/URL normalization、他DTO fractional日時、全通信/Options/auth/取消/並行/他platform・配布は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:CommentAccessControl",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:CommentAccessControl"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/comments.rs",
+        "crates/pixiv-sdk/src/stamps.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_comment_reads_test.go",
+        "crates/pixiv-sdk/tests/comment_reads.rs",
+        "crates/pixiv-sdk/tests/user_wire.rs",
+        "crates/pixiv-sdk/tests/resource_io.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go144 targeted行とactual-Go stamp cache/raw-resolution4例を比較。recursive comment/date-caption precedence/nullable-zero-negative metadata/global cursor/型/orderを保持。CommentDTO fractional日時はGo RFC3339Nanoに合わせ他DTOは変更しない。Stamps/fresh resourceは共有exact decoder/全item validator、cache last duplicate/new client firstを維持。full Rust gateは承認後のtask-local telemetry opt-out・offline再実行で終了0、272passed/既存3ignored、release成功。全schema/UTF8/precision/URL normalization、他DTO fractional日時、全通信/Options/auth/取消/並行/他platform・配布は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:CommentAccessControlDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:CommentAccessControlDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/comments.rs",
+        "crates/pixiv-sdk/src/stamps.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_comment_reads_test.go",
+        "crates/pixiv-sdk/tests/comment_reads.rs",
+        "crates/pixiv-sdk/tests/user_wire.rs",
+        "crates/pixiv-sdk/tests/resource_io.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go144 targeted行とactual-Go stamp cache/raw-resolution4例を比較。recursive comment/date-caption precedence/nullable-zero-negative metadata/global cursor/型/orderを保持。CommentDTO fractional日時はGo RFC3339Nanoに合わせ他DTOは変更しない。Stamps/fresh resourceは共有exact decoder/全item validator、cache last duplicate/new client firstを維持。full Rust gateは承認後のtask-local telemetry opt-out・offline再実行で終了0、272passed/既存3ignored、release成功。全schema/UTF8/precision/URL normalization、他DTO fractional日時、全通信/Options/auth/取消/並行/他platform・配布は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:CommentAccessControlDTO.MarshalJSON",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:CommentAccessControlDTO.MarshalJSON"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/comments.rs",
+        "crates/pixiv-sdk/src/stamps.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_comment_reads_test.go",
+        "crates/pixiv-sdk/tests/comment_reads.rs",
+        "crates/pixiv-sdk/tests/user_wire.rs",
+        "crates/pixiv-sdk/tests/resource_io.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go144 targeted行とactual-Go stamp cache/raw-resolution4例を比較。recursive comment/date-caption precedence/nullable-zero-negative metadata/global cursor/型/orderを保持。CommentDTO fractional日時はGo RFC3339Nanoに合わせ他DTOは変更しない。Stamps/fresh resourceは共有exact decoder/全item validator、cache last duplicate/new client firstを維持。full Rust gateは承認後のtask-local telemetry opt-out・offline再実行で終了0、272passed/既存3ignored、release成功。全schema/UTF8/precision/URL normalization、他DTO fractional日時、全通信/Options/auth/取消/並行/他platform・配布は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:CommentDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:CommentDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/comments.rs",
+        "crates/pixiv-sdk/src/stamps.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_comment_reads_test.go",
+        "crates/pixiv-sdk/tests/comment_reads.rs",
+        "crates/pixiv-sdk/tests/user_wire.rs",
+        "crates/pixiv-sdk/tests/resource_io.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go144 targeted行とactual-Go stamp cache/raw-resolution4例を比較。recursive comment/date-caption precedence/nullable-zero-negative metadata/global cursor/型/orderを保持。CommentDTO fractional日時はGo RFC3339Nanoに合わせ他DTOは変更しない。Stamps/fresh resourceは共有exact decoder/全item validator、cache last duplicate/new client firstを維持。full Rust gateは承認後のtask-local telemetry opt-out・offline再実行で終了0、272passed/既存3ignored、release成功。全schema/UTF8/precision/URL normalization、他DTO fractional日時、全通信/Options/auth/取消/並行/他platform・配布は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:CommentMutationResult",
@@ -8692,27 +8899,61 @@
     },
     {
       "id": "sdk/pixiv:CommentPage",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:CommentPage"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/comments.rs",
+        "crates/pixiv-sdk/src/stamps.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_comment_reads_test.go",
+        "crates/pixiv-sdk/tests/comment_reads.rs",
+        "crates/pixiv-sdk/tests/user_wire.rs",
+        "crates/pixiv-sdk/tests/resource_io.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go144 targeted行とactual-Go stamp cache/raw-resolution4例を比較。recursive comment/date-caption precedence/nullable-zero-negative metadata/global cursor/型/orderを保持。CommentDTO fractional日時はGo RFC3339Nanoに合わせ他DTOは変更しない。Stamps/fresh resourceは共有exact decoder/全item validator、cache last duplicate/new client firstを維持。full Rust gateは承認後のtask-local telemetry opt-out・offline再実行で終了0、272passed/既存3ignored、release成功。全schema/UTF8/precision/URL normalization、他DTO fractional日時、全通信/Options/auth/取消/並行/他platform・配布は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:CommentPageDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:CommentPageDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/comments.rs",
+        "crates/pixiv-sdk/src/stamps.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_comment_reads_test.go",
+        "crates/pixiv-sdk/tests/comment_reads.rs",
+        "crates/pixiv-sdk/tests/user_wire.rs",
+        "crates/pixiv-sdk/tests/resource_io.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go144 targeted行とactual-Go stamp cache/raw-resolution4例を比較。recursive comment/date-caption precedence/nullable-zero-negative metadata/global cursor/型/orderを保持。CommentDTO fractional日時はGo RFC3339Nanoに合わせ他DTOは変更しない。Stamps/fresh resourceは共有exact decoder/全item validator、cache last duplicate/new client firstを維持。full Rust gateは承認後のtask-local telemetry opt-out・offline再実行で終了0、272passed/既存3ignored、release成功。全schema/UTF8/precision/URL normalization、他DTO fractional日時、全通信/Options/auth/取消/並行/他platform・配布は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Credentials",
@@ -9653,15 +9894,32 @@
     },
     {
       "id": "sdk/pixiv:NovelCommentsRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelCommentsRequest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/comments.rs",
+        "crates/pixiv-sdk/src/stamps.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_comment_reads_test.go",
+        "crates/pixiv-sdk/tests/comment_reads.rs",
+        "crates/pixiv-sdk/tests/user_wire.rs",
+        "crates/pixiv-sdk/tests/resource_io.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go144 targeted行とactual-Go stamp cache/raw-resolution4例を比較。recursive comment/date-caption precedence/nullable-zero-negative metadata/global cursor/型/orderを保持。CommentDTO fractional日時はGo RFC3339Nanoに合わせ他DTOは変更しない。Stamps/fresh resourceは共有exact decoder/全item validator、cache last duplicate/new client firstを維持。full Rust gateは承認後のtask-local telemetry opt-out・offline再実行で終了0、272passed/既存3ignored、release成功。全schema/UTF8/precision/URL normalization、他DTO fractional日時、全通信/Options/auth/取消/並行/他platform・配布は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelContent",
@@ -11951,15 +12209,32 @@
     },
     {
       "id": "sdk/pixiv:Stamp",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Stamp"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/comments.rs",
+        "crates/pixiv-sdk/src/stamps.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_comment_reads_test.go",
+        "crates/pixiv-sdk/tests/comment_reads.rs",
+        "crates/pixiv-sdk/tests/user_wire.rs",
+        "crates/pixiv-sdk/tests/resource_io.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go144 targeted行とactual-Go stamp cache/raw-resolution4例を比較。recursive comment/date-caption precedence/nullable-zero-negative metadata/global cursor/型/orderを保持。CommentDTO fractional日時はGo RFC3339Nanoに合わせ他DTOは変更しない。Stamps/fresh resourceは共有exact decoder/全item validator、cache last duplicate/new client firstを維持。full Rust gateは承認後のtask-local telemetry opt-out・offline再実行で終了0、272passed/既存3ignored、release成功。全schema/UTF8/precision/URL normalization、他DTO fractional日時、全通信/Options/auth/取消/並行/他platform・配布は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:StampArtworkCommentRequest",
@@ -11975,15 +12250,32 @@
     },
     {
       "id": "sdk/pixiv:StampDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:StampDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/comments.rs",
+        "crates/pixiv-sdk/src/stamps.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_comment_reads_test.go",
+        "crates/pixiv-sdk/tests/comment_reads.rs",
+        "crates/pixiv-sdk/tests/user_wire.rs",
+        "crates/pixiv-sdk/tests/resource_io.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go144 targeted行とactual-Go stamp cache/raw-resolution4例を比較。recursive comment/date-caption precedence/nullable-zero-negative metadata/global cursor/型/orderを保持。CommentDTO fractional日時はGo RFC3339Nanoに合わせ他DTOは変更しない。Stamps/fresh resourceは共有exact decoder/全item validator、cache last duplicate/new client firstを維持。full Rust gateは承認後のtask-local telemetry opt-out・offline再実行で終了0、272passed/既存3ignored、release成功。全schema/UTF8/precision/URL normalization、他DTO fractional日時、全通信/Options/auth/取消/並行/他platform・配布は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:StampNovelCommentRequest",
@@ -11999,15 +12291,32 @@
     },
     {
       "id": "sdk/pixiv:StampsRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:StampsRequest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/comments.rs",
+        "crates/pixiv-sdk/src/stamps.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_comment_reads_test.go",
+        "crates/pixiv-sdk/tests/comment_reads.rs",
+        "crates/pixiv-sdk/tests/user_wire.rs",
+        "crates/pixiv-sdk/tests/resource_io.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go144 targeted行とactual-Go stamp cache/raw-resolution4例を比較。recursive comment/date-caption precedence/nullable-zero-negative metadata/global cursor/型/orderを保持。CommentDTO fractional日時はGo RFC3339Nanoに合わせ他DTOは変更しない。Stamps/fresh resourceは共有exact decoder/全item validator、cache last duplicate/new client firstを維持。full Rust gateは承認後のtask-local telemetry opt-out・offline再実行で終了0、272passed/既存3ignored、release成功。全schema/UTF8/precision/URL normalization、他DTO fractional日時、全通信/Options/auth/取消/並行/他platform・配布は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Tag",
@@ -12159,39 +12468,90 @@
     },
     {
       "id": "sdk/pixiv:ToCommentAccessControlDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ToCommentAccessControlDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/comments.rs",
+        "crates/pixiv-sdk/src/stamps.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_comment_reads_test.go",
+        "crates/pixiv-sdk/tests/comment_reads.rs",
+        "crates/pixiv-sdk/tests/user_wire.rs",
+        "crates/pixiv-sdk/tests/resource_io.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go144 targeted行とactual-Go stamp cache/raw-resolution4例を比較。recursive comment/date-caption precedence/nullable-zero-negative metadata/global cursor/型/orderを保持。CommentDTO fractional日時はGo RFC3339Nanoに合わせ他DTOは変更しない。Stamps/fresh resourceは共有exact decoder/全item validator、cache last duplicate/new client firstを維持。full Rust gateは承認後のtask-local telemetry opt-out・offline再実行で終了0、272passed/既存3ignored、release成功。全schema/UTF8/precision/URL normalization、他DTO fractional日時、全通信/Options/auth/取消/並行/他platform・配布は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:ToCommentDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ToCommentDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/comments.rs",
+        "crates/pixiv-sdk/src/stamps.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_comment_reads_test.go",
+        "crates/pixiv-sdk/tests/comment_reads.rs",
+        "crates/pixiv-sdk/tests/user_wire.rs",
+        "crates/pixiv-sdk/tests/resource_io.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go144 targeted行とactual-Go stamp cache/raw-resolution4例を比較。recursive comment/date-caption precedence/nullable-zero-negative metadata/global cursor/型/orderを保持。CommentDTO fractional日時はGo RFC3339Nanoに合わせ他DTOは変更しない。Stamps/fresh resourceは共有exact decoder/全item validator、cache last duplicate/new client firstを維持。full Rust gateは承認後のtask-local telemetry opt-out・offline再実行で終了0、272passed/既存3ignored、release成功。全schema/UTF8/precision/URL normalization、他DTO fractional日時、全通信/Options/auth/取消/並行/他platform・配布は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:ToCommentPageDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ToCommentPageDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/comments.rs",
+        "crates/pixiv-sdk/src/stamps.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_comment_reads_test.go",
+        "crates/pixiv-sdk/tests/comment_reads.rs",
+        "crates/pixiv-sdk/tests/user_wire.rs",
+        "crates/pixiv-sdk/tests/resource_io.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go144 targeted行とactual-Go stamp cache/raw-resolution4例を比較。recursive comment/date-caption precedence/nullable-zero-negative metadata/global cursor/型/orderを保持。CommentDTO fractional日時はGo RFC3339Nanoに合わせ他DTOは変更しない。Stamps/fresh resourceは共有exact decoder/全item validator、cache last duplicate/new client firstを維持。full Rust gateは承認後のtask-local telemetry opt-out・offline再実行で終了0、272passed/既存3ignored、release成功。全schema/UTF8/precision/URL normalization、他DTO fractional日時、全通信/Options/auth/取消/並行/他platform・配布は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:ToImageResourceDTO",
@@ -12491,15 +12851,32 @@
     },
     {
       "id": "sdk/pixiv:ToStampDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ToStampDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/comments.rs",
+        "crates/pixiv-sdk/src/stamps.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/user_wire.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/resource_resolution.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_comment_reads_test.go",
+        "crates/pixiv-sdk/tests/comment_reads.rs",
+        "crates/pixiv-sdk/tests/user_wire.rs",
+        "crates/pixiv-sdk/tests/resource_io.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go144 targeted行とactual-Go stamp cache/raw-resolution4例を比較。recursive comment/date-caption precedence/nullable-zero-negative metadata/global cursor/型/orderを保持。CommentDTO fractional日時はGo RFC3339Nanoに合わせ他DTOは変更しない。Stamps/fresh resourceは共有exact decoder/全item validator、cache last duplicate/new client firstを維持。full Rust gateは承認後のtask-local telemetry opt-out・offline再実行で終了0、272passed/既存3ignored、release成功。全schema/UTF8/precision/URL normalization、他DTO fractional日時、全通信/Options/auth/取消/並行/他platform・配布は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:ToTagDTO",

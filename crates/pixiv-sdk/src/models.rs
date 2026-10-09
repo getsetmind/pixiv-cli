@@ -261,3 +261,30 @@ pub struct NovelContent {
     pub caption: String,
     pub blocks: Vec<NovelBlock>,
 }
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct Comment {
+    pub id: i64,
+    pub user: User,
+    pub body: String,
+    pub created_at: DateTime<Utc>,
+    pub parent: Option<Box<Comment>>,
+}
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
+pub struct CommentAccessControl {
+    pub can_comment: bool,
+    pub is_locked: bool,
+    pub numeric_value: Option<i64>,
+}
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct CommentPage {
+    pub items: Vec<Comment>,
+    pub next: crate::cursor::Cursor,
+    pub total: Option<i64>,
+    pub access_control: Option<CommentAccessControl>,
+}
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct Stamp {
+    pub id: i64,
+    pub image: ImageResource,
+}

@@ -1299,3 +1299,31 @@ cargo test -p pixiv-cli-rs --test user_compat_startup --test user_detail --test 
 Go broad regressionのSDK（pixiv1.521秒）、user command、CLI migration（61.295秒）とvet/gofmt・台帳validatorは成功した。Linux snapshot不在の1test除外を維持し、strict全Go scopeとは扱わない。SDK focusedのCurrentUser/header3testは0.07秒、CLI startup61行0.77秒、detail2test0.20秒、既存root/新owner search3test9.27秒、既存search pool0.39秒。これらはcloud Linuxの観測値であり、他platform/behavior数へ外挿しない。MCPのGo/sourceは今回変更せず、既存独立Go fixtureとRust全workspace回帰を保持する。
 
 最終 `scripts/check-rust.ps1` はLinux amd64でexit0、294秒。Formatter、全target Clippy（warnings denied）、workspace tests（264 passed、0 failed、既存helper3 ignored）、workspace release（34.52秒）が成功した。header補正・専用renderer・empty resolver・count断言修正後の最終source treeで全gateを通し、部分ログを成功扱いにしない。Go本番・go.mod・go.sumは固定参照から差分0。独立source/docs reviewと最終台帳検査を通し、今回の固定・接続・修正・検証は約17分だった。scoped Linux比較を全wire/通信/他platformのverifiedや最終切替とは扱わない。
+
+## Comment・stamp read の SDK・CLI・MCP
+
+固定Goの実在するread操作だけを移植する。SDK `ArtworkComments`/`NovelComments`/`Stamps` とrecursive comment、nullable access-control/page、stamp/resource DTO、CLI `comment ID --type artwork|novel` と `comment stamps`、MCP `illust_comments`/`novel_comments` を接続する。Goにstandalone MCP stamps-list toolは存在せず追加しない。create/reply/delete/stamp mutationと各入口は未実装として台帳に保持し、readの比較を外挿しない。
+
+SDK [144 targeted行](contracts/comment-reads.json)はartwork55・novel55・stamp34で、query bytes/global cursor/operation/ID binding、recursive parent ID、date-over-created_at・empty commentのcaption fallback、zero/negative/nullable metadataを固定する。commentのuser IDはunknownも許容し、profile resource失敗をswallowするGo mapperを維持する。invalid dateはendpoint名ではなく`Comment`のerror。numeric comment_access_controlがlegacy objectより優先し、0/negativeもnumeric値のまま保持する。
+
+comment/stampのwireは既存ordered schema decoderへoperation-specific schema/kindを追加して再利用し、既存User/detail/search/関係schemaは変更しない。scalar null保留、pointer null clear、recursive parent merge、casefold・required-list resetを対象例で比較する。Stamps next_urlはGoのRawMessage pointer同様null/non-nullのpresenceだけを保持し、arbitrary exponent9e999でも後続nullがclearできる。payloadの数値変換を挟まない。全precision/UTF8/depthの検証済み宣言ではない。
+
+Stampsはempty query、missing/null next_urlだけを受け付け、全itemのID/URLを検査する。新Stampsとresource re-resolutionは一つのvalidatorを再利用し、raw decoderもstamp branchだけへ接続する。actual Goのduplicate cache/reopen unitと4 fresh raw casesで、read時cacheは最後のduplicate URL、fresh clientは最初のmatching ID、unrelated malformed itemも拒否、uppercase/order/nullを固定する。resource callerのOpenResource error operationを保持し、他resource branchを変更しない。Go ParseRequestURI対URL parserの全normalization境界は未検証。
+
+Goのfractional/offset caseはUTC .1234Zを返すが、Chrono default DTOは.123400Zとなった。実比較失敗を残し、new CommentDTOだけのSerializeをRFC3339Nano相当のtrailing-zero trimに補正した。DateTime modelと他DTOのserializerは変更せず、他DTO fractional日時は別の未検証範囲として保持する。
+
+CLI [98 exact main行](contracts/cli-comment-reads.json)はdirect/保存済みexecutionのDTO/要求/input/output/errorsを比較する。[81 exact pool行](contracts/cli-comment-reads-pool.json)は9scenario ×3mode ×artwork/novel/stampsで、safe replay/commit/partial prefix、selection/freeze/revision、lease/writer順を固定する。namespaceのDTO/endpoint、modeのempty commit/EPIPE/partial-prefix、comment対stampsのlease内外が異なるため交差を残し、既存body/helperを共有する。[30 actual startup行](contracts/cli-comment-reads-startup.json)はconfig/DB作成とstdio/exitのstage順を比較する。rejection-only parser行はない。
+
+commentは選択した全logical traversalを収集してからlease内で出力し、later-page失敗は出力0で最初からreplayする。metadataはattemptごとにresetし最初のnonnull値を保持する。stampsはReadで取得しlease解放後にwriterへ渡す。Go comment resolverは対応URLも拒否するため、独自のURL受入へ緩めない。text-input/arityはconfig前、target/type/page/proxy/format semanticsはconfig後・DB前、invalid proxyはDB/executionへ進むGo stageを保持する。Go Fprintfのsingle-write境界をhuman line単位で維持し、error-bearing short prefixと成功short countの1追加caseも比較する。JSON/NDJSONのbody/newline write境界と他familyのwriterは変更しない。
+
+MCP [72 direct/raw/saved行](contracts/mcp-comment-reads.json)と[4 real-pool行](contracts/mcp-comment-reads-pool.json)はtyped schemas/comments/pagination/metadata/errorsとwhole traversal replayを比較する。generic Go formatted-value dedupeはruntime image URL、unquoted fieldのwhitespace collisionとparent pointerを含む。DTO JSON keyを使わずparentlessの全Go valueをformatし、別decoder allocationのparent付きcommentは区別する。旧41tool全entryを維持し2toolを追加、43件のordered names/full metadataを独立Go基準にも比較する。
+
+fixture8filesは429行・672,579 bytesで、別のactual Go resource unit例はfixture row件数へ加えない。SDK144、CLI98+81+30、MCP72+4をdistinct behavior数・移植率へ変換しない。新しいschema/body/input/output全直積は作らず、poolの上記相互作用だけを残す。
+
+失敗ログはSDK lifetime/import compile、fractional DTO、MCP metadata RefCell !Send、CLI Go URL rejection、single-write prefix、config-stage順、nullable Go argsのtest helperを区別して保持する。固定期待値を変えず、型・同期境界・実装とtest setupを修正した。独立reviewと最終focusedはSDK3test0.04秒、CLI main0.27秒/pool0.33秒/startup0.69秒、MCP direct2.59秒/pool0.04秒で成功した。
+
+Go broad SDK/comment command・CLI migration40.551秒・MCP104.916秒とvet/gofmtが成功した。Linux snapshot不在の1test除外と既存3scopeのdiagnostic opt-inを保持し、strict全Go passとは扱わない。
+
+full Rust scriptは最初のFormatter差分で停止し、cargo fmt適用後の再実行はFormatter/Clippy通過・workspace test compilation中に、予期しないexternal telemetryの送信審査で拒否された。元の部分logには終了sentinelがなく、成功とは数えない。ユーザーの明示承認後、Microsoft公式のPOWERSHELL_TELEMETRY_OPTOUT=1をpwsh起動前に設定し、Cargo offline・既存network restriction・同じscripts/check-rust.ps1の全stageを維持して再実行した。終了sentinel0、263秒、Formatter/Clippy・workspace272passed/0failed/既存3ignored・release34.54秒を確認した。元の拒否/部分logと承認後のfresh log/終了sentinelを別に保存する。
+
+残る全wire/UTF8/precision/depth、other DTO時刻、URL normalization、root parser/Linux snapshot・全scalar/flag/help/TTY/OS hooks、全通信/header/Options/auth/取消/deadline/concurrency/disconnect、実HTTPS/resource、他OS/archと配布信頼を維持する。scoped比較・review成功でwhole migrationの完了や最終切替を宣言しない。

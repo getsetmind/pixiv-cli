@@ -1,0 +1,291 @@
+use pixiv_app::{
+    config::Store,
+    database::{Database, PixivAccount},
+    execution::Execution,
+};
+use pixiv_sdk::{
+    Result,
+    transport::{Request, Response, Transport},
+};
+use serde::Deserialize;
+use serde_json::{Value, json};
+use std::sync::{
+    Arc, Mutex,
+    atomic::{AtomicUsize, Ordering},
+};
+use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader};
+
+#[derive(Deserialize)]
+struct Case {
+    tool_name: String,
+    mode: String,
+    results: Vec<Value>,
+    opens: Vec<i64>,
+    requests: Vec<ContentRequest>,
+    closes: usize,
+    states: Vec<State>,
+    reusable: bool,
+}
+
+#[derive(Debug, Deserialize, PartialEq)]
+struct ContentRequest {
+    id: i64,
+    method: String,
+    path: String,
+    query: std::collections::BTreeMap<String, Vec<String>>,
+}
+
+#[derive(Debug, Deserialize, PartialEq)]
+struct State {
+    id: i64,
+    revision: i64,
+    token: String,
+    frozen: bool,
+    selected: bool,
+}
+
+struct Observed {
+    opens: Mutex<Vec<i64>>,
+    requests: Mutex<Vec<ContentRequest>>,
+    closes: AtomicUsize,
+}
+
+struct Fixture {
+    tool_name: String,
+    mode: String,
+    body: Value,
+    final_body: Value,
+    database: Arc<Mutex<Database>>,
+    observed: Arc<Observed>,
+}
+
+impl Drop for Fixture {
+    fn drop(&mut self) {
+        self.observed.closes.fetch_add(1, Ordering::SeqCst);
+    }
+}
+
+impl Transport for Fixture {
+    async fn send(&self, request: Request) -> Result<Response> {
+        let oauth = request.operation == "Open";
+        let token = if oauth {
+            &request
+                .parameters
+                .iter()
+                .find(|(key, _)| key == "refresh_token")
+                .unwrap()
+                .1
+        } else {
+            &request
+                .headers
+                .iter()
+                .find(|(key, _)| key.eq_ignore_ascii_case("authorization"))
+                .unwrap()
+                .1
+        };
+        let id: i64 = token.rsplit('-').next().unwrap().parse().unwrap();
+        let account = self.database.lock().unwrap().get_pixiv(id).unwrap();
+        if oauth {
+            assert_eq!(token.as_bytes(), account.refresh_token_copy());
+            self.observed.opens.lock().unwrap().push(id);
+            return Ok(Response {
+                status: 200,
+                retry_after: None,
+                body: json!({"access_token":format!("fixture-access-{id}"),"refresh_token":format!("fixture-rotated-{id}"),"expires_in":3600,"user":{"id":id}}),
+            });
+        }
+        assert!(account.credential_revision >= 2);
+        assert_eq!(
+            account.refresh_token_copy(),
+            format!("fixture-rotated-{id}").as_bytes()
+        );
+        let count = {
+            let mut requests = self.observed.requests.lock().unwrap();
+            let mut query = std::collections::BTreeMap::<String, Vec<String>>::new();
+            for (key, value) in &request.parameters {
+                query.entry(key.clone()).or_default().push(value.clone());
+            }
+            let path = request
+                .url
+                .strip_prefix("https://app-api.pixiv.net")
+                .unwrap()
+                .to_string();
+            requests.push(ContentRequest {
+                id,
+                method: request.method.to_string(),
+                path,
+                query,
+            });
+            requests
+                .iter()
+                .filter(|requested| requested.id == id)
+                .count()
+        };
+        let status = if id == 42 && count > 1 { 429 } else { 200 };
+        let continuation = "offset";
+        let body = if request
+            .parameters
+            .iter()
+            .any(|(key, _)| key == continuation)
+        {
+            if self.mode == "replay_malformed" && id == 43 {
+                json!({})
+            } else {
+                self.final_body.clone()
+            }
+        } else if id == 42 {
+            let mut body = self.body.clone();
+            body["comments"][0]["comment"] = json!("discarded account42 metadata");
+            body["total_comments"] = json!(777);
+            body["comment_access_control"] = json!(9);
+            body
+        } else {
+            self.body.clone()
+        };
+        let endpoint = match self.tool_name.as_str() {
+            "illust_comments" => "/v3/illust/comments",
+            "novel_comments" => "/v2/novel/comments",
+            _ => panic!("unexpected comments tool"),
+        };
+        assert_eq!(request.url, format!("https://app-api.pixiv.net{endpoint}"));
+        Ok(Response {
+            status,
+            retry_after: if status == 429 {
+                Some(chrono::TimeDelta::seconds(if count % 2 == 0 {
+                    0
+                } else {
+                    120
+                }))
+            } else {
+                None
+            },
+            body,
+        })
+    }
+}
+
+#[tokio::test]
+async fn comment_reads_pool_matches_go_restarted_metadata_comments_queries_and_release() {
+    let cases: Vec<Case> = serde_json::from_str(include_str!(
+        "../../../docs/migration/contracts/mcp-comment-reads-pool.json"
+    ))
+    .unwrap();
+    assert_eq!(cases.len(), 4);
+    let bodies: Value = serde_json::from_str(include_str!(
+        "../../../docs/migration/contracts/mcp-comment-reads-pool-bodies.json"
+    ))
+    .unwrap();
+    for case in cases {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("config.toml");
+        std::fs::write(
+            &path,
+            "[account_pool]\nenabled = true\nstrategy = 'round_robin'\n",
+        )
+        .unwrap();
+        let mut database = Database::open(directory.path()).unwrap();
+        for id in [42, 43] {
+            database
+                .save_pixiv_credential(&PixivAccount::new(
+                    id,
+                    "fixture",
+                    format!("fixture-refresh-{id}").as_bytes(),
+                ))
+                .unwrap();
+        }
+        database.set_all_pixiv_schedulable(true).unwrap();
+        let database = Arc::new(Mutex::new(database));
+        let observed = Arc::new(Observed {
+            opens: Mutex::new(vec![]),
+            requests: Mutex::new(vec![]),
+            closes: AtomicUsize::new(0),
+        });
+        let factory_database = database.clone();
+        let factory_observed = observed.clone();
+        let tool_name = case.tool_name.clone();
+        let mode = case.mode.clone();
+        let body = bodies[&case.tool_name]["first"].clone();
+        let final_body = bodies[&case.tool_name]["final"].clone();
+        let execution = Execution::new(Store::new(path), database.clone(), move |_| {
+            Ok(Fixture {
+                tool_name: tool_name.clone(),
+                mode: mode.clone(),
+                body: body.clone(),
+                final_body: final_body.clone(),
+                database: factory_database.clone(),
+                observed: factory_observed.clone(),
+            })
+        });
+        let (server, peer) = tokio::io::duplex(4096);
+        let (server_read, mut server_write) = tokio::io::split(server);
+        let (peer_read, mut peer_write) = tokio::io::split(peer);
+        let server = pixiv_mcp::stdio::serve_saved(&execution, server_read, &mut server_write);
+        let peer = async {
+            let mut lines = BufReader::new(peer_read).lines();
+            let init = json!({"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"migration","version":"0"}}});
+            peer_write
+                .write_all((init.to_string() + "\n").as_bytes())
+                .await
+                .unwrap();
+            let _ = lines.next_line().await.unwrap().unwrap();
+            for (index, expected) in case.results.iter().enumerate() {
+                let args = json!({"id":42,"limit":0});
+                let call = json!({"jsonrpc":"2.0","id":index+7,"method":"tools/call","params":{"name":case.tool_name,"arguments":args}});
+                peer_write
+                    .write_all((call.to_string() + "\n").as_bytes())
+                    .await
+                    .unwrap();
+                let response: Value =
+                    serde_json::from_str(&lines.next_line().await.unwrap().unwrap()).unwrap();
+                assert_eq!(response["result"], *expected, "{} / {index}", case.mode);
+                assert_eq!(response["id"], index + 7);
+            }
+            peer_write
+                .write_all(
+                    b"{\"jsonrpc\":\"2.0\",\"id\":\"probe\",\"method\":\"ping\",\"params\":{}}\n",
+                )
+                .await
+                .unwrap();
+            let response: Value =
+                serde_json::from_str(&lines.next_line().await.unwrap().unwrap()).unwrap();
+            assert_eq!(response, json!({"jsonrpc":"2.0","id":"probe","result":{}}));
+            peer_write.shutdown().await.unwrap();
+        };
+        let (result, ()) = tokio::time::timeout(std::time::Duration::from_secs(5), async {
+            tokio::join!(server, peer)
+        })
+        .await
+        .unwrap();
+        result.unwrap();
+        assert!(case.reusable);
+        assert_eq!(*observed.opens.lock().unwrap(), case.opens, "{}", case.mode);
+        assert_eq!(
+            *observed.requests.lock().unwrap(),
+            case.requests,
+            "{}",
+            case.mode
+        );
+        assert_eq!(
+            observed.closes.load(Ordering::SeqCst),
+            case.closes,
+            "{}",
+            case.mode
+        );
+        let states: Vec<_> = [42, 43]
+            .into_iter()
+            .map(|id| {
+                let account = database.lock().unwrap().get_pixiv(id).unwrap();
+                State {
+                    id,
+                    revision: account.credential_revision,
+                    token: String::from_utf8(account.refresh_token_copy()).unwrap(),
+                    frozen: account
+                        .pool_frozen_until
+                        .is_some_and(|until| until > chrono::Utc::now().timestamp()),
+                    selected: account.pool_last_selected,
+                }
+            })
+            .collect();
+        assert_eq!(states, case.states, "{}", case.mode);
+    }
+}
