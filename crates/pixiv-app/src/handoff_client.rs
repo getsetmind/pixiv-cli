@@ -85,12 +85,12 @@ impl From<HandoffStateError> for HandoffClientError {
     }
 }
 
-pub struct HandoffClient<T> {
+pub struct HandoffClient<T, S = HandoffState> {
     transport: T,
-    state: HandoffState,
+    state: S,
 }
-impl<T: HandoffTransport> HandoffClient<T> {
-    pub fn new(transport: T, state: HandoffState) -> Self {
+impl<T: HandoffTransport, S: crate::handoff_state::HandoffStateStore> HandoffClient<T, S> {
+    pub fn new(transport: T, state: S) -> Self {
         Self { transport, state }
     }
 

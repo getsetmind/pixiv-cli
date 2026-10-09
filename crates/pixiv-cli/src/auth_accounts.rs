@@ -12,6 +12,11 @@ pub trait AccountPrompts {
     fn can_prompt(&self) -> bool;
     fn select(&mut self, message: &str, options: &[String]) -> Result<String, CommandError>;
     fn confirm(&mut self, message: &str, default: bool) -> Result<bool, CommandError>;
+    fn input(&mut self, _message: &str, _default: &str) -> Result<String, CommandError> {
+        Err(CommandError::Message(
+            "interactive prompt is only available on a TTY",
+        ))
+    }
     fn secret(&mut self, _message: &str) -> Result<String, CommandError> {
         Err(CommandError::Message(
             "interactive prompt is only available on a TTY",
@@ -31,6 +36,8 @@ impl AccountPrompts for Noninteractive {
     }
 }
 pub enum AuthCommand {
+    Login(crate::auth_login::LoginCommand),
+    Hidden(crate::auth_hidden::HiddenAuthCommand),
     Transfer(crate::auth_transfer::TransferCommand),
     Validation(crate::auth_validation::ValidationCommand),
     Help(String),
@@ -60,6 +67,12 @@ impl AuthCommand {
         input: &mut R,
         terminal: bool,
     ) -> Result<Self, CommandError> {
+        if let Some(command) = crate::auth_hidden::HiddenAuthCommand::parse(args)? {
+            return Ok(Self::Hidden(command));
+        }
+        if crate::auth_login::LoginCommand::discover(args).is_some() {
+            return crate::auth_login::LoginCommand::parse(args).map(Self::Login);
+        }
         if crate::auth_validation::ValidationCommand::discover(args).is_some() {
             return crate::auth_validation::ValidationCommand::parse(args, input, terminal)
                 .map(Self::Validation);
@@ -245,6 +258,9 @@ impl AuthCommand {
         })
     }
     pub fn machine_output(&self) -> bool {
+        if let Self::Login(command) = self {
+            return command.machine_output();
+        }
         if let Self::Validation(command) = self {
             return command.machine_output();
         }
@@ -259,7 +275,17 @@ impl AuthCommand {
                 | Self::Select { json: true, .. }
         )
     }
+    pub fn requires_startup(&self) -> bool {
+        self.requires_config()
+            && !matches!(
+                self,
+                Self::Transfer(crate::auth_transfer::TransferCommand::Export { .. })
+            )
+    }
     pub fn requires_config(&self) -> bool {
+        if let Self::Login(command) = self {
+            return command.requires_config();
+        }
         if let Self::Validation(command) = self {
             return command.requires_config();
         }
@@ -287,6 +313,21 @@ impl AuthCommand {
         prompts: &mut dyn AccountPrompts,
     ) -> Result<(), CommandError> {
         match self {
+            Self::Login(crate::auth_login::LoginCommand::Help(text))
+            | Self::Hidden(crate::auth_hidden::HiddenAuthCommand::Help(text)) => {
+                let _ = out.write_all(text.as_bytes());
+                return Ok(());
+            }
+            Self::Login(_) => {
+                return Err(CommandError::Message(
+                    "account login requires an OAuth transport",
+                ));
+            }
+            Self::Hidden(_) => {
+                return Err(CommandError::Message(
+                    "hidden authentication command requires asynchronous execution",
+                ));
+            }
             Self::Transfer(command) => return command.execute_offline(store, out),
             Self::Validation(crate::auth_validation::ValidationCommand::Help(text)) => {
                 let _ = out.write_all(text.as_bytes());
@@ -707,6 +748,9 @@ _=>unreachable!(),}
 }
 
 pub fn machine_output_requested(args: &[String]) -> bool {
+    if crate::auth_login::LoginCommand::discover(args).is_some() {
+        return crate::auth_login::LoginCommand::machine_output_requested(args);
+    }
     if crate::auth_validation::ValidationCommand::discover(args).is_some() {
         return crate::auth_validation::machine_output_requested(args);
     }

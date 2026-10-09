@@ -6,6 +6,7 @@ mod codec;
 mod continuation;
 pub mod cursor;
 pub mod dto;
+pub mod environment_proxy;
 pub mod error;
 pub mod models;
 mod mutation;

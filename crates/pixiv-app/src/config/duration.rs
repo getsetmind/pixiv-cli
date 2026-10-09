@@ -1,4 +1,4 @@
-pub(super) fn parse(original: &str) -> Result<i64, String> {
+pub fn parse(original: &str) -> Result<i64, String> {
     let invalid = || format!("time: invalid duration {original:?}");
     let (negative, mut remaining) = match original.as_bytes().first() {
         Some(b'-') => (true, &original[1..]),

@@ -1,0 +1,1082 @@
+{
+  "reference": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "source_sha256": "bfc9fd4ef560745c0cdbe5219320bcf76f82bd2f79f4adee6cb94923763c1d45",
+  "resolver_sha256": "c299a189ccd1dc7de2bc820b49566a5be244dfa6bc08add4fea0e5af07eb4d2c",
+  "evidence": "Pinned production cleanup helper and executable resolver, genuine executable/remove ports, real isolated Unix temporary files. Native Windows filesystem calls and OS-specific source error text are unverified.",
+  "cases": [
+    {
+      "name": "linux_no_operations",
+      "goos": "linux",
+      "executable": "${ROOT}/bin/pixiv.exe",
+      "entries": [
+        {
+          "path": "bin/pixiv.exe",
+          "kind": "file"
+        },
+        {
+          "path": "bin/pixiv.exe.old",
+          "kind": "file"
+        }
+      ],
+      "executable_error": "executable denied",
+      "remove_error": "remove denied",
+      "trace": [],
+      "error_stage": "",
+      "error_prefix": "",
+      "error_kind": "",
+      "surviving": [
+        "bin/pixiv.exe",
+        "bin/pixiv.exe.old"
+      ]
+    },
+    {
+      "name": "darwin_no_operations",
+      "goos": "darwin",
+      "executable": "${ROOT}/bin/pixiv.exe",
+      "entries": [
+        {
+          "path": "bin/pixiv.exe",
+          "kind": "file"
+        },
+        {
+          "path": "bin/pixiv.exe.old",
+          "kind": "file"
+        }
+      ],
+      "trace": [],
+      "error_stage": "",
+      "error_prefix": "",
+      "error_kind": "",
+      "surviving": [
+        "bin/pixiv.exe",
+        "bin/pixiv.exe.old"
+      ]
+    },
+    {
+      "name": "executable_failure",
+      "goos": "windows",
+      "executable": "",
+      "entries": [],
+      "executable_error": "executable denied",
+      "trace": [
+        "executable"
+      ],
+      "error_stage": "executable",
+      "error_prefix": "locate executable for pending update cleanup: executable denied",
+      "error_kind": "other",
+      "surviving": []
+    },
+    {
+      "name": "missing_working_directory",
+      "goos": "windows",
+      "executable": "pixiv.exe",
+      "entries": [],
+      "trace": [
+        "executable"
+      ],
+      "error_stage": "absolute",
+      "error_prefix": "resolve current executable \"pixiv.exe\": ",
+      "error_kind": "not_exist",
+      "surviving": []
+    },
+    {
+      "name": "existing_executable",
+      "goos": "windows",
+      "executable": "${ROOT}/bin/pixiv.exe",
+      "entries": [
+        {
+          "path": "bin/pixiv.exe",
+          "kind": "file"
+        },
+        {
+          "path": "bin/pixiv.exe.old",
+          "kind": "file"
+        }
+      ],
+      "trace": [
+        "executable",
+        "remove:${ROOT}/bin/pixiv.exe.old"
+      ],
+      "error_stage": "",
+      "error_prefix": "",
+      "error_kind": "",
+      "surviving": [
+        "bin/pixiv.exe"
+      ]
+    },
+    {
+      "name": "missing_executable",
+      "goos": "windows",
+      "executable": "${ROOT}/bin/pixiv.exe",
+      "entries": [
+        {
+          "path": "bin/pixiv.exe.old",
+          "kind": "file"
+        }
+      ],
+      "trace": [
+        "executable",
+        "remove:${ROOT}/bin/pixiv.exe.old"
+      ],
+      "error_stage": "",
+      "error_prefix": "",
+      "error_kind": "",
+      "surviving": []
+    },
+    {
+      "name": "missing_old",
+      "goos": "windows",
+      "executable": "${ROOT}/bin/pixiv.exe",
+      "entries": [
+        {
+          "path": "bin/pixiv.exe",
+          "kind": "file"
+        }
+      ],
+      "trace": [
+        "executable",
+        "remove:${ROOT}/bin/pixiv.exe.old"
+      ],
+      "error_stage": "",
+      "error_prefix": "",
+      "error_kind": "",
+      "surviving": [
+        "bin/pixiv.exe"
+      ]
+    },
+    {
+      "name": "missing_parent",
+      "goos": "windows",
+      "executable": "${ROOT}/absent/pixiv.exe",
+      "entries": [],
+      "trace": [
+        "executable",
+        "remove:${ROOT}/absent/pixiv.exe.old"
+      ],
+      "error_stage": "",
+      "error_prefix": "",
+      "error_kind": "",
+      "surviving": []
+    },
+    {
+      "name": "relative_executable",
+      "goos": "windows",
+      "executable": "${RELATIVE_ROOT}/bin/../bin/./pixiv.exe",
+      "entries": [
+        {
+          "path": "bin/pixiv.exe",
+          "kind": "file"
+        },
+        {
+          "path": "bin/pixiv.exe.old",
+          "kind": "file"
+        }
+      ],
+      "trace": [
+        "executable",
+        "remove:${ROOT}/bin/pixiv.exe.old"
+      ],
+      "error_stage": "",
+      "error_prefix": "",
+      "error_kind": "",
+      "surviving": [
+        "bin/pixiv.exe"
+      ]
+    },
+    {
+      "name": "quoted_executable",
+      "goos": "windows",
+      "executable": "${ROOT}/bin/pixiv\"\n.exe",
+      "entries": [
+        {
+          "path": "bin/pixiv\"\n.exe.old",
+          "kind": "file"
+        }
+      ],
+      "remove_error": "remove denied",
+      "trace": [
+        "executable",
+        "remove:${ROOT}/bin/pixiv\"\n.exe.old"
+      ],
+      "error_stage": "remove",
+      "error_prefix": "remove pending old executable \"${ROOT}/bin/pixiv\\\"\\n.exe.old\": remove denied",
+      "error_kind": "other",
+      "surviving": [
+        "bin/pixiv\"\n.exe.old"
+      ]
+    },
+    {
+      "name": "empty_old_directory",
+      "goos": "windows",
+      "executable": "${ROOT}/bin/pixiv.exe",
+      "entries": [
+        {
+          "path": "bin/pixiv.exe",
+          "kind": "file"
+        },
+        {
+          "path": "bin/pixiv.exe.old",
+          "kind": "directory"
+        }
+      ],
+      "trace": [
+        "executable",
+        "remove:${ROOT}/bin/pixiv.exe.old"
+      ],
+      "error_stage": "",
+      "error_prefix": "",
+      "error_kind": "",
+      "surviving": [
+        "bin/pixiv.exe"
+      ]
+    },
+    {
+      "name": "nonempty_old_directory",
+      "goos": "windows",
+      "executable": "${ROOT}/bin/pixiv.exe",
+      "entries": [
+        {
+          "path": "bin/pixiv.exe",
+          "kind": "file"
+        },
+        {
+          "path": "bin/pixiv.exe.old",
+          "kind": "directory"
+        },
+        {
+          "path": "bin/pixiv.exe.old/keep",
+          "kind": "file"
+        }
+      ],
+      "trace": [
+        "executable",
+        "remove:${ROOT}/bin/pixiv.exe.old"
+      ],
+      "error_stage": "remove",
+      "error_prefix": "remove pending old executable \"${ROOT}/bin/pixiv.exe.old\": ",
+      "error_kind": "directory_not_empty",
+      "surviving": [
+        "bin/pixiv.exe",
+        "bin/pixiv.exe.old",
+        "bin/pixiv.exe.old/keep"
+      ]
+    },
+    {
+      "name": "old_symlink",
+      "goos": "windows",
+      "executable": "${ROOT}/bin/pixiv.exe",
+      "entries": [
+        {
+          "path": "bin/pixiv.exe",
+          "kind": "file"
+        },
+        {
+          "path": "bin/keep",
+          "kind": "file"
+        },
+        {
+          "path": "bin/pixiv.exe.old",
+          "kind": "symlink",
+          "target": "keep"
+        }
+      ],
+      "trace": [
+        "executable",
+        "remove:${ROOT}/bin/pixiv.exe.old"
+      ],
+      "error_stage": "",
+      "error_prefix": "",
+      "error_kind": "",
+      "surviving": [
+        "bin/pixiv.exe",
+        "bin/keep"
+      ]
+    },
+    {
+      "name": "dangling_old_symlink",
+      "goos": "windows",
+      "executable": "${ROOT}/bin/pixiv.exe",
+      "entries": [
+        {
+          "path": "bin/pixiv.exe",
+          "kind": "file"
+        },
+        {
+          "path": "bin/pixiv.exe.old",
+          "kind": "symlink",
+          "target": "absent"
+        }
+      ],
+      "trace": [
+        "executable",
+        "remove:${ROOT}/bin/pixiv.exe.old"
+      ],
+      "error_stage": "",
+      "error_prefix": "",
+      "error_kind": "",
+      "surviving": [
+        "bin/pixiv.exe"
+      ]
+    },
+    {
+      "name": "final_executable_symlink",
+      "goos": "windows",
+      "executable": "${ROOT}/bin/alias.exe",
+      "entries": [
+        {
+          "path": "bin/pixiv.exe",
+          "kind": "file"
+        },
+        {
+          "path": "bin/pixiv.exe.old",
+          "kind": "file"
+        },
+        {
+          "path": "bin/alias.exe",
+          "kind": "symlink",
+          "target": "pixiv.exe"
+        },
+        {
+          "path": "bin/alias.exe.old",
+          "kind": "file"
+        }
+      ],
+      "trace": [
+        "executable",
+        "remove:${ROOT}/bin/pixiv.exe.old"
+      ],
+      "error_stage": "",
+      "error_prefix": "",
+      "error_kind": "",
+      "surviving": [
+        "bin/pixiv.exe",
+        "bin/alias.exe",
+        "bin/alias.exe.old"
+      ]
+    },
+    {
+      "name": "relative_symlink_chain",
+      "goos": "windows",
+      "executable": "${ROOT}/bin/alias.exe",
+      "entries": [
+        {
+          "path": "bin/pixiv.exe",
+          "kind": "file"
+        },
+        {
+          "path": "bin/pixiv.exe.old",
+          "kind": "file"
+        },
+        {
+          "path": "links/first",
+          "kind": "symlink",
+          "target": "../bin/pixiv.exe"
+        },
+        {
+          "path": "bin/alias.exe",
+          "kind": "symlink",
+          "target": "../links/first"
+        }
+      ],
+      "trace": [
+        "executable",
+        "remove:${ROOT}/bin/pixiv.exe.old"
+      ],
+      "error_stage": "",
+      "error_prefix": "",
+      "error_kind": "",
+      "surviving": [
+        "bin/pixiv.exe",
+        "links/first",
+        "bin/alias.exe"
+      ]
+    },
+    {
+      "name": "intermediate_directory_symlink",
+      "goos": "windows",
+      "executable": "${ROOT}/alias/pixiv.exe",
+      "entries": [
+        {
+          "path": "bin/pixiv.exe",
+          "kind": "file"
+        },
+        {
+          "path": "bin/pixiv.exe.old",
+          "kind": "file"
+        },
+        {
+          "path": "alias",
+          "kind": "symlink",
+          "target": "bin"
+        }
+      ],
+      "trace": [
+        "executable",
+        "remove:${ROOT}/alias/pixiv.exe.old"
+      ],
+      "error_stage": "",
+      "error_prefix": "",
+      "error_kind": "",
+      "surviving": [
+        "bin/pixiv.exe",
+        "alias"
+      ]
+    },
+    {
+      "name": "clean_before_symlink_resolution",
+      "goos": "windows",
+      "executable": "${ROOT}/alias/../bin/pixiv.exe",
+      "entries": [
+        {
+          "path": "bin/pixiv.exe",
+          "kind": "file"
+        },
+        {
+          "path": "bin/pixiv.exe.old",
+          "kind": "file"
+        },
+        {
+          "path": "alias",
+          "kind": "symlink",
+          "target": "absent"
+        }
+      ],
+      "trace": [
+        "executable",
+        "remove:${ROOT}/bin/pixiv.exe.old"
+      ],
+      "error_stage": "",
+      "error_prefix": "",
+      "error_kind": "",
+      "surviving": [
+        "bin/pixiv.exe",
+        "alias"
+      ]
+    },
+    {
+      "name": "executable_symlink_target_trailing_separator",
+      "goos": "windows",
+      "executable": "${ROOT}/bin/alias.exe",
+      "entries": [
+        {
+          "path": "bin/pixiv.exe",
+          "kind": "file"
+        },
+        {
+          "path": "bin/pixiv.exe.old",
+          "kind": "file"
+        },
+        {
+          "path": "bin/alias.exe",
+          "kind": "symlink",
+          "target": "pixiv.exe/"
+        }
+      ],
+      "trace": [
+        "executable"
+      ],
+      "error_stage": "symlink",
+      "error_prefix": "resolve executable symlink \"${ROOT}/bin/alias.exe\": ",
+      "error_kind": "not_directory",
+      "surviving": [
+        "bin/pixiv.exe",
+        "bin/pixiv.exe.old",
+        "bin/alias.exe"
+      ]
+    },
+    {
+      "name": "executable_symlink_target_trailing_dot",
+      "goos": "windows",
+      "executable": "${ROOT}/bin/alias.exe",
+      "entries": [
+        {
+          "path": "bin/pixiv.exe",
+          "kind": "file"
+        },
+        {
+          "path": "bin/pixiv.exe.old",
+          "kind": "file"
+        },
+        {
+          "path": "bin/alias.exe",
+          "kind": "symlink",
+          "target": "pixiv.exe/."
+        }
+      ],
+      "trace": [
+        "executable"
+      ],
+      "error_stage": "symlink",
+      "error_prefix": "resolve executable symlink \"${ROOT}/bin/alias.exe\": ",
+      "error_kind": "not_directory",
+      "surviving": [
+        "bin/pixiv.exe",
+        "bin/pixiv.exe.old",
+        "bin/alias.exe"
+      ]
+    },
+    {
+      "name": "dangling_executable_symlink",
+      "goos": "windows",
+      "executable": "${ROOT}/bin/alias.exe",
+      "entries": [
+        {
+          "path": "bin/alias.exe",
+          "kind": "symlink",
+          "target": "absent"
+        },
+        {
+          "path": "bin/alias.exe.old",
+          "kind": "file"
+        }
+      ],
+      "trace": [
+        "executable"
+      ],
+      "error_stage": "symlink",
+      "error_prefix": "resolve executable symlink \"${ROOT}/bin/alias.exe\": ",
+      "error_kind": "not_exist",
+      "surviving": [
+        "bin/alias.exe",
+        "bin/alias.exe.old"
+      ]
+    },
+    {
+      "name": "cyclic_executable_symlink",
+      "goos": "windows",
+      "executable": "${ROOT}/bin/alias.exe",
+      "entries": [
+        {
+          "path": "bin/alias.exe",
+          "kind": "symlink",
+          "target": "alias.exe"
+        },
+        {
+          "path": "bin/alias.exe.old",
+          "kind": "file"
+        }
+      ],
+      "trace": [
+        "executable"
+      ],
+      "error_stage": "symlink",
+      "error_prefix": "resolve executable symlink \"${ROOT}/bin/alias.exe\": ",
+      "error_kind": "too_many_links",
+      "surviving": [
+        "bin/alias.exe",
+        "bin/alias.exe.old"
+      ]
+    },
+    {
+      "name": "lstat_not_directory_is_ignored",
+      "goos": "windows",
+      "executable": "${ROOT}/bin/pixiv.exe/child",
+      "entries": [
+        {
+          "path": "bin/pixiv.exe",
+          "kind": "file"
+        }
+      ],
+      "trace": [
+        "executable",
+        "remove:${ROOT}/bin/pixiv.exe/child.old"
+      ],
+      "error_stage": "remove",
+      "error_prefix": "remove pending old executable \"${ROOT}/bin/pixiv.exe/child.old\": ",
+      "error_kind": "not_directory",
+      "surviving": [
+        "bin/pixiv.exe"
+      ]
+    },
+    {
+      "name": "remove_failure",
+      "goos": "windows",
+      "executable": "${ROOT}/bin/pixiv.exe",
+      "entries": [
+        {
+          "path": "bin/pixiv.exe",
+          "kind": "file"
+        },
+        {
+          "path": "bin/pixiv.exe.old",
+          "kind": "file"
+        }
+      ],
+      "remove_error": "remove denied",
+      "trace": [
+        "executable",
+        "remove:${ROOT}/bin/pixiv.exe.old"
+      ],
+      "error_stage": "remove",
+      "error_prefix": "remove pending old executable \"${ROOT}/bin/pixiv.exe.old\": remove denied",
+      "error_kind": "other",
+      "surviving": [
+        "bin/pixiv.exe",
+        "bin/pixiv.exe.old"
+      ]
+    },
+    {
+      "name": "remove_not_exist",
+      "goos": "windows",
+      "executable": "${ROOT}/bin/pixiv.exe",
+      "entries": [
+        {
+          "path": "bin/pixiv.exe",
+          "kind": "file"
+        },
+        {
+          "path": "bin/pixiv.exe.old",
+          "kind": "file"
+        }
+      ],
+      "remove_error": "not_exist",
+      "trace": [
+        "executable",
+        "remove:${ROOT}/bin/pixiv.exe.old"
+      ],
+      "error_stage": "",
+      "error_prefix": "",
+      "error_kind": "",
+      "surviving": [
+        "bin/pixiv.exe",
+        "bin/pixiv.exe.old"
+      ]
+    },
+    {
+      "name": "remove_wrapped_not_exist",
+      "goos": "windows",
+      "executable": "${ROOT}/bin/pixiv.exe",
+      "entries": [
+        {
+          "path": "bin/pixiv.exe",
+          "kind": "file"
+        },
+        {
+          "path": "bin/pixiv.exe.old",
+          "kind": "file"
+        }
+      ],
+      "remove_error": "wrapped_not_exist",
+      "trace": [
+        "executable",
+        "remove:${ROOT}/bin/pixiv.exe.old"
+      ],
+      "error_stage": "",
+      "error_prefix": "",
+      "error_kind": "",
+      "surviving": [
+        "bin/pixiv.exe",
+        "bin/pixiv.exe.old"
+      ]
+    },
+    {
+      "name": "long_executable_symlink_chain",
+      "goos": "windows",
+      "executable": "${ROOT}/bin/link0",
+      "entries": [
+        {
+          "path": "bin/pixiv.exe",
+          "kind": "file"
+        },
+        {
+          "path": "bin/pixiv.exe.old",
+          "kind": "file"
+        },
+        {
+          "path": "bin/link0",
+          "kind": "symlink",
+          "target": "link1"
+        },
+        {
+          "path": "bin/link1",
+          "kind": "symlink",
+          "target": "link2"
+        },
+        {
+          "path": "bin/link2",
+          "kind": "symlink",
+          "target": "link3"
+        },
+        {
+          "path": "bin/link3",
+          "kind": "symlink",
+          "target": "link4"
+        },
+        {
+          "path": "bin/link4",
+          "kind": "symlink",
+          "target": "link5"
+        },
+        {
+          "path": "bin/link5",
+          "kind": "symlink",
+          "target": "link6"
+        },
+        {
+          "path": "bin/link6",
+          "kind": "symlink",
+          "target": "link7"
+        },
+        {
+          "path": "bin/link7",
+          "kind": "symlink",
+          "target": "link8"
+        },
+        {
+          "path": "bin/link8",
+          "kind": "symlink",
+          "target": "link9"
+        },
+        {
+          "path": "bin/link9",
+          "kind": "symlink",
+          "target": "link10"
+        },
+        {
+          "path": "bin/link10",
+          "kind": "symlink",
+          "target": "link11"
+        },
+        {
+          "path": "bin/link11",
+          "kind": "symlink",
+          "target": "link12"
+        },
+        {
+          "path": "bin/link12",
+          "kind": "symlink",
+          "target": "link13"
+        },
+        {
+          "path": "bin/link13",
+          "kind": "symlink",
+          "target": "link14"
+        },
+        {
+          "path": "bin/link14",
+          "kind": "symlink",
+          "target": "link15"
+        },
+        {
+          "path": "bin/link15",
+          "kind": "symlink",
+          "target": "link16"
+        },
+        {
+          "path": "bin/link16",
+          "kind": "symlink",
+          "target": "link17"
+        },
+        {
+          "path": "bin/link17",
+          "kind": "symlink",
+          "target": "link18"
+        },
+        {
+          "path": "bin/link18",
+          "kind": "symlink",
+          "target": "link19"
+        },
+        {
+          "path": "bin/link19",
+          "kind": "symlink",
+          "target": "link20"
+        },
+        {
+          "path": "bin/link20",
+          "kind": "symlink",
+          "target": "link21"
+        },
+        {
+          "path": "bin/link21",
+          "kind": "symlink",
+          "target": "link22"
+        },
+        {
+          "path": "bin/link22",
+          "kind": "symlink",
+          "target": "link23"
+        },
+        {
+          "path": "bin/link23",
+          "kind": "symlink",
+          "target": "link24"
+        },
+        {
+          "path": "bin/link24",
+          "kind": "symlink",
+          "target": "link25"
+        },
+        {
+          "path": "bin/link25",
+          "kind": "symlink",
+          "target": "link26"
+        },
+        {
+          "path": "bin/link26",
+          "kind": "symlink",
+          "target": "link27"
+        },
+        {
+          "path": "bin/link27",
+          "kind": "symlink",
+          "target": "link28"
+        },
+        {
+          "path": "bin/link28",
+          "kind": "symlink",
+          "target": "link29"
+        },
+        {
+          "path": "bin/link29",
+          "kind": "symlink",
+          "target": "link30"
+        },
+        {
+          "path": "bin/link30",
+          "kind": "symlink",
+          "target": "link31"
+        },
+        {
+          "path": "bin/link31",
+          "kind": "symlink",
+          "target": "link32"
+        },
+        {
+          "path": "bin/link32",
+          "kind": "symlink",
+          "target": "link33"
+        },
+        {
+          "path": "bin/link33",
+          "kind": "symlink",
+          "target": "link34"
+        },
+        {
+          "path": "bin/link34",
+          "kind": "symlink",
+          "target": "link35"
+        },
+        {
+          "path": "bin/link35",
+          "kind": "symlink",
+          "target": "link36"
+        },
+        {
+          "path": "bin/link36",
+          "kind": "symlink",
+          "target": "link37"
+        },
+        {
+          "path": "bin/link37",
+          "kind": "symlink",
+          "target": "link38"
+        },
+        {
+          "path": "bin/link38",
+          "kind": "symlink",
+          "target": "link39"
+        },
+        {
+          "path": "bin/link39",
+          "kind": "symlink",
+          "target": "link40"
+        },
+        {
+          "path": "bin/link40",
+          "kind": "symlink",
+          "target": "link41"
+        },
+        {
+          "path": "bin/link41",
+          "kind": "symlink",
+          "target": "link42"
+        },
+        {
+          "path": "bin/link42",
+          "kind": "symlink",
+          "target": "link43"
+        },
+        {
+          "path": "bin/link43",
+          "kind": "symlink",
+          "target": "link44"
+        },
+        {
+          "path": "bin/link44",
+          "kind": "symlink",
+          "target": "link45"
+        },
+        {
+          "path": "bin/link45",
+          "kind": "symlink",
+          "target": "link46"
+        },
+        {
+          "path": "bin/link46",
+          "kind": "symlink",
+          "target": "link47"
+        },
+        {
+          "path": "bin/link47",
+          "kind": "symlink",
+          "target": "link48"
+        },
+        {
+          "path": "bin/link48",
+          "kind": "symlink",
+          "target": "link49"
+        },
+        {
+          "path": "bin/link49",
+          "kind": "symlink",
+          "target": "link50"
+        },
+        {
+          "path": "bin/link50",
+          "kind": "symlink",
+          "target": "link51"
+        },
+        {
+          "path": "bin/link51",
+          "kind": "symlink",
+          "target": "link52"
+        },
+        {
+          "path": "bin/link52",
+          "kind": "symlink",
+          "target": "link53"
+        },
+        {
+          "path": "bin/link53",
+          "kind": "symlink",
+          "target": "link54"
+        },
+        {
+          "path": "bin/link54",
+          "kind": "symlink",
+          "target": "link55"
+        },
+        {
+          "path": "bin/link55",
+          "kind": "symlink",
+          "target": "link56"
+        },
+        {
+          "path": "bin/link56",
+          "kind": "symlink",
+          "target": "link57"
+        },
+        {
+          "path": "bin/link57",
+          "kind": "symlink",
+          "target": "link58"
+        },
+        {
+          "path": "bin/link58",
+          "kind": "symlink",
+          "target": "link59"
+        },
+        {
+          "path": "bin/link59",
+          "kind": "symlink",
+          "target": "link60"
+        },
+        {
+          "path": "bin/link60",
+          "kind": "symlink",
+          "target": "link61"
+        },
+        {
+          "path": "bin/link61",
+          "kind": "symlink",
+          "target": "link62"
+        },
+        {
+          "path": "bin/link62",
+          "kind": "symlink",
+          "target": "link63"
+        },
+        {
+          "path": "bin/link63",
+          "kind": "symlink",
+          "target": "pixiv.exe"
+        }
+      ],
+      "trace": [
+        "executable",
+        "remove:${ROOT}/bin/pixiv.exe.old"
+      ],
+      "error_stage": "",
+      "error_prefix": "",
+      "error_kind": "",
+      "surviving": [
+        "bin/pixiv.exe",
+        "bin/link0",
+        "bin/link1",
+        "bin/link2",
+        "bin/link3",
+        "bin/link4",
+        "bin/link5",
+        "bin/link6",
+        "bin/link7",
+        "bin/link8",
+        "bin/link9",
+        "bin/link10",
+        "bin/link11",
+        "bin/link12",
+        "bin/link13",
+        "bin/link14",
+        "bin/link15",
+        "bin/link16",
+        "bin/link17",
+        "bin/link18",
+        "bin/link19",
+        "bin/link20",
+        "bin/link21",
+        "bin/link22",
+        "bin/link23",
+        "bin/link24",
+        "bin/link25",
+        "bin/link26",
+        "bin/link27",
+        "bin/link28",
+        "bin/link29",
+        "bin/link30",
+        "bin/link31",
+        "bin/link32",
+        "bin/link33",
+        "bin/link34",
+        "bin/link35",
+        "bin/link36",
+        "bin/link37",
+        "bin/link38",
+        "bin/link39",
+        "bin/link40",
+        "bin/link41",
+        "bin/link42",
+        "bin/link43",
+        "bin/link44",
+        "bin/link45",
+        "bin/link46",
+        "bin/link47",
+        "bin/link48",
+        "bin/link49",
+        "bin/link50",
+        "bin/link51",
+        "bin/link52",
+        "bin/link53",
+        "bin/link54",
+        "bin/link55",
+        "bin/link56",
+        "bin/link57",
+        "bin/link58",
+        "bin/link59",
+        "bin/link60",
+        "bin/link61",
+        "bin/link62",
+        "bin/link63"
+      ]
+    }
+  ]
+}

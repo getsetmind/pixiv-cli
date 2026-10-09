@@ -6,6 +6,8 @@ pub(crate) mod private_file;
 #[cfg(windows)]
 pub(crate) mod private_replace_windows;
 
+pub use duration::parse as parse_duration;
+
 pub use mutations::{
     ConfigMutationResult, cli_setting_aliases, public_setting_text, valid_setting_aliases,
 };

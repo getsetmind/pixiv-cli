@@ -1,0 +1,837 @@
+{
+  "reference": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "normalization": {
+    "authorization_url": "Only fresh PKCE challenge and state are replaced; the complete URL shape and query keys are asserted separately",
+    "local_address": "Only the bound ephemeral 127.0.0.1 port is replaced by <ADDR>/<PORT>",
+    "relay": "Only the per-attempt random session segment is replaced by <SESSION>; proof/result IDs must never appear in diagnostics",
+    "temporary_paths": "<CERT>/<KEY> are isolated missing PEM paths; server errors must omit them"
+  },
+  "authorization_url": "https://app-api.pixiv.net/web/v1/login?client=pixiv-android&code_challenge=<CHALLENGE>&code_challenge_method=S256&state=<STATE>",
+  "code": "synthetic-login-code",
+  "oauth_response": "{\"access_token\":\"synthetic-access-secret\",\"refresh_token\":\"synthetic-refresh-secret\",\"user\":{\"id\":\"42\",\"name\":\"synthetic-user\"}}",
+  "oauth_failure": "{\"error\":\"synthetic-refresh-secret synthetic-access-secret synthetic-login-code\"}",
+  "validation": [
+    {
+      "name": "proxy_conflict_precedes_services",
+      "args": [
+        "--proxy=bad",
+        "--no-proxy=false",
+        "--addr="
+      ],
+      "runtime": {
+        "login_open_browser": false,
+        "login_use_after_login": false
+      },
+      "service_error": "account",
+      "expected": {
+        "error": "use either --proxy or --no-proxy, not both",
+        "dependency_events": []
+      }
+    },
+    {
+      "name": "account_factory_error_precedes_login",
+      "args": [
+        "--addr="
+      ],
+      "runtime": {
+        "login_open_browser": false,
+        "login_use_after_login": false
+      },
+      "service_error": "account",
+      "expected": {
+        "error": "synthetic account factory failure",
+        "dependency_events": [
+          "account"
+        ]
+      }
+    },
+    {
+      "name": "login_factory_error_precedes_runtime",
+      "args": [
+        "--addr="
+      ],
+      "runtime": {
+        "login_open_browser": false,
+        "login_use_after_login": false
+      },
+      "service_error": "login",
+      "expected": {
+        "error": "synthetic login factory failure",
+        "dependency_events": [
+          "account",
+          "login"
+        ]
+      }
+    },
+    {
+      "name": "missing_runtime_loader_after_services",
+      "args": [
+        "--addr="
+      ],
+      "runtime": {
+        "login_open_browser": false,
+        "login_use_after_login": false
+      },
+      "service_error": "missing_runtime",
+      "expected": {
+        "error": "pixiv auth runtime loader is not configured",
+        "dependency_events": [
+          "account",
+          "login"
+        ]
+      }
+    },
+    {
+      "name": "runtime_error_precedes_validation",
+      "args": [
+        "--addr=",
+        "--proxy=bad"
+      ],
+      "runtime": {
+        "login_open_browser": false,
+        "login_use_after_login": false
+      },
+      "service_error": "runtime",
+      "expected": {
+        "error": "synthetic runtime failure",
+        "dependency_events": [
+          "account",
+          "login",
+          "runtime"
+        ]
+      }
+    },
+    {
+      "name": "relay_partial_precedes_addr_proxy",
+      "args": [
+        "--addr=",
+        "--proxy=bad"
+      ],
+      "runtime": {
+        "login_open_browser": false,
+        "login_use_after_login": false,
+        "login_relay_public_url": "https://relay.invalid"
+      },
+      "service_error": "",
+      "expected": {
+        "error": "remote login relay requires login_relay_public_url and login_relay_listen_addr",
+        "dependency_events": [
+          "account",
+          "login",
+          "runtime"
+        ]
+      }
+    },
+    {
+      "name": "relay_tls_pair_precedes_public_url",
+      "args": [
+        "--addr=",
+        "--proxy=bad"
+      ],
+      "runtime": {
+        "login_open_browser": false,
+        "login_use_after_login": false,
+        "login_relay_public_url": "bad",
+        "login_relay_listen_addr": "bad",
+        "login_relay_tls_cert_file": "synthetic-cert"
+      },
+      "service_error": "",
+      "expected": {
+        "error": "remote login relay TLS requires both certificate and key files",
+        "dependency_events": [
+          "account",
+          "login",
+          "runtime"
+        ]
+      }
+    },
+    {
+      "name": "relay_url_precedes_addr_proxy",
+      "args": [
+        "--addr=",
+        "--proxy=bad"
+      ],
+      "runtime": {
+        "login_open_browser": false,
+        "login_use_after_login": false,
+        "login_relay_public_url": "https://user:synthetic-password@relay.invalid",
+        "login_relay_listen_addr": "127.0.0.1:0"
+      },
+      "service_error": "",
+      "expected": {
+        "error": "invalid remote login relay public URL",
+        "dependency_events": [
+          "account",
+          "login",
+          "runtime"
+        ]
+      }
+    },
+    {
+      "name": "relay_listen_precedes_addr_proxy",
+      "args": [
+        "--addr=",
+        "--proxy=bad"
+      ],
+      "runtime": {
+        "login_open_browser": false,
+        "login_use_after_login": false,
+        "login_relay_public_url": "https://relay.invalid",
+        "login_relay_listen_addr": ":999"
+      },
+      "service_error": "",
+      "expected": {
+        "error": "remote login relay listen address must include host and port",
+        "dependency_events": [
+          "account",
+          "login",
+          "runtime"
+        ]
+      }
+    },
+    {
+      "name": "relay_https_external_requires_tls",
+      "args": [
+        "--addr=",
+        "--proxy=bad"
+      ],
+      "runtime": {
+        "login_open_browser": false,
+        "login_use_after_login": false,
+        "login_relay_public_url": "https://relay.invalid",
+        "login_relay_listen_addr": "0.0.0.0:999"
+      },
+      "service_error": "",
+      "expected": {
+        "error": "HTTPS relay without TLS PEM must listen on loopback for a same-host reverse proxy",
+        "dependency_events": [
+          "account",
+          "login",
+          "runtime"
+        ]
+      }
+    },
+    {
+      "name": "local_empty_addr_precedes_proxy",
+      "args": [
+        "--addr=",
+        "--proxy=bad"
+      ],
+      "runtime": {
+        "login_open_browser": false,
+        "login_use_after_login": false
+      },
+      "service_error": "",
+      "expected": {
+        "error": "--addr cannot be empty",
+        "dependency_events": [
+          "account",
+          "login",
+          "runtime"
+        ]
+      }
+    },
+    {
+      "name": "local_nonloopback_addr_precedes_proxy",
+      "args": [
+        "--addr=0.0.0.0:9",
+        "--proxy=bad"
+      ],
+      "runtime": {
+        "login_open_browser": false,
+        "login_use_after_login": false
+      },
+      "service_error": "",
+      "expected": {
+        "error": "--addr must bind to a loopback address, got \"0.0.0.0:9\"",
+        "dependency_events": [
+          "account",
+          "login",
+          "runtime"
+        ]
+      }
+    },
+    {
+      "name": "invalid_proxy_after_local_addr",
+      "args": [
+        "--proxy=ftp://user:synthetic-password@proxy.invalid"
+      ],
+      "runtime": {
+        "login_open_browser": false,
+        "login_use_after_login": false
+      },
+      "service_error": "",
+      "expected": {
+        "error": "proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration",
+        "dependency_events": [
+          "account",
+          "login",
+          "runtime"
+        ]
+      }
+    },
+    {
+      "name": "local_port_is_not_validated_before_proxy",
+      "args": [
+        "--addr=127.0.0.1:65536",
+        "--proxy=ftp://proxy.invalid"
+      ],
+      "runtime": {
+        "login_open_browser": false,
+        "login_use_after_login": false
+      },
+      "service_error": "",
+      "expected": {
+        "error": "proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration",
+        "dependency_events": [
+          "account",
+          "login",
+          "runtime"
+        ]
+      }
+    },
+    {
+      "name": "relay_skips_local_addr_then_validates_proxy",
+      "args": [
+        "--addr=0.0.0.0:9",
+        "--proxy=ftp://proxy.invalid"
+      ],
+      "runtime": {
+        "login_open_browser": false,
+        "login_use_after_login": false,
+        "login_relay_public_url": "http://127.0.0.1:1",
+        "login_relay_listen_addr": "127.0.0.1:0"
+      },
+      "service_error": "",
+      "expected": {
+        "error": "proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration",
+        "dependency_events": [
+          "account",
+          "login",
+          "runtime"
+        ]
+      }
+    },
+    {
+      "name": "invalid_timeout_precedes_services",
+      "args": [
+        "--timeout=bad"
+      ],
+      "runtime": {
+        "login_open_browser": false,
+        "login_use_after_login": false
+      },
+      "service_error": "",
+      "expected": {
+        "error": "invalid argument \"bad\" for \"--timeout\" flag: time: invalid duration \"bad\"",
+        "dependency_events": []
+      }
+    },
+    {
+      "name": "positional_argument_precedes_services",
+      "args": [
+        "extra"
+      ],
+      "runtime": {
+        "login_open_browser": false,
+        "login_use_after_login": false
+      },
+      "service_error": "",
+      "expected": {
+        "error": "usage: pixiv auth login [--json] [--no-open] [--addr 127.0.0.1:0] [--use] [--timeout DURATION] [--relay-public-url URL] [--relay-listen-addr ADDR]",
+        "dependency_events": []
+      }
+    }
+  ],
+  "flows": [
+    {
+      "name": "local_config_no_open_use_json",
+      "args": [
+        "--json"
+      ],
+      "runtime": {
+        "login_open_browser": false,
+        "login_use_after_login": true,
+        "https_proxy": "ftp://ignored-config-proxy",
+        "pixiv_proxy": "ftp://ignored-service-proxy"
+      },
+      "mode": "local",
+      "submission": "manual",
+      "hook_errors": false,
+      "oauth_status": 200,
+      "command_canceled": false,
+      "expected": {
+        "error": "",
+        "stdout": "{\n  \"user_id\": 42,\n  \"username\": \"synthetic-user\",\n  \"default\": true,\n  \"has_token\": true,\n  \"schedulable\": true,\n  \"eligible\": true\n}\n",
+        "stderr": "Open this Pixiv login URL:\n<LOGIN_URL>\nBrowser opening is disabled; use the manual fallback page or terminal prompt.\nWhen this CLI runs on an SSH host, forward its loopback listener from the browser machine:\n  ssh -N -L <PORT>:127.0.0.1:<PORT> USER@SERVER\nAn SSH tunnel alone cannot receive Pixiv's final app link; remote browser login requires a desktop handoff.\nManual fallback page: http://<ADDR>/\n",
+        "events": [
+          "can_prompt",
+          "oauth"
+        ],
+        "default_user_id": 42,
+        "stored": true,
+        "final_status": 200,
+        "deadline": false,
+        "dependency_events": [
+          "account",
+          "login",
+          "runtime"
+        ]
+      }
+    },
+    {
+      "name": "local_explicit_false_flags_override_config",
+      "args": [
+        "--no-open=false",
+        "--use=false",
+        "--timeout=5s"
+      ],
+      "runtime": {
+        "login_open_browser": false,
+        "login_use_after_login": true
+      },
+      "mode": "local",
+      "submission": "manual",
+      "hook_errors": false,
+      "oauth_status": 200,
+      "command_canceled": false,
+      "expected": {
+        "error": "",
+        "stdout": "✓ uid:42 username:synthetic-user\n",
+        "stderr": "Registered pixiv:// callback handler for this login attempt.\nAfter confirming the Pixiv account, keep this terminal open while the browser shows the final result.\nOpen this Pixiv login URL:\n<LOGIN_URL>\nComplete sign-in in your browser; the local page will receive the result.\nManual fallback page: http://<ADDR>/\n",
+        "events": [
+          "ensure",
+          "install",
+          "can_prompt",
+          "open",
+          "temporary_cleanup",
+          "oauth"
+        ],
+        "default_user_id": 7,
+        "stored": true,
+        "final_status": 200,
+        "deadline": true,
+        "dependency_events": [
+          "account",
+          "login",
+          "runtime"
+        ]
+      }
+    },
+    {
+      "name": "local_hook_failures_are_warnings",
+      "args": [
+        "--json"
+      ],
+      "runtime": {
+        "login_open_browser": true,
+        "login_use_after_login": false
+      },
+      "mode": "local",
+      "submission": "manual",
+      "hook_errors": true,
+      "oauth_status": 200,
+      "command_canceled": false,
+      "expected": {
+        "error": "",
+        "stdout": "{\n  \"user_id\": 42,\n  \"username\": \"synthetic-user\",\n  \"default\": false,\n  \"has_token\": true,\n  \"schedulable\": true,\n  \"eligible\": true\n}\n",
+        "stderr": "warning: persistent pixiv:// callback handler is unavailable: synthetic ensure failure\nwarning: pixiv:// callback handler is unavailable: synthetic install failure\nOpen this Pixiv login URL:\n<LOGIN_URL>\nComplete sign-in in your browser; the local page will receive the result.\nManual fallback page: http://<ADDR>/\nwarning: could not open browser: synthetic open failure\n",
+        "events": [
+          "ensure",
+          "install",
+          "can_prompt",
+          "open",
+          "oauth"
+        ],
+        "default_user_id": 7,
+        "stored": true,
+        "final_status": 200,
+        "deadline": false,
+        "dependency_events": [
+          "account",
+          "login",
+          "runtime"
+        ]
+      }
+    },
+    {
+      "name": "local_callback_get_json",
+      "args": [
+        "--json",
+        "--no-open",
+        "--use",
+        "--no-proxy"
+      ],
+      "runtime": {
+        "login_open_browser": true,
+        "login_use_after_login": false
+      },
+      "mode": "local",
+      "submission": "callback",
+      "hook_errors": false,
+      "oauth_status": 200,
+      "command_canceled": false,
+      "expected": {
+        "error": "",
+        "stdout": "{\n  \"user_id\": 42,\n  \"username\": \"synthetic-user\",\n  \"default\": true,\n  \"has_token\": true,\n  \"schedulable\": true,\n  \"eligible\": true\n}\n",
+        "stderr": "Open this Pixiv login URL:\n<LOGIN_URL>\nBrowser opening is disabled; use the manual fallback page or terminal prompt.\nWhen this CLI runs on an SSH host, forward its loopback listener from the browser machine:\n  ssh -N -L <PORT>:127.0.0.1:<PORT> USER@SERVER\nAn SSH tunnel alone cannot receive Pixiv's final app link; remote browser login requires a desktop handoff.\nManual fallback page: http://<ADDR>/\n",
+        "events": [
+          "can_prompt",
+          "oauth"
+        ],
+        "default_user_id": 42,
+        "stored": true,
+        "final_status": 200,
+        "deadline": false,
+        "dependency_events": [
+          "account",
+          "login",
+          "runtime"
+        ]
+      }
+    },
+    {
+      "name": "local_terminal_negative_timeout",
+      "args": [
+        "--no-open",
+        "--timeout=-1s"
+      ],
+      "runtime": {
+        "login_open_browser": true,
+        "login_use_after_login": false
+      },
+      "mode": "local",
+      "submission": "terminal",
+      "hook_errors": false,
+      "oauth_status": 200,
+      "command_canceled": false,
+      "expected": {
+        "error": "",
+        "stdout": "\n✓ uid:42 username:synthetic-user\n",
+        "stderr": "Open this Pixiv login URL:\n<LOGIN_URL>\nBrowser opening is disabled; use the manual fallback page or terminal prompt.\nWhen this CLI runs on an SSH host, forward its loopback listener from the browser machine:\n  ssh -N -L <PORT>:127.0.0.1:<PORT> USER@SERVER\nAn SSH tunnel alone cannot receive Pixiv's final app link; remote browser login requires a desktop handoff.\nManual fallback page: http://<ADDR>/\n",
+        "events": [
+          "can_prompt",
+          "prompt",
+          "oauth"
+        ],
+        "default_user_id": 7,
+        "stored": true,
+        "final_status": 200,
+        "deadline": false,
+        "dependency_events": [
+          "account",
+          "login",
+          "runtime"
+        ]
+      }
+    },
+    {
+      "name": "local_terminal_relay_is_explicit_open",
+      "args": [
+        "--no-open"
+      ],
+      "runtime": {
+        "login_open_browser": true,
+        "login_use_after_login": false
+      },
+      "mode": "local",
+      "submission": "terminal_relay",
+      "hook_errors": false,
+      "oauth_status": 200,
+      "command_canceled": false,
+      "expected": {
+        "error": "",
+        "stdout": "\n\n✓ uid:42 username:synthetic-user\n",
+        "stderr": "Open this Pixiv login URL:\n<LOGIN_URL>\nBrowser opening is disabled; use the manual fallback page or terminal prompt.\nWhen this CLI runs on an SSH host, forward its loopback listener from the browser machine:\n  ssh -N -L <PORT>:127.0.0.1:<PORT> USER@SERVER\nAn SSH tunnel alone cannot receive Pixiv's final app link; remote browser login requires a desktop handoff.\nManual fallback page: http://<ADDR>/\nDetected Pixiv authorization relay page; opening Pixiv relay URL once.\n",
+        "events": [
+          "can_prompt",
+          "prompt",
+          "open_relay",
+          "prompt",
+          "oauth"
+        ],
+        "default_user_id": 7,
+        "stored": true,
+        "final_status": 200,
+        "deadline": false,
+        "dependency_events": [
+          "account",
+          "login",
+          "runtime"
+        ]
+      }
+    },
+    {
+      "name": "local_oauth_failure_final_false",
+      "args": [
+        "--json",
+        "--no-open"
+      ],
+      "runtime": {
+        "login_open_browser": true,
+        "login_use_after_login": true
+      },
+      "mode": "local",
+      "submission": "manual",
+      "hook_errors": false,
+      "oauth_status": 400,
+      "command_canceled": false,
+      "expected": {
+        "error": "pixiv:Complete: credentials_expired",
+        "stdout": "",
+        "stderr": "Open this Pixiv login URL:\n<LOGIN_URL>\nBrowser opening is disabled; use the manual fallback page or terminal prompt.\nWhen this CLI runs on an SSH host, forward its loopback listener from the browser machine:\n  ssh -N -L <PORT>:127.0.0.1:<PORT> USER@SERVER\nAn SSH tunnel alone cannot receive Pixiv's final app link; remote browser login requires a desktop handoff.\nManual fallback page: http://<ADDR>/\n",
+        "events": [
+          "can_prompt",
+          "oauth"
+        ],
+        "default_user_id": 7,
+        "stored": false,
+        "final_status": 400,
+        "deadline": false,
+        "dependency_events": [
+          "account",
+          "login",
+          "runtime"
+        ]
+      }
+    },
+    {
+      "name": "local_positive_timeout_waits_only_own_context",
+      "args": [
+        "--no-open",
+        "--timeout=100ms"
+      ],
+      "runtime": {
+        "login_open_browser": true,
+        "login_use_after_login": false
+      },
+      "mode": "local",
+      "submission": "none",
+      "hook_errors": false,
+      "oauth_status": 200,
+      "command_canceled": false,
+      "expected": {
+        "error": "context deadline exceeded",
+        "stdout": "",
+        "stderr": "Open this Pixiv login URL:\n<LOGIN_URL>\nBrowser opening is disabled; use the manual fallback page or terminal prompt.\nWhen this CLI runs on an SSH host, forward its loopback listener from the browser machine:\n  ssh -N -L <PORT>:127.0.0.1:<PORT> USER@SERVER\nAn SSH tunnel alone cannot receive Pixiv's final app link; remote browser login requires a desktop handoff.\nManual fallback page: http://<ADDR>/\n",
+        "events": [
+          "can_prompt"
+        ],
+        "default_user_id": 7,
+        "stored": false,
+        "final_status": 0,
+        "deadline": false,
+        "dependency_events": [
+          "account",
+          "login",
+          "runtime"
+        ]
+      }
+    },
+    {
+      "name": "local_canceled_command_does_not_cancel_login",
+      "args": [
+        "--json",
+        "--no-open",
+        "--use",
+        "--timeout=0s",
+        "--no-proxy=false"
+      ],
+      "runtime": {
+        "login_open_browser": true,
+        "login_use_after_login": false,
+        "https_proxy": "ftp://ignored-config-proxy",
+        "pixiv_proxy": "ftp://ignored-service-proxy"
+      },
+      "mode": "local",
+      "submission": "manual",
+      "hook_errors": false,
+      "oauth_status": 200,
+      "command_canceled": true,
+      "expected": {
+        "error": "",
+        "stdout": "{\n  \"user_id\": 42,\n  \"username\": \"synthetic-user\",\n  \"default\": true,\n  \"has_token\": true,\n  \"schedulable\": true,\n  \"eligible\": true\n}\n",
+        "stderr": "Open this Pixiv login URL:\n<LOGIN_URL>\nBrowser opening is disabled; use the manual fallback page or terminal prompt.\nWhen this CLI runs on an SSH host, forward its loopback listener from the browser machine:\n  ssh -N -L <PORT>:127.0.0.1:<PORT> USER@SERVER\nAn SSH tunnel alone cannot receive Pixiv's final app link; remote browser login requires a desktop handoff.\nManual fallback page: http://<ADDR>/\n",
+        "events": [
+          "can_prompt",
+          "oauth"
+        ],
+        "default_user_id": 42,
+        "stored": true,
+        "final_status": 200,
+        "deadline": false,
+        "dependency_events": [
+          "account",
+          "login",
+          "runtime"
+        ]
+      }
+    },
+    {
+      "name": "relay_config_bypasses_local_hooks_and_addr",
+      "args": [
+        "--json",
+        "--addr=0.0.0.0:9",
+        "--timeout=5s"
+      ],
+      "runtime": {
+        "login_open_browser": true,
+        "login_use_after_login": true,
+        "login_relay_public_url": "<RELAY>",
+        "login_relay_listen_addr": "<ADDR>"
+      },
+      "mode": "relay",
+      "submission": "relay",
+      "hook_errors": false,
+      "oauth_status": 200,
+      "command_canceled": false,
+      "expected": {
+        "error": "",
+        "stdout": "{\n  \"user_id\": 42,\n  \"username\": \"synthetic-user\",\n  \"default\": true,\n  \"has_token\": true,\n  \"schedulable\": true,\n  \"eligible\": true\n}\n",
+        "stderr": "Remote Pixiv login relay is listening on <ADDR>.\nOpen remote Pixiv login session:\n<RELAY>/session/<SESSION>\n",
+        "events": [
+          "oauth"
+        ],
+        "default_user_id": 42,
+        "stored": true,
+        "final_status": 200,
+        "deadline": true,
+        "dependency_events": [
+          "account",
+          "login",
+          "runtime"
+        ]
+      }
+    },
+    {
+      "name": "relay_flags_override_all_config_and_oauth_fails",
+      "args": [
+        "--json",
+        "--addr=",
+        "--relay-public-url=<RELAY>",
+        "--relay-listen-addr=<ADDR>",
+        "--relay-tls-cert-file=",
+        "--relay-tls-key-file="
+      ],
+      "runtime": {
+        "login_open_browser": true,
+        "login_use_after_login": true,
+        "login_relay_public_url": "bad",
+        "login_relay_listen_addr": "bad",
+        "login_relay_tls_cert_file": "synthetic-cert",
+        "login_relay_tls_key_file": "synthetic-key"
+      },
+      "mode": "relay",
+      "submission": "relay",
+      "hook_errors": false,
+      "oauth_status": 400,
+      "command_canceled": false,
+      "expected": {
+        "error": "pixiv:Complete: credentials_expired",
+        "stdout": "",
+        "stderr": "Remote Pixiv login relay is listening on <ADDR>.\nOpen remote Pixiv login session:\n<RELAY>/session/<SESSION>\n",
+        "events": [
+          "oauth"
+        ],
+        "default_user_id": 7,
+        "stored": false,
+        "final_status": 400,
+        "deadline": false,
+        "dependency_events": [
+          "account",
+          "login",
+          "runtime"
+        ]
+      }
+    },
+    {
+      "name": "relay_tls_server_error_is_sanitized",
+      "args": [
+        "--json",
+        "--relay-public-url=<RELAY>",
+        "--relay-listen-addr=<ADDR>",
+        "--relay-tls-cert-file=<CERT>",
+        "--relay-tls-key-file=<KEY>"
+      ],
+      "runtime": {
+        "login_open_browser": true,
+        "login_use_after_login": false
+      },
+      "mode": "relay",
+      "submission": "none",
+      "hook_errors": false,
+      "oauth_status": 200,
+      "command_canceled": false,
+      "expected": {
+        "error": "remote login relay server failed; verify its listener and TLS configuration",
+        "stdout": "",
+        "stderr": "Remote Pixiv login relay is listening on <ADDR>.\nOpen remote Pixiv login session:\n<RELAY>/session/<SESSION>\n",
+        "events": [],
+        "default_user_id": 7,
+        "stored": false,
+        "final_status": 0,
+        "deadline": false,
+        "dependency_events": [
+          "account",
+          "login",
+          "runtime"
+        ]
+      }
+    }
+  ],
+  "known_reference_limitations": [
+    "On missing-PEM ServeTLS failure, Go returns before net/http tracks the bound listener. Shutdown may leave that listener alive until garbage collection. This row freezes safe error/diagnostics and no saved account, but does not establish listener cleanup parity. All ordinary local and relay completion/timeout rows assert TCP refusal after the command finishes."
+  ],
+  "help": "Login with the Pixiv browser OAuth flow\n\nUsage:\n  pixiv auth login [flags]\n\nExamples:\npixiv auth login --use\n\nFlags:\n      --addr string                  local loopback callback address; use 127.0.0.1:0 for an available port (default \"127.0.0.1:0\")\n  -h, --help                         help for login\n      --json                         print JSON\n      --no-open                      do not open the browser\n      --no-proxy                     clear the configured proxy for this command\n      --proxy string                 proxy URL (http, https, socks5, or socks5h) for this command\n      --relay-listen-addr string     listen address for this remote login relay\n      --relay-public-url string      public URL for this remote login relay\n      --relay-tls-cert-file string   PEM certificate file for this remote login relay\n      --relay-tls-key-file string    PEM private key file for this remote login relay\n      --timeout duration             maximum time to wait for login flow; 0 adds no deadline\n      --use                          set as default account after login\n",
+  "terminal_input": [
+    {
+      "name": "trim",
+      "input": "  synthetic-code  \r",
+      "default_value": "",
+      "value": "synthetic-code",
+      "error": ""
+    },
+    {
+      "name": "empty retry",
+      "input": "\rsynthetic-code\r",
+      "default_value": "",
+      "value": "synthetic-code",
+      "error": ""
+    },
+    {
+      "name": "whitespace retry",
+      "input": " \rsynthetic-code\r",
+      "default_value": "",
+      "value": "synthetic-code",
+      "error": ""
+    },
+    {
+      "name": "default on Enter",
+      "input": "\r",
+      "default_value": " synthetic-default ",
+      "value": "synthetic-default",
+      "error": ""
+    },
+    {
+      "name": "Unicode left insert",
+      "input": "vλ\u0002x\r",
+      "default_value": "",
+      "value": "vxλ",
+      "error": ""
+    },
+    {
+      "name": "interrupt",
+      "input": "\u0003",
+      "default_value": "",
+      "value": "",
+      "error": "interrupt"
+    },
+    {
+      "name": "EOF",
+      "input": "",
+      "default_value": "",
+      "value": "",
+      "error": "EOF"
+    }
+  ]
+}

@@ -227,6 +227,28 @@ impl TerminalPrompts {
         }
     }
 
+    fn ask_input(&mut self, message: &str, default: &str) -> Result<String, CommandError> {
+        let prefix = format!("\x1b[1;92m? \x1b[0m\x1b[1;99m{message} \x1b[0m");
+        let mut validation = String::new();
+        loop {
+            let shown_default = if default.is_empty() {
+                String::new()
+            } else {
+                format!("\x1b[37m({default}) \x1b[0m")
+            };
+            let answer = self.read_line(&format!("{validation}{prefix}{shown_default}"), false)?;
+            let answer = if answer.is_empty() { default } else { &answer };
+            if answer.trim().is_empty() {
+                validation =
+                    "\x1b[31mX Sorry, your reply was invalid: value cannot be empty\x1b[0m\n"
+                        .into();
+                continue;
+            }
+            self.draw(&format!("{prefix}\x1b[36m{answer}\x1b[0m"))?;
+            return Ok(answer.trim().to_owned());
+        }
+    }
+
     fn ask_confirmation(&mut self, message: &str, default: bool) -> Result<bool, CommandError> {
         let mut validation = String::new();
         loop {
@@ -280,6 +302,11 @@ impl AccountPrompts for TerminalPrompts {
         }
         let mode = self.begin()?;
         let result = self.choose(message, options);
+        self.finish(mode, result)
+    }
+    fn input(&mut self, message: &str, default: &str) -> Result<String, CommandError> {
+        let mode = self.begin()?;
+        let result = self.ask_input(message, default);
         self.finish(mode, result)
     }
     fn secret(&mut self, message: &str) -> Result<String, CommandError> {

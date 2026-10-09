@@ -6,7 +6,7 @@ use chrono::{
 };
 use reqwest::{Method, redirect::Policy};
 use serde_json::Value;
-use std::{error::Error as StdError, fmt, time::Duration};
+use std::{error::Error as StdError, fmt, sync::Arc, time::Duration};
 
 pub use crate::resource_transport::{
     ResourceBody, ResourceReadRequest, ResourceTransport, ResourceUrlValidator,
@@ -100,6 +100,7 @@ pub trait Transport: Send + Sync {
 #[derive(Clone)]
 pub struct HttpTransport {
     client: reqwest::Client,
+    environment_proxy: bool,
     pacing: crate::pacing::RequestPacing,
 }
 
@@ -114,7 +115,28 @@ impl HttpTransport {
                     .map_err(|_| Error::new(Reason::InvalidArgument, "transport"))?,
             );
         }
+        Self::build(builder, false)
+    }
+
+    pub fn new_with_environment_proxy() -> Result<Self> {
+        Self::build(
+            reqwest::Client::builder()
+                .redirect(Policy::none())
+                .no_proxy()
+                .proxy(reqwest::Proxy::custom(|url| {
+                    crate::environment_proxy::ProxyEnvironment::cached()
+                        .proxy_for_url(url.as_str())
+                        .ok()
+                        .flatten()
+                        .and_then(crate::environment_proxy::reqwest_proxy)
+                })),
+            true,
+        )
+    }
+
+    fn build(builder: reqwest::ClientBuilder, environment_proxy: bool) -> Result<Self> {
         Ok(Self {
+            environment_proxy,
             pacing: crate::pacing::RequestPacing::new(Duration::ZERO),
             client: builder
                 .build()
@@ -210,6 +232,9 @@ impl HttpTransport {
         for sent in 1..=10 {
             let previous_url = current.url().clone();
             let previous_method = current.method().clone();
+            if self.environment_proxy {
+                check_environment_proxy(current.url().as_str(), operation)?;
+            }
             self.pacing.wait().await;
             let response = self
                 .client
@@ -287,6 +312,18 @@ impl HttpTransport {
     }
 }
 
+fn check_environment_proxy(url: &str, operation: &'static str) -> Result<()> {
+    let failure = || classified_transport_failure("unknown", operation);
+    if let Some(proxy) = crate::environment_proxy::ProxyEnvironment::cached()
+        .proxy_for_url(url)
+        .map_err(|_| failure())?
+    {
+        let proxy = crate::environment_proxy::reqwest_proxy(proxy).ok_or_else(failure)?;
+        reqwest::Proxy::all(proxy).map_err(|_| failure())?;
+    }
+    Ok(())
+}
+
 fn request_failure(error: &reqwest::Error, operation: &'static str) -> Error {
     let mut source: Option<&(dyn StdError + 'static)> = Some(error);
     let mut tls = false;
@@ -345,8 +382,18 @@ impl ResourceTransport for HttpTransport {
 
     async fn open_resource(
         &self,
-        request: ResourceReadRequest,
+        mut request: ResourceReadRequest,
     ) -> Result<crate::resource::ResourceResponse<Self::Body>> {
+        if self.environment_proxy {
+            let original = request.validate.take();
+            let operation = request.operation;
+            request.validate = Some(Arc::new(move |url| {
+                if let Some(validate) = &original {
+                    validate(url)?;
+                }
+                check_environment_proxy(url, operation)
+            }));
+        }
         crate::resource_transport::open(&self.client, &self.pacing, request).await
     }
 }

@@ -1458,7 +1458,7 @@ Focused app3、CLI validation7、42行startup、既存transfer OAuth4が成功�
 
 Go related CLI/auth/account/ledger suitesとvetは終了0（CLI44.111秒）。既存Linux公開面snapshot不在1testの除外と、Go Cargo interop flag未指定skipを保持し、strict全Go passとしない。独立read-only reviewは最終runtime/proxy/timestamp/rotation境界を確認し、scoped source finding無し。
 
-nonUTF8 stored tokenの既存SDK String/form差分、SDK-owned CloseIdleConnections/shared pool/context/実TLS・全profile wire、実startup/update/diagnostic/DB close、SQL実行中取消/blocked mutex/全clock/flag/help/Windows・macOS・全archを未検証として残す。auth login/callback/URL handlerは未移植。今回の対象例成功をauth全体・whole migration verifiedへ外挿しない。
+nonUTF8 stored tokenの既存SDK String/form差分、SDK-owned CloseIdleConnections/shared pool/context/実TLS・全profile wire、実startup/update/diagnostic/DB close、SQL実行中取消/blocked mutex/全clock/flag/help/Windows・macOS・全archを未検証として残す。この時点ではauth login/callback/URL handlerは未移植で、後掲のCLI login接続checkpointで入口を追加する。今回の対象例成功をauth全体・whole migration verifiedへ外挿しない。
 
 ## Login SDK session・account completion依存（2026-10-09）
 
@@ -1476,7 +1476,7 @@ Focused SDK7・app4が成功した。app初回compileはsummary Serializeとい�
 
 最終Go SDK/account/ledger related suiteとvetは終了0（SDK1.719秒、account0.120秒、ledger0.294秒）。Go Cargo interop flag未指定skipは残す。このscopeはCLI snapshotを変更せず、その不在testを実行したとは呼ばない。validation環境は前checkpoint同様offline・telemetry optout・task-local dev/test debug情報0・incremental0で、scriptの全stageとrelease設定は不変。最終full gateは終了sentinel0・291秒、Formatter/Clippy・workspace365passed/0failed/既存3ignored・release42.45秒を確認した。独立read-only reviewはparser修正とSDK/app順序を確認し、scoped blocker無し。
 
-nonUTF8 callback query/hostのGo byte string対Rust String/form、direct SDK Context API、Go LoginOptionsのStart時HTTPClient injection・owned client生成/explicit CloseIdleConnections、全URL parse/wire/clock/random生成failure/全concurrency/platformは未検証または未移植として残す。caller-owned transportのComplete時注入をowned HTTP parityへ外挿しない。CLI login local/remote/hidden callback/handler・OS登録/restoration・全auth/whole migrationは未完了。
+nonUTF8 callback query/hostのGo byte string対Rust String/form、direct SDK Context API、Go LoginOptionsのStart時HTTPClient injection・owned client生成/explicit CloseIdleConnections、全URL parse/wire/clock/random生成failure/全concurrency/platformは未検証または未移植として残す。caller-owned transportのComplete時注入をowned HTTP parityへ外挿しない。CLI login local/remote/hidden callback/handlerの入口は後掲checkpointで接続する。実OS登録/restoration・全auth/whole migrationは未完了。
 
 ## Login input/relay・embedded pages依存（2026-10-09）
 
@@ -1498,7 +1498,7 @@ Focused input4/page4 Rust test、Go auth/loginpage/SDK/ledger suiteとvetが成�
 
 ## Local login HTTP bridge・hooks/lifecycle依存（2026-10-09）
 
-既存input/page/SDK callback/contextを再利用し、actual loopback HTTP routes・form submission・final response・server ownershipを実装する。CLI login startup/options/real browser/TTY adapter・remote relay/handoff・hidden callback/OS handlerはまだ接続せず、reduced leafを追加しない。testsは127.0.0.1:0とsynthetic hooksだけで、実signin・credential作成・handler登録・外部relay通信を行わない。調査・Go freeze・実装・review補正は13:55〜14:19 UTCの約24分で、full gateの時間と分ける。
+既存input/page/SDK callback/contextを再利用し、actual loopback HTTP routes・form submission・final response・server ownershipを実装する。この依存checkpointではCLI login startup/options/TTY adapter・remote relay/handoff・hidden callback/OS handlerをまだ接続せず、後掲のCLI login checkpointで入口を追加する。実browser/OS登録は実行しない。testsは127.0.0.1:0とsynthetic hooksだけで、実signin・credential作成・handler登録・外部relay通信を行わない。調査・Go freeze・実装・review補正は13:55〜14:19 UTCの約24分で、full gateの時間と分ける。
 
 Go15testはshared fixture36行・6,606bytes（route16/form11/framing4/MIME5）とlifecycle/hooks/TTY/cancelを固定する。test sourceは24,644bytes。routesはroot全method、manual GET/POST/405、callback GET rawquery/emptyfragment、unknown404とGo1.27.1 ServeMuxのcanonical307を比較する。formはbody-before-query・first value・exact empty legacy login_result→code→callback_url、malformed queryがvalid bodyも拒否する順序、10MiB capを保持する。absent Content-Typeはbodyを無視し、quoted parameter内semicolon/escaped quote、duplicate equal成功/conflict拒否をGo-firstで補正する。
 
@@ -1528,7 +1528,7 @@ persistent sidecar lockはtarget atomic replacementと独立したnative flock/L
 
 最初のfocused compileはcancelled closureのgeneric型推論で失敗したためlog/exit101を保持した。test closureにResult型だけを明示して再実行した。final focused protocol2/state7testsは終了0。既存SDK OAuth7・app account4/input4/local bridge16 regressionsも成功した。Go loginhelper/lock/secret/page/SDK/account関連suiteとvetは終了0（.228/.007/.007/.007/.883/.073秒）、Go新contract race×5も終了0・7.300秒。Cargo interop opt-in skipやroot/Linux snapshotをstrict全Go成功へ含めない。
 
-未接続はdefault state path、streaming Start/Forward/Complete、relay serverの期限/context、full CLI flags/startup/TTY/browser・callback/OS handler。percent-decoded nonUTF8 URL components対SDK String・全Go URL grammar/wire/native error・Windows native lock compile/run/ACL・全並行scheduleと既存SDK owned HTTP/context/idle lifecycle debtを保持する。期限は後続relay server lifecycleで扱う。testだけが使うHandoffState lock wrapperを除去し、save/load/clearとtestが同じproduction private_lock boundaryを直接使う最終APIに揃えた。pre-cleanup full gateは終了0・288秒・release42.51秒で証拠を保持するが、最終tree検証へ流用しない。最終unchanged scripts/check-rust.ps1は終了sentinel0・260秒、Formatter/Clippy・workspace top-level398passed/0failed/既存3ignored・release34.52秒で完了した。log raw399passedには独立lock childの1testが含まれ、workspace件数へ二重計上しない。独立read-only reviewは最終cleanup差分まで確認しscoped blocker無し。台帳validatorも終了0・.021秒。task-local offline/telemetry optout/debug情報0/incremental0を維持し、test内容・optimization・release設定・script stageは変更しない。
+このcheckpoint時点の未接続はdefault state path、streaming Start/Forward/Complete、relay serverの期限/context、CLI flags/startup/TTY/browser・callback/OS handlerで、以後の依存checkpointと後掲のCLI login checkpointで接続する。percent-decoded nonUTF8 URL components対SDK String・全Go URL grammar/wire/native error・Windows native lock compile/run/ACL・全並行scheduleと既存SDK owned HTTP/context/idle lifecycle debtを保持する。期限は後続relay server lifecycleで扱う。testだけが使うHandoffState lock wrapperを除去し、save/load/clearとtestが同じproduction private_lock boundaryを直接使う最終APIに揃えた。pre-cleanup full gateは終了0・288秒・release42.51秒で証拠を保持するが、最終tree検証へ流用しない。最終unchanged scripts/check-rust.ps1は終了sentinel0・260秒、Formatter/Clippy・workspace top-level398passed/0failed/既存3ignored・release34.52秒で完了した。log raw399passedには独立lock childの1testが含まれ、workspace件数へ二重計上しない。独立read-only reviewは最終cleanup差分まで確認しscoped blocker無し。台帳validatorも終了0・.021秒。task-local offline/telemetry optout/debug情報0/incremental0を維持し、test内容・optimization・release設定・script stageは変更しない。
 
 ## Streaming remote handoff client dependencies (2026-10-09)
 
@@ -1552,7 +1552,7 @@ Native reqwest0.13.5はGo handoffに無いAccept: */*を自動追加する。Go 
 
 ## Remote relay server session・capability・context依存（2026-10-09）
 
-固定Goのlogin_pair_relay.go/login_relay.goを、synthetic capability・local TCP/TLS・temp設定・caller Contextで先に固定する。session/proof/resultは独立した32byte randomからURL-safe no-padding IDを生成し、proofはtrim後constant-time比較する。stateに独自TTLを加えず、serverの期限はcaller Contextが所有する。CLI login/hidden callback/default state path/browser/OS handlerはまだ未接続であり、この依存を入口完成へ数えない。
+固定Goのlogin_pair_relay.go/login_relay.goを、synthetic capability・local TCP/TLS・temp設定・caller Contextで先に固定する。session/proof/resultは独立した32byte randomからURL-safe no-padding IDを生成し、proofはtrim後constant-time比較する。stateに独自TTLを加えず、serverの期限はcaller Contextが所有する。この依存checkpoint時点ではCLI login/hidden callback/default state path/browser/OS handlerは未接続で、後掲のCLI login checkpointで入口を追加する。
 
 Go13named testsとRust12testsは共有relay_server.json 4,408bytesを使用する。options12行・rejected start8行・特殊deep link1行とaccepted requestを対象化し、flags直積を増やさない。既存page26行SHA fixture、Go JSON normalization/folding、HTTP response/body/path、query encoderとbind境界を共用する。explicit changed flagの空値override、legacy relay値だけではserverを有効にしないこと、public origin canonicalization、PEM pair、HTTPS reverse-proxyのloopback制約、empty portのephemeral bindを固定する。Go-compatible query bytesはUnicode・space・*・~・ordered pairsを比較し、SDK GETと同じproduction encoderへ委譲する。POST/OAuth formは変更しない。
 
@@ -1564,7 +1564,7 @@ native TLSは共有synthetic localhost certificate/key（1,196/1,700bytes）を�
 
 最終unchanged scripts/check-rust.ps1は終了sentinel0・290秒、Formatter/Clippy・workspace top-level424passed/0failed/既存3ignored、release46.23秒で完了した。raw log425には既存sidecar child1testが含まれるため二重計上しない。offline・telemetry optout・consistent task-local dev/test debug情報0/incremental0を維持し、test expectations・optimization・release設定・script stagesは変更しない。Go Cargo interop opt-in skip/root Linux snapshot未実行はstrict全Go成功へ数えない。
 
-HTTP2未移植、native handoff Accept extra header、full CLI/OS wiring、SDK owned HTTP/context/idle lifecycleの既存差分を保持する。全TLS options/handshake failure・native bind/service/error型・random failure・nonUTF8/全JSON/HTTP wire・clock/socket flush/backpressure・全claim/notify/disconnect並行schedule・Windows/macOS/archは未比較。30ms pending観測を全raceの証明へ拡張しない。synthetic public test keyを本物のcredentialとして使用しない。
+HTTP2未移植、native handoff Accept extra header、実OS連携、SDK owned HTTP/context/idle lifecycleの既存差分を保持する。CLI配線は後掲checkpointで接続する。全TLS options/handshake failure・native bind/service/error型・random failure・nonUTF8/全JSON/HTTP wire・clock/socket flush/backpressure・全claim/notify/disconnect並行schedule・Windows/macOS/archは未比較。30ms pending観測を全raceの証明へ拡張しない。synthetic public test keyを本物のcredentialとして使用しない。
 
 ## Callback endpoint・dispatch/default path依存（2026-10-09）
 
@@ -1578,7 +1578,7 @@ Callback dispatchはparse/scheme→remote-login strict link→nonwhite delegatio
 
 Focused serializer2/callback6/handoff14/input4・SDK OAuth/referenceと既存CLI startup5suiteは終了0。callback default-path parent testは2ignored child-only scaffoldsを明示的に起動し、temp/default/relative/missing HOME assertionを実行する。この2scaffoldを未実行契約や通常workspace passへ数えず、既存3ignoredと区別する。Go auth/loginhelperの最終suiteは終了0（.760/.384秒）、gofmt/vet/diff checkも終了0。callback focused race×5も終了0（auth1.037/helper1.075秒）。独立read-only reviewはbyte-preservation補正と共通path差分まで確認しscoped blocker無し。
 
-native browser/process/delegation・manifest storage・Linux/macOS/Windows persistent ensure/disable/temporary restore・startup gatingとhidden callback/full login CLIの接続は未移植。OS inventoryはXDG file snapshots、Darwin Swift bundle/version/home manifest、Windows HKCU tree backup/native shell delegationを実機能として残す。real association/registry/browser authやhost trustを変更せず、Windows既存HKCU integration/Darwin real swiftc testは実行していない。全URL/raw bytes/platform/private writer failure/scheduleとHTTP2/Accept差分・既存SDK owned lifecycle debtを保持する。
+このcheckpoint時点ではnative browser/process/delegation・manifest storage・Linux/macOS/Windows persistent ensure/disable/temporary restore・startup gatingとhidden callback/login CLIは未接続で、以後のhandler依存と後掲のCLI login checkpointで接続する。OS inventoryはXDG file snapshots、Darwin Swift bundle/version/home manifest、Windows HKCU tree backup/native shell delegationを実機能として残す。real association/registry/browser authやhost trustを変更せず、Windows既存HKCU integration/Darwin real swiftc testは実行していない。全URL/raw bytes/platform/private writer failure/scheduleとHTTP2/Accept差分・既存SDK owned lifecycle debtを保持する。
 
 最終unchanged scripts/check-rust.ps1は終了sentinel0・281秒、Formatter/Clippy・workspace top-level432passed/0failed、release40.12秒で完了した。raw log433には既存sidecar child1testが含まれる。ignored5は既存3と、parent testが明示実行する新child-only scaffold2であり、未検証を合格扱いするskipではない。final fixtureのhappy dispatch2行追加後のfull gateであり、先行focused logを最終tree検証へ流用しない。ledger validatorも終了0・.019秒。offline/telemetry optout/consistent dev-test debug情報0/incremental0を維持し、optimization/release/script stages/期待値を変更しない。
 
@@ -1598,13 +1598,13 @@ Windows shellはShellExecuteWのdefault verb/null parameters+directory/SW_SHOWNO
 
 Focused manifest5/native browser7とexisting callback6/state7は終了0。native child-only scaffold1はignoredとしてparent testから明示実行し、default no-env returnをcontract passへ数えない。先行format checkはparent lib moduleのsortだけで差を出し、full formatterで補正したlogを保持する。最終format checkも終了0。Go final auth/loginhelper suitesとvetは終了0（.873/.468秒）。独立read-only reviewはmanifest backing reuseとWindows lookup/NUL補正まで確認しscoped blocker無し。
 
-未移植はpersistent ensure/disable・temporary install/restore・previous-handler delegation・startup gating/full CLI hooksであり、native openerの存在をlogin入口完成へ数えない。Darwin swiftc combined-output orderingはseparate captured buffersの連結で代用せず、実merged-stream dependencyを次scopeで追加する。全native error/lookup/env/PATHEXT/privilege/cancel/permission/schedule・Windows/macOS/BSD/arch compile/run、HTTP2/Accept/SDK lifecycleと既存wire/parser debtを保持する。
+このcheckpoint時点ではpersistent ensure/disable・temporary install/restore・previous-handler delegation・startup gating/CLI hooksを未移植として残し、以後のhandler依存と後掲のCLI login checkpointで接続する。Darwin swiftc combined-output orderingはseparate captured buffersの連結で代用せず、実merged-stream dependencyを次scopeで追加する。全native error/lookup/env/PATHEXT/privilege/cancel/permission/schedule・Windows/macOS/BSD/arch compile/run、HTTP2/Accept/SDK lifecycleと既存wire/parser debtを保持する。
 
 最終unchanged scripts/check-rust.ps1は終了sentinel0・264秒、Formatter/Clippy・workspace top-level444passed/0failed、release37.25秒で完了した。raw log445は既存sidecar child1を含む。ignored6は既存3と、callback2/native browser1のchild-only scaffoldsで、parent testsが明示実行する。Go focused race×5も終了0（auth1.081/helper1.170秒）、ledger validatorは終了0・.019秒。Windows-only Go/Rust NUL testやnative platformをこのLinux成功へ含めない。offline/telemetry optout/consistent dev-test debug情報0/incremental0を維持し、optimization/release/script stages/期待値を変更しない。
 
 ## Linux XDG association backend・context process依存（2026-10-09）
 
-固定Go install_linux.goのpersistent ensure/disable、temporary install/cleanup、previous-handler delegationを、既存manifest/endpoint/private writer/native browser/HostProcess上へ実装する。Go既存Linux testsと新targeted fixture（4,217bytes）を再利用し、temp HOME/XDGとmock xdg-mime/gioだけで先に固定する。real desktop association/registry/browser/signin/credentialsは操作しない。Darwin/Windows backend・full CLI/native hooksは次scopeへ残し、Linux capabilityを全URL-handler完成へ数えない。
+固定Go install_linux.goのpersistent ensure/disable、temporary install/cleanup、previous-handler delegationを、既存manifest/endpoint/private writer/native browser/HostProcess上へ実装する。Go既存Linux testsと新targeted fixture（4,217bytes）を再利用し、temp HOME/XDGとmock xdg-mime/gioだけで先に固定する。real desktop association/registry/browser/signin/credentialsは操作しない。Darwin/Windows backendとCLI hooksは後掲checkpointで接続する。native hooksの実OS実行は残り、Linux capabilityを全URL-handler完成へ数えない。
 
 first ensureはlookup xdg→gio→executable→applications→manifest→previous query→snapshot→desktop write→register→saveの順を保持する。repeatはfirst snapshot/previousを維持し、registration/save failureでinitial stateを復元する。snapshot無しlegacy manifestのregistration failureはGo同様new desktopを残す。disableはexternal defaultに触らずmanifestだけ除去し、legacy previous/self/emptyそれぞれのdesktop removal/unsafe errorを比較する。temporary installはendpoint validation/writeを先に行い、全失敗でendpointをcleanupするが、desktop-write failureの追加rollbackをGoに無く加えない。owned cleanupはendpoint除去→restoreを行い、Go同様cleanup errorsを返さない。default factoryはstate pathをeager resolveせず、invalid relayがmissing HOMEより先に失敗する。ValidatedCallbackEndpoint production typeとstore writerを共用し、同じ入力を2回validateしない。
 
@@ -1635,11 +1635,11 @@ shared fixtureは27 ordered lifecycle flows・5cache/file-kind・2exact Swift sc
 
 CombinedはGo os/execのsame-writer/same-kernel-pipe contractを固定し、std::io::pipeのduplicate writersをstdout/stderrへ渡す。spawn後Commandをdropしてparent writerによるEOF待ちを防ぎ、parallel drain/direct-child reapとexit→context→copy errorの順序を維持する。raw binary alternating writes・empty/nonzero/large output・cancel/reap・parent exit後descendant EOFを実synthetic childで比較する。Go custom Cancelのsuccessful-exit/context/native errorとbinary bytesを別contractで保持する。Rust CapturedはCombinedだけのpost-start error bytesとDisplay/sourceを保持し、既存stdio/prestart/SIGKILL Exitを変えない。constructed accessor testは全native fault実行の証拠ではない。
 
-Darwin Rust10testsとCombined5testsはshared fixturesと対象ordering/owned cleanup/async cancellation/dropを検査する。Go final auth/helper suitesは終了0（.770/2.278秒）、outer/nested vetも終了0。実Darwin compile/run/LaunchServicesと全IO/permission/random/native process faultは未検証。Darwin query/diagnostic Stringのinvalid UTF8はGo raw bytes対Rust replacementの差分を残し、typed captured Vecの保持と混同しない。Windows association/full CLI/HTTP2/Accept/lifecycleと既存共有debtも未解消のままとする。
+Darwin Rust10testsとCombined5testsはshared fixturesと対象ordering/owned cleanup/async cancellation/dropを検査する。Go final auth/helper suitesは終了0（.770/2.278秒）、outer/nested vetも終了0。実Darwin compile/run/LaunchServicesと全IO/permission/random/native process faultは未検証。Darwin query/diagnostic Stringのinvalid UTF8はGo raw bytes対Rust replacementの差分を残し、typed captured Vecの保持と混同しない。Windows associationとCLI配線は後掲checkpointで接続する。実OS連携、HTTP2/Accept/lifecycleと既存共有debtは残す。
 
 reviewでendpointがempty directoryへ置換された後のcleanup差分を確認した。unchanged Go Install返却cleanupを用い、empty directoryは削除・nonempty directory/contentは維持・両方で各cleanupのprevious restoreを試す契約を追加して固定した。既存Linux/manifestのremove-file→missing success→empty-directory removalの処理をshared private_file::remove_if_existsへ移し、Darwin failure/owned cleanupでも共用する。expectationやエラー処理を緩めず、focused Darwin10/Linux14/manifest5/Combined5と最終Go/vetが終了0、独立reviewは補正までblocker無し。先行fullgate（補正前）は終了0・262秒、top-level480/raw481passed・8ignored・release37.09秒の証拠として保持する。最終変更treeのunchanged scripts/check-rust.ps1は別実行で終了sentinel0・262秒、Formatter/Clippy・workspace top-level481passed/0failed、release35.95秒で完了した。raw482には既存sidecar child1が含まれる。ignored8は既存3とparentが明示実行するcallback2/browser1/context1/Linux ordering1のchild scaffoldsを維持する。
 
-fixture sizeはDarwin16882bytes・Combined674bytes（17556bytes total）。全直積を追加せず共有27flowにtargeted cache/script/compiler/directory boundariesを分ける。検証は同じtask-local offline/telemetry optout/dev-test debug情報0/incremental0で、release・optimization・必須script stagesを変えない。台帳はpendingのまま、操作全体/native platformsのverifiedへ引き上げない。
+fixture sizeはDarwin16882bytes・Combined674bytes（17556bytes total）。全直積を追加せず共有27flowにtargeted cache/script/compiler/directory boundariesを分ける。検証は同じtask-local offline/telemetry optout/dev-test debug情報0/incremental0で、release・optimization・必須script stagesを変えない。このbackend checkpointでは台帳をpendingのままにし、操作全体/native platformsのverifiedへ引き上げない。
 
 ## Windows association と previous-class ShellExecuteExW（2026-10-09）
 
@@ -1649,7 +1649,7 @@ shared fixtureは41 lifecycle flow・5command・4key・8ownerの58例。persiste
 
 temporary installはendpoint validate/write→executable→private random backup0700→query→export/chmod0600→3add。export/missing export file failureはendpoint/backupを除去しregistryをrestoreしない。add failureとowned cleanupはfresh background Contextでdelete/importの両方を順に試し、各errorを無視してbackupを除去する。cleanup endpointのempty directoryは削除、nonempty directory/contentは残す。private backupのfull-tree synthetic bytesとimport時のpath/file modeを比較するがnative ACL/registry export formatの実行証明とはしない。
 
-Go cleanupはidempotentではない。明示的な2回目の呼び出しは復元済みtreeを削除し、既に削除されたbackupのimport failureを無視するため、以前のassociationを失う破壊的な挙動となる。この対象例の期待値を安全なno-opへ変更しない。Rustの所有されたDropはexplicit cleanup後に再実行せず、未明示cleanupのDropも1回だけ復元する。後続CLIは通常の所有権でautomatic cleanupを1回に限定する必要があり、native検証時にもこの危険を明示する。
+Go cleanupはidempotentではない。明示的な2回目の呼び出しは復元済みtreeを削除し、既に削除されたbackupのimport failureを無視するため、以前のassociationを失う破壊的な挙動となる。この対象例の期待値を安全なno-opへ変更しない。Rustの所有されたDropはexplicit cleanup後に再実行せず、未明示cleanupのDropも1回だけ復元する。後掲CLI adapterは通常の所有権でautomatic cleanupを1回に限定し、native検証時にもこの危険を明示する。
 
 PreviousHandlerはmanifestのprivate ProgIDとraw callbackをWindowsShellへ渡し、native error/cancel/NULを固定delegate errorへredactする。owned blocking Contextへのcaller cancelとfuture-dropは対象例で検査し、caller tokenをcancelしない。ShellExecuteExWはcontext preflight→class UTF16→URL UTF16→BOOL→GetLastErrorの順。full ABIのCBSize/mask=1/File/Class/show=1と残るnull/zero fieldsを固定する。false+zeroは`ShellExecuteExW failed`、false+nonzeroはnative errno、successはstale LastErrorを無視し、preflight後の取消を追加で再検査しない。
 
@@ -1657,8 +1657,48 @@ Rustのportable preflight/NUL/unsupportedは実production methodを検査し、W
 
 初稿のexecutable早期go_utf8変換がreg.exeへ渡るWindows WTF8を壊す差分をreviewで発見した。追加Go source testはED A0 80 FFとembedded quoteを持つexact command bytesをensure/installで先に固定し、manifest JSONは4つのU+FFFDへ変換する別contractを保持する。native reg commandのOsStringとmanifest JSON Stringを分け、native quote escapeをUnix bytes/Windows UTF16 unitsで行う。Windows surrogate testはnative shell/registryを呼ばないがこのLinux実行ではcompile/run未実施であり、native API parityへ数えない。
 
-初回fullgateはenvironment restartでbookmark_reads_startup実行中に中断し、exit sentinelが無い。中断logを保持し、部分test出力をfullgate成功へ含めない。Go full auth/helper suiteとouter/nested vetは最終sourceで終了0。全CLI login/hidden callback/install-handler/startup wiring・HTTP2/Accept/public SDK lifecycleと既存wire/parser/platform debtは残し、backend依存の実装を入口完成や全操作verifiedへ読み替えない。
+初回fullgateはenvironment restartでbookmark_reads_startup実行中に中断し、exit sentinelが無い。中断logを保持し、部分test出力をfullgate成功へ含めない。Go full auth/helper suiteとouter/nested vetは最終sourceで終了0。CLI login/hidden callback/install-handler/startup wiringは後掲checkpointで接続する。HTTP2/Accept/public SDK lifecycleと既存wire/parser/platform debtは残し、backend依存の対象例を全操作verifiedへ読み替えない。
 
 native argv補正前の対象例は既存のmodule-missing redに加え、exact raw command対sanitized commandで終了101となったregression redも保持する。補正後focusedはWindows handler10/shell4・Linux14/Darwin10/manifest5が終了0。独立read-only reviewはprivate native formatter・実handler/OsString portテストと台帳補正まで確認しscoped blocker無し。
 
 再実行した最終unchanged scripts/check-rust.ps1は終了sentinel0・269秒、Formatter/Clippy・workspace top-level495passed/0failed、release38.24秒で完了した。raw496には既存sidecar child1が含まれる。ignored8は既存3とparentが明示実行するcallback2/browser1/context1/Linux ordering1のchild scaffoldsで、新しいWindows surrogate testはnative runner未実施として別記し、Linux passへ含めない。Go final auth/helper suiteは終了0・wall4.42秒、outer vet0.14秒とnested vetも終了0。ledger validator終了0・.022秒、diff check clean、固定Go production/go.mod/go.sumとの差分0。fixtureは22,449bytes。offline/telemetry optout/dev-test debug情報0/incremental0を維持し、release/optimization/script stages/期待値を変更しない。Rust fullgate後は結果文書だけを更新し、tested Rust treeを変更しない。
+
+
+## CLI login・hidden callback・startup の接続（2026-10-09）
+
+`auth login`、`auth _callback`、`auth _install-handler`を実CLIのauth dispatchへ接続する。[login command](../../crates/pixiv-cli/src/auth_login.rs)は既存SDK/appのone-shot session、local HTTP bridge、remote relay、account/default保存を使い、[hidden command](../../crates/pixiv-cli/src/auth_hidden.rs)は既存callback dispatchとnative handoffを使う。通常起動は[startup](../../crates/pixiv-cli/src/startup.rs)からpending update cleanupと条件付きpersistent handlerへ進む。実signin・実アカウント・browser起動・host association・host trustの変更は行わず、OAuthは合成応答、通信は隔離local listener/proxy、設定とDBは一時ファイルに限定する。
+
+### 固定したGo契約とRustの比較範囲
+
+| 対象 | Go fixture・source test | Rustの比較範囲 |
+| --- | --- | --- |
+| login validation・実行 | [cli_login_flow.json](../../crates/pixiv-cli/tests/fixtures/cli_login_flow.json)：validation17行・local/remote12flow・terminal input7行・help。`migration_cli_login_flow_test.go` | `auth_login_contract.rs`はvalidation13行と12flowを比較する。Go固有のaccount/login/runtime factoryの4error行は同じ注入境界がなく未比較。boundary/runtime testを別に持つ |
+| hidden parser・dispatch・root startup | [cli_login_hidden_startup.json](../../crates/pixiv-cli/tests/fixtures/cli_login_hidden_startup.json)：CLI81行・installer4行・automatic support12行・persistent policy11行 | parser、注入したdispatch/startup、実Linux子プロセスの対象部分を分ける。`auth_hidden_process.rs`は安全な64行を選択し、root helpの1行はhidden名の非表示だけを確認する。81行すべてのnative dispatchを実行したとはしない |
+| default state初期化順序 | `migration_hidden_default_order_test.go`：3対象例 | invalid linkはHOME解決前に拒否し、local callbackはnetworkより先にHOMEを解決する。remote startはHTTP応答を読むまでHOME解決を遅らせる。実子プロセスと合成local HTTPで比較する |
+| pending Windows update cleanup | [pending_update_cleanup.json](../../crates/pixiv-app/tests/fixtures/pending_update_cleanup.json)：27行、固定Go source/resolver SHA付き | `pending_update.rs`はUnixの合成filesystemと実remove/symlink境界で比較する。native Windows実行の証拠とはしない |
+| login default環境proxy | [login_environment_proxy.json](../../crates/pixiv-sdk/tests/fixtures/login_environment_proxy.json)：16行 | `environment_proxy.rs`は同じ隔離子プロセス・HTTP listener/CONNECT proxyを使う。既存handoff selector21行も同じproduction policyで再検査する |
+
+standalone login leafではproxy conflictをservices/runtime/listenerより先に拒否し、relay validationをlocal address/proxy検査より先に行う。実rootでは先に通常startup hooks→default config初期化→runtime検査を行い、その後にleafへ進む。したがってmalformed/invalid runtime configはleafのproxy conflictより先に失敗する。`--no-open=false`、`--use=false`、`--no-proxy=false`、空の`--proxy=`は値とChangedのpresenceを分ける。relay modeはlocal addressとlocal browser/install hooksを使わず、local modeは既存manual/callback/terminal入力を使う。commandの取消はGo同様login固有のBackground contextへ引き継がず、正のtimeoutだけをinput待ちとOAuth/保存の共通期限にする。OAuthと保存結果をfinal pageへ通知した後にsummaryを書き、writer failureで成功pageや保存済みcredential/defaultを戻さない。
+
+Goのnil LoginOptionsはruntimeの`https_proxy`/`pixiv.network.proxy_url`を読まず、DefaultTransportをcloneしてProxyFromEnvironmentを使う。このためSDKに実[environment transport](../../crates/pixiv-sdk/src/transport.rs)を追加し、既存`HttpTransport::new(None)`のexplicit no-proxyは維持する。[共有policy](../../crates/pixiv-sdk/src/environment_proxy.rs)はHTTP/HTTPS/NO_PROXYの非空uppercase優先、ALL_PROXY無視、loopback例外、CGIのHTTP拒否を保持する。環境はconstructor時に固定せず、最初の要求時に読み、その後はprocess-wide cacheを共有する。CGIのHTTP拒否がloopback例外より先である対象例と、HTTPS loginがCGIでもCONNECTへ進む対象例を固定する。追加Go比較で、ftp/socks4のselected環境proxyは明示portへHTTP proxy wireを送り、port省略時はport0へdialして失敗することを確認する。transport adapterだけでnon-HTTPS/non-SOCKS5 schemeをHTTPへ合わせ、original port省略を80へ読み替えず、HTTPS TLSとsocks5/socks5h remote DNSを維持する。selected proxyのreqwest parse失敗は送信前にerrorとし、custom proxy resolverのdirect fallbackへ進めない。
+
+hidden commandはroot config/default/DB/startup hooksを呼ばず、stdinも読まない。default endpoint/handoff stateを実使用時に解決し、remote startのnetwork-before-state順序を維持する。callbackはcommand contextをprevious-handler/handoffへ伝え、通常loginのdetached contextと混同しない。installerのensure failureは詳細付きwarningを出して成功し、通常startupのensure failureは詳細を出さないwarningで続行する。warning writer failureもGo同様無視する。`AuthCommand::requires_startup`はconfigを必要とするかどうかと分け、exportもhidden commandsと同様にroot startup hooksから除外する。exportのaccepted/early validation3行はsupported=trueとhook failureを注入し、hooksが呼ばれないことを固定する。
+
+persistent adapterはDarwin/Windowsだけをautomatic対象にし、program basenameがexact `.test` suffixなら全OSでinertにする。executable取得→manifest読込→cleaned path比較→必要時ensureの順をsource-driven Go fixtureで固定する。missing/changed manifestはensure後のmanifestを次起動で再利用し、malformed manifestやexecutable failureを登録へ読み替えない。Linuxの通常起動ではautomatic登録を行わないが、local loginのtemporary install hookはLinux/Darwin/Windowsの既存backendへ接続する。
+
+Windows temporary backendの明示的な2回目cleanupが復元済みassociationを消すGo挙動は保持する。一方、CLIのowned installation adapterはcleanup時にinstallationを取り出し、automatic cleanupを1回に限定する。pending update cleanupはnon-Windowsで副作用なく終了し、Windowsでは実executableのabsolute/必要時symlink targetに`.old`を付け、missingは成功、empty directoryやsymlinkのremoveはGoと同じ対象だけを削除する。これはupdate/download/install全workflowやnative Windows ACLの検証ではない。
+
+### 残る差分と最終検証記録
+
+terminal input7行のうち、Rust PTY比較は6行でsynthetic reader EOFの1行を除外する。native terminal EOF、全cursor/redraw/width/color-env/非UTF8、Windows console、blocked promptの取消・cleanupは未検証。Go missing-PEM ServeTLS failureはbound listenerがnet/httpへ登録される前に返り、Shutdown後もGCまでlistenerが残り得る。fixtureは安全なdiagnosticと未保存を固定するが、このerror行のlistener cleanup parityは未確立である。通常local/relay completion・timeoutの対象例とは分ける。
+
+blocked config directoryのroot行はGoの`mkdir ...: not a directory`とRustの`File exists (os error 17)`を別々に保持し、exact native IO診断のparityへ数えない。
+
+native Darwin/Windowsのcompile/link/run、実LaunchServices/HKCU/ShellExecuteExW/browser/association、全OS/arch・ACL/permissions/IO/raceは未検証。Rust relayのHTTP/2未移植、handoffの余分なAccept header、全TLS/SOCKS/任意proxy URL grammar/redirected CGI・IDNA/IPv6zone/nonUTF8環境値、全wire/parser/clock/取消/並行scheduleも残る。CLI用の実HTTP transport生成を、Go公開LoginOptionsのStart時HTTPClient ownership・LoginSession/Clientのexplicit CloseIdleConnections・direct SDK Contextの互換へ外挿しない。
+
+<!-- CLI_LOGIN_CHECKPOINT_FINAL_EVIDENCE -->
+最終unchanged `scripts/check-rust.ps1`は終了sentinel0・277秒。Formatter/Clippy、workspace top-level531passed/0failed、release40.43秒が成功した。raw log532には既存sidecar child1passが含まれる。ignored10は既存3と、parentが明示実行するcallback2/browser1/context1/Linux ordering1/環境proxy1/TTY1のchild-only scaffold7である。新TTY parentは6ケース、環境proxy parentは16ケースを実子プロセスで実行し、no-env returnを通常contract passへ数えない。offline/telemetry optout/dev-test debug情報0/incremental0を維持し、script stages/最適化/既存期待値は変更しない。
+
+最終Go gateは関連auth/loginhelper/installer package tests、actual-root81行、環境proxy16行、関連5package vetと台帳validatorが終了0・9秒。auth1.078秒/helper3.492秒/installer.658秒/root.528秒/SDK.067秒、台帳.095秒。native Windows HKCU restore・Darwin swiftc/LaunchServices testsは実行せず、既存interop opt-in/child helper skipとLinux実行範囲をstrict全Go/native passへ読み替えない。docs更新後の台帳validatorも終了0。独立read-only reviewでexport startup除外、root/leaf preflight順序、unknown proxy scheme routingをGo-first追加fixtureで補正し、最終sourceにscoped blocker無し。blocked directoryのnative診断差分は明示的な未解消として保持する。
+
+今回はCLI入口を接続したcheckpointであり、3入口は`in_progress`、native platformの`verified`追加は無し。上記のnative/公開SDK lifecycle/HTTP2/Accept/全parser・TTY・wire・IO・並行scheduleの残りを成功扱いしない。

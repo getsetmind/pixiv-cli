@@ -62,7 +62,13 @@
         "crates/pixiv-app/src/account_login.rs",
         "crates/pixiv-app/src/login_input.rs",
         "crates/pixiv-app/src/login_page.rs",
-        "crates/pixiv-app/src/login_bridge.rs"
+        "crates/pixiv-app/src/login_bridge.rs",
+        "crates/pixiv-cli/src/auth_login.rs",
+        "crates/pixiv-cli/src/auth_hidden.rs",
+        "crates/pixiv-cli/src/startup.rs",
+        "crates/pixiv-app/src/url_handler.rs",
+        "crates/pixiv-app/src/pending_update.rs",
+        "crates/pixiv-sdk/src/environment_proxy.rs"
       ],
       "tests": [
         "internal/storage/database/migration_contract_test.go#TestMigrationDatabasePreservesSchemaAndRejectsDrift",
@@ -170,7 +176,20 @@
         "crates/pixiv-app/tests/fixtures/login_page_writer_errors.json",
         "internal/cli/commands/pixiv/auth/migration_local_login_test.go",
         "crates/pixiv-app/tests/login_bridge.rs",
-        "crates/pixiv-app/tests/fixtures/local_login_http.json"
+        "crates/pixiv-app/tests/fixtures/local_login_http.json",
+        "internal/cli/commands/pixiv/auth/migration_cli_login_flow_test.go",
+        "internal/cli/commands/pixiv/auth/migration_hidden_default_order_test.go",
+        "internal/cli/migration_login_hidden_startup_test.go",
+        "crates/pixiv-cli/tests/auth_login_contract.rs",
+        "crates/pixiv-cli/tests/auth_login_runtime.rs",
+        "crates/pixiv-cli/tests/auth_login_terminal.rs",
+        "crates/pixiv-cli/tests/auth_hidden_process.rs",
+        "crates/pixiv-cli/tests/auth_hidden_startup.rs",
+        "crates/pixiv-cli/tests/fixtures/cli_login_flow.json",
+        "crates/pixiv-cli/tests/fixtures/cli_login_hidden_startup.json",
+        "crates/pixiv-app/tests/url_handler.rs",
+        "crates/pixiv-app/tests/pending_update.rs",
+        "crates/pixiv-sdk/tests/environment_proxy.rs"
       ],
       "verified_platforms": [
         "windows-amd64",
@@ -193,13 +212,14 @@
         "auth use/removeを既存account/configへ接続。Go fixture68行（62actualroot/6injected IO、58,147bytes）と別5prompt/3List-failure、domain/configの対象例でUID/stdin/flags/JSON、選択/確認、3回List、default clear-before-delete/失敗時rollbackなし、post-delete List失敗時committed state、comments/unknown keys/private writeを比較。Unix PTYで実CLIの選択/取消/確定removeと保存状態、Surveyのkeys/filter/Vim/paging/initial ANSI対象例を比較。full script終了0・346秒、Formatter/Clippy・314passed/既存3ignored・release40.50秒成功。Go related tests/vet終了0（既存Linux snapshot1test除外・未指定interop skipを保持）。Ctrl-D/no-matchは固定Go panicに対してRust bounded errorとなる具体差分を保持。全redraw/cursor/width/color-env/malformed CSI/非UTF8・native Windows console/他platform、startup/update/diagnostic/DB close、SQL実行中取消/blocked mutex/並行、その他authは未検証または未実装。",
         "auth import/exportのtoken/bundle/current/UID/all/stdout/output/force workflowを既存OAuth/DB/config/private primitiveへ接続。合成credentialのみでGo CLI61行（51actualroot/10injected IO、47,756bytes）、別8OAuth・分類/codec/domain/secretfile・masked terminal対象例を比較。DB batch atomicityとdefault write失敗後committed state、raw token export bytes対bundle GoJSON replacement、Go17全1,112,064 valid scalarのunknown/duplicate diagnostic2SHAを比較。最終full script終了0・369秒、Formatter/Clippy・342passed/既存3ignored・release36.84秒成功。Go related tests/vet終了0（既存Linux snapshot1test除外・未指定interop skipを保持）。Go-only nonUTF8 token stdin→OAuth formはRust String boundary差分を保持。generic malformed JSON診断・serde128対Go10000 depth・Go duplicate scanner panic対Rust safe reject、secret validation read-ahead packet差、全terminal redraw/width/color/CSI、Windows compile/run/ACL/recovery/durability failure injection、SDK-owned idle-close/sharedpool/context/platform/実HTTPS・残るauthは未検証または未実装。",
         "auth check/refresh/current/UID/stdin/--allを既存OAuth/DB/configへ接続。合成credentialsのみのGo root42行・33,291bytes、別12 OAuth/profile output-state組合せとdomain20対象例でrotation CAS、Check最小DTO、Refresh profile/metadata/fresh default、途中失敗のcommitted token/metadata、all逐次commitと全成功後output、proxy Changed/false/override時runtime reload省略、全commit後JSON日時拒否を比較。app3・CLI7・root42行とtransfer OAuth4 regression成功。full script終了0・298秒、Formatter/Clippy・354passed/既存3ignored・release39.10秒成功。Go関連suite/vet・台帳検査成功、既存Linux snapshot除外とinterop未指定skipを保持。task-local dev/test debug情報0を一貫使用しtest内容/optimization/script全stageは不変。既存nonUTF8 token String/form差分・SDK-owned idle-close/context/TLS/全wire・実startup/update/diagnostic/DB close・SQL取消/blocked mutex/全clock/flags/他platformとlogin/callbackは未検証または未実装。",
-        "login依存SDK/appをGo-first synthetic OAuthで接続。shared clone one-shot・Default empty・invalid retry・PKCE64/state32・callback first query/state/URL predicates・response fallbackと欠落access/expiry、save→direct default read→write→fresh summary、途中失敗committed state/取消safe Displayとcauseを対象例で比較。最終freeze callback30行・official predicate10行・response12行、SDK7/app4test、Go関連suite/vet終了0、full gate終了0・291秒・365passed/既存3ignored・release42.45秒成功。CLI local/remote/browser/hidden callback/URL handlerは未移植。Go実装はofficial HTTPSとpixiv callbackのstate省略を許す（commentと異なる）。nonUTF8 callback bytes対Rust String/form、direct SDK Context API、Start時HTTPClient injection/owned idle-close、全raw wire/parser/randomfailure/concurrency/platformは未検証または未解消。SDK session/credential formattingのredactionをapp public AuthorizationURL/CallbackOrCodeのformatへ外挿しない。",
-        "login入力/relay/pages/local HTTP bridge依存は実装するが、CLI login leafのstartup/options/TTY/browser実adapter・remote relay/handoff・hidden callback/OS handlerは未接続。native hostname/service-port resolutionとGo net.OpError/AddrError exact診断、全HTTP/MIME/parser/wire/Date clock/backpressure/socket flush・blocked native prompt cleanup・全platformは未検証。duplicate waiterの30ms registration/pending観測は全scheduleの証明ではない。nonUTF8 URL/query/form String差分・SDK owned HTTP/context/lifecycleも保持する。"
+        "login依存SDK/appをGo-first synthetic OAuthで接続。shared clone one-shot・Default empty・invalid retry・PKCE64/state32・callback first query/state/URL predicates・response fallbackと欠落access/expiry、save→direct default read→write→fresh summary、途中失敗committed state/取消safe Displayとcauseを対象例で比較。最終freeze callback30行・official predicate10行・response12行、SDK7/app4test、Go関連suite/vet終了0、full gate終了0・291秒・365passed/既存3ignored・release42.45秒成功。CLI local/remote/hidden callback/URL-handler hooksは接続済みだが実browser/OS登録は未検証。Go実装はofficial HTTPSとpixiv callbackのstate省略を許す（commentと異なる）。nonUTF8 callback bytes対Rust String/form、direct SDK Context API、Start時HTTPClient injection/owned idle-close、全raw wire/parser/randomfailure/concurrency/platformは未検証または未解消。SDK session/credential formattingのredactionをapp public AuthorizationURL/CallbackOrCodeのformatへ外挿しない。",
+        "login入力/relay/pages/local HTTP bridge・CLI login leafのstartup/options/TTY/browser adapter・remote relay/handoff・hidden callback/OS handler配線は接続済みだが、実browser/OS登録は未検証。native hostname/service-port resolutionとGo net.OpError/AddrError exact診断、全HTTP/MIME/parser/wire/Date clock/backpressure/socket flush・blocked native prompt cleanup・全platformは未検証。duplicate waiterの30ms registration/pending観測は全scheduleの証明ではない。nonUTF8 URL/query/form String差分・SDK owned HTTP/context/lifecycleも保持する。",
+        "CLI login/_callback/_install-handlerはin_progressで接続するが、native Windows/Darwin実行・実association/browser/全TTY・公開SDK ownership/idle-closeは未検証。root startup/default config/runtime-before-leafとstandalone conflict-before-servicesを区別し、exportのrequires_startup=falseを保持する。blocked config directoryのGo mkdir/notdir対Rust Fileexists17、missing-PEM Go listener cleanup parity、Go dependency factory4error・native terminal EOFの未比較を残す。Windows explicit repeated cleanupの破壊的Go挙動とowned CLI automatic cleanup1回を区別する。"
       ]
     },
     {
       "id": "cli:pixiv auth _callback",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv auth _callback"
@@ -221,7 +241,15 @@
         "crates/pixiv-app/src/linux_handler.rs",
         "crates/pixiv-app/src/host_context.rs",
         "crates/pixiv-app/src/windows_handler.rs",
-        "crates/pixiv-app/src/windows_shell.rs"
+        "crates/pixiv-app/src/windows_shell.rs",
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/auth_accounts.rs",
+        "crates/pixiv-cli/src/auth_hidden.rs",
+        "crates/pixiv-cli/src/startup.rs",
+        "crates/pixiv-app/src/url_handler.rs",
+        "crates/pixiv-app/src/pending_update.rs",
+        "crates/pixiv-sdk/src/environment_proxy.rs",
+        "crates/pixiv-sdk/src/transport.rs"
       ],
       "tests": [
         "internal/cli/commands/pixiv/auth/loginhelper/migration_protocol_test.go",
@@ -265,18 +293,33 @@
         "crates/pixiv-app/tests/windows_handler.rs",
         "crates/pixiv-app/tests/windows_shell.rs",
         "crates/pixiv-app/tests/support/windows_shell_native.rs",
-        "crates/pixiv-app/tests/fixtures/windows_handler.json"
+        "crates/pixiv-app/tests/fixtures/windows_handler.json",
+        "internal/cli/migration_login_hidden_startup_test.go",
+        "internal/cli/commands/pixiv/auth/migration_hidden_installer_test.go",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_persistent_startup_source_test.go",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_persistent_startup_payload_test.go",
+        "internal/update/installer/migration_pending_cleanup_test.go",
+        "crates/pixiv-cli/tests/auth_hidden_boundaries.rs",
+        "crates/pixiv-cli/tests/auth_hidden_execution.rs",
+        "crates/pixiv-cli/tests/auth_hidden_process.rs",
+        "crates/pixiv-cli/tests/auth_hidden_startup.rs",
+        "crates/pixiv-cli/tests/fixtures/cli_login_hidden_startup.json",
+        "crates/pixiv-app/tests/url_handler.rs",
+        "crates/pixiv-app/tests/pending_update.rs",
+        "crates/pixiv-app/tests/fixtures/pending_update_cleanup.json",
+        "internal/cli/commands/pixiv/auth/migration_hidden_default_order_test.go"
       ],
       "verified_platforms": [],
       "differences": [
-        "CLI login/hidden callback入口は未接続。input/pages/local bridge・remote protocol/private state/streaming client・relay session/context HTTP1/TLS・default paths/private endpoint/callback action・manifest/native browser・Linux XDG/context process依存は対象例で実装する。full CLI state wiring/startup/options/TTY/native hooksは未移植。Darwin/Windows association/ShellExecuteExWの対象例は後続のsource-driven mock比較で実装するがnative OS executionは未検証。Windows/macOS/BSD native compile/run・全PATHEXT/lookup/env/error/ACLは未検証。Darwin combined compiler-output orderingは後続のsame-kernel-pipe対象例で実装するが全native post-start faultは未検証。Windows NULはGo panicをnative call前にsourceで維持するがLinux gateでnative実行証明へ数えない。Go TLS serverはHTTP/2 negotiation/servingを持つがRust relayはHTTP/1のみで、HTTP/2は実際の未移植transport capability。synthetic local TLS trustはtest限定でhost trustを変更しない。Go stateにTTLは無く追加しない。nonUTF8 URL/環境値対String、全URL/JSON/native header・Go native exact診断・TLS/proxy実通信/IDNA/IPv6zone/unknown proxy scheme・gzip/wire data+error chunking・全concurrency/cancel/clock/socket flush/backpressureとWindows/native platformは未検証または差分。HandoffReadの0None=EOFはarbitrary Go Readerの0nil/data+EOFを表せずsynthetic n+nonEOF read-error例を全native wireへ外挿しない。SDK owned HTTP/context/idle lifecycle・blocked prompt cleanup・全並行scheduleの既存debtも保持する。 native reqwest0.13.5がAccept: */*を追加する具体差分はGoのAccept不在と別々にcaptureし未解消とする。native header parityを宣言しない。",
-        "Linux実desktop registration/外部gioは未実行。native IO DisplayはGo PathError書式との差分を保持し、全filesystem/race/privilege/env/cancel/platformは未検証。raw native XDG/executable/temp snapshotは対象例で保持するが、persistent JSON pathの不正UTF8はGo同様per-byte replacementへ変換し、そのGo restore結果をhardeningで変更しない。Context stderr32KiB prefix/suffixはbounded capture、SIGKILL/lookup-before-cancel/descendant EOFの対象例を比較し、successful-exit cancel race・任意signal/native pipe faultを未検証とする。",
-        "Windows associationは固定Go source SHA確認とbuild tag/importだけのmock変換で対象41flow・5command・4key・8ownerを比較する。persistent first/repeat・copy/export/import full tree・failure residue・private backup・endpoint-first・wrapped exit-only absence・fresh background restoreとprevious ProgID/raw callbackのredacted delegationを保持する。ShellExecuteExWのfull ABI/mask/null/show・context→class→URL UTF16・BOOL/GetLastError orderingはsource-driven mock検査。temporary cleanupの2回目が復元済みtreeを消してmissing backup importを無視する破壊的Go挙動を保持するが、explicit cleanup後のowned Dropは再実行しない。後続CLIの自動cleanupは所有権で1回に限定する必要がある。native Windows compile/run・live HKCU/実Shell/loader・ACL・全IO/random/native path/privilege/raceは未検証。CLI login/hidden callback/install-handler/startup入口は未接続のまま。 executable ED A0 80 FF+quoteはGo sourceで先に固定し、native command OsStringはlossless、manifest JSONは4つのU+FFFDにする対象例を別々に比較する。Windows surrogate testのnative compile/runは未実施。 初回fullgateは環境restartで中断し成功へ数えない。最終unchanged scriptはexit0・269秒・top-level495/raw496passed/8ignored・release38.24秒、Go full auth/helperとouter/nested vet、ledger validatorもexit0。操作入口はpendingのままで全verifiedへ引き上げない。"
+        "hidden parser/実CLI dispatch/default endpoint・handoff stateのlazy配線を接続するが、81CLI fixture全体のnative dispatchは未実行。実Linux子プロセスは安全な64行に限定し、root help対象行はhidden名の非表示だけを確認する。remote/local/default path順序と注入dispatchの対象例を全callback/native error/取消/IO/並行scheduleへ外挿しない。",
+        "native Windows/Darwin/BSDのcompile/link/run、実HKCU/LaunchServices/ShellExecuteExW/browser/association・ACL・全IO/permission/privilege/native path/raceは未検証。Windows temporary backendの明示的な2回目cleanupが復元済みtreeを削除する破壊的Go挙動は保持するが、CLIのowned adapterはautomatic cleanupを1回に限定する。source-driven Windows UTF16/ABI/surrogate例をnative実行証明へ数えない。",
+        "Rust relayはHTTP/1のみでHTTP/2 servingは未移植。native handoff Accept: */*追加差分、nonUTF8 URL/環境値対String・全URL/JSON/header/wire/clock/並行schedule、全TLS/SOCKS/任意proxy URL grammar/redirected CGI・IDNA/IPv6zone・gzip/data+error chunking・Go native exact診断・socket flush/backpressureは未検証または未解消。HandoffReadの0None=EOFはarbitrary Go Readerの0nil/data+EOFを表せない。公開SDK Start時HTTPClient ownership/explicit idle-close/direct Contextの差分は残る。",
+        "Linux実desktop registration/外部gioは未実行。native IO DisplayのGo PathError書式差分、persistent JSON nonUTF8 pathのper-byte replacement/restoreとtemporary raw path cleanup、全PATHEXT/lookup/env/signal/cancel/native pipe/post-start fault・Windows sidecar lock/ACLは既存の比較範囲と未検証を保持する。"
       ]
     },
     {
       "id": "cli:pixiv auth _install-handler",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv auth _install-handler"
@@ -289,7 +332,13 @@
         "crates/pixiv-app/src/host_context.rs",
         "crates/pixiv-app/src/callback_handler.rs",
         "crates/pixiv-app/src/windows_handler.rs",
-        "crates/pixiv-app/src/windows_shell.rs"
+        "crates/pixiv-app/src/windows_shell.rs",
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/auth_accounts.rs",
+        "crates/pixiv-cli/src/auth_hidden.rs",
+        "crates/pixiv-cli/src/startup.rs",
+        "crates/pixiv-app/src/url_handler.rs",
+        "crates/pixiv-app/src/pending_update.rs"
       ],
       "tests": [
         "internal/cli/commands/pixiv/auth/loginhelper/migration_handler_manifest_test.go",
@@ -314,13 +363,26 @@
         "crates/pixiv-app/tests/windows_handler.rs",
         "crates/pixiv-app/tests/windows_shell.rs",
         "crates/pixiv-app/tests/support/windows_shell_native.rs",
-        "crates/pixiv-app/tests/fixtures/windows_handler.json"
+        "crates/pixiv-app/tests/fixtures/windows_handler.json",
+        "internal/cli/migration_login_hidden_startup_test.go",
+        "internal/cli/commands/pixiv/auth/migration_hidden_installer_test.go",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_persistent_startup_source_test.go",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_persistent_startup_payload_test.go",
+        "internal/update/installer/migration_pending_cleanup_test.go",
+        "crates/pixiv-cli/tests/auth_hidden_boundaries.rs",
+        "crates/pixiv-cli/tests/auth_hidden_execution.rs",
+        "crates/pixiv-cli/tests/auth_hidden_process.rs",
+        "crates/pixiv-cli/tests/auth_hidden_startup.rs",
+        "crates/pixiv-cli/tests/fixtures/cli_login_hidden_startup.json",
+        "crates/pixiv-app/tests/url_handler.rs",
+        "crates/pixiv-app/tests/pending_update.rs",
+        "crates/pixiv-app/tests/fixtures/pending_update_cleanup.json"
       ],
       "verified_platforms": [],
       "differences": [
-        "shared manifest/snapshot storageとnative browser/argv process依存は対象例で実装するが、Linux XDG persistent ensure/disable・temporary install/restore・previous-handler delegationとcontext process依存も対象例で実装するが、Darwin/Windows association/ShellExecuteExWはsource-driven mock比較で対象例を実装するが、hidden install CLI/startup wiringは未移植。Linuxのsynthetic provider/tempfileとhost-mocked dispatch以外のWindows/macOS/BSD native compile/run・ACL・全error/lookup/env/cancel/restore scheduleは未検証。",
-        "Linux実desktop registration/外部gioは未実行。native IO DisplayはGo PathError書式との差分を保持し、全filesystem/race/privilege/env/cancel/platformは未検証。raw native XDG/executable/temp snapshotは対象例で保持するが、persistent JSON pathの不正UTF8はGo同様per-byte replacementへ変換し、そのGo restore結果をhardeningで変更しない。Context stderr32KiB prefix/suffixはbounded capture、SIGKILL/lookup-before-cancel/descendant EOFの対象例を比較し、successful-exit cancel race・任意signal/native pipe faultを未検証とする。",
-        "Windows associationは固定Go source SHA確認とbuild tag/importだけのmock変換で対象41flow・5command・4key・8ownerを比較する。persistent first/repeat・copy/export/import full tree・failure residue・private backup・endpoint-first・wrapped exit-only absence・fresh background restoreとprevious ProgID/raw callbackのredacted delegationを保持する。ShellExecuteExWのfull ABI/mask/null/show・context→class→URL UTF16・BOOL/GetLastError orderingはsource-driven mock検査。temporary cleanupの2回目が復元済みtreeを消してmissing backup importを無視する破壊的Go挙動を保持するが、explicit cleanup後のowned Dropは再実行しない。後続CLIの自動cleanupは所有権で1回に限定する必要がある。native Windows compile/run・live HKCU/実Shell/loader・ACL・全IO/random/native path/privilege/raceは未検証。CLI login/hidden callback/install-handler/startup入口は未接続のまま。 executable ED A0 80 FF+quoteはGo sourceで先に固定し、native command OsStringはlossless、manifest JSONは4つのU+FFFDにする対象例を別々に比較する。Windows surrogate testのnative compile/runは未実施。 初回fullgateは環境restartで中断し成功へ数えない。最終unchanged scriptはexit0・269秒・top-level495/raw496passed/8ignored・release38.24秒、Go full auth/helperとouter/nested vet、ledger validatorもexit0。操作入口はpendingのままで全verifiedへ引き上げない。"
+        "hidden install入口と通常startup/persistent policy adapterを接続するが、Darwin/Windows automatic support・.test suffix・manifest/executable gatingはsource-driven mock比較であり、実host登録は未実行。pending Windows update cleanup27行はUnix synthetic filesystem/依存境界の比較で、native Windows resolver/ACLと公開update/install全workflowは未検証。全root flag/help/diagnostic writer/config/DB close/並行startupを比較済みとはしない。 exportはconfig要否と独立したrequires_startupでhooksから除外する。root blocked configのGo mkdir/notdir対Rust Fileexists17差分を保持する。",
+        "native Windows/Darwin/BSDのcompile/link/run、実HKCU/LaunchServices/ShellExecuteExW/browser/association・ACL・全IO/permission/privilege/native path/raceは未検証。Windows temporary backendの明示的な2回目cleanupが復元済みtreeを削除する破壊的Go挙動は保持するが、CLIのowned adapterはautomatic cleanupを1回に限定する。source-driven Windows UTF16/ABI/surrogate例をnative実行証明へ数えない。",
+        "Linux実desktop registration/外部gioは未実行。native IO DisplayのGo PathError書式差分、persistent JSON nonUTF8 pathのper-byte replacement/restoreとtemporary raw path cleanup、全PATHEXT/lookup/env/signal/cancel/native pipe/post-start fault・Windows sidecar lock/ACLは既存の比較範囲と未検証を保持する。"
       ]
     },
     {
@@ -480,7 +542,7 @@
     },
     {
       "id": "cli:pixiv auth login",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv auth login"
@@ -508,7 +570,18 @@
         "crates/pixiv-app/src/darwin_handler.rs",
         "crates/pixiv-app/src/config/private_file.rs",
         "crates/pixiv-app/src/windows_handler.rs",
-        "crates/pixiv-app/src/windows_shell.rs"
+        "crates/pixiv-app/src/windows_shell.rs",
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/auth_accounts.rs",
+        "crates/pixiv-cli/src/auth_hidden.rs",
+        "crates/pixiv-cli/src/startup.rs",
+        "crates/pixiv-app/src/url_handler.rs",
+        "crates/pixiv-app/src/pending_update.rs",
+        "crates/pixiv-cli/src/auth_login.rs",
+        "crates/pixiv-cli/src/terminal_prompt.rs",
+        "crates/pixiv-app/src/account_login.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/environment_proxy.rs"
       ],
       "tests": [
         "internal/cli/commands/pixiv/auth/migration_input_test.go",
@@ -569,14 +642,38 @@
         "crates/pixiv-app/tests/windows_handler.rs",
         "crates/pixiv-app/tests/windows_shell.rs",
         "crates/pixiv-app/tests/support/windows_shell_native.rs",
-        "crates/pixiv-app/tests/fixtures/windows_handler.json"
+        "crates/pixiv-app/tests/fixtures/windows_handler.json",
+        "internal/cli/migration_login_hidden_startup_test.go",
+        "internal/cli/commands/pixiv/auth/migration_hidden_installer_test.go",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_persistent_startup_source_test.go",
+        "internal/cli/commands/pixiv/auth/loginhelper/migration_persistent_startup_payload_test.go",
+        "internal/update/installer/migration_pending_cleanup_test.go",
+        "crates/pixiv-cli/tests/auth_hidden_boundaries.rs",
+        "crates/pixiv-cli/tests/auth_hidden_execution.rs",
+        "crates/pixiv-cli/tests/auth_hidden_process.rs",
+        "crates/pixiv-cli/tests/auth_hidden_startup.rs",
+        "crates/pixiv-cli/tests/fixtures/cli_login_hidden_startup.json",
+        "crates/pixiv-app/tests/url_handler.rs",
+        "crates/pixiv-app/tests/pending_update.rs",
+        "crates/pixiv-app/tests/fixtures/pending_update_cleanup.json",
+        "internal/cli/commands/pixiv/auth/migration_cli_login_flow_test.go",
+        "crates/pixiv-cli/tests/auth_login_boundaries.rs",
+        "crates/pixiv-cli/tests/auth_login_contract.rs",
+        "crates/pixiv-cli/tests/auth_login_runtime.rs",
+        "crates/pixiv-cli/tests/auth_login_terminal.rs",
+        "crates/pixiv-cli/tests/support/auth_login.rs",
+        "crates/pixiv-cli/tests/support/auth_login_contract.rs",
+        "crates/pixiv-cli/tests/fixtures/cli_login_flow.json",
+        "sdk/pixiv/migration_login_environment_proxy_test.go",
+        "crates/pixiv-sdk/tests/environment_proxy.rs",
+        "crates/pixiv-sdk/tests/fixtures/login_environment_proxy.json"
       ],
       "verified_platforms": [],
       "differences": [
-        "CLI login/hidden callback入口は未接続。input/pages/local bridge・remote protocol/private state/streaming client・relay session/context HTTP1/TLS・default paths/private endpoint/callback action・manifest/native browser・Linux XDG/Darwin association/context process依存は対象例で実装する。full CLI state wiring/startup/options/TTY/native hooksは未移植。Windows association/ShellExecuteExWの対象例はsource-driven mock比較で実装するがnative Windows executionは未検証。Windows/macOS/BSD native compile/run・全PATHEXT/lookup/env/error/ACL・全merged-output post-start faultは未検証。Windows NULはGo panicをnative call前にsourceで維持するがLinux gateでnative実行証明へ数えない。Go TLS serverはHTTP/2 negotiation/servingを持つがRust relayはHTTP/1のみで、HTTP/2は実際の未移植transport capability。synthetic local TLS trustはtest限定でhost trustを変更しない。Go stateにTTLは無く追加しない。nonUTF8 URL/環境値対String、全URL/JSON/native header・Go native exact診断・TLS/proxy実通信/IDNA/IPv6zone/unknown proxy scheme・gzip/wire data+error chunking・全concurrency/cancel/clock/socket flush/backpressureとWindows/native platformは未検証または差分。HandoffReadの0None=EOFはarbitrary Go Readerの0nil/data+EOFを表せずsynthetic n+nonEOF read-error例を全native wireへ外挿しない。SDK owned HTTP/context/idle lifecycle・blocked prompt cleanup・全並行scheduleの既存debtも保持する。 native reqwest0.13.5がAccept: */*を追加する具体差分はGoのAccept不在と別々にcaptureし未解消とする。native header parityを宣言しない。",
-        "Linux実desktop registration/外部gioは未実行。native IO DisplayはGo PathError書式との差分を保持し、全filesystem/race/privilege/env/cancel/platformは未検証。raw native XDG/executable/temp snapshotは対象例で保持するが、persistent JSON pathの不正UTF8はGo同様per-byte replacementへ変換し、そのGo restore結果をhardeningで変更しない。Context stderr32KiB prefix/suffixはbounded capture、SIGKILL/lookup-before-cancel/descendant EOFの対象例を比較し、successful-exit cancel race・任意signal/native pipe faultを未検証とする。",
-        "Darwin associationは固定Go sourceのbuild tag除去とos/exec importだけをmock化したcontrol-flow比較。27flow・5cache/file-kind・2script・bundle version0・endpoint replacement empty/nonempty directory cleanup・private compiler source/assetsを固定し、Swift/plist bytesを共用fixtureと比較する。実Darwin Swift compile/LaunchServices・native process cancellation・全IO/permission/random faultは未検証。Combinedは同じkernel pipeでraw binaryを保持するが、構築したCaptured error accessor testを全native post-start faultの実行証明としない。Darwin query/diagnostic Stringの不正UTF8はGo raw bytes対Rust replacementの具体差分を保持し、typed captured bytesと混同しない。Go同様temporary cleanupがlater external choiceを上書きし、query failureを無視し、cache時permissionを修復しない。",
-        "Windows associationは固定Go source SHA確認とbuild tag/importだけのmock変換で対象41flow・5command・4key・8ownerを比較する。persistent first/repeat・copy/export/import full tree・failure residue・private backup・endpoint-first・wrapped exit-only absence・fresh background restoreとprevious ProgID/raw callbackのredacted delegationを保持する。ShellExecuteExWのfull ABI/mask/null/show・context→class→URL UTF16・BOOL/GetLastError orderingはsource-driven mock検査。temporary cleanupの2回目が復元済みtreeを消してmissing backup importを無視する破壊的Go挙動を保持するが、explicit cleanup後のowned Dropは再実行しない。後続CLIの自動cleanupは所有権で1回に限定する必要がある。native Windows compile/run・live HKCU/実Shell/loader・ACL・全IO/random/native path/privilege/raceは未検証。CLI login/hidden callback/install-handler/startup入口は未接続のまま。 executable ED A0 80 FF+quoteはGo sourceで先に固定し、native command OsStringはlossless、manifest JSONは4つのU+FFFDにする対象例を別々に比較する。Windows surrogate testのnative compile/runは未実施。 初回fullgateは環境restartで中断し成功へ数えない。最終unchanged scriptはexit0・269秒・top-level495/raw496passed/8ignored・release38.24秒、Go full auth/helperとouter/nested vet、ledger validatorもexit0。操作入口はpendingのままで全verifiedへ引き上げない。"
+        "CLI local/remote loginの入口と通常startupを接続するが、Go validation17行中のdependency factory4errorはRust composition rootに同じ注入境界がなく未比較。terminal7行中のsynthetic EOF1行をPTY比較から除外し、native EOF/全TTY/blocked prompt cleanupを未検証とする。missing-PEM Go ServeTLS failureはbound listenerがGCまで残り得るため、そのerror行のlistener cleanup parityは未確立。全flag/help/root parser/hostname/service-port/native error/random failure/取消・保存・writer・並行scheduleも未検証。 standalone leafのconflict-before-servicesと、実rootのstartup/default config/runtime-before-leafを区別する。blocked config directoryはGo mkdir/notdir対Rust Fileexists17のexact native IO診断差分を保持する。",
+        "native Windows/Darwin/BSDのcompile/link/run、実HKCU/LaunchServices/ShellExecuteExW/browser/association・ACL・全IO/permission/privilege/native path/raceは未検証。Windows temporary backendの明示的な2回目cleanupが復元済みtreeを削除する破壊的Go挙動は保持するが、CLIのowned adapterはautomatic cleanupを1回に限定する。source-driven Windows UTF16/ABI/surrogate例をnative実行証明へ数えない。",
+        "Rust relayはHTTP/1のみでHTTP/2 servingは未移植。native handoff Accept: */*追加差分、nonUTF8 URL/環境値対String・全URL/JSON/header/wire/clock/並行schedule、全TLS/SOCKS/任意proxy URL grammar/redirected CGI・IDNA/IPv6zone・gzip/data+error chunking・Go native exact診断・socket flush/backpressureは未検証または未解消。HandoffReadの0None=EOFはarbitrary Go Readerの0nil/data+EOFを表せない。公開SDK Start時HTTPClient ownership/explicit idle-close/direct Contextの差分は残る。",
+        "Linux実desktop registration/外部gioは未実行。native IO DisplayのGo PathError書式差分、persistent JSON nonUTF8 pathのper-byte replacement/restoreとtemporary raw path cleanup、全PATHEXT/lookup/env/signal/cancel/native pipe/post-start fault・Windows sidecar lock/ACLは既存の比較範囲と未検証を保持する。"
       ]
     },
     {
@@ -7956,17 +8053,24 @@
         "crates/pixiv-sdk/src/oauth.rs",
         "crates/pixiv-sdk/src/reference.rs",
         "crates/pixiv-app/src/account_login.rs",
-        "crates/pixiv-app/src/account_transfer.rs"
+        "crates/pixiv-app/src/account_transfer.rs",
+        "crates/pixiv-cli/src/auth_login.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/environment_proxy.rs"
       ],
       "tests": [
         "sdk/pixiv/login_migration_contract_test.go",
         "internal/services/pixiv/account/migration_login_test.go",
         "crates/pixiv-sdk/tests/login_contract.rs",
-        "crates/pixiv-app/tests/account_login.rs"
+        "crates/pixiv-app/tests/account_login.rs",
+        "sdk/pixiv/migration_login_environment_proxy_test.go",
+        "crates/pixiv-sdk/tests/environment_proxy.rs",
+        "crates/pixiv-sdk/tests/fixtures/login_environment_proxy.json",
+        "crates/pixiv-cli/tests/auth_login_contract.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "login依存SDK/appをGo-first synthetic OAuthで接続。shared clone one-shot・Default empty・invalid retry・PKCE64/state32・callback first query/state/URL predicates・response fallbackと欠落access/expiry、save→direct default read→write→fresh summary、途中失敗committed state/取消safe Displayとcauseを対象例で比較。最終freeze callback30行・official predicate10行・response12行、SDK7/app4test、Go関連suite/vet終了0、full gate終了0・291秒・365passed/既存3ignored・release42.45秒成功。CLI local/remote/browser/hidden callback/URL handlerは未移植。Go実装はofficial HTTPSとpixiv callbackのstate省略を許す（commentと異なる）。nonUTF8 callback bytes対Rust String/form、direct SDK Context API、Start時HTTPClient injection/owned idle-close、全raw wire/parser/randomfailure/concurrency/platformは未検証または未解消。SDK session/credential formattingのredactionをapp public AuthorizationURL/CallbackOrCodeのformatへ外挿しない。"
+        "login依存SDK/appをGo-first synthetic OAuthで接続。shared clone one-shot・Default empty・invalid retry・PKCE64/state32・callback first query/state/URL predicates・response fallbackと欠落access/expiry、save→direct default read→write→fresh summary、途中失敗committed state/取消safe Displayとcauseを対象例で比較。最終freeze callback30行・official predicate10行・response12行、SDK7/app4test、Go関連suite/vet終了0、full gate終了0・291秒・365passed/既存3ignored・release42.45秒成功。CLI local/remote/hidden callback/URL-handler hooksは接続済みだが実browser/OS登録は未検証。Go実装はofficial HTTPSとpixiv callbackのstate省略を許す（commentと異なる）。nonUTF8 callback bytes対Rust String/form、direct SDK Context API、Start時HTTPClient injection/owned idle-close、全raw wire/parser/randomfailure/concurrency/platformは未検証または未解消。SDK session/credential formattingのredactionをapp public AuthorizationURL/CallbackOrCodeのformatへ外挿しない。"
       ]
     },
     {
@@ -10279,7 +10383,7 @@
       ],
       "verified_platforms": [],
       "differences": [
-        "login依存SDK/appをGo-first synthetic OAuthで接続。shared clone one-shot・Default empty・invalid retry・PKCE64/state32・callback first query/state/URL predicates・response fallbackと欠落access/expiry、save→direct default read→write→fresh summary、途中失敗committed state/取消safe Displayとcauseを対象例で比較。最終freeze callback30行・official predicate10行・response12行、SDK7/app4test、Go関連suite/vet終了0、full gate終了0・291秒・365passed/既存3ignored・release42.45秒成功。CLI local/remote/browser/hidden callback/URL handlerは未移植。Go実装はofficial HTTPSとpixiv callbackのstate省略を許す（commentと異なる）。nonUTF8 callback bytes対Rust String/form、direct SDK Context API、Start時HTTPClient injection/owned idle-close、全raw wire/parser/randomfailure/concurrency/platformは未検証または未解消。SDK session/credential formattingのredactionをapp public AuthorizationURL/CallbackOrCodeのformatへ外挿しない。"
+        "login依存SDK/appをGo-first synthetic OAuthで接続。shared clone one-shot・Default empty・invalid retry・PKCE64/state32・callback first query/state/URL predicates・response fallbackと欠落access/expiry、save→direct default read→write→fresh summary、途中失敗committed state/取消safe Displayとcauseを対象例で比較。最終freeze callback30行・official predicate10行・response12行、SDK7/app4test、Go関連suite/vet終了0、full gate終了0・291秒・365passed/既存3ignored・release42.45秒成功。CLI local/remote/hidden callback/URL-handler hooksは接続済みだが実browser/OS登録は未検証。Go実装はofficial HTTPSとpixiv callbackのstate省略を許す（commentと異なる）。nonUTF8 callback bytes対Rust String/form、direct SDK Context API、Start時HTTPClient injection/owned idle-close、全raw wire/parser/randomfailure/concurrency/platformは未検証または未解消。SDK session/credential formattingのredactionをapp public AuthorizationURL/CallbackOrCodeのformatへ外挿しない。"
       ]
     },
     {
@@ -10303,7 +10407,7 @@
       ],
       "verified_platforms": [],
       "differences": [
-        "login依存SDK/appをGo-first synthetic OAuthで接続。shared clone one-shot・Default empty・invalid retry・PKCE64/state32・callback first query/state/URL predicates・response fallbackと欠落access/expiry、save→direct default read→write→fresh summary、途中失敗committed state/取消safe Displayとcauseを対象例で比較。最終freeze callback30行・official predicate10行・response12行、SDK7/app4test、Go関連suite/vet終了0、full gate終了0・291秒・365passed/既存3ignored・release42.45秒成功。CLI local/remote/browser/hidden callback/URL handlerは未移植。Go実装はofficial HTTPSとpixiv callbackのstate省略を許す（commentと異なる）。nonUTF8 callback bytes対Rust String/form、direct SDK Context API、Start時HTTPClient injection/owned idle-close、全raw wire/parser/randomfailure/concurrency/platformは未検証または未解消。SDK session/credential formattingのredactionをapp public AuthorizationURL/CallbackOrCodeのformatへ外挿しない。"
+        "login依存SDK/appをGo-first synthetic OAuthで接続。shared clone one-shot・Default empty・invalid retry・PKCE64/state32・callback first query/state/URL predicates・response fallbackと欠落access/expiry、save→direct default read→write→fresh summary、途中失敗committed state/取消safe Displayとcauseを対象例で比較。最終freeze callback30行・official predicate10行・response12行、SDK7/app4test、Go関連suite/vet終了0、full gate終了0・291秒・365passed/既存3ignored・release42.45秒成功。CLI local/remote/hidden callback/URL-handler hooksは接続済みだが実browser/OS登録は未検証。Go実装はofficial HTTPSとpixiv callbackのstate省略を許す（commentと異なる）。nonUTF8 callback bytes対Rust String/form、direct SDK Context API、Start時HTTPClient injection/owned idle-close、全raw wire/parser/randomfailure/concurrency/platformは未検証または未解消。SDK session/credential formattingのredactionをapp public AuthorizationURL/CallbackOrCodeのformatへ外挿しない。"
       ]
     },
     {
@@ -10365,7 +10469,7 @@
       "tests": [],
       "verified_platforms": [],
       "differences": [
-        "login SDK/appのcaller-owned TransportをCompleteへ注入する経路は対象例で比較するが、Go LoginOptionsのStart時HTTPClient ownership・session-owned HTTP生成・explicit idle-closeは未移植。偽no-op APIを追加しない。"
+        "CLI loginは実environment HTTP transportを生成するが、公開SDKのGo LoginOptionsに相当するStart時HTTPClient injection/ownership・session-owned client生成とexplicit CloseIdleConnectionsは未移植。Complete時caller-owned Transport注入やCLIのHTTP/CONNECT等の16対象例（未知scheme・port0を含む）をこの公開APIの互換へ外挿しない。偽no-op APIを追加しない。"
       ]
     },
     {
@@ -10379,7 +10483,10 @@
         "crates/pixiv-sdk/src/oauth.rs",
         "crates/pixiv-sdk/src/reference.rs",
         "crates/pixiv-app/src/account_login.rs",
-        "crates/pixiv-app/src/account_transfer.rs"
+        "crates/pixiv-app/src/account_transfer.rs",
+        "crates/pixiv-cli/src/auth_login.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/environment_proxy.rs"
       ],
       "tests": [
         "sdk/pixiv/login_migration_contract_test.go",
@@ -10391,11 +10498,15 @@
         "crates/pixiv-app/tests/login_input.rs",
         "crates/pixiv-app/tests/login_page.rs",
         "crates/pixiv-app/tests/fixtures/login_page.json",
-        "crates/pixiv-app/tests/fixtures/login_page_writer_errors.json"
+        "crates/pixiv-app/tests/fixtures/login_page_writer_errors.json",
+        "sdk/pixiv/migration_login_environment_proxy_test.go",
+        "crates/pixiv-sdk/tests/environment_proxy.rs",
+        "crates/pixiv-sdk/tests/fixtures/login_environment_proxy.json",
+        "crates/pixiv-cli/tests/auth_login_contract.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "login依存SDK/appをGo-first synthetic OAuthで接続。shared clone one-shot・Default empty・invalid retry・PKCE64/state32・callback first query/state/URL predicates・response fallbackと欠落access/expiry、save→direct default read→write→fresh summary、途中失敗committed state/取消safe Displayとcauseを対象例で比較。最終freeze callback30行・official predicate10行・response12行、SDK7/app4test、Go関連suite/vet終了0、full gate終了0・291秒・365passed/既存3ignored・release42.45秒成功。CLI local/remote/browser/hidden callback/URL handlerは未移植。Go実装はofficial HTTPSとpixiv callbackのstate省略を許す（commentと異なる）。nonUTF8 callback bytes対Rust String/form、direct SDK Context API、Start時HTTPClient injection/owned idle-close、全raw wire/parser/randomfailure/concurrency/platformは未検証または未解消。SDK session/credential formattingのredactionをapp public AuthorizationURL/CallbackOrCodeのformatへ外挿しない。"
+        "login依存SDK/appをGo-first synthetic OAuthで接続。shared clone one-shot・Default empty・invalid retry・PKCE64/state32・callback first query/state/URL predicates・response fallbackと欠落access/expiry、save→direct default read→write→fresh summary、途中失敗committed state/取消safe Displayとcauseを対象例で比較。最終freeze callback30行・official predicate10行・response12行、SDK7/app4test、Go関連suite/vet終了0、full gate終了0・291秒・365passed/既存3ignored・release42.45秒成功。CLI local/remote/hidden callback/URL-handler hooksは接続済みだが実browser/OS登録は未検証。Go実装はofficial HTTPSとpixiv callbackのstate省略を許す（commentと異なる）。nonUTF8 callback bytes対Rust String/form、direct SDK Context API、Start時HTTPClient injection/owned idle-close、全raw wire/parser/randomfailure/concurrency/platformは未検証または未解消。SDK session/credential formattingのredactionをapp public AuthorizationURL/CallbackOrCodeのformatへ外挿しない。"
       ]
     },
     {
@@ -10419,7 +10530,7 @@
       ],
       "verified_platforms": [],
       "differences": [
-        "login依存SDK/appをGo-first synthetic OAuthで接続。shared clone one-shot・Default empty・invalid retry・PKCE64/state32・callback first query/state/URL predicates・response fallbackと欠落access/expiry、save→direct default read→write→fresh summary、途中失敗committed state/取消safe Displayとcauseを対象例で比較。最終freeze callback30行・official predicate10行・response12行、SDK7/app4test、Go関連suite/vet終了0、full gate終了0・291秒・365passed/既存3ignored・release42.45秒成功。CLI local/remote/browser/hidden callback/URL handlerは未移植。Go実装はofficial HTTPSとpixiv callbackのstate省略を許す（commentと異なる）。nonUTF8 callback bytes対Rust String/form、direct SDK Context API、Start時HTTPClient injection/owned idle-close、全raw wire/parser/randomfailure/concurrency/platformは未検証または未解消。SDK session/credential formattingのredactionをapp public AuthorizationURL/CallbackOrCodeのformatへ外挿しない。"
+        "login依存SDK/appをGo-first synthetic OAuthで接続。shared clone one-shot・Default empty・invalid retry・PKCE64/state32・callback first query/state/URL predicates・response fallbackと欠落access/expiry、save→direct default read→write→fresh summary、途中失敗committed state/取消safe Displayとcauseを対象例で比較。最終freeze callback30行・official predicate10行・response12行、SDK7/app4test、Go関連suite/vet終了0、full gate終了0・291秒・365passed/既存3ignored・release42.45秒成功。CLI local/remote/hidden callback/URL-handler hooksは接続済みだが実browser/OS登録は未検証。Go実装はofficial HTTPSとpixiv callbackのstate省略を許す（commentと異なる）。nonUTF8 callback bytes対Rust String/form、direct SDK Context API、Start時HTTPClient injection/owned idle-close、全raw wire/parser/randomfailure/concurrency/platformは未検証または未解消。SDK session/credential formattingのredactionをapp public AuthorizationURL/CallbackOrCodeのformatへ外挿しない。"
       ]
     },
     {
@@ -10443,7 +10554,7 @@
       ],
       "verified_platforms": [],
       "differences": [
-        "login依存SDK/appをGo-first synthetic OAuthで接続。shared clone one-shot・Default empty・invalid retry・PKCE64/state32・callback first query/state/URL predicates・response fallbackと欠落access/expiry、save→direct default read→write→fresh summary、途中失敗committed state/取消safe Displayとcauseを対象例で比較。最終freeze callback30行・official predicate10行・response12行、SDK7/app4test、Go関連suite/vet終了0、full gate終了0・291秒・365passed/既存3ignored・release42.45秒成功。CLI local/remote/browser/hidden callback/URL handlerは未移植。Go実装はofficial HTTPSとpixiv callbackのstate省略を許す（commentと異なる）。nonUTF8 callback bytes対Rust String/form、direct SDK Context API、Start時HTTPClient injection/owned idle-close、全raw wire/parser/randomfailure/concurrency/platformは未検証または未解消。SDK session/credential formattingのredactionをapp public AuthorizationURL/CallbackOrCodeのformatへ外挿しない。"
+        "login依存SDK/appをGo-first synthetic OAuthで接続。shared clone one-shot・Default empty・invalid retry・PKCE64/state32・callback first query/state/URL predicates・response fallbackと欠落access/expiry、save→direct default read→write→fresh summary、途中失敗committed state/取消safe Displayとcauseを対象例で比較。最終freeze callback30行・official predicate10行・response12行、SDK7/app4test、Go関連suite/vet終了0、full gate終了0・291秒・365passed/既存3ignored・release42.45秒成功。CLI local/remote/hidden callback/URL-handler hooksは接続済みだが実browser/OS登録は未検証。Go実装はofficial HTTPSとpixiv callbackのstate省略を許す（commentと異なる）。nonUTF8 callback bytes対Rust String/form、direct SDK Context API、Start時HTTPClient injection/owned idle-close、全raw wire/parser/randomfailure/concurrency/platformは未検証または未解消。SDK session/credential formattingのredactionをapp public AuthorizationURL/CallbackOrCodeのformatへ外挿しない。"
       ]
     },
     {
@@ -10457,7 +10568,7 @@
       "tests": [],
       "verified_platforms": [],
       "differences": [
-        "login SDK/appのcaller-owned TransportをCompleteへ注入する経路は対象例で比較するが、Go LoginOptionsのStart時HTTPClient ownership・session-owned HTTP生成・explicit idle-closeは未移植。偽no-op APIを追加しない。"
+        "CLI loginは実environment HTTP transportを生成するが、公開SDKのGo LoginOptionsに相当するStart時HTTPClient injection/ownership・session-owned client生成とexplicit CloseIdleConnectionsは未移植。Complete時caller-owned Transport注入やCLIのHTTP/CONNECT等の16対象例（未知scheme・port0を含む）をこの公開APIの互換へ外挿しない。偽no-op APIを追加しない。"
       ]
     },
     {
@@ -10471,17 +10582,24 @@
         "crates/pixiv-sdk/src/oauth.rs",
         "crates/pixiv-sdk/src/reference.rs",
         "crates/pixiv-app/src/account_login.rs",
-        "crates/pixiv-app/src/account_transfer.rs"
+        "crates/pixiv-app/src/account_transfer.rs",
+        "crates/pixiv-cli/src/auth_login.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/environment_proxy.rs"
       ],
       "tests": [
         "sdk/pixiv/login_migration_contract_test.go",
         "internal/services/pixiv/account/migration_login_test.go",
         "crates/pixiv-sdk/tests/login_contract.rs",
-        "crates/pixiv-app/tests/account_login.rs"
+        "crates/pixiv-app/tests/account_login.rs",
+        "sdk/pixiv/migration_login_environment_proxy_test.go",
+        "crates/pixiv-sdk/tests/environment_proxy.rs",
+        "crates/pixiv-sdk/tests/fixtures/login_environment_proxy.json",
+        "crates/pixiv-cli/tests/auth_login_contract.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "login依存SDK/appをGo-first synthetic OAuthで接続。shared clone one-shot・Default empty・invalid retry・PKCE64/state32・callback first query/state/URL predicates・response fallbackと欠落access/expiry、save→direct default read→write→fresh summary、途中失敗committed state/取消safe Displayとcauseを対象例で比較。最終freeze callback30行・official predicate10行・response12行、SDK7/app4test、Go関連suite/vet終了0、full gate終了0・291秒・365passed/既存3ignored・release42.45秒成功。CLI local/remote/browser/hidden callback/URL handlerは未移植。Go実装はofficial HTTPSとpixiv callbackのstate省略を許す（commentと異なる）。nonUTF8 callback bytes対Rust String/form、direct SDK Context API、Start時HTTPClient injection/owned idle-close、全raw wire/parser/randomfailure/concurrency/platformは未検証または未解消。SDK session/credential formattingのredactionをapp public AuthorizationURL/CallbackOrCodeのformatへ外挿しない。"
+        "login依存SDK/appをGo-first synthetic OAuthで接続。shared clone one-shot・Default empty・invalid retry・PKCE64/state32・callback first query/state/URL predicates・response fallbackと欠落access/expiry、save→direct default read→write→fresh summary、途中失敗committed state/取消safe Displayとcauseを対象例で比較。最終freeze callback30行・official predicate10行・response12行、SDK7/app4test、Go関連suite/vet終了0、full gate終了0・291秒・365passed/既存3ignored・release42.45秒成功。CLI local/remote/hidden callback/URL-handler hooksは接続済みだが実browser/OS登録は未検証。Go実装はofficial HTTPSとpixiv callbackのstate省略を許す（commentと異なる）。nonUTF8 callback bytes対Rust String/form、direct SDK Context API、Start時HTTPClient injection/owned idle-close、全raw wire/parser/randomfailure/concurrency/platformは未検証または未解消。SDK session/credential formattingのredactionをapp public AuthorizationURL/CallbackOrCodeのformatへ外挿しない。"
       ]
     },
     {
@@ -10505,7 +10623,7 @@
       ],
       "verified_platforms": [],
       "differences": [
-        "login依存SDK/appをGo-first synthetic OAuthで接続。shared clone one-shot・Default empty・invalid retry・PKCE64/state32・callback first query/state/URL predicates・response fallbackと欠落access/expiry、save→direct default read→write→fresh summary、途中失敗committed state/取消safe Displayとcauseを対象例で比較。最終freeze callback30行・official predicate10行・response12行、SDK7/app4test、Go関連suite/vet終了0、full gate終了0・291秒・365passed/既存3ignored・release42.45秒成功。CLI local/remote/browser/hidden callback/URL handlerは未移植。Go実装はofficial HTTPSとpixiv callbackのstate省略を許す（commentと異なる）。nonUTF8 callback bytes対Rust String/form、direct SDK Context API、Start時HTTPClient injection/owned idle-close、全raw wire/parser/randomfailure/concurrency/platformは未検証または未解消。SDK session/credential formattingのredactionをapp public AuthorizationURL/CallbackOrCodeのformatへ外挿しない。"
+        "login依存SDK/appをGo-first synthetic OAuthで接続。shared clone one-shot・Default empty・invalid retry・PKCE64/state32・callback first query/state/URL predicates・response fallbackと欠落access/expiry、save→direct default read→write→fresh summary、途中失敗committed state/取消safe Displayとcauseを対象例で比較。最終freeze callback30行・official predicate10行・response12行、SDK7/app4test、Go関連suite/vet終了0、full gate終了0・291秒・365passed/既存3ignored・release42.45秒成功。CLI local/remote/hidden callback/URL-handler hooksは接続済みだが実browser/OS登録は未検証。Go実装はofficial HTTPSとpixiv callbackのstate省略を許す（commentと異なる）。nonUTF8 callback bytes対Rust String/form、direct SDK Context API、Start時HTTPClient injection/owned idle-close、全raw wire/parser/randomfailure/concurrency/platformは未検証または未解消。SDK session/credential formattingのredactionをapp public AuthorizationURL/CallbackOrCodeのformatへ外挿しない。"
       ]
     },
     {
@@ -10529,7 +10647,7 @@
       ],
       "verified_platforms": [],
       "differences": [
-        "login依存SDK/appをGo-first synthetic OAuthで接続。shared clone one-shot・Default empty・invalid retry・PKCE64/state32・callback first query/state/URL predicates・response fallbackと欠落access/expiry、save→direct default read→write→fresh summary、途中失敗committed state/取消safe Displayとcauseを対象例で比較。最終freeze callback30行・official predicate10行・response12行、SDK7/app4test、Go関連suite/vet終了0、full gate終了0・291秒・365passed/既存3ignored・release42.45秒成功。CLI local/remote/browser/hidden callback/URL handlerは未移植。Go実装はofficial HTTPSとpixiv callbackのstate省略を許す（commentと異なる）。nonUTF8 callback bytes対Rust String/form、direct SDK Context API、Start時HTTPClient injection/owned idle-close、全raw wire/parser/randomfailure/concurrency/platformは未検証または未解消。SDK session/credential formattingのredactionをapp public AuthorizationURL/CallbackOrCodeのformatへ外挿しない。"
+        "login依存SDK/appをGo-first synthetic OAuthで接続。shared clone one-shot・Default empty・invalid retry・PKCE64/state32・callback first query/state/URL predicates・response fallbackと欠落access/expiry、save→direct default read→write→fresh summary、途中失敗committed state/取消safe Displayとcauseを対象例で比較。最終freeze callback30行・official predicate10行・response12行、SDK7/app4test、Go関連suite/vet終了0、full gate終了0・291秒・365passed/既存3ignored・release42.45秒成功。CLI local/remote/hidden callback/URL-handler hooksは接続済みだが実browser/OS登録は未検証。Go実装はofficial HTTPSとpixiv callbackのstate省略を許す（commentと異なる）。nonUTF8 callback bytes対Rust String/form、direct SDK Context API、Start時HTTPClient injection/owned idle-close、全raw wire/parser/randomfailure/concurrency/platformは未検証または未解消。SDK session/credential formattingのredactionをapp public AuthorizationURL/CallbackOrCodeのformatへ外挿しない。"
       ]
     },
     {
@@ -10553,7 +10671,7 @@
       ],
       "verified_platforms": [],
       "differences": [
-        "login依存SDK/appをGo-first synthetic OAuthで接続。shared clone one-shot・Default empty・invalid retry・PKCE64/state32・callback first query/state/URL predicates・response fallbackと欠落access/expiry、save→direct default read→write→fresh summary、途中失敗committed state/取消safe Displayとcauseを対象例で比較。最終freeze callback30行・official predicate10行・response12行、SDK7/app4test、Go関連suite/vet終了0、full gate終了0・291秒・365passed/既存3ignored・release42.45秒成功。CLI local/remote/browser/hidden callback/URL handlerは未移植。Go実装はofficial HTTPSとpixiv callbackのstate省略を許す（commentと異なる）。nonUTF8 callback bytes対Rust String/form、direct SDK Context API、Start時HTTPClient injection/owned idle-close、全raw wire/parser/randomfailure/concurrency/platformは未検証または未解消。SDK session/credential formattingのredactionをapp public AuthorizationURL/CallbackOrCodeのformatへ外挿しない。"
+        "login依存SDK/appをGo-first synthetic OAuthで接続。shared clone one-shot・Default empty・invalid retry・PKCE64/state32・callback first query/state/URL predicates・response fallbackと欠落access/expiry、save→direct default read→write→fresh summary、途中失敗committed state/取消safe Displayとcauseを対象例で比較。最終freeze callback30行・official predicate10行・response12行、SDK7/app4test、Go関連suite/vet終了0、full gate終了0・291秒・365passed/既存3ignored・release42.45秒成功。CLI local/remote/hidden callback/URL-handler hooksは接続済みだが実browser/OS登録は未検証。Go実装はofficial HTTPSとpixiv callbackのstate省略を許す（commentと異なる）。nonUTF8 callback bytes対Rust String/form、direct SDK Context API、Start時HTTPClient injection/owned idle-close、全raw wire/parser/randomfailure/concurrency/platformは未検証または未解消。SDK session/credential formattingのredactionをapp public AuthorizationURL/CallbackOrCodeのformatへ外挿しない。"
       ]
     },
     {

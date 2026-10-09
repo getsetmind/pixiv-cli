@@ -177,6 +177,17 @@ impl CallbackEndpointStore for FileCallbackEndpointStore {
     }
 }
 
+#[derive(Clone, Copy, Debug, Default)]
+pub struct DefaultCallbackEndpointStore;
+impl CallbackEndpointStore for DefaultCallbackEndpointStore {
+    fn local_relay_url(&self, raw_callback: &str) -> CallbackResult<String> {
+        if !is_allowed_pixiv_callback_url(raw_callback) {
+            return Err(Box::new(CallbackEndpointError::InvalidCallback));
+        }
+        FileCallbackEndpointStore::from_default_path()?.local_relay_url(raw_callback)
+    }
+}
+
 pub trait PreviousHandler: Send + Sync {
     fn delegate<'a>(
         &'a self,
@@ -221,19 +232,21 @@ pub trait RemoteLoginHandoff: Send + Sync {
     ) -> HandoffFuture<'a, CallbackResult<Self::Session>>;
     fn clear(&self, start: &RemoteLoginStart) -> CallbackResult<()>;
 }
-pub struct ClientHandoff<T> {
-    client: HandoffClient<T>,
-    state: HandoffState,
+pub struct ClientHandoff<T, S = HandoffState> {
+    client: HandoffClient<T, S>,
+    state: S,
 }
-impl<T: HandoffTransport> ClientHandoff<T> {
-    pub fn new(transport: T, state: HandoffState) -> Self {
+impl<T: HandoffTransport, S: crate::handoff_state::HandoffStateStore> ClientHandoff<T, S> {
+    pub fn new(transport: T, state: S) -> Self {
         Self {
             client: HandoffClient::new(transport, state.clone()),
             state,
         }
     }
 }
-impl<T: HandoffTransport> RemoteLoginHandoff for ClientHandoff<T> {
+impl<T: HandoffTransport, S: crate::handoff_state::HandoffStateStore> RemoteLoginHandoff
+    for ClientHandoff<T, S>
+{
     type Session = RemoteCallbackSession;
     fn start<'a>(
         &'a self,

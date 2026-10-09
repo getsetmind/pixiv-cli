@@ -1,5 +1,7 @@
 mod artwork_list;
 pub mod auth_accounts;
+pub mod auth_hidden;
+pub mod auth_login;
 pub mod auth_transfer;
 pub mod auth_validation;
 pub mod bookmark_lists;
@@ -17,6 +19,7 @@ pub mod ranking;
 pub mod recommended;
 mod record_input;
 pub mod search;
+pub mod startup;
 pub mod terminal_prompt;
 pub mod timeline;
 pub mod trending;
@@ -45,6 +48,7 @@ pub enum CommandError {
     Message(&'static str),
     Usage(String),
     MessageText(String),
+    Startup(String),
     Output(io::Error),
     App(SchedulerError),
     State(Box<dyn std::error::Error + Send + Sync>),
@@ -72,7 +76,7 @@ impl fmt::Display for CommandError {
             Self::LabeledSdk(label, error) => write!(f, "{label}: {error}"),
             Self::Message(message) => f.write_str(message),
             Self::Usage(message) => f.write_str(message),
-            Self::MessageText(message) => f.write_str(message),
+            Self::MessageText(message) | Self::Startup(message) => f.write_str(message),
             Self::Output(error) => error.fmt(f),
             Self::App(error) => error.fmt(f),
             Self::State(error) => error.fmt(f),
@@ -87,7 +91,11 @@ impl std::error::Error for CommandError {
             Self::Output(error) => Some(error),
             Self::App(error) => Some(error),
             Self::State(error) => Some(error.as_ref()),
-            Self::Message(_) | Self::Usage(_) | Self::MessageText(_) | Self::Pipeline => None,
+            Self::Message(_)
+            | Self::Usage(_)
+            | Self::MessageText(_)
+            | Self::Startup(_)
+            | Self::Pipeline => None,
         }
     }
 }
@@ -104,6 +112,7 @@ impl CommandError {
             Self::Message(_)
             | Self::Usage(_)
             | Self::MessageText(_)
+            | Self::Startup(_)
             | Self::Output(_)
             | Self::State(_)
             | Self::Pipeline => None,
@@ -120,6 +129,10 @@ pub fn finish_command<W: Write>(
     let Err(error) = result else {
         return 0;
     };
+    if let CommandError::Startup(message) = &error {
+        let _ = writeln!(diagnostics, "{message}");
+        return 1;
+    }
     if matches!(error, CommandError::Pipeline) {
         return 1;
     }

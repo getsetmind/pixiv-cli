@@ -1,0 +1,155 @@
+[
+  {
+    "name": "http_upper_precedence",
+    "url": "http://public.example/resource",
+    "env": {
+      "HTTP_PROXY": "<UPPER>",
+      "http_proxy": "<LOWER>"
+    },
+    "route": "upper"
+  },
+  {
+    "name": "http_lower_fallback",
+    "url": "http://public.example/resource",
+    "env": {
+      "http_proxy": "<LOWER>"
+    },
+    "route": "lower"
+  },
+  {
+    "name": "http_empty_upper_fallback",
+    "url": "http://public.example/resource",
+    "env": {
+      "HTTP_PROXY": "",
+      "http_proxy": "<LOWER>"
+    },
+    "route": "lower"
+  },
+  {
+    "name": "https_login_upper_precedence",
+    "login": true,
+    "url": "https://oauth.secure.pixiv.net/auth/token",
+    "env": {
+      "HTTPS_PROXY": "<UPPER>",
+      "https_proxy": "<LOWER>"
+    },
+    "route": "upper",
+    "error": "upstream_unavailable"
+  },
+  {
+    "name": "https_login_lower_fallback",
+    "login": true,
+    "url": "https://oauth.secure.pixiv.net/auth/token",
+    "env": {
+      "https_proxy": "<LOWER>"
+    },
+    "route": "lower",
+    "error": "upstream_unavailable"
+  },
+  {
+    "name": "https_login_cgi_allowed",
+    "login": true,
+    "url": "https://oauth.secure.pixiv.net/auth/token",
+    "env": {
+      "HTTPS_PROXY": "<UPPER>",
+      "HTTP_PROXY": "<LOWER>",
+      "REQUEST_METHOD": "POST"
+    },
+    "route": "upper",
+    "error": "upstream_unavailable"
+  },
+  {
+    "name": "loopback_bypasses_http_proxy",
+    "url": "<DIRECT>/resource",
+    "env": {
+      "HTTP_PROXY": "<UPPER>"
+    },
+    "route": "direct"
+  },
+  {
+    "name": "all_proxy_ignored_loopback",
+    "url": "<DIRECT>/resource",
+    "env": {
+      "ALL_PROXY": "<UPPER>",
+      "all_proxy": "<LOWER>"
+    },
+    "route": "direct"
+  },
+  {
+    "name": "cgi_http_refuses_even_loopback",
+    "url": "<DIRECT>/resource",
+    "env": {
+      "HTTP_PROXY": "<UPPER>",
+      "REQUEST_METHOD": "GET"
+    },
+    "route": "",
+    "error": "cgi"
+  },
+  {
+    "name": "environment_read_at_first_request",
+    "url": "http://public.example/resource",
+    "env": {
+      "HTTP_PROXY": "<UPPER>"
+    },
+    "after_build": {
+      "HTTP_PROXY": "<LOWER>"
+    },
+    "route": "lower"
+  },
+  {
+    "name": "environment_cached_after_first_request",
+    "url": "http://public.example/resource",
+    "env": {
+      "HTTP_PROXY": "<UPPER>"
+    },
+    "after_first": {
+      "HTTP_PROXY": "<LOWER>"
+    },
+    "route": "upper",
+    "requests": 2
+  },
+  {
+    "name": "explicit_no_proxy_ignores_environment",
+    "url": "<DIRECT>/resource",
+    "env": {
+      "HTTP_PROXY": "<UPPER>",
+      "REQUEST_METHOD": "GET"
+    },
+    "route": "direct",
+    "disabled": true
+  },
+  {
+    "name": "ftp_environment_proxy_uses_http_wire",
+    "url": "http://public.example/resource",
+    "env": {
+      "HTTP_PROXY": "<UPPER_FTP>"
+    },
+    "route": "upper"
+  },
+  {
+    "name": "socks4_environment_proxy_uses_http_wire",
+    "url": "http://public.example/resource",
+    "env": {
+      "HTTP_PROXY": "<UPPER_SOCKS4>"
+    },
+    "route": "upper"
+  },
+  {
+    "name": "unknown_environment_proxy_without_port_fails",
+    "url": "http://public.example/resource",
+    "env": {
+      "HTTP_PROXY": "ftp://127.0.0.1"
+    },
+    "route": "",
+    "error": "missing_proxy_port"
+  },
+  {
+    "name": "socks4_environment_proxy_without_port_fails",
+    "url": "http://public.example/resource",
+    "env": {
+      "HTTP_PROXY": "socks4://127.0.0.1"
+    },
+    "route": "",
+    "error": "missing_proxy_port"
+  }
+]

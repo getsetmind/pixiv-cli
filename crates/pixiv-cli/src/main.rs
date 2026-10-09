@@ -699,6 +699,10 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
         }
         _ => None,
     };
+    pixiv_cli_rs::startup::run_system_startup(
+        &pixiv_app::lifecycle::Context::new(),
+        &mut io::stderr(),
+    )?;
     let account_config = if matches!(
         &args.command,
         Command::Mypixiv { .. }
@@ -1602,6 +1606,12 @@ fn execute_config() -> Result<(), CommandError> {
         &mut input,
         io::stdin().is_terminal(),
     )?;
+    if command.requires_config() {
+        pixiv_cli_rs::startup::run_system_startup(
+            &pixiv_app::lifecycle::Context::new(),
+            &mut io::stderr(),
+        )?;
+    }
     let path = if command.requires_config() {
         pixiv_app::callback_handler::app_data_directory()
             .map_err(|error| CommandError::MessageText(error.to_string()))?
@@ -1630,6 +1640,10 @@ async fn execute_auth() -> (Result<(), CommandError>, bool) {
                     != Some("import")
                     || io::stdout().is_terminal()),
         )?;
+        let context = pixiv_app::lifecycle::Context::new();
+        if command.requires_startup() {
+            pixiv_cli_rs::startup::run_system_startup(&context, &mut io::stderr())?;
+        }
         let path = if command.requires_config() {
             pixiv_app::callback_handler::app_data_directory()
                 .map_err(|error| CommandError::MessageText(error.to_string()))?
@@ -1637,7 +1651,31 @@ async fn execute_auth() -> (Result<(), CommandError>, bool) {
         } else {
             std::path::PathBuf::new()
         };
+        if command.requires_startup() {
+            let store = pixiv_app::config::Store::new(&path);
+            store
+                .ensure_defaults()
+                .map_err(pixiv_app::scheduler::SchedulerError::from)?;
+            store
+                .current()
+                .and_then(|snapshot| snapshot.runtime())
+                .map_err(pixiv_app::scheduler::SchedulerError::from)?;
+        }
         drop(input);
+        if let pixiv_cli_rs::auth_accounts::AuthCommand::Hidden(hidden) = &command {
+            return hidden
+                .execute_system(&context, &mut io::stdout(), &mut io::stderr())
+                .await;
+        }
+        if let pixiv_cli_rs::auth_accounts::AuthCommand::Login(login) = &command {
+            return login
+                .execute_http(
+                    &pixiv_app::config::Store::new(path),
+                    &context,
+                    &mut io::stdout(),
+                )
+                .await;
+        }
         let mut prompts = pixiv_cli_rs::terminal_prompt::TerminalPrompts::new(
             io::stdin(),
             io::stdout(),

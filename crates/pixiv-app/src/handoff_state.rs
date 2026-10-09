@@ -111,6 +111,68 @@ impl HandoffState {
     }
 }
 
+pub trait HandoffStateStore: Clone + Send + Sync {
+    fn save(&self, session: &ActiveRemoteLogin) -> Result<(), HandoffStateError>;
+    fn load(&self) -> Result<ActiveRemoteLogin, HandoffStateError>;
+    fn clear_if_matches(&self, expected: &ActiveRemoteLogin) -> Result<(), HandoffStateError>;
+    fn clear_remote_login_handoff(&self, start: &RemoteLoginStart)
+    -> Result<(), HandoffStateError>;
+}
+impl HandoffStateStore for HandoffState {
+    fn save(&self, session: &ActiveRemoteLogin) -> Result<(), HandoffStateError> {
+        HandoffState::save(self, session)
+    }
+    fn load(&self) -> Result<ActiveRemoteLogin, HandoffStateError> {
+        HandoffState::load(self)
+    }
+    fn clear_if_matches(&self, expected: &ActiveRemoteLogin) -> Result<(), HandoffStateError> {
+        HandoffState::clear_if_matches(self, expected)
+    }
+    fn clear_remote_login_handoff(
+        &self,
+        start: &RemoteLoginStart,
+    ) -> Result<(), HandoffStateError> {
+        HandoffState::clear_remote_login_handoff(self, start)
+    }
+}
+#[derive(Clone, Copy, Debug, Default)]
+pub struct DefaultHandoffState;
+impl DefaultHandoffState {
+    fn store(&self) -> Result<HandoffState, HandoffStateError> {
+        crate::callback_handler::active_remote_login_path()
+            .map(HandoffState::new)
+            .map_err(|error| HandoffStateError::Storage(ConfigError::Io(error)))
+    }
+}
+impl HandoffStateStore for DefaultHandoffState {
+    fn save(&self, session: &ActiveRemoteLogin) -> Result<(), HandoffStateError> {
+        self.store()?.save(session)
+    }
+    fn load(&self) -> Result<ActiveRemoteLogin, HandoffStateError> {
+        self.store()?.load()
+    }
+    fn clear_if_matches(&self, expected: &ActiveRemoteLogin) -> Result<(), HandoffStateError> {
+        self.store()?.clear_if_matches(expected)
+    }
+    fn clear_remote_login_handoff(
+        &self,
+        start: &RemoteLoginStart,
+    ) -> Result<(), HandoffStateError> {
+        let origin =
+            canonical_relay_origin(&start.origin).map_err(|_| HandoffStateError::InvalidHandoff)?;
+        if go_blank(&start.session_id) || go_blank(&start.proof) {
+            return Err(HandoffStateError::InvalidHandoff);
+        }
+        self.clear_if_matches(&ActiveRemoteLogin {
+            version: 1,
+            origin,
+            session_id: start.session_id.clone(),
+            proof: start.proof.clone(),
+        })
+        .map_err(|_| HandoffStateError::ClearFailed)
+    }
+}
+
 pub fn save_active_remote_login_at(
     path: &Path,
     session: &ActiveRemoteLogin,
