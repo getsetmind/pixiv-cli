@@ -136,3 +136,83 @@ func TestMigrationSearchSelectorsMatchFrozenQueriesAndValidationOrder(t *testing
 		t.Fatal("CLI search selectors differ from the fixed Go reference")
 	}
 }
+
+var migrationUpdateSearchOptionsStartup = flag.Bool("migration-update-search-options-startup", false, "capture isolated real startup for artwork search selector errors")
+
+func TestMigrationSearchSelectorsPreserveRealStartupScope(t *testing.T) {
+	oldCleanup, oldSupported := cleanupPendingWindowsUpdate, automaticPersistentHandlerSupported
+	t.Cleanup(func() { cleanupPendingWindowsUpdate, automaticPersistentHandlerSupported = oldCleanup, oldSupported })
+	cleanupPendingWindowsUpdate = func() error { return nil }
+	automaticPersistentHandlerSupported = func() bool { return false }
+	data, err := os.ReadFile(filepath.Join("..", "..", "docs", "migration", "contracts", "search-options.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	type source struct {
+		Name  string   `json:"name"`
+		Mode  string   `json:"mode"`
+		Args  []string `json:"args"`
+		Error string   `json:"error"`
+	}
+	var sources []source
+	if err := json.Unmarshal(data, &sources); err != nil {
+		t.Fatal(err)
+	}
+	type row struct {
+		Name     string `json:"name"`
+		Mode     string `json:"mode"`
+		Stdout   string `json:"stdout"`
+		Stderr   string `json:"stderr"`
+		Exit     int    `json:"exit"`
+		Config   bool   `json:"config"`
+		Database bool   `json:"database"`
+	}
+	rows := []row{}
+	for _, in := range sources {
+		if in.Error == "" {
+			continue
+		}
+		home := t.TempDir()
+		t.Setenv("HOME", home)
+		t.Setenv("USERPROFILE", home)
+		t.Setenv("PIXIV_ACCESS_TOKEN", "")
+		t.Setenv("HTTPS_PROXY", "")
+		t.Setenv("https_proxy", "")
+		t.Setenv("REQUEST_INTERVAL", "0")
+		var output, diagnostics bytes.Buffer
+		exit := Run(append([]string{"pixiv"}, in.Args...), strings.NewReader(""), &output, &diagnostics)
+		exists := func(name string) bool {
+			_, err := os.Stat(filepath.Join(home, ".pixiv-cli", name))
+			if err != nil && !os.IsNotExist(err) {
+				t.Fatal(err)
+			}
+			return err == nil
+		}
+		rows = append(rows, row{in.Name, in.Mode, output.String(), diagnostics.String(), exit, exists("config.toml"), exists("pixiv-cli.db")})
+	}
+	if len(rows) != 99 {
+		t.Fatalf("selector error startup cases = %d, want 99", len(rows))
+	}
+	data, err = json.MarshalIndent(rows, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	data = append(data, '\n')
+	path := filepath.Join("..", "..", "crates", "pixiv-cli", "tests", "fixtures", "search-options-startup.json")
+	if *migrationUpdateSearchOptionsStartup {
+		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, data, 0o644); err != nil {
+			t.Fatal(err)
+		}
+		return
+	}
+	want, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(data, want) {
+		t.Fatal("search selectors startup differs from fixed Go behavior")
+	}
+}

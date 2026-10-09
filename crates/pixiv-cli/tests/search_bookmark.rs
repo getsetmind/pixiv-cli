@@ -191,8 +191,11 @@ async fn bookmark_search_matches_go_bounds_strategies_completeness_and_atomic_ou
             assert_eq!(String::from_utf8(diagnostics).unwrap(), case.stderr);
         }
         if early_error {
+            let home = tempfile::tempdir().unwrap();
             let output = Command::new(env!("CARGO_BIN_EXE_pixiv"))
                 .args(&case.args)
+                .env("HOME", home.path())
+                .env("USERPROFILE", home.path())
                 .env("PIXIV_ACCESS_TOKEN", "")
                 .env("https_proxy", "invalid proxy fixture")
                 .env_remove("HTTPS_PROXY")

@@ -68,3 +68,15 @@ pub fn from_user_detail(detail: &pixiv_sdk::models::UserDetail) -> Result<Value,
     record["url"] = format!("https://www.pixiv.net/users/{}", detail.user.id).into();
     Ok(record)
 }
+
+pub fn from_user_preview(preview: &pixiv_sdk::models::UserPreview) -> Result<Value, RecordError> {
+    if preview.user.id <= 0 {
+        return Err(RecordError::InvalidId);
+    }
+    let mut record = serde_json::to_value(pixiv_sdk::dto::UserPreviewDto::from(preview))
+        .map_err(|_| RecordError::Serialization)?;
+    record["id"] = preview.user.id.to_string().into();
+    record["type"] = "user".into();
+    record["url"] = format!("https://www.pixiv.net/users/{}", preview.user.id).into();
+    Ok(record)
+}

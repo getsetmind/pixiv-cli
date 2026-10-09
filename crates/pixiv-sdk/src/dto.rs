@@ -272,3 +272,19 @@ impl<'a> From<&'a crate::models::UserDetail> for UserDetailDto<'a> {
         }
     }
 }
+
+#[derive(Serialize)]
+pub struct UserPreviewDto<'a> {
+    pub user: UserDto<'a>,
+    pub illusts: Vec<ArtworkDto<'a>>,
+    pub novels: Vec<NovelDto<'a>>,
+}
+impl<'a> From<&'a crate::models::UserPreview> for UserPreviewDto<'a> {
+    fn from(value: &'a crate::models::UserPreview) -> Self {
+        Self {
+            user: UserDto::from(&value.user),
+            illusts: value.illusts.iter().map(ArtworkDto::from).collect(),
+            novels: value.novels.iter().map(NovelDto::from).collect(),
+        }
+    }
+}

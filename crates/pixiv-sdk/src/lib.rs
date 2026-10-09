@@ -29,3 +29,5 @@ pub use error::{Error, Reason, Result};
 pub use pixiv::Client;
 
 mod user_detail;
+
+mod user_search;

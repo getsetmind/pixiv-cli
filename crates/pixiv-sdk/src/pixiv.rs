@@ -441,3 +441,5 @@ fn malformed(operation: &'static str) -> Error {
 }
 
 pub use crate::user_detail::UserRequest;
+
+pub use crate::user_search::SearchUsersRequest;

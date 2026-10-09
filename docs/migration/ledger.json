@@ -1148,7 +1148,8 @@
         "crates/pixiv-app/src/account_service.rs",
         "crates/pixiv-cli/src/trending.rs",
         "crates/pixiv-cli/src/novel_search.rs",
-        "crates/pixiv-cli/src/novel_list.rs"
+        "crates/pixiv-cli/src/novel_list.rs",
+        "crates/pixiv-cli/src/user_search.rs"
       ],
       "tests": [
         "internal/cli/commands/pixiv/search/migration_dates_test.go#TestMigrationQuickDateRangesMatchFrozenTokyoBoundaries",
@@ -1199,10 +1200,16 @@
         "crates/pixiv-cli/tests/trending.rs#trending_process_matches_go_no_word_and_explicit_flag_restrictions",
         "internal/cli/migration_novel_search_test.go#TestMigrationNovelSearchPreservesLogicalPagesOutputsAndStartup",
         "crates/pixiv-cli/tests/novel_search.rs#novel_search_preserves_go_output_windows_errors_and_saved_account_execution",
-        "crates/pixiv-cli/tests/novel_search.rs#novel_search_process_preserves_go_validation_authentication_and_startup_order"
+        "crates/pixiv-cli/tests/novel_search.rs#novel_search_process_preserves_go_validation_authentication_and_startup_order",
+        "internal/cli/migration_user_search_test.go#TestMigrationUserSearchPreservesLogicalPagesOutputsAndStartup",
+        "crates/pixiv-cli/tests/user_search.rs#user_search_preserves_go_output_windows_errors_and_saved_account_execution",
+        "crates/pixiv-cli/tests/user_search.rs#user_search_process_preserves_go_validation_authentication_and_startup_order",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserSearchPreservesCaseInsensitiveFieldsAndOrderedDuplicateMerges",
+        "internal/cli/migration_search_options_test.go#TestMigrationSearchSelectorsPreserveRealStartupScope"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64"
       ],
       "differences": [
         "日付計算 helper は固定時刻168ケースで比較。period/start-date/end-date flags は Go の213ケースで検証順、33ケースの SDK query、174ケースの子プロセス stderr/終了コード、半年/一年42ケースを確認。NUL 6ケースは adapter のみ比較。時計の全範囲/全timezoneと他OSは未検証。",
@@ -1219,9 +1226,12 @@
         "検索入力・出力指定をGoの64ケースで比較。複数語/空の語/日本語/--区切り、--json/-jのtrue/false・重複指定、--ndjsonのtrue/false・重複指定、設定output_jsonとパイプ自動NDJSONを確認。実CLI子プロセス64ケースで認証エラー、usageエラーの通常stderr/終了コード2、json=falseでも明示指定時のエラーenvelope、DB作成順と設定保持を比較。実TTY、正常CLI子プロセスのHTTPS経路、全flag構文/不正bool/help/entity等は未検証または未実装。",
         "検索stdinのTextValue経路を接続。Goの120ケースでLF/CRLFを末尾1つだけ除去し、空白・複数行・日本語・JSON文字列をそのまま検索語にすること、明示引数/ダッシュ指定ではstdinを読まないことを比較。実CLI子プロセス120ケースで空入力の診断/終了コード1・設定/DB未作成、非空入力後の起動エラーを確認。読み取り失敗3ケースの通常stderr/終了コード2もGoと一致。Goは不正UTF-8のバイト列も保持するがRustの検索語はStringであり、この入力は現在拒否する互換差分が残る。正常CLIのパイプから実HTTPS、実TTY、大容量、stdin中の取消、他OSは未検証。",
         "保存済みアカウントの検索poolをGoの63ケースで比較。通常/sfw/bookmarkとhuman/NDJSON/JSONで、初回429・後続ページ429・全アカウント429・401・writer失敗/BrokenPipe/部分書き込み、OAuth refresh保存・全要求順・凍結/選択状態・解放数を確認。Goの再実行は同じ開始cursorから取り直す契約であり、失敗attemptの結果を混入させない。通常human/NDJSONは公開後に切り替えず、JSONとlocal/bookmark収集はaccount lease解放後に出力するよう修正。bookmark JSONもillusts/filterとmetadataのフィールド順をGoへ揃えた。正常CLI実HTTPS、取消・close失敗・record変換失敗、全pool戦略/境界・proxy設定変更・他OSは未検証。",
-        "search --trending-tags を SDK と保存済み account へ接続。Go の70ケースで JSON/human・sample DTO・空/不正応答、引数拒否、18種類の併用不可 flag（明示 default/false を含む）、stdin を読まないこと、実子プロセスの起動順を比較。--type の認識を追加したが通常の user 検索は未実装。trending の実 HTTPS・pool/取消・全 flag 構文・他 OS は未検証。",
+        "search --trending-tags を SDK と保存済み account へ接続。Go の70ケースで JSON/human・sample DTO・空/不正応答、引数拒否、18種類の併用不可 flag（明示 default/false を含む）、stdin を読まないこと、実子プロセスの起動順を比較。--type の認識を追加し、通常の user 検索の SDK・保存済み account・実起動の比較も279ケースで確認した。trending の実 HTTPS・pool/取消・全 flag 構文・他 OS は未検証。",
         "既存pool比較の all_rate_limited は残り秒数が実時間で減るため、429応答から120秒のDB凍結期限と診断出力前後の時計で検証してから、その時刻依存項目だけを正規化する。他のenvelope項目とGo fixture、本番コードの時刻取得・retry計算は変更していない。",
-        "search --type novel を SDK と保存済みアカウントへ接続。Go の273ケースで human/JSON/NDJSON、論理ページ、入力と明示フラグ拒否、実子プロセスの起動順を比較。NUL を含む検索語も Go・Rust の実起動では stdin 経由で比較。小説ランキングと一覧・JSON spool・lease 解放後の JSON 出力を共有する。部分 writer 失敗・取消・pool replay、全 flag 構文/help・TTY、実 HTTPS と他 OS/arch は未検証または未移植。"
+        "search --type novel を SDK と保存済みアカウントへ接続。Go の273ケースで human/JSON/NDJSON、論理ページ、入力と明示フラグ拒否、実子プロセスの起動順を比較。NUL を含む検索語も Go・Rust の実起動では stdin 経由で比較。小説ランキングと一覧・JSON spool・lease 解放後の JSON 出力を共有する。部分 writer 失敗・取消・pool replay、全 flag 構文/help・TTY、実 HTTPS と他 OS/arch は未検証または未移植。",
+        "search --type user の279ケースで直接 SDK・保存済み account・実子プロセスの入力、出力、論理ページ、writer 失敗、禁止 flag と起動順を Linux amd64 で比較。pixiv user search の互換入口、全 flag/help・TTY、実 HTTPS・取消/deadline・pool と他 OS/arch は未移植または未検証。workspace の必須チェック（Formatter・Clippy・158 tests・release build）は Linux amd64 で成功。",
+        "共有 wire JSON の既知差分: Go は大小文字を区別せず USER_PREVIEWS/USER/ID/NAME 等を受理し、case が異なる重複キーでも入力順の後勝ちと duplicate object の既存 field への merge を行う。Go の5ケースで固定したが Rust Serde/Value は同じ契約を満たさず、NAME の値の欠落等が残る。正しい共有 wire decoder の移植と Rust の同一比較は次工程で行う。任意の map lowercasing では重複/順序を維持できないため代替しない。",
+        "selector の従来 fixture は認証済み owner/SDK を注入した比較であり、SDK 内の sort validation error を実起動へ流用していた差を解消。既存の SDK error/envelope の比較を維持し、別の Go real-startup 99ケースで隔離 HOME の未認証診断と config/DB 作成順を比較する。bookmark/date/options/page の子プロセスを一時 HOME/USERPROFILE へ隔離し、実ホームは参照しない。"
       ]
     },
     {
@@ -2154,15 +2164,30 @@
     },
     {
       "id": "mcp:pixiv:search_user",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "search_user"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/user_search.rs",
+        "crates/pixiv-mcp/src/stdio.rs",
+        "crates/pixiv-mcp/src/search.rs",
+        "crates/pixiv-mcp/schemas/search-user.json",
+        "crates/pixiv-record/src/lib.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_user_search_test.go#TestMigrationMCPUserSearchPreservesSchemaFiltersLogicalPagesAndValidation",
+        "crates/pixiv-mcp/tests/user_search.rs#user_search_preserves_go_schema_records_filters_pages_and_saved_account_validation",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserSearchPreservesCaseInsensitiveFieldsAndOrderedDuplicateMerges"
+      ],
+      "verified_platforms": [
+        "linux-amd64"
+      ],
+      "differences": [
+        "Go の182ケースと schema を Linux amd64 で直接呼出し・stdio・保存済み account stdio から比較。workspace の必須チェック（Formatter・Clippy・158 tests・release build）は Linux amd64 で成功。全 schema/数値構文、取消/deadline・pool replay・disconnect、実 HTTPS、共有通信と他 OS/arch は未検証。",
+        "共有 wire JSON の既知差分: Go は大小文字を区別せず USER_PREVIEWS/USER/ID/NAME 等を受理し、case が異なる重複キーでも入力順の後勝ちと duplicate object の既存 field への merge を行う。Go の5ケースで固定したが Rust Serde/Value は同じ契約を満たさず、NAME の値の欠落等が残る。正しい共有 wire decoder の移植と Rust の同一比較は次工程で行う。任意の map lowercasing では重複/順序を維持できないため代替しない。"
+      ]
     },
     {
       "id": "mcp:pixiv:stamp_artwork_comment",
@@ -6906,18 +6931,28 @@
     },
     {
       "id": "sdk/pixiv:Client.SearchUsers",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.SearchUsers"
       },
-      "rust_sources": [],
-      "tests": [
-        "sdk/pixiv/migration_user_search_test.go#TestMigrationUserSearchPreservesConditionsDTOsPagesAndCursorBinding"
+      "rust_sources": [
+        "crates/pixiv-sdk/src/user_search.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
       ],
-      "verified_platforms": [],
+      "tests": [
+        "sdk/pixiv/migration_user_search_test.go#TestMigrationUserSearchPreservesConditionsDTOsPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/search_users.rs#user_search_matches_go_conditions_dtos_pages_and_global_cursor_binding",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserSearchPreservesCaseInsensitiveFieldsAndOrderedDuplicateMerges"
+      ],
+      "verified_platforms": [
+        "linux-amd64"
+      ],
       "differences": [
-        "Go の64ケースでユーザー検索の入力、DTO、継続 URL、cursor を固定。Rust SDK・CLI・MCP は未実装で、比較は未実行。"
+        "Go の64ケースと Rust SDK を Linux amd64 で比較。MCP の182ケースも比較済み、CLI の279ケースも比較済み。workspace の必須チェック（Formatter・Clippy・158 tests・release build）は Linux amd64 で成功。共有通信、取消/deadline・pool、resource の実取得、実 HTTPS、全 SDK Options と他 OS/arch は未検証。",
+        "共有 wire JSON の既知差分: Go は大小文字を区別せず USER_PREVIEWS/USER/ID/NAME 等を受理し、case が異なる重複キーでも入力順の後勝ちと duplicate object の既存 field への merge を行う。Go の5ケースで固定したが Rust Serde/Value は同じ契約を満たさず、NAME の値の欠落等が残る。正しい共有 wire decoder の移植と Rust の同一比較は次工程で行う。任意の map lowercasing では重複/順序を維持できないため代替しない。"
       ]
     },
     {
@@ -9848,15 +9883,29 @@
     },
     {
       "id": "sdk/pixiv:SearchUsersRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:SearchUsersRequest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/user_search.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_user_search_test.go#TestMigrationUserSearchPreservesConditionsDTOsPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/search_users.rs#user_search_matches_go_conditions_dtos_pages_and_global_cursor_binding",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserSearchPreservesCaseInsensitiveFieldsAndOrderedDuplicateMerges"
+      ],
+      "verified_platforms": [
+        "linux-amd64"
+      ],
+      "differences": [
+        "Go の64ケースと Rust SDK を Linux amd64 で比較。MCP の182ケースも比較済み、CLI の279ケースも比較済み。workspace の必須チェック（Formatter・Clippy・158 tests・release build）は Linux amd64 で成功。共有通信、取消/deadline・pool、resource の実取得、実 HTTPS、全 SDK Options と他 OS/arch は未検証。",
+        "共有 wire JSON の既知差分: Go は大小文字を区別せず USER_PREVIEWS/USER/ID/NAME 等を受理し、case が異なる重複キーでも入力順の後勝ちと duplicate object の既存 field への merge を行う。Go の5ケースで固定したが Rust Serde/Value は同じ契約を満たさず、NAME の値の欠落等が残る。正しい共有 wire decoder の移植と Rust の同一比較は次工程で行う。任意の map lowercasing では重複/順序を維持できないため代替しない。"
+      ]
     },
     {
       "id": "sdk/pixiv:SetAIArtworkVisibilityRequest",
@@ -10546,15 +10595,29 @@
     },
     {
       "id": "sdk/pixiv:ToUserPreviewDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ToUserPreviewDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/user_search.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_user_search_test.go#TestMigrationUserSearchPreservesConditionsDTOsPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/search_users.rs#user_search_matches_go_conditions_dtos_pages_and_global_cursor_binding",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserSearchPreservesCaseInsensitiveFieldsAndOrderedDuplicateMerges"
+      ],
+      "verified_platforms": [
+        "linux-amd64"
+      ],
+      "differences": [
+        "Go の64ケースと Rust SDK を Linux amd64 で比較。MCP の182ケースも比較済み、CLI の279ケースも比較済み。workspace の必須チェック（Formatter・Clippy・158 tests・release build）は Linux amd64 で成功。共有通信、取消/deadline・pool、resource の実取得、実 HTTPS、全 SDK Options と他 OS/arch は未検証。",
+        "共有 wire JSON の既知差分: Go は大小文字を区別せず USER_PREVIEWS/USER/ID/NAME 等を受理し、case が異なる重複キーでも入力順の後勝ちと duplicate object の既存 field への merge を行う。Go の5ケースで固定したが Rust Serde/Value は同じ契約を満たさず、NAME の値の欠落等が残る。正しい共有 wire decoder の移植と Rust の同一比較は次工程で行う。任意の map lowercasing では重複/順序を維持できないため代替しない。"
+      ]
     },
     {
       "id": "sdk/pixiv:ToUserProfileDTO",
@@ -11161,27 +11224,55 @@
     },
     {
       "id": "sdk/pixiv:UserPreview",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:UserPreview"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/user_search.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_user_search_test.go#TestMigrationUserSearchPreservesConditionsDTOsPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/search_users.rs#user_search_matches_go_conditions_dtos_pages_and_global_cursor_binding",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserSearchPreservesCaseInsensitiveFieldsAndOrderedDuplicateMerges"
+      ],
+      "verified_platforms": [
+        "linux-amd64"
+      ],
+      "differences": [
+        "Go の64ケースと Rust SDK を Linux amd64 で比較。MCP の182ケースも比較済み、CLI の279ケースも比較済み。workspace の必須チェック（Formatter・Clippy・158 tests・release build）は Linux amd64 で成功。共有通信、取消/deadline・pool、resource の実取得、実 HTTPS、全 SDK Options と他 OS/arch は未検証。",
+        "共有 wire JSON の既知差分: Go は大小文字を区別せず USER_PREVIEWS/USER/ID/NAME 等を受理し、case が異なる重複キーでも入力順の後勝ちと duplicate object の既存 field への merge を行う。Go の5ケースで固定したが Rust Serde/Value は同じ契約を満たさず、NAME の値の欠落等が残る。正しい共有 wire decoder の移植と Rust の同一比較は次工程で行う。任意の map lowercasing では重複/順序を維持できないため代替しない。"
+      ]
     },
     {
       "id": "sdk/pixiv:UserPreviewDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:UserPreviewDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/user_search.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_user_search_test.go#TestMigrationUserSearchPreservesConditionsDTOsPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/search_users.rs#user_search_matches_go_conditions_dtos_pages_and_global_cursor_binding",
+        "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserSearchPreservesCaseInsensitiveFieldsAndOrderedDuplicateMerges"
+      ],
+      "verified_platforms": [
+        "linux-amd64"
+      ],
+      "differences": [
+        "Go の64ケースと Rust SDK を Linux amd64 で比較。MCP の182ケースも比較済み、CLI の279ケースも比較済み。workspace の必須チェック（Formatter・Clippy・158 tests・release build）は Linux amd64 で成功。共有通信、取消/deadline・pool、resource の実取得、実 HTTPS、全 SDK Options と他 OS/arch は未検証。",
+        "共有 wire JSON の既知差分: Go は大小文字を区別せず USER_PREVIEWS/USER/ID/NAME 等を受理し、case が異なる重複キーでも入力順の後勝ちと duplicate object の既存 field への merge を行う。Go の5ケースで固定したが Rust Serde/Value は同じ契約を満たさず、NAME の値の欠落等が残る。正しい共有 wire decoder の移植と Rust の同一比較は次工程で行う。任意の map lowercasing では重複/順序を維持できないため代替しない。"
+      ]
     },
     {
       "id": "sdk/pixiv:UserProfile",

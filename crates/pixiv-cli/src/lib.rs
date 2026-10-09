@@ -4,6 +4,7 @@ pub mod novel_search;
 pub mod ranking;
 pub mod search;
 pub mod trending;
+pub mod user_search;
 
 use pixiv_app::{execution::Execution, lifecycle::Context, scheduler::SchedulerError};
 use pixiv_sdk::{Client, Error, Reason, transport::Transport};

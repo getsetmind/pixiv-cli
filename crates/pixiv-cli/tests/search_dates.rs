@@ -100,8 +100,11 @@ async fn search_date_flags_match_go_queries_and_process_errors_before_client_con
                 continue;
             }
             process_cases += 1;
+            let home = tempfile::tempdir().unwrap();
             let output = Command::new(env!("CARGO_BIN_EXE_pixiv"))
                 .args(&case.args)
+                .env("HOME", home.path())
+                .env("USERPROFILE", home.path())
                 .env("PIXIV_ACCESS_TOKEN", "")
                 .env("https_proxy", "invalid proxy fixture")
                 .env_remove("HTTPS_PROXY")

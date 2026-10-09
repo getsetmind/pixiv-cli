@@ -130,10 +130,10 @@ async fn collect<T: Transport>(
             }
         },
         |artwork: &Artwork| {
-            Ok(!input
+            Ok(input
                 .illust_filter
                 .as_ref()
-                .is_some_and(|filter| !crate::search::matches(artwork, filter, &local))
+                .is_none_or(|filter| crate::search::matches(artwork, filter, &local))
                 && seen.insert(artwork.id))
         },
         None::<fn(Cursor, usize) -> Result<Cursor, SchedulerError>>,

@@ -143,6 +143,15 @@ pub(crate) fn validate_schema_with_integer_binding(
     context: &str,
     binding: (&str, &str),
 ) -> Result<(), String> {
+    validate_schema_with_bindings(value, schema, path, context, &|_| binding)
+}
+pub(crate) fn validate_schema_with_bindings<'a>(
+    value: &mut Value,
+    schema: &Value,
+    path: &str,
+    context: &str,
+    binding: &impl Fn(&str) -> (&'a str, &'a str),
+) -> Result<(), String> {
     let expected = schema["type"].as_str().unwrap_or_default();
     let actual = crate::stdio::value_type(value);
     if actual != expected {
@@ -172,6 +181,15 @@ pub(crate) fn validate_schema_with_integer_binding(
             display(value),
             minimum as f64
         ));
+    }
+    if let Some(minimum) = schema["minLength"].as_u64() {
+        let text = value.as_str().expect("string schema has minLength");
+        let length = text.chars().count();
+        if (length as u64) < minimum {
+            return Err(format!(
+                "{context}: minLength: {text:?} contains {length} Unicode code points, fewer than {minimum}"
+            ));
+        }
     }
     if let Some(pattern) = schema["pattern"].as_str()
         && !date_shape(value.as_str().unwrap_or_default())
@@ -212,7 +230,7 @@ pub(crate) fn validate_schema_with_integer_binding(
         }
         for (key, value) in map {
             let nested = format!("{path}/properties/{key}");
-            validate_schema_with_integer_binding(
+            validate_schema_with_bindings(
                 value,
                 &properties[key],
                 &nested,
@@ -223,7 +241,7 @@ pub(crate) fn validate_schema_with_integer_binding(
     } else if let Some(values) = value.as_array_mut() {
         for value in values {
             let nested = format!("{path}/items");
-            validate_schema_with_integer_binding(
+            validate_schema_with_bindings(
                 value,
                 &schema["items"],
                 &nested,
@@ -233,7 +251,12 @@ pub(crate) fn validate_schema_with_integer_binding(
         }
     } else if expected == "integer" {
         let decimal = value.as_f64().expect("integer fits float64").to_string();
-        let integer: i64 = decimal.parse().map_err(|_|format!("invalid params: json: cannot unmarshal number {decimal} into Go struct field {}.{} of type {}",binding.0,path.strip_prefix("/properties/").unwrap_or(path),binding.1))?;
+        let (structure, integer_type) = binding(path);
+        let field = path
+            .strip_prefix("/properties/")
+            .unwrap_or(path)
+            .replace("/properties/", ".");
+        let integer: i64 = decimal.parse().map_err(|_|format!("invalid params: json: cannot unmarshal number {decimal} into Go struct field {structure}.{field} of type {integer_type}"))?;
         *value = json!(integer);
     }
     Ok(())
@@ -529,17 +552,17 @@ async fn collect<T: Transport>(
                             .into(),
                     );
                 }
-                Ok(!input
+                Ok(input
                     .bookmark_min
-                    .is_some_and(|min| artwork.total_bookmarks < min)
-                    && !input
+                    .is_none_or(|min| artwork.total_bookmarks >= min)
+                    && input
                         .bookmark_max
-                        .is_some_and(|max| artwork.total_bookmarks > max))
+                        .is_none_or(|max| artwork.total_bookmarks <= max))
             } else if !bookmark_branch {
-                Ok(!input
+                Ok(input
                     .illust_filter
                     .as_ref()
-                    .is_some_and(|filter| !matches(artwork, filter, &local_type))
+                    .is_none_or(|filter| matches(artwork, filter, &local_type))
                     && seen.insert(format!("{}:{}", kind(artwork), artwork.id)))
             } else {
                 Ok(true)

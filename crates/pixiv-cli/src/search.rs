@@ -146,6 +146,57 @@ impl SearchInput {
         })
     }
 
+    pub fn user_request(
+        &self,
+        options: &SearchOptions,
+        word: &str,
+    ) -> Result<pixiv_sdk::pixiv::SearchUsersRequest, CommandError> {
+        if self
+            .entity
+            .as_deref()
+            .is_some_and(|entity| !matches!(entity, "novel" | "artwork" | "user"))
+        {
+            return Err(CommandError::Message(
+                "type must be one of artwork, novel, user",
+            ));
+        }
+        for name in [
+            "content-type",
+            "resolution",
+            "aspect-ratio",
+            "draw-tool",
+            "ai-mode",
+            "bookmark-min",
+            "bookmark-max",
+            "bookmark-strategy",
+        ] {
+            if self.changed_flags.contains(&name) {
+                return Err(CommandError::MessageText(format!(
+                    "--{name} is only supported when --type artwork"
+                )));
+            }
+        }
+        for name in [
+            "search-by",
+            "sort",
+            "period",
+            "start-date",
+            "end-date",
+            "rating",
+        ] {
+            if self.changed_flags.contains(&name) {
+                return Err(CommandError::MessageText(format!(
+                    "--{name} is only supported when --type artwork or novel"
+                )));
+            }
+        }
+        options.plan()?;
+        Ok(pixiv_sdk::pixiv::SearchUsersRequest {
+            word: word.into(),
+            ..Default::default()
+        })
+    }
+
     pub fn validate_trending_arguments(&self) -> Result<(), CommandError> {
         if !self.query.is_empty() {
             return Err(CommandError::Message(

@@ -1,5 +1,5 @@
 use chrono::DateTime;
-use pixiv_cli_rs::search::SearchOptions;
+use pixiv_cli_rs::{CommandError, finish_command, search::SearchOptions};
 use pixiv_sdk::{
     Client, Result,
     transport::{Request, Response, Transport},
@@ -28,6 +28,30 @@ struct Case {
     exit: i32,
 }
 
+#[derive(Deserialize)]
+struct Startup {
+    name: String,
+    mode: String,
+    stdout: String,
+    stderr: String,
+    exit: i32,
+    config: bool,
+    database: bool,
+}
+
+fn assert_diagnostics(actual: &[u8], expected: &str, mode: &str, name: &str) {
+    if mode == "human" {
+        assert_eq!(actual, expected.as_bytes(), "{name}");
+    } else {
+        assert_eq!(
+            serde_json::from_slice::<Value>(actual).unwrap(),
+            serde_json::from_str::<Value>(expected).unwrap(),
+            "{name}"
+        );
+        assert_eq!(actual.iter().filter(|byte| **byte == b'\n').count(), 1);
+    }
+}
+
 struct Fixture(Queries);
 impl Transport for Fixture {
     async fn send(&self, request: Request) -> Result<Response> {
@@ -53,6 +77,9 @@ async fn search_selectors_match_go_queries_normalization_validation_order_and_pr
     ))
     .unwrap();
     assert_eq!(cases.len(), 210);
+    let startups: Vec<Startup> =
+        serde_json::from_str(include_str!("fixtures/search-options-startup.json")).unwrap();
+    assert_eq!(startups.len(), 99);
     let mut processes = 0;
     let mut successes = 0;
     for case in cases {
@@ -79,22 +106,47 @@ async fn search_selectors_match_go_queries_normalization_validation_order_and_pr
             DateTime::parse_from_rfc3339("2024-02-29T12:00:00+09:00").unwrap(),
         );
         assert_eq!(usize::from(prepared.is_ok()), case.calls, "{}", case.name);
-        let error = match prepared {
+        let result = match prepared {
             Ok(request) => client
                 .search_artworks(request)
                 .await
-                .err()
-                .map(|error| error.to_string())
-                .unwrap_or_default(),
-            Err(error) => error.to_string(),
+                .map(|_| ())
+                .map_err(CommandError::from),
+            Err(error) => Err(error),
         };
+        let error = result
+            .as_ref()
+            .err()
+            .map(ToString::to_string)
+            .unwrap_or_default();
         assert_eq!(error, case.error, "{}", case.name);
         assert_eq!(*seen.lock().unwrap(), case.queries, "{}", case.name);
         if !case.error.is_empty() {
+            assert!(case.stdout.is_empty());
+            let mut diagnostics = vec![];
+            assert_eq!(
+                finish_command(
+                    result,
+                    case.mode == "ndjson",
+                    case.mode != "human",
+                    &mut diagnostics
+                ),
+                case.exit,
+                "{}",
+                case.name
+            );
+            assert_diagnostics(&diagnostics, &case.stderr, &case.mode, &case.name);
+            let startup = startups
+                .iter()
+                .find(|startup| startup.name == case.name && startup.mode == case.mode)
+                .unwrap();
             processes += 1;
+            let home = tempfile::tempdir().unwrap();
             let mut command = Command::new(env!("CARGO_BIN_EXE_pixiv"));
             command
                 .args(&case.args)
+                .env("HOME", home.path())
+                .env("USERPROFILE", home.path())
                 .env("PIXIV_ACCESS_TOKEN", "")
                 .env_remove("https_proxy")
                 .env_remove("HTTPS_PROXY");
@@ -104,31 +156,21 @@ async fn search_selectors_match_go_queries_normalization_validation_order_and_pr
             let output = command.output().unwrap();
             assert_eq!(
                 output.status.code(),
-                Some(case.exit),
+                Some(startup.exit),
                 "{} {:?}",
                 case.name,
                 case.args
             );
-            assert_eq!(String::from_utf8(output.stdout).unwrap(), case.stdout);
-            if case.mode == "human" {
-                assert_eq!(
-                    String::from_utf8(output.stderr).unwrap(),
-                    case.stderr,
-                    "{}",
-                    case.name
-                );
-            } else {
-                assert_eq!(
-                    serde_json::from_slice::<Value>(&output.stderr).unwrap(),
-                    serde_json::from_str::<Value>(&case.stderr).unwrap(),
-                    "{}",
-                    case.name
-                );
-                assert_eq!(
-                    output.stderr.iter().filter(|byte| **byte == b'\n').count(),
-                    1
-                );
-            }
+            assert_eq!(String::from_utf8(output.stdout).unwrap(), startup.stdout);
+            assert_diagnostics(&output.stderr, &startup.stderr, &case.mode, &case.name);
+            assert_eq!(
+                home.path().join(".pixiv-cli/config.toml").exists(),
+                startup.config
+            );
+            assert_eq!(
+                home.path().join(".pixiv-cli/pixiv-cli.db").exists(),
+                startup.database
+            );
         } else {
             successes += 1;
             assert_eq!(case.exit, 0);

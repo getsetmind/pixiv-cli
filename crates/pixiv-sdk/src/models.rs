@@ -178,3 +178,10 @@ pub struct UserDetail {
     pub profile_publicity: UserProfilePublicity,
     pub workspace: UserWorkspace,
 }
+
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct UserPreview {
+    pub user: User,
+    pub illusts: Vec<Artwork>,
+    pub novels: Vec<Novel>,
+}

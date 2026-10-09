@@ -10,11 +10,13 @@ use std::sync::{Arc, Mutex};
 pub struct SavedTransport<T> {
     inner: T,
     database: Arc<Mutex<Database>>,
+    opens: Arc<std::sync::atomic::AtomicUsize>,
 }
 
 impl<T: Transport> Transport for SavedTransport<T> {
     async fn send(&self, request: Request) -> pixiv_sdk::Result<Response> {
         if request.operation == "Open" {
+            self.opens.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
             assert!(
                 request
                     .parameters
@@ -43,6 +45,7 @@ impl<T: Transport> Transport for SavedTransport<T> {
 
 pub struct SavedExecution<T> {
     pub execution: Execution<SavedTransport<T>>,
+    pub _opens: Arc<std::sync::atomic::AtomicUsize>,
     _directory: tempfile::TempDir,
 }
 
@@ -56,14 +59,18 @@ pub fn saved_execution<T: Transport + Clone + 'static>(inner: T) -> SavedExecuti
         .unwrap();
     let database = Arc::new(Mutex::new(database));
     let factory_database = database.clone();
+    let opens = Arc::new(std::sync::atomic::AtomicUsize::new(0));
+    let factory_opens = opens.clone();
     let execution = Execution::new(Store::new(path), database, move |_| {
         Ok(SavedTransport {
             inner: inner.clone(),
             database: factory_database.clone(),
+            opens: factory_opens.clone(),
         })
     });
     SavedExecution {
         execution,
+        _opens: opens,
         _directory: directory,
     }
 }

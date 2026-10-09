@@ -54,6 +54,12 @@ impl JsonSpool {
     ) -> Result<(), CommandError> {
         self.append_dtos(items.iter().map(pixiv_sdk::dto::NovelDto::from))
     }
+    pub(crate) fn append_users(
+        &mut self,
+        items: &[pixiv_sdk::models::UserPreview],
+    ) -> Result<(), CommandError> {
+        self.append_dtos(items.iter().map(pixiv_sdk::dto::UserPreviewDto::from))
+    }
     fn append_dtos<T: serde::Serialize>(
         &mut self,
         items: impl IntoIterator<Item = T>,

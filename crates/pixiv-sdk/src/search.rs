@@ -168,7 +168,7 @@ fn queries(
         ("tool", &request.tool, false),
         ("cursor_context", &request.cursor_context, false),
     ] {
-        if !value.is_empty() && !(skip_all && value == "all") {
+        if !(value.is_empty() || skip_all && value == "all") {
             digest.insert(key.into(), value.clone());
         }
     }

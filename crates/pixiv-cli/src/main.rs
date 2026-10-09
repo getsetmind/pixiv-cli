@@ -260,21 +260,30 @@ async fn execute(args: Arguments, ndjson_output: &mut bool) -> Result<(), Comman
         }
         _ => None,
     };
+    let user_search_request = match &args.command {
+        Command::Search { input, options, .. }
+            if !input.trending_tags && input.entity.as_deref() == Some("user") =>
+        {
+            Some(input.user_request(
+                options,
+                search_word.as_deref().expect("search input was resolved"),
+            )?)
+        }
+        _ => None,
+    };
     let search_request = match &args.command {
         Command::Search { input, options, .. }
-            if !input.trending_tags && novel_search_request.is_none() =>
+            if !input.trending_tags
+                && novel_search_request.is_none()
+                && user_search_request.is_none() =>
         {
-            if let Some(entity) = input
+            if input
                 .entity
                 .as_deref()
-                .filter(|entity| *entity != "artwork")
+                .is_some_and(|entity| entity != "artwork")
             {
                 return Err(CommandError::Message(
-                    if matches!(entity, "novel" | "user") {
-                        "user search is not implemented yet"
-                    } else {
-                        "type must be one of artwork, novel, user"
-                    },
+                    "type must be one of artwork, novel, user",
                 ));
             }
             Some(options.request(
@@ -332,6 +341,21 @@ async fn execute(args: Arguments, ndjson_output: &mut bool) -> Result<(), Comman
         }
         if novel_search_request.is_some() {
             return pixiv_cli_rs::novel_search::saved_novel_search(
+                &execution,
+                &pixiv_app::lifecycle::Context::new(),
+                (
+                    input,
+                    options.as_ref(),
+                    search_word.as_deref().expect("search input was resolved"),
+                ),
+                proxy,
+                mode,
+                io::stdout(),
+            )
+            .await;
+        }
+        if user_search_request.is_some() {
+            return pixiv_cli_rs::user_search::saved_user_search(
                 &execution,
                 &pixiv_app::lifecycle::Context::new(),
                 (

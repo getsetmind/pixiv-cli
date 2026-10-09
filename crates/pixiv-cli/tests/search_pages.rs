@@ -118,8 +118,11 @@ async fn search_rating_and_logical_pages_match_go_without_dropping_duplicates_or
         } else {
             assert!(case.stdout.is_empty());
             if case.calls == 0 {
+                let home = tempfile::tempdir().unwrap();
                 let output = Command::new(env!("CARGO_BIN_EXE_pixiv"))
                     .args(case.args)
+                    .env("HOME", home.path())
+                    .env("USERPROFILE", home.path())
                     .env("PIXIV_ACCESS_TOKEN", "")
                     .env("https_proxy", "invalid proxy fixture")
                     .env_remove("HTTPS_PROXY")

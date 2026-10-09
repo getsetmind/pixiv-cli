@@ -952,8 +952,33 @@ Rust の互換入口は受理したオプションを共通の SearchInput/Searc
 検証環境は Windows amd64。全 ID/URL 構文・JSON/数値構文、record/text 入力パイプ・aggregate JSON、TTY/出力 override/全 flag、部分 writer 失敗、取消/deadline・pool replay・disconnect、resource の実取得、実 HTTPS と他 OS/arch は未検証である。
 
 
-## ユーザー検索の Go 契約
+## ユーザー検索の SDK・CLI・MCP
 
-[user-search.json](contracts/user-search.json) は Go の64ケースである。SDK SearchUsers の検索語、UserPreview DTO、必須 user_previews と正のユーザー ID、フィールドの null・不正型、継続 URL、global cursor と検索語 binding を固定する。query は word と継続時の offset を使う。応答に含まれる illusts/novels は不正型の場合も無視し、DTO は両方を空配列として出力する。
+[user-search.json](contracts/user-search.json) は Go の64ケースである。SDK SearchUsers の検索語、UserPreview DTO、必須 user_previews と正のユーザー ID、フィールドの null・不正型、継続 URL、global cursor と検索語 binding を固定する。query は word と継続時の offset を使う。Go の検索応答に含まれる illusts/novels は不正型の場合も無視し、DTO では両方を空配列として出力する。
 
-検証環境は Windows amd64。Rust SDK・CLI・MCP のユーザー検索は未実装であり、Rust 比較は未実行。次の工程では本 fixture を使う Rust 契約テストを書き、検索を実装する。CLI の出力・論理ページ・禁止フラグ、MCP の schema・ローカル ID filter・空検索語の検証順も Go の実入口で固定してから接続する。
+これに対応する Rust SDK の `search_users` は、既存の cursor・継続 URL・User mapper と resource registry を使う。型付きの UserPreview と UserPreviewDto を追加し、Linux amd64 で同じ64ケースを比較した。canonical user record の preview envelope と正の ID も外部テストで確認した。
+
+[cli-user-search.json](../../crates/pixiv-cli/tests/fixtures/cli-user-search.json) は Go の実 CLI から取得した279ケースである。human/JSON/NDJSON、論理ページ、空の batch の補充、重複、後続ページの失敗、writer 失敗、禁止フラグと実子プロセスの起動順を固定する。Rust の `search --type user` は既存の stdin・設定・認証・proxy・ページ処理・JSON spool・NDJSON・writer commit 処理へ接続し、直接 SDK・保存済みアカウント・実子プロセスの各比較が通った。`pixiv user search` の互換入口は今回の範囲に含めず、未移植として残す。
+
+[mcp-user-search.json](contracts/mcp-user-search.json) は実 Go MCP の schema と182ケースである。SDK 応答、ローカル ID filter、重複の除去、filter で空になる batch の補充、論理ページ、部分取得後の失敗、schema と validation の順序を固定した。Rust の直接呼出し・stdio・保存済みアカウント stdio から同じ182ケースを比較し、既存の list/pagination/record と schema の数値 binding を使う。
+
+Go の大小文字・重複キー処理は、Rust の共有 wire decoder に既知の差分がある。Go の追加5ケースで、大文字・大小混在の USER_PREVIEWS/USER/ID/NAME/ACCOUNT、case が異なる同名フィールドの入力順による後勝ち、重複 user オブジェクトの field merge を固定した。Rust では NAME の値が欠落するなど、同じ契約を満たしていない。対応する Rust 比較は未実装であり、共有 wire の次工程で修正する。単純な map の小文字化では、重複キーと入力順の契約を維持できない。
+
+検証環境は Linux amd64。共有通信、全 input/flag/help・TTY、CLI 正常子プロセスの実 HTTPS、取消/deadline・pool replay・disconnect、resource の実取得、他 OS/arch は未検証である。全契約の検証状態は引き続き in_progress とする。
+
+### 2026-10-09 cloud Linux amd64 の検証状態
+
+Go の SDK・CLI・MCP の対象比較と `go vet ./internal/cli ./sdk/pixiv ./internal/mcpserver/pixiv` は成功した。公開契約の manifest・SDK・MCP schema・台帳を確認する `go test ./scripts/tests/migration -run '^TestMigration' -count=1` も成功した。Go 本番コード・go.mod・go.sum は固定参照コミットとの差分がない。
+
+Rust の SDK・record・MCP の全テストは81 passed、0 failed、0 ignored で、同じ3 crate の all-target Clippy も成功した。Rust 1.93 の nonminimal_bool を満たすため、既存 SDK 検索の query 条件と MCP 検索・ランキングの filter/bookmark 条件を論理的に等価な式へ変更し、既存の検索・ランキング比較も通した。条件、範囲、重複除去の機能は変えず、warning の許可設定は追加していない。
+
+依存取得では、CONNECT 403・実行取消と公式 Go proxy の archive redirect 失敗が発生した。同じ公式経路の通常の再取得で依存がそろい、Go CLI fixture の取得と offline の Rust workspace Clippy まで成功した。途中の実行取消では終了 status を取得できなかったため、その実行を成功に数えていない。
+
+workspace の実テストで、追加した search_user を含めた catalog の検証と、既存 bookmark/date/options/page テストの隔離 HOME が不足していたことを確認した。catalog は既存7ツールの schema 比較を維持して8番目の search_user を追加し、各子プロセスには一時 HOME/USERPROFILE を指定した。
+
+selector の従来 fixture は認証済み owner/SDK を注入した比較であり、SDK 内の sort validation error を未認証の実起動に流用していた。既存の SDK error/envelope の比較は維持し、[search-options-startup.json](../../crates/pixiv-cli/tests/fixtures/search-options-startup.json) の別の99ケースで、Go の実起動の診断と config/DB 作成順を比較した。これは元の期待値の緩和ではなく、注入済み SDK と実起動を異なる実行条件として別々に検証する変更である。対応する Rust 比較は成功した。
+
+
+最終の `scripts/check-rust.ps1` は Linux amd64 で終了0となり、本番ソースのテスト属性検査、Formatter、workspace all-target Clippy、workspace テスト（158 passed、0 failed、3 ignored）、release build が成功した。3 ignored は既存の Go account/DB 相互テスト用の入口2件と、親テストから実行する spool 子プロセス用の入口1件であり、新たな skip/ignore は追加していない。最終チェックは約134秒、初回の release build は約61秒だった。Go の参照テスト、Rust のテストと本番 build を実 Pixiv 資格情報・ライブアクセスなしで実行した。
+
+今回の実装・比較・環境回復は約33分で、その中には依存取得と実行取消の調査、既存テストの隔離 HOME と実行条件の修正も含む。最終の検証時間だけから工程全体の遅延原因を断定しない。ユーザー検索の入口は接続済みだが、大小文字・重複キーの共有 wire 差分と前述の未検証範囲があるため、全契約の verified や Rust への最終切替とは扱わない。
