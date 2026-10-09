@@ -121,3 +121,60 @@ pub struct Novel {
     pub total_views: i64,
     pub cover: ImageResource,
 }
+
+#[derive(Clone, Debug, Default, PartialEq, Serialize)]
+pub struct UserProfile {
+    pub webpage: String,
+    pub gender: String,
+    pub birth_day: String,
+    pub birth_year: i64,
+    pub region: String,
+    pub country_code: String,
+    pub job: String,
+    pub total_follow_users: i64,
+    pub total_my_pixiv_users: i64,
+    pub total_illusts: i64,
+    pub total_manga: i64,
+    pub total_novels: i64,
+    pub total_illust_bookmarks: i64,
+    pub total_illust_series: i64,
+    pub total_novel_series: i64,
+    pub background_image_url: String,
+    pub twitter_account: String,
+    pub twitter_url: String,
+    pub pawoo_url: String,
+    pub is_premium: bool,
+    pub is_using_custom_profile_image: bool,
+}
+#[derive(Clone, Debug, Default, PartialEq, Serialize)]
+pub struct UserWorkspace {
+    pub pc: String,
+    pub monitor: String,
+    pub tool: String,
+    pub scanner: String,
+    pub tablet: String,
+    pub mouse: String,
+    pub printer: String,
+    pub desktop: String,
+    pub music: String,
+    pub desk: String,
+    pub chair: String,
+    pub comment: String,
+    pub workspace_image_url: String,
+}
+#[derive(Clone, Debug, Default, PartialEq, Serialize)]
+pub struct UserProfilePublicity {
+    pub gender: bool,
+    pub region: bool,
+    pub birth_day: bool,
+    pub birth_year: bool,
+    pub job: bool,
+    pub pawoo: bool,
+}
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct UserDetail {
+    pub user: User,
+    pub profile: UserProfile,
+    pub profile_publicity: UserProfilePublicity,
+    pub workspace: UserWorkspace,
+}

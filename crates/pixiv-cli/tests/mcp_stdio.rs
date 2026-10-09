@@ -69,8 +69,12 @@ fn mcp_process_exchanges_jsonrpc_without_stdout_diagnostics_or_credentials() {
         pixiv_mcp::search_novel_tool()
     );
     assert_eq!(
+        by_id("list")["result"]["tools"][6],
+        pixiv_mcp::user_detail_tool()
+    );
+    assert_eq!(
         by_id("list")["result"]["tools"].as_array().unwrap().len(),
-        6
+        7
     );
     assert_eq!(
         by_id("invalid")["result"]["content"][0]["text"],

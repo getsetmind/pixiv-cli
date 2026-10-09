@@ -439,3 +439,5 @@ pub(crate) fn headers(token: Option<&str>) -> Vec<(String, String)> {
 fn malformed(operation: &'static str) -> Error {
     Error::new(Reason::MalformedUpstreamResponse, operation)
 }
+
+pub use crate::user_detail::UserRequest;

@@ -921,7 +921,7 @@ Rust の CLI は保存済みアカウントから `Execution::read` で型付き
 
 [mcp-novel-detail.json](contracts/mcp-novel-detail.json) は実 Go MCP session の schema と43ケースである。Rust の直接呼出し、stdio、保存済みアカウントの stdio で record/result と要求数を比較する。required novel_id、未知 key、非整数、float64 経由の int64 overflow の拒否を含む。整数の schema 検証は既存検索と共有し、Go の構造体名と整数型に対応する診断を操作ごとに保持する。公開カタログに novel_detail を追加し、既存4ツールも維持する。
 
-検証環境は Windows amd64。小説の record/text 入力パイプ、aggregate JSON、全 flag 構文/help・TTY/出力 override、部分 writer 失敗、取消/deadline、全数値/JSON 構文、実 HTTPS と他 OS/arch は未検証。小説検索は次節の範囲で接続した。シリーズ・ユーザー詳細は別の未移植項目として残る。
+検証環境は Windows amd64。小説の record/text 入力パイプ、aggregate JSON、全 flag 構文/help・TTY/出力 override、部分 writer 失敗、取消/deadline、全数値/JSON 構文、実 HTTPS と他 OS/arch は未検証。小説検索は次節の範囲で接続した。シリーズ操作は別の未移植項目として残る。ユーザー詳細は後述の範囲で接続した。
 
 ## 小説検索の SDK・CLI・MCP
 
@@ -940,3 +940,13 @@ Rust の CLI は保存済みアカウントから `Execution::read` で型付き
 Rust の互換入口は受理したオプションを共通の SearchInput/SearchOptions へ変換し、既存の小説検索へ渡す。公開するフラグを Go の互換入口に限定し、未知の長いオプションは起動時に Go と同じ usage 診断へ変換する。NUL を含む検索語も実起動では stdin 経由で比較する。
 
 検証環境は Windows amd64。グループ単体の入力/help、全 flag 構文と診断順、全 bool/整数境界、実 TTY/HTTPS、部分 writer 失敗・取消・pool replay と他 OS/arch は未検証である。
+
+## ユーザー詳細の SDK・CLI・MCP
+
+[user-detail.json](contracts/user-detail.json) は Go の145ケースである。user/profile/profile_publicity/workspace の必須オブジェクト、正の ID、profile/workspace の全フィールドの null と不正型、公開範囲の bool/public/private、profile image、method/path/query を固定する。DTO に出さない birth/address_id/job_id も型を検証する。Rust の Profile/Workspace DTO はモデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。
+
+[user-output.json](contracts/user-output.json) は Go の66ケースである。human の全 profile/workspace 表示、完全な JSON envelope、canonical user record の NDJSON、空・不正応答、Web ページ URL の user-info/query/fragment 除去と16種類の入力を比較する。直接 SDK と保存済みアカウントの両経路を使い、refresh CAS 保存と Bearer 使用を確認する。[user-startup.json](contracts/user-startup.json) の24ケースは実 Rust 子プロセスで入力と設定の優先順、ユーザー URL、content/type の拒否、設定・DB 作成順を比較する。
+
+[mcp-user-detail.json](contracts/mcp-user-detail.json) は実 Go MCP の schema と14ケースである。直接呼出し・stdio・保存済みアカウント stdio で complete envelope を持つ user record、要求数、required user_id、未知 key、非整数と float64 経由の int64 overflow、不正応答を比較する。公開カタログへ user_detail を追加する。
+
+検証環境は Windows amd64。全 ID/URL 構文・JSON/数値構文、record/text 入力パイプ・aggregate JSON、TTY/出力 override/全 flag、部分 writer 失敗、取消/deadline・pool replay・disconnect、resource の実取得、実 HTTPS と他 OS/arch は未検証である。

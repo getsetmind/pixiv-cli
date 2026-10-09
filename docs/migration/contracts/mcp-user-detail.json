@@ -1,0 +1,1161 @@
+{
+  "tool": {
+    "description": "Get a user's complete profile through the authenticated Pixiv SDK.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "user_id": {
+          "description": "Positive Pixiv user ID.",
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "type": "object"
+    },
+    "name": "user_detail",
+    "outputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "records": {
+          "items": {
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "url"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "type": "object"
+    }
+  },
+  "cases": [
+    {
+      "name": "rich",
+      "arguments": {
+        "user_id": 42
+      },
+      "body": {
+        "profile": {
+          "address_id": 17,
+          "background_image_url": "background_image_url \u003c\u0026\u003e",
+          "birth": "birth \u003c\u0026\u003e",
+          "birth_day": "birth_day \u003c\u0026\u003e",
+          "birth_year": 17,
+          "country_code": "country_code \u003c\u0026\u003e",
+          "gender": "gender \u003c\u0026\u003e",
+          "is_premium": true,
+          "is_using_custom_profile_image": true,
+          "job": "job \u003c\u0026\u003e",
+          "job_id": 17,
+          "pawoo_url": "pawoo_url \u003c\u0026\u003e",
+          "region": "region \u003c\u0026\u003e",
+          "total_follow_users": 17,
+          "total_illust_bookmarks_public": 17,
+          "total_illust_series": 17,
+          "total_illusts": 17,
+          "total_manga": 17,
+          "total_mypixiv_users": 17,
+          "total_novel_series": 17,
+          "total_novels": 17,
+          "twitter_account": "twitter_account \u003c\u0026\u003e",
+          "twitter_url": "twitter_url \u003c\u0026\u003e",
+          "webpage": "webpage \u003c\u0026\u003e"
+        },
+        "profile_publicity": {
+          "birth_day": true,
+          "birth_year": false,
+          "gender": "public",
+          "job": "public",
+          "pawoo": "private",
+          "region": "private"
+        },
+        "user": {
+          "account": "account",
+          "comment": "comment",
+          "id": 42,
+          "is_followed": true,
+          "name": "writer\n\u003c\u0026\u003e",
+          "profile_image_urls": {
+            "medium": "https://i.pximg.net/profile.jpg"
+          }
+        },
+        "workspace": {
+          "chair": "chair \u003c\u0026\u003e",
+          "comment": "comment \u003c\u0026\u003e",
+          "desk": "desk \u003c\u0026\u003e",
+          "desktop": "desktop \u003c\u0026\u003e",
+          "monitor": "monitor \u003c\u0026\u003e",
+          "mouse": "mouse \u003c\u0026\u003e",
+          "music": "music \u003c\u0026\u003e",
+          "pc": "pc \u003c\u0026\u003e",
+          "printer": "printer \u003c\u0026\u003e",
+          "scanner": "scanner \u003c\u0026\u003e",
+          "tablet": "tablet \u003c\u0026\u003e",
+          "tool": "tool \u003c\u0026\u003e",
+          "workspace_image_url": "workspace_image_url \u003c\u0026\u003e"
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "id": "42",
+              "profile": {
+                "background_image_url": "background_image_url \u003c\u0026\u003e",
+                "birth_day": "birth_day \u003c\u0026\u003e",
+                "birth_year": 17,
+                "country_code": "country_code \u003c\u0026\u003e",
+                "gender": "gender \u003c\u0026\u003e",
+                "is_premium": true,
+                "is_using_custom_profile_image": true,
+                "job": "job \u003c\u0026\u003e",
+                "pawoo_url": "pawoo_url \u003c\u0026\u003e",
+                "region": "region \u003c\u0026\u003e",
+                "total_follow_users": 17,
+                "total_illust_bookmarks": 17,
+                "total_illust_series": 17,
+                "total_illusts": 17,
+                "total_manga": 17,
+                "total_my_pixiv_users": 17,
+                "total_novel_series": 17,
+                "total_novels": 17,
+                "twitter_account": "twitter_account \u003c\u0026\u003e",
+                "twitter_url": "twitter_url \u003c\u0026\u003e",
+                "webpage": "webpage \u003c\u0026\u003e"
+              },
+              "profile_publicity": {
+                "birth_day": true,
+                "birth_year": false,
+                "gender": true,
+                "job": true,
+                "pawoo": false,
+                "region": false
+              },
+              "type": "user",
+              "url": "https://www.pixiv.net/users/42",
+              "user": {
+                "account": "account",
+                "comment": "comment",
+                "id": 42,
+                "is_followed": true,
+                "name": "writer\n\u003c\u0026\u003e",
+                "profile_image": {
+                  "height": 0,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPalF5TENKd0lqb3RNU3dpZGlJNkltMWxaR2wxYlNKOSJ9"
+                  },
+                  "variant": "medium",
+                  "width": 0
+                }
+              },
+              "workspace": {
+                "chair": "chair \u003c\u0026\u003e",
+                "comment": "comment \u003c\u0026\u003e",
+                "desk": "desk \u003c\u0026\u003e",
+                "desktop": "desktop \u003c\u0026\u003e",
+                "monitor": "monitor \u003c\u0026\u003e",
+                "mouse": "mouse \u003c\u0026\u003e",
+                "music": "music \u003c\u0026\u003e",
+                "pc": "pc \u003c\u0026\u003e",
+                "printer": "printer \u003c\u0026\u003e",
+                "scanner": "scanner \u003c\u0026\u003e",
+                "tablet": "tablet \u003c\u0026\u003e",
+                "tool": "tool \u003c\u0026\u003e",
+                "workspace_image_url": "workspace_image_url \u003c\u0026\u003e"
+              }
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "missing:user",
+      "arguments": {
+        "user_id": 42
+      },
+      "body": {
+        "profile": {
+          "address_id": 17,
+          "background_image_url": "background_image_url \u003c\u0026\u003e",
+          "birth": "birth \u003c\u0026\u003e",
+          "birth_day": "birth_day \u003c\u0026\u003e",
+          "birth_year": 17,
+          "country_code": "country_code \u003c\u0026\u003e",
+          "gender": "gender \u003c\u0026\u003e",
+          "is_premium": true,
+          "is_using_custom_profile_image": true,
+          "job": "job \u003c\u0026\u003e",
+          "job_id": 17,
+          "pawoo_url": "pawoo_url \u003c\u0026\u003e",
+          "region": "region \u003c\u0026\u003e",
+          "total_follow_users": 17,
+          "total_illust_bookmarks_public": 17,
+          "total_illust_series": 17,
+          "total_illusts": 17,
+          "total_manga": 17,
+          "total_mypixiv_users": 17,
+          "total_novel_series": 17,
+          "total_novels": 17,
+          "twitter_account": "twitter_account \u003c\u0026\u003e",
+          "twitter_url": "twitter_url \u003c\u0026\u003e",
+          "webpage": "webpage \u003c\u0026\u003e"
+        },
+        "profile_publicity": {
+          "birth_day": true,
+          "birth_year": false,
+          "gender": "public",
+          "job": "public",
+          "pawoo": "private",
+          "region": "private"
+        },
+        "workspace": {
+          "chair": "chair \u003c\u0026\u003e",
+          "comment": "comment \u003c\u0026\u003e",
+          "desk": "desk \u003c\u0026\u003e",
+          "desktop": "desktop \u003c\u0026\u003e",
+          "monitor": "monitor \u003c\u0026\u003e",
+          "mouse": "mouse \u003c\u0026\u003e",
+          "music": "music \u003c\u0026\u003e",
+          "pc": "pc \u003c\u0026\u003e",
+          "printer": "printer \u003c\u0026\u003e",
+          "scanner": "scanner \u003c\u0026\u003e",
+          "tablet": "tablet \u003c\u0026\u003e",
+          "tool": "tool \u003c\u0026\u003e",
+          "workspace_image_url": "workspace_image_url \u003c\u0026\u003e"
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:User: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "missing:profile",
+      "arguments": {
+        "user_id": 42
+      },
+      "body": {
+        "profile_publicity": {
+          "birth_day": true,
+          "birth_year": false,
+          "gender": "public",
+          "job": "public",
+          "pawoo": "private",
+          "region": "private"
+        },
+        "user": {
+          "account": "account",
+          "comment": "comment",
+          "id": 42,
+          "is_followed": true,
+          "name": "writer\n\u003c\u0026\u003e",
+          "profile_image_urls": {
+            "medium": "https://i.pximg.net/profile.jpg"
+          }
+        },
+        "workspace": {
+          "chair": "chair \u003c\u0026\u003e",
+          "comment": "comment \u003c\u0026\u003e",
+          "desk": "desk \u003c\u0026\u003e",
+          "desktop": "desktop \u003c\u0026\u003e",
+          "monitor": "monitor \u003c\u0026\u003e",
+          "mouse": "mouse \u003c\u0026\u003e",
+          "music": "music \u003c\u0026\u003e",
+          "pc": "pc \u003c\u0026\u003e",
+          "printer": "printer \u003c\u0026\u003e",
+          "scanner": "scanner \u003c\u0026\u003e",
+          "tablet": "tablet \u003c\u0026\u003e",
+          "tool": "tool \u003c\u0026\u003e",
+          "workspace_image_url": "workspace_image_url \u003c\u0026\u003e"
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:User: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "section:profile:map[]",
+      "arguments": {
+        "user_id": 42
+      },
+      "body": {
+        "profile": {},
+        "profile_publicity": {
+          "birth_day": true,
+          "birth_year": false,
+          "gender": "public",
+          "job": "public",
+          "pawoo": "private",
+          "region": "private"
+        },
+        "user": {
+          "account": "account",
+          "comment": "comment",
+          "id": 42,
+          "is_followed": true,
+          "name": "writer\n\u003c\u0026\u003e",
+          "profile_image_urls": {
+            "medium": "https://i.pximg.net/profile.jpg"
+          }
+        },
+        "workspace": {
+          "chair": "chair \u003c\u0026\u003e",
+          "comment": "comment \u003c\u0026\u003e",
+          "desk": "desk \u003c\u0026\u003e",
+          "desktop": "desktop \u003c\u0026\u003e",
+          "monitor": "monitor \u003c\u0026\u003e",
+          "mouse": "mouse \u003c\u0026\u003e",
+          "music": "music \u003c\u0026\u003e",
+          "pc": "pc \u003c\u0026\u003e",
+          "printer": "printer \u003c\u0026\u003e",
+          "scanner": "scanner \u003c\u0026\u003e",
+          "tablet": "tablet \u003c\u0026\u003e",
+          "tool": "tool \u003c\u0026\u003e",
+          "workspace_image_url": "workspace_image_url \u003c\u0026\u003e"
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Retrieved 1 records."
+          }
+        ],
+        "structuredContent": {
+          "records": [
+            {
+              "id": "42",
+              "profile": {
+                "background_image_url": "",
+                "birth_day": "",
+                "birth_year": 0,
+                "country_code": "",
+                "gender": "",
+                "is_premium": false,
+                "is_using_custom_profile_image": false,
+                "job": "",
+                "pawoo_url": "",
+                "region": "",
+                "total_follow_users": 0,
+                "total_illust_bookmarks": 0,
+                "total_illust_series": 0,
+                "total_illusts": 0,
+                "total_manga": 0,
+                "total_my_pixiv_users": 0,
+                "total_novel_series": 0,
+                "total_novels": 0,
+                "twitter_account": "",
+                "twitter_url": "",
+                "webpage": ""
+              },
+              "profile_publicity": {
+                "birth_day": true,
+                "birth_year": false,
+                "gender": true,
+                "job": true,
+                "pawoo": false,
+                "region": false
+              },
+              "type": "user",
+              "url": "https://www.pixiv.net/users/42",
+              "user": {
+                "account": "account",
+                "comment": "comment",
+                "id": 42,
+                "is_followed": true,
+                "name": "writer\n\u003c\u0026\u003e",
+                "profile_image": {
+                  "height": 0,
+                  "resource": {
+                    "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkWE5sY2w5d2NtOW1hV3hsSWl3aWFXUWlPalF5TENKd0lqb3RNU3dpZGlJNkltMWxaR2wxYlNKOSJ9"
+                  },
+                  "variant": "medium",
+                  "width": 0
+                }
+              },
+              "workspace": {
+                "chair": "chair \u003c\u0026\u003e",
+                "comment": "comment \u003c\u0026\u003e",
+                "desk": "desk \u003c\u0026\u003e",
+                "desktop": "desktop \u003c\u0026\u003e",
+                "monitor": "monitor \u003c\u0026\u003e",
+                "mouse": "mouse \u003c\u0026\u003e",
+                "music": "music \u003c\u0026\u003e",
+                "pc": "pc \u003c\u0026\u003e",
+                "printer": "printer \u003c\u0026\u003e",
+                "scanner": "scanner \u003c\u0026\u003e",
+                "tablet": "tablet \u003c\u0026\u003e",
+                "tool": "tool \u003c\u0026\u003e",
+                "workspace_image_url": "workspace_image_url \u003c\u0026\u003e"
+              }
+            }
+          ]
+        }
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "missing:profile_publicity",
+      "arguments": {
+        "user_id": 42
+      },
+      "body": {
+        "profile": {
+          "address_id": 17,
+          "background_image_url": "background_image_url \u003c\u0026\u003e",
+          "birth": "birth \u003c\u0026\u003e",
+          "birth_day": "birth_day \u003c\u0026\u003e",
+          "birth_year": 17,
+          "country_code": "country_code \u003c\u0026\u003e",
+          "gender": "gender \u003c\u0026\u003e",
+          "is_premium": true,
+          "is_using_custom_profile_image": true,
+          "job": "job \u003c\u0026\u003e",
+          "job_id": 17,
+          "pawoo_url": "pawoo_url \u003c\u0026\u003e",
+          "region": "region \u003c\u0026\u003e",
+          "total_follow_users": 17,
+          "total_illust_bookmarks_public": 17,
+          "total_illust_series": 17,
+          "total_illusts": 17,
+          "total_manga": 17,
+          "total_mypixiv_users": 17,
+          "total_novel_series": 17,
+          "total_novels": 17,
+          "twitter_account": "twitter_account \u003c\u0026\u003e",
+          "twitter_url": "twitter_url \u003c\u0026\u003e",
+          "webpage": "webpage \u003c\u0026\u003e"
+        },
+        "user": {
+          "account": "account",
+          "comment": "comment",
+          "id": 42,
+          "is_followed": true,
+          "name": "writer\n\u003c\u0026\u003e",
+          "profile_image_urls": {
+            "medium": "https://i.pximg.net/profile.jpg"
+          }
+        },
+        "workspace": {
+          "chair": "chair \u003c\u0026\u003e",
+          "comment": "comment \u003c\u0026\u003e",
+          "desk": "desk \u003c\u0026\u003e",
+          "desktop": "desktop \u003c\u0026\u003e",
+          "monitor": "monitor \u003c\u0026\u003e",
+          "mouse": "mouse \u003c\u0026\u003e",
+          "music": "music \u003c\u0026\u003e",
+          "pc": "pc \u003c\u0026\u003e",
+          "printer": "printer \u003c\u0026\u003e",
+          "scanner": "scanner \u003c\u0026\u003e",
+          "tablet": "tablet \u003c\u0026\u003e",
+          "tool": "tool \u003c\u0026\u003e",
+          "workspace_image_url": "workspace_image_url \u003c\u0026\u003e"
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:User: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "missing:workspace",
+      "arguments": {
+        "user_id": 42
+      },
+      "body": {
+        "profile": {
+          "address_id": 17,
+          "background_image_url": "background_image_url \u003c\u0026\u003e",
+          "birth": "birth \u003c\u0026\u003e",
+          "birth_day": "birth_day \u003c\u0026\u003e",
+          "birth_year": 17,
+          "country_code": "country_code \u003c\u0026\u003e",
+          "gender": "gender \u003c\u0026\u003e",
+          "is_premium": true,
+          "is_using_custom_profile_image": true,
+          "job": "job \u003c\u0026\u003e",
+          "job_id": 17,
+          "pawoo_url": "pawoo_url \u003c\u0026\u003e",
+          "region": "region \u003c\u0026\u003e",
+          "total_follow_users": 17,
+          "total_illust_bookmarks_public": 17,
+          "total_illust_series": 17,
+          "total_illusts": 17,
+          "total_manga": 17,
+          "total_mypixiv_users": 17,
+          "total_novel_series": 17,
+          "total_novels": 17,
+          "twitter_account": "twitter_account \u003c\u0026\u003e",
+          "twitter_url": "twitter_url \u003c\u0026\u003e",
+          "webpage": "webpage \u003c\u0026\u003e"
+        },
+        "profile_publicity": {
+          "birth_day": true,
+          "birth_year": false,
+          "gender": "public",
+          "job": "public",
+          "pawoo": "private",
+          "region": "private"
+        },
+        "user": {
+          "account": "account",
+          "comment": "comment",
+          "id": 42,
+          "is_followed": true,
+          "name": "writer\n\u003c\u0026\u003e",
+          "profile_image_urls": {
+            "medium": "https://i.pximg.net/profile.jpg"
+          }
+        }
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error: pixiv:User: malformed_upstream_response"
+          }
+        ],
+        "structuredContent": {
+          "records": []
+        },
+        "isError": true
+      },
+      "calls": 1,
+      "requests": 1,
+      "rpc_error": ""
+    },
+    {
+      "name": "argument-a",
+      "arguments": {},
+      "body": {
+        "profile": {
+          "address_id": 17,
+          "background_image_url": "background_image_url \u003c\u0026\u003e",
+          "birth": "birth \u003c\u0026\u003e",
+          "birth_day": "birth_day \u003c\u0026\u003e",
+          "birth_year": 17,
+          "country_code": "country_code \u003c\u0026\u003e",
+          "gender": "gender \u003c\u0026\u003e",
+          "is_premium": true,
+          "is_using_custom_profile_image": true,
+          "job": "job \u003c\u0026\u003e",
+          "job_id": 17,
+          "pawoo_url": "pawoo_url \u003c\u0026\u003e",
+          "region": "region \u003c\u0026\u003e",
+          "total_follow_users": 17,
+          "total_illust_bookmarks_public": 17,
+          "total_illust_series": 17,
+          "total_illusts": 17,
+          "total_manga": 17,
+          "total_mypixiv_users": 17,
+          "total_novel_series": 17,
+          "total_novels": 17,
+          "twitter_account": "twitter_account \u003c\u0026\u003e",
+          "twitter_url": "twitter_url \u003c\u0026\u003e",
+          "webpage": "webpage \u003c\u0026\u003e"
+        },
+        "profile_publicity": {
+          "birth_day": true,
+          "birth_year": false,
+          "gender": "public",
+          "job": "public",
+          "pawoo": "private",
+          "region": "private"
+        },
+        "user": {
+          "account": "account",
+          "comment": "comment",
+          "id": 42,
+          "is_followed": true,
+          "name": "writer\n\u003c\u0026\u003e",
+          "profile_image_urls": {
+            "medium": "https://i.pximg.net/profile.jpg"
+          }
+        },
+        "workspace": {
+          "chair": "chair \u003c\u0026\u003e",
+          "comment": "comment \u003c\u0026\u003e",
+          "desk": "desk \u003c\u0026\u003e",
+          "desktop": "desktop \u003c\u0026\u003e",
+          "monitor": "monitor \u003c\u0026\u003e",
+          "mouse": "mouse \u003c\u0026\u003e",
+          "music": "music \u003c\u0026\u003e",
+          "pc": "pc \u003c\u0026\u003e",
+          "printer": "printer \u003c\u0026\u003e",
+          "scanner": "scanner \u003c\u0026\u003e",
+          "tablet": "tablet \u003c\u0026\u003e",
+          "tool": "tool \u003c\u0026\u003e",
+          "workspace_image_url": "workspace_image_url \u003c\u0026\u003e"
+        }
+      },
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: required: missing properties: [\"user_id\"]"
+    },
+    {
+      "name": "argument-b",
+      "arguments": {
+        "user_id": 0
+      },
+      "body": {
+        "profile": {
+          "address_id": 17,
+          "background_image_url": "background_image_url \u003c\u0026\u003e",
+          "birth": "birth \u003c\u0026\u003e",
+          "birth_day": "birth_day \u003c\u0026\u003e",
+          "birth_year": 17,
+          "country_code": "country_code \u003c\u0026\u003e",
+          "gender": "gender \u003c\u0026\u003e",
+          "is_premium": true,
+          "is_using_custom_profile_image": true,
+          "job": "job \u003c\u0026\u003e",
+          "job_id": 17,
+          "pawoo_url": "pawoo_url \u003c\u0026\u003e",
+          "region": "region \u003c\u0026\u003e",
+          "total_follow_users": 17,
+          "total_illust_bookmarks_public": 17,
+          "total_illust_series": 17,
+          "total_illusts": 17,
+          "total_manga": 17,
+          "total_mypixiv_users": 17,
+          "total_novel_series": 17,
+          "total_novels": 17,
+          "twitter_account": "twitter_account \u003c\u0026\u003e",
+          "twitter_url": "twitter_url \u003c\u0026\u003e",
+          "webpage": "webpage \u003c\u0026\u003e"
+        },
+        "profile_publicity": {
+          "birth_day": true,
+          "birth_year": false,
+          "gender": "public",
+          "job": "public",
+          "pawoo": "private",
+          "region": "private"
+        },
+        "user": {
+          "account": "account",
+          "comment": "comment",
+          "id": 42,
+          "is_followed": true,
+          "name": "writer\n\u003c\u0026\u003e",
+          "profile_image_urls": {
+            "medium": "https://i.pximg.net/profile.jpg"
+          }
+        },
+        "workspace": {
+          "chair": "chair \u003c\u0026\u003e",
+          "comment": "comment \u003c\u0026\u003e",
+          "desk": "desk \u003c\u0026\u003e",
+          "desktop": "desktop \u003c\u0026\u003e",
+          "monitor": "monitor \u003c\u0026\u003e",
+          "mouse": "mouse \u003c\u0026\u003e",
+          "music": "music \u003c\u0026\u003e",
+          "pc": "pc \u003c\u0026\u003e",
+          "printer": "printer \u003c\u0026\u003e",
+          "scanner": "scanner \u003c\u0026\u003e",
+          "tablet": "tablet \u003c\u0026\u003e",
+          "tool": "tool \u003c\u0026\u003e",
+          "workspace_image_url": "workspace_image_url \u003c\u0026\u003e"
+        }
+      },
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/user_id: minimum: 0/1 is less than 1.000000"
+    },
+    {
+      "name": "argument-c",
+      "arguments": {
+        "user_id": -1
+      },
+      "body": {
+        "profile": {
+          "address_id": 17,
+          "background_image_url": "background_image_url \u003c\u0026\u003e",
+          "birth": "birth \u003c\u0026\u003e",
+          "birth_day": "birth_day \u003c\u0026\u003e",
+          "birth_year": 17,
+          "country_code": "country_code \u003c\u0026\u003e",
+          "gender": "gender \u003c\u0026\u003e",
+          "is_premium": true,
+          "is_using_custom_profile_image": true,
+          "job": "job \u003c\u0026\u003e",
+          "job_id": 17,
+          "pawoo_url": "pawoo_url \u003c\u0026\u003e",
+          "region": "region \u003c\u0026\u003e",
+          "total_follow_users": 17,
+          "total_illust_bookmarks_public": 17,
+          "total_illust_series": 17,
+          "total_illusts": 17,
+          "total_manga": 17,
+          "total_mypixiv_users": 17,
+          "total_novel_series": 17,
+          "total_novels": 17,
+          "twitter_account": "twitter_account \u003c\u0026\u003e",
+          "twitter_url": "twitter_url \u003c\u0026\u003e",
+          "webpage": "webpage \u003c\u0026\u003e"
+        },
+        "profile_publicity": {
+          "birth_day": true,
+          "birth_year": false,
+          "gender": "public",
+          "job": "public",
+          "pawoo": "private",
+          "region": "private"
+        },
+        "user": {
+          "account": "account",
+          "comment": "comment",
+          "id": 42,
+          "is_followed": true,
+          "name": "writer\n\u003c\u0026\u003e",
+          "profile_image_urls": {
+            "medium": "https://i.pximg.net/profile.jpg"
+          }
+        },
+        "workspace": {
+          "chair": "chair \u003c\u0026\u003e",
+          "comment": "comment \u003c\u0026\u003e",
+          "desk": "desk \u003c\u0026\u003e",
+          "desktop": "desktop \u003c\u0026\u003e",
+          "monitor": "monitor \u003c\u0026\u003e",
+          "mouse": "mouse \u003c\u0026\u003e",
+          "music": "music \u003c\u0026\u003e",
+          "pc": "pc \u003c\u0026\u003e",
+          "printer": "printer \u003c\u0026\u003e",
+          "scanner": "scanner \u003c\u0026\u003e",
+          "tablet": "tablet \u003c\u0026\u003e",
+          "tool": "tool \u003c\u0026\u003e",
+          "workspace_image_url": "workspace_image_url \u003c\u0026\u003e"
+        }
+      },
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/user_id: minimum: -1/1 is less than 1.000000"
+    },
+    {
+      "name": "argument-d",
+      "arguments": {
+        "url": "https://www.pixiv.net/user/show.php?id=42",
+        "user_id": 42
+      },
+      "body": {
+        "profile": {
+          "address_id": 17,
+          "background_image_url": "background_image_url \u003c\u0026\u003e",
+          "birth": "birth \u003c\u0026\u003e",
+          "birth_day": "birth_day \u003c\u0026\u003e",
+          "birth_year": 17,
+          "country_code": "country_code \u003c\u0026\u003e",
+          "gender": "gender \u003c\u0026\u003e",
+          "is_premium": true,
+          "is_using_custom_profile_image": true,
+          "job": "job \u003c\u0026\u003e",
+          "job_id": 17,
+          "pawoo_url": "pawoo_url \u003c\u0026\u003e",
+          "region": "region \u003c\u0026\u003e",
+          "total_follow_users": 17,
+          "total_illust_bookmarks_public": 17,
+          "total_illust_series": 17,
+          "total_illusts": 17,
+          "total_manga": 17,
+          "total_mypixiv_users": 17,
+          "total_novel_series": 17,
+          "total_novels": 17,
+          "twitter_account": "twitter_account \u003c\u0026\u003e",
+          "twitter_url": "twitter_url \u003c\u0026\u003e",
+          "webpage": "webpage \u003c\u0026\u003e"
+        },
+        "profile_publicity": {
+          "birth_day": true,
+          "birth_year": false,
+          "gender": "public",
+          "job": "public",
+          "pawoo": "private",
+          "region": "private"
+        },
+        "user": {
+          "account": "account",
+          "comment": "comment",
+          "id": 42,
+          "is_followed": true,
+          "name": "writer\n\u003c\u0026\u003e",
+          "profile_image_urls": {
+            "medium": "https://i.pximg.net/profile.jpg"
+          }
+        },
+        "workspace": {
+          "chair": "chair \u003c\u0026\u003e",
+          "comment": "comment \u003c\u0026\u003e",
+          "desk": "desk \u003c\u0026\u003e",
+          "desktop": "desktop \u003c\u0026\u003e",
+          "monitor": "monitor \u003c\u0026\u003e",
+          "mouse": "mouse \u003c\u0026\u003e",
+          "music": "music \u003c\u0026\u003e",
+          "pc": "pc \u003c\u0026\u003e",
+          "printer": "printer \u003c\u0026\u003e",
+          "scanner": "scanner \u003c\u0026\u003e",
+          "tablet": "tablet \u003c\u0026\u003e",
+          "tool": "tool \u003c\u0026\u003e",
+          "workspace_image_url": "workspace_image_url \u003c\u0026\u003e"
+        }
+      },
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: unexpected additional properties [\"url\"]"
+    },
+    {
+      "name": "argument-e",
+      "arguments": {
+        "user_id": 9223372036854775807
+      },
+      "body": {
+        "profile": {
+          "address_id": 17,
+          "background_image_url": "background_image_url \u003c\u0026\u003e",
+          "birth": "birth \u003c\u0026\u003e",
+          "birth_day": "birth_day \u003c\u0026\u003e",
+          "birth_year": 17,
+          "country_code": "country_code \u003c\u0026\u003e",
+          "gender": "gender \u003c\u0026\u003e",
+          "is_premium": true,
+          "is_using_custom_profile_image": true,
+          "job": "job \u003c\u0026\u003e",
+          "job_id": 17,
+          "pawoo_url": "pawoo_url \u003c\u0026\u003e",
+          "region": "region \u003c\u0026\u003e",
+          "total_follow_users": 17,
+          "total_illust_bookmarks_public": 17,
+          "total_illust_series": 17,
+          "total_illusts": 17,
+          "total_manga": 17,
+          "total_mypixiv_users": 17,
+          "total_novel_series": 17,
+          "total_novels": 17,
+          "twitter_account": "twitter_account \u003c\u0026\u003e",
+          "twitter_url": "twitter_url \u003c\u0026\u003e",
+          "webpage": "webpage \u003c\u0026\u003e"
+        },
+        "profile_publicity": {
+          "birth_day": true,
+          "birth_year": false,
+          "gender": "public",
+          "job": "public",
+          "pawoo": "private",
+          "region": "private"
+        },
+        "user": {
+          "account": "account",
+          "comment": "comment",
+          "id": 42,
+          "is_followed": true,
+          "name": "writer\n\u003c\u0026\u003e",
+          "profile_image_urls": {
+            "medium": "https://i.pximg.net/profile.jpg"
+          }
+        },
+        "workspace": {
+          "chair": "chair \u003c\u0026\u003e",
+          "comment": "comment \u003c\u0026\u003e",
+          "desk": "desk \u003c\u0026\u003e",
+          "desktop": "desktop \u003c\u0026\u003e",
+          "monitor": "monitor \u003c\u0026\u003e",
+          "mouse": "mouse \u003c\u0026\u003e",
+          "music": "music \u003c\u0026\u003e",
+          "pc": "pc \u003c\u0026\u003e",
+          "printer": "printer \u003c\u0026\u003e",
+          "scanner": "scanner \u003c\u0026\u003e",
+          "tablet": "tablet \u003c\u0026\u003e",
+          "tool": "tool \u003c\u0026\u003e",
+          "workspace_image_url": "workspace_image_url \u003c\u0026\u003e"
+        }
+      },
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: json: cannot unmarshal number 9223372036854776000 into Go struct field In.user_id of type int64"
+    },
+    {
+      "name": "argument-f",
+      "arguments": {
+        "user_id": "42"
+      },
+      "body": {
+        "profile": {
+          "address_id": 17,
+          "background_image_url": "background_image_url \u003c\u0026\u003e",
+          "birth": "birth \u003c\u0026\u003e",
+          "birth_day": "birth_day \u003c\u0026\u003e",
+          "birth_year": 17,
+          "country_code": "country_code \u003c\u0026\u003e",
+          "gender": "gender \u003c\u0026\u003e",
+          "is_premium": true,
+          "is_using_custom_profile_image": true,
+          "job": "job \u003c\u0026\u003e",
+          "job_id": 17,
+          "pawoo_url": "pawoo_url \u003c\u0026\u003e",
+          "region": "region \u003c\u0026\u003e",
+          "total_follow_users": 17,
+          "total_illust_bookmarks_public": 17,
+          "total_illust_series": 17,
+          "total_illusts": 17,
+          "total_manga": 17,
+          "total_mypixiv_users": 17,
+          "total_novel_series": 17,
+          "total_novels": 17,
+          "twitter_account": "twitter_account \u003c\u0026\u003e",
+          "twitter_url": "twitter_url \u003c\u0026\u003e",
+          "webpage": "webpage \u003c\u0026\u003e"
+        },
+        "profile_publicity": {
+          "birth_day": true,
+          "birth_year": false,
+          "gender": "public",
+          "job": "public",
+          "pawoo": "private",
+          "region": "private"
+        },
+        "user": {
+          "account": "account",
+          "comment": "comment",
+          "id": 42,
+          "is_followed": true,
+          "name": "writer\n\u003c\u0026\u003e",
+          "profile_image_urls": {
+            "medium": "https://i.pximg.net/profile.jpg"
+          }
+        },
+        "workspace": {
+          "chair": "chair \u003c\u0026\u003e",
+          "comment": "comment \u003c\u0026\u003e",
+          "desk": "desk \u003c\u0026\u003e",
+          "desktop": "desktop \u003c\u0026\u003e",
+          "monitor": "monitor \u003c\u0026\u003e",
+          "mouse": "mouse \u003c\u0026\u003e",
+          "music": "music \u003c\u0026\u003e",
+          "pc": "pc \u003c\u0026\u003e",
+          "printer": "printer \u003c\u0026\u003e",
+          "scanner": "scanner \u003c\u0026\u003e",
+          "tablet": "tablet \u003c\u0026\u003e",
+          "tool": "tool \u003c\u0026\u003e",
+          "workspace_image_url": "workspace_image_url \u003c\u0026\u003e"
+        }
+      },
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/user_id: type: 42 has type \"string\", want \"integer\""
+    },
+    {
+      "name": "argument-g",
+      "arguments": {
+        "user_id": null
+      },
+      "body": {
+        "profile": {
+          "address_id": 17,
+          "background_image_url": "background_image_url \u003c\u0026\u003e",
+          "birth": "birth \u003c\u0026\u003e",
+          "birth_day": "birth_day \u003c\u0026\u003e",
+          "birth_year": 17,
+          "country_code": "country_code \u003c\u0026\u003e",
+          "gender": "gender \u003c\u0026\u003e",
+          "is_premium": true,
+          "is_using_custom_profile_image": true,
+          "job": "job \u003c\u0026\u003e",
+          "job_id": 17,
+          "pawoo_url": "pawoo_url \u003c\u0026\u003e",
+          "region": "region \u003c\u0026\u003e",
+          "total_follow_users": 17,
+          "total_illust_bookmarks_public": 17,
+          "total_illust_series": 17,
+          "total_illusts": 17,
+          "total_manga": 17,
+          "total_mypixiv_users": 17,
+          "total_novel_series": 17,
+          "total_novels": 17,
+          "twitter_account": "twitter_account \u003c\u0026\u003e",
+          "twitter_url": "twitter_url \u003c\u0026\u003e",
+          "webpage": "webpage \u003c\u0026\u003e"
+        },
+        "profile_publicity": {
+          "birth_day": true,
+          "birth_year": false,
+          "gender": "public",
+          "job": "public",
+          "pawoo": "private",
+          "region": "private"
+        },
+        "user": {
+          "account": "account",
+          "comment": "comment",
+          "id": 42,
+          "is_followed": true,
+          "name": "writer\n\u003c\u0026\u003e",
+          "profile_image_urls": {
+            "medium": "https://i.pximg.net/profile.jpg"
+          }
+        },
+        "workspace": {
+          "chair": "chair \u003c\u0026\u003e",
+          "comment": "comment \u003c\u0026\u003e",
+          "desk": "desk \u003c\u0026\u003e",
+          "desktop": "desktop \u003c\u0026\u003e",
+          "monitor": "monitor \u003c\u0026\u003e",
+          "mouse": "mouse \u003c\u0026\u003e",
+          "music": "music \u003c\u0026\u003e",
+          "pc": "pc \u003c\u0026\u003e",
+          "printer": "printer \u003c\u0026\u003e",
+          "scanner": "scanner \u003c\u0026\u003e",
+          "tablet": "tablet \u003c\u0026\u003e",
+          "tool": "tool \u003c\u0026\u003e",
+          "workspace_image_url": "workspace_image_url \u003c\u0026\u003e"
+        }
+      },
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/user_id: type: \u003cinvalid reflect.Value\u003e has type \"null\", want \"integer\""
+    },
+    {
+      "name": "argument-h",
+      "arguments": {
+        "user_id": 1.5
+      },
+      "body": {
+        "profile": {
+          "address_id": 17,
+          "background_image_url": "background_image_url \u003c\u0026\u003e",
+          "birth": "birth \u003c\u0026\u003e",
+          "birth_day": "birth_day \u003c\u0026\u003e",
+          "birth_year": 17,
+          "country_code": "country_code \u003c\u0026\u003e",
+          "gender": "gender \u003c\u0026\u003e",
+          "is_premium": true,
+          "is_using_custom_profile_image": true,
+          "job": "job \u003c\u0026\u003e",
+          "job_id": 17,
+          "pawoo_url": "pawoo_url \u003c\u0026\u003e",
+          "region": "region \u003c\u0026\u003e",
+          "total_follow_users": 17,
+          "total_illust_bookmarks_public": 17,
+          "total_illust_series": 17,
+          "total_illusts": 17,
+          "total_manga": 17,
+          "total_mypixiv_users": 17,
+          "total_novel_series": 17,
+          "total_novels": 17,
+          "twitter_account": "twitter_account \u003c\u0026\u003e",
+          "twitter_url": "twitter_url \u003c\u0026\u003e",
+          "webpage": "webpage \u003c\u0026\u003e"
+        },
+        "profile_publicity": {
+          "birth_day": true,
+          "birth_year": false,
+          "gender": "public",
+          "job": "public",
+          "pawoo": "private",
+          "region": "private"
+        },
+        "user": {
+          "account": "account",
+          "comment": "comment",
+          "id": 42,
+          "is_followed": true,
+          "name": "writer\n\u003c\u0026\u003e",
+          "profile_image_urls": {
+            "medium": "https://i.pximg.net/profile.jpg"
+          }
+        },
+        "workspace": {
+          "chair": "chair \u003c\u0026\u003e",
+          "comment": "comment \u003c\u0026\u003e",
+          "desk": "desk \u003c\u0026\u003e",
+          "desktop": "desktop \u003c\u0026\u003e",
+          "monitor": "monitor \u003c\u0026\u003e",
+          "mouse": "mouse \u003c\u0026\u003e",
+          "music": "music \u003c\u0026\u003e",
+          "pc": "pc \u003c\u0026\u003e",
+          "printer": "printer \u003c\u0026\u003e",
+          "scanner": "scanner \u003c\u0026\u003e",
+          "tablet": "tablet \u003c\u0026\u003e",
+          "tool": "tool \u003c\u0026\u003e",
+          "workspace_image_url": "workspace_image_url \u003c\u0026\u003e"
+        }
+      },
+      "result": null,
+      "calls": 0,
+      "requests": 0,
+      "rpc_error": "calling \"tools/call\": invalid params: validating \"arguments\": validating root: validating /properties/user_id: type: 1.5 has type \"number\", want \"integer\""
+    }
+  ]
+}

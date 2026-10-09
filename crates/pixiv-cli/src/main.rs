@@ -222,7 +222,7 @@ async fn execute(args: Arguments, ndjson_output: &mut bool) -> Result<(), Comman
             let entity = match entity.as_str() {
                 "artwork" | "illust" | "manga" | "ugoira" => "artwork",
                 "novel" => "novel",
-                "user" => return Err(CommandError::Message("user detail is not implemented yet")),
+                "user" => "user",
                 _ => {
                     return Err(CommandError::Message(
                         "type must be one of artwork, novel, user",
@@ -239,7 +239,9 @@ async fn execute(args: Arguments, ndjson_output: &mut bool) -> Result<(), Comman
                     .with_detail("novel content is unsupported by the v1 App API")
                     .into());
             }
-            Some(if entity == "novel" {
+            Some(if entity == "user" {
+                pixiv_cli_rs::detail_user_id(source)?
+            } else if entity == "novel" {
                 pixiv_cli_rs::detail_novel_id(source)?
             } else {
                 detail_artwork_id(source)?
@@ -416,6 +418,18 @@ async fn execute(args: Arguments, ndjson_output: &mut bool) -> Result<(), Comman
         } else {
             DetailOutput::Human
         };
+        if entity == "user" {
+            return pixiv_cli_rs::saved_user_detail(
+                &execution,
+                &pixiv_app::lifecycle::Context::new(),
+                detail_id.expect("detail input was resolved"),
+                0,
+                connection.override_value()?,
+                mode,
+                &mut io::stdout().lock(),
+            )
+            .await;
+        }
         if entity == "novel" {
             return pixiv_cli_rs::saved_novel_detail(
                 &execution,

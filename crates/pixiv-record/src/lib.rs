@@ -56,3 +56,15 @@ pub fn from_novel(novel: &pixiv_sdk::models::Novel) -> Result<Value, RecordError
     record["url"] = format!("https://www.pixiv.net/novel/show.php?id={}", novel.id).into();
     Ok(record)
 }
+
+pub fn from_user_detail(detail: &pixiv_sdk::models::UserDetail) -> Result<Value, RecordError> {
+    if detail.user.id <= 0 {
+        return Err(RecordError::InvalidId);
+    }
+    let mut record = serde_json::to_value(pixiv_sdk::dto::UserDetailDto::from(detail))
+        .map_err(|_| RecordError::Serialization)?;
+    record["id"] = detail.user.id.to_string().into();
+    record["type"] = "user".into();
+    record["url"] = format!("https://www.pixiv.net/users/{}", detail.user.id).into();
+    Ok(record)
+}

@@ -15,6 +15,7 @@ type ToolFuture<'a> = Pin<Box<dyn Future<Output = Value> + 'a>>;
 enum ToolInput {
     Detail(IllustReference),
     Novel(crate::NovelDetailInput),
+    User(crate::UserDetailInput),
     NovelSearch(crate::SearchNovelInput),
     Trending,
     Ranking(Box<crate::IllustRankingInput>),
@@ -37,6 +38,10 @@ pub async fn serve<T: Transport, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
             match input {
                 ToolInput::Detail(input) => {
                     serde_json::to_value(illust_detail(client, input).await)
+                        .expect("tool result is serializable")
+                }
+                ToolInput::User(input) => {
+                    serde_json::to_value(crate::user_detail(client, input).await)
                         .expect("tool result is serializable")
                 }
                 ToolInput::Novel(input) => {
@@ -89,6 +94,10 @@ pub async fn serve_saved_with_proxy<
             match input {
                 ToolInput::Detail(input) => serde_json::to_value(
                     crate::saved_illust_detail_with_proxy(execution, &context, input, proxy).await,
+                )
+                .expect("tool result is serializable"),
+                ToolInput::User(input) => serde_json::to_value(
+                    crate::user::saved_user_detail(execution, &context, input, proxy).await,
                 )
                 .expect("tool result is serializable"),
                 ToolInput::Novel(input) => serde_json::to_value(
@@ -159,7 +168,7 @@ async fn serve_with<'a, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
                     }
                     "ping" => success(id, json!({})),
                     _ if !session.initialized => protocol_error(id,0,format!("method {method:?} is invalid during session initialization")),
-                    "tools/list" => success(id,json!({"tools":[illust_detail_tool(),crate::search_illust_tool(),crate::trending_tags_illust_tool(),crate::illust_ranking_tool(),crate::novel_detail_tool(),crate::search_novel_tool()]})),
+                    "tools/list" => success(id,json!({"tools":[illust_detail_tool(),crate::search_illust_tool(),crate::trending_tags_illust_tool(),crate::illust_ranking_tool(),crate::novel_detail_tool(),crate::search_novel_tool(),crate::user_detail_tool()]})),
                     "logging/setLevel" => {
                         if params.is_none() || params.is_some_and(Value::is_null) {
                             protocol_error(id,-32600,"invalid request: missing required \"params\"".into())
@@ -171,10 +180,10 @@ async fn serve_with<'a, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
                     "tools/call" => {
                         if let Some(params) = params.filter(|value| !value.is_null()) {
                             let name = params["name"].as_str().unwrap_or_default();
-                            if !matches!(name, "illust_detail" | "search_illust" | "trending_tags_illust" | "illust_ranking" | "novel_detail" | "search_novel") {
+                            if !matches!(name, "illust_detail" | "search_illust" | "trending_tags_illust" | "illust_ranking" | "novel_detail" | "search_novel" | "user_detail") {
                                 protocol_error(id,-32602,format!("unknown tool {name:?}"))
                             } else {
-                                let input = if name=="search_novel" {crate::novel_search::decode(params.get("arguments")).map(ToolInput::NovelSearch)} else if name == "novel_detail" { crate::novel::decode(params.get("arguments")).map(ToolInput::Novel) } else if name == "search_illust" {
+                                let input = if name=="user_detail" {crate::user::decode(params.get("arguments")).map(ToolInput::User)} else if name=="search_novel" {crate::novel_search::decode(params.get("arguments")).map(ToolInput::NovelSearch)} else if name == "novel_detail" { crate::novel::decode(params.get("arguments")).map(ToolInput::Novel) } else if name == "search_illust" {
                                     crate::search::decode(params.get("arguments")).map(|input| ToolInput::Search(Box::new(input)))
                                 } else if name == "illust_ranking" { crate::ranking::decode(params.get("arguments")).map(|input|ToolInput::Ranking(Box::new(input))) } else if name == "trending_tags_illust" { crate::trending::decode(params.get("arguments")).map(|()|ToolInput::Trending) } else { decode_reference(params.get("arguments")).map(ToolInput::Detail) };
                                 match input {
@@ -186,11 +195,12 @@ async fn serve_with<'a, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
                                             let is_ranking = matches!(&input, ToolInput::Ranking(_));
                                             let is_trending = matches!(&input, ToolInput::Trending);
                                             let is_novel = matches!(&input, ToolInput::Novel(_));
+                                            let is_user=matches!(&input,ToolInput::User(_));
                                             let is_novel_search=matches!(&input,ToolInput::NovelSearch(_));
                                             let result = match Abortable::new(invoke(input), registration).await {
                                                 Ok(result) => result,
                                                 Err(_) => {
-                                                    let message = pixiv_sdk::Error::new(pixiv_sdk::Reason::UpstreamUnavailable,if is_search { "SearchArtworks" } else if is_ranking { "ArtworkRanking" } else if is_trending { "TrendingArtworkTags" } else if is_novel { "Novel" } else if is_novel_search { "SearchNovels" } else { "Artwork" }).with_detail("pixiv upstream transport failed").to_string();
+                                                    let message = pixiv_sdk::Error::new(pixiv_sdk::Reason::UpstreamUnavailable,if is_search { "SearchArtworks" } else if is_ranking { "ArtworkRanking" } else if is_trending { "TrendingArtworkTags" } else if is_novel { "Novel" } else if is_novel_search { "SearchNovels" } else if is_user { "User" } else { "Artwork" }).with_detail("pixiv upstream transport failed").to_string();
                                                     if is_search || is_ranking || is_novel_search { serde_json::to_value(crate::search::failure(message)) } else if is_trending { serde_json::to_value(crate::trending::failure(message)) } else { serde_json::to_value(crate::failure(message)) }.expect("tool result is serializable")
                                                 },
                                             };

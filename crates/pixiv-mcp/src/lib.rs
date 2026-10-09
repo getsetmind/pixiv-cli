@@ -178,3 +178,6 @@ fn failure(error: String) -> CallToolResult {
         is_error: true,
     }
 }
+
+mod user;
+pub use user::{UserDetailInput, user_detail, user_detail_tool};

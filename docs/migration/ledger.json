@@ -623,7 +623,9 @@
         "crates/pixiv-app/src/execution.rs",
         "crates/pixiv-app/src/config.rs",
         "crates/pixiv-app/src/config/initialization.rs",
-        "crates/pixiv-sdk/src/novel.rs"
+        "crates/pixiv-sdk/src/novel.rs",
+        "crates/pixiv-cli/src/user_detail.rs",
+        "crates/pixiv-record/src/lib.rs"
       ],
       "tests": [
         "internal/cli/migration_detail_input_test.go#TestMigrationDetailInputMatchesFrozenErrorsBeforeAccountAccess",
@@ -656,7 +658,11 @@
         "internal/cli/migration_novel_input_test.go#TestMigrationNovelInputMatchesFrozenErrorsBeforeAccountAccess",
         "crates/pixiv-cli/tests/novel_input.rs#detail_inputs_match_go_process_errors_and_validate_before_client_configuration",
         "internal/cli/migration_novel_startup_test.go#TestMigrationNovelStartupInitializesConfigurationBeforeInputAndAccountAccess",
-        "crates/pixiv-cli/tests/novel_startup.rs#detail_startup_matches_go_initialization_input_order_and_database_creation"
+        "crates/pixiv-cli/tests/novel_startup.rs#detail_startup_matches_go_initialization_input_order_and_database_creation",
+        "internal/cli/commands/pixiv/detail/migration_user_output_test.go#TestMigrationUserDetailOutputMatchesFrozenModes",
+        "crates/pixiv-cli/tests/user_detail.rs#user_detail_modes_match_go_dtos_records_profiles_and_failures",
+        "internal/cli/migration_user_startup_test.go#TestMigrationUserStartupInitializesConfigurationBeforeInputAndAccountAccess",
+        "crates/pixiv-cli/tests/user_startup.rs#user_detail_startup_matches_go_initialization_input_order_and_database_creation"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -666,7 +672,8 @@
         "全 flag 構文・alias・help・競合診断、user と novel/content の残る条件、全 entity/record/text 入力パイプと aggregate JSON、全 TTY/configuration 条件は未完了。作品詳細の保存済み account 実行・初回設定・proxy 指定の比較は既存 tests と contracts.md に記録済み。",
         "OS/process BrokenPipe・stderr 失敗、全 HTML/Unicode・JSON 重複 key/不正 UTF-8/null・日時変種、取消/deadline/並行競合の全条件、全 SDK Options の再構築と所有期間は未検証。既存の writer・DTO・pacing 比較を全条件の証明とはしない。",
         "設定の Close エラー報告は未移植。filesystem の失敗・symlink・並行初期化、startup hooks、URL handler、他 OS/arch は未検証または未実行。auth 管理や config コマンド全体は別の未完了操作として追跡する。",
-        "小説詳細を SDK・保存済みアカウントへ接続。Go 出力126ケース、ID/URL 入力122ケース、設定・DB 作成順と --content の拒否24ケースを比較。小説メタデータの human/JSON/NDJSON と refresh CAS/Bearer は確認済み。小説の record/text パイプ、全 flag 構文・TTY/出力 override、部分 writer 失敗・取消・実 HTTPS・他 OS は未検証。"
+        "小説詳細を SDK・保存済みアカウントへ接続。Go 出力126ケース、ID/URL 入力122ケース、設定・DB 作成順と --content の拒否24ケースを比較。小説メタデータの human/JSON/NDJSON と refresh CAS/Bearer は確認済み。小説の record/text パイプ、全 flag 構文・TTY/出力 override、部分 writer 失敗・取消・実 HTTPS・他 OS は未検証。",
+        "detail --type user を SDK と保存済みアカウントへ接続。Go の66ケースで human/JSON/NDJSON、プロフィール・作業環境、Web ページ表示の user-info/query/fragment 除去と不正 URL の拒否を比較し、refresh CAS/Bearer も確認。実子プロセス24ケースでユーザー URL、入力/type/content、設定不正の優先順と DB 作成順を比較。全 ID/URL 構文・record/text パイプ・aggregate JSON・TTY/全 flag・部分 writer 失敗・取消・実 HTTPS と他 OS/arch は未検証。"
       ]
     },
     {
@@ -2290,15 +2297,27 @@
     },
     {
       "id": "mcp:pixiv:user_detail",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "user_detail"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/user.rs",
+        "crates/pixiv-mcp/src/stdio.rs",
+        "crates/pixiv-mcp/schemas/user-detail.json",
+        "crates/pixiv-record/src/lib.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_user_detail_test.go#TestMigrationMCPUserDetailMatchesFrozenSchemaRecordsAndValidation",
+        "crates/pixiv-mcp/tests/user_detail.rs#user_detail_matches_go_schema_records_errors_and_saved_account_stdio"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "実 Go MCP の schema と14ケースを直接呼出し・stdio・保存済みアカウント stdio で比較。完全な user detail envelope を canonical user record にし、required user_id、未知 key、非整数、float64 経由の int64 overflow と不正応答を拒否する。refresh CAS/Bearer と要求数も比較。全 schema/数値/JSON 構文、取消/deadline・pool replay・disconnect、実 HTTPS と他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:user_followers",
@@ -7034,15 +7053,26 @@
     },
     {
       "id": "sdk/pixiv:Client.User",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.User"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/user_detail.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_user_detail_test.go#TestMigrationUserDetailPreservesFieldsVisibilityAndRequests",
+        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.UserArtworkBookmarks",
@@ -10465,15 +10495,26 @@
     },
     {
       "id": "sdk/pixiv:ToUserDetailDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ToUserDetailDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/user_detail.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_user_detail_test.go#TestMigrationUserDetailPreservesFieldsVisibilityAndRequests",
+        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:ToUserDTO",
@@ -10513,39 +10554,72 @@
     },
     {
       "id": "sdk/pixiv:ToUserProfileDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ToUserProfileDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/user_detail.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_user_detail_test.go#TestMigrationUserDetailPreservesFieldsVisibilityAndRequests",
+        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:ToUserProfilePublicityDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ToUserProfilePublicityDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/user_detail.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_user_detail_test.go#TestMigrationUserDetailPreservesFieldsVisibilityAndRequests",
+        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:ToUserWorkspaceDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ToUserWorkspaceDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/user_detail.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_user_detail_test.go#TestMigrationUserDetailPreservesFieldsVisibilityAndRequests",
+        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:TrendingArtworkTagsRequest",
@@ -10940,27 +11014,49 @@
     },
     {
       "id": "sdk/pixiv:UserDetail",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:UserDetail"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/user_detail.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_user_detail_test.go#TestMigrationUserDetailPreservesFieldsVisibilityAndRequests",
+        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:UserDetailDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:UserDetailDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/user_detail.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_user_detail_test.go#TestMigrationUserDetailPreservesFieldsVisibilityAndRequests",
+        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:UserDTO",
@@ -11085,87 +11181,164 @@
     },
     {
       "id": "sdk/pixiv:UserProfile",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:UserProfile"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/user_detail.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_user_detail_test.go#TestMigrationUserDetailPreservesFieldsVisibilityAndRequests",
+        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:UserProfileDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:UserProfileDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/user_detail.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_user_detail_test.go#TestMigrationUserDetailPreservesFieldsVisibilityAndRequests",
+        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:UserProfilePublicity",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:UserProfilePublicity"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/user_detail.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_user_detail_test.go#TestMigrationUserDetailPreservesFieldsVisibilityAndRequests",
+        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:UserProfilePublicityDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:UserProfilePublicityDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/user_detail.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_user_detail_test.go#TestMigrationUserDetailPreservesFieldsVisibilityAndRequests",
+        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:UserRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:UserRequest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/user_detail.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_user_detail_test.go#TestMigrationUserDetailPreservesFieldsVisibilityAndRequests",
+        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:UserWorkspace",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:UserWorkspace"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/user_detail.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_user_detail_test.go#TestMigrationUserDetailPreservesFieldsVisibilityAndRequests",
+        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:UserWorkspaceDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:UserWorkspaceDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/user_detail.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_user_detail_test.go#TestMigrationUserDetailPreservesFieldsVisibilityAndRequests",
+        "crates/pixiv-sdk/tests/user_detail.rs#user_detail_preserves_go_fields_visibility_errors_and_requests"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "Go の145ケースで user/profile/profile_publicity/workspace、全 profile/workspace フィールドの null・不正型、公開範囲の bool/public/private、必須オブジェクト、正の ID、profile image と method/path/query を比較。Profile/Workspace DTO は Rust モデルの Serialize と型 alias で対応し、UserDetailDto は既存 UserDto を使う。全 JSON 構文・SDK Options・取消/deadline・resource の実取得・実 HTTPS と他 OS/arch は未検証。"
+      ]
     }
   ]
 }

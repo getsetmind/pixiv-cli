@@ -251,3 +251,24 @@ impl<'a> From<&'a crate::models::Novel> for NovelDto<'a> {
         }
     }
 }
+
+pub type UserProfileDto = crate::models::UserProfile;
+pub type UserProfilePublicityDto = crate::models::UserProfilePublicity;
+pub type UserWorkspaceDto = crate::models::UserWorkspace;
+#[derive(Serialize)]
+pub struct UserDetailDto<'a> {
+    pub user: UserDto<'a>,
+    pub profile: &'a UserProfileDto,
+    pub profile_publicity: &'a UserProfilePublicityDto,
+    pub workspace: &'a UserWorkspaceDto,
+}
+impl<'a> From<&'a crate::models::UserDetail> for UserDetailDto<'a> {
+    fn from(value: &'a crate::models::UserDetail) -> Self {
+        Self {
+            user: UserDto::from(&value.user),
+            profile: &value.profile,
+            profile_publicity: &value.profile_publicity,
+            workspace: &value.workspace,
+        }
+    }
+}

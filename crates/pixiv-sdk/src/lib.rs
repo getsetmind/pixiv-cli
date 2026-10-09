@@ -27,3 +27,5 @@ mod ugoira;
 
 pub use error::{Error, Reason, Result};
 pub use pixiv::Client;
+
+mod user_detail;
