@@ -8,7 +8,7 @@
 | --- | --- | --- |
 | download・媒体処理 | SDK resource open/save、ugoira metadata、CLI metadata 試作 | Go の download 計画・進捗・record 入力・失敗/取消、MCP download/random recommendation、ugoira 取得/変換等の全 workflow |
 | auth の操作入口 | 合成 DB/config/account、refresh CAS、pool/lease | Go の CLI auth login・callback/URL handler 等。import/export/list/use/remove・pool status/enable/disableは下記scopeで接続。下位部品の存在を入口実装と数えない |
-| 公開 client lifecycle | OAuth/HTTP client 基盤 | Go の Client.CloseIdleConnections 等の残る公開契約。通信テストだけの不足と区別する |
+| 公開 client lifecycle | OAuth/HTTP client・login one-shot 基盤 | Go の Client.CloseIdleConnections・LoginOptions Start時HTTPClient ownership・LoginSession.CloseIdleConnections 等の残る公開契約。通信テストだけの不足と区別する |
 | 追加サービス・OS・配布 | Pixiv 共通処理 | FANBOX、辞典、reverse search、update/install/browser/URL handler 等。各 Go 実装の実在範囲を確認してから小さな単位で固定する |
 
 入口確認は `crates/pixiv-cli/src/main.rs`、`crates/pixiv-mcp/src/stdio.rs`、公開 SDK は `crates/pixiv-sdk/src/pixiv.rs` と関連 module を基準にする。Go 側の対応 command/tool/SDK を先に固定し、未実装の空結果・成功や Go fallback で不足を隠さない。
@@ -30,6 +30,7 @@ auth check/refresh（full gate354passed・既存3ignored、対象fixture42root�
 - config sparse documentの全quoted/dotted/inline/duplicate/syntax/非UTF8、private close/cleanup/commit故障、Windows ReplaceFileW compile/run/ACL、symlink/concurrent write
 - auth transferのnonUTF8 token importは既存SDK String/form boundary差分。codec malformed syntax/depth128対Go10000・source scanner panic、安全なRust拒否、secret retry read-ahead・Windows secret ACL/force recovery/durability failureは未検証または具体差分
 - auth terminalのCtrl-D/no-matchは固定Go panic対Rust bounded errorの具体差分。全cursor/redraw/width/color-env/malformed CSI/非UTF8・native Windows consoleは未検証
+- login SDK/appのone-shot/保存依存は対象例で比較（full gate365passed・既存3ignored）するが、CLI local/remote/browser/callback/handlerは未移植。nonUTF8 callback query/form、direct SDK Context、全URL/raw-wire、random failureとowned-client lifecycleは残る
 - auth localの実startup/update/diagnostic/DB close・SQL実行中取消/blocked mutex、service clock全境界/日時/flag/help/非UTF8
 - Windows/macOS/Linux の amd64/arm64、配布・更新の署名/信頼条件
 

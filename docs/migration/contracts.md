@@ -1459,3 +1459,21 @@ Focused app3、CLI validation7、42行startup、既存transfer OAuth4が成功�
 Go related CLI/auth/account/ledger suitesとvetは終了0（CLI44.111秒）。既存Linux公開面snapshot不在1testの除外と、Go Cargo interop flag未指定skipを保持し、strict全Go passとしない。独立read-only reviewは最終runtime/proxy/timestamp/rotation境界を確認し、scoped source finding無し。
 
 nonUTF8 stored tokenの既存SDK String/form差分、SDK-owned CloseIdleConnections/shared pool/context/実TLS・全profile wire、実startup/update/diagnostic/DB close、SQL実行中取消/blocked mutex/全clock/flag/help/Windows・macOS・全archを未検証として残す。auth login/callback/URL handlerは未移植。今回の対象例成功をauth全体・whole migration verifiedへ外挿しない。
+
+## Login SDK session・account completion依存（2026-10-09）
+
+CLI loginのlocal HTTP/manual/TTY・remote relay/handoff・hidden callback/URL-handlerを縮小実装せず、先に一貫したSDK/app依存を固定する。このcheckpointはbrowserを開かず、host protocol登録・実signin・実credential生成/保存を行わない。PKCEのproduction random生成はmock OAuth session用であり、実Pixivへのgrant/accessは取得しない。
+
+LoginSessionはCloneが共有するArc/atomic gate、Default empty handle、非消費callback acceptanceを持つ。invalid inputはgateより先に拒否し、valid inputはOAuth開始前にgateを消費するので、HTTP failure・cancel・future abortでも再使用できない。PKCE verifierは64random bytes、stateは32bytes、S256 challengeとGo query順を比較する。secret-bearing verifier/state/code/callbackをSDK SessionのDebug/Displayへ出さず、CredentialsのDebug/Serializeもtokensを省く。appの公開AuthorizationURLとCallbackOrCodeはGo同様取得/formatできるため、それらまでredactedと呼ばない。
+
+Go実装はcommentと異なり、exact official HTTPS redirectとpixiv://account/loginの両方でstate省略を許す。その他URLもmatching stateなら受け入れる。known first query value、percent decoding、trim、malformed URL parse時のbare-code fallbackを固定し、arbitrary allowlistやURL正規化で置き換えない。official OAuth start/callbackのpure predicateはsession callback acceptanceとは別にし、origin/decoded pathを比較する。reviewで見つかったuserinfo/host forbidden characters、UTF8 percent-host・IPv6 zone/empty zoneを先にGoで再現してから狭く修正する。最終freezeはcallback30行・official predicate10行・response12行で、別one-shot/concurrent/transport/cancel/PKCE checksとRust7testを対応させる。
+
+login responseは既存refresh decode部品を再利用するがrefresh動作は変えない。nested responseのnonzero markerによるroot fallback、refresh-token-requiredとUID/trim validationの異なるerror、access token欠落とzero/nonpositive expiryの成功、typed error/statusを比較する。全raw JSON casing/ordered duplicates/null/precision/UTF8/clock極値の互換証明とはしない。
+
+app LoginService Start/CompleteとCompleteLoginは既存repository/default/summaryへ接続する。missing sessionを先に拒否し、OAuthを消費した後だけmissing account serviceを検査する。credentials validation→save revision1→direct configured default read（use=trueでも省かない）→必要時set→fresh account/default summaryの順を保つ。save/read/set/summary失敗で先行commitを戻さない。tempDBを使い、save後cancelでもconfig read/setが先にcommitし、summary Getのcancelを返すGo境界を比較する。Go4testの9ordered variants＋別post-save cancellation、missing/used sequence・pre-canceled save・canceled OAuth safe Display/causeとRust app4testを比較する。
+
+Focused SDK7・app4が成功した。app初回compileはsummary Serializeという存在しないAPIを仮定し失敗したため、productionへserializationを追加せず実Debug/fields境界へtestだけを直した。次のcanceled OAuth testはDisplayにcontext causeを期待して失敗した。実Goはsafe transport Displayでcauseからcontext.Canceledを検索できるため、追加Go freeze後にexact Display＋is_canceled検査へ直した。両失敗logを保持する。
+
+最終Go SDK/account/ledger related suiteとvetは終了0（SDK1.719秒、account0.120秒、ledger0.294秒）。Go Cargo interop flag未指定skipは残す。このscopeはCLI snapshotを変更せず、その不在testを実行したとは呼ばない。validation環境は前checkpoint同様offline・telemetry optout・task-local dev/test debug情報0・incremental0で、scriptの全stageとrelease設定は不変。最終full gateは終了sentinel0・291秒、Formatter/Clippy・workspace365passed/0failed/既存3ignored・release42.45秒を確認した。独立read-only reviewはparser修正とSDK/app順序を確認し、scoped blocker無し。
+
+nonUTF8 callback query/hostのGo byte string対Rust String/form、direct SDK Context API、Go LoginOptionsのStart時HTTPClient injection・owned client生成/explicit CloseIdleConnections、全URL parse/wire/clock/random生成failure/全concurrency/platformは未検証または未移植として残す。caller-owned transportのComplete時注入をowned HTTP parityへ外挿しない。CLI login local/remote/hidden callback/handler・OS登録/restoration・全auth/whole migrationは未完了。

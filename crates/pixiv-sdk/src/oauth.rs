@@ -8,7 +8,13 @@ use chrono::{DateTime, TimeDelta, Utc};
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-use std::fmt;
+use std::{
+    fmt,
+    sync::{
+        Arc,
+        atomic::{AtomicBool, Ordering},
+    },
+};
 use url::Url;
 
 const CLIENT_ID: &str = "MOBrBDS8blbauoSck0ZfDbtuzpyT";
@@ -61,9 +67,16 @@ impl Serialize for Credentials {
     }
 }
 
+#[derive(Clone, Default)]
 pub struct LoginSession {
+    state: Option<Arc<LoginState>>,
+}
+
+struct LoginState {
     verifier: String,
-    authorization_url: Url,
+    state: String,
+    authorization_url: String,
+    used: AtomicBool,
 }
 
 impl fmt::Debug for LoginSession {
@@ -72,65 +85,294 @@ impl fmt::Debug for LoginSession {
     }
 }
 
+impl fmt::Display for LoginSession {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str("LoginSession { .. }")
+    }
+}
+
 impl LoginSession {
     pub fn begin() -> Result<Self> {
-        let mut random = [0_u8; 32];
-        getrandom::fill(&mut random).map_err(|_| Error::new(Reason::LocalStateError, "login"))?;
-        let verifier = URL_SAFE_NO_PAD.encode(random);
+        let random_token = |size| -> Result<String> {
+            let mut random = vec![0_u8; size];
+            getrandom::fill(&mut random).map_err(|_| {
+                Error::new(Reason::UpstreamUnavailable, "BeginLogin")
+                    .with_detail("cannot create oauth login session")
+            })?;
+            Ok(URL_SAFE_NO_PAD.encode(random))
+        };
+        let verifier = random_token(64)?;
+        let state = random_token(32)?;
         let challenge = URL_SAFE_NO_PAD.encode(Sha256::digest(verifier.as_bytes()));
         let mut authorization_url = Url::parse("https://app-api.pixiv.net/web/v1/login")
-            .map_err(|_| Error::new(Reason::LocalStateError, "login"))?;
+            .map_err(|_| Error::new(Reason::LocalStateError, "BeginLogin"))?;
         authorization_url
             .query_pairs_mut()
+            .append_pair("client", "pixiv-android")
             .append_pair("code_challenge", &challenge)
             .append_pair("code_challenge_method", "S256")
-            .append_pair("client", "pixiv-android");
+            .append_pair("state", &state);
         Ok(Self {
-            verifier,
-            authorization_url,
+            state: Some(Arc::new(LoginState {
+                verifier,
+                state,
+                authorization_url: authorization_url.into(),
+                used: AtomicBool::new(false),
+            })),
         })
     }
 
     pub fn authorization_url(&self) -> &str {
-        self.authorization_url.as_str()
+        self.state
+            .as_ref()
+            .map_or("", |state| state.authorization_url.as_str())
+    }
+
+    pub fn accepts_callback_url(&self, callback: &str) -> bool {
+        let Some(state) = &self.state else {
+            return false;
+        };
+        LoginUrl::parse(callback.trim())
+            .is_some_and(|url| !url.scheme.is_empty() && url.code(&state.state).is_some())
     }
 
     pub async fn complete<T: Transport>(
-        self,
+        &self,
         transport: &T,
         callback: &str,
     ) -> Result<Credentials> {
-        let url = Url::parse(callback).map_err(|_| Error::new(Reason::InvalidArgument, "login"))?;
-        let valid = (url.scheme() == "pixiv"
-            && url.host_str() == Some("account")
-            && url.path() == "/login")
-            || (url.scheme() == "https"
-                && url.host_str() == Some("app-api.pixiv.net")
-                && url.path() == "/web/v1/users/auth/pixiv/callback");
-        if !valid || !url.username().is_empty() || url.password().is_some() || url.port().is_some()
+        let state = self.state.as_ref().ok_or_else(|| {
+            Error::new(Reason::InvalidArgument, "Complete").with_detail("login session is nil")
+        })?;
+        let code = login_code(callback, &state.state).ok_or_else(|| {
+            Error::new(Reason::InvalidArgument, "Complete").with_detail("login callback is invalid")
+        })?;
+        if state
+            .used
+            .compare_exchange(false, true, Ordering::AcqRel, Ordering::Acquire)
+            .is_err()
         {
-            return Err(Error::new(Reason::InvalidArgument, "login"));
-        }
-        let codes: Vec<_> = url
-            .query_pairs()
-            .filter(|(key, _)| key == "code")
-            .map(|(_, value)| value.into_owned())
-            .collect();
-        if codes.len() != 1 || codes[0].is_empty() {
-            return Err(Error::new(Reason::InvalidArgument, "login"));
+            return Err(Error::new(Reason::InvalidArgument, "Complete")
+                .with_detail("login session was already used"));
         }
         exchange(
             transport,
             "Complete",
             vec![
                 ("grant_type", "authorization_code".to_owned()),
-                ("code", codes[0].clone()),
-                ("code_verifier", self.verifier),
+                ("code", code),
+                ("code_verifier", state.verifier.clone()),
                 ("redirect_uri", REDIRECT_URI.to_owned()),
             ],
         )
         .await
     }
+}
+
+fn login_code(input: &str, state: &str) -> Option<String> {
+    let input = input.trim();
+    if input.is_empty() {
+        return None;
+    }
+    match LoginUrl::parse(input) {
+        Some(url) if !url.scheme.is_empty() => url.code(state),
+        _ if !input.contains(['?', '#', '&']) => Some(input.to_owned()),
+        _ => None,
+    }
+}
+
+struct LoginUrl<'a> {
+    scheme: &'a str,
+    host: String,
+    path: String,
+    query: &'a str,
+}
+
+impl<'a> LoginUrl<'a> {
+    fn parse(input: &'a str) -> Option<Self> {
+        use crate::reference::decode_url_component;
+        if input.bytes().any(|byte| byte < 32 || byte == 127) {
+            return None;
+        }
+        let (input, fragment) = input.split_once('#').unwrap_or((input, ""));
+        decode_url_component(fragment, false)?;
+        let colon = input.find(':');
+        let (scheme, remainder) = match colon {
+            Some(index) if !input[..index].contains(['/', '?']) => {
+                let scheme = &input[..index];
+                if scheme.is_empty()
+                    || !scheme.as_bytes()[0].is_ascii_alphabetic()
+                    || !scheme
+                        .bytes()
+                        .all(|b| b.is_ascii_alphanumeric() || b"+-.".contains(&b))
+                {
+                    return None;
+                }
+                (scheme, &input[index + 1..])
+            }
+            _ => ("", input),
+        };
+        let (remainder, query) = remainder.split_once('?').unwrap_or((remainder, ""));
+        let (host, path) = if let Some(authority) = remainder.strip_prefix("//") {
+            let boundary = authority.find('/').unwrap_or(authority.len());
+            let (authority, path) = authority.split_at(boundary);
+            let host = if let Some((userinfo, host)) = authority.rsplit_once('@') {
+                if !userinfo
+                    .bytes()
+                    .all(|b| b.is_ascii_alphanumeric() || b"-._:~!$&'()*+,;=%@".contains(&b))
+                {
+                    return None;
+                }
+                decode_url_component(userinfo, false)?;
+                host
+            } else {
+                authority
+            };
+            let host = login_host(host, scheme)?;
+            (host, path)
+        } else {
+            (String::new(), remainder)
+        };
+        let path = if !scheme.is_empty() && !remainder.starts_with('/') {
+            String::new()
+        } else {
+            decode_url_component(path, false)?
+        };
+        Some(Self {
+            scheme,
+            host,
+            path,
+            query,
+        })
+    }
+
+    fn query_value(&self, name: &str) -> String {
+        use crate::reference::decode_url_component;
+        self.query
+            .split('&')
+            .filter(|entry| !entry.contains(';'))
+            .find_map(|entry| {
+                let (key, value) = entry.split_once('=').unwrap_or((entry, ""));
+                let key = decode_url_component(key, true)?;
+                let value = decode_url_component(value, true)?;
+                (key == name).then_some(value)
+            })
+            .unwrap_or_default()
+    }
+
+    fn official(&self, path: &str) -> bool {
+        self.scheme.eq_ignore_ascii_case("https")
+            && self.host.eq_ignore_ascii_case("app-api.pixiv.net")
+            && self.path == path
+    }
+
+    fn code(&self, expected_state: &str) -> Option<String> {
+        let code = self.query_value("code");
+        let code = code.trim();
+        if code.is_empty() {
+            return None;
+        }
+        let state = self.query_value("state");
+        let state = state.trim();
+        let optional_state = (self.scheme.eq_ignore_ascii_case("pixiv")
+            && self.host.eq_ignore_ascii_case("account")
+            && self.path == "/login")
+            || self.official("/web/v1/users/auth/pixiv/callback");
+        if state != expected_state && (!state.is_empty() || !optional_state) {
+            return None;
+        }
+        Some(code.to_owned())
+    }
+}
+
+fn login_host(input: &str, scheme: &str) -> Option<String> {
+    use crate::reference::decode_url_component;
+    let valid_port = |suffix: &str| {
+        suffix.is_empty()
+            || suffix
+                .strip_prefix(':')
+                .is_some_and(|port| port.bytes().all(|b| b.is_ascii_digit()))
+    };
+    let valid_host_byte =
+        |b: u8| b >= 128 || b.is_ascii_alphanumeric() || b"-_.~!$&'()*+,;=:[]<>\"".contains(&b);
+    let unescape_host = |input: &str, zone: bool| -> Option<String> {
+        let mut index = 0;
+        let bytes = input.as_bytes();
+        while index < bytes.len() {
+            let byte = bytes[index];
+            if byte == b'%' {
+                let high = (*bytes.get(index + 1)? as char).to_digit(16)?;
+                let low = (*bytes.get(index + 2)? as char).to_digit(16)?;
+                let decoded = (high * 16 + low) as u8;
+                if decoded != b'%'
+                    && if zone {
+                        decoded >= 128 || (decoded != b' ' && !valid_host_byte(decoded))
+                    } else {
+                        decoded < 128
+                    }
+                {
+                    return None;
+                }
+                index += 3;
+            } else {
+                if !valid_host_byte(byte) {
+                    return None;
+                }
+                index += 1;
+            }
+        }
+        decode_url_component(input, false)
+    };
+    if let Some(bracketed) = input.strip_prefix('[') {
+        if bracketed.contains('[') {
+            return None;
+        }
+        let end = bracketed.rfind(']')?;
+        let suffix = &bracketed[end + 1..];
+        if !valid_port(suffix) {
+            return None;
+        }
+        let raw_address = &bracketed[..end];
+        let address = if let Some((host, zone)) = raw_address.split_once("%25") {
+            format!(
+                "{}%{}",
+                unescape_host(host, false)?,
+                unescape_host(zone, true)?
+            )
+        } else {
+            unescape_host(raw_address, false)?
+        };
+        let ip = match address.split_once('%') {
+            Some((_, "")) => return None,
+            Some((ip, _)) => ip,
+            None => address.as_str(),
+        };
+        ip.parse::<std::net::Ipv6Addr>().ok()?;
+        return Some(format!("[{address}]{suffix}"));
+    }
+    if input.contains('[') {
+        return None;
+    }
+    if let Some(index) = input.find(':') {
+        let index = if scheme.eq_ignore_ascii_case("http") || scheme.eq_ignore_ascii_case("https") {
+            index
+        } else {
+            input.rfind(':')?
+        };
+        if !valid_port(&input[index..]) {
+            return None;
+        }
+    }
+    unescape_host(input, false)
+}
+
+pub fn is_official_oauth_callback_url(input: &str) -> bool {
+    LoginUrl::parse(input.trim())
+        .is_some_and(|url| url.official("/web/v1/users/auth/pixiv/callback"))
+}
+
+pub fn is_official_oauth_start_url(input: &str) -> bool {
+    LoginUrl::parse(input.trim()).is_some_and(|url| url.official("/web/v1/users/auth/pixiv/start"))
 }
 
 pub async fn refresh<T: Transport>(transport: &T, refresh_token: &str) -> Result<Credentials> {
@@ -325,45 +567,37 @@ async fn request_exchange<T: Transport>(
 }
 
 fn decode_login(body: serde_json::Value, operation: &'static str) -> Result<Credentials> {
-    #[derive(Deserialize)]
-    struct Payload {
-        access_token: String,
-        refresh_token: String,
-        expires_in: i64,
-        user: Identity,
-    }
-    #[derive(Deserialize)]
-    #[serde(untagged)]
-    enum IdentityId {
-        Text(String),
-        Number(i64),
-    }
-    #[derive(Deserialize)]
-    struct Identity {
-        id: IdentityId,
-        name: String,
-    }
-    let payload: Payload = serde_json::from_value(body.get("response").cloned().unwrap_or(body))
-        .map_err(|_| Error::new(Reason::MalformedUpstreamResponse, operation))?;
-    let user_id = match payload.user.id {
-        IdentityId::Text(value) => value.parse::<i64>().ok(),
-        IdentityId::Number(value) => Some(value),
-    }
-    .filter(|id| *id > 0)
-    .ok_or_else(|| Error::new(Reason::MalformedUpstreamResponse, operation))?;
-    if payload.access_token.is_empty()
-        || payload.refresh_token.is_empty()
-        || payload.expires_in <= 0
+    let decoded: RefreshResponse = if body.is_null() {
+        RefreshResponse::default()
+    } else {
+        serde_json::from_value(body)
+            .map_err(|_| Error::new(Reason::MalformedUpstreamResponse, operation))?
+    };
+    let payload = if !decoded.response.access_token.is_empty()
+        || !decoded.response.refresh_token.is_empty()
+        || decoded.response.user.id.0 != 0
     {
+        decoded.response
+    } else {
+        decoded.root
+    };
+    if payload.refresh_token.is_empty() {
         return Err(Error::new(Reason::MalformedUpstreamResponse, operation));
     }
-    let expires_at = TimeDelta::try_seconds(payload.expires_in)
-        .and_then(|duration| Utc::now().checked_add_signed(duration))
-        .ok_or_else(|| Error::new(Reason::MalformedUpstreamResponse, operation))?;
+    if payload.user.id.0 <= 0 || payload.refresh_token.trim().is_empty() {
+        return Err(Error::new(Reason::MalformedUpstreamResponse, operation)
+            .with_detail("oauth response did not include account identity"));
+    }
+    let expires_at = if payload.expires_in <= 0 {
+        DateTime::from_timestamp(-62_135_596_800, 0)
+            .ok_or_else(|| Error::new(Reason::LocalStateError, operation))?
+    } else {
+        Utc::now() + TimeDelta::nanoseconds(payload.expires_in.wrapping_mul(1_000_000_000))
+    };
     Ok(Credentials {
         access_token: payload.access_token,
         refresh_token: payload.refresh_token,
-        user_id,
+        user_id: payload.user.id.0,
         username: payload.user.name,
         expires_at,
     })

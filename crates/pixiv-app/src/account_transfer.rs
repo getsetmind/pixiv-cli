@@ -94,8 +94,8 @@ pub struct RestoreAccountsResult {
 }
 
 pub struct AccountTransfer<'a> {
-    service: &'a AccountService,
-    defaults: &'a dyn AccountDefaultStore,
+    pub(crate) service: &'a AccountService,
+    pub(crate) defaults: &'a dyn AccountDefaultStore,
 }
 impl AccountService {
     pub fn transfer<'a>(&'a self, defaults: &'a dyn AccountDefaultStore) -> AccountTransfer<'a> {

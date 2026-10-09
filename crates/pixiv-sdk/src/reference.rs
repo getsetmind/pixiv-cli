@@ -154,7 +154,7 @@ fn is_locale(value: &str) -> bool {
             (2..=8).contains(&part.len()) && part.bytes().all(|byte| byte.is_ascii_alphabetic())
         })
 }
-fn decode_url_component(value: &str, query: bool) -> Option<String> {
+pub(crate) fn decode_url_component(value: &str, query: bool) -> Option<String> {
     let mut result = vec![];
     let bytes = value.as_bytes();
     let mut index = 0;
