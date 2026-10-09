@@ -1,0 +1,141 @@
+{
+  "desktop_id": "pixiv-cli-url-handler.desktop",
+  "scheme": "x-scheme-handler/pixiv",
+  "executable": "/tmp/pixiv \"quoted\" $value`\\tail",
+  "entry": "[Desktop Entry]\nType=Application\nName=Pixiv CLI OAuth Callback\nNoDisplay=true\nExec=\"/tmp/pixiv \\\"quoted\\\" \\$value\\`\\\\tail\" auth _callback %u\nMimeType=x-scheme-handler/pixiv;\n",
+  "invalid_ids": [
+    "",
+    "../outside.desktop",
+    "/tmp/outside.desktop",
+    "plain",
+    "nested/name.desktop"
+  ],
+  "errors": {
+    "xdg": "xdg-mime is required for the desktop Pixiv callback handler",
+    "gio": "gio is required for the desktop Pixiv callback handler",
+    "no_previous": "no previous Pixiv URL handler is available",
+    "delegate_gio": "gio is required to open the previous Pixiv URL handler",
+    "delegate_locate": "could not locate previous Pixiv URL handler",
+    "delegate_launch": "could not open previous Pixiv URL handler",
+    "unsafe_restore": "cannot safely restore a previous Linux Pixiv URL handler",
+    "nonregular": "desktop integration state is not a regular file"
+  },
+  "snapshot_order": [
+    "config/mimeapps.list",
+    "data/applications/mimeapps.list",
+    "data/applications/pixiv-cli-url-handler.desktop"
+  ],
+  "set_default_args": [
+    "default",
+    "pixiv-cli-url-handler.desktop",
+    "x-scheme-handler/pixiv"
+  ],
+  "ensure_first_order": [
+    "find:xdg-mime",
+    "find:gio",
+    "executable",
+    "query",
+    "default"
+  ],
+  "ensure_repeat_order": [
+    "find:xdg-mime",
+    "find:gio",
+    "executable",
+    "default"
+  ],
+  "restore_order": "all snapshots attempted in stored order; duplicate paths last wins; errors joined in encounter order",
+  "home_missing_with_explicit_xdg": "applications resolves from XDG_DATA_HOME; mimeapps snapshot list is empty",
+  "process": {
+    "query_argv": [
+      "query",
+      "default",
+      "x-scheme-handler/pixiv"
+    ],
+    "query_output": "trim Unicode whitespace",
+    "query_failure_prefix": "query xdg-mime: ",
+    "default_failure_prefix": "run xdg-mime: ",
+    "gio_argv": [
+      "launch",
+      "<resolved desktop file>",
+      "<raw URL>"
+    ],
+    "gio_failure": "could not open previous Pixiv URL handler"
+  },
+  "legacy_disable": [
+    {
+      "previous": "previous.desktop",
+      "calls": [
+        [
+          "default",
+          "previous.desktop",
+          "x-scheme-handler/pixiv"
+        ]
+      ],
+      "manifest_removed": true,
+      "desktop_removed": true
+    },
+    {
+      "previous": "",
+      "error": "cannot safely restore a previous Linux Pixiv URL handler",
+      "manifest_removed": false,
+      "desktop_removed": false
+    },
+    {
+      "previous": "pixiv-cli-url-handler.desktop",
+      "calls": [],
+      "manifest_removed": true,
+      "desktop_removed": false
+    }
+  ],
+  "repeat_legacy_registration_failure": {
+    "query_called": false,
+    "desktop_retained": true,
+    "manifest_unchanged": true,
+    "reason": "no stored snapshots means no rollback"
+  },
+  "disable_failure_order": {
+    "missing_manifest": [],
+    "query_failure": [
+      "query"
+    ],
+    "legacy_default_failure": [
+      "query",
+      "default"
+    ],
+    "legacy_desktop_remove_failure": [
+      "query",
+      "default",
+      "remove-desktop"
+    ]
+  },
+  "native_paths": {
+    "xdg_leaf_bytes_hex": "7864672dff",
+    "temporary_cleanup": "restores original native paths and does not create replacement-character paths",
+    "persistent_loaded_snapshot_leaf": "xdg-\ufffd",
+    "persistent_disable": "restores initial config into lossy snapshot path; native config retains registration change and native desktop remains"
+  },
+  "restore_existing_parent_mode": {
+    "before": 489,
+    "after": 489,
+    "restored_file_mode": 416,
+    "new_file_mode": 388
+  },
+  "native_path_cases": [
+    {
+      "name": "invalid-byte",
+      "leaf_hex": "7864672dff",
+      "lossy_leaf": "xdg-\ufffd"
+    },
+    {
+      "name": "truncated-multibyte",
+      "leaf_hex": "7864672df090",
+      "lossy_leaf": "xdg-\ufffd\ufffd"
+    }
+  ],
+  "invalid_endpoint_missing_home": {
+    "relay": "invalid-relay",
+    "error": "invalid callback endpoint",
+    "host_hooks": [],
+    "ordering": "validate relay before callback endpoint path resolution"
+  }
+}

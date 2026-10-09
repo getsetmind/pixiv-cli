@@ -1,9 +1,12 @@
 use std::{
+    collections::VecDeque,
     error::Error,
     ffi::{OsStr, OsString},
     fmt, io,
+    io::Read,
     path::{Path, PathBuf},
-    process::{Command, ExitStatus, Stdio},
+    process::{Child, Command, ExitStatus, Stdio},
+    thread,
 };
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -35,6 +38,8 @@ impl HostPlatform {
 pub enum ProcessStdio {
     Inherit,
     Capture,
+    CaptureStdout,
+    Discard,
 }
 
 #[derive(Debug)]
@@ -63,6 +68,7 @@ pub enum HostProcessError {
         output: ProcessOutput,
     },
     Native(io::Error),
+    Context(crate::lifecycle::ContextError),
 }
 
 impl HostProcessError {
@@ -93,9 +99,19 @@ impl fmt::Display for HostProcessError {
                 source.fmt(f)
             }
             Self::Native(source) => source.fmt(f),
+            Self::Context(source) => source.fmt(f),
             Self::Exit { output, .. } => match output.status.code() {
                 Some(code) => write!(f, "exit status {code}"),
-                None => output.status.fmt(f),
+                None => {
+                    #[cfg(unix)]
+                    {
+                        use std::os::unix::process::ExitStatusExt;
+                        if output.status.signal() == Some(libc::SIGKILL) {
+                            return f.write_str("signal: killed");
+                        }
+                    }
+                    output.status.fmt(f)
+                }
             },
         }
     }
@@ -107,6 +123,7 @@ impl Error for HostProcessError {
             Self::Lookup { source, .. } | Self::Spawn { source, .. } | Self::Native(source) => {
                 Some(source)
             }
+            Self::Context(source) => Some(source),
             Self::RelativePath { .. } | Self::Exit { .. } => None,
         }
     }
@@ -346,6 +363,146 @@ fn windows_look_extensions(path: &Path) -> Result<PathBuf, HostProcessError> {
     windows_look_path(path.as_os_str())
 }
 
+pub(crate) fn prepare_command(
+    host: &impl HostProcess,
+    program: &OsStr,
+    args: &[OsString],
+    stdio: ProcessStdio,
+) -> Result<(PathBuf, Command), HostProcessError> {
+    let path = Path::new(program);
+    let executable = if contains_separator(program) || path.is_absolute() {
+        #[cfg(windows)]
+        {
+            windows_look_extensions(path)?
+        }
+        #[cfg(not(windows))]
+        {
+            path.to_owned()
+        }
+    } else {
+        host.look_path(program)?
+    };
+    let mut command = Command::new(&executable);
+    command.args(args).stdin(Stdio::null());
+    #[cfg(unix)]
+    {
+        use std::os::unix::process::CommandExt;
+        command.arg0(program);
+    }
+    match stdio {
+        ProcessStdio::Inherit => {
+            command.stdout(Stdio::inherit()).stderr(Stdio::inherit());
+        }
+        ProcessStdio::Discard => {
+            command.stdout(Stdio::null()).stderr(Stdio::null());
+        }
+        ProcessStdio::Capture | ProcessStdio::CaptureStdout => {
+            command.stdout(Stdio::piped()).stderr(Stdio::piped());
+        }
+    }
+    Ok((executable, command))
+}
+
+pub(crate) fn finish_output(
+    program: &OsStr,
+    stdio: ProcessStdio,
+    mut output: ProcessOutput,
+) -> Result<ProcessOutput, HostProcessError> {
+    if stdio == ProcessStdio::CaptureStdout && output.status.success() {
+        output.stderr.clear();
+    }
+    if output.status.success() {
+        Ok(output)
+    } else {
+        Err(HostProcessError::Exit {
+            program: program.to_owned(),
+            output,
+        })
+    }
+}
+
+fn read_pipe(pipe: Option<impl Read>, bounded: bool) -> (Vec<u8>, Option<io::Error>) {
+    let Some(mut pipe) = pipe else {
+        return (Vec::new(), None);
+    };
+    let mut prefix = Vec::new();
+    let mut suffix = VecDeque::new();
+    let mut total = 0_u64;
+    let mut buffer = [0_u8; 8192];
+    let error = loop {
+        match pipe.read(&mut buffer) {
+            Ok(0) => break None,
+            Ok(length) => {
+                total += length as u64;
+                let bytes = &buffer[..length];
+                if !bounded {
+                    prefix.extend_from_slice(bytes);
+                    continue;
+                }
+                let first = (32768 - prefix.len()).min(bytes.len());
+                prefix.extend_from_slice(&bytes[..first]);
+                for &byte in &bytes[first..] {
+                    if suffix.len() == 32768 {
+                        suffix.pop_front();
+                    }
+                    suffix.push_back(byte);
+                }
+            }
+            Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
+            Err(error) => break Some(error),
+        }
+    };
+    if bounded {
+        let skipped = total.saturating_sub((prefix.len() + suffix.len()) as u64);
+        if skipped != 0 {
+            prefix.extend_from_slice(format!("\n... omitting {skipped} bytes ...\n").as_bytes());
+        }
+        prefix.extend(suffix);
+    }
+    (prefix, error)
+}
+
+pub(crate) fn collect_child_output(
+    program: &OsStr,
+    stdio: ProcessStdio,
+    mut child: Child,
+    wait: impl FnOnce(&mut Child) -> io::Result<(ExitStatus, Option<HostProcessError>)>,
+) -> Result<ProcessOutput, HostProcessError> {
+    let stdout = child.stdout.take();
+    let stderr = child.stderr.take();
+    thread::scope(|scope| {
+        let stdout = scope.spawn(move || read_pipe(stdout, false));
+        let stderr = scope.spawn(move || read_pipe(stderr, stdio == ProcessStdio::CaptureStdout));
+        let waited = wait(&mut child);
+        if waited.is_err() {
+            let _ = child.kill();
+            let _ = child.wait();
+        }
+        let (stdout, stdout_error) = stdout
+            .join()
+            .unwrap_or_else(|_| (Vec::new(), Some(io::Error::other("stdout reader panicked"))));
+        let (stderr, stderr_error) = stderr
+            .join()
+            .unwrap_or_else(|_| (Vec::new(), Some(io::Error::other("stderr reader panicked"))));
+        let (status, cancellation) = waited.map_err(HostProcessError::Native)?;
+        let output = ProcessOutput {
+            status,
+            stdout,
+            stderr,
+        };
+        if !status.success() {
+            return finish_output(program, stdio, output);
+        }
+        if let Some(error) = cancellation {
+            return Err(error);
+        }
+        if let Some(error) = stdout_error.or(stderr_error) {
+            return Err(HostProcessError::Native(error));
+        }
+        finish_output(program, stdio, output)
+    })
+}
+
 impl HostProcess for SystemHostProcess {
     fn platform(&self) -> HostPlatform {
         HostPlatform::current()
@@ -388,54 +545,29 @@ impl HostProcess for SystemHostProcess {
         args: &[OsString],
         stdio: ProcessStdio,
     ) -> Result<ProcessOutput, HostProcessError> {
-        let path = Path::new(program);
-        let executable = if contains_separator(program) || path.is_absolute() {
-            #[cfg(windows)]
-            {
-                windows_look_extensions(path)?
-            }
-            #[cfg(not(windows))]
-            {
-                path.to_owned()
-            }
-        } else {
-            self.look_path(program)?
-        };
-        let mut command = Command::new(&executable);
-        command.args(args).stdin(Stdio::null());
-        #[cfg(unix)]
-        {
-            use std::os::unix::process::CommandExt;
-            command.arg0(program);
+        let (executable, mut command) = prepare_command(self, program, args, stdio)?;
+        if stdio == ProcessStdio::CaptureStdout {
+            let child = command.spawn().map_err(|source| HostProcessError::Spawn {
+                program: executable.into_os_string(),
+                source,
+            })?;
+            return collect_child_output(program, stdio, child, |child| {
+                child.wait().map(|status| (status, None))
+            });
         }
-        let result = match stdio {
-            ProcessStdio::Inherit => command
-                .stdout(Stdio::inherit())
-                .stderr(Stdio::inherit())
-                .status()
-                .map(|status| ProcessOutput {
-                    status,
-                    stdout: Vec::new(),
-                    stderr: Vec::new(),
-                }),
-            ProcessStdio::Capture => command.output().map(|output| ProcessOutput {
-                status: output.status,
-                stdout: output.stdout,
-                stderr: output.stderr,
-            }),
-        }
-        .map_err(|source| HostProcessError::Spawn {
+        let output = command.output().map_err(|source| HostProcessError::Spawn {
             program: executable.into_os_string(),
             source,
         })?;
-        if result.status.success() {
-            Ok(result)
-        } else {
-            Err(HostProcessError::Exit {
-                program: program.to_owned(),
-                output: result,
-            })
-        }
+        finish_output(
+            program,
+            stdio,
+            ProcessOutput {
+                status: output.status,
+                stdout: output.stdout,
+                stderr: output.stderr,
+            },
+        )
     }
 
     fn shell_open_url(&self, url: &str) -> Result<(), HostProcessError> {

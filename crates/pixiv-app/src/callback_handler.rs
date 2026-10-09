@@ -20,7 +20,7 @@ use tokio_util::sync::CancellationToken;
 pub type CallbackError = Box<dyn Error + Send + Sync>;
 pub type CallbackResult<T> = Result<T, CallbackError>;
 
-pub fn app_data_directory() -> io::Result<PathBuf> {
+pub fn user_home_directory() -> io::Result<PathBuf> {
     let variable = if cfg!(windows) { "USERPROFILE" } else { "HOME" };
     let home = std::env::var_os(variable)
         .filter(|value| !value.is_empty())
@@ -31,9 +31,18 @@ pub fn app_data_directory() -> io::Result<PathBuf> {
                 "$HOME is not defined"
             })
         })?;
-    let joined = PathBuf::from(home).join(".pixiv-cli");
+    Ok(PathBuf::from(home))
+}
+
+pub fn app_data_directory() -> io::Result<PathBuf> {
+    Ok(clean_native_path(
+        &user_home_directory()?.join(".pixiv-cli"),
+    ))
+}
+
+pub(crate) fn clean_native_path(path: &Path) -> PathBuf {
     let mut cleaned = PathBuf::new();
-    for component in joined.components() {
+    for component in path.components() {
         match component {
             Component::CurDir => {}
             Component::ParentDir => {
@@ -46,7 +55,7 @@ pub fn app_data_directory() -> io::Result<PathBuf> {
             other => cleaned.push(other.as_os_str()),
         }
     }
-    Ok(cleaned)
+    cleaned
 }
 
 pub fn callback_endpoint_path() -> io::Result<PathBuf> {
@@ -111,6 +120,14 @@ pub fn validated_callback_endpoint(raw: &str) -> Result<String, CallbackEndpoint
     Ok(parsed.with_fragment(""))
 }
 
+pub(crate) struct ValidatedCallbackEndpoint(String);
+
+impl ValidatedCallbackEndpoint {
+    pub(crate) fn parse(raw: &str) -> Result<Self, CallbackEndpointError> {
+        validated_callback_endpoint(raw).map(Self)
+    }
+}
+
 pub trait CallbackEndpointStore: Send + Sync {
     fn local_relay_url(&self, raw_callback: &str) -> CallbackResult<String>;
 }
@@ -129,8 +146,13 @@ impl FileCallbackEndpointStore {
         &self.path
     }
     pub fn write(&self, endpoint: &str) -> Result<&Path, CallbackEndpointError> {
-        let endpoint = validated_callback_endpoint(endpoint)?;
-        private_file::write(&self.path, format!("{endpoint}\n").as_bytes())
+        self.write_validated(&ValidatedCallbackEndpoint::parse(endpoint)?)
+    }
+    pub(crate) fn write_validated(
+        &self,
+        endpoint: &ValidatedCallbackEndpoint,
+    ) -> Result<&Path, CallbackEndpointError> {
+        private_file::write(&self.path, format!("{}\n", endpoint.0).as_bytes())
             .map_err(CallbackEndpointError::Storage)?;
         Ok(&self.path)
     }
