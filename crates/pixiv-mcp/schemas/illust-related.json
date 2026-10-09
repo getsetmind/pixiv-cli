@@ -1,0 +1,169 @@
+{
+  "description": "Find artworks related to a specific illustration.",
+  "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "illust_filter": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "description": "optional positive illustration ID",
+            "type": [
+              "null",
+              "integer"
+            ]
+          },
+          "min_pages": {
+            "description": "minimum page count",
+            "type": [
+              "null",
+              "integer"
+            ]
+          },
+          "min_views": {
+            "description": "minimum public view count",
+            "type": [
+              "null",
+              "integer"
+            ]
+          },
+          "tags": {
+            "description": "all exact tags required",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "type": {
+            "description": "illust, manga, or ugoira",
+            "type": "string"
+          }
+        },
+        "type": [
+          "null",
+          "object"
+        ]
+      },
+      "illust_id": {
+        "type": "integer"
+      },
+      "limit": {
+        "description": "maximum items; 0 returns all items",
+        "type": [
+          "null",
+          "integer"
+        ]
+      },
+      "page": {
+        "description": "1-based logical page; requires a positive limit",
+        "type": [
+          "null",
+          "integer"
+        ]
+      }
+    },
+    "required": [
+      "illust_id"
+    ],
+    "type": "object"
+  },
+  "name": "illust_related",
+  "outputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "access_control": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "bookmark_tags": {
+        "items": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "type": "array"
+      },
+      "bookmarked": {
+        "type": "boolean"
+      },
+      "comments": {
+        "items": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "type": "array"
+      },
+      "content": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "filter": {
+        "additionalProperties": false,
+        "properties": {
+          "completeness": {
+            "type": "string"
+          },
+          "max": {
+            "type": "integer"
+          },
+          "membership": {
+            "type": "string"
+          },
+          "min": {
+            "type": "integer"
+          },
+          "strategy": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "pagination": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "records": {
+        "items": {
+          "additionalProperties": true,
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "type",
+            "url"
+          ],
+          "type": "object"
+        },
+        "type": "array"
+      },
+      "restrict": {
+        "type": "string"
+      },
+      "series": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "tags": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "total": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "records"
+    ],
+    "type": "object"
+  }
+}

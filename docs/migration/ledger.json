@@ -2062,27 +2062,57 @@
     },
     {
       "id": "mcp:pixiv:illust_recommended",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "illust_recommended"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/artwork_feed.rs",
+        "crates/pixiv-mcp/src/search.rs",
+        "crates/pixiv-mcp/src/stdio.rs",
+        "crates/pixiv-mcp/schemas/illust-recommended.json"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_artwork_feed_test.go",
+        "internal/mcpserver/pixiv/migration_artwork_feed_pool_test.go",
+        "crates/pixiv-mcp/tests/artwork_feed.rs",
+        "crates/pixiv-mcp/tests/artwork_feed_pool.rs",
+        "crates/pixiv-cli/tests/mcp_stdio.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go114入力/filter/pagination/errorケースと4保存済み2accountシナリオを直接・stdio・保存済みaccountで比較。filter/dedupを論理pagination前に適用し、空batchの補充とretry時の結果破棄を維持。旧17tool順序を保持し2toolを末尾へ追加。推奨CLIのnovel/user/all全体は別工程。共有raw-wire/cursor payload、schemaの複数不正field診断順、取消/concurrency/disconnect、全通信/JSON・実HTTPS・他OS/archは未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:illust_related",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "illust_related"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/artwork_feed.rs",
+        "crates/pixiv-mcp/src/search.rs",
+        "crates/pixiv-mcp/src/stdio.rs",
+        "crates/pixiv-mcp/schemas/illust-related.json"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_artwork_feed_test.go",
+        "internal/mcpserver/pixiv/migration_artwork_feed_pool_test.go",
+        "crates/pixiv-mcp/tests/artwork_feed.rs",
+        "crates/pixiv-mcp/tests/artwork_feed_pool.rs",
+        "crates/pixiv-cli/tests/mcp_stdio.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go114入力/filter/pagination/errorケースと4保存済み2accountシナリオを直接・stdio・保存済みaccountで比較。filter/dedupを論理pagination前に適用し、空batchの補充とretry時の結果破棄を維持。旧17tool順序を保持し2toolを末尾へ追加。推奨CLIのnovel/user/all全体は別工程。共有raw-wire/cursor payload、schemaの複数不正field診断順、取消/concurrency/disconnect、全通信/JSON・実HTTPS・他OS/archは未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:illust_series",
@@ -2202,7 +2232,8 @@
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "正IDは保存account取得後に固定Goと同じcontent_unavailableとなり、endpoint HTTPは0回。非正ID/schemaと完全なfailureenvelopeをGo比較。WebView本文は固定Goの契約外。全JSON/認証/取消/deadline/disconnect・他OS/archは未検証。"
+        "正IDは保存account取得後に固定Goと同じcontent_unavailableとなり、endpoint HTTPは0回。非正ID/schemaと完全なfailureenvelopeをGo比較。WebView本文は固定Goの契約外。全JSON/認証/取消/deadline/disconnect・他OS/archは未検証。",
+        "Go既存novel_content-argument-pの2未知property診断順はmap iterationで[page limit]/[limit page]となり非決定的。fixtureは変更せず20回再現検査で差を確認。Rustは固定fixtureと比較するが、この複数不正fieldのGo診断順の完全一致は未検証。"
       ]
     },
     {
@@ -7069,15 +7100,26 @@
     },
     {
       "id": "sdk/pixiv:Client.RecommendedArtworks",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.RecommendedArtworks"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/artwork_feeds.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_artwork_feeds_test.go",
+        "crates/pixiv-sdk/tests/artwork_feeds.rs#feeds_match_frozen_go_dtos_structured_cursors_validation_and_exact_queries"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "2操作のGo155ケースでDTO・binding v2・account/client/query隔離・cursor bytes・indexed array順序とquery多重値・offset0・validation段階を比較。relatedはindexed配列を[]へ正規化し、recommendedはviewed[を除去する。応答でcursorを発行し再利用時に拒否するGoの段階も保持。Value応答とcursor payloadの大小文字/重複/null/不正UTF-8、全URL/JSON/通信/Options・取消/deadline/disconnect・実HTTPS/resource・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.RecommendedNovels",
@@ -7105,15 +7147,26 @@
     },
     {
       "id": "sdk/pixiv:Client.RelatedArtworks",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.RelatedArtworks"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/artwork_feeds.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_artwork_feeds_test.go",
+        "crates/pixiv-sdk/tests/artwork_feeds.rs#feeds_match_frozen_go_dtos_structured_cursors_validation_and_exact_queries"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "2操作のGo155ケースでDTO・binding v2・account/client/query隔離・cursor bytes・indexed array順序とquery多重値・offset0・validation段階を比較。relatedはindexed配列を[]へ正規化し、recommendedはviewed[を除去する。応答でcursorを発行し再利用時に拒否するGoの段階も保持。Value応答とcursor payloadの大小文字/重複/null/不正UTF-8、全URL/JSON/通信/Options・取消/deadline/disconnect・実HTTPS/resource・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.RelatedUsers",
@@ -9962,15 +10015,26 @@
     },
     {
       "id": "sdk/pixiv:RecommendedArtworksRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:RecommendedArtworksRequest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/artwork_feeds.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_artwork_feeds_test.go",
+        "crates/pixiv-sdk/tests/artwork_feeds.rs#feeds_match_frozen_go_dtos_structured_cursors_validation_and_exact_queries"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "2操作のGo155ケースでDTO・binding v2・account/client/query隔離・cursor bytes・indexed array順序とquery多重値・offset0・validation段階を比較。relatedはindexed配列を[]へ正規化し、recommendedはviewed[を除去する。応答でcursorを発行し再利用時に拒否するGoの段階も保持。Value応答とcursor payloadの大小文字/重複/null/不正UTF-8、全URL/JSON/通信/Options・取消/deadline/disconnect・実HTTPS/resource・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:RecommendedNovelsRequest",
@@ -10190,15 +10254,26 @@
     },
     {
       "id": "sdk/pixiv:RelatedArtworksRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:RelatedArtworksRequest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/artwork_feeds.rs",
+        "crates/pixiv-sdk/src/continuation.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_artwork_feeds_test.go",
+        "crates/pixiv-sdk/tests/artwork_feeds.rs#feeds_match_frozen_go_dtos_structured_cursors_validation_and_exact_queries"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "2操作のGo155ケースでDTO・binding v2・account/client/query隔離・cursor bytes・indexed array順序とquery多重値・offset0・validation段階を比較。relatedはindexed配列を[]へ正規化し、recommendedはviewed[を除去する。応答でcursorを発行し再利用時に拒否するGoの段階も保持。Value応答とcursor payloadの大小文字/重複/null/不正UTF-8、全URL/JSON/通信/Options・取消/deadline/disconnect・実HTTPS/resource・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:RelatedUsersRequest",

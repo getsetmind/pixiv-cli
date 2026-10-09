@@ -78,7 +78,7 @@ fn mcp_process_exchanges_jsonrpc_without_stdout_diagnostics_or_credentials() {
     );
     assert_eq!(
         by_id("list")["result"]["tools"].as_array().unwrap().len(),
-        17
+        19
     );
     for (index, name) in [
         "add_bookmark",
@@ -111,6 +111,14 @@ fn mcp_process_exchanges_jsonrpc_without_stdout_diagnostics_or_credentials() {
     assert_eq!(
         by_id("list")["result"]["tools"][16],
         pixiv_mcp::illust_series_tool()
+    );
+    assert_eq!(
+        by_id("list")["result"]["tools"][17],
+        pixiv_mcp::illust_related_tool()
+    );
+    assert_eq!(
+        by_id("list")["result"]["tools"][18],
+        pixiv_mcp::illust_recommended_tool()
     );
     assert_eq!(
         by_id("invalid")["result"]["content"][0]["text"],

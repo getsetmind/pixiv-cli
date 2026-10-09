@@ -1057,3 +1057,21 @@ MCP は [mcp-artwork-series.json](contracts/mcp-artwork-series.json) の34ケー
 Linux amd64 の最終 scripts/check-rust.ps1 は終了0で、Formatter、workspace all-target Clippy、193 passed・0 failed・既存3 ignored、release build が成功した。Clippy build は約6秒、test build は約25秒、release build は約18秒で、全チェックは約170秒だった。Go の SDK・MCP・CLI・series command・migration 台帳テスト、関連 vet と gofmt は成功した。CLI 全体検査では既知の cli.linux-amd64.json 不在の公開面検査だけを除外し、未検証として残した。補助チェックの初回には存在しない series package path を指定して失敗したが、実在する internal/cli/commands/pixiv/series に訂正して関連チェック全体を再実行した。失敗と成功の終了値を別に保存した。
 
 独立レビューと字句を保持する比較の追加確認を行い、Go 本番コード・go.mod・go.sum は固定参照から変更していない。実装・契約取得・入口比較・検証は約18分で、実 Pixiv 資格情報・ライブアクセスを使用していない。作品・小説の Value decode の raw-wire 差分、共有 root parser の3差分、Linux 公開面 snapshot、全 flag/help/TTY・通信/Options・取消/deadline/disconnect・実 HTTPS/resource、他 OS/arch は未検証である。台帳は in_progress を維持し、全体移植の完了や最終切替とは扱わない。
+
+## 関連作品・推奨作品の SDK・MCP
+
+[artwork-feeds.json](contracts/artwork-feeds.json) は RelatedArtworks と RecommendedArtworks の固定 Go 155ケースである。DTO、binding v2 の cursor bytes、account/client/query の隔離、ordered query と多重値、offset=0、未知/不正 continuation と検証段階を比較する。verified account は同じ account の別 client で継続でき、別 account と匿名 client では拒否する。関連作品は indexed seed_illust_ids/viewed を順序を持つ repeated [] query に変換する。推奨作品は viewed[ prefix を取り除き、offset/bookmark/include params をそのまま保存する。offset=0 を先頭ページへの省略に置き換えない。
+
+Go の next_url parser と次回 cursor validation は同じ検証ではない。不正な numeric/bool 推奨値や関連 offset に余分な array key がある応答では、最初の取得が cursor を返し、再利用時に失敗する。関連 illust_id の不一致は endpoint 再実行前の upstream error になる。Rust はこれらを最初の malformed response に変更しない。最初の比較で related 再利用エラーの cause text の欠落を確認し、Go と同じ秘匿化済み cause を追加した。Go fixture を変えずに再実行し、155ケースと既存 ranking/series の回帰比較が通った。URL safety parser を共用し、scalar continuation の意味は保持した。
+
+[mcp-artwork-feed.json](contracts/mcp-artwork-feed.json) は illust_related と illust_recommended の schema・114入力/filter/pagination/errorケースであり、直接・stdio・保存済み account から比較する。related の生成 schema は任意 pointer の null を許し、handler が ID、plan、filter の順で検証する。recommended の明示 schema は null/minimum 違反を先に拒否する。schema の複数不正 field は Go map の診断順が安定しないため、単一不正 field を固定し、関連の semantic multi-invalid 検証順とは区別する。全5 filter field、kind+ID の重複除去を logical pagination 前に適用し、空または全件 filter された batch は omitted limit でも非空になるまで補充する。
+
+[mcp-artwork-feed-pool.json](contracts/mcp-artwork-feed-pool.json) は4つの保存済み2 account replay/state/release/reuseシナリオである。各試行は取得結果と dedup state を初期化し、途中失敗の部分結果を次の試行へ残さない。pool 比較は account 選択を確認し、cursor/query の正確な順序・多重値は SDK155ケースで確認する。既存17 tool の順序と schema を保持し、新しい related/recommended の2 tool を末尾へ追加した。
+
+固定 Go に作品 related の CLI は存在しないため、新たな CLI を作成していない。recommended CLI は novel/user/all を含む全体の縦断移植として pending を維持する。作品応答は既存 Value decode であり、共有 raw-wire 大小文字・重複・順序・不正 UTF-8、cursor payload の大小文字・重複/null と任意 JSON precision、取消/concurrency/disconnect、全通信/Options・実 HTTPS/resource、他 OS/arch は未検証である。前の root parser3差分と Linux 公開面 snapshot 不在も解消扱いにしない。
+
+この工程の Go 全体再検査で、既存 novel_content-argument-p の未知 property が2つある診断の非決定性を確認した。Go map iteration により [page limit] と [limit page] の順が変わる。最初の5回は成功し、20回の再現検査では差を複数回確認したため、成功するまでの再実行を検証証拠にしない。既存 fixture は変更せず、Go テストに最初の差分 byte と前後の診断を出す処理だけを追加した。Rust の固定 fixture 比較は通っても、この複数不正 field 診断順の全互換を証明しない。台帳の novel_content に追加の未検証として記録した。
+
+Go の scoped 全体検査は終了0で、SDK・MCP・CLI・migration 台帳、関連 vet と gofmt が成功した。MCP は opt-in の `-migration-skip-nondeterministic-novel-property-order` を使い、novel_content-argument-p の診断全文が観測した2通りのいずれかであることを確認した上で、この行の未知 property の順だけを未検証にする。他の診断内容、result・calls・requests、schema、全ての他の行は元の byte 比較を維持する。flag 無指定の検査は従来通り strict で、非決定的な順で失敗し得る。CLI は既知の cli.linux-amd64.json 不在の公開面検査だけを除外した。失敗ログ、20回再現ログ、scoped 成功ログを分けて保持し、未検証を成功扱いにしていない。
+
+Linux amd64 の最終 scripts/check-rust.ps1 は終了0で、Formatter、workspace all-target Clippy、196 passed・0 failed・既存3 ignored、release build が成功した。最初の全チェックは既存 novel-series catalog set が追加2 tool を含んでおらず失敗した。旧17 tool の比較を保持して2 tool を追加し、全チェックを再実行した。最終 Clippy build は約0.4秒、test build は約2秒、release build は約19秒だった。独立レビューは feed 実装と、診断順だけを隔離する Go 比較を確認した。実装・契約取得・比較・検証は約15分で、Go 本番コード・go.mod・go.sum は固定参照との差がなく、実 Pixiv 資格情報・ライブアクセスを使用していない。台帳の in_progress と全体切替条件を維持する。

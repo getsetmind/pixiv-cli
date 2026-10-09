@@ -195,3 +195,9 @@ pub use novel_content::{NovelContentInput, novel_content, novel_content_tool};
 
 mod illust_series;
 pub use illust_series::{IllustSeriesInput, illust_series, illust_series_tool};
+
+mod artwork_feed;
+pub use artwork_feed::{
+    IllustRecommendedInput, IllustRelatedInput, illust_recommended, illust_recommended_tool,
+    illust_related, illust_related_tool,
+};

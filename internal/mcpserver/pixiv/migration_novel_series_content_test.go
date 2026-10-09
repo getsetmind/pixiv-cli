@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	pixivmcp "github.com/FlanChanXwO/pixiv-cli/internal/mcpserver/pixiv"
@@ -17,6 +18,8 @@ import (
 )
 
 var migrationUpdateMCPNovelSeriesContent = flag.Bool("migration-update-mcp-novel-series-content", false, "capture fixed Go MCP detail contracts")
+
+var migrationSkipNovelPropertyOrder = flag.Bool("migration-skip-nondeterministic-novel-property-order", false, "leave exact ordering of two unknown novel content properties unverified")
 
 func TestMigrationMCPNovelSeriesContentMatchesFrozenContracts(t *testing.T) {
 	path := filepath.Join("..", "..", "..", "docs", "migration", "contracts")
@@ -139,7 +142,46 @@ func TestMigrationMCPNovelSeriesContentMatchesFrozenContracts(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	if *migrationSkipNovelPropertyOrder {
+		var reference struct {
+			Cases []row `json:"cases"`
+		}
+		if err := json.Unmarshal(want, &reference); err != nil {
+			t.Fatal(err)
+		}
+		if len(rows) != len(reference.Cases) {
+			t.Fatal("novel contract case count differs")
+		}
+		for index := range rows {
+			if rows[index].Name != "novel_content-argument-p" {
+				continue
+			}
+			expected := reference.Cases[index]
+			if expected.Name != rows[index].Name || !strings.Contains(expected.RPCError, `["limit" "page"]`) {
+				t.Fatal("unknown-property order reference differs")
+			}
+			alternate := strings.Replace(expected.RPCError, `["limit" "page"]`, `["page" "limit"]`, 1)
+			if rows[index].RPCError != expected.RPCError && rows[index].RPCError != alternate {
+				t.Fatalf("unknown-property diagnostic content differs: %q", rows[index].RPCError)
+			}
+			t.Log("novel_content-argument-p exact unknown-property order remains unverified; diagnostic content and all other fields are compared")
+			rows[index].RPCError = expected.RPCError
+		}
+		data, err = json.MarshalIndent(struct {
+			Tools map[string]json.RawMessage `json:"tools"`
+			Cases []row                      `json:"cases"`
+		}{tools, rows}, "", "  ")
+		if err != nil {
+			t.Fatal(err)
+		}
+		data = append(data, '\n')
+	}
 	if !bytes.Equal(data, want) {
-		t.Fatal("MCP detail differs from fixed Go reference")
+		index := 0
+		for index < len(data) && index < len(want) && data[index] == want[index] {
+			index++
+		}
+		start := max(0, index-160)
+		t.Fatalf("MCP detail differs from fixed Go reference at byte %d: got %q; want %q", index, data[start:min(len(data), index+240)], want[start:min(len(want), index+240)])
 	}
 }

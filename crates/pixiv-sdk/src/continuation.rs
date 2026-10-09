@@ -45,6 +45,58 @@ pub(crate) fn next_keyed_value(
     allowed_keys: &[&str],
     keys: &[&str],
 ) -> Option<(String, i64)> {
+    let bytes = continuation_query(raw, endpoint)?.as_bytes();
+    let mut entries = BTreeMap::new();
+    for (key, value) in url::form_urlencoded::parse(bytes) {
+        if !allowed_keys.contains(&key.as_ref())
+            || entries
+                .insert(key.into_owned(), value.into_owned())
+                .is_some()
+        {
+            return None;
+        }
+    }
+    let mut selected = keys.iter().filter(|key| entries.contains_key(**key));
+    let key = *selected.next()?;
+    if selected.next().is_some() {
+        return None;
+    }
+    let value = entries.get(key)?.parse::<i64>().ok()?;
+    (value > 0).then_some((key.into(), value))
+}
+
+pub(crate) fn next_params(
+    raw: &str,
+    endpoint: &str,
+    allowed_keys: &[&str],
+    allowed_prefixes: &[&str],
+    ignored_prefixes: &[&str],
+) -> Option<BTreeMap<String, Option<Vec<String>>>> {
+    let bytes = continuation_query(raw, endpoint)?.as_bytes();
+    let mut entries = BTreeMap::new();
+    for (key, value) in url::form_urlencoded::parse(bytes) {
+        if ignored_prefixes
+            .iter()
+            .any(|prefix| key.starts_with(prefix))
+        {
+            continue;
+        }
+        if (!allowed_keys.contains(&key.as_ref())
+            && !allowed_prefixes
+                .iter()
+                .any(|prefix| key.starts_with(prefix)))
+            || value.is_empty()
+            || entries
+                .insert(key.into_owned(), Some(vec![value.into_owned()]))
+                .is_some()
+        {
+            return None;
+        }
+    }
+    (!entries.is_empty()).then_some(entries)
+}
+
+fn continuation_query<'a>(raw: &'a str, endpoint: &str) -> Option<&'a str> {
     let (scheme, remainder) = raw.split_once("://")?;
     if !scheme.eq_ignore_ascii_case("https") || raw.bytes().any(|byte| byte < 32 || byte == 127) {
         return None;
@@ -76,21 +128,5 @@ pub(crate) fn next_keyed_value(
             return None;
         }
     }
-    let mut entries = BTreeMap::new();
-    for (key, value) in url::form_urlencoded::parse(bytes) {
-        if !allowed_keys.contains(&key.as_ref())
-            || entries
-                .insert(key.into_owned(), value.into_owned())
-                .is_some()
-        {
-            return None;
-        }
-    }
-    let mut selected = keys.iter().filter(|key| entries.contains_key(**key));
-    let key = *selected.next()?;
-    if selected.next().is_some() {
-        return None;
-    }
-    let value = entries.get(key)?.parse::<i64>().ok()?;
-    (value > 0).then_some((key.into(), value))
+    Some(query)
 }

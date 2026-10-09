@@ -1,4 +1,5 @@
 mod artwork;
+mod artwork_feeds;
 mod artwork_series;
 mod bookmark;
 mod codec;
