@@ -1,6 +1,6 @@
 use unicode_general_category::{GeneralCategory as C, get_general_category};
 
-pub(super) fn quote(value: &str) -> String {
+pub(crate) fn quote(value: &str) -> String {
     let mut output = String::from("\"");
     for ch in value.chars() {
         match ch {

@@ -181,7 +181,12 @@ fn login_code(input: &str, state: &str) -> Option<String> {
     }
 }
 
-struct LoginUrl<'a> {
+/// Parsed address used by Pixiv OAuth callback and authorization-relay inputs.
+///
+/// This preserves the supported Go OAuth URL/query behavior rather than the
+/// browser-oriented normalization of `url::Url`. It is not a general-purpose
+/// Go URL parser; inputs and decoded query values must be representable as UTF-8.
+pub struct LoginUrl<'a> {
     scheme: &'a str,
     host: String,
     path: String,
@@ -189,7 +194,23 @@ struct LoginUrl<'a> {
 }
 
 impl<'a> LoginUrl<'a> {
-    fn parse(input: &'a str) -> Option<Self> {
+    pub fn scheme(&self) -> &str {
+        self.scheme
+    }
+
+    pub fn host(&self) -> &str {
+        &self.host
+    }
+
+    pub fn path(&self) -> &str {
+        &self.path
+    }
+
+    pub fn raw_query(&self) -> &str {
+        self.query
+    }
+
+    pub fn parse(input: &'a str) -> Option<Self> {
         use crate::reference::decode_url_component;
         if input.bytes().any(|byte| byte < 32 || byte == 127) {
             return None;
@@ -246,7 +267,7 @@ impl<'a> LoginUrl<'a> {
         })
     }
 
-    fn query_value(&self, name: &str) -> String {
+    pub fn query_value(&self, name: &str) -> String {
         use crate::reference::decode_url_component;
         self.query
             .split('&')

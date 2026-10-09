@@ -128,6 +128,25 @@ fn run_terminal(mut command: Command, input: &[u8], expected: &str, success: boo
             sent = true;
         }
         if let Some(status) = child.try_wait().unwrap() {
+            loop {
+                let mut ready = libc::pollfd {
+                    fd: master.as_raw_fd(),
+                    events: libc::POLLIN,
+                    revents: 0,
+                };
+                if unsafe { libc::poll(&mut ready, 1, 0) } <= 0 || ready.revents & libc::POLLIN == 0
+                {
+                    break;
+                }
+                let mut buffer = [0; 4096];
+                match master.read(&mut buffer) {
+                    Ok(0) => break,
+                    Ok(count) => output.extend_from_slice(&buffer[..count]),
+                    Err(error) if error.raw_os_error() == Some(libc::EIO) => break,
+                    Err(error) => panic!("terminal read after exit: {error}"),
+                }
+            }
+            let text = String::from_utf8_lossy(&output);
             assert_eq!(status.success(), success, "{text}");
             break;
         }

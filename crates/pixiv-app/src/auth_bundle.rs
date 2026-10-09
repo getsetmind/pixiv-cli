@@ -1,6 +1,6 @@
 #[path = "auth_bundle_quote.rs"]
 mod quoted;
-use quoted::quote as go_quote;
+pub(crate) use quoted::quote as go_quote;
 use serde::{
     Deserialize, Deserializer, Serialize,
     de::{self, MapAccess, SeqAccess, Visitor},
