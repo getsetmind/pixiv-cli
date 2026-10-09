@@ -1216,15 +1216,36 @@
     },
     {
       "id": "cli:pixiv recommended",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv recommended"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/recommended.rs",
+        "crates/pixiv-cli/src/json_spool.rs",
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-app/src/pagination.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_recommended_test.go#TestMigrationRecommendedPreservesCommandOutputsAndWindows",
+        "internal/cli/migration_recommended_test.go#TestMigrationRecommendedInvalidUTF8StdinPreservesKindValidation",
+        "internal/cli/migration_recommended_startup_test.go#TestMigrationRecommendedStartupPreservesValidationConfigurationAndAuthOrder",
+        "internal/cli/migration_recommended_stdin_test.go#TestMigrationRecommendedStdinPreservesTextAndExplicitArguments",
+        "internal/cli/migration_recommended_pool_test.go#TestMigrationRecommendedPoolPreservesCommitReplayWriterAndLease",
+        "internal/cli/migration_recommended_pool_test.go#TestMigrationRecommendedPrivateSpoolCreationFailurePrecedesFetchAndOutput",
+        "crates/pixiv-cli/tests/recommended.rs",
+        "crates/pixiv-cli/tests/recommended_startup.rs",
+        "crates/pixiv-cli/tests/recommended_stdin.rs",
+        "crates/pixiv-cli/tests/recommended_pool.rs",
+        "crates/pixiv-cli/tests/search_spool.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "全kind/--type/content-type・human/JSON/NDJSONのGo231出力ケース、216startup・165stdin・129pool/writerケースを比較。204startupは実子process、12read failureはRead APIで比較。raw作品window後filter、CLI重複保持、allの1visual取得と私有spool再初期化、singleJSON lease後/all humanJSON lease中commit、NDJSON出力後replay禁止を維持。Go先行のinvalid UTF8 kind/conflictとmock temp creation/privacy/cleanupも比較。共有raw-wire/任意JSON精度/cursor、root parser3差分・Linux公開面snapshot、全flag/help/TTY/OS hooks・通信/Options・取消/deadline/concurrency/disconnect・正常実HTTPS・他OS/archは未検証。"
+      ]
     },
     {
       "id": "cli:pixiv search",
@@ -2084,7 +2105,7 @@
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "Go114入力/filter/pagination/errorケースと4保存済み2accountシナリオを直接・stdio・保存済みaccountで比較。filter/dedupを論理pagination前に適用し、空batchの補充とretry時の結果破棄を維持。旧17tool順序を保持し2toolを末尾へ追加。推奨CLIのnovel/user/all全体は別工程。共有raw-wire/cursor payload、schemaの複数不正field診断順、取消/concurrency/disconnect、全通信/JSON・実HTTPS・他OS/archは未検証。"
+        "Go114入力/filter/pagination/errorケースと4保存済み2accountシナリオを直接・stdio・保存済みaccountで比較。filter/dedupを論理pagination前に適用し、空batchの補充とretry時の結果破棄を維持。旧17tool順序を保持し2toolを末尾へ追加。推奨CLI全kindもscoped比較を追加し、全flag/help/TTY/通信/他platformは未検証。共有raw-wire/cursor payload、schemaの複数不正field診断順、取消/concurrency/disconnect、全通信/JSON・実HTTPS・他OS/archは未検証。"
       ]
     },
     {
@@ -2111,7 +2132,7 @@
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "Go114入力/filter/pagination/errorケースと4保存済み2accountシナリオを直接・stdio・保存済みaccountで比較。filter/dedupを論理pagination前に適用し、空batchの補充とretry時の結果破棄を維持。旧17tool順序を保持し2toolを末尾へ追加。推奨CLIのnovel/user/all全体は別工程。共有raw-wire/cursor payload、schemaの複数不正field診断順、取消/concurrency/disconnect、全通信/JSON・実HTTPS・他OS/archは未検証。"
+        "Go114入力/filter/pagination/errorケースと4保存済み2accountシナリオを直接・stdio・保存済みaccountで比較。filter/dedupを論理pagination前に適用し、空batchの補充とretry時の結果破棄を維持。旧17tool順序を保持し2toolを末尾へ追加。推奨CLI全kindもscoped比較を追加し、全flag/help/TTY/通信/他platformは未検証。共有raw-wire/cursor payload、schemaの複数不正field診断順、取消/concurrency/disconnect、全通信/JSON・実HTTPS・他OS/archは未検証。"
       ]
     },
     {
@@ -2313,7 +2334,7 @@
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "all/illust/manga/novel/userのGo279 schema/input/filter/pagination/recordsケースと2pool modeを直接・stdio・保存済みaccountで比較。raw artwork windowを先に1回取得しsubtypeを後filter、novel/userは先filter。all+明示typeの2section重複、後続feed retryの既完了records保持/追加、最終失敗の空envelopeをGo通り保持。旧19tool順序を保持し末尾へ追加。recommended CLI全体はpending。共有raw-wire/JSON precision/cursor payload、schema複数不正field診断順、取消/concurrency/disconnect・全通信/Options・実HTTPS・他OS/archは未検証。"
+        "all/illust/manga/novel/userのGo279 schema/input/filter/pagination/recordsケースと2pool modeを直接・stdio・保存済みaccountで比較。raw artwork windowを先に1回取得しsubtypeを後filter、novel/userは先filter。all+明示typeの2section重複、後続feed retryの既完了records保持/追加、最終失敗の空envelopeをGo通り保持。旧19tool順序を保持し末尾へ追加。recommended CLIも全kindのscoped比較を追加したが、全flag/help/TTY/通信/他platformは未検証。共有raw-wire/JSON precision/cursor payload、schema複数不正field診断順、取消/concurrency/disconnect・全通信/Options・実HTTPS・他OS/archは未検証。"
       ]
     },
     {

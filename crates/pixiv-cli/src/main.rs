@@ -121,6 +121,13 @@ enum Command {
         #[command(flatten)]
         connection: ProxyOptions,
     },
+    #[command(args_override_self = true)]
+    Recommended {
+        #[command(flatten)]
+        options: Box<pixiv_cli_rs::recommended::RecommendedOptions>,
+        #[command(flatten)]
+        connection: ProxyOptions,
+    },
     Ugoira {
         source: String,
         #[arg(long)]
@@ -186,6 +193,7 @@ async fn main() {
         Command::Detail { json, ndjson, .. } => *json || *ndjson,
         Command::Ugoira { json, .. } => *json,
         Command::Search { input, .. } => input.machine_output(),
+        Command::Recommended { options, .. } => options.json.is_some() || options.ndjson,
         Command::Ranking { options, .. } => options.json.is_some() || options.ndjson,
         Command::Series { options, .. } => options.json.is_some() || options.ndjson,
     };
@@ -200,6 +208,9 @@ async fn main() {
             input.ndjson || (input.json.is_none() && !io::stdout().is_terminal())
         }
         Command::Ugoira { .. } => false,
+        Command::Recommended { options, .. } => {
+            options.ndjson || (options.json.is_none() && !io::stdout().is_terminal())
+        }
         Command::Ranking { options, .. } => {
             options.ndjson || (options.json.is_none() && !io::stdout().is_terminal())
         }
@@ -219,6 +230,9 @@ async fn main() {
 }
 
 async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), CommandError> {
+    if let Command::Recommended { options, .. } = &mut args.command {
+        options.resolve_source(&mut io::stdin().lock(), io::stdin().is_terminal())?;
+    }
     if let Command::Ranking { options, .. } = &args.command {
         options.validate_arguments()?;
     }
@@ -241,6 +255,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
         Command::Detail { .. }
             | Command::Mcp { .. }
             | Command::Search { .. }
+            | Command::Recommended { .. }
             | Command::Ranking { .. }
             | Command::Series { .. }
             | Command::Bookmark { .. }
@@ -476,6 +491,42 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
         )
         .await;
     }
+    if let Command::Recommended {
+        options,
+        connection,
+    } = &args.command
+    {
+        let (directory, config) = account_config.expect("recommended startup was resolved");
+        options.validate()?;
+        let proxy = connection.override_value()?;
+        let configured_json = if options.ndjson {
+            options.output_mode(false, true)?;
+            false
+        } else {
+            config
+                .current()
+                .and_then(|snapshot| snapshot.runtime())
+                .map_err(pixiv_app::scheduler::SchedulerError::from)?
+                .output_json
+        };
+        let mode = options.output_mode(configured_json, io::stdout().is_terminal())?;
+        *ndjson_output = mode == DetailOutput::Ndjson;
+        let database = pixiv_app::database::Database::open(&directory)
+            .map_err(|error| CommandError::State(Box::new(error)))?;
+        let execution = pixiv_app::execution::Execution::http(
+            config,
+            std::sync::Arc::new(std::sync::Mutex::new(database)),
+        );
+        return pixiv_cli_rs::recommended::saved_recommended(
+            &execution,
+            &pixiv_app::lifecycle::Context::new(),
+            options.as_ref().clone(),
+            proxy,
+            mode,
+            io::stdout(),
+        )
+        .await;
+    }
     if let Command::Ranking {
         options,
         connection,
@@ -643,6 +694,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
         }
         Command::Detail { .. } => unreachable!("detail uses saved account execution"),
         Command::Search { .. } => unreachable!("search uses saved account execution"),
+        Command::Recommended { .. } => unreachable!("recommended uses saved account execution"),
         Command::Ranking { .. } => unreachable!("ranking uses saved account execution"),
         Command::Series { .. } => unreachable!("series uses saved account execution"),
         Command::Ugoira { source, json } => {

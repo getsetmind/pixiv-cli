@@ -18,6 +18,11 @@ impl JsonSpool {
         Self::with_key("illusts")
     }
     pub(crate) fn with_key(key: &str) -> Result<Self, CommandError> {
+        let mut spool = Self::raw()?;
+        spool.write_all(format!("{{\n  \"{key}\": [").as_bytes())?;
+        Ok(spool)
+    }
+    pub(crate) fn raw() -> Result<Self, CommandError> {
         let mut random = [0_u8; 16];
         getrandom::fill(&mut random).map_err(|error| io::Error::other(error.to_string()))?;
         let name = random
@@ -33,18 +38,38 @@ impl JsonSpool {
             options.mode(0o600);
         }
         let file = options.open(&path)?;
-        let mut spool = Self {
+        Ok(Self {
             file: Some(file),
             path,
             first: true,
             fields: Vec::new(),
-        };
-        spool
-            .file
-            .as_mut()
-            .expect("spool file is open")
-            .write_all(format!("{{\n  \"{key}\": [").as_bytes())?;
-        Ok(spool)
+        })
+    }
+    pub(crate) fn section(&mut self, key: &str, initial: bool) -> Result<(), CommandError> {
+        if !initial {
+            self.write_all(b"\n  ],")?;
+        }
+        self.first = true;
+        self.write_all(format!("\n  \"{key}\": [").as_bytes())?;
+        Ok(())
+    }
+    pub(crate) fn append_compact<T: serde::Serialize>(
+        &mut self,
+        value: &T,
+    ) -> Result<(), CommandError> {
+        if !self.first {
+            self.write_all(b",")?;
+        }
+        self.first = false;
+        let body = crate::go_json_escape(serde_json::to_string(value).map_err(io::Error::other)?);
+        self.write_all(format!("\n    {body}").as_bytes())?;
+        Ok(())
+    }
+    pub(crate) fn commit_raw<W: Write>(&mut self, out: &mut W) -> Result<(), CommandError> {
+        let file = self.file.as_mut().expect("spool file is open");
+        file.seek(SeekFrom::Start(0))?;
+        io::copy(file, out)?;
+        Ok(())
     }
 
     pub(crate) fn append(&mut self, items: &[Artwork]) -> Result<(), CommandError> {
@@ -119,5 +144,14 @@ impl Drop for JsonSpool {
     fn drop(&mut self) {
         drop(self.file.take());
         let _ = std::fs::remove_file(&self.path);
+    }
+}
+
+impl Write for JsonSpool {
+    fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
+        self.file.as_mut().expect("spool file is open").write(bytes)
+    }
+    fn flush(&mut self) -> io::Result<()> {
+        self.file.as_mut().expect("spool file is open").flush()
     }
 }

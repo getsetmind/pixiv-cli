@@ -5,6 +5,7 @@ mod novel_list;
 pub mod novel_search;
 pub mod novel_series;
 pub mod ranking;
+pub mod recommended;
 pub mod search;
 pub mod trending;
 pub mod user_search;
