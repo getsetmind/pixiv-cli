@@ -215,3 +215,6 @@ mod user_relationships;
 pub use user_relationships::{
     UserRelationship, UserRelationshipInput, user_relationship, user_relationship_tool,
 };
+
+mod bookmark_lists;
+pub use bookmark_lists::{BookmarkList, BookmarkListInput, bookmark_list, bookmark_list_tool};

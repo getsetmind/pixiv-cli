@@ -230,10 +230,13 @@ async fn stdio_lists_both_new_tools_and_retains_existing_tools() {
             "user_following",
             "user_followers",
             "related_users",
-            "blocked_users"
+            "blocked_users",
+            "user_bookmarks",
+            "user_novel_bookmarks",
+            "bookmark_list_all"
         ])
     );
-    assert_eq!(tools.len(), 26);
+    assert_eq!(tools.len(), 29);
     assert_eq!(tools[19]["name"], "recommended");
     assert_eq!(tools[14]["name"], "novel_series");
     assert_eq!(tools[15]["name"], "novel_content");

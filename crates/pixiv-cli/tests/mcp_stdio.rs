@@ -78,7 +78,7 @@ fn mcp_process_exchanges_jsonrpc_without_stdout_diagnostics_or_credentials() {
     );
     assert_eq!(
         by_id("list")["result"]["tools"].as_array().unwrap().len(),
-        26
+        29
     );
     assert_eq!(
         by_id("list")["result"]["tools"][19],
@@ -92,6 +92,19 @@ fn mcp_process_exchanges_jsonrpc_without_stdout_diagnostics_or_credentials() {
         by_id("list")["result"]["tools"][21],
         pixiv_mcp::user_novels_tool()
     );
+    for (index, kind) in [
+        pixiv_mcp::BookmarkList::Artwork,
+        pixiv_mcp::BookmarkList::Novel,
+        pixiv_mcp::BookmarkList::All,
+    ]
+    .into_iter()
+    .enumerate()
+    {
+        assert_eq!(
+            by_id("list")["result"]["tools"][26 + index],
+            pixiv_mcp::bookmark_list_tool(kind)
+        );
+    }
     for (index, name) in [
         "add_bookmark",
         "remove_bookmark",

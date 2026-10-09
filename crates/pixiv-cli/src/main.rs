@@ -54,7 +54,27 @@ enum NovelCommand {
 }
 
 #[derive(Subcommand)]
+enum BookmarkGroupCommand {
+    #[command(args_override_self = true)]
+    List {
+        #[command(flatten)]
+        options: Box<pixiv_cli_rs::bookmark_lists::BookmarkListOptions>,
+        #[command(flatten)]
+        connection: ProxyOptions,
+    },
+    #[command(flatten)]
+    Mutation(pixiv_cli_rs::mutation::BookmarkCommand),
+}
+
+#[derive(Subcommand)]
 enum UserCommand {
+    #[command(args_override_self = true)]
+    Bookmarks {
+        #[command(flatten)]
+        options: Box<pixiv_cli_rs::bookmark_lists::UserBookmarksOptions>,
+        #[command(flatten)]
+        connection: ProxyOptions,
+    },
     #[command(args_override_self = true)]
     Artworks {
         #[command(flatten)]
@@ -107,7 +127,7 @@ enum UserCommand {
 enum Command {
     Bookmark {
         #[command(subcommand)]
-        command: pixiv_cli_rs::mutation::BookmarkCommand,
+        command: BookmarkGroupCommand,
     },
     Follow {
         #[command(subcommand)]
@@ -227,6 +247,12 @@ async fn main() {
         command => command,
     };
     let machine_output = match &args.command {
+        Command::Bookmark {
+            command: BookmarkGroupCommand::List { options, .. },
+        } => options.listing.json.is_some() || options.listing.ndjson,
+        Command::User {
+            command: UserCommand::Bookmarks { options, .. },
+        } => options.listing.json.is_some() || options.listing.ndjson,
         Command::User {
             command: UserCommand::Artworks { options, .. },
         } => options.listing.json.is_some() || options.listing.ndjson,
@@ -252,6 +278,15 @@ async fn main() {
         Command::Series { options, .. } => options.json.is_some() || options.ndjson,
     };
     let mut ndjson_output = match &args.command {
+        Command::Bookmark {
+            command: BookmarkGroupCommand::List { options, .. },
+        } => options.listing.ndjson,
+        Command::User {
+            command: UserCommand::Bookmarks { options, .. },
+        } => {
+            options.listing.ndjson
+                || (options.listing.json.is_none() && !io::stdout().is_terminal())
+        }
         Command::User {
             command: UserCommand::Artworks { options, .. },
         } => {
@@ -305,6 +340,23 @@ async fn main() {
 }
 
 async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), CommandError> {
+    let mut bookmark_lists = match &args.command {
+        Command::Bookmark {
+            command: BookmarkGroupCommand::List { options, .. },
+        } => Some(pixiv_cli_rs::bookmark_lists::BookmarkLists::List(
+            options.as_ref().clone(),
+        )),
+        Command::User {
+            command: UserCommand::Bookmarks { options, .. },
+        } => Some(pixiv_cli_rs::bookmark_lists::BookmarkLists::User(
+            options.as_ref().clone(),
+        )),
+        _ => None,
+    };
+    if let Some(options) = &mut bookmark_lists {
+        options.resolve_source(&mut io::stdin().lock(), io::stdin().is_terminal())?;
+    }
+
     let mut user_works = match &args.command {
         Command::User {
             command: UserCommand::Artworks { options, .. },
@@ -407,6 +459,53 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
     } else {
         None
     };
+
+    if let Some(mut options) = bookmark_lists {
+        let (directory, config) = account_config.expect("bookmark lists startup was resolved");
+        options.resolve_target(&mut io::stdin().lock())?;
+        options.validate()?;
+        let connection = match &args.command {
+            Command::Bookmark {
+                command: BookmarkGroupCommand::List { connection, .. },
+            }
+            | Command::User {
+                command: UserCommand::Bookmarks { connection, .. },
+            } => connection,
+            _ => unreachable!("bookmark lists route was resolved"),
+        };
+        let proxy = connection.override_value()?;
+        let configured_json = if options.options().ndjson {
+            options.output_mode(false, true)?;
+            false
+        } else {
+            config
+                .current()
+                .and_then(|snapshot| snapshot.runtime())
+                .map_err(pixiv_app::scheduler::SchedulerError::from)?
+                .output_json
+        };
+        let mode = options.output_mode(configured_json, io::stdout().is_terminal())?;
+        *ndjson_output = options.options().ndjson
+            || (matches!(
+                options,
+                pixiv_cli_rs::bookmark_lists::BookmarkLists::User(_)
+            ) && mode == DetailOutput::Ndjson);
+        let database = pixiv_app::database::Database::open(&directory)
+            .map_err(|error| CommandError::State(Box::new(error)))?;
+        let execution = pixiv_app::execution::Execution::http(
+            config,
+            std::sync::Arc::new(std::sync::Mutex::new(database)),
+        );
+        return pixiv_cli_rs::bookmark_lists::saved_bookmark_lists(
+            &execution,
+            &pixiv_app::lifecycle::Context::new(),
+            options,
+            proxy,
+            mode,
+            io::stdout(),
+        )
+        .await;
+    }
     if let Some(options) = user_works {
         let (directory, config) = account_config.expect("user works startup was resolved");
         options.validate()?;
@@ -489,9 +588,9 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
         .await;
     }
     let mutation = match &args.command {
-        Command::Bookmark { command } => {
-            Some(pixiv_cli_rs::mutation::Mutation::Bookmark(command.clone()))
-        }
+        Command::Bookmark {
+            command: BookmarkGroupCommand::Mutation(command),
+        } => Some(pixiv_cli_rs::mutation::Mutation::Bookmark(command.clone())),
         Command::Follow { command }
         | Command::User {
             command: UserCommand::Follow { command },

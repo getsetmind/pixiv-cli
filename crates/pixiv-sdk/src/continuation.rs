@@ -18,6 +18,13 @@ fn query_escape(value: &str) -> String {
     }
     encoded
 }
+pub(crate) fn encode_query(parameters: &[(String, String)]) -> String {
+    parameters
+        .iter()
+        .map(|(key, value)| format!("{}={}", query_escape(key), query_escape(value)))
+        .collect::<Vec<_>>()
+        .join("&")
+}
 pub(crate) fn query_digest(query: &BTreeMap<String, String>) -> String {
     let mut canonical = String::new();
     for (key, value) in query {

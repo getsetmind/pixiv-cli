@@ -1,0 +1,99 @@
+[
+  {
+    "name": "unicode-and-punctuation",
+    "path": "/fixture",
+    "parameters": [
+      [
+        "tag",
+        "空 白+\u0026/=~!*'():;?@#$,[]"
+      ]
+    ],
+    "target": "/fixture?tag=%E7%A9%BA+%E7%99%BD%2B%26%2F%3D~%21%2A%27%28%29%3A%3B%3F%40%23%24%2C%5B%5D"
+  },
+  {
+    "name": "duplicate-encounter-order",
+    "path": "/fixture",
+    "parameters": [
+      [
+        "z",
+        "last"
+      ],
+      [
+        "a",
+        "2"
+      ],
+      [
+        "a",
+        "1"
+      ],
+      [
+        "z",
+        "first"
+      ]
+    ],
+    "target": "/fixture?z=last\u0026a=2\u0026a=1\u0026z=first"
+  },
+  {
+    "name": "existing-raw-query",
+    "path": "/fixture?raw=%7e%2f+\u0026dup=old\u0026empty=",
+    "parameters": [
+      [
+        "dup",
+        "new"
+      ],
+      [
+        "tag",
+        "~*"
+      ]
+    ],
+    "target": "/fixture?raw=%7e%2f+\u0026dup=old\u0026empty=\u0026dup=new\u0026tag=~%2A"
+  },
+  {
+    "name": "existing-empty-query",
+    "path": "/fixture?",
+    "parameters": [
+      [
+        "tag",
+        "~*"
+      ]
+    ],
+    "target": "/fixture?tag=~%2A"
+  },
+  {
+    "name": "empty-parameters",
+    "path": "/fixture",
+    "parameters": [],
+    "target": "/fixture"
+  },
+  {
+    "name": "empty-parameters-existing-query",
+    "path": "/fixture?raw=%7e%2f+\u0026empty=",
+    "parameters": [],
+    "target": "/fixture?raw=%7e%2f+\u0026empty="
+  },
+  {
+    "name": "empty-parameters-empty-query",
+    "path": "/fixture?",
+    "parameters": [],
+    "target": "/fixture?"
+  },
+  {
+    "name": "empty-and-encoded-keys",
+    "path": "/fixture",
+    "parameters": [
+      [
+        "",
+        ""
+      ],
+      [
+        "~* 空",
+        ""
+      ],
+      [
+        "",
+        "value"
+      ]
+    ],
+    "target": "/fixture?=\u0026~%2A+%E7%A9%BA=\u0026=value"
+  }
+]

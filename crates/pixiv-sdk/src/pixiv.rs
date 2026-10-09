@@ -5,6 +5,7 @@ pub use crate::bookmark::{
     ArtworkBookmarkRequest, NovelBookmarkRequest, UserArtworkBookmarkTagsRequest,
     UserNovelBookmarkTagsRequest,
 };
+pub use crate::bookmark_lists::{UserArtworkBookmarksRequest, UserNovelBookmarksRequest};
 pub use crate::mutation::*;
 pub use crate::novel::NovelRequest;
 pub use crate::novel_content::NovelContentRequest;

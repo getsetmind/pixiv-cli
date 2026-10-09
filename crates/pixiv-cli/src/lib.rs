@@ -1,4 +1,5 @@
 mod artwork_list;
+pub mod bookmark_lists;
 mod json_spool;
 pub mod mutation;
 mod novel_list;
@@ -6,6 +7,7 @@ pub mod novel_search;
 pub mod novel_series;
 pub mod ranking;
 pub mod recommended;
+mod record_input;
 pub mod search;
 pub mod trending;
 pub mod user_relationships;

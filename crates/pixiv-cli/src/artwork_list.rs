@@ -20,6 +20,11 @@ use std::{
 #[derive(Clone)]
 pub(crate) enum Source {
     Ranking(ArtworkRankingRequest),
+    Bookmarks(
+        pixiv_sdk::pixiv::UserArtworkBookmarksRequest,
+        Arc<std::sync::atomic::AtomicI64>,
+        bool,
+    ),
     Series(ArtworkSeriesRequest),
     User(
         pixiv_sdk::pixiv::UserArtworksRequest,
@@ -117,6 +122,12 @@ pub(crate) async fn attempt<T: Transport, W: Write>(
             let source = listing.source.clone();
             async move {
                 let page = match source {
+                    Source::Bookmarks(mut request, identity, user_alias) => {
+                        request.user_id =
+                            crate::bookmark_lists::current_target(client, &identity, user_alias)?;
+                        request.cursor = cursor;
+                        client.user_artwork_bookmarks(request).await
+                    }
                     Source::Ranking(mut request) => {
                         request.cursor = cursor;
                         client.artwork_ranking(request).await
@@ -146,6 +157,9 @@ pub(crate) async fn attempt<T: Transport, W: Write>(
             }
             if !heading {
                 let heading_text = match &listing.source {
+                    Source::Bookmarks(_, identity, _) => {
+                        format!("bookmarks by {}", identity.load(Ordering::Acquire))
+                    }
                     Source::User(_, identity) => {
                         format!("artworks by {}", identity.load(Ordering::Acquire))
                     }
@@ -156,8 +170,12 @@ pub(crate) async fn attempt<T: Transport, W: Write>(
             }
             for item in &items {
                 position += 1;
-                let user = matches!(listing.source, Source::User(..));
-                if user {
+                let user = matches!(
+                    listing.source,
+                    Source::User(..) | Source::Bookmarks(_, _, true)
+                );
+                let plain = matches!(listing.source, Source::Bookmarks(..));
+                if user || plain {
                     writeln!(out, "https://www.pixiv.net/artworks/{}", item.id)?;
                 } else {
                     writeln!(

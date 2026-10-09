@@ -7,8 +7,12 @@ use pixiv_app::{
     lifecycle::Context,
 };
 use pixiv_cli_rs::{
-    DetailOutput, finish_command,
-    recommended::{RecommendedOptions, saved_recommended},
+    DetailOutput,
+    bookmark_lists::{
+        BookmarkListOptions, BookmarkLists, UserBookmarksOptions, saved_bookmark_lists,
+    },
+    finish_command,
+    user_works::UserWorksOptions,
 };
 use pixiv_sdk::transport::{Request, Response, Transport};
 use serde::Deserialize;
@@ -27,10 +31,12 @@ struct Case {
     scenario: String,
     mode: String,
     kind: String,
+    target: i64,
     opens: Vec<i64>,
     requests: Vec<Fetch>,
     closes: usize,
     under_lease: bool,
+    committed: Vec<bool>,
     states: Vec<State>,
     stdout: String,
     stderr: String,
@@ -39,8 +45,9 @@ struct Case {
 #[derive(Debug, Deserialize, PartialEq)]
 struct Fetch {
     id: i64,
-    offset: String,
+    max_bookmark_id: String,
     path: String,
+    target: String,
 }
 #[derive(Debug, Deserialize, PartialEq)]
 struct State {
@@ -61,8 +68,6 @@ struct Observed {
 }
 struct Fixture {
     scenario: String,
-    kind: String,
-    mode: String,
     bodies: Value,
     database: Arc<Mutex<Database>>,
     observed: Arc<Mutex<Observed>>,
@@ -106,14 +111,6 @@ impl Transport for Fixture {
             });
         }
         assert_eq!(request.method.as_str(), "GET");
-        if self.kind == "all"
-            && (self.mode != "ndjson" || request.url.ends_with("/illust/recommended"))
-        {
-            assert!(
-                observed.output.is_empty(),
-                "aggregate output preceded complete source window"
-            );
-        }
         let path = request
             .url
             .strip_prefix("https://app-api.pixiv.net")
@@ -128,7 +125,7 @@ impl Transport for Fixture {
         let offset = request
             .parameters
             .iter()
-            .find(|(key, _)| key == "offset")
+            .find(|(key, _)| key == "max_bookmark_id")
             .map(|(_, value)| value.clone())
             .unwrap_or_default();
         let index = match offset.as_str() {
@@ -137,23 +134,29 @@ impl Transport for Fixture {
         };
         observed.requests.push(Fetch {
             id,
-            offset: offset.clone(),
+            max_bookmark_id: offset.clone(),
             path: path.clone(),
+            target: request
+                .parameters
+                .iter()
+                .find(|(key, _)| key == "user_id")
+                .unwrap()
+                .1
+                .clone(),
         });
         let count = observed
             .requests
             .iter()
-            .filter(|fetch| fetch.id == id && fetch.offset == offset && fetch.path == path)
+            .filter(|fetch| fetch.id == id && fetch.max_bookmark_id == offset && fetch.path == path)
             .count();
         let status = if self.scenario == "not_retryable" {
             401
         } else if self.scenario == "all_rate_limited"
             || id == 42
                 && (self.scenario == "before_output"
-                    || self.scenario == "after_page" && offset == "30"
-                    || self.scenario == "late_novel" && path == "/v1/novel/recommended"
-                    || (self.scenario == "late_user" || self.scenario == "late_empty")
-                        && path == "/v1/user/recommended")
+                    || (self.scenario == "after_page" || self.scenario == "empty_before_output")
+                        && offset == "30"
+                    || self.scenario == "after_artworks" && path == "/v1/user/bookmarks/novel")
         {
             429
         } else {
@@ -177,9 +180,7 @@ impl Transport for Fixture {
                             item["title"] = format!("item-account-{id}").into();
                         }
                     }
-                    if self.scenario == "late_empty"
-                        && path != "/v1/user/recommended"
-                        && body.get(key).is_some()
+                    if self.scenario == "empty_before_output" && id == 42 && body.get(key).is_some()
                     {
                         body[key] = json!([]);
                     }
@@ -219,14 +220,14 @@ impl Write for Output {
 }
 
 #[tokio::test]
-async fn recommended_pool_matches_go_commit_replay_writer_state_and_output_lease() {
+async fn bookmark_lists_pool_matches_go_aggregate_atomicity_replay_target_identity_and_lease() {
     let cases: Vec<Case> = serde_json::from_str(include_str!(
-        "../../../docs/migration/contracts/cli-recommended-pool.json"
+        "../../../docs/migration/contracts/cli-bookmark-lists-pool.json"
     ))
     .unwrap();
-    assert_eq!(cases.len(), 129);
+    assert_eq!(cases.len(), 240);
     let sources: Value = serde_json::from_str(include_str!(
-        "../../../docs/migration/contracts/cli-recommended-pool-bodies.json"
+        "../../../docs/migration/contracts/cli-bookmark-lists-pool-bodies.json"
     ))
     .unwrap();
     for case in cases {
@@ -253,23 +254,35 @@ async fn recommended_pool_matches_go_commit_replay_writer_state_and_output_lease
         let factory_database = database.clone();
         let factory_observed = observed.clone();
         let scenario = case.scenario.clone();
-        let kind = case.kind.clone();
-        let output_mode = case.mode.clone();
         let bodies = sources.clone();
         let execution = Execution::new(Store::new(path), database.clone(), move |_| {
             Ok(Fixture {
                 scenario: scenario.clone(),
-                kind: kind.clone(),
-                mode: output_mode.clone(),
                 bodies: bodies.clone(),
                 database: factory_database.clone(),
                 observed: factory_observed.clone(),
             })
         });
-        let options = RecommendedOptions {
-            query: vec![case.kind.clone()],
+        let listing = UserWorksOptions {
             limit: Some(0),
+            sources: if case.target > 0 {
+                vec![case.target.to_string()]
+            } else {
+                vec![]
+            },
             ..Default::default()
+        };
+        let options = if case.kind == "user" {
+            BookmarkLists::User(UserBookmarksOptions {
+                listing,
+                ..Default::default()
+            })
+        } else {
+            BookmarkLists::List(BookmarkListOptions {
+                listing,
+                entity: case.kind.clone(),
+                ..Default::default()
+            })
         };
         let mode = match case.mode.as_str() {
             "json" => DetailOutput::Json,
@@ -277,7 +290,7 @@ async fn recommended_pool_matches_go_commit_replay_writer_state_and_output_lease
             _ => DetailOutput::Human,
         };
         let invocation_start = chrono::Utc::now();
-        let result = saved_recommended(
+        let result = saved_bookmark_lists(
             &execution,
             &Context::new(),
             options,
@@ -306,6 +319,8 @@ async fn recommended_pool_matches_go_commit_replay_writer_state_and_output_lease
         );
         let diagnostic_end = chrono::Utc::now();
         let observed = observed.lock().unwrap();
+        // Replay, request targets, output and lease state expose the private Go commit decisions without test-only APIs.
+        assert_eq!(case.committed.len(), observed.opens.len());
         assert_eq!(observed.opens, case.opens);
         assert_eq!(observed.requests, case.requests);
         assert_eq!(observed.closes, case.closes);
@@ -400,105 +415,5 @@ async fn recommended_pool_matches_go_commit_replay_writer_state_and_output_lease
             })
             .collect();
         assert_eq!(states, case.states);
-    }
-}
-
-#[tokio::test]
-async fn recommended_private_spool_creation_failure_precedes_fetch_and_output() {
-    if std::env::var_os("PIXIV_RECOMMENDED_SPOOL_FAILURE_CHILD").is_some() {
-        assert_private_spool_creation_failure().await;
-        return;
-    }
-    let directory = tempfile::tempdir().unwrap();
-    let invalid = directory.path().join("file");
-    std::fs::write(&invalid, b"fixture").unwrap();
-    let child = std::process::Command::new(std::env::current_exe().unwrap())
-        .args([
-            "--exact",
-            "recommended_private_spool_creation_failure_precedes_fetch_and_output",
-            "--nocapture",
-        ])
-        .env("PIXIV_RECOMMENDED_SPOOL_FAILURE_CHILD", "1")
-        .env("TEMP", &invalid)
-        .env("TMP", &invalid)
-        .env("TMPDIR", &invalid)
-        .output()
-        .unwrap();
-    assert!(
-        child.status.success(),
-        "spool failure subprocess failed: {}\nstdout:\n{}\nstderr:\n{}",
-        child.status,
-        String::from_utf8_lossy(&child.stdout),
-        String::from_utf8_lossy(&child.stderr)
-    );
-}
-
-async fn assert_private_spool_creation_failure() {
-    let invalid = std::path::PathBuf::from(std::env::var_os("TMPDIR").unwrap());
-    let parent = invalid.parent().unwrap();
-    for mode in [DetailOutput::Human, DetailOutput::Json] {
-        let home = parent.join(if mode == DetailOutput::Human {
-            "human"
-        } else {
-            "json"
-        });
-        std::fs::create_dir(&home).unwrap();
-        let path = home.join("config.toml");
-        std::fs::write(
-            &path,
-            "[account_pool]\nenabled = true\nstrategy = 'round_robin'\n",
-        )
-        .unwrap();
-        let mut database = Database::open(&home).unwrap();
-        for id in [42, 43] {
-            database
-                .save_pixiv_credential(&PixivAccount::new(
-                    id,
-                    "fixture",
-                    format!("fixture-refresh-{id}").as_bytes(),
-                ))
-                .unwrap();
-        }
-        database.set_all_pixiv_schedulable(true).unwrap();
-        let database = Arc::new(Mutex::new(database));
-        let observed = Arc::new(Mutex::new(Observed::default()));
-        let factory_database = database.clone();
-        let factory_observed = observed.clone();
-        let execution = Execution::new(Store::new(path), database, move |_| {
-            Ok(Fixture {
-                scenario: "success".into(),
-                kind: "all".into(),
-                mode: "json".into(),
-                bodies: json!({}),
-                database: factory_database.clone(),
-                observed: factory_observed.clone(),
-            })
-        });
-        let result = saved_recommended(
-            &execution,
-            &Context::new(),
-            RecommendedOptions {
-                query: vec!["all".into()],
-                limit: Some(0),
-                ..Default::default()
-            },
-            None,
-            mode,
-            Output {
-                scenario: "success".into(),
-                observed: observed.clone(),
-            },
-        )
-        .await;
-        assert!(
-            result.is_err(),
-            "invalid temp directory unexpectedly succeeded"
-        );
-        let observed = observed.lock().unwrap();
-        assert_eq!(observed.opens, [42]);
-        assert!(observed.requests.is_empty());
-        assert!(observed.output.is_empty());
-        assert_eq!(observed.active, 0);
-        assert_eq!(observed.closes, 1);
     }
 }

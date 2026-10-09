@@ -1,3 +1,5 @@
+#[path = "support/pool_deadline.rs"]
+mod pool_deadline;
 use pixiv_app::{
     config::Store,
     database::{Database, PixivAccount},
@@ -239,6 +241,7 @@ async fn search_pool_matches_go_replay_state_commit_and_release_before_collected
             "ndjson" => DetailOutput::Ndjson,
             _ => DetailOutput::Human,
         };
+        let invocation_start = chrono::Utc::now();
         let result = saved_artwork_search(
             &execution,
             &Context::new(),
@@ -306,7 +309,13 @@ async fn search_pool_matches_go_replay_state_commit_and_release_before_collected
                         .unwrap()
                         .pool_frozen_until
                         .unwrap();
-                    assert!(until >= start + 120 && until <= diagnostic_start.timestamp() + 120);
+                    pool_deadline::assert_freeze_deadline(
+                        until,
+                        *start,
+                        invocation_start,
+                        diagnostic_start,
+                        120,
+                    );
                 }
                 let deadline = [42, 43]
                     .into_iter()

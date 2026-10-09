@@ -9,7 +9,7 @@
 | user の作品一覧 | SDK・CLI・MCP の UserArtworks/UserNovels を今回比較 | 全 wire/通信/他 platform の検証は別に残す |
 | user の互換入口 | top-level detail/search の user mode、follow | `user detail`、`user search` の Go 入口。現在の同等 SDK 呼出しだけで入口互換としない |
 | user の関係・公開一覧 | following/followers/related/blocked の SDK・CLI・MCP を今回比較 | CurrentUser/Username の公開 SDK 契約、全通信と他 platform の検証 |
-| bookmark の読み取り | SDK detail/tag、CLI/MCP add/remove | artwork/novel bookmark list、CLI detail/list/tags、MCP detail/tags/list-all/tag-all と user bookmark 入口 |
+| bookmark の読み取り | SDK artwork/novel list・detail/tag、CLI list全kind/user bookmarks・add/remove、MCP3list・add/remove | CLI detail/tags、MCP detail/tags/tag-all の入口と全共有検証 |
 | timeline・MyPixiv | artwork/novel/user DTO と cursor | following/latest、MyPixiv works/users の SDK・CLI・MCP |
 | comment・stamp | エラー、record、更新操作の commit 基盤 | artwork/novel のコメント一覧・作成・削除・返信・stamp、stamp 一覧と各入口 |
 | download・媒体処理 | SDK resource open/save、ugoira metadata、CLI metadata 試作 | Go の download 計画・進捗・record 入力・失敗/取消、MCP download/random recommendation、ugoira 取得/変換等の全 workflow |

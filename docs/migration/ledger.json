@@ -426,15 +426,32 @@
     },
     {
       "id": "cli:pixiv bookmark list",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv bookmark list"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/bookmark_lists.rs",
+        "crates/pixiv-cli/src/artwork_list.rs",
+        "crates/pixiv-cli/src/novel_list.rs",
+        "crates/pixiv-cli/src/main.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_bookmark_lists_test.go",
+        "internal/cli/migration_bookmark_lists_startup_test.go",
+        "internal/cli/migration_bookmark_lists_pool_test.go",
+        "crates/pixiv-cli/tests/bookmark_lists.rs",
+        "crates/pixiv-cli/tests/bookmark_lists_startup.rs",
+        "crates/pixiv-cli/tests/bookmark_lists_pool.rs",
+        "internal/cli/migration_bookmark_lists_records_test.go"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go1873出力/input/window/writerと1296 record入力、724 startup、240 real保存済みpoolケースを比較。bookmark listのartwork/novel/allとuser bookmarks、text/URL/record入力・validation順・明示false/auto・buffer/private spoolを維持。allはartwork→novelの単一logical budgetとbatch checkpoint、失敗時whole-page replay・試行ごとのomitted ID解決、singleは最初のtarget保持。Go内部committedはRustの実replay/request/output/state/leaseで間接観測しtest-only APIを追加しない。root parser3/Linux公開面snapshot、全flag/help/TTY/OS hooks、wire/全通信/取消/他platformは未検証。"
+      ]
     },
     {
       "id": "cli:pixiv bookmark remove",
@@ -1531,15 +1548,32 @@
     },
     {
       "id": "cli:pixiv user bookmarks",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv user bookmarks"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/bookmark_lists.rs",
+        "crates/pixiv-cli/src/artwork_list.rs",
+        "crates/pixiv-cli/src/novel_list.rs",
+        "crates/pixiv-cli/src/main.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_bookmark_lists_test.go",
+        "internal/cli/migration_bookmark_lists_startup_test.go",
+        "internal/cli/migration_bookmark_lists_pool_test.go",
+        "crates/pixiv-cli/tests/bookmark_lists.rs",
+        "crates/pixiv-cli/tests/bookmark_lists_startup.rs",
+        "crates/pixiv-cli/tests/bookmark_lists_pool.rs",
+        "internal/cli/migration_bookmark_lists_records_test.go"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go1873出力/input/window/writerと1296 record入力、724 startup、240 real保存済みpoolケースを比較。bookmark listのartwork/novel/allとuser bookmarks、text/URL/record入力・validation順・明示false/auto・buffer/private spoolを維持。allはartwork→novelの単一logical budgetとbatch checkpoint、失敗時whole-page replay・試行ごとのomitted ID解決、singleは最初のtarget保持。Go内部committedはRustの実replay/request/output/state/leaseで間接観測しtest-only APIを追加しない。root parser3/Linux公開面snapshot、全flag/help/TTY/OS hooks、wire/全通信/取消/他platformは未検証。"
+      ]
     },
     {
       "id": "cli:pixiv user detail",
@@ -1974,15 +2008,27 @@
     },
     {
       "id": "mcp:pixiv:bookmark_list_all",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "bookmark_list_all"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/bookmark_lists.rs",
+        "crates/pixiv-mcp/src/stdio.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_bookmark_lists_test.go",
+        "internal/mcpserver/pixiv/migration_bookmark_lists_pool_test.go",
+        "crates/pixiv-mcp/tests/bookmark_lists.rs",
+        "crates/pixiv-mcp/tests/bookmark_lists_pool.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go170 direct schema/input/resultと12 real DB/poolケースを比較。artwork filter/dedup、novel identity-before-plan、allのordered stream/checkpoint・単一logical budget/no-filter/no-dedupとwhole-page replay、別executionでdefault targetを一度解決し保持する境界を維持。既存26tool prefix/schemaを保持。最初のoffset誤記fixtureによる不十分な成功証拠を別に記録しmax_bookmark_id入力へ訂正してGo再取得。内部取消/復旧、known非決定的diagnostic、全wire/通信/他platformは未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:bookmark_tags",
@@ -2808,15 +2854,27 @@
     },
     {
       "id": "mcp:pixiv:user_bookmarks",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "user_bookmarks"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/bookmark_lists.rs",
+        "crates/pixiv-mcp/src/stdio.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_bookmark_lists_test.go",
+        "internal/mcpserver/pixiv/migration_bookmark_lists_pool_test.go",
+        "crates/pixiv-mcp/tests/bookmark_lists.rs",
+        "crates/pixiv-mcp/tests/bookmark_lists_pool.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go170 direct schema/input/resultと12 real DB/poolケースを比較。artwork filter/dedup、novel identity-before-plan、allのordered stream/checkpoint・単一logical budget/no-filter/no-dedupとwhole-page replay、別executionでdefault targetを一度解決し保持する境界を維持。既存26tool prefix/schemaを保持。最初のoffset誤記fixtureによる不十分な成功証拠を別に記録しmax_bookmark_id入力へ訂正してGo再取得。内部取消/復旧、known非決定的diagnostic、全wire/通信/他platformは未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:user_detail",
@@ -2901,15 +2959,27 @@
     },
     {
       "id": "mcp:pixiv:user_novel_bookmarks",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "user_novel_bookmarks"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-mcp/src/bookmark_lists.rs",
+        "crates/pixiv-mcp/src/stdio.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/migration_bookmark_lists_test.go",
+        "internal/mcpserver/pixiv/migration_bookmark_lists_pool_test.go",
+        "crates/pixiv-mcp/tests/bookmark_lists.rs",
+        "crates/pixiv-mcp/tests/bookmark_lists_pool.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go170 direct schema/input/resultと12 real DB/poolケースを比較。artwork filter/dedup、novel identity-before-plan、allのordered stream/checkpoint・単一logical budget/no-filter/no-dedupとwhole-page replay、別executionでdefault targetを一度解決し保持する境界を維持。既存26tool prefix/schemaを保持。最初のoffset誤記fixtureによる不十分な成功証拠を別に記録しmax_bookmark_id入力へ訂正してGo再取得。内部取消/復旧、known非決定的diagnostic、全wire/通信/他platformは未検証。"
+      ]
     },
     {
       "id": "mcp:pixiv:user_novels",
@@ -4583,18 +4653,25 @@
         "key": "sdk:TransportHTTP"
       },
       "rust_sources": [
-        "crates/pixiv-sdk/src/error.rs"
+        "crates/pixiv-sdk/src/error.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "crates/pixiv-sdk/src/continuation.rs"
       ],
       "tests": [
         "sdk/migration_error_test.go#TestMigrationErrorsMatchFrozenClassificationAndMetadata",
         "crates/pixiv-sdk/tests/errors.rs",
-        "crates/pixiv-cli/tests/errors.rs"
+        "crates/pixiv-cli/tests/errors.rs",
+        "sdk/pixiv/migration_http_query_test.go",
+        "crates/pixiv-sdk/tests/http_query.rs",
+        "crates/pixiv-sdk/tests/bookmark_lists.rs"
       ],
       "verified_platforms": [
-        "windows-amd64"
+        "windows-amd64",
+        "linux-amd64 (partial)"
       ],
       "differences": [
-        "空・未知の Reason と任意の redacted cause 型の表現は未移植。製品別 HTTP/通信失敗のマッピングと実際の取消は未検証。"
+        "空・未知の Reason と任意の redacted cause 型の表現は未移植。製品別 HTTP/通信失敗のマッピングと実際の取消は未検証。",
+        "Go8 local HTTP byteケースとbookmark list全queryでGET QueryEscapeの~/*/Unicode/記号を比較し、pair順/重複値/existing raw query/空paramsを保持。既存digest encoderを再利用しPOST form/OAuthは変更しない。TLS/DNS/proxy/redirect/全Options・取消/実HTTPS/他platformの全体互換証拠ではない。"
       ]
     },
     {
@@ -7838,15 +7915,26 @@
     },
     {
       "id": "sdk/pixiv:Client.UserArtworkBookmarks",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.UserArtworkBookmarks"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/bookmark_lists.rs",
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_bookmark_lists_test.go",
+        "crates/pixiv-sdk/tests/bookmark_lists.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go248ケースでartwork/novelのbookmark list ID/restrict/tag検証順、DTO/resources、global binding1とmax_bookmark_id正値cursor、ID/restrict/tag query binding・wire/query multiplicityを比較。空restrictをwire/digestで維持し、next_urlのbase値差分を拒否しない。全記録queryを実HttpTransportのlocal HTTP bytesとも比較。Value応答のcase/duplicate/null/不正UTF8/任意precisionとcursor payload、全通信/Options・取消/deadline/concurrency/disconnect・実HTTPS/resource・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.UserArtworkBookmarkTags",
@@ -7998,15 +8086,26 @@
     },
     {
       "id": "sdk/pixiv:Client.UserNovelBookmarks",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.UserNovelBookmarks"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/bookmark_lists.rs",
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_bookmark_lists_test.go",
+        "crates/pixiv-sdk/tests/bookmark_lists.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go248ケースでartwork/novelのbookmark list ID/restrict/tag検証順、DTO/resources、global binding1とmax_bookmark_id正値cursor、ID/restrict/tag query binding・wire/query multiplicityを比較。空restrictをwire/digestで維持し、next_urlのbase値差分を拒否しない。全記録queryを実HttpTransportのlocal HTTP bytesとも比較。Value応答のcase/duplicate/null/不正UTF8/任意precisionとcursor payload、全通信/Options・取消/deadline/concurrency/disconnect・実HTTPS/resource・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.UserNovelBookmarkTags",
@@ -12506,15 +12605,26 @@
     },
     {
       "id": "sdk/pixiv:UserArtworkBookmarksRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:UserArtworkBookmarksRequest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/bookmark_lists.rs",
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_bookmark_lists_test.go",
+        "crates/pixiv-sdk/tests/bookmark_lists.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go248ケースでartwork/novelのbookmark list ID/restrict/tag検証順、DTO/resources、global binding1とmax_bookmark_id正値cursor、ID/restrict/tag query binding・wire/query multiplicityを比較。空restrictをwire/digestで維持し、next_urlのbase値差分を拒否しない。全記録queryを実HttpTransportのlocal HTTP bytesとも比較。Value応答のcase/duplicate/null/不正UTF8/任意precisionとcursor payload、全通信/Options・取消/deadline/concurrency/disconnect・実HTTPS/resource・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:UserArtworkBookmarkTagsRequest",
@@ -12727,15 +12837,26 @@
     },
     {
       "id": "sdk/pixiv:UserNovelBookmarksRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:UserNovelBookmarksRequest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/bookmark_lists.rs",
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_bookmark_lists_test.go",
+        "crates/pixiv-sdk/tests/bookmark_lists.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go248ケースでartwork/novelのbookmark list ID/restrict/tag検証順、DTO/resources、global binding1とmax_bookmark_id正値cursor、ID/restrict/tag query binding・wire/query multiplicityを比較。空restrictをwire/digestで維持し、next_urlのbase値差分を拒否しない。全記録queryを実HttpTransportのlocal HTTP bytesとも比較。Value応答のcase/duplicate/null/不正UTF8/任意precisionとcursor payload、全通信/Options・取消/deadline/concurrency/disconnect・実HTTPS/resource・他OS/archは未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:UserNovelBookmarkTagsRequest",

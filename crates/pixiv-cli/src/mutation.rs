@@ -373,45 +373,7 @@ where
     }
 }
 fn parse_record(line: &[u8]) -> Result<(String, String), String> {
-    let value: &serde_json::value::RawValue =
-        serde_json::from_slice(line).map_err(|_| "invalid record JSON object".to_owned())?;
-    let fields: std::collections::BTreeMap<String, Box<serde_json::value::RawValue>> =
-        serde_json::from_str(value.get())
-            .map_err(|_| "invalid record JSON object: record must be a JSON object".to_owned())?;
-    let id = match fields.get("id") {
-        None => return Err("record id is required".into()),
-        Some(raw) if raw.get().starts_with('"') => {
-            let id: String =
-                serde_json::from_str(raw.get()).map_err(|_| "invalid record JSON object")?;
-            if id.is_empty() {
-                return Err("record id must be a non-empty string".into());
-            }
-            id
-        }
-        Some(raw) => {
-            let id = raw.get();
-            if !id.starts_with(['1', '2', '3', '4', '5', '6', '7', '8', '9'])
-                || !id.bytes().all(|b| b.is_ascii_digit())
-            {
-                return Err("record id must be a non-empty string or positive integer".into());
-            }
-            id.to_owned()
-        }
-    };
-    let required = |name: &str| -> Result<String, String> {
-        let value = fields
-            .get(name)
-            .ok_or_else(|| format!("record {name} is required"))?;
-        let value: String = serde_json::from_str(value.get())
-            .map_err(|_| format!("record {name} must be a string"))?;
-        if value.is_empty() {
-            return Err(format!("record {name} must be a non-empty string"));
-        }
-        Ok(value)
-    };
-    let typ = required("type")?;
-    required("url")?;
-    Ok((id, typ))
+    crate::record_input::parse(line).map(|(id, typ, _)| (id, typ))
 }
 
 fn check_context(context: Option<&Context>) -> Result<(), CommandError> {

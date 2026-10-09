@@ -647,6 +647,9 @@ async fn stdio_publishes_implemented_tool_metadata_and_preserves_request_ids() {
             pixiv_mcp::user_relationship_tool(pixiv_mcp::UserRelationship::Followers),
             pixiv_mcp::user_relationship_tool(pixiv_mcp::UserRelationship::Related),
             pixiv_mcp::user_relationship_tool(pixiv_mcp::UserRelationship::Blocked),
+            pixiv_mcp::bookmark_list_tool(pixiv_mcp::BookmarkList::Artwork),
+            pixiv_mcp::bookmark_list_tool(pixiv_mcp::BookmarkList::Novel),
+            pixiv_mcp::bookmark_list_tool(pixiv_mcp::BookmarkList::All),
         ])
     );
 }

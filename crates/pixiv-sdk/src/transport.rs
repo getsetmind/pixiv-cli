@@ -162,14 +162,20 @@ impl HttpTransport {
         for (name, value) in &request.headers {
             builder = builder.header(name, value);
         }
-        builder = if request.method == Method::GET {
-            builder.query(&request.parameters)
-        } else {
-            builder.form(&request.parameters)
-        };
-        let original = builder
+        if request.method != Method::GET {
+            builder = builder.form(&request.parameters);
+        }
+        let mut original = builder
             .build()
             .map_err(|error| request_failure(&error, request.operation))?;
+        if request.method == Method::GET && !request.parameters.is_empty() {
+            let mut query = original.url().query().unwrap_or_default().to_owned();
+            if !query.is_empty() {
+                query.push('&');
+            }
+            query.push_str(&crate::continuation::encode_query(&request.parameters));
+            original.url_mut().set_query(Some(&query));
+        }
         let response = self.follow_redirects(original, request.operation).await?;
         let status = response.status().as_u16();
         let retry_after = response
