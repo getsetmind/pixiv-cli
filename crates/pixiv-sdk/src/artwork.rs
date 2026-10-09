@@ -13,14 +13,14 @@ pub struct ResourcePolicy {
 }
 
 #[derive(Default, Deserialize)]
-struct Images {
+pub(crate) struct Images {
     original: Option<String>,
     large: Option<String>,
     medium: Option<String>,
     square_medium: Option<String>,
 }
 impl Images {
-    fn first(&self) -> Option<(&str, &str)> {
+    pub(crate) fn first(&self) -> Option<(&str, &str)> {
         [
             ("original", &self.original),
             ("large", &self.large),
@@ -37,8 +37,8 @@ impl Images {
     }
 }
 #[derive(Default, Deserialize)]
-struct WireUser {
-    id: Option<i64>,
+pub(crate) struct WireUser {
+    pub(crate) id: Option<i64>,
     name: Option<String>,
     account: Option<String>,
     comment: Option<String>,
@@ -50,7 +50,7 @@ struct ProfileImages {
     medium: Option<String>,
 }
 #[derive(Default, Deserialize)]
-struct WireTag {
+pub(crate) struct WireTag {
     name: Option<String>,
     translated_name: Option<String>,
 }
@@ -131,26 +131,7 @@ pub(crate) fn map(
     };
     let width = wire.width.unwrap_or_default();
     let height = wire.height.unwrap_or_default();
-    let wire_user = wire.user.unwrap_or_default();
-    let user_id = wire_user.id.unwrap_or_default();
-    let profile_image = wire_user
-        .profile_image_urls
-        .and_then(|images| images.medium)
-        .filter(|url| !url.is_empty())
-        .and_then(|url| {
-            policy
-                .image("user_profile", user_id, -1, "medium", &url, (0, 0))
-                .ok()
-        })
-        .unwrap_or_default();
-    let user = User {
-        id: user_id,
-        name: wire_user.name.unwrap_or_default(),
-        account: wire_user.account.unwrap_or_default(),
-        comment: wire_user.comment.unwrap_or_default(),
-        is_followed: wire_user.is_followed.unwrap_or_default(),
-        profile_image,
-    };
+    let user = wire.user.unwrap_or_default().map(policy);
     let images = wire.image_urls.unwrap_or_default();
     let cover = match images.first() {
         Some((variant, url)) => policy.image("artwork", id, -1, variant, url, (width, height))?,
@@ -177,10 +158,7 @@ pub(crate) fn map(
             .tags
             .unwrap_or_default()
             .into_iter()
-            .map(|tag| Tag {
-                name: tag.name.unwrap_or_default(),
-                translated_name: tag.translated_name.unwrap_or_default(),
-            })
+            .map(WireTag::map)
             .collect(),
         user,
         published_at,
@@ -227,7 +205,7 @@ impl ResourcePolicy {
         Ok(())
     }
 
-    fn image(
+    pub(crate) fn image(
         &self,
         kind: &str,
         id: i64,
@@ -494,4 +472,38 @@ pub fn artwork_variant_resource(original: &Resource, variant: &str) -> Result<Re
     }
     let _ = identity.v;
     encode_identity(&kind, id, identity.p.unwrap_or_default(), variant)
+}
+
+impl WireUser {
+    pub(crate) fn map(self, policy: &ResourcePolicy) -> User {
+        let wire_user = self;
+        let user_id = wire_user.id.unwrap_or_default();
+        let profile_image = wire_user
+            .profile_image_urls
+            .and_then(|images| images.medium)
+            .filter(|url| !url.is_empty())
+            .and_then(|url| {
+                policy
+                    .image("user_profile", user_id, -1, "medium", &url, (0, 0))
+                    .ok()
+            })
+            .unwrap_or_default();
+        User {
+            id: user_id,
+            name: wire_user.name.unwrap_or_default(),
+            account: wire_user.account.unwrap_or_default(),
+            comment: wire_user.comment.unwrap_or_default(),
+            is_followed: wire_user.is_followed.unwrap_or_default(),
+            profile_image,
+        }
+    }
+}
+
+impl WireTag {
+    pub(crate) fn map(self) -> Tag {
+        Tag {
+            name: self.name.unwrap_or_default(),
+            translated_name: self.translated_name.unwrap_or_default(),
+        }
+    }
 }

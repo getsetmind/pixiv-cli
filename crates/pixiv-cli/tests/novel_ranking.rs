@@ -46,7 +46,7 @@ struct Fixture {
 impl Transport for Fixture {
     async fn send(&self, request: Request) -> pixiv_sdk::Result<Response> {
         assert_eq!(request.method.as_str(), "GET");
-        assert_eq!(request.url, "https://app-api.pixiv.net/v1/illust/ranking");
+        assert_eq!(request.url, "https://app-api.pixiv.net/v1/novel/ranking");
         let mut query = BTreeMap::<String, Vec<String>>::new();
         for (key, value) in request.parameters {
             query.entry(key).or_default().push(value);
@@ -73,7 +73,7 @@ fn equal_output(actual: &[u8], expected: &str) {
 #[tokio::test]
 async fn ranking_preserves_go_output_windows_errors_and_saved_account_execution() {
     let cases: Vec<Case> = serde_json::from_str(include_str!(
-        "../../../docs/migration/contracts/cli-ranking.json"
+        "../../../docs/migration/contracts/cli-novel-ranking.json"
     ))
     .unwrap();
     for case in cases {
@@ -169,7 +169,7 @@ async fn ranking_preserves_go_output_windows_errors_and_saved_account_execution(
 #[test]
 fn ranking_process_preserves_go_validation_authentication_and_startup_order() {
     let cases: Vec<Case> = serde_json::from_str(include_str!(
-        "../../../docs/migration/contracts/cli-ranking.json"
+        "../../../docs/migration/contracts/cli-novel-ranking.json"
     ))
     .unwrap();
     for case in cases {

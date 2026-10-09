@@ -266,7 +266,7 @@ async fn execute(args: Arguments, ndjson_output: &mut bool) -> Result<(), Comman
             config,
             std::sync::Arc::new(std::sync::Mutex::new(database)),
         );
-        return pixiv_cli_rs::ranking::saved_artwork_ranking(
+        return pixiv_cli_rs::ranking::saved_ranking(
             &execution,
             &pixiv_app::lifecycle::Context::new(),
             options.as_ref().clone(),

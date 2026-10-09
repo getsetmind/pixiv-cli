@@ -4,6 +4,7 @@ pub use crate::bookmark::{
     UserNovelBookmarkTagsRequest,
 };
 pub use crate::mutation::*;
+pub use crate::novel_ranking::NovelRankingRequest;
 pub use crate::ranking::*;
 pub use crate::search::SearchArtworksRequest;
 pub use crate::trending::TrendingArtworkTagsRequest;
@@ -203,7 +204,7 @@ impl<T: Transport> Client<T> {
         Ok(pages)
     }
 
-    fn remember_resource(&self, resource: &Resource) {
+    pub(crate) fn remember_resource(&self, resource: &Resource) {
         if !resource.reference.is_zero() && !resource.url.is_empty() {
             self.resource_urls
                 .lock()

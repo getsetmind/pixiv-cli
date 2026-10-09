@@ -44,3 +44,15 @@ pub fn from_artwork(artwork: &Artwork) -> Result<Value, RecordError> {
     record["url"] = format!("https://www.pixiv.net/artworks/{}", artwork.id).into();
     Ok(record)
 }
+
+pub fn from_novel(novel: &pixiv_sdk::models::Novel) -> Result<Value, RecordError> {
+    if novel.id <= 0 {
+        return Err(RecordError::InvalidId);
+    }
+    let mut record = serde_json::to_value(pixiv_sdk::dto::NovelDto::from(novel))
+        .map_err(|_| RecordError::Serialization)?;
+    record["id"] = novel.id.to_string().into();
+    record["type"] = "novel".into();
+    record["url"] = format!("https://www.pixiv.net/novel/show.php?id={}", novel.id).into();
+    Ok(record)
+}

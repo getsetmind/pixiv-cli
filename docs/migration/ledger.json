@@ -1050,20 +1050,27 @@
         "crates/pixiv-cli/src/search.rs",
         "crates/pixiv-cli/src/json_spool.rs",
         "crates/pixiv-app/src/pagination.rs",
-        "crates/pixiv-app/src/execution.rs"
+        "crates/pixiv-app/src/execution.rs",
+        "crates/pixiv-sdk/src/novel_ranking.rs",
+        "crates/pixiv-record/src/lib.rs"
       ],
       "tests": [
         "internal/cli/migration_ranking_test.go#TestMigrationRankingPreservesLogicalPagesOutputsAndStartup",
         "crates/pixiv-cli/tests/ranking.rs#ranking_preserves_go_output_windows_errors_and_saved_account_execution",
         "crates/pixiv-cli/tests/ranking.rs#ranking_process_preserves_go_validation_authentication_and_startup_order",
         "sdk/pixiv/migration_ranking_test.go#TestMigrationArtworkRankingPreservesModesDatesPagesAndCursorBinding",
-        "crates/pixiv-sdk/tests/artwork_ranking.rs#ranking_matches_go_modes_dates_dtos_pages_and_global_cursor_binding"
+        "crates/pixiv-sdk/tests/artwork_ranking.rs#ranking_matches_go_modes_dates_dtos_pages_and_global_cursor_binding",
+        "sdk/pixiv/migration_novel_ranking_test.go#TestMigrationNovelRankingPreservesModesDTOsPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/novel_ranking.rs#ranking_matches_go_modes_dtos_pages_and_global_cursor_binding",
+        "internal/cli/migration_novel_ranking_test.go#TestMigrationNovelRankingPreservesLogicalPagesOutputsAndStartup",
+        "crates/pixiv-cli/tests/novel_ranking.rs#ranking_preserves_go_output_windows_errors_and_saved_account_execution",
+        "crates/pixiv-cli/tests/novel_ranking.rs#ranking_process_preserves_go_validation_authentication_and_startup_order"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
-        "作品ランキングを既存設定・保存済みアカウントの Execution に接続。Go の204ケースで全16モード、日付、human の見出し/順位、JSON/NDJSON、DTO、不正応答、論理 limit/page、入力/type 拒否と実子プロセスの起動順を比較。直接 Client と保存済みアカウントの両経路で同じ結果/query と refresh の CAS 保存・Bearer を確認。JSON は既存 spool でページ単位に蓄積して lease 解放後に公開する。--type novel は未移植で明示的な未実装エラーを返す。全 flag 構文/help・proxy・出力 override/TTY、writer 部分失敗・取消・pool replay、実 HTTPS と他 OS/arch は未検証。"
+        "作品・小説ランキングを実設定と保存済みアカウントの Execution へ接続。Go の作品204ケースと小説222ケースで全16モード、human/JSON/NDJSON、DTO、論理 limit/page、入力/type 拒否、子プロセスの起動順を比較。小説の --date は client を開く前に拒否する。直接 Client と保存済みアカウントで出力/query と refresh の CAS 保存・Bearer 使用を確認。JSON は private spool にページごとに蓄積し、lease 解放後に公開する。全 flag 構文/help・proxy・出力 override/TTY、writer 部分失敗・取消・pool replay、実 HTTPS と他 OS/arch は未検証。"
       ]
     },
     {
@@ -6465,15 +6472,28 @@
     },
     {
       "id": "sdk/pixiv:Client.NovelRanking",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.NovelRanking"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_ranking.rs",
+        "crates/pixiv-sdk/src/novel.rs",
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_ranking_test.go#TestMigrationNovelRankingPreservesModesDTOsPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/novel_ranking.rs#ranking_matches_go_modes_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "小説ランキングの全16モード、for_android、DTO、複数ページ、next_url、global cursor と mode binding を Go の74ケースで比較。NovelDto は updated_at=null を保持し、tags は空配列へ変換。カバーの original/large/medium/square_medium 優先順、禁止 host と作者画像の失敗時の空値を比較。他操作からの Novel/DTO、通信失敗・取消・ライブ HTTPS・他 OS/arch の全条件は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.NovelSeries",
@@ -7729,15 +7749,28 @@
     },
     {
       "id": "sdk/pixiv:Novel",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Novel"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_ranking.rs",
+        "crates/pixiv-sdk/src/novel.rs",
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_ranking_test.go#TestMigrationNovelRankingPreservesModesDTOsPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/novel_ranking.rs#ranking_matches_go_modes_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "小説ランキングの全16モード、for_android、DTO、複数ページ、next_url、global cursor と mode binding を Go の74ケースで比較。NovelDto は updated_at=null を保持し、tags は空配列へ変換。カバーの original/large/medium/square_medium 優先順、禁止 host と作者画像の失敗時の空値を比較。他操作からの Novel/DTO、通信失敗・取消・ライブ HTTPS・他 OS/arch の全条件は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelBlock",
@@ -7957,15 +7990,28 @@
     },
     {
       "id": "sdk/pixiv:NovelDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_ranking.rs",
+        "crates/pixiv-sdk/src/novel.rs",
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_ranking_test.go#TestMigrationNovelRankingPreservesModesDTOsPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/novel_ranking.rs#ranking_matches_go_modes_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "小説ランキングの全16モード、for_android、DTO、複数ページ、next_url、global cursor と mode binding を Go の74ケースで比較。NovelDto は updated_at=null を保持し、tags は空配列へ変換。カバーの original/large/medium/square_medium 優先順、禁止 host と作者画像の失敗時の空値を比較。他操作からの Novel/DTO、通信失敗・取消・ライブ HTTPS・他 OS/arch の全条件は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelFileBlock",
@@ -8137,15 +8183,28 @@
     },
     {
       "id": "sdk/pixiv:NovelRankingRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:NovelRankingRequest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_ranking.rs",
+        "crates/pixiv-sdk/src/novel.rs",
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_ranking_test.go#TestMigrationNovelRankingPreservesModesDTOsPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/novel_ranking.rs#ranking_matches_go_modes_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "小説ランキングの全16モード、for_android、DTO、複数ページ、next_url、global cursor と mode binding を Go の74ケースで比較。NovelDto は updated_at=null を保持し、tags は空配列へ変換。カバーの original/large/medium/square_medium 優先順、禁止 host と作者画像の失敗時の空値を比較。他操作からの Novel/DTO、通信失敗・取消・ライブ HTTPS・他 OS/arch の全条件は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:NovelRequest",
@@ -10040,15 +10099,28 @@
     },
     {
       "id": "sdk/pixiv:ToNovelDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:ToNovelDTO"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/novel_ranking.rs",
+        "crates/pixiv-sdk/src/novel.rs",
+        "crates/pixiv-sdk/src/ranking.rs",
+        "crates/pixiv-sdk/src/models.rs",
+        "crates/pixiv-sdk/src/dto.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_novel_ranking_test.go#TestMigrationNovelRankingPreservesModesDTOsPagesAndCursorBinding",
+        "crates/pixiv-sdk/tests/novel_ranking.rs#ranking_matches_go_modes_dtos_pages_and_global_cursor_binding"
+      ],
+      "verified_platforms": [
+        "windows-amd64"
+      ],
+      "differences": [
+        "小説ランキングの全16モード、for_android、DTO、複数ページ、next_url、global cursor と mode binding を Go の74ケースで比較。NovelDto は updated_at=null を保持し、tags は空配列へ変換。カバーの original/large/medium/square_medium 優先順、禁止 host と作者画像の失敗時の空値を比較。他操作からの Novel/DTO、通信失敗・取消・ライブ HTTPS・他 OS/arch の全条件は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:ToNovelFileBlockDTO",

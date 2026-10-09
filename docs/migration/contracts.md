@@ -901,4 +901,14 @@ Rust の CLI は保存済みアカウントから `Execution::read` で型付き
 
 [mcp-ranking.json](contracts/mcp-ranking.json) は実 Go MCP session の schema と60応答である。全16モード、日付、空・不正応答、論理 page/limit と offset overflow、illust_filter と重複除去、pagination を固定する。Rust の直接呼出し、stdio、保存済みアカウントの stdio で同じ result と query を比較する。検索と共通の schema 検証、list plan、filter 判定、record/result 生成を使う。
 
-検証環境は Windows amd64 である。小説ランキングは未移植で、Rust CLI の `--type novel` は未実装エラーを返す。全 flag 構文/help・proxy・出力 override/TTY、部分 writer 失敗、取消・pool replay・disconnect、schema 拒否と整数精度の全条件、実 HTTPS と他 OS/arch は未検証。作品ランキングの接続を ranking 全体や全環境の完了として扱わない。
+検証環境は Windows amd64 である。小説ランキングは次節の範囲で接続した。全 flag 構文/help・proxy・出力 override/TTY、部分 writer 失敗、取消・pool replay・disconnect、schema 拒否と整数精度の全条件、実 HTTPS と他 OS/arch は未検証。作品ランキングの接続を ranking 全体や全環境の完了として扱わない。
+
+## 小説ランキングの SDK・CLI
+
+[novel-ranking.json](contracts/novel-ranking.json) は Go の74ケースである。全16モードと既定値、`filter=for_android`、複数ページ、next_url、cursor payload と mode binding、Novel DTO を固定する。小説ランキングも global cursor を使う。NovelDto の `updated_at` は null を出力し、tags は空配列を保持する。カバーは original、large、medium、square_medium の順に選び、禁止 host は拒否する。作者画像の不正 URL は Go と同じく空画像へ変換する。
+
+[cli-novel-ranking.json](contracts/cli-novel-ranking.json) は Go の222ケースである。小説の human 見出しと行、JSON の novels キー、NDJSON の文字列 ID/type/canonical URL、論理 limit/page、入力拒否を固定する。`--date` は空値を明示した場合も client を開く前に拒否する。Rust は直接 SDK と保存済みアカウントの両経路で出力・query を比較し、OAuth refresh の CAS 保存と Bearer 使用も確認する。実 Rust バイナリの222起動ケースで診断と設定・DB 作成順を比較する。
+
+作品と小説は mode 定数、cursor の検証と生成、作者・画像のマッピング、account pool と private JSON spool を共有する。JSON は全取得成功と lease 解放後に出力する。Go MCP に小説ランキングの登録はないため、公開ツールを追加しない。
+
+検証環境は Windows amd64。部分 writer 失敗、取消、pool replay、全 flag 構文/help・proxy・出力 override/TTY、実 HTTPS と他 OS/arch の全条件は未検証である。小説の detail/search/text やシリーズ操作は別の未移植項目として残る。

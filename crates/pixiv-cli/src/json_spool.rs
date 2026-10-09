@@ -14,6 +14,9 @@ pub(crate) struct JsonSpool {
 
 impl JsonSpool {
     pub(crate) fn new() -> Result<Self, CommandError> {
+        Self::with_key("illusts")
+    }
+    pub(crate) fn with_key(key: &str) -> Result<Self, CommandError> {
         let mut random = [0_u8; 16];
         getrandom::fill(&mut random).map_err(|error| io::Error::other(error.to_string()))?;
         let name = random
@@ -38,19 +41,30 @@ impl JsonSpool {
             .file
             .as_mut()
             .expect("spool file is open")
-            .write_all(b"{\n  \"illusts\": [")?;
+            .write_all(format!("{{\n  \"{key}\": [").as_bytes())?;
         Ok(spool)
     }
 
     pub(crate) fn append(&mut self, items: &[Artwork]) -> Result<(), CommandError> {
+        self.append_dtos(items.iter().map(ArtworkDto::from))
+    }
+    pub(crate) fn append_novels(
+        &mut self,
+        items: &[pixiv_sdk::models::Novel],
+    ) -> Result<(), CommandError> {
+        self.append_dtos(items.iter().map(pixiv_sdk::dto::NovelDto::from))
+    }
+    fn append_dtos<T: serde::Serialize>(
+        &mut self,
+        items: impl IntoIterator<Item = T>,
+    ) -> Result<(), CommandError> {
         let file = self.file.as_mut().expect("spool file is open");
         for item in items {
             if !self.first {
                 file.write_all(b",")?;
             }
             self.first = false;
-            let encoded =
-                serde_json::to_string_pretty(&ArtworkDto::from(item)).map_err(io::Error::other)?;
+            let encoded = serde_json::to_string_pretty(&item).map_err(io::Error::other)?;
             let encoded = crate::go_json_escape(encoded);
             file.write_all(b"\n    ")?;
             for (index, line) in encoded.split('\n').enumerate() {

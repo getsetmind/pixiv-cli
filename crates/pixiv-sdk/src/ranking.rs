@@ -26,7 +26,7 @@ pub const RANKING_MODE_DAY_MALE_R18: &str = "day_male_r18";
 pub const RANKING_MODE_DAY_FEMALE_R18: &str = "day_female_r18";
 pub const RANKING_MODE_WEEK_R18: &str = "week_r18";
 pub const RANKING_MODE_WEEK_R18G: &str = "week_r18g";
-const MODES: &[&str] = &[
+pub(crate) const MODES: &[&str] = &[
     RANKING_MODE_DAY,
     RANKING_MODE_DAY_MALE,
     RANKING_MODE_DAY_FEMALE,
@@ -105,47 +105,7 @@ impl<T: Transport> Client<T> {
             query.insert("date".into(), request.date);
         }
         let digest = crate::continuation::query_digest(&query);
-        if !request.cursor.is_zero() {
-            request
-                .cursor
-                .validate("pixiv", OPERATION, 1, &digest)
-                .map_err(|_| {
-                    error(
-                        Reason::InvalidCursor,
-                        "cursor does not match this operation and query",
-                    )
-                })?;
-            let payload = request
-                .cursor
-                .payload()
-                .map_err(|_| error(Reason::InvalidCursor, "cursor payload is unavailable"))?;
-            let position: Option<Continuation> = serde_json::from_slice(&payload)
-                .map_err(|_| error(Reason::InvalidCursor, "cursor payload is malformed"))?;
-            let position = position.unwrap_or_default();
-            let key = position.k.unwrap_or_default();
-            let value = position.v.unwrap_or_default();
-            let params = position.p.unwrap_or_default();
-            if value < 0
-                || position.s.unwrap_or_default() < 0
-                || (key.is_empty() && params.is_empty())
-                || (!key.is_empty() && !params.is_empty())
-            {
-                return Err(error(Reason::InvalidCursor, "cursor payload is malformed"));
-            }
-            if key != "offset" {
-                return Err(error(
-                    Reason::InvalidCursor,
-                    "cursor continuation kind mismatch",
-                ));
-            }
-            if value <= 0 || value > isize::MAX as i64 {
-                return Err(error(
-                    Reason::InvalidCursor,
-                    "cursor continuation offset must be positive",
-                ));
-            }
-            query.insert("offset".into(), value.to_string());
-        }
+        apply_offset(&request.cursor, OPERATION, &digest, &mut query)?;
         let body = self
             .get("/v1/illust/ranking", query.into_iter().collect(), OPERATION)
             .await?;
@@ -171,23 +131,102 @@ impl<T: Transport> Client<T> {
             self.remember_artwork(&artwork);
             items.push(artwork);
         }
-        let next = if let Some(offset) = offset {
+        let next = next_cursor(OPERATION, &digest, offset)?;
+        Ok(Page { items, next })
+    }
+}
+
+pub(crate) fn ranking_error(
+    operation: &'static str,
+    reason: Reason,
+    detail: &'static str,
+) -> Error {
+    Error::new(reason, operation).with_detail(detail)
+}
+pub(crate) fn apply_offset(
+    cursor: &Cursor,
+    operation: &'static str,
+    digest: &str,
+    query: &mut BTreeMap<String, String>,
+) -> Result<()> {
+    if !cursor.is_zero() {
+        cursor
+            .validate("pixiv", operation, 1, digest)
+            .map_err(|_| {
+                ranking_error(
+                    operation,
+                    Reason::InvalidCursor,
+                    "cursor does not match this operation and query",
+                )
+            })?;
+        let payload = cursor.payload().map_err(|_| {
+            ranking_error(
+                operation,
+                Reason::InvalidCursor,
+                "cursor payload is unavailable",
+            )
+        })?;
+        let position: Option<Continuation> = serde_json::from_slice(&payload).map_err(|_| {
+            ranking_error(
+                operation,
+                Reason::InvalidCursor,
+                "cursor payload is malformed",
+            )
+        })?;
+        let position = position.unwrap_or_default();
+        let key = position.k.unwrap_or_default();
+        let value = position.v.unwrap_or_default();
+        let params = position.p.unwrap_or_default();
+        if value < 0
+            || position.s.unwrap_or_default() < 0
+            || (key.is_empty() && params.is_empty())
+            || (!key.is_empty() && !params.is_empty())
+        {
+            return Err(ranking_error(
+                operation,
+                Reason::InvalidCursor,
+                "cursor payload is malformed",
+            ));
+        }
+        if key != "offset" {
+            return Err(ranking_error(
+                operation,
+                Reason::InvalidCursor,
+                "cursor continuation kind mismatch",
+            ));
+        }
+        if value <= 0 || value > isize::MAX as i64 {
+            return Err(ranking_error(
+                operation,
+                Reason::InvalidCursor,
+                "cursor continuation offset must be positive",
+            ));
+        }
+        query.insert("offset".into(), value.to_string());
+    }
+    Ok(())
+}
+pub(crate) fn next_cursor(
+    operation: &'static str,
+    digest: &str,
+    offset: Option<i64>,
+) -> Result<Cursor> {
+    match offset {
+        Some(offset) => {
             let payload = serde_json::to_vec(&Position {
                 k: "offset",
                 v: offset,
             })
-            .map_err(|_| error(Reason::UpstreamError, "cannot encode cursor"))?;
+            .map_err(|_| ranking_error(operation, Reason::UpstreamError, "cannot encode cursor"))?;
             Cursor::new(
                 "pixiv",
-                OPERATION,
+                operation,
                 1,
-                &digest,
+                digest,
                 &payload,
                 CursorOptions::default(),
-            )?
-        } else {
-            Cursor::default()
-        };
-        Ok(Page { items, next })
+            )
+        }
+        None => Ok(Cursor::default()),
     }
 }

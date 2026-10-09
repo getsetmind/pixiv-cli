@@ -7,6 +7,8 @@ pub mod dto;
 pub mod error;
 pub mod models;
 mod mutation;
+mod novel;
+mod novel_ranking;
 pub mod oauth;
 mod pacing;
 pub mod pixiv;

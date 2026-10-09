@@ -104,3 +104,20 @@ pub struct BookmarkTag {
     pub name: String,
     pub count: i64,
 }
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct Novel {
+    pub id: i64,
+    pub title: String,
+    pub caption: String,
+    pub user: User,
+    pub tags: Vec<Tag>,
+    pub published_at: DateTime<Utc>,
+    pub updated_at: Option<DateTime<Utc>>,
+    pub x_restrict: i64,
+    pub text_length: i64,
+    pub is_original: bool,
+    pub total_bookmarks: i64,
+    pub total_views: i64,
+    pub cover: ImageResource,
+}

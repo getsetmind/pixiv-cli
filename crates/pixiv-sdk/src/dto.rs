@@ -215,3 +215,39 @@ impl<'a> From<&'a Artwork> for ArtworkDto<'a> {
         }
     }
 }
+
+#[derive(Serialize)]
+pub struct NovelDto<'a> {
+    pub id: i64,
+    pub title: &'a str,
+    pub caption: &'a str,
+    pub user: UserDto<'a>,
+    pub tags: &'a [Tag],
+    pub published_at: DateTime<Utc>,
+    pub updated_at: Option<DateTime<Utc>>,
+    pub x_restrict: i64,
+    pub text_length: i64,
+    pub is_original: bool,
+    pub total_bookmarks: i64,
+    pub total_views: i64,
+    pub cover: ImageResourceDto<'a>,
+}
+impl<'a> From<&'a crate::models::Novel> for NovelDto<'a> {
+    fn from(value: &'a crate::models::Novel) -> Self {
+        Self {
+            id: value.id,
+            title: &value.title,
+            caption: &value.caption,
+            user: (&value.user).into(),
+            tags: &value.tags,
+            published_at: value.published_at,
+            updated_at: value.updated_at,
+            x_restrict: value.x_restrict,
+            text_length: value.text_length,
+            is_original: value.is_original,
+            total_bookmarks: value.total_bookmarks,
+            total_views: value.total_views,
+            cover: (&value.cover).into(),
+        }
+    }
+}
