@@ -18,7 +18,7 @@ use std::sync::{
 
 #[derive(Args, Clone, Debug)]
 pub struct SearchInput {
-    #[arg(required = true, num_args = 1..)]
+    #[arg(num_args = 0..)]
     pub query: Vec<String>,
     #[arg(long, short = 'j', num_args = 0..=1, require_equals = true, default_missing_value = "true")]
     pub json: Option<bool>,
@@ -27,6 +27,32 @@ pub struct SearchInput {
 }
 
 impl SearchInput {
+    pub fn resolve_word<R: std::io::Read>(
+        &self,
+        input: &mut R,
+        terminal: bool,
+    ) -> Result<String, CommandError> {
+        if !self.query.is_empty() {
+            return Ok(self.word());
+        }
+        if !terminal {
+            let mut bytes = Vec::new();
+            input
+                .read_to_end(&mut bytes)
+                .map_err(|error| CommandError::Usage(format!("read stdin value: {error}")))?;
+            if bytes.ends_with(b"\r\n") {
+                bytes.truncate(bytes.len() - 2);
+            } else if bytes.ends_with(b"\n") {
+                bytes.pop();
+            }
+            if !bytes.is_empty() {
+                return String::from_utf8(bytes)
+                    .map_err(|_| CommandError::Message("stdin search word is not valid UTF-8"));
+            }
+        }
+        Err(CommandError::Message("usage: pixiv search [options] WORD"))
+    }
+
     pub fn word(&self) -> String {
         self.query.join(" ")
     }
@@ -41,7 +67,9 @@ impl SearchInput {
         terminal: bool,
     ) -> Result<crate::DetailOutput, CommandError> {
         if self.ndjson && self.json.is_some() {
-            return Err(CommandError::Usage("--ndjson cannot be used with --json"));
+            return Err(CommandError::Usage(
+                "--ndjson cannot be used with --json".into(),
+            ));
         }
         if self.ndjson {
             Ok(crate::DetailOutput::Ndjson)

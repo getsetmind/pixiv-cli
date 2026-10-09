@@ -19,7 +19,7 @@ pub enum DetailOutput {
 pub enum CommandError {
     Sdk(Error),
     Message(&'static str),
-    Usage(&'static str),
+    Usage(String),
     MessageText(String),
     Output(io::Error),
     App(SchedulerError),
@@ -44,7 +44,8 @@ impl fmt::Display for CommandError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Sdk(error) => error.fmt(f),
-            Self::Message(message) | Self::Usage(message) => f.write_str(message),
+            Self::Message(message) => f.write_str(message),
+            Self::Usage(message) => f.write_str(message),
             Self::MessageText(message) => f.write_str(message),
             Self::Output(error) => error.fmt(f),
             Self::App(error) => error.fmt(f),

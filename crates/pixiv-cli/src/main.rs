@@ -98,6 +98,12 @@ async fn main() {
 }
 
 async fn execute(args: Arguments, ndjson_output: &mut bool) -> Result<(), CommandError> {
+    let search_word = match &args.command {
+        Command::Search { input, .. } => {
+            Some(input.resolve_word(&mut io::stdin().lock(), io::stdin().is_terminal())?)
+        }
+        _ => None,
+    };
     let account_config = if matches!(
         &args.command,
         Command::Detail { .. } | Command::Mcp { .. } | Command::Search { .. }
@@ -131,9 +137,10 @@ async fn execute(args: Arguments, ndjson_output: &mut bool) -> Result<(), Comman
         _ => None,
     };
     let search_request = match &args.command {
-        Command::Search { input, options, .. } => {
-            Some(options.request(&input.word(), chrono::Utc::now().fixed_offset())?)
-        }
+        Command::Search { options, .. } => Some(options.request(
+            search_word.as_deref().expect("search input was resolved"),
+            chrono::Utc::now().fixed_offset(),
+        )?),
         _ => None,
     };
     if let Command::Search {
