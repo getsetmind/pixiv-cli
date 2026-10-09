@@ -950,3 +950,10 @@ Rust の互換入口は受理したオプションを共通の SearchInput/Searc
 [mcp-user-detail.json](contracts/mcp-user-detail.json) は実 Go MCP の schema と14ケースである。直接呼出し・stdio・保存済みアカウント stdio で complete envelope を持つ user record、要求数、required user_id、未知 key、非整数と float64 経由の int64 overflow、不正応答を比較する。公開カタログへ user_detail を追加する。
 
 検証環境は Windows amd64。全 ID/URL 構文・JSON/数値構文、record/text 入力パイプ・aggregate JSON、TTY/出力 override/全 flag、部分 writer 失敗、取消/deadline・pool replay・disconnect、resource の実取得、実 HTTPS と他 OS/arch は未検証である。
+
+
+## ユーザー検索の Go 契約
+
+[user-search.json](contracts/user-search.json) は Go の64ケースである。SDK SearchUsers の検索語、UserPreview DTO、必須 user_previews と正のユーザー ID、フィールドの null・不正型、継続 URL、global cursor と検索語 binding を固定する。query は word と継続時の offset を使う。応答に含まれる illusts/novels は不正型の場合も無視し、DTO は両方を空配列として出力する。
+
+検証環境は Windows amd64。Rust SDK・CLI・MCP のユーザー検索は未実装であり、Rust 比較は未実行。次の工程では本 fixture を使う Rust 契約テストを書き、検索を実装する。CLI の出力・論理ページ・禁止フラグ、MCP の schema・ローカル ID filter・空検索語の検証順も Go の実入口で固定してから接続する。
