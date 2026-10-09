@@ -138,3 +138,33 @@ fn json_classifier_preserves_go_string_validity_and_proxy_precedence() {
         );
     }
 }
+
+#[tokio::test]
+async fn no_proxy_false_preserves_configured_proxy_validation() {
+    let home = tempfile::tempdir().unwrap();
+    let store = Store::new(home.path().join("config.toml"));
+    std::fs::write(store.path(), "[pixiv.network]\nproxy_url='invalid'\n").unwrap();
+    let args = ["import", "synthetic-token", "--no-proxy=false"].map(str::to_owned);
+    let AuthCommand::Transfer(command) = AuthCommand::parse(&args, &mut &b""[..], false).unwrap()
+    else {
+        panic!("transfer dispatch")
+    };
+    let requests = Arc::new(Mutex::new(0));
+    let error = command
+        .execute_with_transport(
+            &store,
+            &Context::new(),
+            &mut Vec::new(),
+            &mut Prompts,
+            OAuth {
+                requests: requests.clone(),
+            },
+        )
+        .await
+        .unwrap_err();
+    assert_eq!(
+        error.to_string(),
+        "proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration"
+    );
+    assert_eq!(*requests.lock().unwrap(), 0);
+}

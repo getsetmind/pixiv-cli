@@ -1441,3 +1441,21 @@ TTY secretは本番のraw mode/restorationとmasked editing・trim・empty valid
 初回focused compileはgetrandomのStdError変換、次はtest-only Context::background仮定で失敗し、既存APIに補正した。startup comparisonのhelp-prefix失敗は固定Go期待値を維持してdiscoveryを補正した。pre-classifier/quote-fix full scriptは339passed/既存3ignoredで終了0だが、final validationには使わない。post-fix scriptはFormatter/Clippy通過後、duplicate debug variantsのdisk exhaustion（ENOSPC/linker BusError）で終了1となった。失敗証拠を保持し、rebuildable target/debugだけを削除してsingle target/pinned toolchain/既存環境のまま全scriptを再実行する。POWERSHELL_TELEMETRY_OPTOUT=1・Cargo offlineを保持した最終scriptは終了sentinel0・369秒、Formatter/Clippy・workspace342passed/0failed/既存3ignored・release36.84秒を確認した。独立read-only reviewも最終classifier/quote修正を確認した。Go related CLI/auth/account/secret writer/ledger suiteとvetは終了0（CLI59.530秒）。Go Cargo interop flag未指定のskipと既存Linux公開面snapshot不在1testの除外を保持し、strict全Go passとはしない。
 
 generic malformed-JSON syntax diagnostic、serde depth128対Go10000、source duplicate scannerのnil-map panic対Rust safe rejection、nonUTF8 token import、SDK lifecycle/context/実HTTPS、terminal packet/rendering、Windows/全arch/配布を未検証または具体差分として残す。操作全体のverified・auth全体・whole migrationの完了とはしない。残るauth check/refresh/login・callback/URL handlerはinventoryに保持する。
+
+## Auth check/refresh・rotation/profile・all partial commit（2026-10-09）
+
+固定Goのcheck/refreshをcurrent/explicit UID/stdin・human/JSON・refresh all・proxy全presenceへ接続する。既存OAuth・account repository/revision CAS・config/default・AccountOutを再利用し、credentialsは合成値、profile/OAuthはmock、DB/configはtempだけを使用する。Goには対応auth MCP toolが無いため、存在しない入口を追加しない。
+
+[CLI fixture](contracts/cli-auth-validation.json)は42 actual-root行・33,291bytesで、startup/input/UID parse/error priority/help/output/config/DB保存bytesをexact比較する。別12組合せ（current/explicit/stdin × human/JSON × check/refresh）は実Go OAuth/profileと同じsynthetic request/rotation/metadata/outputを比較する。domain20例は3Go/Rust testでordered errors・identity/CAS・取消・fresh summaryを比較する。全flag/state/outputの直積は増やさない。
+
+CheckはGetのerrorを直接返し、OAuth後のreturned-record UIDでidentity/revision CASを行い、username/UIDだけの最小summaryを返す。default=false・premium不明・pool field省略を保持する。既存OpenAccountはrequested UIDを使い続け、shared rotationのrefactorによる変更を専用regressionで防ぐ。Refreshはwrapped select→rotation commit→CurrentUser profile→fresh account nameを保持したmetadata commit→fresh account/default summaryの順で、profile/metadata/final default失敗が既にcommitted tokenを戻さない。premiumCheckedAtはDBにUnix秒を保存するがDTOへ出さない。期限切れfreezeはsummaryから省略するだけのsingle refreshと、List cleanupを先に行うallを区別する。
+
+allはBackgroundでIDsをListし、command contextで順にrefreshし、全成功後だけまとめてoutputする。後の失敗でも先行credential/metadataを戻さない。default UID0の選択はnetwork optionsより先で、explicit UIDはdefault lookupを省く。initial startup runtime検査を維持しつつ、override無し（--no-proxy=falseを含む）はaccountごとにruntimeをreloadし、explicit proxy/--no-proxy=trueはloaderを呼ばない。proxyの排他はChangedのpresence、clearはtrueだけで判定し、既存import/exportの共通helperへ同じ挙動を抽出する。JSON frozen時刻のyear範囲errorは全refreshのcommit後に返し、partial JSONを出さない。human premiumはyes/no/unknown。
+
+Focused app3、CLI validation7、42行startup、既存transfer OAuth4が成功した。最初のproxy2testはglobal HTTPS_PROXYがconfigより優先する既存契約を見落とし失敗した。失敗logとexpectationを保持し、Go同様environmentより優先する[pixiv.network].proxy_urlという実config境界で合成fixtureを隔離した。production環境precedenceは変更しない。full script初回はappのsignature折返し/module順のFormatter差分で停止し、logを保持してcargo fmtだけを適用した。
+
+直前checkpointのduplicate debug variantによるdisk exhaustionを受け、published-clean時点でrebuildable target/debugだけを削除した。以後このcheckpoint全buildに一貫してtask-local CARGO_PROFILE_DEV_DEBUG=0・CARGO_PROFILE_TEST_DEBUG=0を設定する。debug情報だけを省き、optimization・assertions・test内容・script全stage・release profileは変更しない。CARGO_INCREMENTAL=0・Cargo offline・POWERSHELL_TELEMETRY_OPTOUT=1も保持する。最終full scriptは終了sentinel0・298秒、Formatter/Clippy・workspace354passed/0failed/既存3ignored・release39.10秒で完了した。
+
+Go related CLI/auth/account/ledger suitesとvetは終了0（CLI44.111秒）。既存Linux公開面snapshot不在1testの除外と、Go Cargo interop flag未指定skipを保持し、strict全Go passとしない。独立read-only reviewは最終runtime/proxy/timestamp/rotation境界を確認し、scoped source finding無し。
+
+nonUTF8 stored tokenの既存SDK String/form差分、SDK-owned CloseIdleConnections/shared pool/context/実TLS・全profile wire、実startup/update/diagnostic/DB close、SQL実行中取消/blocked mutex/全clock/flag/help/Windows・macOS・全archを未検証として残す。auth login/callback/URL handlerは未移植。今回の対象例成功をauth全体・whole migration verifiedへ外挿しない。

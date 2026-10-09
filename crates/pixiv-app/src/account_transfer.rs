@@ -127,7 +127,11 @@ impl AccountTransfer<'_> {
                 .map(|account| account.user_id)),
         }
     }
-    fn summary(&self, context: &Context, id: i64) -> Result<AccountSummary, SchedulerError> {
+    pub(crate) fn summary(
+        &self,
+        context: &Context,
+        id: i64,
+    ) -> Result<AccountSummary, SchedulerError> {
         let account = self.service.repository.get(context, id)?;
         let selected = self.selected(context)?;
         let now = Utc::now().timestamp();

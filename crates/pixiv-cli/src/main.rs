@@ -1677,6 +1677,15 @@ async fn execute_auth() -> (Result<(), CommandError>, bool) {
             io::stdout(),
             io::stderr(),
         );
+        if let pixiv_cli_rs::auth_accounts::AuthCommand::Validation(validation) = &command {
+            return validation
+                .execute_http(
+                    &pixiv_app::config::Store::new(path),
+                    &pixiv_app::lifecycle::Context::new(),
+                    &mut io::stdout().lock(),
+                )
+                .await;
+        }
         if let pixiv_cli_rs::auth_accounts::AuthCommand::Transfer(transfer) = &command {
             return transfer
                 .execute_http(

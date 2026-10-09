@@ -63,6 +63,18 @@ pub trait AccountRepository: Send + Sync {
             "pixiv account pool repository is not configured".into(),
         ))
     }
+    fn update_metadata(
+        &self,
+        _context: &Context,
+        _user_id: i64,
+        _username: &str,
+        _premium: Option<bool>,
+        _checked_at: Option<i64>,
+    ) -> Result<(), SchedulerError> {
+        Err(SchedulerError::Message(
+            "pixiv account metadata repository is not configured".into(),
+        ))
+    }
     fn get(&self, context: &Context, user_id: i64) -> Result<PixivAccount, SchedulerError>;
     fn list(&self, context: &Context) -> Result<Vec<PixivAccount>, SchedulerError>;
     fn rotate(
@@ -141,6 +153,23 @@ impl AccountRepository for Mutex<Database> {
             .unwrap_or_else(|poisoned| poisoned.into_inner())
             .set_all_pixiv_schedulable_with_context(context, enabled)
             .map_err(Into::into)
+    }
+
+    fn update_metadata(
+        &self,
+        context: &Context,
+        user_id: i64,
+        username: &str,
+        premium: Option<bool>,
+        checked_at: Option<i64>,
+    ) -> Result<(), SchedulerError> {
+        if let Some(error) = context.error() {
+            return Err(error.into());
+        }
+        self.lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner())
+            .update_pixiv_metadata(user_id, username, premium, checked_at)
+            .map_err(SchedulerError::Account)
     }
 
     fn get(&self, context: &Context, user_id: i64) -> Result<PixivAccount, SchedulerError> {
@@ -238,10 +267,23 @@ impl AccountService {
             .repository
             .get(context, user_id)
             .map_err(|error| wrapped("select pixiv account", error))?;
+        let credentials = self
+            .rotate_account(context, user_id, &account, &transport)
+            .await?;
+        Ok(Client::from_credentials(&credentials, transport))
+    }
+
+    pub(crate) async fn rotate_account<T: Transport>(
+        &self,
+        context: &Context,
+        user_id: i64,
+        account: &PixivAccount,
+        transport: &T,
+    ) -> Result<oauth::Credentials, SchedulerError> {
         let token = account.refresh_token_copy();
         let token = String::from_utf8_lossy(&token);
         let credentials = tokio::select! {
-            result=oauth::refresh(&transport,&token)=>result?,
+            result=oauth::refresh(transport,&token)=>result?,
             error=context.cancelled()=>{
                 let cause=match error {crate::lifecycle::ContextError::Canceled=>Cause::Canceled,crate::lifecycle::ContextError::DeadlineExceeded=>Cause::DeadlineExceeded};
                 return Err(Error::new(Reason::UpstreamUnavailable,"Open").with_transport(TransportKind::Http).with_cause(Cause::TransportFailure(Box::new(cause))).into());
@@ -261,6 +303,6 @@ impl AccountService {
                 )
             };
         persisted.map_err(|error| wrapped("persist rotated pixiv credentials", error))?;
-        Ok(Client::from_credentials(&credentials, transport))
+        Ok(credentials)
     }
 }

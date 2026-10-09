@@ -1,6 +1,7 @@
 pub mod account_management;
 pub mod account_service;
 pub mod account_transfer;
+pub mod account_validation;
 pub mod account_views;
 pub mod auth_bundle;
 pub mod config;

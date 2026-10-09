@@ -32,6 +32,7 @@ impl AccountPrompts for Noninteractive {
 }
 pub enum AuthCommand {
     Transfer(crate::auth_transfer::TransferCommand),
+    Validation(crate::auth_validation::ValidationCommand),
     Help(String),
     List {
         json: bool,
@@ -59,6 +60,10 @@ impl AuthCommand {
         input: &mut R,
         terminal: bool,
     ) -> Result<Self, CommandError> {
+        if crate::auth_validation::ValidationCommand::discover(args).is_some() {
+            return crate::auth_validation::ValidationCommand::parse(args, input, terminal)
+                .map(Self::Validation);
+        }
         if crate::auth_transfer::TransferCommand::discover(args).is_some() {
             return crate::auth_transfer::TransferCommand::parse(args, input, terminal)
                 .map(Self::Transfer);
@@ -240,6 +245,9 @@ impl AuthCommand {
         })
     }
     pub fn machine_output(&self) -> bool {
+        if let Self::Validation(command) = self {
+            return command.machine_output();
+        }
         if let Self::Transfer(command) = self {
             return command.machine_output();
         }
@@ -252,6 +260,9 @@ impl AuthCommand {
         )
     }
     pub fn requires_config(&self) -> bool {
+        if let Self::Validation(command) = self {
+            return command.requires_config();
+        }
         if let Self::Transfer(command) = self {
             return command.requires_config();
         }
@@ -277,6 +288,15 @@ impl AuthCommand {
     ) -> Result<(), CommandError> {
         match self {
             Self::Transfer(command) => return command.execute_offline(store, out),
+            Self::Validation(crate::auth_validation::ValidationCommand::Help(text)) => {
+                let _ = out.write_all(text.as_bytes());
+                return Ok(());
+            }
+            Self::Validation(_) => {
+                return Err(CommandError::Message(
+                    "account validation requires an OAuth transport",
+                ));
+            }
             Self::Help(text) => {
                 let _ = out.write_all(text.as_bytes());
                 return Ok(());
@@ -582,7 +602,7 @@ pub(crate) fn boolean(raw: &str, name: &str) -> Result<bool, CommandError> {
         ))),
     }
 }
-fn uid(raw: &str) -> Result<i64, CommandError> {
+pub(crate) fn uid(raw: &str) -> Result<i64, CommandError> {
     let s = raw.trim();
     if s.is_empty() {
         return Err(CommandError::Message("uid cannot be empty"));
@@ -595,15 +615,15 @@ fn zero(value: &i64) -> bool {
     *value == 0
 }
 #[derive(Serialize)]
-struct AccountOut {
+pub(crate) struct AccountOut {
     #[serde(skip_serializing_if = "zero")]
-    user_id: i64,
+    pub(crate) user_id: i64,
     #[serde(skip_serializing_if = "String::is_empty")]
-    username: String,
+    pub(crate) username: String,
     default: bool,
     has_token: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
-    premium_status: Option<bool>,
+    pub(crate) premium_status: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
     schedulable: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -663,7 +683,10 @@ fn human_pool<W: Write>(out: &mut W, a: &AccountOut) {
         }
     }
 }
-fn print_json<W: Write, T: Serialize>(out: &mut W, value: &T) -> Result<(), CommandError> {
+pub(crate) fn print_json<W: Write, T: Serialize>(
+    out: &mut W,
+    value: &T,
+) -> Result<(), CommandError> {
     let body = crate::go_json_escape(
         serde_json::to_string_pretty(value).map_err(|e| CommandError::State(Box::new(e)))?,
     );
@@ -684,6 +707,9 @@ _=>unreachable!(),}
 }
 
 pub fn machine_output_requested(args: &[String]) -> bool {
+    if crate::auth_validation::ValidationCommand::discover(args).is_some() {
+        return crate::auth_validation::machine_output_requested(args);
+    }
     if let Some(op) = crate::auth_transfer::TransferCommand::discover(args) {
         return op == "import" && crate::auth_transfer::machine_output_requested(args);
     }
@@ -750,4 +776,35 @@ pub fn machine_output_requested(args: &[String]) -> bool {
         }
     }
     changed
+}
+
+pub(crate) fn discover_auth_operation(args: &[String]) -> Option<&str> {
+    let mut index = 0;
+    while index < args.len() {
+        let arg = &args[index];
+        if arg == "--" {
+            return None;
+        }
+        if arg.starts_with('-') && arg != "-" {
+            index += if arg.contains('=') { 1 } else { 2 };
+        } else {
+            return Some(arg.as_str());
+        }
+    }
+    None
+}
+pub(crate) fn auth_proxy_override(
+    proxy: &Option<String>,
+    no_proxy: Option<bool>,
+) -> Result<Option<&str>, CommandError> {
+    if proxy.is_some() && no_proxy.is_some() {
+        return Err(CommandError::Message(
+            "use either --proxy or --no-proxy, not both",
+        ));
+    }
+    Ok(if no_proxy == Some(true) {
+        Some("")
+    } else {
+        proxy.as_deref()
+    })
 }

@@ -55,7 +55,9 @@
         "crates/pixiv-app/src/secret_file.rs",
         "crates/pixiv-app/src/secret_file_windows.rs",
         "crates/pixiv-app/src/config/private_file.rs",
-        "crates/pixiv-app/src/config/private_replace_windows.rs"
+        "crates/pixiv-app/src/config/private_replace_windows.rs",
+        "crates/pixiv-cli/src/auth_validation.rs",
+        "crates/pixiv-app/src/account_validation.rs"
       ],
       "tests": [
         "internal/storage/database/migration_contract_test.go#TestMigrationDatabasePreservesSchemaAndRejectsDrift",
@@ -143,7 +145,14 @@
         "crates/pixiv-app/tests/auth_bundle.rs",
         "crates/pixiv-app/tests/secret_file.rs",
         "crates/pixiv-app/tests/support/check_auth_bundle_printability.py",
-        "crates/pixiv-app/tests/fixtures/auth_bundle_quote_evidence.json"
+        "crates/pixiv-app/tests/fixtures/auth_bundle_quote_evidence.json",
+        "internal/cli/migration_auth_validation_startup_test.go",
+        "internal/cli/migration_auth_validation_test.go",
+        "internal/services/pixiv/account/migration_validation_test.go",
+        "docs/migration/contracts/cli-auth-validation.json",
+        "crates/pixiv-cli/tests/auth_validation.rs",
+        "crates/pixiv-cli/tests/auth_validation_startup.rs",
+        "crates/pixiv-app/tests/account_validation.rs"
       ],
       "verified_platforms": [
         "windows-amd64",
@@ -164,7 +173,8 @@
         "本番 Execution で Store・DB・refresh CAS・Gate・pool を接続し設定の fresh read と replay を検証。auth list/poolと既存data CLI/MCPの呼び出し元・ホームパス・初回設定作成は対象例で接続済み。他auth/bootstrapは未完了。transport constructor 失敗の Gate 前後の順序差は未解消。",
         "auth group/list・pool group/status/enable/disableを接続。Go CLI104行（91actualroot/13reader-writer）とdomain12行で空list=null対status=[]、HasToken=true/checked_at省略、explicit JSON Changed/error、per-row default/stale default、snapshot先読/期限cleanup、atomic対象/all membership/rollback、Go max時刻のRFC3339/JSON拒否/wrapped Beforeを比較。app4+CLI3focused成功。full Rust gate終了0、297passed/既存3ignored、release成功。check/refresh/login/hidden callbackと実OS startup/update/diagnostic/close、SQL実行中取消/blocked mutex/全wire/時間境界/他platform・配布は未検証または未実装。既存windows-amd64はfoundationの先行証拠であり、この新local CLI scopeはLinuxのみ比較。",
         "auth use/removeを既存account/configへ接続。Go fixture68行（62actualroot/6injected IO、58,147bytes）と別5prompt/3List-failure、domain/configの対象例でUID/stdin/flags/JSON、選択/確認、3回List、default clear-before-delete/失敗時rollbackなし、post-delete List失敗時committed state、comments/unknown keys/private writeを比較。Unix PTYで実CLIの選択/取消/確定removeと保存状態、Surveyのkeys/filter/Vim/paging/initial ANSI対象例を比較。full script終了0・346秒、Formatter/Clippy・314passed/既存3ignored・release40.50秒成功。Go related tests/vet終了0（既存Linux snapshot1test除外・未指定interop skipを保持）。Ctrl-D/no-matchは固定Go panicに対してRust bounded errorとなる具体差分を保持。全redraw/cursor/width/color-env/malformed CSI/非UTF8・native Windows console/他platform、startup/update/diagnostic/DB close、SQL実行中取消/blocked mutex/並行、その他authは未検証または未実装。",
-        "auth import/exportのtoken/bundle/current/UID/all/stdout/output/force workflowを既存OAuth/DB/config/private primitiveへ接続。合成credentialのみでGo CLI61行（51actualroot/10injected IO、47,756bytes）、別8OAuth・分類/codec/domain/secretfile・masked terminal対象例を比較。DB batch atomicityとdefault write失敗後committed state、raw token export bytes対bundle GoJSON replacement、Go17全1,112,064 valid scalarのunknown/duplicate diagnostic2SHAを比較。最終full script終了0・369秒、Formatter/Clippy・342passed/既存3ignored・release36.84秒成功。Go related tests/vet終了0（既存Linux snapshot1test除外・未指定interop skipを保持）。Go-only nonUTF8 token stdin→OAuth formはRust String boundary差分を保持。generic malformed JSON診断・serde128対Go10000 depth・Go duplicate scanner panic対Rust safe reject、secret validation read-ahead packet差、全terminal redraw/width/color/CSI、Windows compile/run/ACL/recovery/durability failure injection、SDK-owned idle-close/sharedpool/context/platform/実HTTPS・残るauthは未検証または未実装。"
+        "auth import/exportのtoken/bundle/current/UID/all/stdout/output/force workflowを既存OAuth/DB/config/private primitiveへ接続。合成credentialのみでGo CLI61行（51actualroot/10injected IO、47,756bytes）、別8OAuth・分類/codec/domain/secretfile・masked terminal対象例を比較。DB batch atomicityとdefault write失敗後committed state、raw token export bytes対bundle GoJSON replacement、Go17全1,112,064 valid scalarのunknown/duplicate diagnostic2SHAを比較。最終full script終了0・369秒、Formatter/Clippy・342passed/既存3ignored・release36.84秒成功。Go related tests/vet終了0（既存Linux snapshot1test除外・未指定interop skipを保持）。Go-only nonUTF8 token stdin→OAuth formはRust String boundary差分を保持。generic malformed JSON診断・serde128対Go10000 depth・Go duplicate scanner panic対Rust safe reject、secret validation read-ahead packet差、全terminal redraw/width/color/CSI、Windows compile/run/ACL/recovery/durability failure injection、SDK-owned idle-close/sharedpool/context/platform/実HTTPS・残るauthは未検証または未実装。",
+        "auth check/refresh/current/UID/stdin/--allを既存OAuth/DB/configへ接続。合成credentialsのみのGo root42行・33,291bytes、別12 OAuth/profile output-state組合せとdomain20対象例でrotation CAS、Check最小DTO、Refresh profile/metadata/fresh default、途中失敗のcommitted token/metadata、all逐次commitと全成功後output、proxy Changed/false/override時runtime reload省略、全commit後JSON日時拒否を比較。app3・CLI7・root42行とtransfer OAuth4 regression成功。full script終了0・298秒、Formatter/Clippy・354passed/既存3ignored・release39.10秒成功。Go関連suite/vet・台帳検査成功、既存Linux snapshot除外とinterop未指定skipを保持。task-local dev/test debug情報0を一貫使用しtest内容/optimization/script全stageは不変。既存nonUTF8 token String/form差分・SDK-owned idle-close/context/TLS/全wire・実startup/update/diagnostic/DB close・SQL取消/blocked mutex/全clock/flags/他platformとlogin/callbackは未検証または未実装。"
       ]
     },
     {
@@ -193,15 +203,33 @@
     },
     {
       "id": "cli:pixiv auth check",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv auth check"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-cli/src/auth_validation.rs",
+        "crates/pixiv-cli/src/auth_accounts.rs",
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-app/src/account_validation.rs",
+        "crates/pixiv-app/src/account_service.rs",
+        "crates/pixiv-app/src/account_transfer.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_auth_validation_startup_test.go",
+        "internal/cli/migration_auth_validation_test.go",
+        "internal/services/pixiv/account/migration_validation_test.go",
+        "docs/migration/contracts/cli-auth-validation.json",
+        "crates/pixiv-cli/tests/auth_validation.rs",
+        "crates/pixiv-cli/tests/auth_validation_startup.rs",
+        "crates/pixiv-app/tests/account_validation.rs",
+        "crates/pixiv-cli/tests/auth_transfer_oauth.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "auth check/refresh/current/UID/stdin/--allを既存OAuth/DB/configへ接続。合成credentialsのみのGo root42行・33,291bytes、別12 OAuth/profile output-state組合せとdomain20対象例でrotation CAS、Check最小DTO、Refresh profile/metadata/fresh default、途中失敗のcommitted token/metadata、all逐次commitと全成功後output、proxy Changed/false/override時runtime reload省略、全commit後JSON日時拒否を比較。app3・CLI7・root42行とtransfer OAuth4 regression成功。full script終了0・298秒、Formatter/Clippy・354passed/既存3ignored・release39.10秒成功。Go関連suite/vet・台帳検査成功、既存Linux snapshot除外とinterop未指定skipを保持。task-local dev/test debug情報0を一貫使用しtest内容/optimization/script全stageは不変。既存nonUTF8 token String/form差分・SDK-owned idle-close/context/TLS/全wire・実startup/update/diagnostic/DB close・SQL取消/blocked mutex/全clock/flags/他platformとlogin/callbackは未検証または未実装。"
+      ]
     },
     {
       "id": "cli:pixiv auth export",
@@ -537,15 +565,33 @@
     },
     {
       "id": "cli:pixiv auth refresh",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv auth refresh"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-cli/src/auth_validation.rs",
+        "crates/pixiv-cli/src/auth_accounts.rs",
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-app/src/account_validation.rs",
+        "crates/pixiv-app/src/account_service.rs",
+        "crates/pixiv-app/src/account_transfer.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_auth_validation_startup_test.go",
+        "internal/cli/migration_auth_validation_test.go",
+        "internal/services/pixiv/account/migration_validation_test.go",
+        "docs/migration/contracts/cli-auth-validation.json",
+        "crates/pixiv-cli/tests/auth_validation.rs",
+        "crates/pixiv-cli/tests/auth_validation_startup.rs",
+        "crates/pixiv-app/tests/account_validation.rs",
+        "crates/pixiv-cli/tests/auth_transfer_oauth.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "auth check/refresh/current/UID/stdin/--allを既存OAuth/DB/configへ接続。合成credentialsのみのGo root42行・33,291bytes、別12 OAuth/profile output-state組合せとdomain20対象例でrotation CAS、Check最小DTO、Refresh profile/metadata/fresh default、途中失敗のcommitted token/metadata、all逐次commitと全成功後output、proxy Changed/false/override時runtime reload省略、全commit後JSON日時拒否を比較。app3・CLI7・root42行とtransfer OAuth4 regression成功。full script終了0・298秒、Formatter/Clippy・354passed/既存3ignored・release39.10秒成功。Go関連suite/vet・台帳検査成功、既存Linux snapshot除外とinterop未指定skipを保持。task-local dev/test debug情報0を一貫使用しtest内容/optimization/script全stageは不変。既存nonUTF8 token String/form差分・SDK-owned idle-close/context/TLS/全wire・実startup/update/diagnostic/DB close・SQL取消/blocked mutex/全clock/flags/他platformとlogin/callbackは未検証または未実装。"
+      ]
     },
     {
       "id": "cli:pixiv auth remove",

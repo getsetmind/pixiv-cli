@@ -37,19 +37,8 @@ pub enum TransferCommand {
 }
 impl TransferCommand {
     pub fn discover(args: &[String]) -> Option<&str> {
-        let mut index = 0;
-        while index < args.len() {
-            let arg = &args[index];
-            if arg == "--" {
-                return None;
-            }
-            if arg.starts_with('-') && arg != "-" {
-                index += if arg.contains('=') { 1 } else { 2 };
-            } else {
-                return matches!(arg.as_str(), "import" | "export").then_some(arg.as_str());
-            }
-        }
-        None
+        crate::auth_accounts::discover_auth_operation(args)
+            .filter(|op| matches!(*op, "import" | "export"))
     }
     pub fn parse<R: Read>(
         args: &[String],
@@ -486,11 +475,7 @@ impl TransferCommand {
             service,
             token,
             before,
-            proxy: if *no_proxy == Some(true) {
-                Some(String::new())
-            } else {
-                proxy.clone()
-            },
+            proxy: crate::auth_accounts::auth_proxy_override(proxy, *no_proxy)?.map(str::to_owned),
         })
     }
     async fn import_token<T: Transport, W: Write>(
@@ -538,13 +523,7 @@ struct ImportOut {
     status: &'static str,
 }
 fn check_proxy(proxy: &Option<String>, no_proxy: Option<bool>) -> Result<(), CommandError> {
-    if proxy.is_some() && no_proxy.is_some() {
-        Err(CommandError::Message(
-            "use either --proxy or --no-proxy, not both",
-        ))
-    } else {
-        Ok(())
-    }
+    crate::auth_accounts::auth_proxy_override(proxy, no_proxy).map(|_| ())
 }
 fn read_token(body: &[u8]) -> Result<String, CommandError> {
     let text = String::from_utf8_lossy(body);
