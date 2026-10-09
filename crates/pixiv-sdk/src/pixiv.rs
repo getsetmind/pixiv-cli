@@ -82,6 +82,10 @@ impl<T: Transport> Client<T> {
         client
     }
 
+    pub fn user_id(&self) -> i64 {
+        self.user_id
+    }
+
     pub fn with_pacing(mut self, interval: Duration) -> Self {
         self.interval = interval;
         self
@@ -480,3 +484,8 @@ pub use crate::user_detail::UserRequest;
 pub use crate::user_search::SearchUsersRequest;
 
 pub use crate::recommendations::{RecommendedNovelsRequest, RecommendedUsersRequest};
+
+pub use crate::user_works::{
+    USER_ARTWORK_KIND_ILLUST, USER_ARTWORK_KIND_ILLUSTRATION, USER_ARTWORK_KIND_MANGA,
+    USER_ARTWORK_KIND_UGOIRA, UserArtworkKind, UserArtworksRequest, UserNovelsRequest,
+};

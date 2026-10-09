@@ -1111,3 +1111,21 @@ Linux amd64 の最終 scripts/check-rust.ps1 は終了0で、Formatter、workspa
 実装した全 kind は scoped 比較済みであるが、共有 raw-wire/任意 JSON precision/cursor payload、root parser3差分と Linux 公開面 snapshot、全 flag/help/TTY/OS startup hooks、通信/Options・取消/deadline/concurrency/disconnect・正常実 HTTPS、他 OS/arch は未検証である。novel_content の非決定的な未知 property 診断順も前の記録を維持する。台帳の in_progress と全体切替条件を保持する。
 
 Linux amd64 の最終 scripts/check-rust.ps1 は終了0で、Formatter、workspace all-target Clippy、209 passed・0 failed・既存3 ignored、release build が成功した。Clippy build は約3秒、test build は約11秒、release build は約18秒で、全チェックは約3分だった。Go SDK・MCP・CLI・recommended command・migration 台帳、関連 vet/gofmt と固定参照の本番 Go/go.mod/go.sum 無差分チェックも成功した。既知の Linux 公開面検査だけの除外と、novel_content の未知 property の診断順だけを隔離する opt-in flag は維持し、未検証を通過扱いにしていない。独立レビューと、既存 ranking・series・private spool の回帰比較も通った。実装・Go 契約取得・入口/失敗境界比較・検証は約16分で、実 Pixiv 資格情報・ライブアクセスを使用していない。
+
+## ユーザーの作品・小説一覧
+
+[user-works.json](contracts/user-works.json) は UserArtworks/UserNovels の Go 147ケースである。正の ID、type の default/illustration/illust/manga/ugoira、検証順、DTO、offset/next_url、cursor、query 順と多重値を比較する。type は query/digest 前に canonicalize する。両操作は global binding1 であり、account/client identity による追加の拒否をしない。UserNovels の wire `filter=for_android` は digest の user_id に混ぜない。UserID getter は未知0/verified snapshotを元と置換 client で確認した。cover/profile は mock OpenResource で追加 detail API 取得なしに開き、一覧 DTO に detail pages を追加しない。
+
+[cli-user-works.json](contracts/cli-user-works.json) は400 Go 出力・format・window・writerケース、[startup](contracts/cli-user-works-startup.json) は270隔離起動ケース、[pool](contracts/cli-user-works-pool.json) は108 synthetic DB/account/Gateケースである。CLI は重複を保持し、omitted ID を最初の取得 client から解決して retry でも cache する。explicit99/omitted42 は account 交代でも変えない。novel heading は解決前の `novels by 0` を保持する。固定 Go は standard /users/42 URL も list resolver で拒否するため、user detail と同じ URL acceptance に広げない。ID label を含む SDK error の分類を保持する。
+
+human/JSON/NDJSON、auto と明示 false、page/limit、stdin の1 LF/CRLFだけの除去と読取 failure/skip、config/ID/type/plan/proxy/format/DB/auth の順序を比較した。invalid UTF-8 ID と type の Go 境界も固定し、この入口での診断を保つ。JSON は共有私有 spool を使い、lease 解放後に公開する。前のランキング・series・recommended の source と描画を保持し、user 用の text 表示だけを選ぶ。pool は commit前/後/空結果の retry、writer failure、refresh/state/selection/freeze/revision と lease close を比較する。
+
+[mcp-user-works.json](contracts/mcp-user-works.json) は schema と129入力/result行、[pool](contracts/mcp-user-works-pool.json) は8 synthetic 保存済み poolケースである。default user は listing と別の execution で解決し、その target を保持する。target42を選ぶ identity callback、listing43、retry42の各要求と refresh/state/open/close を比較する。MCP は filter/dedup を logical pagination 前に適用し、試行ごとに初期化する。未知 identity の plain error は CLI の CurrentUser/Unauthorized と同じにしない。root numeric/bool argument の Go diagnostic は number/bool であり、schema の integer/boolean type 名とは区別する。既存20 tool の順序/schemaを保ち2 toolを末尾へ追加した。
+
+2つの argument22 行は page0/limit-1 が同時に不正で、Go schema map の走査により limit と page の最初の診断が変わる。129行の固定 fixture は変更せず、両 tool の real Go schema呼出しを128回ずつ行って2つの診断全文を独立に確認した。default strict 検査の bounded count4 でも実際に失敗を再現した。opt-in `-migration-skip-nondeterministic-user-works-violation-selection` はこの2行の全文を観測した2通りへ限定し、他の field・row・schema を厳密に比較する。Rust は固定 fixture と比較するが、この violation selection の完全一致を成功扱いにしない。前の novel_content の property-order 未検証とは別に記録する。
+
+最初の CLI compile では heading変数の shadowing を修正し、auto format fixtureの writer が Go と異なる setup であった点を一致させた。fixtureの期待値は変えていない。最初の full gateは追加した testのFormatter、続くClippyは testのelse-if/type complexityで停止した。整形、論理的に等価な枝の整理、test-only type aliasを適用し、warning許可や skipを追加せずに全チェックを再実行した。失敗ログを最終成功ログと分けて残す。
+
+追加した [残る操作一覧](remaining-features.md) は、実装入口の不足と共有検証の不足を区別する。Value decodeのraw-wire/cursor大小文字・重複/null/不正UTF8/任意precision、root parser3差分・Linux公開面snapshot、全flag/help/TTY/OS hooks・通信/Options・取消/deadline/concurrency/disconnect・実HTTPS/resource・他OS/archは未検証として維持する。全体のverifiedや最終切替とは扱わない。
+
+Linux amd64 の最終 scripts/check-rust.ps1 は終了0で、Formatter、workspace all-target Clippy、218 passed・0 failed・既存3 ignored、release build が成功した。Clippy build は約1秒、test build は約37秒、release build は約23秒だった。Go SDK・MCP・CLI・user command・migration 台帳、関連 vet/gofmt、固定参照の本番 Go/go.mod/go.sum 無差分も確認した。Go の broad 検査では不在の Linux 公開面 snapshot の1検査を明示除外し、novel_content の未知 property 順と今回の2行の violation selection はそれぞれの opt-in flag だけで隔離した。未検証を通過扱いにしていない。独立レビューと既存 ranking・series・recommendation の回帰比較も通った。契約取得から最終検証までは約27分で、実 Pixiv 資格情報・ライブアクセスを使用していない。

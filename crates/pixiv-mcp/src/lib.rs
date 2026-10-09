@@ -204,3 +204,9 @@ pub use artwork_feed::{
 
 mod recommended;
 pub use recommended::{RecommendedInput, recommended, recommended_tool};
+
+mod user_works;
+pub use user_works::{
+    UserArtworksInput, UserNovelsInput, user_artworks, user_artworks_tool, user_novels,
+    user_novels_tool,
+};

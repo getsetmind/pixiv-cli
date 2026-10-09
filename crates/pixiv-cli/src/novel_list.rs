@@ -15,6 +15,10 @@ pub(crate) enum Source {
     Ranking(pixiv_sdk::pixiv::NovelRankingRequest),
     Series(pixiv_sdk::pixiv::NovelSeriesRequest),
     Search(pixiv_sdk::pixiv::SearchNovelsRequest),
+    User(
+        pixiv_sdk::pixiv::UserNovelsRequest,
+        Arc<std::sync::atomic::AtomicI64>,
+    ),
 }
 #[derive(Clone)]
 pub(crate) struct Listing {
@@ -110,6 +114,11 @@ pub(crate) async fn attempt<T: Transport, W: Write>(
             async move {
                 let page = match source {
                     Source::Series(_) => unreachable!("series uses collected presentation"),
+                    Source::User(mut request, identity) => {
+                        request.user_id = crate::user_works::current_target(client, &identity)?;
+                        request.cursor = cursor;
+                        client.user_novels(request).await
+                    }
                     Source::Ranking(mut request) => {
                         request.cursor = cursor;
                         client.novel_ranking(request).await
@@ -143,7 +152,17 @@ pub(crate) async fn attempt<T: Transport, W: Write>(
                 heading = true;
             }
             for item in &items {
-                writeln!(out, "{} {} — {}", item.id, item.title, item.user.name)?;
+                if matches!(listing.source, Source::User(..)) {
+                    writeln!(
+                        out,
+                        "{} {} — {}",
+                        item.id,
+                        crate::safe_line(&item.title),
+                        crate::safe_line(&item.user.name)
+                    )?;
+                } else {
+                    writeln!(out, "{} {} — {}", item.id, item.title, item.user.name)?;
+                }
             }
             Ok(())
         },

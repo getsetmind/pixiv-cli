@@ -224,10 +224,12 @@ async fn stdio_lists_both_new_tools_and_retains_existing_tools() {
             "illust_series",
             "illust_related",
             "illust_recommended",
-            "recommended"
+            "recommended",
+            "user_artworks",
+            "user_novels"
         ])
     );
-    assert_eq!(tools.len(), 20);
+    assert_eq!(tools.len(), 22);
     assert_eq!(tools[19]["name"], "recommended");
     assert_eq!(tools[14]["name"], "novel_series");
     assert_eq!(tools[15]["name"], "novel_content");

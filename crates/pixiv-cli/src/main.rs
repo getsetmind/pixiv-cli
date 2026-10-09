@@ -55,6 +55,20 @@ enum NovelCommand {
 
 #[derive(Subcommand)]
 enum UserCommand {
+    #[command(args_override_self = true)]
+    Artworks {
+        #[command(flatten)]
+        options: Box<pixiv_cli_rs::user_works::UserArtworksOptions>,
+        #[command(flatten)]
+        connection: ProxyOptions,
+    },
+    #[command(args_override_self = true)]
+    Novels {
+        #[command(flatten)]
+        options: Box<pixiv_cli_rs::user_works::UserWorksOptions>,
+        #[command(flatten)]
+        connection: ProxyOptions,
+    },
     Follow {
         #[command(subcommand)]
         command: pixiv_cli_rs::mutation::FollowCommand,
@@ -185,6 +199,12 @@ async fn main() {
         command => command,
     };
     let machine_output = match &args.command {
+        Command::User {
+            command: UserCommand::Artworks { options, .. },
+        } => options.listing.json.is_some() || options.listing.ndjson,
+        Command::User {
+            command: UserCommand::Novels { options, .. },
+        } => options.json.is_some() || options.ndjson,
         Command::Novel { .. } => unreachable!("novel commands were resolved"),
         Command::Mcp { .. }
         | Command::Bookmark { .. }
@@ -198,6 +218,15 @@ async fn main() {
         Command::Series { options, .. } => options.json.is_some() || options.ndjson,
     };
     let mut ndjson_output = match &args.command {
+        Command::User {
+            command: UserCommand::Artworks { options, .. },
+        } => {
+            options.listing.ndjson
+                || (options.listing.json.is_none() && !io::stdout().is_terminal())
+        }
+        Command::User {
+            command: UserCommand::Novels { options, .. },
+        } => options.ndjson || (options.json.is_none() && !io::stdout().is_terminal()),
         Command::Novel { .. } => unreachable!("novel commands were resolved"),
         Command::Mcp { .. }
         | Command::Bookmark { .. }
@@ -230,6 +259,22 @@ async fn main() {
 }
 
 async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), CommandError> {
+    let mut user_works = match &args.command {
+        Command::User {
+            command: UserCommand::Artworks { options, .. },
+        } => Some(pixiv_cli_rs::user_works::UserWorks::Artworks(
+            options.as_ref().clone(),
+        )),
+        Command::User {
+            command: UserCommand::Novels { options, .. },
+        } => Some(pixiv_cli_rs::user_works::UserWorks::Novels(
+            options.as_ref().clone(),
+        )),
+        _ => None,
+    };
+    if let Some(options) = &mut user_works {
+        options.resolve_source(&mut io::stdin().lock(), io::stdin().is_terminal())?;
+    }
     if let Command::Recommended { options, .. } = &mut args.command {
         options.resolve_source(&mut io::stdin().lock(), io::stdin().is_terminal())?;
     }
@@ -286,6 +331,45 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
     } else {
         None
     };
+    if let Some(options) = user_works {
+        let (directory, config) = account_config.expect("user works startup was resolved");
+        options.validate()?;
+        let connection = match &args.command {
+            Command::User {
+                command:
+                    UserCommand::Artworks { connection, .. } | UserCommand::Novels { connection, .. },
+            } => connection,
+            _ => unreachable!("user works route was resolved"),
+        };
+        let proxy = connection.override_value()?;
+        let configured_json = if options.options().ndjson {
+            options.output_mode(false, true)?;
+            false
+        } else {
+            config
+                .current()
+                .and_then(|snapshot| snapshot.runtime())
+                .map_err(pixiv_app::scheduler::SchedulerError::from)?
+                .output_json
+        };
+        let mode = options.output_mode(configured_json, io::stdout().is_terminal())?;
+        *ndjson_output = mode == DetailOutput::Ndjson;
+        let database = pixiv_app::database::Database::open(&directory)
+            .map_err(|error| CommandError::State(Box::new(error)))?;
+        let execution = pixiv_app::execution::Execution::http(
+            config,
+            std::sync::Arc::new(std::sync::Mutex::new(database)),
+        );
+        return pixiv_cli_rs::user_works::saved_user_works(
+            &execution,
+            &pixiv_app::lifecycle::Context::new(),
+            options,
+            proxy,
+            mode,
+            io::stdout(),
+        )
+        .await;
+    }
     let mutation = match &args.command {
         Command::Bookmark { command } => {
             Some(pixiv_cli_rs::mutation::Mutation::Bookmark(command.clone()))

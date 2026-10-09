@@ -21,6 +21,10 @@ use std::{
 pub(crate) enum Source {
     Ranking(ArtworkRankingRequest),
     Series(ArtworkSeriesRequest),
+    User(
+        pixiv_sdk::pixiv::UserArtworksRequest,
+        Arc<std::sync::atomic::AtomicI64>,
+    ),
 }
 #[derive(Clone)]
 pub(crate) struct Listing {
@@ -117,6 +121,11 @@ pub(crate) async fn attempt<T: Transport, W: Write>(
                         request.cursor = cursor;
                         client.artwork_ranking(request).await
                     }
+                    Source::User(mut request, identity) => {
+                        request.user_id = crate::user_works::current_target(client, &identity)?;
+                        request.cursor = cursor;
+                        client.user_artworks(request).await
+                    }
                     Source::Series(mut request) => {
                         request.cursor = cursor;
                         client.artwork_series(request).await
@@ -136,20 +145,37 @@ pub(crate) async fn attempt<T: Transport, W: Write>(
                 return crate::search::present_search("", &items, mode, &mut false, out);
             }
             if !heading {
-                writeln!(out, "{}", listing.heading)?;
+                let heading_text = match &listing.source {
+                    Source::User(_, identity) => {
+                        format!("artworks by {}", identity.load(Ordering::Acquire))
+                    }
+                    _ => listing.heading.clone(),
+                };
+                writeln!(out, "{heading_text}")?;
                 heading = true;
             }
             for item in &items {
                 position += 1;
-                writeln!(
-                    out,
-                    "#{position} https://www.pixiv.net/artworks/{}",
-                    item.id
-                )?;
+                let user = matches!(listing.source, Source::User(..));
+                if user {
+                    writeln!(out, "https://www.pixiv.net/artworks/{}", item.id)?;
+                } else {
+                    writeln!(
+                        out,
+                        "#{position} https://www.pixiv.net/artworks/{}",
+                        item.id
+                    )?;
+                }
                 let tags = item
                     .tags
                     .iter()
-                    .map(|tag| tag.name.as_str())
+                    .map(|tag| {
+                        if user {
+                            crate::safe_line(&tag.name)
+                        } else {
+                            tag.name.clone()
+                        }
+                    })
                     .collect::<Vec<_>>()
                     .join(",");
                 writeln!(
@@ -157,7 +183,11 @@ pub(crate) async fn attempt<T: Transport, W: Write>(
                     "{} {} by {} bookmarks:{} views:{} tags:{}",
                     item.id,
                     crate::search::quote(&item.title),
-                    item.user.name,
+                    if user {
+                        crate::safe_line(&item.user.name)
+                    } else {
+                        item.user.name.clone()
+                    },
                     item.total_bookmarks,
                     item.total_views,
                     tags

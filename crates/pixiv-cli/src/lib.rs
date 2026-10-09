@@ -9,6 +9,7 @@ pub mod recommended;
 pub mod search;
 pub mod trending;
 pub mod user_search;
+pub mod user_works;
 
 use pixiv_app::{execution::Execution, lifecycle::Context, scheduler::SchedulerError};
 use pixiv_sdk::{Client, Error, Reason, transport::Transport};
@@ -27,6 +28,7 @@ pub enum DetailOutput {
 #[derive(Debug)]
 pub enum CommandError {
     Sdk(Error),
+    LabeledSdk(&'static str, Error),
     Message(&'static str),
     Usage(String),
     MessageText(String),
@@ -54,6 +56,7 @@ impl fmt::Display for CommandError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Sdk(error) => error.fmt(f),
+            Self::LabeledSdk(label, error) => write!(f, "{label}: {error}"),
             Self::Message(message) => f.write_str(message),
             Self::Usage(message) => f.write_str(message),
             Self::MessageText(message) => f.write_str(message),
@@ -67,7 +70,7 @@ impl fmt::Display for CommandError {
 impl std::error::Error for CommandError {
     fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
         match self {
-            Self::Sdk(error) => Some(error),
+            Self::Sdk(error) | Self::LabeledSdk(_, error) => Some(error),
             Self::Output(error) => Some(error),
             Self::App(error) => Some(error),
             Self::State(error) => Some(error.as_ref()),
@@ -83,7 +86,7 @@ impl CommandError {
     }
     pub fn sdk_error(&self) -> Option<&Error> {
         match self {
-            Self::Sdk(error) => Some(error),
+            Self::Sdk(error) | Self::LabeledSdk(_, error) => Some(error),
             Self::App(error) => error.classified(),
             Self::Message(_)
             | Self::Usage(_)

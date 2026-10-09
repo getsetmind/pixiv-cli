@@ -13,6 +13,8 @@ type ResponseFuture<'a> = Pin<Box<dyn Future<Output = Value> + 'a>>;
 type ToolFuture<'a> = Pin<Box<dyn Future<Output = Value> + 'a>>;
 
 enum ToolInput {
+    UserArtworks(crate::UserArtworksInput),
+    UserNovels(crate::UserNovelsInput),
     Mutation(crate::MutationAction, crate::MutationInput),
     Detail(IllustReference),
     Novel(crate::NovelDetailInput),
@@ -50,6 +52,14 @@ pub async fn serve<T: Transport, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
                 }
                 ToolInput::Detail(input) => {
                     serde_json::to_value(illust_detail(client, input).await)
+                        .expect("tool result is serializable")
+                }
+                ToolInput::UserArtworks(input) => {
+                    serde_json::to_value(crate::user_artworks(client, input).await)
+                        .expect("tool result is serializable")
+                }
+                ToolInput::UserNovels(input) => {
+                    serde_json::to_value(crate::user_novels(client, input).await)
                         .expect("tool result is serializable")
                 }
                 ToolInput::User(input) => {
@@ -138,6 +148,14 @@ pub async fn serve_saved_with_proxy<
                 .expect("tool result is serializable"),
                 ToolInput::Detail(input) => serde_json::to_value(
                     crate::saved_illust_detail_with_proxy(execution, &context, input, proxy).await,
+                )
+                .expect("tool result is serializable"),
+                ToolInput::UserArtworks(input) => serde_json::to_value(
+                    crate::user_works::saved_artworks(execution, &context, input, proxy).await,
+                )
+                .expect("tool result is serializable"),
+                ToolInput::UserNovels(input) => serde_json::to_value(
+                    crate::user_works::saved_novels(execution, &context, input, proxy).await,
                 )
                 .expect("tool result is serializable"),
                 ToolInput::User(input) => serde_json::to_value(
@@ -243,7 +261,7 @@ async fn serve_with<'a, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
                            }
                            "ping" => success(id, json!({})),
                            _ if !session.initialized => protocol_error(id,0,format!("method {method:?} is invalid during session initialization")),
-                           "tools/list" => success(id,json!({"tools":[illust_detail_tool(),crate::search_illust_tool(),crate::trending_tags_illust_tool(),crate::illust_ranking_tool(),crate::novel_detail_tool(),crate::search_novel_tool(),crate::user_detail_tool(),crate::search_user_tool(),crate::mutation_tool(crate::MutationAction::AddBookmark),crate::mutation_tool(crate::MutationAction::RemoveBookmark),crate::mutation_tool(crate::MutationAction::AddNovelBookmark),crate::mutation_tool(crate::MutationAction::RemoveNovelBookmark),crate::mutation_tool(crate::MutationAction::FollowUser),crate::mutation_tool(crate::MutationAction::UnfollowUser),crate::novel_series_tool(),crate::novel_content_tool(),crate::illust_series_tool(),crate::illust_related_tool(),crate::illust_recommended_tool(),crate::recommended_tool()]})),
+                           "tools/list" => success(id,json!({"tools":[illust_detail_tool(),crate::search_illust_tool(),crate::trending_tags_illust_tool(),crate::illust_ranking_tool(),crate::novel_detail_tool(),crate::search_novel_tool(),crate::user_detail_tool(),crate::search_user_tool(),crate::mutation_tool(crate::MutationAction::AddBookmark),crate::mutation_tool(crate::MutationAction::RemoveBookmark),crate::mutation_tool(crate::MutationAction::AddNovelBookmark),crate::mutation_tool(crate::MutationAction::RemoveNovelBookmark),crate::mutation_tool(crate::MutationAction::FollowUser),crate::mutation_tool(crate::MutationAction::UnfollowUser),crate::novel_series_tool(),crate::novel_content_tool(),crate::illust_series_tool(),crate::illust_related_tool(),crate::illust_recommended_tool(),crate::recommended_tool(),crate::user_artworks_tool(),crate::user_novels_tool()]})),
                            "logging/setLevel" => {
                                if params.is_none() || params.is_some_and(Value::is_null) {
                                    protocol_error(id,-32600,"invalid request: missing required \"params\"".into())
@@ -255,10 +273,10 @@ async fn serve_with<'a, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
                            "tools/call" => {
                                if let Some(params) = params.filter(|value| !value.is_null()) {
                                    let name = params["name"].as_str().unwrap_or_default();
-                                   if crate::MutationAction::from_name(name).is_none() && !matches!(name, "recommended" | "illust_related" | "illust_recommended" | "illust_detail" | "search_illust" | "trending_tags_illust" | "illust_ranking" | "novel_detail" | "illust_series" | "novel_series" | "novel_content" | "search_novel" | "user_detail" | "search_user") {
+                                   if crate::MutationAction::from_name(name).is_none() && !matches!(name, "user_artworks" | "user_novels" | "recommended" | "illust_related" | "illust_recommended" | "illust_detail" | "search_illust" | "trending_tags_illust" | "illust_ranking" | "novel_detail" | "illust_series" | "novel_series" | "novel_content" | "search_novel" | "user_detail" | "search_user") {
                                        protocol_error(id,-32602,format!("unknown tool {name:?}"))
                                    } else {
-                                       let input = if let Some(action) = crate::MutationAction::from_name(name) {crate::mutation::decode(action,params.get("arguments")).map(|input|ToolInput::Mutation(action,input))} else if name=="recommended" {crate::recommended::decode(params.get("arguments")).map(ToolInput::MixedRecommended)} else if name=="illust_related" {crate::artwork_feed::decode_related(params.get("arguments")).map(ToolInput::Related)} else if name=="illust_recommended" {crate::artwork_feed::decode_recommended(params.get("arguments")).map(ToolInput::Recommended)} else if name=="search_user" {crate::user_search::decode(params.get("arguments")).map(ToolInput::UserSearch)} else if name=="user_detail" {crate::user::decode(params.get("arguments")).map(ToolInput::User)} else if name=="search_novel" {crate::novel_search::decode(params.get("arguments")).map(ToolInput::NovelSearch)} else if name == "illust_series" {crate::illust_series::decode(params.get("arguments")).map(ToolInput::IllustSeries)} else if name == "novel_series" {crate::novel_series::decode(params.get("arguments")).map(ToolInput::NovelSeries)} else if name == "novel_content" {crate::novel_content::decode(params.get("arguments")).map(ToolInput::NovelContent)} else if name == "novel_detail" { crate::novel::decode(params.get("arguments")).map(ToolInput::Novel) } else if name == "search_illust" {
+                                       let input = if let Some(action) = crate::MutationAction::from_name(name) {crate::mutation::decode(action,params.get("arguments")).map(|input|ToolInput::Mutation(action,input))} else if name=="user_artworks" {crate::user_works::decode_artworks(params.get("arguments")).map(ToolInput::UserArtworks)} else if name=="user_novels" {crate::user_works::decode_novels(params.get("arguments")).map(ToolInput::UserNovels)} else if name=="recommended" {crate::recommended::decode(params.get("arguments")).map(ToolInput::MixedRecommended)} else if name=="illust_related" {crate::artwork_feed::decode_related(params.get("arguments")).map(ToolInput::Related)} else if name=="illust_recommended" {crate::artwork_feed::decode_recommended(params.get("arguments")).map(ToolInput::Recommended)} else if name=="search_user" {crate::user_search::decode(params.get("arguments")).map(ToolInput::UserSearch)} else if name=="user_detail" {crate::user::decode(params.get("arguments")).map(ToolInput::User)} else if name=="search_novel" {crate::novel_search::decode(params.get("arguments")).map(ToolInput::NovelSearch)} else if name == "illust_series" {crate::illust_series::decode(params.get("arguments")).map(ToolInput::IllustSeries)} else if name == "novel_series" {crate::novel_series::decode(params.get("arguments")).map(ToolInput::NovelSeries)} else if name == "novel_content" {crate::novel_content::decode(params.get("arguments")).map(ToolInput::NovelContent)} else if name == "novel_detail" { crate::novel::decode(params.get("arguments")).map(ToolInput::Novel) } else if name == "search_illust" {
                                            crate::search::decode(params.get("arguments")).map(|input| ToolInput::Search(Box::new(input)))
                                        } else if name == "illust_ranking" { crate::ranking::decode(params.get("arguments")).map(|input|ToolInput::Ranking(Box::new(input))) } else if name == "trending_tags_illust" { crate::trending::decode(params.get("arguments")).map(|()|ToolInput::Trending) } else { decode_reference(params.get("arguments")).map(ToolInput::Detail) };
                                        match input {
@@ -267,7 +285,9 @@ async fn serve_with<'a, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
                                                inflight.insert(id.to_string(), handle);
                                                pending.push(Box::pin(async move {
                                                    let mutation = match &input {ToolInput::Mutation(action,input)=>Some((*action,input.clone())),_=>None};
-                                                   let is_related=matches!(&input,ToolInput::Related(_));
+                                                   let is_user_artworks=matches!(&input,ToolInput::UserArtworks(_));
+        let is_user_novels=matches!(&input,ToolInput::UserNovels(_));
+        let is_related=matches!(&input,ToolInput::Related(_));
         let is_mixed_recommended=matches!(&input,ToolInput::MixedRecommended(_));
         let is_recommended=matches!(&input,ToolInput::Recommended(_));
         let is_search = matches!(&input, ToolInput::Search(_));
@@ -284,8 +304,8 @@ async fn serve_with<'a, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
                                                        Ok(result) => result,
                                                        Err(_) => {
                                                            if let Some((action,input))=mutation {let message=pixiv_sdk::Error::new(pixiv_sdk::Reason::UpstreamUnavailable,action.operation()).with_detail("pixiv upstream transport failed").to_string();serde_json::to_value(crate::mutation::result_for(action,&input,Err(message))).expect("tool result is serializable")} else {
-                                                           let message = pixiv_sdk::Error::new(pixiv_sdk::Reason::UpstreamUnavailable,if is_mixed_recommended { "Recommended" } else if is_related { "RelatedArtworks" } else if is_recommended { "RecommendedArtworks" } else if is_search { "SearchArtworks" } else if is_ranking { "ArtworkRanking" } else if is_trending { "TrendingArtworkTags" } else if is_illust_series { "ArtworkSeries" } else if is_novel_series { "NovelSeries" } else if is_novel_content { "NovelContent" } else if is_novel { "Novel" } else if is_novel_search { "SearchNovels" } else if is_user_search { "SearchUsers" } else if is_user { "User" } else { "Artwork" }).with_detail("pixiv upstream transport failed").to_string();
-                                                           if is_mixed_recommended {serde_json::to_value(crate::recommended::failure(message))} else if is_novel_series {serde_json::to_value(crate::novel_series::failure(message))} else if is_novel_content {serde_json::to_value(crate::novel_content::failure(message))} else if is_related || is_recommended || is_search || is_ranking || is_illust_series || is_novel_search || is_user_search { serde_json::to_value(crate::search::failure(message)) } else if is_trending { serde_json::to_value(crate::trending::failure(message)) } else { serde_json::to_value(crate::failure(message)) }.expect("tool result is serializable")}
+                                                           let message = pixiv_sdk::Error::new(pixiv_sdk::Reason::UpstreamUnavailable,if is_user_artworks { "UserArtworks" } else if is_user_novels { "UserNovels" } else if is_mixed_recommended { "Recommended" } else if is_related { "RelatedArtworks" } else if is_recommended { "RecommendedArtworks" } else if is_search { "SearchArtworks" } else if is_ranking { "ArtworkRanking" } else if is_trending { "TrendingArtworkTags" } else if is_illust_series { "ArtworkSeries" } else if is_novel_series { "NovelSeries" } else if is_novel_content { "NovelContent" } else if is_novel { "Novel" } else if is_novel_search { "SearchNovels" } else if is_user_search { "SearchUsers" } else if is_user { "User" } else { "Artwork" }).with_detail("pixiv upstream transport failed").to_string();
+                                                           if is_mixed_recommended {serde_json::to_value(crate::recommended::failure(message))} else if is_novel_series {serde_json::to_value(crate::novel_series::failure(message))} else if is_novel_content {serde_json::to_value(crate::novel_content::failure(message))} else if is_user_artworks || is_user_novels || is_related || is_recommended || is_search || is_ranking || is_illust_series || is_novel_search || is_user_search { serde_json::to_value(crate::search::failure(message)) } else if is_trending { serde_json::to_value(crate::trending::failure(message)) } else { serde_json::to_value(crate::failure(message)) }.expect("tool result is serializable")}
                                                        },
                                                    };
                                                    success(id,result)

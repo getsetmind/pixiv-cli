@@ -78,11 +78,19 @@ fn mcp_process_exchanges_jsonrpc_without_stdout_diagnostics_or_credentials() {
     );
     assert_eq!(
         by_id("list")["result"]["tools"].as_array().unwrap().len(),
-        20
+        22
     );
     assert_eq!(
         by_id("list")["result"]["tools"][19],
         pixiv_mcp::recommended_tool()
+    );
+    assert_eq!(
+        by_id("list")["result"]["tools"][20],
+        pixiv_mcp::user_artworks_tool()
+    );
+    assert_eq!(
+        by_id("list")["result"]["tools"][21],
+        pixiv_mcp::user_novels_tool()
     );
     for (index, name) in [
         "add_bookmark",
