@@ -4,15 +4,25 @@
   "entries": [
     {
       "id": "cli:pixiv",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-cli/src/interrupt.rs",
+        "crates/pixiv-cli/src/main.rs"
+      ],
+      "tests": [
+        "cmd/pixiv/migration_interrupt_test.go",
+        "cmd/pixiv/migration_interrupt_windows_source_test.go",
+        "crates/pixiv-cli/tests/cli_interrupt.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "実Rust mainのowned signal contextを全dispatchへ明示伝播する。Go root-entry12行のうち10download/OAuth行はowned Unix SIGINTとgenuine SDK/Execution/local saveのRust SPIでobservable fields比較、MCP SIGINT/EOF2行は実Rust binaryを比較する。Go physical HTTP connection closed countersをRust request/body future dropsと同一視しない。",
+        "Go Stopのhandler unregisterに対しTokioはUnix process-wide handlerをdrop後も保持する具体差分。Windows CtrlC/CtrlBreak mappingはinstalled Go stdlib go1.27.1のsource-only契約でnative Windows compile/run未実施。全signal/EOF/IO/clock/TTY/並行scheduleは未検証。"
+      ]
     },
     {
       "id": "cli:pixiv auth",
@@ -1638,7 +1648,8 @@
       "rust_sources": [
         "crates/pixiv-app/src/download.rs",
         "crates/pixiv-cli/src/download.rs",
-        "crates/pixiv-cli/src/main.rs"
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/interrupt.rs"
       ],
       "tests": [
         "internal/media/downloader/migration_direct_sources_test.go",
@@ -1648,7 +1659,10 @@
         "crates/pixiv-cli/tests/download_direct.rs",
         "crates/pixiv-cli/tests/download_owned_output.rs",
         "crates/pixiv-cli/tests/download_startup.rs",
-        "crates/pixiv-cli/tests/download_pool.rs"
+        "crates/pixiv-cli/tests/download_pool.rs",
+        "cmd/pixiv/migration_interrupt_test.go",
+        "cmd/pixiv/migration_interrupt_windows_source_test.go",
+        "crates/pixiv-cli/tests/cli_interrupt.rs"
       ],
       "verified_platforms": [],
       "differences": [
@@ -1656,7 +1670,8 @@
         "Go fixtureはapp26行、CLI63行、root27行。rootの実Linux子プロセス比較は安全な23行に限定し、native hooks/read-error4行を実行しない。",
         "全URL grammar/非UTF8、native IO/OS、全writer/cancel/race/TTY/public SDK lifecycleは未検証。Go productionにpersisted resume/job schemaやdownload progress callback注入はなく、Rustに新契約として追加しない。",
         "CLI text/JSONとpublication前後4組を実Execution/SDK/account poolで比較し、Output(BrokenPipe)をcallbackからroot終了0へ保持する。",
-        "Go mainのos.Interrupt→NotifyContextに対応する実Rust CLI signal→Context配線は未移植。注入したContext取消を実Ctrl-C cleanup/終了動作の証拠にしない。"
+        "実Rust mainのowned signal contextを全dispatchへ明示伝播する。Go root-entry12行のうち10download/OAuth行はowned Unix SIGINTとgenuine SDK/Execution/local saveのRust SPIでobservable fields比較、MCP SIGINT/EOF2行は実Rust binaryを比較する。Go physical HTTP connection closed countersをRust request/body future dropsと同一視しない。",
+        "Go Stopのhandler unregisterに対しTokioはUnix process-wide handlerをdrop後も保持する具体差分。Windows CtrlC/CtrlBreak mappingはinstalled Go stdlib go1.27.1のsource-only契約でnative Windows compile/run未実施。全signal/EOF/IO/clock/TTY/並行scheduleは未検証。"
       ]
     },
     {
@@ -1934,7 +1949,8 @@
         "crates/pixiv-sdk/src/pacing.rs",
         "crates/pixiv-sdk/src/transport.rs",
         "crates/pixiv-sdk/src/resource_transport.rs",
-        "crates/pixiv-app/src/execution.rs"
+        "crates/pixiv-app/src/execution.rs",
+        "crates/pixiv-cli/src/interrupt.rs"
       ],
       "tests": [
         "crates/pixiv-cli/tests/mcp_stdio.rs#mcp_process_exchanges_jsonrpc_without_stdout_diagnostics_or_credentials",
@@ -1958,7 +1974,12 @@
         "crates/pixiv-mcp/tests/pool.rs#saved_account_pool_matches_go_replay_results_rotation_and_release",
         "internal/cli/migration_mcp_proxy_test.go#TestMigrationMCPProxyFlagsPreserveStartupAndToolOverrides",
         "crates/pixiv-cli/tests/mcp_proxy.rs#mcp_proxy_flags_match_go_startup_validation_and_tool_account_requests",
-        "crates/pixiv-mcp/tests/stdio.rs#saved_proxy_override_reaches_detail_and_search_account_connections"
+        "crates/pixiv-mcp/tests/stdio.rs#saved_proxy_override_reaches_detail_and_search_account_connections",
+        "cmd/pixiv/migration_interrupt_test.go",
+        "cmd/pixiv/migration_interrupt_windows_source_test.go",
+        "crates/pixiv-cli/tests/cli_interrupt.rs",
+        "internal/mcpserver/pixiv/tools/download/migration_interrupt_shutdown_test.go",
+        "crates/pixiv-mcp/tests/interrupt_shutdown.rs"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -1969,7 +1990,10 @@
         "CommandConnectionの25ケースでproxy/interval/errorと実HTTP transport構築可否を比較し、選択したintervalをtransportへ渡す。共有HTTP pacingをGoのOpenWith後のcontent/resource redirect/mutation 5通信とRust実socketで比較（観測差5ms）。clone間でlast startを共有する。Goのdefault SDK HTTP timeout=0を再現しRust試作の60秒制限を削除。仮想61秒で保留responseが存続し、pacing待機task abort後も残り時間で次requestが再開することを確認。SDK Options全体/client再構築/pool replayの寿命/context取消/deadline/全競合/App API redirect/TLS/SOCKS wire/pool/idle cleanup/CLI/MCP bootstrap/他OSは未完了または未検証。",
         "MCP起動を既存設定・DBとExecutionへ接続。Go実SDKPorts/MCPの認証エラー8ケースを隔離homeの実Rustバイナリで比較。詳細33ケースと検索144ケースは実DB・refresh CAS保存後のstdioでも一致。非poolの内容取得取消後にGate再取得・保存済みtokenでrefreshを確認。MCP pool replay/lease取消、検索途中page継続、EOF/disconnect全取消、全tools、通信/他OSは未完了。検索replayは収集全体を再実行する差が残る。",
         "実Go AccountService/DB/Facade/Scheduler/SDK/MCPの4ケースをRust Execution/stdioで比較。SDK内429一回retry後のpool切替、成功/応答不正/全rate limit/401、同一session二回のresult、OAuth/content順、token/revision/freeze/last-selectedが一致。Go Close callback数とRust所有transport Drop数を比較。pool有効でも内容取得取消後のGate再利用・非freezeを確認。HTTP idle cleanup、OAuth/Gate/切替中取消、全並行状態、検索途中継続、disconnect/EOF、他OSは未検証。",
-        "MCPのproxy/no-proxyを本番stdioの各Executionへ接続。Go実Run/root/MCP組立て（stdioのみin-memory）10ケースと実Rust子プロセスで明示proxy事前検証・DB有無・false/空/併用/重複/設定エラー順と詳細・検索結果を比較。正常Go fixtureでも両toolの接続選択値・refresh保存後のresultを確認。実proxy wire/TLS/redirect、全flag構文/help、reverse search/全tools、他OSは未検証または未移植。"
+        "MCPのproxy/no-proxyを本番stdioの各Executionへ接続。Go実Run/root/MCP組立て（stdioのみin-memory）10ケースと実Rust子プロセスで明示proxy事前検証・DB有無・false/空/併用/重複/設定エラー順と詳細・検索結果を比較。正常Go fixtureでも両toolの接続選択値・refresh保存後のresultを確認。実proxy wire/TLS/redirect、全flag構文/help、reverse search/全tools、他OSは未検証または未移植。",
+        "実Rust mainのowned signal contextを全dispatchへ明示伝播する。Go root-entry12行のうち10download/OAuth行はowned Unix SIGINTとgenuine SDK/Execution/local saveのRust SPIでobservable fields比較、MCP SIGINT/EOF2行は実Rust binaryを比較する。Go physical HTTP connection closed countersをRust request/body future dropsと同一視しない。",
+        "Go Stopのhandler unregisterに対しTokioはUnix process-wide handlerをdrop後も保持する具体差分。Windows CtrlC/CtrlBreak mappingはinstalled Go stdlib go1.27.1のsource-only契約でnative Windows compile/run未実施。全signal/EOF/IO/clock/TTY/並行scheduleは未検証。",
+        "Go root closeはactive request contextを一括取消しない。closing中もnotifications/cancelledを処理し、通常calls/responsesを抑止してactive workを待つ。download request contextはresult処理後に取消してdisposeする。Go4行のprivate middleware/lease eventsはRust instrumentationと同一視せず、fixture-only serverInfo/instructionsを正規化し、実CLI2行でnative identity全JSONを別比較する。"
       ]
     },
     {

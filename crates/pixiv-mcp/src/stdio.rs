@@ -185,7 +185,7 @@ async fn serve_client_inner<T: Transport, R: AsyncRead + Unpin, W: AsyncWrite + 
             }
         })
     };
-    serve_with(&invoke, download, input, output).await
+    serve_with(&invoke, download, None, input, output).await
 }
 
 pub async fn serve_saved<T: Transport + 'static, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
@@ -206,7 +206,7 @@ pub async fn serve_saved_with_proxy<
     input: R,
     output: &mut W,
 ) -> io::Result<()> {
-    serve_saved_inner(execution, proxy, None, input, output).await
+    serve_saved_inner(execution, proxy, None, None, input, output).await
 }
 
 pub async fn serve_saved_with_download<
@@ -220,13 +220,37 @@ pub async fn serve_saved_with_download<
     input: R,
     output: &mut W,
 ) -> io::Result<()> {
-    serve_saved_inner(execution, proxy, Some(download), input, output).await
+    serve_saved_inner(execution, proxy, Some(download), None, input, output).await
+}
+
+pub async fn serve_saved_with_download_context<
+    T: Transport + 'static,
+    R: AsyncRead + Unpin,
+    W: AsyncWrite + Unpin,
+>(
+    execution: &pixiv_app::execution::Execution<T>,
+    proxy: Option<&str>,
+    download: &crate::download::DownloadExecutor,
+    context: &pixiv_app::lifecycle::Context,
+    input: R,
+    output: &mut W,
+) -> io::Result<()> {
+    serve_saved_inner(
+        execution,
+        proxy,
+        Some(download),
+        Some(context),
+        input,
+        output,
+    )
+    .await
 }
 
 async fn serve_saved_inner<T: Transport + 'static, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
     execution: &pixiv_app::execution::Execution<T>,
     proxy: Option<&str>,
     download: Option<&crate::download::DownloadExecutor>,
+    context: Option<&pixiv_app::lifecycle::Context>,
     input: R,
     output: &mut W,
 ) -> io::Result<()> {
@@ -346,12 +370,13 @@ async fn serve_saved_inner<T: Transport + 'static, R: AsyncRead + Unpin, W: Asyn
             }
         })
     };
-    serve_with(&invoke, download, input, output).await
+    serve_with(&invoke, download, context, input, output).await
 }
 
 async fn serve_with<'a, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
     invoke: &impl Fn(ToolInput) -> ToolFuture<'a>,
     download: Option<&crate::download::DownloadExecutor>,
+    context: Option<&pixiv_app::lifecycle::Context>,
     input: R,
     output: &mut W,
 ) -> io::Result<()> {
@@ -360,19 +385,47 @@ async fn serve_with<'a, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
     let mut pending: FuturesUnordered<ResponseFuture<'_>> = FuturesUnordered::new();
     let mut eof = false;
     let mut inflight: BTreeMap<String, InflightRequest> = BTreeMap::new();
+    let mut closing = None;
     loop {
+        if let Some(error) = closing
+            && pending.is_empty()
+        {
+            return Err(io::Error::new(io::ErrorKind::Interrupted, error));
+        }
+        if eof && pending.is_empty() {
+            if let Some(error) = context.and_then(|context| context.error()) {
+                return Err(io::Error::new(io::ErrorKind::Interrupted, error));
+            }
+            break;
+        }
         tokio::select! {
+                   error = async { match context {
+                       Some(context) => context.cancelled().await,
+                       None => std::future::pending().await,
+                   } }, if context.is_some() && closing.is_none() => {
+                       closing = Some(error);
+                   }
                    line = lines.next_line(), if !eof => {
+                       if closing.is_none() {
+                           closing = context.and_then(|context| context.error());
+                       }
+                       if closing.is_some() {
+                           match line {
+                               Ok(Some(line)) => {
+                                   // Go's cancellation preempter remains active while ordinary calls are rejected.
+                                   if let Ok(message) = serde_json::from_str::<Value>(&line) {
+                                       cancel_notification(&message, &inflight);
+                                   }
+                               }
+                               _ => eof = true,
+                           }
+                           continue;
+                       }
                        let Some(line) = line? else { eof = true; continue; };
                        if line.trim().is_empty() { continue; }
                        let message: Value = serde_json::from_str(&line).map_err(|error| io::Error::new(io::ErrorKind::InvalidData,error))?;
                        if message.get("id").is_none() {
-                           if message["method"] == "notifications/cancelled"
-                               && let Some(id) = message["params"].get("requestId")
-                               && let Some(handle) = inflight.get(&id.to_string())
-                           {
-                               handle.cancel();
-                           }
+                           cancel_notification(&message, &inflight);
                            continue;
                        }
                        let id = message["id"].clone();
@@ -472,13 +525,29 @@ async fn serve_with<'a, R: AsyncRead + Unpin, W: AsyncWrite + Unpin>(
                        write_response(output,response).await?;
                    }
                    Some(response) = pending.next(), if !pending.is_empty() => {
-                       inflight.remove(&response["id"].to_string());
+                       if let Some(InflightRequest::Download(context)) = inflight.remove(&response["id"].to_string()) {
+                           context.cancel();
+                       }
+                       if closing.is_none() {
+                           closing = context.and_then(|context| context.error());
+                       }
+                       if closing.is_some() { continue; }
                        write_response(output,response).await?;
                    }
                    else => break,
                }
     }
     output.flush().await
+}
+
+fn cancel_notification(message: &Value, inflight: &BTreeMap<String, InflightRequest>) {
+    if message.get("id").is_none()
+        && message["method"] == "notifications/cancelled"
+        && let Some(id) = message["params"].get("requestId")
+        && let Some(handle) = inflight.get(&id.to_string())
+    {
+        handle.cancel();
+    }
 }
 
 fn missing_download_executor() -> Value {

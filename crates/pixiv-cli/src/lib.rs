@@ -10,6 +10,7 @@ pub mod comment_mutations;
 pub mod comment_reads;
 pub mod config_commands;
 pub mod download;
+pub mod interrupt;
 mod json_spool;
 pub mod mutation;
 pub mod mypixiv;

@@ -300,26 +300,37 @@ enum Command {
 
 #[tokio::main]
 async fn main() {
+    let owner = match pixiv_cli_rs::interrupt::OwnedSignalContext::new() {
+        Ok(owner) => owner,
+        Err(error) => {
+            let exit = finish_command(Err(error.into()), false, false, &mut io::stderr().lock());
+            std::process::exit(exit);
+        }
+    };
+    let root_context = owner.context();
     if std::env::args().nth(1).as_deref() == Some("download") {
-        let (result, ndjson, machine) = execute_download().await;
+        let (result, ndjson, machine) = execute_download(&root_context).await;
         let exit = finish_command(result, ndjson, machine, &mut io::stderr().lock());
         if exit != 0 {
+            drop(owner);
             std::process::exit(exit);
         }
         return;
     }
     if std::env::args().nth(1).as_deref() == Some("auth") {
-        let (result, machine) = execute_auth().await;
+        let (result, machine) = execute_auth(&root_context).await;
         let exit = finish_command(result, false, machine, &mut io::stderr().lock());
         if exit != 0 {
+            drop(owner);
             std::process::exit(exit);
         }
         return;
     }
     if std::env::args().nth(1).as_deref() == Some("config") {
-        let result = execute_config();
+        let result = execute_config(&root_context);
         let exit = finish_command(result, false, false, &mut io::stderr().lock());
         if exit != 0 {
+            drop(owner);
             std::process::exit(exit);
         }
         return;
@@ -568,17 +579,22 @@ async fn main() {
         }
     };
     let exit = finish_command(
-        execute(args, &mut ndjson_output).await,
+        execute(args, &root_context, &mut ndjson_output).await,
         ndjson_output,
         machine_output,
         &mut io::stderr().lock(),
     );
     if exit != 0 {
+        drop(owner);
         std::process::exit(exit);
     }
 }
 
-async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), CommandError> {
+async fn execute(
+    mut args: Arguments,
+    root_context: &pixiv_app::lifecycle::Context,
+    ndjson_output: &mut bool,
+) -> Result<(), CommandError> {
     if let Command::Comment {
         options, command, ..
     } = &mut args.command
@@ -722,10 +738,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
         }
         _ => None,
     };
-    pixiv_cli_rs::startup::run_system_startup(
-        &pixiv_app::lifecycle::Context::new(),
-        &mut io::stderr(),
-    )?;
+    pixiv_cli_rs::startup::run_system_startup(root_context, &mut io::stderr())?;
     let account_config = if matches!(
         &args.command,
         Command::Mypixiv { .. }
@@ -789,7 +802,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
             );
             return pixiv_cli_rs::user_detail::saved_user_profile(
                 &execution,
-                &pixiv_app::lifecycle::Context::new(),
+                root_context,
                 id,
                 proxy,
                 mode,
@@ -822,7 +835,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
             );
             return pixiv_cli_rs::bookmark_reads::saved_bookmark_detail(
                 &execution,
-                &pixiv_app::lifecycle::Context::new(),
+                root_context,
                 options.as_ref().clone(),
                 proxy,
                 mode,
@@ -861,7 +874,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
             );
             return pixiv_cli_rs::bookmark_reads::saved_bookmark_tags(
                 &execution,
-                &pixiv_app::lifecycle::Context::new(),
+                root_context,
                 options.as_ref().clone(),
                 proxy,
                 mode,
@@ -897,7 +910,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
             );
             return pixiv_cli_rs::comment_mutations::saved_mutation(
                 &execution,
-                &pixiv_app::lifecycle::Context::new(),
+                root_context,
                 action.clone(),
                 json,
                 &mut io::stdout(),
@@ -942,7 +955,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
             config,
             std::sync::Arc::new(std::sync::Mutex::new(database)),
         );
-        let context = pixiv_app::lifecycle::Context::new();
+        let context = root_context.clone();
         return match command {
             Some(CommentCommand::Stamps { .. }) => {
                 pixiv_cli_rs::comment_reads::saved_stamps(
@@ -1006,7 +1019,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
         );
         return pixiv_cli_rs::bookmark_lists::saved_bookmark_lists(
             &execution,
-            &pixiv_app::lifecycle::Context::new(),
+            root_context,
             options,
             proxy,
             mode,
@@ -1045,7 +1058,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
         );
         return pixiv_cli_rs::mypixiv::saved_mypixiv(
             &execution,
-            &pixiv_app::lifecycle::Context::new(),
+            root_context,
             options,
             proxy,
             mode,
@@ -1085,7 +1098,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
         );
         return pixiv_cli_rs::timeline::saved_timeline(
             &execution,
-            &pixiv_app::lifecycle::Context::new(),
+            root_context,
             options,
             proxy,
             mode,
@@ -1124,7 +1137,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
         );
         return pixiv_cli_rs::user_works::saved_user_works(
             &execution,
-            &pixiv_app::lifecycle::Context::new(),
+            root_context,
             options,
             proxy,
             mode,
@@ -1166,7 +1179,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
         );
         return pixiv_cli_rs::user_relationships::saved_user_relationships(
             &execution,
-            &pixiv_app::lifecycle::Context::new(),
+            root_context,
             options,
             proxy,
             mode,
@@ -1189,7 +1202,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
         let (directory, config) = account_config.expect("mutation startup was resolved");
         let mut execution = None;
         return pixiv_cli_rs::mutation::saved_mutation_with_factory(
-            &pixiv_app::lifecycle::Context::new(),
+            root_context,
             action,
             &mut io::stdin().lock(),
             io::stdin().is_terminal(),
@@ -1331,7 +1344,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
         if input.trending_tags {
             return pixiv_cli_rs::trending::saved_trending_tags(
                 &execution,
-                &pixiv_app::lifecycle::Context::new(),
+                root_context,
                 proxy,
                 mode == DetailOutput::Json,
                 &mut io::stdout().lock(),
@@ -1341,7 +1354,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
         if novel_search_request.is_some() {
             return pixiv_cli_rs::novel_search::saved_novel_search(
                 &execution,
-                &pixiv_app::lifecycle::Context::new(),
+                root_context,
                 (
                     input,
                     options.as_ref(),
@@ -1356,7 +1369,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
         if user_search_request.is_some() {
             return pixiv_cli_rs::user_search::saved_user_search(
                 &execution,
-                &pixiv_app::lifecycle::Context::new(),
+                root_context,
                 (
                     input,
                     options.as_ref(),
@@ -1370,7 +1383,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
         }
         return pixiv_cli_rs::search::saved_artwork_search(
             &execution,
-            &pixiv_app::lifecycle::Context::new(),
+            root_context,
             search_request.expect("search options were resolved"),
             options.as_ref().clone(),
             proxy,
@@ -1407,7 +1420,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
         );
         return pixiv_cli_rs::recommended::saved_recommended(
             &execution,
-            &pixiv_app::lifecycle::Context::new(),
+            root_context,
             options.as_ref().clone(),
             proxy,
             mode,
@@ -1438,7 +1451,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
         );
         return pixiv_cli_rs::ranking::saved_ranking(
             &execution,
-            &pixiv_app::lifecycle::Context::new(),
+            root_context,
             options.as_ref().clone(),
             proxy,
             mode,
@@ -1469,7 +1482,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
         );
         return pixiv_cli_rs::novel_series::saved_novel_series(
             &execution,
-            &pixiv_app::lifecycle::Context::new(),
+            root_context,
             options.as_ref().clone(),
             proxy,
             mode,
@@ -1511,7 +1524,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
         if entity == "user" {
             return pixiv_cli_rs::saved_user_detail(
                 &execution,
-                &pixiv_app::lifecycle::Context::new(),
+                root_context,
                 detail_id.expect("detail input was resolved"),
                 0,
                 connection.override_value()?,
@@ -1523,7 +1536,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
         if entity == "novel" {
             return pixiv_cli_rs::saved_novel_detail(
                 &execution,
-                &pixiv_app::lifecycle::Context::new(),
+                root_context,
                 detail_id.expect("detail input was resolved"),
                 0,
                 connection.override_value()?,
@@ -1534,7 +1547,7 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
         }
         return saved_artwork_detail(
             &execution,
-            &pixiv_app::lifecycle::Context::new(),
+            root_context,
             detail_id.expect("detail input was resolved"),
             0,
             connection.override_value()?,
@@ -1587,10 +1600,11 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
                 .await
             })
         };
-        pixiv_mcp::stdio::serve_saved_with_download(
+        pixiv_mcp::stdio::serve_saved_with_download_context(
             &execution,
             proxy,
             &download,
+            root_context,
             tokio::io::stdin(),
             &mut tokio::io::stdout(),
         )
@@ -1650,7 +1664,7 @@ fn output(value: &str) -> Result<(), CommandError> {
     writeln!(io::stdout().lock(), "{value}").map_err(CommandError::from)
 }
 
-fn execute_config() -> Result<(), CommandError> {
+fn execute_config(root_context: &pixiv_app::lifecycle::Context) -> Result<(), CommandError> {
     let args: Vec<String> = std::env::args().skip(2).collect();
     let mut input = io::stdin().lock();
     let command = pixiv_cli_rs::config_commands::ConfigCommand::parse(
@@ -1659,10 +1673,7 @@ fn execute_config() -> Result<(), CommandError> {
         io::stdin().is_terminal(),
     )?;
     if command.requires_config() {
-        pixiv_cli_rs::startup::run_system_startup(
-            &pixiv_app::lifecycle::Context::new(),
-            &mut io::stderr(),
-        )?;
+        pixiv_cli_rs::startup::run_system_startup(root_context, &mut io::stderr())?;
     }
     let path = if command.requires_config() {
         pixiv_app::callback_handler::app_data_directory()
@@ -1679,7 +1690,9 @@ fn execute_config() -> Result<(), CommandError> {
     )
 }
 
-async fn execute_download() -> (Result<(), CommandError>, bool, bool) {
+async fn execute_download(
+    root_context: &pixiv_app::lifecycle::Context,
+) -> (Result<(), CommandError>, bool, bool) {
     let args: Vec<String> = std::env::args().skip(2).collect();
     let (ndjson, machine) = pixiv_cli_rs::download::DownloadCommand::output_policy_requested(&args);
     let result = async {
@@ -1693,7 +1706,7 @@ async fn execute_download() -> (Result<(), CommandError>, bool, bool) {
             io::stdout().write_all(help.as_bytes())?;
             return Ok(());
         }
-        let context = pixiv_app::lifecycle::Context::new();
+        let context = root_context.clone();
         if command.requires_startup() {
             pixiv_cli_rs::startup::run_system_startup(&context, &mut io::stderr())?;
         }
@@ -1728,7 +1741,9 @@ async fn execute_download() -> (Result<(), CommandError>, bool, bool) {
     (result, ndjson, machine)
 }
 
-async fn execute_auth() -> (Result<(), CommandError>, bool) {
+async fn execute_auth(
+    root_context: &pixiv_app::lifecycle::Context,
+) -> (Result<(), CommandError>, bool) {
     let args: Vec<String> = std::env::args().skip(2).collect();
     let machine = pixiv_cli_rs::auth_accounts::machine_output_requested(&args);
     let result = async {
@@ -1741,7 +1756,7 @@ async fn execute_auth() -> (Result<(), CommandError>, bool) {
                     != Some("import")
                     || io::stdout().is_terminal()),
         )?;
-        let context = pixiv_app::lifecycle::Context::new();
+        let context = root_context.clone();
         if command.requires_startup() {
             pixiv_cli_rs::startup::run_system_startup(&context, &mut io::stderr())?;
         }
@@ -1786,7 +1801,7 @@ async fn execute_auth() -> (Result<(), CommandError>, bool) {
             return validation
                 .execute_http(
                     &pixiv_app::config::Store::new(path),
-                    &pixiv_app::lifecycle::Context::new(),
+                    root_context,
                     &mut io::stdout().lock(),
                 )
                 .await;
@@ -1795,7 +1810,7 @@ async fn execute_auth() -> (Result<(), CommandError>, bool) {
             return transfer
                 .execute_http(
                     &pixiv_app::config::Store::new(path),
-                    &pixiv_app::lifecycle::Context::new(),
+                    root_context,
                     &mut io::stdout().lock(),
                     &mut prompts,
                 )
@@ -1803,7 +1818,7 @@ async fn execute_auth() -> (Result<(), CommandError>, bool) {
         }
         command.execute_with_prompts(
             &pixiv_app::config::Store::new(path),
-            &pixiv_app::lifecycle::Context::new(),
+            root_context,
             &mut io::stdout().lock(),
             &mut prompts,
         )

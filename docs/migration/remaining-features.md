@@ -59,6 +59,6 @@ Go productionにはpersisted resume/job schemaがなく、download保存へのpr
 
 次の縦断候補はstatic illustration/mangaのPID・artwork URLであり、全5quality・pages・filename/directory templates・MIME publication・partial cancel/commitを一緒に固定する。MCP現在のstartup adapterはdownload_pathだけを渡すため、visual移植時はconfig templateも同じruntime境界から接続する。direct resourceはGoもtemplateを使わないので、その対象比較をvisual namingへ外挿しない。user/bookmarkの全visual kindとugoira・record・randomは別の残るworkflowとして保持する。
 
-実CLIのOS interrupt→Context配線は未移植。Go cmd/pixiv/main.goのNotifyContext(os.Interrupt)と、Rustの手動Context/MCP通知取消を区別する。実Ctrl-C時のatomic temp cleanup・終了動作を今回の取消testだけで成功扱いしない。
+実CLIのOS interrupt→Contextはowned watcher/main explicit contextへ接続中。Go root12行とMCP graceful-close4行を先に固定し、owned Unix SIGINT/SPI atomic cleanup＋実Rust MCP binaryのSIGINT/EOFを比較する。Go physical connection close対Rust future/body drop、Go Stop unregister対Tokio persistent Unix handlerの差分を残し、native Windows/全TTY/signal/raceを成功扱いしない。
 
-次の優先checkpointは実CLI os.Interrupt→Contextとowned subprocess/synthetic IOによるcleanup/終了の比較であり、static download拡張より先に行う。loginのGo detached Background contextとMCP graceful closeをroot取消のbroadcastへ変えない。
+今回のinterrupt checkpointはlogin detached Backgroundを維持し、MCP closing中のper-request cancellation notificationを処理し、通常responseを抑止してgraceful completionを待つ。normal EOFとcompleted-request disposalもGo-firstで固定する。最終gate後はstatic downloadの次の縦断scopeへ進むが、handler restoration/native platformの残る差分は維持する。

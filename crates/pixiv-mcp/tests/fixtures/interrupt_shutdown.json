@@ -1,0 +1,450 @@
+{
+  "source": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "source_hashes": {
+    "cmd/pixiv/main.go": "fe6b94296b80fc4a5d9aad1a3034a4e6ebe4d72600222e2d7e3f0ea4619bcd68",
+    "github.com/modelcontextprotocol/go-sdk@v0.8.0/internal/jsonrpc2/conn.go": "0b88d2aa927bceb2e730214ef7d94ab25fe3b48becd04e0f3211a22d6c089b18",
+    "github.com/modelcontextprotocol/go-sdk@v0.8.0/mcp/server.go": "67739c8e9d676479da4196e12039bc0013dbe2e5be3034a8920f1cad5cdafda9",
+    "github.com/modelcontextprotocol/go-sdk@v0.8.0/mcp/transport.go": "a9240ec0cf83e5e151e51496817b20714a56d729df668d360bd9976949b69815",
+    "internal/mcpserver/pixiv/internal/runtime/runtime.go": "a6ca224d1949e7716277677f81f80c1133eb0b91e196dc64e04d29fad2c7fe79",
+    "internal/mcpserver/pixiv/tools/download/download.go": "60cd7f8fcecfe27c185a9df4469dd8eaa0117e87586c047dfdf911e3400a11e5",
+    "internal/mcpserver/stdio.go": "c48f34ffdcc0f92eadea6766aeb331ceab9899d982dcb59565900aa4adaeb46e",
+    "sdk/pixiv/resource.go": "e94cdf3b2d7f67e159bd2481a1c419e887d842c903107767c4004e4f6a529ed8"
+  },
+  "cases": [
+    {
+      "name": "idle",
+      "exit": 0,
+      "stdio": [
+        {
+          "id": 1,
+          "jsonrpc": "2.0",
+          "result": {
+            "capabilities": {
+              "logging": {},
+              "tools": {
+                "listChanged": true
+              }
+            },
+            "protocolVersion": "2025-06-18",
+            "serverInfo": {
+              "name": "fixture",
+              "version": "0"
+            }
+          }
+        }
+      ],
+      "events": [
+        {
+          "name": "ready",
+          "request_error": "",
+          "request_context": false,
+          "published": 0,
+          "temporary": 0
+        },
+        {
+          "name": "root_interrupted",
+          "root_error": "context canceled",
+          "request_error": "",
+          "request_context": false,
+          "published": 0,
+          "temporary": 0
+        },
+        {
+          "name": "server_returned",
+          "root_error": "context canceled",
+          "request_error": "",
+          "request_context": false,
+          "published": 0,
+          "temporary": 0
+        }
+      ],
+      "files": []
+    },
+    {
+      "name": "active",
+      "exit": 0,
+      "stdio": [
+        {
+          "id": 1,
+          "jsonrpc": "2.0",
+          "result": {
+            "capabilities": {
+              "logging": {},
+              "tools": {
+                "listChanged": true
+              }
+            },
+            "protocolVersion": "2025-06-18",
+            "serverInfo": {
+              "name": "fixture",
+              "version": "0"
+            }
+          }
+        }
+      ],
+      "events": [
+        {
+          "name": "ready",
+          "request_error": "",
+          "request_context": false,
+          "published": 0,
+          "temporary": 0
+        },
+        {
+          "name": "lease_acquired",
+          "request_error": "",
+          "request_context": true,
+          "published": 0,
+          "temporary": 0
+        },
+        {
+          "name": "body_waiting",
+          "request_error": "",
+          "request_context": true,
+          "published": 1,
+          "temporary": 1
+        },
+        {
+          "name": "root_interrupted",
+          "root_error": "context canceled",
+          "request_error": "",
+          "request_context": true,
+          "published": 1,
+          "temporary": 1
+        },
+        {
+          "name": "body_released",
+          "root_error": "context canceled",
+          "request_error": "",
+          "request_context": true,
+          "published": 1,
+          "temporary": 1
+        },
+        {
+          "name": "body_closed",
+          "root_error": "context canceled",
+          "request_error": "",
+          "request_context": true,
+          "published": 2,
+          "temporary": 0
+        },
+        {
+          "name": "lease_released",
+          "root_error": "context canceled",
+          "request_error": "",
+          "request_context": true,
+          "published": 2,
+          "temporary": 0
+        },
+        {
+          "name": "tool_completed",
+          "root_error": "context canceled",
+          "request_error": "",
+          "request_context": true,
+          "published": 2,
+          "temporary": 0
+        },
+        {
+          "name": "tool_result",
+          "root_error": "context canceled",
+          "request_error": "",
+          "request_context": true,
+          "published": 2,
+          "temporary": 0,
+          "result": {
+            "content": [
+              {
+                "text": "Download completed; delivery: local_path.\nResource download / Type: resource\n- \u003cROOT\u003e/prefix-f40ae67576ef.png\n  URI: file://\u003cROOT\u003e/prefix-f40ae67576ef.png\n  MIME: image/png\n  Size: 15 bytes\nResource download / Type: resource\n- \u003cROOT\u003e/pending-9658b03dc775.png\n  URI: file://\u003cROOT\u003e/pending-9658b03dc775.png\n  MIME: image/png\n  Size: 15 bytes",
+                "type": "text"
+              }
+            ],
+            "structuredContent": {
+              "delivery": "local_path",
+              "failures": [],
+              "files": [
+                {
+                  "author": "",
+                  "file_uri": "file://\u003cROOT\u003e/prefix-f40ae67576ef.png",
+                  "illust_id": 0,
+                  "mime_type": "image/png",
+                  "page": 1,
+                  "path": "\u003cROOT\u003e/prefix-f40ae67576ef.png",
+                  "size_bytes": 15,
+                  "title": ""
+                },
+                {
+                  "author": "",
+                  "file_uri": "file://\u003cROOT\u003e/pending-9658b03dc775.png",
+                  "illust_id": 0,
+                  "mime_type": "image/png",
+                  "page": 1,
+                  "path": "\u003cROOT\u003e/pending-9658b03dc775.png",
+                  "size_bytes": 15,
+                  "title": ""
+                }
+              ],
+              "items": [
+                {
+                  "author": "",
+                  "files": [
+                    {
+                      "author": "",
+                      "file_uri": "file://\u003cROOT\u003e/prefix-f40ae67576ef.png",
+                      "illust_id": 0,
+                      "mime_type": "image/png",
+                      "page": 1,
+                      "path": "\u003cROOT\u003e/prefix-f40ae67576ef.png",
+                      "size_bytes": 15,
+                      "title": ""
+                    }
+                  ],
+                  "illust_id": 0,
+                  "title": "",
+                  "type": "resource",
+                  "url": ""
+                },
+                {
+                  "author": "",
+                  "files": [
+                    {
+                      "author": "",
+                      "file_uri": "file://\u003cROOT\u003e/pending-9658b03dc775.png",
+                      "illust_id": 0,
+                      "mime_type": "image/png",
+                      "page": 1,
+                      "path": "\u003cROOT\u003e/pending-9658b03dc775.png",
+                      "size_bytes": 15,
+                      "title": ""
+                    }
+                  ],
+                  "illust_id": 0,
+                  "title": "",
+                  "type": "resource",
+                  "url": ""
+                }
+              ],
+              "text": "Download completed; delivery: local_path.\nResource download / Type: resource\n- \u003cROOT\u003e/prefix-f40ae67576ef.png\n  URI: file://\u003cROOT\u003e/prefix-f40ae67576ef.png\n  MIME: image/png\n  Size: 15 bytes\nResource download / Type: resource\n- \u003cROOT\u003e/pending-9658b03dc775.png\n  URI: file://\u003cROOT\u003e/pending-9658b03dc775.png\n  MIME: image/png\n  Size: 15 bytes",
+              "warnings": []
+            }
+          }
+        },
+        {
+          "name": "server_returned",
+          "root_error": "context canceled",
+          "request_error": "",
+          "request_context": false,
+          "published": 2,
+          "temporary": 0
+        }
+      ],
+      "files": [
+        {
+          "name": "pending-9658b03dc775.png",
+          "hex": "89504e470d0a1a0a66697874757265"
+        },
+        {
+          "name": "prefix-f40ae67576ef.png",
+          "hex": "89504e470d0a1a0a66697874757265"
+        }
+      ],
+      "post_run_request_error": "context canceled"
+    },
+    {
+      "name": "active-notification-cancelled",
+      "exit": 0,
+      "stdio": [
+        {
+          "id": 1,
+          "jsonrpc": "2.0",
+          "result": {
+            "capabilities": {
+              "logging": {},
+              "tools": {
+                "listChanged": true
+              }
+            },
+            "protocolVersion": "2025-06-18",
+            "serverInfo": {
+              "name": "fixture",
+              "version": "0"
+            }
+          }
+        }
+      ],
+      "events": [
+        {
+          "name": "ready",
+          "request_error": "",
+          "request_context": false,
+          "published": 0,
+          "temporary": 0
+        },
+        {
+          "name": "lease_acquired",
+          "request_error": "",
+          "request_context": true,
+          "published": 0,
+          "temporary": 0
+        },
+        {
+          "name": "body_waiting",
+          "request_error": "",
+          "request_context": true,
+          "published": 1,
+          "temporary": 1
+        },
+        {
+          "name": "root_interrupted",
+          "root_error": "context canceled",
+          "request_error": "",
+          "request_context": true,
+          "published": 1,
+          "temporary": 1
+        },
+        {
+          "name": "body_cancelled",
+          "root_error": "context canceled",
+          "request_error": "context canceled",
+          "request_context": true,
+          "published": 1,
+          "temporary": 1
+        },
+        {
+          "name": "body_closed",
+          "root_error": "context canceled",
+          "request_error": "context canceled",
+          "request_context": true,
+          "published": 1,
+          "temporary": 0
+        },
+        {
+          "name": "lease_released",
+          "root_error": "context canceled",
+          "request_error": "context canceled",
+          "request_context": true,
+          "published": 1,
+          "temporary": 0
+        },
+        {
+          "name": "tool_completed",
+          "root_error": "context canceled",
+          "request_error": "context canceled",
+          "request_context": true,
+          "published": 1,
+          "temporary": 0
+        },
+        {
+          "name": "tool_result",
+          "root_error": "context canceled",
+          "request_error": "context canceled",
+          "request_context": true,
+          "published": 1,
+          "temporary": 0,
+          "result": {
+            "content": [
+              {
+                "text": "Download completed; delivery: local_path.\nResource download / Type: resource\n- \u003cROOT\u003e/prefix-f40ae67576ef.png\n  URI: file://\u003cROOT\u003e/prefix-f40ae67576ef.png\n  MIME: image/png\n  Size: 15 bytes\nDownload failed: context canceled",
+                "type": "text"
+              }
+            ],
+            "isError": true,
+            "structuredContent": {
+              "delivery": "local_path",
+              "failures": [],
+              "files": [
+                {
+                  "author": "",
+                  "file_uri": "file://\u003cROOT\u003e/prefix-f40ae67576ef.png",
+                  "illust_id": 0,
+                  "mime_type": "image/png",
+                  "page": 1,
+                  "path": "\u003cROOT\u003e/prefix-f40ae67576ef.png",
+                  "size_bytes": 15,
+                  "title": ""
+                }
+              ],
+              "items": [
+                {
+                  "author": "",
+                  "files": [
+                    {
+                      "author": "",
+                      "file_uri": "file://\u003cROOT\u003e/prefix-f40ae67576ef.png",
+                      "illust_id": 0,
+                      "mime_type": "image/png",
+                      "page": 1,
+                      "path": "\u003cROOT\u003e/prefix-f40ae67576ef.png",
+                      "size_bytes": 15,
+                      "title": ""
+                    }
+                  ],
+                  "illust_id": 0,
+                  "title": "",
+                  "type": "resource",
+                  "url": ""
+                }
+              ],
+              "text": "Download completed; delivery: local_path.\nResource download / Type: resource\n- \u003cROOT\u003e/prefix-f40ae67576ef.png\n  URI: file://\u003cROOT\u003e/prefix-f40ae67576ef.png\n  MIME: image/png\n  Size: 15 bytes\nDownload failed: context canceled",
+              "warnings": []
+            }
+          }
+        },
+        {
+          "name": "server_returned",
+          "root_error": "context canceled",
+          "request_error": "",
+          "request_context": false,
+          "published": 1,
+          "temporary": 0
+        }
+      ],
+      "files": [
+        {
+          "name": "prefix-f40ae67576ef.png",
+          "hex": "89504e470d0a1a0a66697874757265"
+        }
+      ],
+      "post_run_request_error": "context canceled"
+    },
+    {
+      "name": "normal-eof",
+      "exit": 0,
+      "stdio": [
+        {
+          "id": 1,
+          "jsonrpc": "2.0",
+          "result": {
+            "capabilities": {
+              "logging": {},
+              "tools": {
+                "listChanged": true
+              }
+            },
+            "protocolVersion": "2025-06-18",
+            "serverInfo": {
+              "name": "fixture",
+              "version": "0"
+            }
+          }
+        }
+      ],
+      "events": [
+        {
+          "name": "ready",
+          "request_error": "",
+          "request_context": false,
+          "published": 0,
+          "temporary": 0
+        },
+        {
+          "name": "server_returned",
+          "request_error": "",
+          "request_context": false,
+          "published": 0,
+          "temporary": 0
+        }
+      ],
+      "files": []
+    }
+  ]
+}
