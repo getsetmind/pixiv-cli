@@ -155,6 +155,11 @@ fn is_locale(value: &str) -> bool {
         })
 }
 pub(crate) fn decode_url_component(value: &str, query: bool) -> Option<String> {
+    let result = decode_url_component_bytes(value, query)?;
+    Some(String::from_utf8_lossy(&result).into_owned())
+}
+
+pub(crate) fn decode_url_component_bytes(value: &str, query: bool) -> Option<Vec<u8>> {
     let mut result = vec![];
     let bytes = value.as_bytes();
     let mut index = 0;
@@ -176,7 +181,7 @@ pub(crate) fn decode_url_component(value: &str, query: bool) -> Option<String> {
             }
         }
     }
-    Some(String::from_utf8_lossy(&result).into_owned())
+    Some(result)
 }
 fn reference_error(detail: &str) -> Error {
     Error::new(Reason::InvalidArgument, "ParseURL").with_detail(detail)

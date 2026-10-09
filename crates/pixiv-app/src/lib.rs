@@ -5,6 +5,7 @@ pub mod account_transfer;
 pub mod account_validation;
 pub mod account_views;
 pub mod auth_bundle;
+pub mod callback_handler;
 pub mod config;
 pub mod connection;
 pub mod database;

@@ -714,18 +714,8 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
             | Command::Follow { .. }
             | Command::User { .. }
     ) {
-        let home_name = if cfg!(windows) { "USERPROFILE" } else { "HOME" };
-        let home = std::env::var_os(home_name)
-            .filter(|home| !home.is_empty())
-            .ok_or_else(|| {
-                let variable = if cfg!(windows) {
-                    "%USERPROFILE%"
-                } else {
-                    "$HOME"
-                };
-                CommandError::MessageText(format!("{variable} is not defined"))
-            })?;
-        let directory = std::path::PathBuf::from(home).join(".pixiv-cli");
+        let directory = pixiv_app::callback_handler::app_data_directory()
+            .map_err(|error| CommandError::MessageText(error.to_string()))?;
         let config = pixiv_app::config::Store::new(directory.join("config.toml"));
         config
             .ensure_defaults()
@@ -1613,21 +1603,8 @@ fn execute_config() -> Result<(), CommandError> {
         io::stdin().is_terminal(),
     )?;
     let path = if command.requires_config() {
-        let name = if cfg!(windows) { "USERPROFILE" } else { "HOME" };
-        let home = std::env::var_os(name)
-            .filter(|value| !value.is_empty())
-            .ok_or_else(|| {
-                CommandError::MessageText(format!(
-                    "{} is not defined",
-                    if cfg!(windows) {
-                        "%USERPROFILE%"
-                    } else {
-                        "$HOME"
-                    }
-                ))
-            })?;
-        std::path::PathBuf::from(home)
-            .join(".pixiv-cli")
+        pixiv_app::callback_handler::app_data_directory()
+            .map_err(|error| CommandError::MessageText(error.to_string()))?
             .join("config.toml")
     } else {
         std::path::PathBuf::new()
@@ -1654,20 +1631,9 @@ async fn execute_auth() -> (Result<(), CommandError>, bool) {
                     || io::stdout().is_terminal()),
         )?;
         let path = if command.requires_config() {
-            let name = if cfg!(windows) { "USERPROFILE" } else { "HOME" };
-            let home = std::env::var_os(name)
-                .filter(|v| !v.is_empty())
-                .ok_or_else(|| {
-                    CommandError::MessageText(format!(
-                        "{} is not defined",
-                        if cfg!(windows) {
-                            "%USERPROFILE%"
-                        } else {
-                            "$HOME"
-                        }
-                    ))
-                })?;
-            std::path::PathBuf::from(home).join(".pixiv-cli/config.toml")
+            pixiv_app::callback_handler::app_data_directory()
+                .map_err(|error| CommandError::MessageText(error.to_string()))?
+                .join("config.toml")
         } else {
             std::path::PathBuf::new()
         };

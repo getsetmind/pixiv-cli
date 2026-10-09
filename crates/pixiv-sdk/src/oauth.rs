@@ -193,8 +193,13 @@ pub struct LoginUrl<'a> {
     query: &'a str,
     raw_path: &'a str,
     fragment: String,
-    userinfo: bool,
+    userinfo: Option<LoginUserinfo>,
     force_query: bool,
+}
+
+struct LoginUserinfo {
+    username: Vec<u8>,
+    password: Option<Vec<u8>>,
 }
 
 impl<'a> LoginUrl<'a> {
@@ -215,7 +220,7 @@ impl<'a> LoginUrl<'a> {
     }
 
     pub fn parse(input: &'a str) -> Option<Self> {
-        use crate::reference::decode_url_component;
+        use crate::reference::{decode_url_component, decode_url_component_bytes};
         if input.bytes().any(|byte| byte < 32 || byte == 127) {
             return None;
         }
@@ -239,19 +244,27 @@ impl<'a> LoginUrl<'a> {
         };
         let force_query = remainder.ends_with('?') && remainder.matches('?').count() == 1;
         let (remainder, query) = remainder.split_once('?').unwrap_or((remainder, ""));
-        let mut userinfo_present = false;
+        let mut parsed_userinfo = None;
         let (host, path) = if let Some(authority) = remainder.strip_prefix("//") {
             let boundary = authority.find('/').unwrap_or(authority.len());
             let (authority, path) = authority.split_at(boundary);
             let host = if let Some((userinfo, host)) = authority.rsplit_once('@') {
-                userinfo_present = true;
                 if !userinfo
                     .bytes()
                     .all(|b| b.is_ascii_alphanumeric() || b"-._:~!$&'()*+,;=%@".contains(&b))
                 {
                     return None;
                 }
-                decode_url_component(userinfo, false)?;
+                let (username, password) = match userinfo.split_once(':') {
+                    Some((username, password)) => {
+                        (username, Some(decode_url_component_bytes(password, false)?))
+                    }
+                    None => (userinfo, None),
+                };
+                parsed_userinfo = Some(LoginUserinfo {
+                    username: decode_url_component_bytes(username, false)?,
+                    password,
+                });
                 host
             } else {
                 authority
@@ -275,13 +288,13 @@ impl<'a> LoginUrl<'a> {
             query,
             raw_path,
             fragment,
-            userinfo: userinfo_present,
+            userinfo: parsed_userinfo,
             force_query,
         })
     }
 
     pub fn has_userinfo(&self) -> bool {
-        self.userinfo
+        self.userinfo.is_some()
     }
 
     pub fn fragment(&self) -> &str {
@@ -325,6 +338,33 @@ impl<'a> LoginUrl<'a> {
         } else {
             escape_login_path(path)
         }
+    }
+
+    /// Serializes a supported hierarchical HTTP callback endpoint with a replacement fragment.
+    pub fn with_fragment(&self, fragment: &str) -> String {
+        let mut output = format!("{}://", self.scheme.to_ascii_lowercase());
+        if let Some(userinfo) = &self.userinfo {
+            output.push_str(&escape_login_bytes(&userinfo.username, b"-._~$&+,;="));
+            if let Some(password) = &userinfo.password {
+                output.push(':');
+                output.push_str(&escape_login_bytes(password, b"-._~$&+,;="));
+            }
+            output.push('@');
+        }
+        output.push_str(&escape_login_component(
+            &self.host,
+            b"-._~!$&'()*+,;=:[]<>\"",
+        ));
+        output.push_str(&self.escaped_path());
+        if self.force_query || !self.query.is_empty() {
+            output.push('?');
+            output.push_str(self.query);
+        }
+        if !fragment.is_empty() {
+            output.push('#');
+            output.push_str(&escape_login_component(fragment, b"-._~$&+,/:;=?@!()*"));
+        }
+        output
     }
 
     pub fn query_value(&self, name: &str) -> String {
@@ -685,9 +725,17 @@ fn decode_login(body: serde_json::Value, operation: &'static str) -> Result<Cred
 }
 
 fn escape_login_path(path: &str) -> String {
+    escape_login_component(path, b"-._~$&+,/:;=@")
+}
+
+fn escape_login_component(value: &str, allowed: &[u8]) -> String {
+    escape_login_bytes(value.as_bytes(), allowed)
+}
+
+fn escape_login_bytes(value: &[u8], allowed: &[u8]) -> String {
     let mut output = String::new();
-    for byte in path.bytes() {
-        if byte.is_ascii_alphanumeric() || b"-._~$&+,/:;=@".contains(&byte) {
+    for &byte in value {
+        if byte.is_ascii_alphanumeric() || allowed.contains(&byte) {
             output.push(byte as char);
         } else {
             use std::fmt::Write;

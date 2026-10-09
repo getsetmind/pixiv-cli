@@ -1,0 +1,412 @@
+{
+  "paths": {
+    "endpoint": ".pixiv-cli/url-handler-endpoint",
+    "manifest": ".pixiv-cli/url-handler/handler-manifest.json",
+    "active": ".pixiv-cli/remote-login-session.json"
+  },
+  "endpoints": [
+    {
+      "name": "trim",
+      "input": " \thttp://127.0.0.1:41871/callback\n",
+      "output": "http://127.0.0.1:41871/callback",
+      "error": ""
+    },
+    {
+      "name": "localhost_case",
+      "input": "HTTP://LOCALHOST:1/callback",
+      "output": "http://LOCALHOST:1/callback",
+      "error": ""
+    },
+    {
+      "name": "ipv6",
+      "input": "http://[::1]:9/callback",
+      "output": "http://[::1]:9/callback",
+      "error": ""
+    },
+    {
+      "name": "loopback_range",
+      "input": "http://127.12.34.56:9/callback",
+      "output": "http://127.12.34.56:9/callback",
+      "error": ""
+    },
+    {
+      "name": "empty_port",
+      "input": "http://localhost:/callback",
+      "output": "http://localhost:/callback",
+      "error": ""
+    },
+    {
+      "name": "large_port",
+      "input": "http://localhost:99999/callback",
+      "output": "http://localhost:99999/callback",
+      "error": ""
+    },
+    {
+      "name": "userinfo",
+      "input": "http://synthetic@localhost:9/callback",
+      "output": "http://synthetic@localhost:9/callback",
+      "error": ""
+    },
+    {
+      "name": "empty_query",
+      "input": "http://localhost:9/callback?",
+      "output": "http://localhost:9/callback?",
+      "error": ""
+    },
+    {
+      "name": "encoded_path",
+      "input": "http://localhost:9/%63allback",
+      "output": "http://localhost:9/%63allback",
+      "error": ""
+    },
+    {
+      "name": "https",
+      "input": "https://localhost:9/callback",
+      "output": "",
+      "error": "invalid callback endpoint"
+    },
+    {
+      "name": "missing_port",
+      "input": "http://localhost/callback",
+      "output": "",
+      "error": "invalid callback endpoint"
+    },
+    {
+      "name": "named_port",
+      "input": "http://localhost:named/callback",
+      "output": "",
+      "error": "invalid callback endpoint"
+    },
+    {
+      "name": "path_case",
+      "input": "http://localhost:9/Callback",
+      "output": "",
+      "error": "invalid callback endpoint"
+    },
+    {
+      "name": "query",
+      "input": "http://localhost:9/callback?x=1",
+      "output": "",
+      "error": "invalid callback endpoint"
+    },
+    {
+      "name": "fragment",
+      "input": "http://localhost:9/callback#x",
+      "output": "",
+      "error": "invalid callback endpoint"
+    },
+    {
+      "name": "opaque",
+      "input": "http:localhost:9/callback",
+      "output": "",
+      "error": "invalid callback endpoint"
+    },
+    {
+      "name": "nonloopback",
+      "input": "http://192.0.2.1:9/callback",
+      "output": "",
+      "error": "callback endpoint must be loopback"
+    },
+    {
+      "name": "hostname",
+      "input": "http://example.invalid:9/callback",
+      "output": "",
+      "error": "callback endpoint must be loopback"
+    },
+    {
+      "name": "userinfo_colons",
+      "input": "http://user%3Aname:pass%3Aword@localhost:9/callback",
+      "output": "http://user%3Aname:pass%3Aword@localhost:9/callback",
+      "error": ""
+    },
+    {
+      "name": "userinfo_at_slash",
+      "input": "http://user%40name:p%2Fword@localhost:9/callback",
+      "output": "http://user%40name:p%2Fword@localhost:9/callback",
+      "error": ""
+    },
+    {
+      "name": "userinfo_space",
+      "input": "http://user%20name:p%20word@localhost:9/callback",
+      "output": "http://user%20name:p%20word@localhost:9/callback",
+      "error": ""
+    },
+    {
+      "name": "userinfo_unicode",
+      "input": "http://%E6%97%A5:%E6%9C%AC@localhost:9/callback",
+      "output": "http://%E6%97%A5:%E6%9C%AC@localhost:9/callback",
+      "error": ""
+    },
+    {
+      "name": "escaped_host",
+      "input": "http://local%68ost:9/callback",
+      "output": "",
+      "error": "invalid callback endpoint"
+    },
+    {
+      "name": "unicode_host",
+      "input": "http://日:9/callback",
+      "output": "",
+      "error": "callback endpoint must be loopback"
+    },
+    {
+      "name": "userinfo_invalid_utf8",
+      "input": "http://%FF:%FE@localhost:9/callback",
+      "output": "http://%FF:%FE@localhost:9/callback",
+      "error": ""
+    },
+    {
+      "name": "bracket_ipv4",
+      "input": "http://[127.0.0.1]:9/callback",
+      "output": "",
+      "error": "invalid callback endpoint"
+    }
+  ],
+  "dispatch": [
+    {
+      "name": "invalid_scheme",
+      "input": "https://account/login?code=synthetic",
+      "local": "success",
+      "remote": "success",
+      "delegate_error": "",
+      "calls": [],
+      "result": "",
+      "error": "invalid Pixiv login link"
+    },
+    {
+      "name": "invalid_parse",
+      "input": "pixiv://account/login?code=%zz#%zz",
+      "local": "success",
+      "remote": "success",
+      "delegate_error": "",
+      "calls": [],
+      "result": "",
+      "error": "invalid Pixiv login link"
+    },
+    {
+      "name": "wrong_account_remote_path",
+      "input": "pixiv://other/remote-login?origin=https%3A%2F%2Frelay.example&session=s&access=p",
+      "local": "success",
+      "remote": "success",
+      "delegate_error": "",
+      "calls": [],
+      "result": "",
+      "error": "invalid remote login start link"
+    },
+    {
+      "name": "nonwhitelisted_raw",
+      "input": " pixiv://account/works/1 ",
+      "local": "success",
+      "remote": "success",
+      "delegate_error": "",
+      "calls": [
+        "delegate"
+      ],
+      "result": "",
+      "error": ""
+    },
+    {
+      "name": "delegate_failure",
+      "input": "pixiv://account/works/1",
+      "local": "success",
+      "remote": "success",
+      "delegate_error": "synthetic delegate failure",
+      "calls": [
+        "delegate"
+      ],
+      "result": "",
+      "error": "synthetic delegate failure"
+    },
+    {
+      "name": "local_error",
+      "input": "pixiv://account/login?code=synthetic",
+      "local": "error",
+      "remote": "success",
+      "delegate_error": "",
+      "calls": [
+        "local"
+      ],
+      "result": "",
+      "error": "synthetic local failure"
+    },
+    {
+      "name": "wrapped_local_inactive",
+      "input": "pixiv://account/login?code=synthetic",
+      "local": "wrapped_inactive",
+      "remote": "success",
+      "delegate_error": "",
+      "calls": [
+        "local",
+        "remote"
+      ],
+      "result": "remote",
+      "error": ""
+    },
+    {
+      "name": "remote_error",
+      "input": "pixiv://account/login?code=synthetic",
+      "local": "inactive",
+      "remote": "error",
+      "delegate_error": "",
+      "calls": [
+        "local",
+        "remote"
+      ],
+      "result": "",
+      "error": "synthetic remote failure"
+    },
+    {
+      "name": "wrapped_remote_inactive",
+      "input": "pixiv://account/login?code=synthetic",
+      "local": "inactive",
+      "remote": "wrapped_inactive",
+      "delegate_error": "",
+      "calls": [
+        "local",
+        "remote",
+        "delegate"
+      ],
+      "result": "",
+      "error": ""
+    },
+    {
+      "name": "fallback_delegate_failure",
+      "input": "pixiv://account/login?code=synthetic",
+      "local": "inactive",
+      "remote": "inactive",
+      "delegate_error": "synthetic delegate failure",
+      "calls": [
+        "local",
+        "remote",
+        "delegate"
+      ],
+      "result": "",
+      "error": "synthetic delegate failure"
+    },
+    {
+      "name": "local_first_success",
+      "input": "pixiv://account/login?code=synthetic",
+      "local": "success",
+      "remote": "error",
+      "delegate_error": "synthetic delegate failure",
+      "calls": [
+        "local"
+      ],
+      "result": "local",
+      "error": ""
+    },
+    {
+      "name": "valid_remote_start",
+      "input": "pixiv://account/remote-login?origin=https%3A%2F%2Frelay.example&session=synthetic-session&access=synthetic-proof",
+      "local": "error",
+      "remote": "error",
+      "delegate_error": "synthetic delegate failure",
+      "calls": [],
+      "result": "start",
+      "error": ""
+    }
+  ],
+  "browser": [
+    {
+      "name": "local_open_failure",
+      "kind": "local",
+      "open_error": true,
+      "body": "",
+      "calls": [
+        "open"
+      ],
+      "error": "could not open Pixiv login callback bridge"
+    },
+    {
+      "name": "remote_open_failure",
+      "kind": "remote",
+      "open_error": true,
+      "body": "{\"success\":true}",
+      "calls": [
+        "forward",
+        "open",
+        "close"
+      ],
+      "error": "could not open Pixiv login result page"
+    },
+    {
+      "name": "remote_complete_success",
+      "kind": "remote",
+      "open_error": false,
+      "body": "{\"success\":true}",
+      "calls": [
+        "forward",
+        "open",
+        "read",
+        "read",
+        "close"
+      ],
+      "error": ""
+    },
+    {
+      "name": "remote_complete_failure",
+      "kind": "remote",
+      "open_error": false,
+      "body": "{\"success\":false}",
+      "calls": [
+        "forward",
+        "open",
+        "read",
+        "read",
+        "close"
+      ],
+      "error": "remote Pixiv login relay reported that login failed"
+    },
+    {
+      "name": "delegated_no_browser",
+      "kind": "delegate",
+      "open_error": false,
+      "body": "",
+      "calls": [
+        "delegate"
+      ],
+      "error": ""
+    },
+    {
+      "name": "start_open_failure_clear_success",
+      "kind": "start",
+      "open_error": true,
+      "body": "",
+      "calls": [
+        "start",
+        "open",
+        "clear"
+      ],
+      "error": "could not open Pixiv authorization page"
+    }
+  ],
+  "path_inputs": [
+    {
+      "name": "relative_dot_home",
+      "home": "./synthetic/../home",
+      "output": "home/.pixiv-cli/url-handler-endpoint",
+      "error": ""
+    },
+    {
+      "name": "empty_home",
+      "home": "",
+      "output": "",
+      "error": "$HOME is not defined"
+    },
+    {
+      "name": "absent_home",
+      "home": "",
+      "unset": true,
+      "output": "",
+      "error": "$HOME is not defined"
+    }
+  ],
+  "relay": [
+    {
+      "name": "original_fragment_special_bytes",
+      "endpoint": "HTTP://user%3Aname:p%2Fword@LOCALHOST:9/%63allback?",
+      "callback": " \tpixiv://account/login?code=synthetic%2Fvalue&x=!'()*日#original \n",
+      "output": "http://user%3Aname:p%2Fword@LOCALHOST:9/%63allback?#%20%09pixiv://account/login?code=synthetic%252Fvalue&x=!%27()*%E6%97%A5%23original%20%0A"
+    }
+  ]
+}
