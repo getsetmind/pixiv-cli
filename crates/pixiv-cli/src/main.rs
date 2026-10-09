@@ -1569,11 +1569,11 @@ async fn execute(
         }
         let database = pixiv_app::database::Database::open(&directory)
             .map_err(|error| CommandError::State(Box::new(error)))?;
-        let download_path = config
+        let download_runtime = config
             .current()
             .and_then(|snapshot| snapshot.runtime())
-            .map_err(pixiv_app::scheduler::SchedulerError::from)?
-            .download_path;
+            .map_err(pixiv_app::scheduler::SchedulerError::from)?;
+        let download_defaults = pixiv_mcp::download::DownloadDefaults::from(&download_runtime);
         let execution = std::sync::Arc::new(pixiv_app::execution::Execution::http(
             config,
             std::sync::Arc::new(std::sync::Mutex::new(database)),
@@ -1582,13 +1582,13 @@ async fn execute(
         let download_proxy = proxy.map(str::to_owned);
         let download = move |context, input| -> pixiv_mcp::download::DownloadFuture {
             let execution = download_execution.clone();
-            let path = download_path.clone();
+            let defaults = download_defaults.clone();
             let proxy = download_proxy.clone();
             Box::pin(async move {
-                pixiv_mcp::download::saved_download(
+                pixiv_mcp::download::saved_download_with_defaults(
                     &execution,
                     &context,
-                    &path,
+                    &defaults,
                     input,
                     proxy.as_deref(),
                     std::sync::Arc::new(|client| {

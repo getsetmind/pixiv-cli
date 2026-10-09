@@ -111,11 +111,28 @@ pub fn decode_download(arguments: Option<&Value>) -> Result<DownloadInput, Strin
     )?;
     serde_json::from_value(arguments).map_err(|error| format!("invalid params: {error}"))
 }
+#[derive(Clone, Debug, Default)]
+pub struct DownloadDefaults {
+    pub download_path: String,
+    pub filename_template: String,
+    pub directory_template: String,
+}
+
+impl From<&pixiv_app::config::RuntimeConfig> for DownloadDefaults {
+    fn from(runtime: &pixiv_app::config::RuntimeConfig) -> Self {
+        Self {
+            download_path: runtime.download_path.clone(),
+            filename_template: runtime.filename_template.clone(),
+            directory_template: runtime.directory_template.clone(),
+        }
+    }
+}
+
 struct Plan {
     sources: Vec<String>,
     request: DownloadRequest,
 }
-fn plan(input: DownloadInput, path: &str) -> Result<Plan, String> {
+fn plan(input: DownloadInput, defaults: &DownloadDefaults) -> Result<Plan, String> {
     let sources = if !input.src.trim().is_empty() {
         if !input.srcs.is_empty() {
             return Err("Error: provide src or srcs, not both".into());
@@ -148,11 +165,12 @@ fn plan(input: DownloadInput, path: &str) -> Result<Plan, String> {
     Ok(Plan {
         sources,
         request: DownloadRequest {
-            download_path: path.into(),
+            download_path: defaults.download_path.clone(),
+            filename_template: defaults.filename_template.clone(),
+            directory_template: defaults.directory_template.clone(),
             pages,
             quality,
             ugoira_format,
-            ..Default::default()
         },
     })
 }
@@ -182,7 +200,24 @@ pub async fn download(
     path: &str,
     input: DownloadInput,
 ) -> CallToolResult<DownloadOutput> {
-    let plan = match plan(input, path) {
+    download_with_defaults(
+        context,
+        client,
+        &DownloadDefaults {
+            download_path: path.into(),
+            ..Default::default()
+        },
+        input,
+    )
+    .await
+}
+pub async fn download_with_defaults(
+    context: &Context,
+    client: &dyn DownloadSaveClient,
+    defaults: &DownloadDefaults,
+    input: DownloadInput,
+) -> CallToolResult<DownloadOutput> {
+    let plan = match plan(input, defaults) {
         Ok(plan) => plan,
         Err(error) => return empty_error(error),
     };
@@ -203,7 +238,28 @@ pub async fn saved_download<T: Transport + 'static>(
     proxy: Option<&str>,
     factory: Arc<SaveClientFactory<T>>,
 ) -> CallToolResult<DownloadOutput> {
-    let plan = match plan(input, path) {
+    saved_download_with_defaults(
+        execution,
+        context,
+        &DownloadDefaults {
+            download_path: path.into(),
+            ..Default::default()
+        },
+        input,
+        proxy,
+        factory,
+    )
+    .await
+}
+pub async fn saved_download_with_defaults<T: Transport + 'static>(
+    execution: &Execution<T>,
+    context: &Context,
+    defaults: &DownloadDefaults,
+    input: DownloadInput,
+    proxy: Option<&str>,
+    factory: Arc<SaveClientFactory<T>>,
+) -> CallToolResult<DownloadOutput> {
+    let plan = match plan(input, defaults) {
         Ok(plan) => plan,
         Err(error) => return empty_error(error),
     };

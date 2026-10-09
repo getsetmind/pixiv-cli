@@ -209,7 +209,10 @@ impl DownloadCommand {
     }
     pub fn output_policy_requested(args: &[String]) -> (bool, bool) {
         let (options, _) = Self::parse_flags(args);
-        (options.ndjson == Some(true), options.json.is_some())
+        (
+            options.ndjson == Some(true),
+            options.json.is_some() || options.ndjson == Some(true),
+        )
     }
     pub fn parse<R: Read + ?Sized>(
         args: &[String],

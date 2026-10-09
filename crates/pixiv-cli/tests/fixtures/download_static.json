@@ -1,0 +1,3430 @@
+{
+  "reference": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "source_sha256": {
+    "internal/cli/commands/pixiv/download/execution.go": "236460386b2847dc03a00f10ac1e955ad1fca9f18c173ae0a1523f960812fdf0",
+    "internal/cli/commands/pixiv/download/report.go": "7d75a279defc954df3ab326af750fa1ca51021942a2bc4a205c34b80422b0b63",
+    "internal/cli/root.go": "afbb8c2d7a90ccbe3ce124e9e2ee68ec463b9d020ba161d0d1cb270d1e1e7b1e",
+    "internal/media/downloader/downloader.go": "2ea84cf1ab3eaf8bec1b3dc5b2f5162ba48071b0a7ae5e2a950043dcc4867979",
+    "internal/services/pixiv/facade.go": "99523f209e13554508cb7c991e47876efff2d1c5208382843a9969b4e51ee525",
+    "internal/services/pixiv/pool/pool.go": "be7f58dba0e1957268551bbf01bd73a9edc8365a6ec57751d2668960bda681d4",
+    "sdk/pixiv/resource.go": "e94cdf3b2d7f67e159bd2481a1c419e887d842c903107767c4004e4f6a529ed8"
+  },
+  "normalization": "Only the isolated temporary download root is replaced by $ROOT. Request order, opaque SDK-derived resource URLs, array order, text, bytes and account state remain exact. Root source hashes are read-only wiring evidence; this harness executes a Cobra root plus the actual download leaf and saved-account facade, not native startup hooks.",
+  "remaining": [
+    "user/bookmark expansion, ugoira conversion/archive, visual action-record execution and recommendation-random remain separate accepted Go workflows; no replacement success or invalid-source expectations are introduced",
+    "native root startup/association/browser and real network/accounts are not executed; existing isolated startup fixture remains independent",
+    "full metadata/page/template/MIME manager matrices belong to the shared downloader fixture"
+  ],
+  "cases": [
+    {
+      "name": "pid-human",
+      "args": [
+        "42"
+      ],
+      "input": "",
+      "metadata_pages": 1,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "",
+      "stdout": "",
+      "stderr": "",
+      "error": "",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": true,
+          "error": "",
+          "cause": ""
+        }
+      ],
+      "saves": [
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9",
+          "destination": "$ROOT/runtime/Author_ - Title_ slash__42.jpg"
+        }
+      ],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p0.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": false,
+      "files": {
+        "runtime/Author_ - Title_ slash__42.png": "payload"
+      },
+      "directories": [
+        "runtime"
+      ]
+    },
+    {
+      "name": "pid-json",
+      "args": [
+        "42",
+        "--json"
+      ],
+      "input": "",
+      "metadata_pages": 1,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "",
+      "stdout": "[\n  {\n    \"artwork_id\": 42,\n    \"kind\": \"illustration\",\n    \"page\": 1,\n    \"path\": \"$ROOT/runtime/Author_ - Title_ slash__42.png\",\n    \"bytes\": 7\n  }\n]\n",
+      "stderr": "",
+      "error": "",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": true,
+          "error": "",
+          "cause": ""
+        }
+      ],
+      "saves": [
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9",
+          "destination": "$ROOT/runtime/Author_ - Title_ slash__42.jpg"
+        }
+      ],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p0.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": true,
+      "files": {
+        "runtime/Author_ - Title_ slash__42.png": "payload"
+      },
+      "directories": [
+        "runtime"
+      ]
+    },
+    {
+      "name": "artwork-url-ndjson",
+      "args": [
+        "https://www.pixiv.net/en/artworks/42",
+        "--ndjson"
+      ],
+      "input": "",
+      "metadata_pages": 1,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "",
+      "stdout": "{\"artwork_id\":42,\"kind\":\"illustration\",\"page\":1,\"path\":\"$ROOT/runtime/Author_ - Title_ slash__42.png\",\"bytes\":7}\n",
+      "stderr": "",
+      "error": "",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": true,
+          "error": "",
+          "cause": ""
+        }
+      ],
+      "saves": [
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9",
+          "destination": "$ROOT/runtime/Author_ - Title_ slash__42.jpg"
+        }
+      ],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p0.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": true,
+      "files": {
+        "runtime/Author_ - Title_ slash__42.png": "payload"
+      },
+      "directories": [
+        "runtime"
+      ]
+    },
+    {
+      "name": "canonical-dedup",
+      "args": [
+        "+42",
+        "https://www.pixiv.net/artworks/42",
+        "42",
+        "--json"
+      ],
+      "input": "",
+      "metadata_pages": 1,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "",
+      "stdout": "[\n  {\n    \"artwork_id\": 42,\n    \"kind\": \"illustration\",\n    \"page\": 1,\n    \"path\": \"$ROOT/runtime/Author_ - Title_ slash__42.png\",\n    \"bytes\": 7\n  }\n]\n",
+      "stderr": "",
+      "error": "",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": true,
+          "error": "",
+          "cause": ""
+        }
+      ],
+      "saves": [
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9",
+          "destination": "$ROOT/runtime/Author_ - Title_ slash__42.jpg"
+        }
+      ],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p0.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": true,
+      "files": {
+        "runtime/Author_ - Title_ slash__42.png": "payload"
+      },
+      "directories": [
+        "runtime"
+      ]
+    },
+    {
+      "name": "runtime-json",
+      "args": [
+        "42"
+      ],
+      "input": "",
+      "metadata_pages": 1,
+      "metadata_kind": "illust",
+      "runtime_json": true,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "",
+      "stdout": "[\n  {\n    \"artwork_id\": 42,\n    \"kind\": \"illustration\",\n    \"page\": 1,\n    \"path\": \"$ROOT/runtime/Author_ - Title_ slash__42.png\",\n    \"bytes\": 7\n  }\n]\n",
+      "stderr": "",
+      "error": "",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": true,
+          "error": "",
+          "cause": ""
+        }
+      ],
+      "saves": [
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9",
+          "destination": "$ROOT/runtime/Author_ - Title_ slash__42.jpg"
+        }
+      ],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p0.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": true,
+      "files": {
+        "runtime/Author_ - Title_ slash__42.png": "payload"
+      },
+      "directories": [
+        "runtime"
+      ]
+    },
+    {
+      "name": "explicit-json-false",
+      "args": [
+        "42",
+        "--json=false"
+      ],
+      "input": "",
+      "metadata_pages": 1,
+      "metadata_kind": "illust",
+      "runtime_json": true,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "",
+      "stdout": "",
+      "stderr": "",
+      "error": "",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": true,
+          "error": "",
+          "cause": ""
+        }
+      ],
+      "saves": [
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9",
+          "destination": "$ROOT/runtime/Author_ - Title_ slash__42.jpg"
+        }
+      ],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p0.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": false,
+      "files": {
+        "runtime/Author_ - Title_ slash__42.png": "payload"
+      },
+      "directories": [
+        "runtime"
+      ]
+    },
+    {
+      "name": "multipage-default",
+      "args": [
+        "42",
+        "--ndjson"
+      ],
+      "input": "",
+      "metadata_pages": 3,
+      "metadata_kind": "manga",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "",
+      "stdout": "{\"artwork_id\":42,\"kind\":\"manga\",\"page\":1,\"path\":\"$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.png\",\"bytes\":7}\n{\"artwork_id\":42,\"kind\":\"manga\",\"page\":2,\"path\":\"$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p1.png\",\"bytes\":7}\n{\"artwork_id\":42,\"kind\":\"manga\",\"page\":3,\"path\":\"$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p2.png\",\"bytes\":7}\n",
+      "stderr": "",
+      "error": "",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": true,
+          "error": "",
+          "cause": ""
+        }
+      ],
+      "saves": [
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9",
+          "destination": "$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.jpg"
+        },
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0",
+          "destination": "$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p1.jpg"
+        },
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TWl3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0",
+          "destination": "$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p2.jpg"
+        }
+      ],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p0.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p1.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p2.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": true,
+      "files": {
+        "runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.png": "payload",
+        "runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p1.png": "payload",
+        "runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p2.png": "payload"
+      },
+      "directories": [
+        "runtime",
+        "runtime/42 - Title_ slash_"
+      ]
+    },
+    {
+      "name": "selection-sorted-dedup",
+      "args": [
+        "42",
+        "--pages=3,1,3",
+        "--json"
+      ],
+      "input": "",
+      "metadata_pages": 3,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "",
+      "stdout": "[\n  {\n    \"artwork_id\": 42,\n    \"kind\": \"illustration\",\n    \"page\": 1,\n    \"path\": \"$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.png\",\n    \"bytes\": 7\n  },\n  {\n    \"artwork_id\": 42,\n    \"kind\": \"illustration\",\n    \"page\": 3,\n    \"path\": \"$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p2.png\",\n    \"bytes\": 7\n  }\n]\n",
+      "stderr": "",
+      "error": "",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": true,
+          "error": "",
+          "cause": ""
+        }
+      ],
+      "saves": [
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9",
+          "destination": "$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.jpg"
+        },
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TWl3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0",
+          "destination": "$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p2.jpg"
+        }
+      ],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p0.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p2.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": true,
+      "files": {
+        "runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.png": "payload",
+        "runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p2.png": "payload"
+      },
+      "directories": [
+        "runtime",
+        "runtime/42 - Title_ slash_"
+      ]
+    },
+    {
+      "name": "quality-original",
+      "args": [
+        "42",
+        "--quality=original",
+        "--json"
+      ],
+      "input": "",
+      "metadata_pages": 2,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "",
+      "stdout": "[\n  {\n    \"artwork_id\": 42,\n    \"kind\": \"illustration\",\n    \"page\": 1,\n    \"path\": \"$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.png\",\n    \"bytes\": 7\n  },\n  {\n    \"artwork_id\": 42,\n    \"kind\": \"illustration\",\n    \"page\": 2,\n    \"path\": \"$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p1.png\",\n    \"bytes\": 7\n  }\n]\n",
+      "stderr": "",
+      "error": "",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": true,
+          "error": "",
+          "cause": ""
+        }
+      ],
+      "saves": [
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9",
+          "destination": "$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.jpg"
+        },
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0",
+          "destination": "$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p1.jpg"
+        }
+      ],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p0.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p1.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": true,
+      "files": {
+        "runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.png": "payload",
+        "runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p1.png": "payload"
+      },
+      "directories": [
+        "runtime",
+        "runtime/42 - Title_ slash_"
+      ]
+    },
+    {
+      "name": "quality-regular",
+      "args": [
+        "42",
+        "--quality=regular",
+        "--json"
+      ],
+      "input": "",
+      "metadata_pages": 2,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "",
+      "stdout": "[\n  {\n    \"artwork_id\": 42,\n    \"kind\": \"illustration\",\n    \"page\": 1,\n    \"path\": \"$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.png\",\n    \"bytes\": 7\n  },\n  {\n    \"artwork_id\": 42,\n    \"kind\": \"illustration\",\n    \"page\": 2,\n    \"path\": \"$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p1.png\",\n    \"bytes\": 7\n  }\n]\n",
+      "stderr": "",
+      "error": "",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": true,
+          "error": "",
+          "cause": ""
+        }
+      ],
+      "saves": [
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW5KbFozVnNZWElpZlE9PSJ9",
+          "destination": "$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.jpg"
+        },
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TVN3aWRpSTZJbkpsWjNWc1lYSWlmUT09In0",
+          "destination": "$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p1.jpg"
+        }
+      ],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/c/1200x1200/img-master/img/2026/01/02/03/04/05/42_p0_master1200.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/c/1200x1200/img-master/img/2026/01/02/03/04/05/42_p1_master1200.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": true,
+      "files": {
+        "runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.png": "payload",
+        "runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p1.png": "payload"
+      },
+      "directories": [
+        "runtime",
+        "runtime/42 - Title_ slash_"
+      ]
+    },
+    {
+      "name": "quality-small",
+      "args": [
+        "42",
+        "--quality=small",
+        "--json"
+      ],
+      "input": "",
+      "metadata_pages": 2,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "",
+      "stdout": "[\n  {\n    \"artwork_id\": 42,\n    \"kind\": \"illustration\",\n    \"page\": 1,\n    \"path\": \"$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.png\",\n    \"bytes\": 7\n  },\n  {\n    \"artwork_id\": 42,\n    \"kind\": \"illustration\",\n    \"page\": 2,\n    \"path\": \"$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p1.png\",\n    \"bytes\": 7\n  }\n]\n",
+      "stderr": "",
+      "error": "",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": true,
+          "error": "",
+          "cause": ""
+        }
+      ],
+      "saves": [
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW5OdFlXeHNJbjA9In0",
+          "destination": "$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.jpg"
+        },
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TVN3aWRpSTZJbk50WVd4c0luMD0ifQ",
+          "destination": "$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p1.jpg"
+        }
+      ],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/c/540x540_70/img-master/img/2026/01/02/03/04/05/42_p0_master1200.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/c/540x540_70/img-master/img/2026/01/02/03/04/05/42_p1_master1200.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": true,
+      "files": {
+        "runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.png": "payload",
+        "runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p1.png": "payload"
+      },
+      "directories": [
+        "runtime",
+        "runtime/42 - Title_ slash_"
+      ]
+    },
+    {
+      "name": "quality-thumb",
+      "args": [
+        "42",
+        "--quality=thumb",
+        "--json"
+      ],
+      "input": "",
+      "metadata_pages": 2,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "",
+      "stdout": "[\n  {\n    \"artwork_id\": 42,\n    \"kind\": \"illustration\",\n    \"page\": 1,\n    \"path\": \"$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.png\",\n    \"bytes\": 7\n  },\n  {\n    \"artwork_id\": 42,\n    \"kind\": \"illustration\",\n    \"page\": 2,\n    \"path\": \"$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p1.png\",\n    \"bytes\": 7\n  }\n]\n",
+      "stderr": "",
+      "error": "",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": true,
+          "error": "",
+          "cause": ""
+        }
+      ],
+      "saves": [
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW5Sb2RXMWlJbjA9In0",
+          "destination": "$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.jpg"
+        },
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TVN3aWRpSTZJblJvZFcxaUluMD0ifQ",
+          "destination": "$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p1.jpg"
+        }
+      ],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/c/250x250_80_a2/img-master/img/2026/01/02/03/04/05/42_p0_square1200.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/c/250x250_80_a2/img-master/img/2026/01/02/03/04/05/42_p1_square1200.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": true,
+      "files": {
+        "runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.png": "payload",
+        "runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p1.png": "payload"
+      },
+      "directories": [
+        "runtime",
+        "runtime/42 - Title_ slash_"
+      ]
+    },
+    {
+      "name": "quality-mini",
+      "args": [
+        "42",
+        "--quality=mini",
+        "--json"
+      ],
+      "input": "",
+      "metadata_pages": 2,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "",
+      "stdout": "[\n  {\n    \"artwork_id\": 42,\n    \"kind\": \"illustration\",\n    \"page\": 1,\n    \"path\": \"$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.png\",\n    \"bytes\": 7\n  },\n  {\n    \"artwork_id\": 42,\n    \"kind\": \"illustration\",\n    \"page\": 2,\n    \"path\": \"$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p1.png\",\n    \"bytes\": 7\n  }\n]\n",
+      "stderr": "",
+      "error": "",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": true,
+          "error": "",
+          "cause": ""
+        }
+      ],
+      "saves": [
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW0xcGJta2lmUT09In0",
+          "destination": "$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.jpg"
+        },
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TVN3aWRpSTZJbTFwYm1raWZRPT0ifQ",
+          "destination": "$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p1.jpg"
+        }
+      ],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/c/48x48/img-master/img/2026/01/02/03/04/05/42_p0_square1200.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/c/48x48/img-master/img/2026/01/02/03/04/05/42_p1_square1200.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": true,
+      "files": {
+        "runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.png": "payload",
+        "runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p1.png": "payload"
+      },
+      "directories": [
+        "runtime",
+        "runtime/42 - Title_ slash_"
+      ]
+    },
+    {
+      "name": "quality-",
+      "args": [
+        "42",
+        "--quality=",
+        "--json"
+      ],
+      "input": "",
+      "metadata_pages": 2,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "",
+      "stdout": "[\n  {\n    \"artwork_id\": 42,\n    \"kind\": \"illustration\",\n    \"page\": 1,\n    \"path\": \"$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.png\",\n    \"bytes\": 7\n  },\n  {\n    \"artwork_id\": 42,\n    \"kind\": \"illustration\",\n    \"page\": 2,\n    \"path\": \"$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p1.png\",\n    \"bytes\": 7\n  }\n]\n",
+      "stderr": "",
+      "error": "",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": true,
+          "error": "",
+          "cause": ""
+        }
+      ],
+      "saves": [
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9",
+          "destination": "$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.jpg"
+        },
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0",
+          "destination": "$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p1.jpg"
+        }
+      ],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p0.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p1.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": true,
+      "files": {
+        "runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.png": "payload",
+        "runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p1.png": "payload"
+      },
+      "directories": [
+        "runtime",
+        "runtime/42 - Title_ slash_"
+      ]
+    },
+    {
+      "name": "runtime-templates",
+      "args": [
+        "42",
+        "--json"
+      ],
+      "input": "",
+      "metadata_pages": 2,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author_id}_{date}_{tags}_{num}",
+      "runtime_directory": "{author}/{id}/{num}",
+      "failure": "",
+      "stdout": "[\n  {\n    \"artwork_id\": 42,\n    \"kind\": \"illustration\",\n    \"page\": 1,\n    \"path\": \"$ROOT/runtime/Author_/42/0/7_2026-01-02_first,second_0.png\",\n    \"bytes\": 7\n  },\n  {\n    \"artwork_id\": 42,\n    \"kind\": \"illustration\",\n    \"page\": 2,\n    \"path\": \"$ROOT/runtime/Author_/42/0/7_2026-01-02_first,second_1.png\",\n    \"bytes\": 7\n  }\n]\n",
+      "stderr": "",
+      "error": "",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": true,
+          "error": "",
+          "cause": ""
+        }
+      ],
+      "saves": [
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9",
+          "destination": "$ROOT/runtime/Author_/42/0/7_2026-01-02_first,second_0.jpg"
+        },
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0",
+          "destination": "$ROOT/runtime/Author_/42/0/7_2026-01-02_first,second_1.jpg"
+        }
+      ],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p0.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p1.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": true,
+      "files": {
+        "runtime/Author_/42/0/7_2026-01-02_first,second_0.png": "payload",
+        "runtime/Author_/42/0/7_2026-01-02_first,second_1.png": "payload"
+      },
+      "directories": [
+        "runtime",
+        "runtime/Author_",
+        "runtime/Author_/42",
+        "runtime/Author_/42/0"
+      ]
+    },
+    {
+      "name": "template-override",
+      "args": [
+        "42",
+        "--filename-template={id}_{num}",
+        "--json"
+      ],
+      "input": "",
+      "metadata_pages": 2,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "nested/{id}",
+      "failure": "",
+      "stdout": "[\n  {\n    \"artwork_id\": 42,\n    \"kind\": \"illustration\",\n    \"page\": 1,\n    \"path\": \"$ROOT/runtime/nested/42/42_0.png\",\n    \"bytes\": 7\n  },\n  {\n    \"artwork_id\": 42,\n    \"kind\": \"illustration\",\n    \"page\": 2,\n    \"path\": \"$ROOT/runtime/nested/42/42_1.png\",\n    \"bytes\": 7\n  }\n]\n",
+      "stderr": "",
+      "error": "",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": true,
+          "error": "",
+          "cause": ""
+        }
+      ],
+      "saves": [
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9",
+          "destination": "$ROOT/runtime/nested/42/42_0.jpg"
+        },
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0",
+          "destination": "$ROOT/runtime/nested/42/42_1.jpg"
+        }
+      ],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p0.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p1.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": true,
+      "files": {
+        "runtime/nested/42/42_0.png": "payload",
+        "runtime/nested/42/42_1.png": "payload"
+      },
+      "directories": [
+        "runtime",
+        "runtime/nested",
+        "runtime/nested/42"
+      ]
+    },
+    {
+      "name": "output-alias",
+      "args": [
+        "42",
+        "-o",
+        "$ROOT/override",
+        "--json"
+      ],
+      "input": "",
+      "metadata_pages": 1,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "",
+      "stdout": "[\n  {\n    \"artwork_id\": 42,\n    \"kind\": \"illustration\",\n    \"page\": 1,\n    \"path\": \"$ROOT/override/Author_ - Title_ slash__42.png\",\n    \"bytes\": 7\n  }\n]\n",
+      "stderr": "",
+      "error": "",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": true,
+          "error": "",
+          "cause": ""
+        }
+      ],
+      "saves": [
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9",
+          "destination": "$ROOT/override/Author_ - Title_ slash__42.jpg"
+        }
+      ],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p0.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": true,
+      "files": {
+        "override/Author_ - Title_ slash__42.png": "payload"
+      },
+      "directories": [
+        "override"
+      ]
+    },
+    {
+      "name": "download-path",
+      "args": [
+        "42",
+        "--download-path=$ROOT/override",
+        "--json"
+      ],
+      "input": "",
+      "metadata_pages": 1,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "",
+      "stdout": "[\n  {\n    \"artwork_id\": 42,\n    \"kind\": \"illustration\",\n    \"page\": 1,\n    \"path\": \"$ROOT/override/Author_ - Title_ slash__42.png\",\n    \"bytes\": 7\n  }\n]\n",
+      "stderr": "",
+      "error": "",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": true,
+          "error": "",
+          "cause": ""
+        }
+      ],
+      "saves": [
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9",
+          "destination": "$ROOT/override/Author_ - Title_ slash__42.jpg"
+        }
+      ],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p0.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": true,
+      "files": {
+        "override/Author_ - Title_ slash__42.png": "payload"
+      },
+      "directories": [
+        "override"
+      ]
+    },
+    {
+      "name": "empty-template-default",
+      "args": [
+        "42",
+        "--filename-template=",
+        "--json"
+      ],
+      "input": "",
+      "metadata_pages": 1,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "",
+      "stdout": "[\n  {\n    \"artwork_id\": 42,\n    \"kind\": \"illustration\",\n    \"page\": 1,\n    \"path\": \"$ROOT/runtime/Author_ - Title_ slash__42.png\",\n    \"bytes\": 7\n  }\n]\n",
+      "stderr": "",
+      "error": "",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": true,
+          "error": "",
+          "cause": ""
+        }
+      ],
+      "saves": [
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9",
+          "destination": "$ROOT/runtime/Author_ - Title_ slash__42.jpg"
+        }
+      ],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p0.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": true,
+      "files": {
+        "runtime/Author_ - Title_ slash__42.png": "payload"
+      },
+      "directories": [
+        "runtime"
+      ]
+    },
+    {
+      "name": "invalid-template",
+      "args": [
+        "42",
+        "--filename-template={bad}",
+        "--json"
+      ],
+      "input": "",
+      "metadata_pages": 1,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "",
+      "stdout": "[\n  {\n    \"artwork_id\": 42,\n    \"error\": {\n      \"code\": \"command_failed\"\n    }\n  }\n]\n",
+      "stderr": "",
+      "error": "pipeline records failed",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": false,
+          "error": "pipeline records failed",
+          "cause": ""
+        }
+      ],
+      "saves": [],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": true,
+      "files": {},
+      "directories": [
+        "runtime"
+      ]
+    },
+    {
+      "name": "invalid-directory",
+      "args": [
+        "42",
+        "--json"
+      ],
+      "input": "",
+      "metadata_pages": 1,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "../escape",
+      "failure": "",
+      "stdout": "",
+      "stderr": "",
+      "error": "directory template contains an unsafe path segment",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": false,
+          "error": "directory template contains an unsafe path segment",
+          "cause": ""
+        }
+      ],
+      "saves": [],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": false,
+      "files": {},
+      "directories": []
+    },
+    {
+      "name": "missing-page",
+      "args": [
+        "42",
+        "--pages=2",
+        "--json"
+      ],
+      "input": "",
+      "metadata_pages": 1,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "",
+      "stdout": "[\n  {\n    \"artwork_id\": 42,\n    \"error\": {\n      \"code\": \"command_failed\"\n    }\n  }\n]\n",
+      "stderr": "",
+      "error": "pipeline records failed",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": false,
+          "error": "pipeline records failed",
+          "cause": ""
+        }
+      ],
+      "saves": [],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": true,
+      "files": {},
+      "directories": [
+        "runtime"
+      ]
+    },
+    {
+      "name": "invalid-pages-before-service",
+      "args": [
+        "42",
+        "--pages=bad",
+        "--quality=bad"
+      ],
+      "input": "",
+      "metadata_pages": 1,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "",
+      "stdout": "",
+      "stderr": "",
+      "error": "invalid page number \"bad\"",
+      "cause": "",
+      "events": [
+        "usage"
+      ],
+      "attempts": [],
+      "saves": [],
+      "requests": [],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 0,
+      "writer_under_lease": false,
+      "files": {},
+      "directories": []
+    },
+    {
+      "name": "invalid-quality-before-service",
+      "args": [
+        "42",
+        "--quality=bad"
+      ],
+      "input": "",
+      "metadata_pages": 1,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "",
+      "stdout": "",
+      "stderr": "",
+      "error": "quality must be one of original, regular, small, thumb, mini",
+      "cause": "",
+      "events": [
+        "usage"
+      ],
+      "attempts": [],
+      "saves": [],
+      "requests": [],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 0,
+      "writer_under_lease": false,
+      "files": {},
+      "directories": []
+    },
+    {
+      "name": "proxy-conflict-before-service",
+      "args": [
+        "42",
+        "--proxy=x",
+        "--no-proxy"
+      ],
+      "input": "",
+      "metadata_pages": 1,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "",
+      "stdout": "",
+      "stderr": "",
+      "error": "use either --proxy or --no-proxy, not both",
+      "cause": "",
+      "events": [],
+      "attempts": [],
+      "saves": [],
+      "requests": [],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 0,
+      "writer_under_lease": false,
+      "files": {},
+      "directories": []
+    },
+    {
+      "name": "output-conflict-before-pool",
+      "args": [
+        "42",
+        "--json",
+        "--ndjson"
+      ],
+      "input": "",
+      "metadata_pages": 1,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "",
+      "stdout": "",
+      "stderr": "",
+      "error": "--json and --ndjson cannot be used together",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "usage"
+      ],
+      "attempts": [],
+      "saves": [],
+      "requests": [],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 0,
+      "writer_under_lease": false,
+      "files": {},
+      "directories": []
+    },
+    {
+      "name": "path-conflict-before-service",
+      "args": [
+        "42",
+        "-o",
+        "one",
+        "--download-path=two"
+      ],
+      "input": "",
+      "metadata_pages": 1,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "",
+      "stdout": "",
+      "stderr": "",
+      "error": "--output and --download-path must name the same directory when both are provided",
+      "cause": "",
+      "events": [
+        "runtime",
+        "usage"
+      ],
+      "attempts": [],
+      "saves": [],
+      "requests": [],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 0,
+      "writer_under_lease": false,
+      "files": {},
+      "directories": []
+    },
+    {
+      "name": "stdin-pid",
+      "args": [
+        "--json"
+      ],
+      "input": "42\r\n",
+      "metadata_pages": 1,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "",
+      "stdout": "[\n  {\n    \"artwork_id\": 42,\n    \"kind\": \"illustration\",\n    \"page\": 1,\n    \"path\": \"$ROOT/runtime/Author_ - Title_ slash__42.png\",\n    \"bytes\": 7\n  }\n]\n",
+      "stderr": "",
+      "error": "",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": true,
+          "error": "",
+          "cause": ""
+        }
+      ],
+      "saves": [
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9",
+          "destination": "$ROOT/runtime/Author_ - Title_ slash__42.jpg"
+        }
+      ],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p0.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": true,
+      "files": {
+        "runtime/Author_ - Title_ slash__42.png": "payload"
+      },
+      "directories": [
+        "runtime"
+      ]
+    },
+    {
+      "name": "typed-rate-limit-precommit-rotation",
+      "args": [
+        "42"
+      ],
+      "input": "",
+      "metadata_pages": 1,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "metadata-rate",
+      "stdout": "",
+      "stderr": "",
+      "error": "",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": false,
+          "error": "download completed with 1 failures: pixiv:Artwork: rate_limited",
+          "cause": "rate_limited"
+        },
+        {
+          "committed": true,
+          "error": "",
+          "cause": ""
+        }
+      ],
+      "saves": [
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9",
+          "destination": "$ROOT/runtime/Author_ - Title_ slash__42.jpg"
+        }
+      ],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 43,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 43,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 43,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p0.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": true,
+          "selected": false,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        }
+      ],
+      "closes": 2,
+      "writer_under_lease": false,
+      "files": {
+        "runtime/Author_ - Title_ slash__42.png": "payload"
+      },
+      "directories": [
+        "runtime"
+      ]
+    },
+    {
+      "name": "typed-rate-limit-all-accounts",
+      "args": [
+        "42"
+      ],
+      "input": "",
+      "metadata_pages": 1,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "all-rate",
+      "stdout": "",
+      "stderr": "",
+      "error": "pixiv:account_pool: rate_limited: account_pool_all_frozen",
+      "cause": "rate_limited",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": false,
+          "error": "download completed with 1 failures: pixiv:Artwork: rate_limited",
+          "cause": "rate_limited"
+        },
+        {
+          "committed": false,
+          "error": "download completed with 1 failures: pixiv:Artwork: rate_limited",
+          "cause": "rate_limited"
+        }
+      ],
+      "saves": [],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 43,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 43,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 43,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": true,
+          "selected": false,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 2,
+          "frozen": true,
+          "selected": true,
+          "rotated": true
+        }
+      ],
+      "closes": 2,
+      "writer_under_lease": false,
+      "files": {},
+      "directories": []
+    },
+    {
+      "name": "partial-page-rate-no-replay-human",
+      "args": [
+        "42"
+      ],
+      "input": "",
+      "metadata_pages": 2,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "page-rate",
+      "stdout": "",
+      "stderr": "",
+      "error": "download completed with 1 failures: pixiv:SaveResource: upstream_error: resource returned a non-success status",
+      "cause": "upstream_error",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": true,
+          "error": "download completed with 1 failures: pixiv:SaveResource: upstream_error: resource returned a non-success status",
+          "cause": "upstream_error"
+        }
+      ],
+      "saves": [
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9",
+          "destination": "$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.jpg"
+        },
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0",
+          "destination": "$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p1.jpg"
+        }
+      ],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p0.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p1.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": false,
+      "files": {
+        "runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.png": "payload"
+      },
+      "directories": [
+        "runtime",
+        "runtime/42 - Title_ slash_"
+      ]
+    },
+    {
+      "name": "partial-page-rate-no-replay-json",
+      "args": [
+        "42",
+        "--json"
+      ],
+      "input": "",
+      "metadata_pages": 2,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "page-rate",
+      "stdout": "[\n  {\n    \"artwork_id\": 42,\n    \"kind\": \"illustration\",\n    \"page\": 1,\n    \"path\": \"$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.png\",\n    \"bytes\": 7\n  },\n  {\n    \"artwork_id\": 42,\n    \"error\": {\n      \"code\": \"upstream_error\"\n    }\n  }\n]\n",
+      "stderr": "",
+      "error": "pipeline records failed",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": true,
+          "error": "pipeline records failed",
+          "cause": ""
+        }
+      ],
+      "saves": [
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9",
+          "destination": "$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.jpg"
+        },
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0",
+          "destination": "$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p1.jpg"
+        }
+      ],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p0.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p1.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": true,
+      "files": {
+        "runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.png": "payload"
+      },
+      "directories": [
+        "runtime",
+        "runtime/42 - Title_ slash_"
+      ]
+    },
+    {
+      "name": "partial-page-rate-no-replay-ndjson",
+      "args": [
+        "42",
+        "--ndjson"
+      ],
+      "input": "",
+      "metadata_pages": 2,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "page-rate",
+      "stdout": "{\"artwork_id\":42,\"kind\":\"illustration\",\"page\":1,\"path\":\"$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.png\",\"bytes\":7}\n{\"artwork_id\":42,\"error\":{\"code\":\"upstream_error\"}}\n",
+      "stderr": "",
+      "error": "pipeline records failed",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": true,
+          "error": "pipeline records failed",
+          "cause": ""
+        }
+      ],
+      "saves": [
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9",
+          "destination": "$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.jpg"
+        },
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0",
+          "destination": "$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p1.jpg"
+        }
+      ],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p0.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p1.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": true,
+      "files": {
+        "runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.png": "payload"
+      },
+      "directories": [
+        "runtime",
+        "runtime/42 - Title_ slash_"
+      ]
+    },
+    {
+      "name": "partial-page-rate-no-replay-fail-fast",
+      "args": [
+        "42",
+        "--json",
+        "--on-error=fail-fast"
+      ],
+      "input": "",
+      "metadata_pages": 2,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "page-rate",
+      "stdout": "",
+      "stderr": "",
+      "error": "download completed with 1 failures: pixiv:SaveResource: upstream_error: resource returned a non-success status",
+      "cause": "upstream_error",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": true,
+          "error": "download completed with 1 failures: pixiv:SaveResource: upstream_error: resource returned a non-success status",
+          "cause": "upstream_error"
+        }
+      ],
+      "saves": [
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9",
+          "destination": "$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.jpg"
+        },
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0",
+          "destination": "$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p1.jpg"
+        }
+      ],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p0.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p1.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": false,
+      "files": {
+        "runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.png": "payload"
+      },
+      "directories": [
+        "runtime",
+        "runtime/42 - Title_ slash_"
+      ]
+    },
+    {
+      "name": "partial-page-read-no-replay",
+      "args": [
+        "42",
+        "--json"
+      ],
+      "input": "",
+      "metadata_pages": 2,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "read",
+      "stdout": "[\n  {\n    \"artwork_id\": 42,\n    \"kind\": \"illustration\",\n    \"page\": 1,\n    \"path\": \"$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.png\",\n    \"bytes\": 7\n  },\n  {\n    \"artwork_id\": 42,\n    \"error\": {\n      \"code\": \"local_state_error\"\n    }\n  }\n]\n",
+      "stderr": "",
+      "error": "pipeline records failed",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": true,
+          "error": "pipeline records failed",
+          "cause": ""
+        }
+      ],
+      "saves": [
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9",
+          "destination": "$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.jpg"
+        },
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0",
+          "destination": "$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p1.jpg"
+        }
+      ],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p0.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p1.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": true,
+      "files": {
+        "runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.png": "payload"
+      },
+      "directories": [
+        "runtime",
+        "runtime/42 - Title_ slash_"
+      ]
+    },
+    {
+      "name": "operation-cancel-after-page",
+      "args": [
+        "42",
+        "--json"
+      ],
+      "input": "",
+      "metadata_pages": 2,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "cancel",
+      "stdout": "",
+      "stderr": "",
+      "error": "context canceled",
+      "cause": "cancel",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": true,
+          "error": "context canceled",
+          "cause": "cancel"
+        }
+      ],
+      "saves": [
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9",
+          "destination": "$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.jpg"
+        },
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TVN3aWRpSTZJbTl5YVdkcGJtRnNJbjA9In0",
+          "destination": "$ROOT/runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p1.jpg"
+        }
+      ],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p0.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p1.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": false,
+      "files": {
+        "runtime/42 - Title_ slash_/Author_ - Title_ slash__42_p0.png": "payload"
+      },
+      "directories": [
+        "runtime",
+        "runtime/42 - Title_ slash_"
+      ]
+    },
+    {
+      "name": "operation-cancel-before-pool",
+      "args": [
+        "42",
+        "--json"
+      ],
+      "input": "",
+      "metadata_pages": 1,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "before-cancel",
+      "stdout": "",
+      "stderr": "",
+      "error": "context canceled",
+      "cause": "cancel",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [],
+      "saves": [],
+      "requests": [],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 0,
+      "writer_under_lease": false,
+      "files": {},
+      "directories": []
+    },
+    {
+      "name": "writer-failure-after-commit",
+      "args": [
+        "42",
+        "--json"
+      ],
+      "input": "",
+      "metadata_pages": 1,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "writer",
+      "stdout": "",
+      "stderr": "",
+      "error": "fixture writer failure",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": true,
+          "error": "fixture writer failure",
+          "cause": ""
+        }
+      ],
+      "saves": [
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9",
+          "destination": "$ROOT/runtime/Author_ - Title_ slash__42.jpg"
+        }
+      ],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p0.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": true,
+      "files": {
+        "runtime/Author_ - Title_ slash__42.png": "payload"
+      },
+      "directories": [
+        "runtime"
+      ]
+    },
+    {
+      "name": "mixed-static-before-direct",
+      "args": [
+        "https://i.pximg.net/assets/direct.png",
+        "42",
+        "--ndjson"
+      ],
+      "input": "",
+      "metadata_pages": 1,
+      "metadata_kind": "illust",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "",
+      "stdout": "{\"artwork_id\":42,\"kind\":\"illustration\",\"page\":1,\"path\":\"$ROOT/runtime/Author_ - Title_ slash__42.png\",\"bytes\":7}\n{\"kind\":\"resource\",\"path\":\"$ROOT/runtime/direct-764803e96425.png\",\"bytes\":7}\n",
+      "stderr": "",
+      "error": "",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": true,
+          "error": "",
+          "cause": ""
+        }
+      ],
+      "saves": [
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9",
+          "destination": "$ROOT/runtime/Author_ - Title_ slash__42.jpg"
+        }
+      ],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p0.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/assets/direct.png",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": true,
+      "files": {
+        "runtime/Author_ - Title_ slash__42.png": "payload",
+        "runtime/direct-764803e96425.png": "payload"
+      },
+      "directories": [
+        "runtime"
+      ]
+    },
+    {
+      "name": "unknown-upstream-kind-static",
+      "args": [
+        "42",
+        "--json"
+      ],
+      "input": "",
+      "metadata_pages": 1,
+      "metadata_kind": "synthetic_new_kind",
+      "runtime_json": false,
+      "runtime_filename": "{author} - {title}_{id}",
+      "runtime_directory": "",
+      "failure": "",
+      "stdout": "[\n  {\n    \"artwork_id\": 42,\n    \"kind\": \"unknown\",\n    \"page\": 1,\n    \"path\": \"$ROOT/runtime/Author_ - Title_ slash__42.png\",\n    \"bytes\": 7\n  }\n]\n",
+      "stderr": "",
+      "error": "",
+      "cause": "",
+      "events": [
+        "runtime",
+        "service",
+        "json-mode",
+        "pool"
+      ],
+      "attempts": [
+        {
+          "committed": true,
+          "error": "",
+          "cause": ""
+        }
+      ],
+      "saves": [
+        {
+          "ref": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW05eWFXZHBibUZzSW4wPSJ9",
+          "destination": "$ROOT/runtime/Author_ - Title_ slash__42.jpg"
+        }
+      ],
+      "requests": [
+        {
+          "account": 42,
+          "method": "POST",
+          "url": "https://oauth.secure.pixiv.net/auth/token",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://app-api.pixiv.net/v1/illust/detail?illust_id=42",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        },
+        {
+          "account": 42,
+          "method": "GET",
+          "url": "https://i.pximg.net/img-original/img/2026/01/02/03/04/05/42_p0.jpg",
+          "referer": "https://app-api.pixiv.net/",
+          "cookie": ""
+        }
+      ],
+      "accounts": [
+        {
+          "id": 42,
+          "revision": 2,
+          "frozen": false,
+          "selected": true,
+          "rotated": true
+        },
+        {
+          "id": 43,
+          "revision": 1,
+          "frozen": false,
+          "selected": false,
+          "rotated": false
+        }
+      ],
+      "closes": 1,
+      "writer_under_lease": true,
+      "files": {
+        "runtime/Author_ - Title_ slash__42.png": "payload"
+      },
+      "directories": [
+        "runtime"
+      ]
+    }
+  ]
+}

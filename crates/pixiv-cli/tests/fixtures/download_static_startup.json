@@ -1,0 +1,214 @@
+[
+  {
+    "name": "pid-no-account",
+    "args": [
+      "download",
+      "42"
+    ],
+    "input": "",
+    "before": null,
+    "read_error": true,
+    "supported": false,
+    "cleanup_error": "",
+    "ensure_error": "",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+    "calls": [
+      "cleanup",
+      "supported"
+    ],
+    "stdin_reads": 0,
+    "network_calls": 0,
+    "config": true,
+    "database": true,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n"
+  },
+  {
+    "name": "artwork-url-json-no-account",
+    "args": [
+      "download",
+      "https://www.pixiv.net/artworks/42",
+      "--json"
+    ],
+    "input": "",
+    "before": null,
+    "read_error": true,
+    "supported": false,
+    "cleanup_error": "",
+    "ensure_error": "",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:auth: unauthorized: no pixiv account is authenticated\"}}\n",
+    "calls": [
+      "cleanup",
+      "supported"
+    ],
+    "stdin_reads": 0,
+    "network_calls": 0,
+    "config": true,
+    "database": true,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n"
+  },
+  {
+    "name": "pid-ndjson-no-account",
+    "args": [
+      "download",
+      "42",
+      "--ndjson"
+    ],
+    "input": "",
+    "before": null,
+    "read_error": true,
+    "supported": false,
+    "cleanup_error": "",
+    "ensure_error": "",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:auth: unauthorized: no pixiv account is authenticated\"}}\n",
+    "calls": [
+      "cleanup",
+      "supported"
+    ],
+    "stdin_reads": 0,
+    "network_calls": 0,
+    "config": true,
+    "database": true,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n"
+  },
+  {
+    "name": "stdin-artwork-url-no-account",
+    "args": [
+      "download",
+      "--json"
+    ],
+    "input": "https://www.pixiv.net/artworks/42\n",
+    "before": null,
+    "read_error": false,
+    "supported": false,
+    "cleanup_error": "",
+    "ensure_error": "",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:auth: unauthorized: no pixiv account is authenticated\"}}\n",
+    "calls": [
+      "cleanup",
+      "supported"
+    ],
+    "stdin_reads": 3,
+    "network_calls": 0,
+    "config": true,
+    "database": true,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n"
+  },
+  {
+    "name": "pid-options-no-account",
+    "args": [
+      "download",
+      "42",
+      "--quality=small",
+      "--pages=3,1",
+      "--filename-template={author_id}-{id}-{num}",
+      "--download-path=static-output"
+    ],
+    "input": "",
+    "before": null,
+    "read_error": true,
+    "supported": false,
+    "cleanup_error": "",
+    "ensure_error": "",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+    "calls": [
+      "cleanup",
+      "supported"
+    ],
+    "stdin_reads": 0,
+    "network_calls": 0,
+    "config": true,
+    "database": true,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n"
+  },
+  {
+    "name": "pid-invalid-quality-before-account",
+    "args": [
+      "download",
+      "42",
+      "--quality=bad",
+      "--json"
+    ],
+    "input": "",
+    "before": null,
+    "read_error": true,
+    "supported": false,
+    "cleanup_error": "",
+    "ensure_error": "",
+    "exit": 2,
+    "stdout": "",
+    "stderr": "error: quality must be one of original, regular, small, thumb, mini\n",
+    "calls": [
+      "cleanup",
+      "supported"
+    ],
+    "stdin_reads": 0,
+    "network_calls": 0,
+    "config": true,
+    "database": false,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n"
+  },
+  {
+    "name": "pid-invalid-pages-before-account",
+    "args": [
+      "download",
+      "42",
+      "--pages=0",
+      "--json"
+    ],
+    "input": "",
+    "before": null,
+    "read_error": true,
+    "supported": false,
+    "cleanup_error": "",
+    "ensure_error": "",
+    "exit": 2,
+    "stdout": "",
+    "stderr": "error: invalid page number \"0\"\n",
+    "calls": [
+      "cleanup",
+      "supported"
+    ],
+    "stdin_reads": 0,
+    "network_calls": 0,
+    "config": true,
+    "database": false,
+    "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n"
+  },
+  {
+    "name": "static-runtime-before-quality",
+    "args": [
+      "download",
+      "42",
+      "--quality=bad",
+      "--json"
+    ],
+    "input": "",
+    "before": "[unfinished\n",
+    "read_error": true,
+    "supported": false,
+    "cleanup_error": "",
+    "ensure_error": "",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"toml: expected character ]\"}}\n",
+    "calls": [
+      "cleanup",
+      "supported"
+    ],
+    "stdin_reads": 0,
+    "network_calls": 0,
+    "config": true,
+    "database": false,
+    "after": "[unfinished\n"
+  }
+]

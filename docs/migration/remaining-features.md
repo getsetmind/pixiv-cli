@@ -6,7 +6,7 @@
 
 | 操作群 | 既存 Rust の部品 | 残る範囲 |
 | --- | --- | --- |
-| download・媒体処理 | direct URL/opaque ResourceRefのshared report・CLI/MCP・保存済みExecution・SDK atomic save、ugoira metadata | 作品/PID/user/bookmark展開、record実行、ページ/quality/template計画、ugoira取得/変換、random recommendation。直リンクの対象比較だけでdownload全体を完了としない |
+| download・媒体処理 | direct URL/opaque ResourceRefとstatic artwork PID/URLのshared report・CLI/MCP・保存済みExecution・SDK atomic save、5quality/pages/templates/MIME publication、ugoira metadata | user/bookmark展開、record実行、ugoira取得/変換、random recommendation、全native publication/IO/parallel schedule。staticの対象比較だけでdownload全体を完了としない |
 | auth の残る契約 | CLI login/local/remote・hidden callback/install-handler・通常startup、SDK/app保存、default endpoint/handoff state、Linux XDG/Darwin/Windows backendへのadapterは接続済み | 全flag/help/TTY/raw-wire/取消・実browser/association/native OS検証、公開SDK HTTPClient ownership/idle-close。3つの新CLI入口はin_progressで、比較範囲は下記とcontracts.mdに分ける |
 | relay HTTP/2 transport | HTTP/1 relay listener・synthetic trustによるnative TLS | Go TLS serverのHTTP/2 negotiation/servingはactual Go testで確認したが、Rust relayはHTTP/1のみ。HTTP/2 capabilityは未移植であり、単なる検証不足としない |
 | OS URL-handler association | shared manifest・native browser/process、Linux XDG/Darwin/Windows ensure/disable/temp restore/delegate・ShellExecuteExW、CLI hooks/automatic startup policy | native OS/arch compile/link/runと実desktop integration・ACL・全IO/privilege/race |
@@ -55,10 +55,18 @@ auth check/refresh（full gate354passed・既存3ignored、対象fixture42root�
 
 app26行、CLI63行、MCP25行、root27行を固定Goで先に採取し、shared reportから実CLI/MCP stdio・保存済みclient・SDK atomic saveへ接続する。root実Linux子プロセスは安全な23行を選択し、native hook/read-error4行は実行しない。MCP通知取消はpublished prefixを残した通常RPC結果とし、downloadだけcooperative Contextで処理する。CLI writerはclient callback内で書き、保存後のwriter failureでファイルやcommitを戻さない。最終gateは終了0・226秒、contract555/raw556/ignored10・release42.91秒で成功し、scoped reviewと具体差分をcontracts.mdへ記録する。全downloadのverifiedとはしない。
 
-Go productionにはpersisted resume/job schemaがなく、download保存へのprogress callback注入もない。別のprogress rendererの存在をdownloadの新挙動へ読み替えない。作品/user/bookmark/record/ugoiraの受理済み入力をinvalid source・空成功へ隠さず、未移植errorとして残す。HTTP2 serving・余分なAccept header・公開SDK ownership/idle-close/direct Contextと全native OS/parser/wireの既存負債も引き続き残る。
+Go productionにはpersisted resume/job schemaがなく、download保存へのprogress callback注入もない。別のprogress rendererの存在をdownloadの新挙動へ読み替えない。user/bookmark/record/ugoiraの受理済み入力をinvalid source・空成功へ隠さず、未移植errorとして残す。static作品/PIDは次節の対象比較として接続する。HTTP2 serving・余分なAccept header・公開SDK ownership/idle-close/direct Contextと全native OS/parser/wireの既存負債も引き続き残る。
 
-次の縦断候補はstatic illustration/mangaのPID・artwork URLであり、全5quality・pages・filename/directory templates・MIME publication・partial cancel/commitを一緒に固定する。MCP現在のstartup adapterはdownload_pathだけを渡すため、visual移植時はconfig templateも同じruntime境界から接続する。direct resourceはGoもtemplateを使わないので、その対象比較をvisual namingへ外挿しない。user/bookmarkの全visual kindとugoira・record・randomは別の残るworkflowとして保持する。
+static illustration/mangaとunknown upstream kindのPID・artwork URLは、全5quality・pages・filename/directory templates・MIME publication・partial cancel/commitをGo-firstで一緒に固定する。MCP startup adapterはpathと両templateをreal RuntimeConfigから同じproduction conversionで渡す。direct resourceはGoもtemplateを使わないので、その対象比較をvisual namingへ外挿しない。user/bookmarkの全visual kindとugoira・record・randomは別の残るworkflowとして保持する。
 
 実CLIのOS interrupt→Contextはowned watcher/main explicit contextへ接続中。Go root12行とMCP graceful-close4行を先に固定し、owned Unix SIGINT/SPI atomic cleanup＋実Rust MCP binaryのSIGINT/EOFを比較する。Go physical connection close対Rust future/body drop、Go Stop unregister対Tokio persistent Unix handlerの差分を残し、native Windows/全TTY/signal/raceを成功扱いしない。
 
 今回のinterrupt checkpointはlogin detached Backgroundを維持し、MCP closing中のper-request cancellation notificationを処理し、通常responseを抑止してgraceful completionを待つ。normal EOFとcompleted-request disposalもGo-firstで固定する。最終gate後はstatic downloadの次の縦断scopeへ進むが、handler restoration/native platformの残る差分は維持する。
+
+## static artwork download の対象比較
+
+Go app82行・saved CLI40行・MCP29行とowned stdio通知取消1schedule、actual root preflight8行を固定する。Go IDsは昇順となり、page_count/vector不整合で同名pathをoverwriteする観測も保持する。MIMEはresponse→supported signature→MIME absent時だけsuffix fallbackとし、corrected targetはhard-linkでoverwriteしない。leading-dot basenameのGo filepath.Ext差分を追加5行でGo-first修正する。shared missing-capability/runtime red、root NDJSON error redとMCP defaults API redは実行済みであり、全成功と混同しない。
+
+app fixtureの初回seedがwire illustをpublic Kindへcastしていた入力モデルの誤りを、public illustration/unknown+RawKindへ修正して実Goで再採取する。元の合法open-string custom producerはpermanent Go-only regressionに残し、Rust closed enumのrepresentation gapをpendingへ明示する。native SDK wireのunknown kindはCLI/MCP双方でstaticとして実比較する。runtime worker boundはGo GOMAXPROCSとRust available_parallelismの同一設定へ読み替えない。実accounts/外部media/authenticated network/native registry/browser/associationは使わない。
+
+fullgate/review最終証拠はcontracts.mdへ追記する。user/bookmarkの全visual kinds、ugoira archive/convert、recordとrandom、HTTP2/Accept/public SDK lifecycle・Tokio handler restoration等は次の残る移植・検証対象である。

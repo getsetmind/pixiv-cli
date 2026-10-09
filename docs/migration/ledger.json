@@ -1649,7 +1649,9 @@
         "crates/pixiv-app/src/download.rs",
         "crates/pixiv-cli/src/download.rs",
         "crates/pixiv-cli/src/main.rs",
-        "crates/pixiv-cli/src/interrupt.rs"
+        "crates/pixiv-cli/src/interrupt.rs",
+        "crates/pixiv-app/src/download/static_artwork.rs",
+        "crates/pixiv-app/src/download/static_filename.rs"
       ],
       "tests": [
         "internal/media/downloader/migration_direct_sources_test.go",
@@ -1662,16 +1664,24 @@
         "crates/pixiv-cli/tests/download_pool.rs",
         "cmd/pixiv/migration_interrupt_test.go",
         "cmd/pixiv/migration_interrupt_windows_source_test.go",
-        "crates/pixiv-cli/tests/cli_interrupt.rs"
+        "crates/pixiv-cli/tests/cli_interrupt.rs",
+        "internal/media/downloader/migration_static_artwork_test.go",
+        "crates/pixiv-app/tests/download_static.rs",
+        "internal/cli/commands/pixiv/download/migration_static_artwork_test.go",
+        "internal/cli/migration_static_download_startup_test.go",
+        "crates/pixiv-cli/tests/download_static.rs",
+        "crates/pixiv-cli/tests/download_static_startup.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "直リンクとopaque ResourceRefの実CLI・保存済みclient・SDK atomic saveへ接続した限定比較。作品/PID/user/bookmark展開・record実行・ページ/quality/template計画・ugoira取得/変換は未移植。",
+        "direct URL/opaque refとstatic artwork PID/artwork URLを保存済みExecution・SDK metadata/ref saveへ接続する。全5quality/pages/filename・directory templates/MIME publication/partial commitを対象比較する。user/bookmark展開・record実行・ugoira取得/変換・randomは残るworkflowである。",
         "Go fixtureはapp26行、CLI63行、root27行。rootの実Linux子プロセス比較は安全な23行に限定し、native hooks/read-error4行を実行しない。",
         "全URL grammar/非UTF8、native IO/OS、全writer/cancel/race/TTY/public SDK lifecycleは未検証。Go productionにpersisted resume/job schemaやdownload progress callback注入はなく、Rustに新契約として追加しない。",
         "CLI text/JSONとpublication前後4組を実Execution/SDK/account poolで比較し、Output(BrokenPipe)をcallbackからroot終了0へ保持する。",
         "実Rust mainのowned signal contextを全dispatchへ明示伝播する。Go root-entry12行のうち10download/OAuth行はowned Unix SIGINTとgenuine SDK/Execution/local saveのRust SPIでobservable fields比較、MCP SIGINT/EOF2行は実Rust binaryを比較する。Go physical HTTP connection closed countersをRust request/body future dropsと同一視しない。",
-        "Go Stopのhandler unregisterに対しTokioはUnix process-wide handlerをdrop後も保持する具体差分。Windows CtrlC/CtrlBreak mappingはinstalled Go stdlib go1.27.1のsource-only契約でnative Windows compile/run未実施。全signal/EOF/IO/clock/TTY/並行scheduleは未検証。"
+        "Go Stopのhandler unregisterに対しTokioはUnix process-wide handlerをdrop後も保持する具体差分。Windows CtrlC/CtrlBreak mappingはinstalled Go stdlib go1.27.1のsource-only契約でnative Windows compile/run未実施。全signal/EOF/IO/clock/TTY/並行scheduleは未検証。",
+        "static Go fixture app82/CLI40、actual root preflight8行。CLIはgenuine saved SQLite pool/SDK metadata/resource/ref destination/output/file/stateで比較する。native Rust binary8行はaccounts/network無しのpreflightであり、成功したnative binary media取得へ数えない。NDJSON root error policyの実差分をGo-firstで修正する。",
+        "Go ManagerのID昇順・page_countとpage vector不整合による同名overwriteを保持する。runtime worker boundはGo GOMAXPROCSとRust available_parallelismで同一制御ではない。leading-dot suffix/publicationはGo-first追加5行で固定する。任意Go ArtworkKind string custom producerはpermanent Go-only契約を残し、Rust closed enumとのrepresentation差分をpendingに保持する。native filesystem wording/非UTF8/path/platform・全publication IOは未検証。"
       ]
     },
     {
@@ -3258,21 +3268,29 @@
         "crates/pixiv-app/src/download.rs",
         "crates/pixiv-mcp/src/download.rs",
         "crates/pixiv-mcp/src/stdio.rs",
-        "crates/pixiv-cli/src/main.rs"
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-app/src/download/static_artwork.rs",
+        "crates/pixiv-app/src/download/static_filename.rs"
       ],
       "tests": [
         "internal/mcpserver/pixiv/tools/download/migration_direct_test.go",
         "crates/pixiv-mcp/tests/download_direct.rs",
         "crates/pixiv-mcp/tests/download_stdio.rs",
         "internal/mcpserver/pixiv/tools/download/migration_single_lease_test.go",
-        "crates/pixiv-mcp/tests/download_pool.rs"
+        "crates/pixiv-mcp/tests/download_pool.rs",
+        "internal/media/downloader/migration_static_artwork_test.go",
+        "crates/pixiv-app/tests/download_static.rs",
+        "internal/mcpserver/pixiv/tools/download/migration_static_artwork_test.go",
+        "crates/pixiv-mcp/tests/download_static.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "全入力schemaとdirect URL/opaque ref local_path報告25行を固定し、実resource-enabled stdioと保存済みExecutionへ接続する。作品/user/record/ugoira計画とrandom recommendationは未移植。",
+        "全schemaとdirect local_path25行に加えstatic artwork PID/artwork URL29行をgenuine saved default lease・SDK・stdioへ接続する。path/filename/directory defaultsはreal RuntimeConfigから同じproduction conversionを経由する。user/bookmark展開・ugoira・random recommendationは残るworkflowである。",
         "downloadのnotifications/cancelledはcooperative Context取消で通常JSON-RPC結果とpublished prefixを保持する。既存Transport-only serve APIはresource executorを持たず明示errorを返す。",
         "全disconnect/cancel/並行schedule・URL/JSON/native IO/public SDK lifecycleは未検証。",
-        "Go single-default lease3行を追加固定し、Rustはaccount selectionとretryable open failureの2行を実SDK/stateで比較する。deferred close callback errorの第3行はsource-driven契約に留め、native close-error実行へ数えない。"
+        "Go single-default lease3行を追加固定し、Rustはaccount selectionとretryable open failureの2行を実SDK/stateで比較する。deferred close callback errorの第3行はsource-driven契約に留め、native close-error実行へ数えない。",
+        "static metadata unknown wire kindはpublic KindUnknownとしてstaticを保存し、UTC dayを跨ぐdate namingも比較する。notifications/cancelledはpage1 published/page2 live atomic tempのowned stdio schedule1件をGo-firstで比較する。全cancel/disconnect/signal/EOF scheduleのverifiedではない。Go-only lease callback/internal countersをRust adapter Dropと同一視しない。",
+        "Go ManagerのID昇順・page_countとpage vector不整合による同名overwriteを保持する。runtime worker boundはGo GOMAXPROCSとRust available_parallelismで同一制御ではない。leading-dot suffix/publicationはGo-first追加5行で固定する。任意Go ArtworkKind string custom producerはpermanent Go-only契約を残し、Rust closed enumとのrepresentation差分をpendingに保持する。native filesystem wording/非UTF8/path/platform・全publication IOは未検証。"
       ]
     },
     {

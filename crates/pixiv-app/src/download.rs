@@ -1,8 +1,12 @@
+mod static_artwork;
+mod static_filename;
+
 use crate::{
     auth_bundle::go_quote, diagnostics::Event, lifecycle::Context, scheduler::SchedulerError,
 };
 use pixiv_sdk::{
     Client,
+    models::Artwork,
     oauth::LoginUrl,
     reference::{
         REFERENCE_KIND_ARTWORK, REFERENCE_KIND_USER, REFERENCE_KIND_USER_BOOKMARKS, parse_url,
@@ -75,7 +79,12 @@ pub struct DownloadAttempt {
 
 pub type SaveFuture<'a> =
     Pin<Box<dyn Future<Output = Result<SavedResource, SchedulerError>> + Send + 'a>>;
+pub type ArtworkFuture<'a> =
+    Pin<Box<dyn Future<Output = Result<Artwork, SchedulerError>> + Send + 'a>>;
 pub trait DownloadSaveClient: Send + Sync {
+    fn artwork(&self, _context: Context, _id: i64) -> Option<ArtworkFuture<'_>> {
+        None
+    }
     fn supports_direct_urls(&self) -> bool {
         true
     }
@@ -92,6 +101,15 @@ impl NativeDownloadSaveClient {
     }
 }
 impl DownloadSaveClient for NativeDownloadSaveClient {
+    fn artwork(&self, context: Context, id: i64) -> Option<ArtworkFuture<'_>> {
+        Some(Box::pin(async move {
+            tokio::select! {
+                biased;
+                error = context.cancelled() => Err(error.into()),
+                result = self.client.artwork(id) => result.map_err(Into::into),
+            }
+        }))
+    }
     fn save_ref(&self, context: Context, reference: ResourceRef, path: PathBuf) -> SaveFuture<'_> {
         Box::pin(async move {
             tokio::select! {
@@ -178,7 +196,7 @@ async fn execute_download_sources(
     }
     let mut refs = vec![];
     let mut urls = vec![];
-    let mut has_artworks = false;
+    let mut artwork_ids = BTreeSet::new();
     for source in sources {
         if let Some(error) = context.error() {
             attempt.error = Some(error.into());
@@ -187,7 +205,7 @@ async fn execute_download_sources(
         if let Ok(reference) = parse_url(source) {
             match reference.kind.as_str() {
                 REFERENCE_KIND_ARTWORK => {
-                    has_artworks = true;
+                    artwork_ids.insert(reference.id);
                     continue;
                 }
                 REFERENCE_KIND_USER | REFERENCE_KIND_USER_BOOKMARKS => {
@@ -200,8 +218,10 @@ async fn execute_download_sources(
                 }
             }
         }
-        if source.trim().parse::<i64>().is_ok_and(|id| id > 0) {
-            has_artworks = true;
+        if let Ok(id) = source.trim().parse::<i64>()
+            && id > 0
+        {
+            artwork_ids.insert(id);
             continue;
         }
         let trimmed = source.trim();
@@ -219,9 +239,22 @@ async fn execute_download_sources(
             }
         }
     }
-    if has_artworks {
-        attempt.error = Some(message("artwork download is not yet supported"));
-        return attempt;
+    if !artwork_ids.is_empty() {
+        let batch = static_artwork::download_batch(
+            context,
+            client,
+            artwork_ids.into_iter().collect(),
+            request,
+        )
+        .await;
+        attempt.report.items.extend(batch.report.items);
+        attempt.report.failures.extend(batch.report.failures);
+        attempt.report.warnings.extend(batch.report.warnings);
+        attempt.report.committed |= batch.report.committed;
+        if batch.error.is_some() {
+            attempt.error = batch.error;
+            return attempt;
+        }
     }
     for reference in refs {
         if let Some(error) = context.error() {

@@ -199,7 +199,7 @@ async fn frozen_go_direct_source_contract() {
 }
 
 #[tokio::test]
-async fn valid_artwork_and_user_dispatch_remain_explicitly_deferred() {
+async fn save_only_client_artwork_capability_and_user_expansion_remain_explicitly_deferred() {
     for source in [
         "42",
         "https://www.pixiv.net/artworks/42",
