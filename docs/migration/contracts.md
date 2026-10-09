@@ -1373,3 +1373,25 @@ Windows backendはexisting targetへflags0 ReplaceFileWとdisposable recovery ba
 full Rust gateはprivate cleanupのcollapsible-if lintで一度停止し、意味を変えない条件連結へ修正した。その後のrunは終了0になったが、test実行後にsingle Write/count-checkのGo差分をsourceで補正したため最終treeの証明とは数えない。元失敗log/終了1とこの中間runを保持し、最終sourceで同じscripts/check-rust.ps1を全stage再実行し、終了sentinel0・254秒、Formatter/Clippy・workspace290passed/0failed/既存3ignored・release cached0.13秒の完了を確認した。POWERSHELL_TELEMETRY_OPTOUT=1、Cargo offline、既存network restrictionを維持し、この最終runだけをfinal-tree full gate成功として数える。
 
 残る全TOML/非UTF8、FS read/write/close/cleanup/commit fault、platform ACL/Windows/macOS、symlink/concurrency/OS startup、root全flag/help、auth/config他入口・配布信頼を保持する。下位Store/commandのscoped比較をwhole migration完了としない。
+
+## Auth list・pool status/enable/disable
+
+固定Goのauth group/listとpool group/status/enable/disableを、既存local DB/AccountService/pool transactionへ接続する。OAuth・login・実credential生成・実アカウント変更は行わず、synthetic credentials/temp storesだけで固定する。use/remove/import/export/check/refresh/login/hidden callbackはpendingのまま保持し、bare auth helpでGoの残るcommandを削らず、未実装入口は明示errorとする。root helpのauth discoverabilityを追加するが、pending subcommandの実行や全helpの比較済み宣言はしない。
+
+Go [104 targeted CLI行](contracts/cli-auth-accounts.json)は91actual executable/rootと13isolated reader/writer boundaryでstdio/exit/config/DB/stateを比較する。auth自身の--json boolを使いoutput.json設定を継承しない。error machine selectionはflagの値だけでなくChangedも使うため--json=falseのerrorも区別する。prefix help/subcommand discovery・bool/shorthand/unknown exact matching・stdin whole-value/引数優先・UID trim/+decimal・bell quotingを固定し、既存input/quote/config path/helperを再利用する。
+
+Go DTOのempty listはaccounts:null、empty pool statusはaccounts:[]となる。HasTokenはsummary経由で常にtrueでありsecret bytesを検査・表示しない。premium_checked_at/warningはGo mapperがコピーしないので推測追加しない。listはBackground、status/changeはcommand contextを使う。human writer errorは無視するがJSON writer errorは返し、JSON successful short countはGo同様無視する。5short-write行・human/JSON writer error・noinput/read failureを別境界として比較する。
+
+Domain [12行](contracts/auth-account-views.json)と別のpaired Go/Rust unitはpool snapshot→list→per-account default fresh readを固定する。implicit fallbackはその都度先頭stored accountを再取得し、explicit stale UIDはerrorではなく全default:false、empty listはdefault storeを読まない。複数default summaryが生じる場合のadapterはGo同様最後のIDを採用する。real DB snapshotはexpired <=now freezeをtransactionally clearしupdated_atを変更しない。disabled future freezeもstatus earliestへ入る。
+
+既存contextless DB APIを残し、genuine context-aware variantsを同じvalidation/transactionへ追加する。selected/all membershipはunknown/duplicate/invalid UIDでbatch全体を失敗させ、freeze/marker/credential revision・token/premium/cache/created_atを変更しない。Go-first trigger-abort unitでselected/all rollbackを比較する。snapshot/settersはtransaction前/commit前にcontextを検査するが、blocked SQLite/mutex中の即時取消を実証したとは扱わない。storageの既存equal-now比較と、service clockの全境界を区別する。
+
+Go-first year10000・max i64・mixed正常future/maxのhuman/JSON例で、Chrono range外のtimestampを黙って落とさない。integer UTC formatterはGoのexpanded positive yearへ'+'を付けず、JSONは[0,9999]外をGoのTime.MarshalJSON errorで拒否する。Go Time.BeforeはUnix+62135596800をwrapping i64のinternal secondsとして比較するため、earliestを文字列sortや単純epoch minにせず対応keyを使う。対象例を全日時/range/clockの保証へ外挿しない。
+
+初回Rust reader-error比較はGo exit2に対してexit1で失敗し、shared Usage分類へ修正した。max synthetic stateはGo test helperのfloat64 roundtripが9223372036854775807を9223372036854776000へ丸めていたため、typed int64/*int64のactual SQL captureへ修正した。元bad artifactと失敗logを保持し、6max/mixed state値だけを正し、stdout/stderr/config/exitは変更しない。Rust値を誤ったfloatへ正規化して合格にはしない。
+
+新fixture2filesは116行・94,038bytesで、CLI91actualroot/13boundaryとdomain12を区別し、別unitをrow件数へ加算しない。app4focusedとCLI3focused（boundaries0.05秒/startup0.58秒）が成功した。Go account/storage全synthetic suite/vet、CLI104 replay/vet、broad CLI37.817秒が成功した。Go Cargo interop flag未指定のskipと既存Linux snapshot不在1testの除外を保持し、strict全Go passとはしない。
+
+full Rust scriptはapp testのcollapsible-else-ifとauth flag scannerのnonminimal-boolで停止した。意味を変えない形へ補正し、各失敗log/終了1を保持して同じ全stageを再実行した。POWERSHELL_TELEMETRY_OPTOUT=1・Cargo offline・既存network restrictionを維持し、終了sentinel0・310秒、Formatter/Clippy・workspace297passed/0failed/既存3ignored・release35.62秒の完了を確認した。既存auth/pool groupのwindows-amd64 foundation証拠は保持するが、新local CLI scopeの比較はLinuxのみでありWindows実行へ外挿しない。
+
+実startup/update/OS hooks・diagnostics/DB close報告、全時間/UID/UTF8/flag/help、SQL実行中取消/blocked mutex/並行、Windows/macOS/全arch・配布信頼を保持する。local auth4leafの比較をauth全機能やwhole migrationの完了としない。

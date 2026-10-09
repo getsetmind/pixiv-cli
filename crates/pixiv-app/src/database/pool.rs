@@ -51,6 +51,7 @@ pub enum PoolError {
         earliest_frozen_until: Option<i64>,
     },
     Account(AccountError),
+    Context(crate::lifecycle::ContextError),
     Storage(rusqlite::Error),
     Message(String),
     UnknownSelection(String),
@@ -62,6 +63,7 @@ impl fmt::Display for PoolError {
                 write!(f, "pixiv account pool selection failed: {}", kind.as_str())
             }
             Self::Account(error) => fmt::Display::fmt(error, f),
+            Self::Context(error) => fmt::Display::fmt(error, f),
             Self::Storage(error) => fmt::Display::fmt(error, f),
             Self::Message(message) => f.write_str(message),
             Self::UnknownSelection(kind) => {
@@ -74,6 +76,7 @@ impl std::error::Error for PoolError {
     fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
         match self {
             Self::Account(error) => Some(error),
+            Self::Context(error) => Some(error),
             Self::Storage(error) => Some(error),
             _ => None,
         }
@@ -141,6 +144,15 @@ fn random_index(size: usize) -> Result<i64, PoolError> {
 
 impl Database {
     pub fn set_pixiv_schedulable(&mut self, ids: &[i64], enabled: bool) -> Result<(), PoolError> {
+        self.set_pixiv_schedulable_with_context(&crate::lifecycle::Context::new(), ids, enabled)
+    }
+
+    pub fn set_pixiv_schedulable_with_context(
+        &mut self,
+        context: &crate::lifecycle::Context,
+        ids: &[i64],
+        enabled: bool,
+    ) -> Result<(), PoolError> {
         if ids.is_empty() {
             return Err(PoolError::Message(
                 "database: account pool requires at least one user id".into(),
@@ -158,6 +170,9 @@ impl Database {
                     "database: duplicate account pool user id {id}"
                 )));
             }
+        }
+        if let Some(error) = context.error() {
+            return Err(PoolError::Context(error));
         }
         let transaction = self.connection.transaction()?;
         let placeholders = vec!["?"; ids.len()].join(",");
@@ -178,16 +193,33 @@ impl Database {
             &format!("UPDATE pixiv_account SET schedulable=?,updated_at=? WHERE user_id IN ({placeholders})"),
             params_from_iter(values),
         )?;
+        if let Some(error) = context.error() {
+            return Err(PoolError::Context(error));
+        }
         transaction.commit()?;
         Ok(())
     }
 
     pub fn set_all_pixiv_schedulable(&mut self, enabled: bool) -> Result<(), PoolError> {
+        self.set_all_pixiv_schedulable_with_context(&crate::lifecycle::Context::new(), enabled)
+    }
+
+    pub fn set_all_pixiv_schedulable_with_context(
+        &mut self,
+        context: &crate::lifecycle::Context,
+        enabled: bool,
+    ) -> Result<(), PoolError> {
+        if let Some(error) = context.error() {
+            return Err(PoolError::Context(error));
+        }
         let transaction = self.connection.transaction()?;
         transaction.execute(
             "UPDATE pixiv_account SET schedulable=?1,updated_at=?2",
             params![enabled, Utc::now().timestamp()],
         )?;
+        if let Some(error) = context.error() {
+            return Err(PoolError::Context(error));
+        }
         transaction.commit()?;
         Ok(())
     }
@@ -201,6 +233,17 @@ impl Database {
     }
 
     pub fn list_pixiv_pool_status(&mut self, now: i64) -> Result<PoolStatus, PoolError> {
+        self.list_pixiv_pool_status_with_context(&crate::lifecycle::Context::new(), now)
+    }
+
+    pub fn list_pixiv_pool_status_with_context(
+        &mut self,
+        context: &crate::lifecycle::Context,
+        now: i64,
+    ) -> Result<PoolStatus, PoolError> {
+        if let Some(error) = context.error() {
+            return Err(PoolError::Context(error));
+        }
         let transaction = self.connection.transaction()?;
         clear_expired(&transaction, now)?;
         let accounts = candidates(&transaction, now, "", &[])?;
@@ -208,6 +251,9 @@ impl Database {
             .iter()
             .filter_map(|account| account.pool_frozen_until)
             .min();
+        if let Some(error) = context.error() {
+            return Err(PoolError::Context(error));
+        }
         transaction.commit()?;
         Ok(PoolStatus {
             accounts,

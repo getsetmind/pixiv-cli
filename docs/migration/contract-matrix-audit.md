@@ -49,3 +49,5 @@ SDK144、CLI98 main+81 pool+30実startup、MCP72+4 poolの429行を8files・672,
 Comment mutation checkpointは6fixture・457行・305,470bytes。SDK136、CLI146（140exact/6rejection-only）+46actual startup+22realpool、MCP99+8realpoolで、451exactと6standalone parser/no-effectを区別する。validation/wire/headerとleaf/schema/write-commitの独立境界をtargetedで固定し、既存common helperを再利用する。先のread matrixをそのままmutation全直積へ拡張しない。
 
 Config checkpointは2fixture・148行・97,351bytes。Store35とCLI113（100actual executable/13isolated reader-writer boundary）をすべてscope内exactで比較し、別の型/秘匿性/FS unitをfixture行数へ加算しない。12managed key表とschema/storage機構を共有し、環境・parser・writerの全直積を作らず独立boundaryをtargetedに固定する。Windows source reviewをplatform実行件数と数えない。
+
+Auth list/pool checkpointは2fixture・116行・94,038bytes。CLI104（91actualroot/13reader-writer boundary）とdomain12を全scope exact比較し、別defaultread/trigger rollback unitを加算しない。既存DB validation/transactionとcommon input/quote/JSON/pathを共有する。極端時刻/state captureのprecisionは型付きactual SQLで保持し、float正規化でfixtureを合わせない。flags/writer/default/pool全直積は作らない。

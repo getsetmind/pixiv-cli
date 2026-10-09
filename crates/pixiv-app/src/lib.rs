@@ -1,4 +1,5 @@
 pub mod account_service;
+pub mod account_views;
 pub mod config;
 pub mod connection;
 pub mod database;

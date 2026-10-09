@@ -1,5 +1,5 @@
 use crate::{
-    database::{Database, PixivAccount},
+    database::{Database, PixivAccount, PoolStatus},
     lifecycle::Context,
     scheduler::SchedulerError,
 };
@@ -11,7 +11,33 @@ use pixiv_sdk::{
 };
 use std::sync::{Arc, Mutex};
 
+pub use crate::account_views::AccountSummary;
+
 pub trait AccountRepository: Send + Sync {
+    fn pool_status(&self, _context: &Context, _now: i64) -> Result<PoolStatus, SchedulerError> {
+        Err(SchedulerError::Message(
+            "pixiv account pool repository is not configured".into(),
+        ))
+    }
+    fn set_pool_schedulable(
+        &self,
+        _context: &Context,
+        _ids: &[i64],
+        _enabled: bool,
+    ) -> Result<(), SchedulerError> {
+        Err(SchedulerError::Message(
+            "pixiv account pool repository is not configured".into(),
+        ))
+    }
+    fn set_all_pool_schedulable(
+        &self,
+        _context: &Context,
+        _enabled: bool,
+    ) -> Result<(), SchedulerError> {
+        Err(SchedulerError::Message(
+            "pixiv account pool repository is not configured".into(),
+        ))
+    }
     fn get(&self, context: &Context, user_id: i64) -> Result<PixivAccount, SchedulerError>;
     fn list(&self, context: &Context) -> Result<Vec<PixivAccount>, SchedulerError>;
     fn rotate(
@@ -24,6 +50,37 @@ pub trait AccountRepository: Send + Sync {
 }
 
 impl AccountRepository for Mutex<Database> {
+    fn pool_status(&self, context: &Context, now: i64) -> Result<PoolStatus, SchedulerError> {
+        let mut database = self.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
+        if let Some(error) = context.error() {
+            return Err(error.into());
+        }
+        database
+            .list_pixiv_pool_status_with_context(context, now)
+            .map_err(Into::into)
+    }
+    fn set_pool_schedulable(
+        &self,
+        context: &Context,
+        ids: &[i64],
+        enabled: bool,
+    ) -> Result<(), SchedulerError> {
+        self.lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner())
+            .set_pixiv_schedulable_with_context(context, ids, enabled)
+            .map_err(Into::into)
+    }
+    fn set_all_pool_schedulable(
+        &self,
+        context: &Context,
+        enabled: bool,
+    ) -> Result<(), SchedulerError> {
+        self.lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner())
+            .set_all_pixiv_schedulable_with_context(context, enabled)
+            .map_err(Into::into)
+    }
+
     fn get(&self, context: &Context, user_id: i64) -> Result<PixivAccount, SchedulerError> {
         if let Some(error) = context.error() {
             return Err(error.into());
