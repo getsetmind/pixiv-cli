@@ -15,6 +15,8 @@ pub(crate) enum Source {
     Ranking(pixiv_sdk::pixiv::NovelRankingRequest),
     Following(pixiv_sdk::pixiv::FollowingNovelsRequest),
     Latest(pixiv_sdk::pixiv::LatestNovelsRequest),
+    MyPixiv(pixiv_sdk::pixiv::MyPixivNovelsRequest),
+    MyPixivUser(pixiv_sdk::pixiv::UserNovelsRequest),
     Bookmarks(
         pixiv_sdk::pixiv::UserNovelBookmarksRequest,
         Arc<std::sync::atomic::AtomicI64>,
@@ -134,6 +136,14 @@ pub(crate) async fn attempt<T: Transport, W: Write>(
                     Source::Following(mut request) => {
                         request.cursor = cursor;
                         client.following_novels(request).await
+                    }
+                    Source::MyPixiv(mut request) => {
+                        request.cursor = cursor;
+                        client.my_pixiv_novels(request).await
+                    }
+                    Source::MyPixivUser(mut request) => {
+                        request.cursor = cursor;
+                        client.user_novels(request).await
                     }
                     Source::Latest(mut request) => {
                         request.cursor = cursor;

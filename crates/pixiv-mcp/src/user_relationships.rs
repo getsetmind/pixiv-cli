@@ -199,7 +199,7 @@ pub(crate) async fn saved_relationship<T: Transport + 'static>(
         .await;
     result(collected, limit, &plan)
 }
-fn result(
+pub(crate) fn result(
     output: Result<(Vec<UserPreview>, bool), SchedulerError>,
     limit: Option<i64>,
     plan: &crate::search::Plan,

@@ -1,13 +1,10 @@
-use crate::{CallToolResult, IllustFilter, NovelFilter, SearchIllustInput};
+use crate::{CallToolResult, IllustFilter, NovelFilter, SearchIllustInput, UserFilter};
 use pixiv_app::scheduler::SchedulerError;
 use pixiv_sdk::{
     Client,
     cursor::Cursor,
-    models::{Artwork, Novel},
-    pixiv::{
-        FollowingArtworksRequest, FollowingNovelsRequest, LatestArtworksRequest,
-        LatestNovelsRequest,
-    },
+    models::{Artwork, Novel, UserPreview},
+    pixiv::{MyPixivArtworksRequest, MyPixivNovelsRequest, MyPixivUsersRequest},
     transport::Transport,
 };
 use serde::Deserialize;
@@ -15,54 +12,49 @@ use serde_json::{Value, json};
 use std::collections::BTreeSet;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub enum Timeline {
-    IllustFollowing,
-    NovelFollowing,
-    IllustLatest,
-    NovelLatest,
+pub enum MyPixiv {
+    Artworks,
+    Novels,
+    Users,
 }
-impl Timeline {
+impl MyPixiv {
     pub fn from_name(name: &str) -> Option<Self> {
         match name {
-            "timeline_illust_following" => Some(Self::IllustFollowing),
-            "timeline_novel_following" => Some(Self::NovelFollowing),
-            "timeline_illust_latest" => Some(Self::IllustLatest),
-            "timeline_novel_latest" => Some(Self::NovelLatest),
+            "mypixiv_illusts" => Some(Self::Artworks),
+            "mypixiv_novels" => Some(Self::Novels),
+            "mypixiv_users" => Some(Self::Users),
             _ => None,
         }
     }
     pub fn operation(self) -> &'static str {
         match self {
-            Self::IllustFollowing => "FollowingArtworks",
-            Self::NovelFollowing => "FollowingNovels",
-            Self::IllustLatest => "LatestArtworks",
-            Self::NovelLatest => "LatestNovels",
+            Self::Artworks => "MyPixivArtworks",
+            Self::Novels => "MyPixivNovels",
+            Self::Users => "MyPixivUsers",
         }
     }
     fn artworks(self) -> bool {
-        matches!(self, Self::IllustFollowing | Self::IllustLatest)
+        self == Self::Artworks
     }
 }
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(default)]
-pub struct TimelineInput {
-    pub restrict: String,
-    pub content_type: String,
+pub struct MyPixivInput {
     pub illust_filter: Option<IllustFilter>,
     pub novel_filter: Option<NovelFilter>,
+    pub user_filter: Option<UserFilter>,
     pub page: Option<i64>,
     pub limit: Option<i64>,
 }
-pub fn timeline_tool(kind: Timeline) -> Value {
+pub fn my_pixiv_tool(kind: MyPixiv) -> Value {
     serde_json::from_str(match kind {
-        Timeline::IllustFollowing => include_str!("../schemas/timeline-illust-following.json"),
-        Timeline::NovelFollowing => include_str!("../schemas/timeline-novel-following.json"),
-        Timeline::IllustLatest => include_str!("../schemas/timeline-illust-latest.json"),
-        Timeline::NovelLatest => include_str!("../schemas/timeline-novel-latest.json"),
+        MyPixiv::Artworks => include_str!("../schemas/mypixiv-illusts.json"),
+        MyPixiv::Novels => include_str!("../schemas/mypixiv-novels.json"),
+        MyPixiv::Users => include_str!("../schemas/mypixiv-users.json"),
     })
-    .expect("timeline schema is valid JSON")
+    .expect("my_pixiv schema is valid JSON")
 }
-pub(crate) fn decode(kind: Timeline, arguments: Option<&Value>) -> Result<TimelineInput, String> {
+pub(crate) fn decode(kind: MyPixiv, arguments: Option<&Value>) -> Result<MyPixivInput, String> {
     let mut arguments = arguments
         .filter(|value| !value.is_null())
         .cloned()
@@ -79,16 +71,12 @@ pub(crate) fn decode(kind: Timeline, arguments: Option<&Value>) -> Result<Timeli
     }
     crate::search::validate_schema_with_bindings(
         &mut arguments,
-        &timeline_tool(kind)["inputSchema"],
+        &my_pixiv_tool(kind)["inputSchema"],
         "",
         "invalid params: validating \"arguments\": validating root",
         &|path| {
             (
-                if kind == Timeline::IllustFollowing {
-                    "followIn"
-                } else {
-                    "In"
-                },
+                "In",
                 if path.ends_with("/id") {
                     "int64"
                 } else {
@@ -99,7 +87,7 @@ pub(crate) fn decode(kind: Timeline, arguments: Option<&Value>) -> Result<Timeli
     )?;
     serde_json::from_value(arguments).map_err(|error| format!("invalid params: {error}"))
 }
-fn common(input: &TimelineInput) -> SearchIllustInput {
+fn common(input: &MyPixivInput) -> SearchIllustInput {
     SearchIllustInput {
         illust_filter: input.illust_filter.clone(),
         page: input.page,
@@ -107,24 +95,24 @@ fn common(input: &TimelineInput) -> SearchIllustInput {
         ..Default::default()
     }
 }
-fn validate(kind: Timeline, input: &mut TimelineInput) -> Result<crate::search::Plan, String> {
-    if kind == Timeline::IllustLatest && !matches!(input.content_type.as_str(), "illust" | "manga")
-    {
-        return Err("content_type must be one of: illust, manga".into());
-    }
-    if input.restrict.is_empty() {
-        input.restrict = "public".into();
-    }
-    let plan = crate::search::validate(&mut common(input))?;
+fn validate(kind: MyPixiv, input: &mut MyPixivInput) -> Result<crate::search::Plan, String> {
+    let mut pagination = common(input);
     if !kind.artworks() {
+        pagination.illust_filter = None;
+    }
+    let plan = crate::search::validate(&mut pagination)?;
+    if kind == MyPixiv::Novels {
         crate::novel_search::validate_filter(input.novel_filter.as_ref())?;
+    }
+    if kind == MyPixiv::Users {
+        crate::user_search::validate_filter(input.user_filter.as_ref())?;
     }
     Ok(plan)
 }
-pub async fn timeline<T: Transport>(
+pub async fn my_pixiv<T: Transport>(
     client: &Client<T>,
-    kind: Timeline,
-    mut input: TimelineInput,
+    kind: MyPixiv,
+    mut input: MyPixivInput,
 ) -> CallToolResult {
     let plan = match validate(kind, &mut input) {
         Ok(plan) => plan,
@@ -136,19 +124,25 @@ pub async fn timeline<T: Transport>(
             &common(&input),
             &plan,
         )
+    } else if kind == MyPixiv::Users {
+        crate::user_relationships::result(
+            collect_users(client, &input, &plan).await,
+            input.limit,
+            &plan,
+        )
     } else {
-        novel_result(
+        crate::timeline::novel_result(
             collect_novels(client, kind, &input, &plan).await,
             input.limit,
             &plan,
         )
     }
 }
-pub(crate) async fn saved_timeline<T: Transport + 'static>(
+pub(crate) async fn saved_my_pixiv<T: Transport + 'static>(
     execution: &pixiv_app::execution::Execution<T>,
     context: &pixiv_app::lifecycle::Context,
-    kind: Timeline,
-    mut input: TimelineInput,
+    kind: MyPixiv,
+    mut input: MyPixivInput,
     proxy: Option<&str>,
 ) -> CallToolResult {
     let plan = match validate(kind, &mut input) {
@@ -164,6 +158,14 @@ pub(crate) async fn saved_timeline<T: Transport + 'static>(
             })
             .await;
         crate::search::search_result(output, &common(&input), &plan)
+    } else if kind == MyPixiv::Users {
+        let output = execution
+            .read(context, 0, proxy, move |_, client| {
+                let input = requested.clone();
+                async move { collect_users(&client, &input, &plan).await }
+            })
+            .await;
+        crate::user_relationships::result(output, input.limit, &plan)
     } else {
         let output = execution
             .read(context, 0, proxy, move |_, client| {
@@ -171,34 +173,13 @@ pub(crate) async fn saved_timeline<T: Transport + 'static>(
                 async move { collect_novels(&client, kind, &input, &plan).await }
             })
             .await;
-        novel_result(output, input.limit, &plan)
-    }
-}
-pub(crate) fn novel_result(
-    output: Result<(Vec<Novel>, bool), SchedulerError>,
-    limit: Option<i64>,
-    plan: &crate::search::Plan,
-) -> CallToolResult {
-    match output {
-        Ok((items, more)) => {
-            let mut records = vec![];
-            for item in &items {
-                let mut record = match pixiv_record::from_novel(item) {
-                    Ok(record) => record,
-                    Err(error) => return crate::search::failure(error.to_string()),
-                };
-                crate::structured_wire_numbers(&mut record);
-                records.push(record)
-            }
-            crate::search::list_result(records, more, None, limit, plan)
-        }
-        Err(error) => crate::search::failure(error.to_string()),
+        crate::timeline::novel_result(output, input.limit, &plan)
     }
 }
 async fn collect_artworks<T: Transport>(
     client: &Client<T>,
-    kind: Timeline,
-    input: &TimelineInput,
+    _kind: MyPixiv,
+    input: &MyPixivInput,
     plan: &crate::search::Plan,
 ) -> Result<(Vec<Artwork>, bool, Option<Value>), SchedulerError> {
     let local = pixiv_app::search_filter::normalize_filter(
@@ -219,26 +200,10 @@ async fn collect_artworks<T: Transport>(
         },
         Cursor::default(),
         |cursor| async move {
-            let page = match kind {
-                Timeline::IllustFollowing => {
-                    client
-                        .following_artworks(FollowingArtworksRequest {
-                            restrict: input.restrict.clone(),
-                            cursor,
-                        })
-                        .await
-                }
-                Timeline::IllustLatest => {
-                    client
-                        .latest_artworks(LatestArtworksRequest {
-                            content_type: input.content_type.clone(),
-                            cursor,
-                        })
-                        .await
-                }
-                _ => unreachable!("artwork timeline"),
-            }
-            .map_err(SchedulerError::from)?;
+            let page = client
+                .my_pixiv_artworks(MyPixivArtworksRequest { cursor })
+                .await
+                .map_err(SchedulerError::from)?;
             Ok((page.items, page.next))
         },
         |item: &Artwork| {
@@ -259,8 +224,8 @@ async fn collect_artworks<T: Transport>(
 }
 async fn collect_novels<T: Transport>(
     client: &Client<T>,
-    kind: Timeline,
-    input: &TimelineInput,
+    _kind: MyPixiv,
+    input: &MyPixivInput,
     plan: &crate::search::Plan,
 ) -> Result<(Vec<Novel>, bool), SchedulerError> {
     let mut seen = BTreeSet::new();
@@ -272,25 +237,52 @@ async fn collect_novels<T: Transport>(
         },
         Cursor::default(),
         |cursor| async move {
-            let page = match kind {
-                Timeline::NovelFollowing => {
-                    client
-                        .following_novels(FollowingNovelsRequest {
-                            restrict: input.restrict.clone(),
-                            cursor,
-                        })
-                        .await
-                }
-                Timeline::NovelLatest => client.latest_novels(LatestNovelsRequest { cursor }).await,
-                _ => unreachable!("novel timeline"),
-            }
-            .map_err(SchedulerError::from)?;
+            let page = client
+                .my_pixiv_novels(MyPixivNovelsRequest { cursor })
+                .await
+                .map_err(SchedulerError::from)?;
             Ok((page.items, page.next))
         },
         |item: &Novel| {
             Ok(
                 crate::novel_search::matches(item, input.novel_filter.as_ref())
                     && seen.insert(item.id),
+            )
+        },
+        None::<fn(Cursor, usize) -> Result<Cursor, SchedulerError>>,
+    )
+    .await
+    .map_err(|error| match error.cause {
+        pixiv_app::pagination::Cause::Source(error) => error,
+        pixiv_app::pagination::Cause::Message(message) => SchedulerError::Message(message),
+    })?;
+    Ok((page.items, page.result.has_more))
+}
+
+async fn collect_users<T: Transport>(
+    client: &Client<T>,
+    input: &MyPixivInput,
+    plan: &crate::search::Plan,
+) -> Result<(Vec<UserPreview>, bool), SchedulerError> {
+    let mut seen = BTreeSet::new();
+    let page = pixiv_app::pagination::collect_pages(
+        pixiv_app::pagination::Plan {
+            skip: plan.skip,
+            limit: plan.limit.max(0),
+            one_batch: plan.one_batch,
+        },
+        Cursor::default(),
+        |cursor| async move {
+            let page = client
+                .my_pixiv_users(MyPixivUsersRequest { cursor })
+                .await
+                .map_err(SchedulerError::from)?;
+            Ok((page.items, page.next))
+        },
+        |item: &UserPreview| {
+            Ok(
+                crate::user_search::matches(item, input.user_filter.as_ref())
+                    && seen.insert(item.user.id),
             )
         },
         None::<fn(Cursor, usize) -> Result<Cursor, SchedulerError>>,

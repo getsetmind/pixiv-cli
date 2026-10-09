@@ -1237,3 +1237,34 @@ cargo test -p pixiv-cli-rs --test timeline --test timeline_startup --test timeli
 Go broad regressionのSDK、timeline command、CLI migration（33.843秒）、MCP（78.188秒）、vet・migration台帳検査は成功した。既存のLinux snapshot不在による1 test除外と3個の限定diagnostic opt-inを保持し、strict全Go確認とは扱わない。full Rust gateではCLI-hosted MCPの旧34 countとbookmark-readの旧34 names assertionが順に失敗した。旧assertionの意味を保持して38件へ追加し、implemented namesと独立Go metadata lookupをtests/の共通helperで再利用する。schema-loaderとregistrationの一致、request-ID、独立hostの検査は別に保持する。失敗ログも保存する。
 
 最終 `scripts/check-rust.ps1` はLinux amd64でexit0、218秒。Formatter、全target Clippy（warnings denied）、workspace tests（248 passed、既存helper3 ignored）、workspace release（32.00秒）が成功した。共通catalog helperへの整理後の全treeで実行し、途中の旧catalog失敗を成功扱いにしない。Go本番・go.mod・go.sumは固定参照commitから差分0。operation/入口のscoped確認を、全wire・通信・他platform・最終切替のverifiedとは扱わない。
+
+## MyPixiv の SDK・CLI・MCP
+
+固定Goの実在する3feedを移植する。SDK `MyPixivArtworks`/`MyPixivNovels`/`MyPixivUsers` と各request型、CLI `mypixiv users` と `mypixiv works [USER_ID]`、MCP `mypixiv_illusts`/`mypixiv_novels`/`mypixiv_users` を接続する。実Pixiv通信・実アカウント操作は使用しない。
+
+SDK [195 targeted行](../../crates/pixiv-sdk/tests/fixtures/mypixiv.json)でDTO/resource、body型/null、exact query bytes、positive offset、operation/account/instance bindingを固定する。artwork/novel feedのwire queryはoffsetだけで、next URLにもrestrict/filterを許さない。MyPixivUsersはidentityをcursorより先に検査し、wireのuser_id/filterをempty cursor digestへ混ぜない。user previewは既存のexact raw decoderを再利用し、body fixtureをRawValueで渡す。重複keyのmergeは既存wire契約の範囲であり、今回の195行による新たな比較とは数えない。MyPixivArtworksのowner IDもpositiveが必須であり、他feedのvalidatorを変更しない。cached resourceのopenと既存timeline/関係一覧の回帰を比較する。anonymous envelope iは既存Go共通helper同様instance placeholderで比較し、nonce bytesは未検証。
+
+CLI [main77行](contracts/cli-mypixiv.json)の75行は直接処理と合成保存済みExecutionのexact比較、2行はCobra leaf parserに対するRust拒否のみであり、exact standalone診断/exitは未検証。[startup25行](contracts/cli-mypixiv-startup.json)は24実process比較と1 injected reader-error証拠で、後者はmainの入力境界で比較し実process通過と数えない。[scalar33行](contracts/cli-mypixiv-flags.json)は実startupとnormalized production parser値を比較する。[pool18行](contracts/cli-mypixiv-pool.json)は要求/replay/commit境界、selection/freeze/revision、writer/EPIPE、leaseを比較する。
+
+usersはno-inputでautomatic NDJSONを行わず、authenticated UIDのheadingとraw `ID NAME`を出力する。worksはoptional text入力を解決し、automatic NDJSONを保持する。aggregate worksはartwork/illust・novel、USER_ID付きはmangaも受け付ける。explicit-IDは既存UserArtworks/UserNovels SDKへ委譲するが、MyPixiv固有のraw author/tag/title human表示を共有listのsource variantで維持する。mangaもheadingはartworks by ID。timelineの実Go scalar parserをMyPixivへ再利用し、他command familyを変更しない。
+
+MCP [135行](contracts/mcp-mypixiv.json)は16共有bodyからschema/DTO/record/filter-before-window/dedup、exact出力・要求と直接/raw/保存済みstdio境界を比較する。[6 real-pool行](contracts/mcp-mypixiv-pool.json)では3toolのsuccess/malformedを各2callで検査し、全collection replay、OAuth保存、account42→43のusers identity、gate再利用を保持する。旧38tool全entryを変更せず3toolを末尾へ追加し、41件のordered catalogと全metadataを独立Go referenceへ比較する。既存schema-loader full-arrayの断言も3entryだけ追加する。novel/user record renderingは既存production-internal helperを再利用する。
+
+fixture9 filesは810,546 bytes（約0.77 MiB）、489行であり、distinct behavior数や移植率ではない。新たな全直積は作らず、境界の相互作用と共有bodyを使用する。最初のMCP比較は追加toolのunknown-tool guard不足で失敗し、固定期待値を変えずadditive dispatchを修正した。次の比較で既存38-entry schema-loader assertionが失敗し、意味を保持して3entryを追加した。最初のfull gateのClippy nonminimal_boolはDe Morgan同値の条件に変更し、失敗ログを残す。
+
+User/SearchUsers/4関係一覧/MyPixivUsers以外のraw-wire casing/duplicates/order/null、不正UTF-8・任意precision・全cursor payload、既存root parser3差分/Linux snapshot、timeline/MyPixiv以外のscalar forms、group help/全flag/help/TTY/OS hooks、既知の非決定的Go diagnostic、全通信/Options/auth/取消/deadline/concurrency/disconnect、実HTTPS/resource、他OS/archと配布の署名/信頼は未検証。scoped比較成功と操作全体のverified・最終切替を区別する。
+
+```text
+go test ./sdk/... ./internal/cli/commands/pixiv/mypixiv -count=1
+go test ./internal/cli -run '^TestMigration' -skip '^TestMigrationCLIContractKeepsCommandsAliasesAndFlags$' -count=1
+go test ./internal/mcpserver/pixiv -count=1 -args -migration-skip-nondeterministic-novel-property-order -migration-skip-nondeterministic-user-works-violation-selection -migration-mcp-bookmark-reads-allow-diagnostic-order
+go vet ./sdk/pixiv ./internal/cli ./internal/cli/commands/pixiv/mypixiv ./internal/mcpserver/pixiv
+go test ./scripts/tests/migration -count=1
+cargo test -p pixiv-sdk --test mypixiv --test timeline --test user_relationships --locked
+cargo test -p pixiv-mcp --test mypixiv --test mypixiv_pool --test timeline --test timeline_pool --test user_relationships --test stdio --locked
+cargo test -p pixiv-cli-rs --test mypixiv --test mypixiv_startup --test mypixiv_pool --test timeline --test timeline_pool --test user_relationships --test mcp_stdio --locked
+```
+
+Go broad回帰はSDK/MyPixiv command、CLI migration40.218秒、MCP122.823秒とvetが成功した。Linux snapshot不在の1test除外と既存3scopeの非決定的diagnostic opt-inを保持し、strict全Go成功とは扱わない。SDK最終fixture replayは0.023秒、CLI captureは0.471秒、MCP最終main/pool replayは約8.4秒。Rust focusedはSDK0.05秒と既存timeline0.08秒/関係0.09秒、CLI main/flags/identity0.25秒、pool0.08秒、startup/flags0.79秒、MCP main5.63秒/pool0.06秒。cloud Linuxでの観測値を他platformやdistinct behaviorへ外挿しない。独立レビューでdocsの重複key比較claimを確認し、このfixtureに実際にはないため削除した。期待値や行は変更していない。
+
+最終 `scripts/check-rust.ps1` はLinux amd64でexit0、285秒。Formatter、全target Clippy（warnings denied）、workspace tests（258 passed、0 failed、既存helper3 ignored）、workspace release（32.54秒）が成功した。旧catalog失敗とClippy失敗後の最終source treeで全gateを通し、部分ログを成功扱いにしない。Go本番・go.mod・go.sumは固定参照から差分0、gofmt/vet・台帳validatorも成功した。今回の契約固定・接続・修正・検証は約17分。scoped Linux比較を全wire/通信/他platformのverifiedや最終切替とは扱わない。

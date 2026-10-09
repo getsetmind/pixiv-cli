@@ -27,6 +27,14 @@ pub struct LatestArtworksRequest {
 pub struct LatestNovelsRequest {
     pub cursor: Cursor,
 }
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
+pub struct MyPixivArtworksRequest {
+    pub cursor: Cursor,
+}
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
+pub struct MyPixivNovelsRequest {
+    pub cursor: Cursor,
+}
 #[derive(Deserialize)]
 struct ArtworksEnvelope {
     illusts: Option<Vec<Value>>,
@@ -43,7 +51,10 @@ struct Position<'a> {
     v: i64,
 }
 fn following(operation: &str) -> bool {
-    matches!(operation, "FollowingArtworks" | "FollowingNovels")
+    matches!(
+        operation,
+        "FollowingArtworks" | "FollowingNovels" | "MyPixivArtworks" | "MyPixivNovels"
+    )
 }
 fn restrict(value: String, operation: &'static str) -> Result<String> {
     match value.as_str() {
@@ -108,6 +119,7 @@ impl<T: Transport> Client<T> {
                 &["max_illust_id", "offset"],
             ),
             "LatestNovels" => (&["filter", "max_novel_id"], &["max_novel_id"]),
+            "MyPixivArtworks" | "MyPixivNovels" => (&["offset"], &["offset"]),
             _ => (&["restrict", "offset"], &["offset"]),
         };
         let (key, value) = crate::continuation::next_keyed_value(
@@ -126,6 +138,27 @@ impl<T: Transport> Client<T> {
             Error::new(Reason::UpstreamError, operation).with_detail("cannot encode cursor")
         })?;
         Cursor::new("pixiv", operation, 1, digest, &payload, options)
+    }
+    pub async fn my_pixiv_artworks(
+        &self,
+        request: MyPixivArtworksRequest,
+    ) -> Result<Page<Artwork>> {
+        self.timeline_artworks(
+            "MyPixivArtworks",
+            "/v2/illust/mypixiv",
+            BTreeMap::new(),
+            request.cursor,
+        )
+        .await
+    }
+    pub async fn my_pixiv_novels(&self, request: MyPixivNovelsRequest) -> Result<Page<Novel>> {
+        self.timeline_novels(
+            "MyPixivNovels",
+            "/v1/novel/mypixiv",
+            BTreeMap::new(),
+            request.cursor,
+        )
+        .await
     }
     pub async fn following_artworks(
         &self,
@@ -183,6 +216,17 @@ impl<T: Transport> Client<T> {
         let envelope: ArtworksEnvelope = serde_json::from_value(body).map_err(|_| malformed())?;
         let values = envelope.illusts.ok_or_else(malformed)?;
         crate::artwork::validate_list(&values, operation)?;
+        if operation == "MyPixivArtworks"
+            && values.iter().any(|value| {
+                value
+                    .get("user")
+                    .and_then(|user| user.get("id"))
+                    .and_then(Value::as_i64)
+                    .is_none_or(|id| id <= 0)
+            })
+        {
+            return Err(malformed());
+        }
         let next =
             self.timeline_next(operation, endpoint, &digest, envelope.next_url.as_deref())?;
         let mut items = Vec::with_capacity(values.len());

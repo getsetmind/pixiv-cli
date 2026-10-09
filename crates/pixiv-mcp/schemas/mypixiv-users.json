@@ -1,0 +1,129 @@
+{
+  "description": "Browse MyPixiv users for the authenticated account through the App API.",
+  "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "limit": {
+        "description": "Maximum logical results; 0 returns all; omit for one logical batch.",
+        "minimum": 0,
+        "type": "integer"
+      },
+      "page": {
+        "description": "1-based logical page; requires a positive limit.",
+        "minimum": 1,
+        "type": "integer"
+      },
+      "user_filter": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "required": null,
+    "type": "object"
+  },
+  "name": "mypixiv_users",
+  "outputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "access_control": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "bookmark_tags": {
+        "items": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "type": "array"
+      },
+      "bookmarked": {
+        "type": "boolean"
+      },
+      "comments": {
+        "items": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "type": "array"
+      },
+      "content": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "filter": {
+        "additionalProperties": false,
+        "properties": {
+          "completeness": {
+            "type": "string"
+          },
+          "max": {
+            "type": "integer"
+          },
+          "membership": {
+            "type": "string"
+          },
+          "min": {
+            "type": "integer"
+          },
+          "strategy": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "pagination": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "records": {
+        "items": {
+          "additionalProperties": true,
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "type",
+            "url"
+          ],
+          "type": "object"
+        },
+        "type": "array"
+      },
+      "restrict": {
+        "type": "string"
+      },
+      "series": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "tags": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "total": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "records"
+    ],
+    "type": "object"
+  }
+}

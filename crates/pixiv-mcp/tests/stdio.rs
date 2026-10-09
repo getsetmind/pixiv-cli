@@ -665,6 +665,9 @@ async fn stdio_publishes_implemented_tool_metadata_and_preserves_request_ids() {
             pixiv_mcp::timeline_tool(pixiv_mcp::Timeline::NovelFollowing),
             pixiv_mcp::timeline_tool(pixiv_mcp::Timeline::IllustLatest),
             pixiv_mcp::timeline_tool(pixiv_mcp::Timeline::NovelLatest),
+            pixiv_mcp::my_pixiv_tool(pixiv_mcp::MyPixiv::Artworks),
+            pixiv_mcp::my_pixiv_tool(pixiv_mcp::MyPixiv::Novels),
+            pixiv_mcp::my_pixiv_tool(pixiv_mcp::MyPixiv::Users),
         ])
     );
     implemented_catalog::assert_catalog(responses[1]["result"]["tools"].as_array().unwrap());

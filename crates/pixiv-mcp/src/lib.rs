@@ -227,3 +227,6 @@ pub use bookmark_reads::{
 
 mod timeline;
 pub use timeline::{Timeline, TimelineInput, timeline, timeline_tool};
+
+mod mypixiv;
+pub use mypixiv::{MyPixiv, MyPixivInput, my_pixiv, my_pixiv_tool};

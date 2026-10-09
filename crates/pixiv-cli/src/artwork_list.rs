@@ -25,6 +25,8 @@ pub(crate) enum Source {
         pixiv_app::search_filter::ArtworkFilter,
     ),
     Latest(pixiv_sdk::pixiv::LatestArtworksRequest),
+    MyPixiv(pixiv_sdk::pixiv::MyPixivArtworksRequest),
+    MyPixivUser(pixiv_sdk::pixiv::UserArtworksRequest),
     Bookmarks(
         pixiv_sdk::pixiv::UserArtworkBookmarksRequest,
         Arc<std::sync::atomic::AtomicI64>,
@@ -150,6 +152,14 @@ pub(crate) async fn attempt<T: Transport, W: Write>(
                             page
                         })
                     }
+                    Source::MyPixiv(mut request) => {
+                        request.cursor = cursor;
+                        client.my_pixiv_artworks(request).await
+                    }
+                    Source::MyPixivUser(mut request) => {
+                        request.cursor = cursor;
+                        client.user_artworks(request).await
+                    }
                     Source::Latest(mut request) => {
                         request.cursor = cursor;
                         client.latest_artworks(request).await
@@ -202,7 +212,11 @@ pub(crate) async fn attempt<T: Transport, W: Write>(
                 );
                 let plain = matches!(
                     listing.source,
-                    Source::Bookmarks(..) | Source::Following(..) | Source::Latest(..)
+                    Source::Bookmarks(..)
+                        | Source::Following(..)
+                        | Source::Latest(..)
+                        | Source::MyPixiv(..)
+                        | Source::MyPixivUser(..)
                 );
                 if user || plain {
                     writeln!(out, "https://www.pixiv.net/artworks/{}", item.id)?;

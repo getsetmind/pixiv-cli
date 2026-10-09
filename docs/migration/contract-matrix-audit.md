@@ -33,3 +33,7 @@ Cobraのleaf harnessとGoの実際のRun/root parserは、同じ未対応flagで
 ## 次checkpoint: timeline
 
 同じ方針をfollowing/latestに適用し、SDK221、MCP213+pool8、CLI main75（73処理/2拒否）、startup22、pool18、scalar33の590行に絞った。body mapと過去のrich DTO/helperを再利用し、BindNoInputのrecord×kind×mode直積は作らない。10 fixture/evidence filesは計1,745,217 bytes（1.66 MiB）。anonymous cursor生診断の815 bytesはcomparison rowに数えない。Scalarの4追加はoverflowと不正suffixの優先順位、control/Unicode quotingというdistinct behaviorを固定するためであり、writer/body/outputとの直積は増やしていない。観測runtimeはcontracts.mdに記録する。
+
+### MyPixiv checkpoint
+
+MyPixivはSDK195、MCP135+pool6、CLI main77+startup25+scalar33+pool18の489行を固定し、共有bodyを使った9fixture filesは810,546 bytes（約0.77 MiB）。CLI mainは75 exactと2 rejection-only、startupは24 real processと1 injected reader-error証拠に分け、後者を実process比較の件数へ加えない。scalar33は値正規化と実startupを共通fixtureで比較する。kind/output/inputの全直積を追加せず、aggregate対explicit-ID、users対worksの入力/autoNDJSON、identity-before-cursor、offset-only continuation、filter/window、writer/commit/replayの相互作用を対象とする。旧fixtureや失敗行は削除しない。

@@ -31,6 +31,10 @@ pub struct UserBlockedUsersRequest {
     pub user_id: i64,
     pub cursor: Cursor,
 }
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
+pub struct MyPixivUsersRequest {
+    pub cursor: Cursor,
+}
 #[derive(Deserialize)]
 struct Preview {
     user: Option<WireUser>,
@@ -55,6 +59,20 @@ fn validate(user_id: i64, restrict: Option<&str>, operation: &'static str) -> Re
     Ok(())
 }
 impl<T: Transport> Client<T> {
+    pub async fn my_pixiv_users(&self, request: MyPixivUsersRequest) -> Result<Page<UserPreview>> {
+        if self.user_id <= 0 {
+            return Err(Error::new(Reason::Unauthorized, "MyPixivUsers")
+                .with_detail("current user identity is unknown"));
+        }
+        self.user_relationship(
+            "MyPixivUsers",
+            "/v1/user/mypixiv",
+            self.user_id,
+            None,
+            request.cursor,
+        )
+        .await
+    }
     pub async fn user_following(&self, request: UserFollowingRequest) -> Result<Page<UserPreview>> {
         validate(request.user_id, Some(&request.restrict), "UserFollowing")?;
         self.user_relationship(
@@ -126,14 +144,19 @@ impl<T: Transport> Client<T> {
                 },
             );
         }
-        let digest = crate::continuation::query_digest(&query);
+        let digest_query = if operation == "MyPixivUsers" {
+            BTreeMap::new()
+        } else {
+            query.clone()
+        };
+        let digest = crate::continuation::query_digest(&digest_query);
         self.validate_scoped_cursor(&cursor, operation, 1, &digest)?;
         apply_offset(&cursor, operation, &digest, &mut query)?;
         let mut allowed = vec!["offset", user_key];
         if query.contains_key("restrict") {
             allowed.push("restrict");
         }
-        if operation == "UserBlockedUsers" {
+        if matches!(operation, "UserBlockedUsers" | "MyPixivUsers") {
             query.insert("filter".into(), "for_android".into());
             allowed.push("filter");
         }

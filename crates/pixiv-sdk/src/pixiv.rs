@@ -492,9 +492,11 @@ pub use crate::user_works::{
 };
 
 pub use crate::user_relationships::{
-    RelatedUsersRequest, UserBlockedUsersRequest, UserFollowersRequest, UserFollowingRequest,
+    MyPixivUsersRequest, RelatedUsersRequest, UserBlockedUsersRequest, UserFollowersRequest,
+    UserFollowingRequest,
 };
 
 pub use crate::timeline::{
     FollowingArtworksRequest, FollowingNovelsRequest, LatestArtworksRequest, LatestNovelsRequest,
+    MyPixivArtworksRequest, MyPixivNovelsRequest,
 };

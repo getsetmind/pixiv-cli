@@ -21,12 +21,13 @@ pub enum UserRelationships {
     Followers(UserFollowingOptions),
     Related(UserWorksOptions),
     Blocked(UserWorksOptions),
+    MyPixiv(UserWorksOptions),
 }
 impl UserRelationships {
     pub fn options(&self) -> &UserWorksOptions {
         match self {
             Self::Following(o) | Self::Followers(o) => &o.listing,
-            Self::Related(o) | Self::Blocked(o) => o,
+            Self::Related(o) | Self::Blocked(o) | Self::MyPixiv(o) => o,
         }
     }
     pub fn name(&self) -> &'static str {
@@ -35,6 +36,7 @@ impl UserRelationships {
             Self::Followers(_) => "followers",
             Self::Related(_) => "related",
             Self::Blocked(_) => "blocked",
+            Self::MyPixiv(_) => "mypixiv",
         }
     }
     pub fn resolve_source<R: Read>(
@@ -42,18 +44,22 @@ impl UserRelationships {
         input: &mut R,
         terminal: bool,
     ) -> Result<(), CommandError> {
+        if matches!(self, Self::MyPixiv(_)) {
+            return self.validate_arguments();
+        }
         if self.options().sources.len() > 1 {
             self.validate_arguments()?;
         }
         let options = match self {
             Self::Following(options) | Self::Followers(options) => &mut options.listing,
-            Self::Related(options) | Self::Blocked(options) => options,
+            Self::Related(options) | Self::Blocked(options) | Self::MyPixiv(options) => options,
         };
         crate::user_works::resolve_optional_source(options, input, terminal)?;
         self.validate_arguments()
     }
     pub fn validate_arguments(&self) -> Result<(), CommandError> {
-        if self.options().sources.len() > 1
+        if (matches!(self, Self::MyPixiv(_)) && !self.options().sources.is_empty())
+            || self.options().sources.len() > 1
             || (matches!(self, Self::Related(_)) && self.options().sources.is_empty())
         {
             return Err(CommandError::Message(match self {
@@ -61,11 +67,15 @@ impl UserRelationships {
                 Self::Followers(_) => "usage: pixiv user followers [options] [USER_ID]",
                 Self::Related(_) => "usage: pixiv user related [options] USER_ID",
                 Self::Blocked(_) => "usage: pixiv user blocked [options] [USER_ID]",
+                Self::MyPixiv(_) => "usage: pixiv mypixiv users",
             }));
         }
         Ok(())
     }
     fn user_id(&self) -> Result<i64, CommandError> {
+        if matches!(self, Self::MyPixiv(_)) {
+            return Ok(0);
+        }
         crate::user_works::resolved_user_id(
             self.options().sources.first(),
             &format!("user {}", self.name()),
@@ -107,7 +117,10 @@ impl UserRelationships {
             DetailOutput::Ndjson
         } else if options.json.unwrap_or(configured_json) {
             DetailOutput::Json
-        } else if options.json.is_none() && !terminal && !matches!(self, Self::Following(_)) {
+        } else if options.json.is_none()
+            && !terminal
+            && !matches!(self, Self::Following(_) | Self::MyPixiv(_))
+        {
             DetailOutput::Ndjson
         } else {
             DetailOutput::Human
@@ -226,7 +239,21 @@ async fn attempt<T: Transport, W: Write>(
         },
         Cursor::default(),
         |cursor| async move {
-            let user_id = crate::user_works::current_target(client, &listing.identity)?;
+            let user_id = if matches!(listing.options, UserRelationships::MyPixiv(_)) {
+                let mut id = listing.identity.load(Ordering::Acquire);
+                if id == 0 {
+                    id = client.user_id();
+                    if id <= 0 {
+                        return Err(Error::new(Reason::Unauthorized, "MyPixivUsers")
+                            .with_detail("cannot determine current user id")
+                            .into());
+                    }
+                    listing.identity.store(id, Ordering::Release);
+                }
+                id
+            } else {
+                crate::user_works::current_target(client, &listing.identity)?
+            };
             use pixiv_sdk::pixiv::*;
             let page = match &listing.options {
                 UserRelationships::Following(o) => {
@@ -251,6 +278,9 @@ async fn attempt<T: Transport, W: Write>(
                     client
                         .related_users(RelatedUsersRequest { user_id, cursor })
                         .await
+                }
+                UserRelationships::MyPixiv(_) => {
+                    client.my_pixiv_users(MyPixivUsersRequest { cursor }).await
                 }
                 UserRelationships::Blocked(_) => {
                     client
@@ -283,12 +313,18 @@ async fn attempt<T: Transport, W: Write>(
                     UserRelationships::Followers(_) => "followers of",
                     UserRelationships::Related(_) => "users related to",
                     UserRelationships::Blocked(_) => "blocked users of",
+                    UserRelationships::MyPixiv(_) => "MyPixiv users for",
                 };
                 writeln!(out, "{text} {id}")?;
                 heading = true;
             }
             for item in &items {
-                let line = format!("{} {}", item.user.id, crate::safe_line(&item.user.name));
+                let name = if matches!(listing.options, UserRelationships::MyPixiv(_)) {
+                    item.user.name.clone()
+                } else {
+                    crate::safe_line(&item.user.name)
+                };
+                let line = format!("{} {}", item.user.id, name);
                 writeln!(out, "{line}")?;
             }
             Ok(())

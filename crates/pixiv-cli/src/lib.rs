@@ -3,6 +3,7 @@ pub mod bookmark_lists;
 pub mod bookmark_reads;
 mod json_spool;
 pub mod mutation;
+pub mod mypixiv;
 mod novel_list;
 pub mod novel_search;
 pub mod novel_series;
