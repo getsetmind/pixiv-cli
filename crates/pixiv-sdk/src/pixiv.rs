@@ -39,6 +39,7 @@ pub struct Client<T = HttpTransport> {
     last_request: Mutex<Option<Instant>>,
     pub(crate) resource_policy: ResourcePolicy,
     pub(crate) user_id: i64,
+    username: String,
     pub(crate) cursor_instance: Option<String>,
     resource_urls: std::sync::Mutex<BTreeMap<String, String>>,
 }
@@ -72,6 +73,7 @@ impl<T: Transport> Client<T> {
             last_request: Mutex::new(None),
             resource_policy: ResourcePolicy::default(),
             user_id: 0,
+            username: String::new(),
             cursor_instance,
             resource_urls: std::sync::Mutex::new(BTreeMap::new()),
         }
@@ -80,11 +82,16 @@ impl<T: Transport> Client<T> {
     pub fn from_credentials(credentials: &crate::oauth::Credentials, transport: T) -> Self {
         let mut client = Self::with_transport(credentials.access_token(), transport);
         client.user_id = credentials.user_id;
+        client.username = credentials.username.clone();
         client
     }
 
     pub fn user_id(&self) -> i64 {
         self.user_id
+    }
+
+    pub fn username(&self) -> &str {
+        &self.username
     }
 
     pub fn with_pacing(mut self, interval: Duration) -> Self {
@@ -112,10 +119,14 @@ impl<T: Transport> Client<T> {
         if self.expires_at.is_some_and(|expiry| expiry <= Utc::now()) {
             return Err(Error::new(Reason::CredentialsExpired, operation));
         }
+        let mut headers = headers(Some(&self.access_token));
+        if self.user_id > 0 {
+            headers.push(("X-User-Id".into(), self.user_id.to_string()));
+        }
         Ok(Request {
             method: Method::GET,
             url: format!("https://app-api.pixiv.net{path}"),
-            headers: headers(Some(&self.access_token)),
+            headers,
             parameters,
             operation,
         })
@@ -480,7 +491,7 @@ fn malformed(operation: &'static str) -> Error {
     Error::new(Reason::MalformedUpstreamResponse, operation)
 }
 
-pub use crate::user_detail::UserRequest;
+pub use crate::user_detail::{CurrentUserRequest, UserRequest};
 
 pub use crate::user_search::SearchUsersRequest;
 

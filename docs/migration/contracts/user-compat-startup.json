@@ -1,0 +1,800 @@
+[
+  {
+    "args": [
+      "detail",
+      "42"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+    "exit": 1,
+    "config": true,
+    "database": true
+  },
+  {
+    "args": [
+      "detail",
+      "42",
+      "--json"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:auth: unauthorized: no pixiv account is authenticated\"}}\n",
+    "exit": 1,
+    "config": true,
+    "database": true
+  },
+  {
+    "args": [
+      "detail",
+      ""
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: user_id: pixiv:user detail: invalid_argument: input value is required\n",
+    "exit": 1,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "detail",
+      "",
+      "--json"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"invalid_argument\",\"message\":\"user_id: pixiv:user detail: invalid_argument: input value is required\"}}\n",
+    "exit": 1,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "detail",
+      " "
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: user_id: pixiv:user detail: invalid_argument: input value is required\n",
+    "exit": 1,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "detail",
+      " ",
+      "--json"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"invalid_argument\",\"message\":\"user_id: pixiv:user detail: invalid_argument: input value is required\"}}\n",
+    "exit": 1,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "detail",
+      "0"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: user_id: pixiv:user detail: invalid_argument: id must be a positive integer\n",
+    "exit": 1,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "detail",
+      "0",
+      "--json"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"invalid_argument\",\"message\":\"user_id: pixiv:user detail: invalid_argument: id must be a positive integer\"}}\n",
+    "exit": 1,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "detail",
+      "-1"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: unknown option '-1'\n",
+    "exit": 2,
+    "config": false,
+    "database": false
+  },
+  {
+    "args": [
+      "detail",
+      "-1",
+      "--json"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: unknown option '-1'\n",
+    "exit": 2,
+    "config": false,
+    "database": false
+  },
+  {
+    "args": [
+      "detail",
+      "not-id"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: user_id: pixiv:user detail: invalid_argument: input must be a positive ID or a supported Pixiv URL\n",
+    "exit": 1,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "detail",
+      "not-id",
+      "--json"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"invalid_argument\",\"message\":\"user_id: pixiv:user detail: invalid_argument: input must be a positive ID or a supported Pixiv URL\"}}\n",
+    "exit": 1,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "detail",
+      "https://www.pixiv.net/users/42"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: user_id: pixiv:user detail: invalid_argument: URL kind is not allowed for this command\n",
+    "exit": 1,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "detail",
+      "https://www.pixiv.net/users/42",
+      "--json"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"invalid_argument\",\"message\":\"user_id: pixiv:user detail: invalid_argument: URL kind is not allowed for this command\"}}\n",
+    "exit": 1,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "detail",
+      "https://www.pixiv.net/artworks/42"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: user_id: pixiv:user detail: invalid_argument: URL kind is not allowed for this command\n",
+    "exit": 1,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "detail",
+      "https://www.pixiv.net/artworks/42",
+      "--json"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"invalid_argument\",\"message\":\"user_id: pixiv:user detail: invalid_argument: URL kind is not allowed for this command\"}}\n",
+    "exit": 1,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "detail"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: usage: pixiv user detail [options] USER_ID\n",
+    "exit": 1,
+    "config": false,
+    "database": false
+  },
+  {
+    "args": [
+      "detail",
+      "--json"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"usage: pixiv user detail [options] USER_ID\"}}\n",
+    "exit": 1,
+    "config": false,
+    "database": false
+  },
+  {
+    "args": [
+      "detail",
+      "42",
+      "43"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: usage: pixiv user detail [options] USER_ID\n",
+    "exit": 1,
+    "config": false,
+    "database": false
+  },
+  {
+    "args": [
+      "detail",
+      "42",
+      "43",
+      "--json"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"usage: pixiv user detail [options] USER_ID\"}}\n",
+    "exit": 1,
+    "config": false,
+    "database": false
+  },
+  {
+    "args": [
+      "detail",
+      "42",
+      "--ndjson"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: unknown option '--ndjson'\n",
+    "exit": 2,
+    "config": false,
+    "database": false
+  },
+  {
+    "args": [
+      "detail",
+      "42",
+      "--ndjson",
+      "--json"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: unknown option '--ndjson'\n",
+    "exit": 2,
+    "config": false,
+    "database": false
+  },
+  {
+    "args": [
+      "detail",
+      "42",
+      "--content"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: unknown option '--content'\n",
+    "exit": 2,
+    "config": false,
+    "database": false
+  },
+  {
+    "args": [
+      "detail",
+      "42",
+      "--content",
+      "--json"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: unknown option '--content'\n",
+    "exit": 2,
+    "config": false,
+    "database": false
+  },
+  {
+    "args": [
+      "detail",
+      "42",
+      "--proxy=http://localhost",
+      "--no-proxy=false"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: use either --proxy or --no-proxy, not both\n",
+    "exit": 1,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "detail",
+      "42",
+      "--proxy=http://localhost",
+      "--no-proxy=false",
+      "--json"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"use either --proxy or --no-proxy, not both\"}}\n",
+    "exit": 1,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "detail",
+      "0",
+      "--proxy=http://localhost",
+      "--no-proxy"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: user_id: pixiv:user detail: invalid_argument: id must be a positive integer\n",
+    "exit": 1,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "detail",
+      "0",
+      "--proxy=http://localhost",
+      "--no-proxy",
+      "--json"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"invalid_argument\",\"message\":\"user_id: pixiv:user detail: invalid_argument: id must be a positive integer\"}}\n",
+    "exit": 1,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "search",
+      "artist"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+    "exit": 1,
+    "config": true,
+    "database": true
+  },
+  {
+    "args": [
+      "search",
+      "artist",
+      "--json"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:auth: unauthorized: no pixiv account is authenticated\"}}\n",
+    "exit": 1,
+    "config": true,
+    "database": true
+  },
+  {
+    "args": [
+      "search",
+      "more",
+      "words"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+    "exit": 1,
+    "config": true,
+    "database": true
+  },
+  {
+    "args": [
+      "search",
+      "more",
+      "words",
+      "--json"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:auth: unauthorized: no pixiv account is authenticated\"}}\n",
+    "exit": 1,
+    "config": true,
+    "database": true
+  },
+  {
+    "args": [
+      "search",
+      ""
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+    "exit": 1,
+    "config": true,
+    "database": true
+  },
+  {
+    "args": [
+      "search",
+      "",
+      "--json"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:auth: unauthorized: no pixiv account is authenticated\"}}\n",
+    "exit": 1,
+    "config": true,
+    "database": true
+  },
+  {
+    "args": [
+      "search",
+      " "
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+    "exit": 1,
+    "config": true,
+    "database": true
+  },
+  {
+    "args": [
+      "search",
+      " ",
+      "--json"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:auth: unauthorized: no pixiv account is authenticated\"}}\n",
+    "exit": 1,
+    "config": true,
+    "database": true
+  },
+  {
+    "args": [
+      "search"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: usage: pixiv user search [options] WORD\n",
+    "exit": 1,
+    "config": false,
+    "database": false
+  },
+  {
+    "args": [
+      "search",
+      "--json"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"usage: pixiv user search [options] WORD\"}}\n",
+    "exit": 1,
+    "config": false,
+    "database": false
+  },
+  {
+    "args": [
+      "search",
+      "artist",
+      "--limit=-1"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: limit must be zero or a positive integer\n",
+    "exit": 1,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "search",
+      "artist",
+      "--limit=-1",
+      "--json"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"limit must be zero or a positive integer\"}}\n",
+    "exit": 1,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "search",
+      "artist",
+      "--page=0"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: page must be a positive integer\n",
+    "exit": 1,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "search",
+      "artist",
+      "--page=0",
+      "--json"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"page must be a positive integer\"}}\n",
+    "exit": 1,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "search",
+      "artist",
+      "--limit=0",
+      "--page=2"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: --page requires --limit to be a positive integer\n",
+    "exit": 1,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "search",
+      "artist",
+      "--limit=0",
+      "--page=2",
+      "--json"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"--page requires --limit to be a positive integer\"}}\n",
+    "exit": 1,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "search",
+      "artist",
+      "--json=false",
+      "--ndjson"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: --ndjson cannot be used with --json\n",
+    "exit": 2,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "search",
+      "artist",
+      "--json=false",
+      "--ndjson",
+      "--json"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: --ndjson cannot be used with --json\n",
+    "exit": 2,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "search",
+      "artist",
+      "--type=user"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: unknown option '--type'\n",
+    "exit": 2,
+    "config": false,
+    "database": false
+  },
+  {
+    "args": [
+      "search",
+      "artist",
+      "--type=user",
+      "--json"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: unknown option '--type'\n",
+    "exit": 2,
+    "config": false,
+    "database": false
+  },
+  {
+    "args": [
+      "search",
+      "artist",
+      "--sort=date_desc"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: unknown option '--sort'\n",
+    "exit": 2,
+    "config": false,
+    "database": false
+  },
+  {
+    "args": [
+      "search",
+      "artist",
+      "--sort=date_desc",
+      "--json"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: unknown option '--sort'\n",
+    "exit": 2,
+    "config": false,
+    "database": false
+  },
+  {
+    "args": [
+      "search",
+      "artist",
+      "--proxy=http://localhost",
+      "--no-proxy=false"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: use either --proxy or --no-proxy, not both\n",
+    "exit": 1,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "search",
+      "artist",
+      "--proxy=http://localhost",
+      "--no-proxy=false",
+      "--json"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"use either --proxy or --no-proxy, not both\"}}\n",
+    "exit": 1,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "search",
+      "artist",
+      "--limit=-1",
+      "--proxy=http://localhost",
+      "--no-proxy"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "error: limit must be zero or a positive integer\n",
+    "exit": 1,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "search",
+      "artist",
+      "--limit=-1",
+      "--proxy=http://localhost",
+      "--no-proxy",
+      "--json"
+    ],
+    "input": "",
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"limit must be zero or a positive integer\"}}\n",
+    "exit": 1,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "detail"
+    ],
+    "input": "42\n",
+    "stdout": "",
+    "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+    "exit": 1,
+    "config": true,
+    "database": true
+  },
+  {
+    "args": [
+      "detail"
+    ],
+    "input": "42\n43\n",
+    "stdout": "",
+    "stderr": "error: user_id: pixiv:user detail: invalid_argument: input must be a positive ID or a supported Pixiv URL\n",
+    "exit": 1,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "search"
+    ],
+    "input": "more words\n",
+    "stdout": "",
+    "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+    "exit": 1,
+    "config": true,
+    "database": true
+  },
+  {
+    "args": [
+      "search"
+    ],
+    "input": "first\nsecond\n",
+    "stdout": "",
+    "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+    "exit": 1,
+    "config": true,
+    "database": true
+  },
+  {
+    "args": [
+      "detail",
+      "0"
+    ],
+    "input": "",
+    "before": "[unfinished\n",
+    "stdout": "",
+    "stderr": "error: toml: expected character ]\n",
+    "exit": 1,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "search",
+      "artist",
+      "--page=0"
+    ],
+    "input": "",
+    "before": "[unfinished\n",
+    "stdout": "",
+    "stderr": "error: toml: expected character ]\n",
+    "exit": 1,
+    "config": true,
+    "database": false
+  },
+  {
+    "args": [
+      "detail",
+      "42",
+      "--json=false"
+    ],
+    "input": "",
+    "before": "[output]\njson=true\n",
+    "stdout": "",
+    "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:auth: unauthorized: no pixiv account is authenticated\"}}\n",
+    "exit": 1,
+    "config": true,
+    "database": true
+  }
+]

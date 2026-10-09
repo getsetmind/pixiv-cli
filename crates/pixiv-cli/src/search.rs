@@ -24,6 +24,8 @@ pub struct SearchInput {
     pub entity: Option<String>,
     #[arg(skip)]
     changed_flags: Vec<&'static str>,
+    #[arg(skip)]
+    user_owner: bool,
     #[arg(num_args = 0..)]
     pub query: Vec<String>,
     #[arg(long, short = 'j', num_args = 0..=1, require_equals = true, default_missing_value = "true")]
@@ -38,10 +40,18 @@ impl SearchInput {
             trending_tags: false,
             entity: Some("novel".into()),
             changed_flags: vec![],
+            user_owner: false,
             query,
             json,
             ndjson,
         }
+    }
+
+    pub(crate) fn for_user(query: Vec<String>, json: Option<bool>, ndjson: bool) -> Self {
+        let mut input = Self::for_novel(query, json, ndjson);
+        input.entity = Some("user".into());
+        input.user_owner = true;
+        input
     }
 
     pub fn record_flag_presence(&mut self, matches: &clap::ArgMatches) {
@@ -235,7 +245,11 @@ impl SearchInput {
         read_text_value(
             input,
             terminal,
-            "usage: pixiv search [options] WORD",
+            if self.user_owner {
+                "usage: pixiv user search [options] WORD"
+            } else {
+                "usage: pixiv search [options] WORD"
+            },
             "stdin search word is not valid UTF-8",
         )
     }

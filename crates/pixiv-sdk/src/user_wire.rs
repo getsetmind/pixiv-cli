@@ -251,7 +251,7 @@ pub(crate) fn decode(raw: &[u8], operation: &'static str) -> Result<Value> {
     let malformed = || Error::new(Reason::MalformedUpstreamResponse, operation);
     let raw = crate::codec::normalize_json(raw).map_err(|_| malformed())?;
     let schema = match operation {
-        "User" => DETAIL,
+        "User" | "CurrentUser" => DETAIL,
         "UserBlockedUsers" => BLOCKED,
         _ => SEARCH,
     };

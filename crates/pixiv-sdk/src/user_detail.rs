@@ -5,6 +5,8 @@ use serde_json::Value;
 pub struct UserRequest {
     pub user_id: i64,
 }
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct CurrentUserRequest {}
 #[derive(Default, Deserialize)]
 struct WireUserProfile {
     webpage: Option<String>,
@@ -107,14 +109,17 @@ struct Envelope {
     profile_publicity: Option<serde_json::Map<String, Value>>,
     workspace: Option<WireUserWorkspace>,
 }
-fn publicity(value: serde_json::Map<String, Value>) -> Result<UserProfilePublicity> {
+fn publicity(
+    value: serde_json::Map<String, Value>,
+    operation: &'static str,
+) -> Result<UserProfilePublicity> {
     let flag = |key: &str| -> Result<bool> {
         match value.get(key) {
             None => Ok(false),
             Some(Value::Bool(v)) => Ok(*v),
             Some(Value::String(v)) if v == "public" => Ok(true),
             Some(Value::String(v)) if v == "private" => Ok(false),
-            _ => Err(Error::new(Reason::MalformedUpstreamResponse, "User")),
+            _ => Err(Error::new(Reason::MalformedUpstreamResponse, operation)),
         }
     };
     Ok(UserProfilePublicity {
@@ -133,16 +138,40 @@ impl<T: Transport> Client<T> {
                 Error::new(Reason::InvalidArgument, "User").with_detail("user ID must be positive")
             );
         }
+        self.user_detail(
+            vec![("user_id".into(), request.user_id.to_string())],
+            "User",
+        )
+        .await
+    }
+
+    pub async fn current_user(&self, _request: CurrentUserRequest) -> Result<UserDetail> {
+        if self.user_id <= 0 {
+            return Err(Error::new(Reason::Unauthorized, "CurrentUser")
+                .with_detail("current user identity is unknown"));
+        }
+        self.user_detail(
+            vec![
+                ("filter".into(), "for_android".into()),
+                ("user_id".into(), self.user_id.to_string()),
+            ],
+            "CurrentUser",
+        )
+        .await
+    }
+
+    async fn user_detail(
+        &self,
+        parameters: Vec<(String, String)>,
+        operation: &'static str,
+    ) -> Result<UserDetail> {
         let body = self
-            .get_json(
-                "/v1/user/detail",
-                vec![("user_id".into(), request.user_id.to_string())],
-                "User",
-            )
+            .get_json("/v1/user/detail", parameters, operation)
             .await?;
-        let malformed = || Error::new(Reason::MalformedUpstreamResponse, "User");
-        let envelope: Envelope = serde_json::from_value(crate::user_wire::decode(&body, "User")?)
-            .map_err(|_| malformed())?;
+        let malformed = || Error::new(Reason::MalformedUpstreamResponse, operation);
+        let envelope: Envelope =
+            serde_json::from_value(crate::user_wire::decode(&body, operation)?)
+                .map_err(|_| malformed())?;
         let user = envelope.user.ok_or_else(malformed)?;
         if user.id.is_none_or(|id| id <= 0) {
             return Err(malformed());
@@ -150,7 +179,10 @@ impl<T: Transport> Client<T> {
         let detail = UserDetail {
             user: user.map(&self.resource_policy),
             profile: envelope.profile.ok_or_else(malformed)?.map(),
-            profile_publicity: publicity(envelope.profile_publicity.ok_or_else(malformed)?)?,
+            profile_publicity: publicity(
+                envelope.profile_publicity.ok_or_else(malformed)?,
+                operation,
+            )?,
             workspace: envelope.workspace.ok_or_else(malformed)?.map(),
         };
         self.remember_resource(&detail.user.profile_image.resource);

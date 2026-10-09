@@ -1624,15 +1624,30 @@
     },
     {
       "id": "cli:pixiv user",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv user"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/user_detail.rs",
+        "crates/pixiv-cli/src/user_search.rs",
+        "crates/pixiv-cli/src/search.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_user_compat_startup_test.go",
+        "internal/cli/migration_user_compat_output_test.go",
+        "crates/pixiv-cli/tests/user_compat_startup.rs",
+        "crates/pixiv-cli/tests/user_detail.rs",
+        "crates/pixiv-cli/tests/user_search.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "user detail/searchの実Go入口を既存canonical fetch/JSON/search/list/pool処理へ接続。61 actual startup・8 profile表示、owner surface255 reused search行を比較し、Go225 owner replayと30既存shared wire証拠を区別。detailはtext-only入力/no NDJSON・safe human表示・user_id prefix/empty input/URL拒否を維持しroot detailのraw表示を変更しない。共通scalar lexemes、group/全flag/help/TTY/OS startup、root parser3/Linux snapshot、全通信/取消/並行/他platform・配布は未検証。"
+      ]
     },
     {
       "id": "cli:pixiv user artworks",
@@ -1721,15 +1736,30 @@
     },
     {
       "id": "cli:pixiv user detail",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv user detail"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/user_detail.rs",
+        "crates/pixiv-cli/src/user_search.rs",
+        "crates/pixiv-cli/src/search.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_user_compat_startup_test.go",
+        "internal/cli/migration_user_compat_output_test.go",
+        "crates/pixiv-cli/tests/user_compat_startup.rs",
+        "crates/pixiv-cli/tests/user_detail.rs",
+        "crates/pixiv-cli/tests/user_search.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "user detail/searchの実Go入口を既存canonical fetch/JSON/search/list/pool処理へ接続。61 actual startup・8 profile表示、owner surface255 reused search行を比較し、Go225 owner replayと30既存shared wire証拠を区別。detailはtext-only入力/no NDJSON・safe human表示・user_id prefix/empty input/URL拒否を維持しroot detailのraw表示を変更しない。共通scalar lexemes、group/全flag/help/TTY/OS startup、root parser3/Linux snapshot、全通信/取消/並行/他platform・配布は未検証。"
+      ]
     },
     {
       "id": "cli:pixiv user follow",
@@ -1924,15 +1954,30 @@
     },
     {
       "id": "cli:pixiv user search",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv user search"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/user_detail.rs",
+        "crates/pixiv-cli/src/user_search.rs",
+        "crates/pixiv-cli/src/search.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_user_compat_startup_test.go",
+        "internal/cli/migration_user_compat_output_test.go",
+        "crates/pixiv-cli/tests/user_compat_startup.rs",
+        "crates/pixiv-cli/tests/user_detail.rs",
+        "crates/pixiv-cli/tests/user_search.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "user detail/searchの実Go入口を既存canonical fetch/JSON/search/list/pool処理へ接続。61 actual startup・8 profile表示、owner surface255 reused search行を比較し、Go225 owner replayと30既存shared wire証拠を区別。detailはtext-only入力/no NDJSON・safe human表示・user_id prefix/empty input/URL拒否を維持しroot detailのraw表示を変更しない。共通scalar lexemes、group/全flag/help/TTY/OS startup、root parser3/Linux snapshot、全通信/取消/並行/他platform・配布は未検証。"
+      ]
     },
     {
       "id": "mcp:fanbox:fanbox_creator",
@@ -7360,15 +7405,29 @@
     },
     {
       "id": "sdk/pixiv:Client.CurrentUser",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.CurrentUser"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/user_detail.rs",
+        "crates/pixiv-sdk/src/user_wire.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_current_user_test.go",
+        "crates/pixiv-sdk/tests/current_user.rs",
+        "crates/pixiv-sdk/tests/user_detail.rs",
+        "crates/pixiv-sdk/tests/user_wire.rs",
+        "crates/pixiv-sdk/tests/user_wire_transport.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go9 targeted CurrentUser行とcached Username snapshot/no-HTTP、verified/token-only User/FollowingArtworks GET headerを比較。CurrentUserはidentity-before-transport、filter=for_android/current UID、CurrentUser error operation、共有exact detail decoderを維持。Usernameは返却profileでなくconstructor credentialをcopy。GET builderのpositive identity X-User-Idを固定Go-firstで補正しPOST/OAuthは変更しない。全header/Options/通信/auth/取消/並行、全wire precision/UTF8・他platform/配布は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.DeleteArtworkComment",
@@ -8460,15 +8519,29 @@
     },
     {
       "id": "sdk/pixiv:Client.Username",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.Username"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/user_detail.rs",
+        "crates/pixiv-sdk/src/user_wire.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_current_user_test.go",
+        "crates/pixiv-sdk/tests/current_user.rs",
+        "crates/pixiv-sdk/tests/user_detail.rs",
+        "crates/pixiv-sdk/tests/user_wire.rs",
+        "crates/pixiv-sdk/tests/user_wire_transport.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go9 targeted CurrentUser行とcached Username snapshot/no-HTTP、verified/token-only User/FollowingArtworks GET headerを比較。CurrentUserはidentity-before-transport、filter=for_android/current UID、CurrentUser error operation、共有exact detail decoderを維持。Usernameは返却profileでなくconstructor credentialをcopy。GET builderのpositive identity X-User-Idを固定Go-firstで補正しPOST/OAuthは変更しない。全header/Options/通信/auth/取消/並行、全wire precision/UTF8・他platform/配布は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:Client.UserNovelBookmarks",
@@ -8727,15 +8800,29 @@
     },
     {
       "id": "sdk/pixiv:CurrentUserRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:CurrentUserRequest"
       },
-      "rust_sources": [],
-      "tests": [],
-      "verified_platforms": [],
-      "differences": []
+      "rust_sources": [
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/user_detail.rs",
+        "crates/pixiv-sdk/src/user_wire.rs"
+      ],
+      "tests": [
+        "sdk/pixiv/migration_current_user_test.go",
+        "crates/pixiv-sdk/tests/current_user.rs",
+        "crates/pixiv-sdk/tests/user_detail.rs",
+        "crates/pixiv-sdk/tests/user_wire.rs",
+        "crates/pixiv-sdk/tests/user_wire_transport.rs"
+      ],
+      "verified_platforms": [
+        "linux-amd64 (partial)"
+      ],
+      "differences": [
+        "Go9 targeted CurrentUser行とcached Username snapshot/no-HTTP、verified/token-only User/FollowingArtworks GET headerを比較。CurrentUserはidentity-before-transport、filter=for_android/current UID、CurrentUser error operation、共有exact detail decoderを維持。Usernameは返却profileでなくconstructor credentialをcopy。GET builderのpositive identity X-User-Idを固定Go-firstで補正しPOST/OAuthは変更しない。全header/Options/通信/auth/取消/並行、全wire precision/UTF8・他platform/配布は未検証。"
+      ]
     },
     {
       "id": "sdk/pixiv:DeleteArtworkCommentRequest",

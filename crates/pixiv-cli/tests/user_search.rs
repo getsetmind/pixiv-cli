@@ -94,19 +94,40 @@ fn user_search_cases() -> Vec<Case> {
 async fn user_search_preserves_go_output_windows_errors_and_saved_account_execution() {
     let cases = user_search_cases();
     assert_eq!(cases.len(), 309);
-    compare_output(cases).await;
+    compare_output(cases, false).await;
 }
 
-async fn compare_output(cases: Vec<Case>) {
+async fn compare_output(cases: Vec<Case>, owner: bool) {
     for case in cases {
         for saved in [false, true] {
-            let matches = Arguments::command()
-                .try_get_matches_from(std::iter::once("pixiv".to_owned()).chain(case.args.clone()))
+            let (input, options) = if owner {
+                #[derive(clap::Parser)]
+                struct OwnerArguments {
+                    #[command(flatten)]
+                    options: pixiv_cli_rs::user_search::UserSearchOptions,
+                }
+                let args = <OwnerArguments as clap::Parser>::try_parse_from(
+                    std::iter::once("pixiv").chain(
+                        case.args
+                            .iter()
+                            .map(String::as_str)
+                            .filter(|arg| *arg != "--type=user"),
+                    ),
+                )
                 .unwrap();
-            let mut args = Arguments::from_arg_matches(&matches).unwrap();
-            args.input.record_flag_presence(&matches);
-            let input = args.input;
-            let options = args.options;
+                args.options.into_search()
+            } else {
+                let matches = Arguments::command()
+                    .try_get_matches_from(
+                        std::iter::once("pixiv".to_owned()).chain(case.args.clone()),
+                    )
+                    .unwrap();
+                let mut args = Arguments::from_arg_matches(&matches).unwrap();
+                args.input.record_flag_presence(&matches);
+                let input = args.input;
+                let options = args.options;
+                (input, options)
+            };
             let word = input.word();
             let queries = Arc::new(Mutex::new(vec![]));
             let transport = Fixture {
@@ -265,4 +286,23 @@ fn user_search_process_preserves_go_validation_authentication_and_startup_order(
             case.database
         );
     }
+}
+
+#[tokio::test]
+async fn user_search_owner_reuses_saved_pagination_and_writer_contracts() {
+    let cases = user_search_cases()
+        .into_iter()
+        .filter(|case| {
+            case.args.iter().all(|arg| {
+                !arg.starts_with("--")
+                    || arg == "--type=user"
+                    || arg == "--json"
+                    || arg == "--ndjson"
+                    || arg.starts_with("--limit=")
+                    || arg.starts_with("--page=")
+            })
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(cases.len(), 255);
+    compare_output(cases, true).await;
 }

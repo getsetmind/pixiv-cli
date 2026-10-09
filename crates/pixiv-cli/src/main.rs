@@ -84,6 +84,20 @@ enum BookmarkGroupCommand {
 #[derive(Subcommand)]
 enum UserCommand {
     #[command(args_override_self = true)]
+    Detail {
+        #[command(flatten)]
+        options: pixiv_cli_rs::user_detail::UserDetailOptions,
+        #[command(flatten)]
+        connection: ProxyOptions,
+    },
+    #[command(args_override_self = true)]
+    Search {
+        #[command(flatten)]
+        options: Box<pixiv_cli_rs::user_search::UserSearchOptions>,
+        #[command(flatten)]
+        connection: ProxyOptions,
+    },
+    #[command(args_override_self = true)]
     Bookmarks {
         #[command(flatten)]
         options: Box<pixiv_cli_rs::bookmark_lists::UserBookmarksOptions>,
@@ -304,6 +318,20 @@ async fn main() {
         );
     }
     args.command = match args.command {
+        Command::User {
+            command:
+                UserCommand::Search {
+                    options,
+                    connection,
+                },
+        } => {
+            let (input, options) = options.into_search();
+            Command::Search {
+                input,
+                options: Box::new(options),
+                connection,
+            }
+        }
         Command::Novel {
             command:
                 NovelCommand::Search {
@@ -321,6 +349,9 @@ async fn main() {
         command => command,
     };
     let machine_output = match &args.command {
+        Command::User {
+            command: UserCommand::Detail { options, .. },
+        } => options.json.is_some(),
         Command::Mypixiv { command } => {
             let options = match command {
                 MyPixivCommand::Users { options, .. } => options.as_ref(),
@@ -565,6 +596,12 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
     if let Some(options) = &timeline {
         options.validate_arguments()?;
     }
+    let user_detail_source = match &args.command {
+        Command::User {
+            command: UserCommand::Detail { options, .. },
+        } => Some(options.resolve_source(&mut io::stdin().lock(), io::stdin().is_terminal())?),
+        _ => None,
+    };
     let search_word = match &args.command {
         Command::Search { input, .. } => {
             if input.trending_tags {
@@ -616,6 +653,46 @@ async fn execute(mut args: Arguments, ndjson_output: &mut bool) -> Result<(), Co
     };
 
     match &mut args.command {
+        Command::User {
+            command:
+                UserCommand::Detail {
+                    options,
+                    connection,
+                },
+        } => {
+            let (directory, config) = account_config.expect("user detail startup was resolved");
+            let id = pixiv_cli_rs::user_detail::profile_user_id(
+                user_detail_source
+                    .as_ref()
+                    .expect("user detail input was resolved"),
+            )?;
+            let proxy = connection.override_value()?;
+            let configured_json = config
+                .current()
+                .and_then(|snapshot| snapshot.runtime())
+                .map_err(pixiv_app::scheduler::SchedulerError::from)?
+                .output_json;
+            let mode = if options.json.unwrap_or(configured_json) {
+                DetailOutput::Json
+            } else {
+                DetailOutput::Human
+            };
+            let database = pixiv_app::database::Database::open(&directory)
+                .map_err(|error| CommandError::State(Box::new(error)))?;
+            let execution = pixiv_app::execution::Execution::http(
+                config,
+                std::sync::Arc::new(std::sync::Mutex::new(database)),
+            );
+            return pixiv_cli_rs::user_detail::saved_user_profile(
+                &execution,
+                &pixiv_app::lifecycle::Context::new(),
+                id,
+                proxy,
+                mode,
+                &mut io::stdout().lock(),
+            )
+            .await;
+        }
         Command::Bookmark {
             command:
                 BookmarkGroupCommand::Detail {

@@ -165,3 +165,29 @@ async fn attempt<T: Transport, W: Write>(
     })?;
     Ok(spool)
 }
+
+#[derive(clap::Args)]
+pub struct UserSearchOptions {
+    #[arg(num_args = 0..)]
+    pub query: Vec<String>,
+    #[arg(long, short = 'j', num_args = 0..=1, require_equals = true, default_missing_value = "true")]
+    pub json: Option<bool>,
+    #[arg(long, action = clap::ArgAction::Set, num_args = 0..=1, require_equals = true, default_missing_value = "true", default_value = "false")]
+    pub ndjson: bool,
+    #[arg(long, short = 'l', allow_hyphen_values = true)]
+    pub limit: Option<i64>,
+    #[arg(long, short = 'p', allow_hyphen_values = true)]
+    pub page: Option<i64>,
+}
+impl UserSearchOptions {
+    pub fn into_search(self) -> (SearchInput, SearchOptions) {
+        (
+            SearchInput::for_user(self.query, self.json, self.ndjson),
+            SearchOptions {
+                limit: self.limit,
+                page: self.page,
+                ..Default::default()
+            },
+        )
+    }
+}

@@ -116,3 +116,53 @@ async fn user_detail_modes_match_go_dtos_records_profiles_and_failures() {
         }
     }
 }
+
+#[tokio::test]
+async fn dedicated_user_profile_preserves_owner_safe_lines_and_json() {
+    let cases: Vec<Value> = serde_json::from_str(include_str!(
+        "../../../docs/migration/contracts/user-compat-output.json"
+    ))
+    .unwrap();
+    assert_eq!(cases.len(), 8);
+    for case in cases {
+        let requests = Arc::new(Mutex::new(0));
+        let application = saved_account::saved_execution(Fixture {
+            user_id: 42,
+            body: serde_json::to_vec(&case["body"]).unwrap(),
+            requests: requests.clone(),
+        });
+        let mut output = Vec::new();
+        let mode = if case["json"].as_bool().unwrap() {
+            DetailOutput::Json
+        } else {
+            DetailOutput::Human
+        };
+        let error = pixiv_cli_rs::user_detail::saved_user_profile(
+            &application.execution,
+            &pixiv_app::lifecycle::Context::new(),
+            42,
+            Some(""),
+            mode,
+            &mut output,
+        )
+        .await
+        .err()
+        .map(|error| error.to_string())
+        .unwrap_or_default();
+        assert_eq!(error, case["error"].as_str().unwrap(), "{}", case["name"]);
+        if mode == DetailOutput::Json && !output.is_empty() {
+            assert_eq!(
+                serde_json::from_slice::<Value>(&output).unwrap(),
+                serde_json::from_str::<Value>(case["output"].as_str().unwrap()).unwrap()
+            );
+        } else {
+            assert_eq!(
+                String::from_utf8(output).unwrap(),
+                case["output"].as_str().unwrap(),
+                "{}",
+                case["name"]
+            );
+        }
+        assert_eq!(*requests.lock().unwrap(), 1);
+    }
+}

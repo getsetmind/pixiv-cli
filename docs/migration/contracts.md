@@ -1268,3 +1268,34 @@ cargo test -p pixiv-cli-rs --test mypixiv --test mypixiv_startup --test mypixiv_
 Go broad回帰はSDK/MyPixiv command、CLI migration40.218秒、MCP122.823秒とvetが成功した。Linux snapshot不在の1test除外と既存3scopeの非決定的diagnostic opt-inを保持し、strict全Go成功とは扱わない。SDK最終fixture replayは0.023秒、CLI captureは0.471秒、MCP最終main/pool replayは約8.4秒。Rust focusedはSDK0.05秒と既存timeline0.08秒/関係0.09秒、CLI main/flags/identity0.25秒、pool0.08秒、startup/flags0.79秒、MCP main5.63秒/pool0.06秒。cloud Linuxでの観測値を他platformやdistinct behaviorへ外挿しない。独立レビューでdocsの重複key比較claimを確認し、このfixtureに実際にはないため削除した。期待値や行は変更していない。
 
 最終 `scripts/check-rust.ps1` はLinux amd64でexit0、285秒。Formatter、全target Clippy（warnings denied）、workspace tests（258 passed、0 failed、既存helper3 ignored）、workspace release（32.54秒）が成功した。旧catalog失敗とClippy失敗後の最終source treeで全gateを通し、部分ログを成功扱いにしない。Go本番・go.mod・go.sumは固定参照から差分0、gofmt/vet・台帳validatorも成功した。今回の契約固定・接続・修正・検証は約17分。scoped Linux比較を全wire/通信/他platformのverifiedや最終切替とは扱わない。
+
+## User detail/search の互換入口と CurrentUser/Username
+
+Goの実在する `user detail USER_ID` と `user search WORD...` の入口を追加し、既存SDK・detail/search execution・JSON/list/poolを再利用する。MCPの新toolは追加せず、既存41toolを維持する。SDKは公開 `CurrentUser`/`CurrentUserRequest` とcached `Username` を接続する。
+
+CLI [61 actual startup行](contracts/user-compat-startup.json)はisolated homeの実Go Run/候補executableでstdout/stderr/exit、config/DB作成、input・proxy/auth・validation順を比較する。専用detailはtext-valueのみでrecord入力を受け付けず、NDJSON flag/automatic出力を持たない。固定Goはuser URLもuser_id-prefixed resolver errorで拒否するため、root `detail --type=user` のURL受入と混同しない。empty/whitespace IDは `input value is required` を固定し、新入口のresolverだけを補正する。
+
+[8 profile表示行](contracts/user-compat-output.json)はhuman/JSONと全control-text欄を固定する。専用detailのhumanはSafeLineでescapeし、既存root detailのraw表示を維持する。shared fetch/JSON writerへproduction presentation choiceを渡し、numeric countは変更しない。どちらのhuman表示もwebpageのuserinfo/query/fragmentを出力しない。JSONは元のDTOを保持する。
+
+owner user-searchは既存[309行](../../crates/pixiv-cli/tests/fixtures/cli-user-search.json)のfixtureを再利用する。新入口に存在しないroot-only selector/type overrideの54行をowner比較から除くが、既存root比較とfixtureは保持する。Rust ownerは255行を実optionsからcanonical executionへ通し、writer・保存済みaccount・paging/replayを比較する。Goのactual owner再実行は225行で、残る30 raw wire-body行は既存shared canonical Go契約を再利用し、owner固有のGo replay成功件数へ加えない。WORD argsをspaceでjoinし、独自のflag surface/text-input・auto NDJSONを維持する。
+
+SDK [9 CurrentUser行](contracts/current-user.json)は既存user detail/wire bodyを参照し、rich DTO、uppercase/duplicate workspace、malformed/missing field、HTTP error、unknown identityのGo結果を固定する。CurrentUserはidentityをtransportより先に確認し、query `filter=for_android&user_id=42` とoperation-specific error、shared raw DETAIL decoding/publicity/resource mappingを保持する。Usernameは取得profileのnameではなく、constructorのverified credential snapshotをcopyして返す。credentialの後続変更、Arc共有、unknown identity/no HTTP、redacted Debugを検査し、新たなClient/Credentials clone APIは追加しない。
+
+既存Go CurrentUserが要求するX-User-Id欠落を、実Rust比較の失敗で確認した。Go-firstでUser/FollowingArtworksのverified presence/valueとtoken-only absenceも固定し、shared GET builderだけへpositive cached UID headerを追加する。POST/OAuthその他headerを変更せず、全通信契約の解決とは扱わない。既存User/wire/transport/MyPixiv/novelと全workspaceの回帰を維持する。
+
+新fixture3filesは78行・48,205 bytesであり、既存search255行を再利用する。到達しないroot-only flag/decoder/bodyの直積を増やさず、独自input/renderer/error/identity/header境界を対象にする。parent検証のtest-target誤指定、human numeric countへのescape適用compile失敗、startup件数assertionの算術誤りも、actual header欠落失敗と分けて記録する。期待値・既存行は削除/翻訳せず、compile条件・exact件数断言と実装を修正する。
+
+root parser3差分/Linux snapshot不在、timeline/MyPixiv以外のscalar lexemes、group/全flag/help/TTY/OS hooks、User/CurrentUser/SearchUsers/4関係一覧/MyPixivUsers以外のraw-wire casing/duplicates/order/null、不正UTF8/任意precision/全cursor payload、全通信/Options/header/auth/取消/deadline/concurrency/disconnect、実HTTPS/resource、他OS/arch・配布信頼は未検証。入口実装とscoped比較を全体verified/最終切替に外挿しない。
+
+```text
+go test ./sdk/... ./internal/cli/commands/pixiv/user -count=1
+go test ./internal/cli -run '^TestMigration' -skip '^TestMigrationCLIContractKeepsCommandsAliasesAndFlags$' -count=1
+go vet ./sdk/pixiv ./internal/cli ./internal/cli/commands/pixiv/user
+go test ./scripts/tests/migration -count=1
+cargo test -p pixiv-sdk --test current_user --test user_detail --test user_wire --test user_wire_transport --test mypixiv --test novel_series --locked
+cargo test -p pixiv-cli-rs --test user_compat_startup --test user_detail --test user_search --test search_pool --locked
+```
+
+Go broad regressionのSDK（pixiv1.521秒）、user command、CLI migration（61.295秒）とvet/gofmt・台帳validatorは成功した。Linux snapshot不在の1test除外を維持し、strict全Go scopeとは扱わない。SDK focusedのCurrentUser/header3testは0.07秒、CLI startup61行0.77秒、detail2test0.20秒、既存root/新owner search3test9.27秒、既存search pool0.39秒。これらはcloud Linuxの観測値であり、他platform/behavior数へ外挿しない。MCPのGo/sourceは今回変更せず、既存独立Go fixtureとRust全workspace回帰を保持する。
+
+最終 `scripts/check-rust.ps1` はLinux amd64でexit0、294秒。Formatter、全target Clippy（warnings denied）、workspace tests（264 passed、0 failed、既存helper3 ignored）、workspace release（34.52秒）が成功した。header補正・専用renderer・empty resolver・count断言修正後の最終source treeで全gateを通し、部分ログを成功扱いにしない。Go本番・go.mod・go.sumは固定参照から差分0。独立source/docs reviewと最終台帳検査を通し、今回の固定・接続・修正・検証は約17分だった。scoped Linux比較を全wire/通信/他platformのverifiedや最終切替とは扱わない。

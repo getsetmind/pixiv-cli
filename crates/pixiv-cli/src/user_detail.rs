@@ -9,7 +9,7 @@ pub async fn user_detail<T: Transport, W: Write>(
     out: &mut W,
 ) -> Result<(), CommandError> {
     let user = client.user(UserRequest { user_id: id }).await?;
-    write(&user, mode, out)
+    write(&user, mode, false, out)
 }
 pub async fn saved_user_detail<T: Transport + 'static, W: Write>(
     execution: &Execution<T>,
@@ -20,6 +20,17 @@ pub async fn saved_user_detail<T: Transport + 'static, W: Write>(
     mode: DetailOutput,
     out: &mut W,
 ) -> Result<(), CommandError> {
+    saved_detail(execution, context, id, user_id, proxy, (mode, false), out).await
+}
+async fn saved_detail<T: Transport + 'static, W: Write>(
+    execution: &Execution<T>,
+    context: &Context,
+    id: i64,
+    user_id: i64,
+    proxy: Option<&str>,
+    presentation: (DetailOutput, bool),
+    out: &mut W,
+) -> Result<(), CommandError> {
     let user = execution
         .read(context, user_id, proxy, move |_, client| async move {
             client
@@ -28,9 +39,14 @@ pub async fn saved_user_detail<T: Transport + 'static, W: Write>(
                 .map_err(Into::into)
         })
         .await?;
-    write(&user, mode, out)
+    write(&user, presentation.0, presentation.1, out)
 }
-fn write<W: Write>(user: &UserDetail, mode: DetailOutput, out: &mut W) -> Result<(), CommandError> {
+fn write<W: Write>(
+    user: &UserDetail,
+    mode: DetailOutput,
+    safe: bool,
+    out: &mut W,
+) -> Result<(), CommandError> {
     match mode {
         DetailOutput::Json => writeln!(
             out,
@@ -63,7 +79,15 @@ fn write<W: Write>(user: &UserDetail, mode: DetailOutput, out: &mut W) -> Result
                 ("job", &user.profile.job),
             ] {
                 if !value.is_empty() {
-                    writeln!(out, "{name}: {value}")?;
+                    writeln!(
+                        out,
+                        "{name}: {}",
+                        if safe {
+                            crate::safe_line(value)
+                        } else {
+                            value.into()
+                        }
+                    )?;
                 }
             }
             for (name, value) in [
@@ -89,7 +113,15 @@ fn write<W: Write>(user: &UserDetail, mode: DetailOutput, out: &mut W) -> Result
                 ("comment", &user.workspace.comment),
             ] {
                 if !value.is_empty() {
-                    writeln!(out, "workspace {name}: {value}")?;
+                    writeln!(
+                        out,
+                        "workspace {name}: {}",
+                        if safe {
+                            crate::safe_line(value)
+                        } else {
+                            value.into()
+                        }
+                    )?;
                 }
             }
         }
@@ -184,4 +216,56 @@ fn public_webpage(raw: &str) -> String {
         }
     }
     format!("{scheme}://{escaped}")
+}
+
+#[derive(clap::Args)]
+pub struct UserDetailOptions {
+    #[arg(num_args = 0..)]
+    pub sources: Vec<String>,
+    #[arg(long, short = 'j', num_args = 0..=1, require_equals = true, default_missing_value = "true")]
+    pub json: Option<bool>,
+}
+impl UserDetailOptions {
+    pub fn resolve_source<R: std::io::Read>(
+        &self,
+        input: &mut R,
+        terminal: bool,
+    ) -> Result<String, CommandError> {
+        if self.sources.len() > 1 {
+            return Err(CommandError::Message(
+                "usage: pixiv user detail [options] USER_ID",
+            ));
+        }
+        let source = match self.sources.first() {
+            Some(source) => source.clone(),
+            None => crate::search::read_text_value(
+                input,
+                terminal,
+                "usage: pixiv user detail [options] USER_ID",
+                "stdin user ID is not valid UTF-8",
+            )?,
+        };
+        Ok(source)
+    }
+}
+pub async fn saved_user_profile<T: Transport + 'static, W: Write>(
+    execution: &Execution<T>,
+    context: &Context,
+    id: i64,
+    proxy: Option<&str>,
+    mode: DetailOutput,
+    out: &mut W,
+) -> Result<(), CommandError> {
+    saved_detail(execution, context, id, 0, proxy, (mode, true), out).await
+}
+
+pub fn profile_user_id(source: &str) -> Result<i64, CommandError> {
+    if source.trim().is_empty() {
+        return Err(CommandError::LabeledSdk(
+            "user_id",
+            pixiv_sdk::Error::new(pixiv_sdk::Reason::InvalidArgument, "user detail")
+                .with_detail("input value is required"),
+        ));
+    }
+    crate::user_works::resolved_user_id(Some(&source.to_owned()), "user detail")
 }

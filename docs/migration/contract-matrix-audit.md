@@ -37,3 +37,7 @@ Cobraのleaf harnessとGoの実際のRun/root parserは、同じ未対応flagで
 ### MyPixiv checkpoint
 
 MyPixivはSDK195、MCP135+pool6、CLI main77+startup25+scalar33+pool18の489行を固定し、共有bodyを使った9fixture filesは810,546 bytes（約0.77 MiB）。CLI mainは75 exactと2 rejection-only、startupは24 real processと1 injected reader-error証拠に分け、後者を実process比較の件数へ加えない。scalar33は値正規化と実startupを共通fixtureで比較する。kind/output/inputの全直積を追加せず、aggregate対explicit-ID、users対worksの入力/autoNDJSON、identity-before-cursor、offset-only continuation、filter/window、writer/commit/replayの相互作用を対象とする。旧fixtureや失敗行は削除しない。
+
+### User compatibility checkpoint
+
+新fixtureはCurrentUser9、専用user profile8、実startup61の3files・78行・48,205 bytes。owner searchの共通fixtureは255行を再利用し、新規copy/matrixは作らない。root-only flagの54行をowner選択から除くが既存rootテスト/期待値は維持する。Go owner225行と既存shared raw-wire30行の証拠を区別し、255件全てが今回Go ownerで再実行されたとは記さない。専用detailのtext入力/safe表示/empty error、CurrentUserのidentity/query/error/headerとcached Usernameが今回の新しい境界である。
