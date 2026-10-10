@@ -1911,7 +1911,14 @@
         "crates/pixiv-app/src/config.rs",
         "crates/pixiv-app/src/config/files.rs",
         "crates/pixiv-app/src/config/mutations.rs",
-        "crates/pixiv-cli/src/fanbox_browser.rs"
+        "crates/pixiv-cli/src/fanbox_browser.rs",
+        "crates/pixiv-app/src/browser_cookies.rs",
+        "crates/pixiv-app/src/browser_chromium.rs",
+        "crates/pixiv-app/src/browser_chromium_provider.rs",
+        "crates/pixiv-app/src/browser_profiles.rs",
+        "crates/pixiv-app/src/browser_sqlite.rs",
+        "crates/pixiv-app/src/browser_secrets.rs",
+        "crates/pixiv-app/src/browser_dpapi.rs"
       ],
       "tests": [
         "internal/cli/migration_fanbox_help_routing_test.go",
@@ -1931,13 +1938,22 @@
         "crates/pixiv-sdk/tests/fanbox_opaque_credentials.rs",
         "crates/pixiv-cli/tests/fanbox_browser_bytes.rs",
         "internal/cli/migration_fanbox_browser_test.go",
-        "crates/pixiv-cli/tests/fixtures/fanbox-browser-import.json"
+        "crates/pixiv-cli/tests/fixtures/fanbox-browser-import.json",
+        "internal/browsercookies/chromium/migration_provider_correspondence_test.go",
+        "crates/pixiv-cli/tests/fixtures/browser-chromium-provider.json",
+        "crates/pixiv-app/tests/browser_chromium.rs",
+        "crates/pixiv-app/tests/browser_profiles.rs",
+        "crates/pixiv-app/tests/browser_sqlite.rs",
+        "crates/pixiv-app/tests/browser_native_secret_contract.rs",
+        "crates/pixiv-app/tests/browser_backend.rs",
+        "crates/pixiv-cli/tests/fanbox_browser_import.rs"
       ],
       "verified_platforms": [],
       "differences": [
         "Go nil verification context has no non-null Rust API input; nil-success session factory panics in Go and returns an explicit missing-client error in Rust. Custom SessionOpener(&str) cannot reproduce arbitrary Go byte-string factories; Unrestricted service/trim/saved byte schedules remain unverified beyond the bounded comparisons.",
-        "Native browser extraction, successful authenticated native binary import, arbitrary credential/parser/transport/cancel/TTY/native-platform schedules and complete SDK lifecycle remain unverified or unimplemented. Unrestricted parser/TTY/IO/SQLite concurrency and non-Linux/platform verification remain open; no verified platform is added.",
-        "Browser extraction contracts are sealed separately; additive byte provider/auth forwarding passes three regression tests and the unchanged full workspace gate. System native browser factory remains unimplemented; six new browser fixtures are Go evidence only at this foundation checkpoint."
+        "The normal system browser factory connects Chrome/Edge/Firefox/Safari extraction to byte import in the bounded candidate. Native Darwin/Windows compile/link/run, actual browser/keyring/Keychain/DPAPI integration, successful authenticated native binary import and unrestricted credential/parser/transport/cancel/TTY/platform/SDK lifecycle remain unverified; no verified platform is added.",
+        "Browser expectations distinguish actual decoder/keysource/read recaptures from Go-only helper rows and source-driven native mocks. Raw CLI argument and stderr UTF-8 boundaries, nil/empty Go slice identity versus Rust Vec, all native profile/path/env/ACL, tool distribution/version and contemporary browser formats remain unresolved beyond the exact bounded tests.",
+        "Full/deep Local State JSON grammar remains unverified; serde IgnoredAny skips unknown containers iteratively, so a default recursion-limit mismatch is not established. Successful nil/empty Go byte-slice identity maps to Rust empty Vec without a separate representation. New147 recaptures actual provider behavior, preserving all old159 helper expectations unchanged."
       ]
     },
     {

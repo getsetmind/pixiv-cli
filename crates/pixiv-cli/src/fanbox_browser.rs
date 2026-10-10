@@ -10,6 +10,12 @@ pub struct CookieProfile {
     pub path: PathBuf,
 }
 
+pub struct CookieByteProfile {
+    pub id: Vec<u8>,
+    pub path: PathBuf,
+}
+pub type BrowserByteProfilesFuture<'a> =
+    Pin<Box<dyn Future<Output = Result<Vec<CookieByteProfile>, CommandError>> + Send + 'a>>;
 pub type BrowserProfilesFuture<'a> =
     Pin<Box<dyn Future<Output = Result<Vec<CookieProfile>, CommandError>> + Send + 'a>>;
 pub type BrowserCookiesFuture<'a> =
@@ -39,6 +45,32 @@ pub trait CookieProvider: Send + Sync {
                 .map(|values| values.into_iter().map(String::into_bytes).collect())
         })
     }
+    fn discover_byte_profiles<'a>(&'a self, context: &'a Context) -> BrowserByteProfilesFuture<'a> {
+        Box::pin(async move {
+            self.discover_profiles(context).await.map(|profiles| {
+                profiles
+                    .into_iter()
+                    .map(|profile| CookieByteProfile {
+                        id: profile.id.into_bytes(),
+                        path: profile.path,
+                    })
+                    .collect()
+            })
+        })
+    }
+    fn read_profile_bytes<'a>(
+        &'a self,
+        context: &'a Context,
+        host: &'a str,
+        name: &'a str,
+        profile: &'a [u8],
+    ) -> BrowserCookieBytesFuture<'a> {
+        Box::pin(async move {
+            let profile = std::str::from_utf8(profile)
+                .map_err(|_| CommandError::Message("browsercookies: invalid profile identifier"))?;
+            self.read_bytes(context, host, name, profile).await
+        })
+    }
     fn close(&self) -> Result<(), CommandError>;
 }
 
@@ -54,11 +86,10 @@ impl SystemBrowserProvider {
     }
 
     pub fn system() -> Self {
-        Self::with_factory(Arc::new(|browser| match browser {
-            "chrome" | "edge" | "firefox" | "safari" => Err(CommandError::Message(
-                "browsercookies: native browser cookie extraction is not implemented",
-            )),
-            _ => Err(CommandError::Message("browsercookies: unknown browser")),
+        Self::with_factory(Arc::new(|browser| {
+            let backend = pixiv_app::browser_cookies::BrowserCookieBackend::system(browser)
+                .map_err(browser_error)?;
+            Ok(Arc::new(NativeCookieProvider::new(Arc::new(backend))))
         }))
     }
 }
@@ -107,10 +138,30 @@ async fn read_session_bytes(
     context: &Context,
     profile_id: &str,
 ) -> Result<Vec<u8>, CommandError> {
-    let profiles = provider.discover_profiles(context).await?;
-    let profile = select_profile(&profiles, profile_id)?;
+    let profiles = provider.discover_byte_profiles(context).await?;
+    let profile = if profile_id.is_empty() {
+        match profiles.as_slice() {
+            [] => return Err(CommandError::Message("browsercookies: profile not found")),
+            [profile] => profile,
+            _ => {
+                return Err(CommandError::MessageText(format!(
+                    "browsercookies: multiple profiles match and no profile was specified: {}",
+                    profiles
+                        .iter()
+                        .map(|profile| String::from_utf8_lossy(&profile.id))
+                        .collect::<Vec<_>>()
+                        .join(", ")
+                )));
+            }
+        }
+    } else {
+        profiles
+            .iter()
+            .find(|profile| profile.id == profile_id.as_bytes())
+            .ok_or(CommandError::Message("browsercookies: profile not found"))?
+    };
     let mut cookies = provider
-        .read_bytes(context, ".fanbox.cc", "FANBOXSESSID", &profile.id)
+        .read_profile_bytes(context, ".fanbox.cc", "FANBOXSESSID", &profile.id)
         .await?;
     match cookies.len() {
         0 => Err(CommandError::Message(
@@ -193,5 +244,106 @@ impl Drop for ProviderClose {
         if let Some(provider) = self.provider.take() {
             let _ = provider.close();
         }
+    }
+}
+
+fn browser_error(error: pixiv_app::browser_cookies::BrowserCookieError) -> CommandError {
+    CommandError::MessageText(error.to_string())
+}
+
+pub struct NativeCookieProvider {
+    backend: Arc<pixiv_app::browser_cookies::BrowserCookieBackend>,
+}
+impl NativeCookieProvider {
+    pub fn new(backend: Arc<pixiv_app::browser_cookies::BrowserCookieBackend>) -> Self {
+        Self { backend }
+    }
+}
+async fn native_job<T: Send + 'static>(
+    operation: impl FnOnce() -> Result<T, CommandError> + Send + 'static,
+) -> Result<T, CommandError> {
+    match tokio::task::spawn_blocking(operation).await {
+        Ok(result) => result,
+        Err(error) if error.is_panic() => std::panic::resume_unwind(error.into_panic()),
+        Err(_) => Err(CommandError::Message(
+            "browsercookies: cookie database query failed",
+        )),
+    }
+}
+impl CookieProvider for NativeCookieProvider {
+    fn discover_profiles<'a>(&'a self, context: &'a Context) -> BrowserProfilesFuture<'a> {
+        Box::pin(async move {
+            self.discover_byte_profiles(context)
+                .await?
+                .into_iter()
+                .map(|profile| {
+                    Ok(CookieProfile {
+                        id: String::from_utf8(profile.id).map_err(|_| {
+                            CommandError::Message("browsercookies: invalid profile identifier")
+                        })?,
+                        path: profile.path,
+                    })
+                })
+                .collect()
+        })
+    }
+    fn discover_byte_profiles<'a>(&'a self, context: &'a Context) -> BrowserByteProfilesFuture<'a> {
+        let backend = self.backend.clone();
+        let context = context.clone();
+        Box::pin(native_job(move || {
+            backend
+                .discover_profiles(&context)
+                .map(|profiles| {
+                    profiles
+                        .into_iter()
+                        .map(|profile| CookieByteProfile {
+                            id: profile.id,
+                            path: profile.path,
+                        })
+                        .collect()
+                })
+                .map_err(browser_error)
+        }))
+    }
+    fn read<'a>(
+        &'a self,
+        context: &'a Context,
+        host: &'a str,
+        name: &'a str,
+        profile: &'a str,
+    ) -> BrowserCookiesFuture<'a> {
+        Box::pin(async move {
+            self.read_bytes(context, host, name, profile).await?.into_iter().map(|value| String::from_utf8(value).map_err(|_| CommandError::Message("browsercookies: cookie value is encrypted and decryption is not supported by this provider"))).collect()
+        })
+    }
+    fn read_bytes<'a>(
+        &'a self,
+        context: &'a Context,
+        host: &'a str,
+        name: &'a str,
+        profile: &'a str,
+    ) -> BrowserCookieBytesFuture<'a> {
+        self.read_profile_bytes(context, host, name, profile.as_bytes())
+    }
+    fn read_profile_bytes<'a>(
+        &'a self,
+        context: &'a Context,
+        host: &'a str,
+        name: &'a str,
+        profile: &'a [u8],
+    ) -> BrowserCookieBytesFuture<'a> {
+        let backend = self.backend.clone();
+        let context = context.clone();
+        let query = pixiv_app::browser_cookies::CookieQuery::new(host, name);
+        let profile = profile.to_vec();
+        Box::pin(native_job(move || {
+            backend
+                .read(&context, &query.map_err(browser_error)?, &profile)
+                .map(|values| values.into_iter().map(|value| value.into_bytes()).collect())
+                .map_err(browser_error)
+        }))
+    }
+    fn close(&self) -> Result<(), CommandError> {
+        self.backend.close().map_err(browser_error)
     }
 }

@@ -186,7 +186,7 @@ async fn failed_provider_construction_stops_before_any_provider_lifecycle() {
 }
 
 #[tokio::test]
-async fn system_registry_validates_names_and_reports_native_extraction_as_pending() {
+async fn system_registry_validates_names_and_checks_cancellation_before_native_access() {
     let adapter = SystemBrowserProvider::system();
     let context = Context::new();
     for browser in [
@@ -204,6 +204,7 @@ async fn system_registry_validates_names_and_reports_native_extraction_as_pendin
             "browsercookies: unknown browser"
         );
     }
+    context.cancel();
     for browser in [
         "chrome",
         "edge",
@@ -219,7 +220,7 @@ async fn system_registry_validates_names_and_reports_native_extraction_as_pendin
                 .await
                 .unwrap_err()
                 .to_string(),
-            "browsercookies: native browser cookie extraction is not implemented"
+            "context canceled"
         );
     }
 }

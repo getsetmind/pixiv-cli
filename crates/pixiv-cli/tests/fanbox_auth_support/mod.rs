@@ -32,7 +32,7 @@ fn trace(observed: &Shared, value: impl Into<String>) {
 fn caller_key() -> ContextKey {
     ContextKey::new("fanbox-auth-owned-command")
 }
-fn context_marker(context: &dyn RequestContext) -> String {
+pub(crate) fn context_marker(context: &dyn RequestContext) -> String {
     let mut marker = context
         .value(&caller_key())
         .and_then(|value| value.downcast::<String>().ok())
@@ -45,6 +45,23 @@ fn context_marker(context: &dyn RequestContext) -> String {
 }
 
 pub async fn observe(home: &Path, case: &Case) -> Vec<Observation> {
+    observe_with_browser(home, case, |step, observed| {
+        Box::new(browser::Browser {
+            step: step.clone(),
+            observed,
+        })
+    })
+    .await
+}
+
+pub async fn observe_with_browser<F>(
+    home: &Path,
+    case: &Case,
+    mut open_browser: F,
+) -> Vec<Observation>
+where
+    F: FnMut(&schema::Step, Shared) -> Box<dyn fanbox_auth::BrowserProvider>,
+{
     let directory = home.join(".pixiv-cli");
     if directory.exists() {
         std::fs::remove_dir_all(&directory).unwrap();
@@ -73,10 +90,7 @@ pub async fn observe(home: &Path, case: &Case) -> Vec<Observation> {
             step: step.clone(),
             observed: observed.clone(),
         };
-        let browser = browser::Browser {
-            step: step.clone(),
-            observed: observed.clone(),
-        };
+        let browser = open_browser(step, observed.clone());
         let owned_database = Arc::new(Mutex::new(None::<Arc<Mutex<Database>>>));
         let machine = AuthCommand::parse(&step.args)
             .as_ref()
@@ -174,7 +188,7 @@ pub async fn observe(home: &Path, case: &Case) -> Vec<Observation> {
                             reader: &mut reader,
                             writer: &mut output,
                             prompts: &mut prompts,
-                            browser: &browser,
+                            browser: browser.as_ref(),
                         },
                     )
                     .await;

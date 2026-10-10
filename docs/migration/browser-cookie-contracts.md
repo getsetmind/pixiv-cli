@@ -1,5 +1,9 @@
 # 保存済みブラウザー cookie の契約と byte 基盤
 
+Current state: the later native-backend continuation below connects all four providers through the normal system factory. The foundation-only sections before that continuation are retained historical evidence from published39470c5; their unimplemented-factory wording describes that earlier checkpoint only. Native OS execution and all explicitly bounded parity gaps remain open.
+
+## Historical contracts and byte-foundation checkpoint
+
 参照実装は Go `4b4426487ef18bed276706daec385e0d0a6979f9`、今回の公開済み Rust 基準は `0da302cdebcbcbbeeee558d9b93b9533e4d69662` に固定する。[移植方針](strategy.md) に従い、Go の実処理で期待値を固定してから Rust の入口を変更する。
 
 今回の区切りは Go 契約 fixture の保存と、Rust の byte 型の受け渡しを auth import へ接続するところまでである。Rust の通常 factory は Chrome、Edge、Firefox、Safari のいずれにも `browsercookies: native browser cookie extraction is not implemented` を返す。保存済みブラウザーから取得して import する Rust の機能は、まだ利用できない。
@@ -134,3 +138,91 @@ AuthCommand の browser import は byte method を使い、既存 `import_sessio
 - 現代 Safari binarycookies、新しい Chromium version/app-bound、Local State/profile grammar の追加対応は固定 Go にない範囲を含むため、今回の parity とは別の調査・機能追加として扱う
 
 実 credential の抽出・送信、live browser/account/keyring、persistent access、system trust/settings の変更は今回の範囲外である。拒否された supplemental probe の再実行は行わない。
+
+
+## 通常 browser backend の接続候補（2026-10-10）
+
+この追加工程の Rust 基準は `39470c5491930150aeebffafefcd944bfd2e56bf`、参照 Go は `4b4426487ef18bed276706daec385e0d0a6979f9` である。前節の byte 基盤とその 338 秒の full gate は、前工程の証拠として保持する。この候補の実装・検証結果と混同しない。
+
+通常の `SystemBrowserProvider::system` を app の `BrowserCookieBackend::system` へ接続し、Chrome/Edge、Firefox、Safari の discovery と読取を byte import へ渡す候補を実装している。root/main から通常 factory、固定 query/parser、暗号と OS 依存、exactly-one/close、SDK identity、所有する保存 DB/config/output までの接続比較が今回の区切りである。本稿の作成時点では候補の最終 GREEN、aggregate gate、独立 review は未確定である。
+
+### 暗号 helper の期待値を provider の期待値へ投影しない
+
+追加の `browser-chromium-provider.json` は、元の Go の `decryptEncrypted`、`encryptionKeys`、`Read` と private Local State を実際に呼び出した 147 行である。新しい producer は古い 159 行の fixture の SHA と行を保持し、provider の出力を別に採取する。公式 SQLite shell を実行しない所有 CSV process と公式 shell の所有 DB 実行は区別する。
+
+| 追加 fixture の operation | Go 行数 | Rust 比較の対象と境界 |
+| --- | ---: | --- |
+| `decrypt_encrypted` | 61 | 元 helper の blob/key 入力 51 と元 provider 入力 10 を、Go の実 `decryptEncrypted` で再採取。Rust の実 decoder と鍵取得依存を比較する予定 |
+| `linux_encryption_keys` | 34 | 元 Linux keysource 入力 13 と追加 State 入力 21。Go は所有 `secret-tool` を実行し、Rust は同じ本番 keysource と process/files 依存を比較する予定 |
+| `linux_decrypt_encrypted` | 9 | 実 keysource、固定 secret command、State、decoder を接続。鍵 override を使わない |
+| `provider_read` | 22 | 21 行は Rust の実 Chromium Read を比較する予定。invalid query の 1 行は `CookieQuery::new` の先行拒否として別に数える |
+| `local_state_encrypted_key` | 21 | Go private helper の直接出力は Go-only。各 State body に対応する 21 行の `keys-state-*` を別途実 keysource で採取した |
+
+decoder/keysource の直接対象は 61 + 34 + 9 = 104 行である。追加 fixture の 147 行全体を Rust provider の完全一致件数と記録しない。追加の public Read は実 Go の `Read → sqliteio.Query → CSV → rowsToSnapshot → decryptEncrypted` を通るが、所有 `Cookies` placeholder と合成 CSV process を使う。これは readonly SQLite command/CSV/Read の観測であり、147 行の fixture が native SQLite SQL を実行した証拠ではない。
+
+元 helper と再採取した provider では 6 入力の結果が異なる。legacy-zero-IV と 16 bytes を超える legacy key の 2 入力では provider が平文 prefix の先頭 32 bytes を取り除く。legacy blob 長 0、3、16、31 の 4 入力では provider の先行 format 判定により、helper の malformed から provider の format-unknown になる。古い fixture の期待値は変更せず、Rust decoder は実 provider の出力と比較する。
+
+追加 Go producer の保存済み証拠は capture、同一入力の replay 3 回、race、vet、空の gofmt、related suite と source/fixture guard を含む。manifest の各 capture/replay は top-level 1 pass であり、147 個の名前付き test pass と数えない。related suite は top-level 28、named pass event 70、fail/skip 0 である。これらは Go の再現性と保存確認の結果であり、今回の Rust GREEN には加算しない。個別 command/exit/log SHA と producer/fixture/source SHA は追加 provenance の元 manifest を変更せず保持する。
+
+### 古い 159 行の対応と残る Go-only 入力
+
+| 古い crypto fixture の範囲 | 行数 | この工程の扱い |
+| --- | ---: | --- |
+| GCM/CBC/modern/legacy cipher と既存 `decryptEncrypted` | 61 | 同じ入力を実 Go provider で再採取し、追加 fixture の decoder 比較へ対応付ける |
+| Linux `encryptionKeys` | 13 | 実 Go keysource の再採取行へ対応付ける |
+| private `rowsToSnapshot` | 12 | 実 Rust `DecodedCookies` の部分結果と error を別々に比較する予定。public Read は error 時にそれまでの値を破棄する |
+| Linux Secret Service password | 11 | 実 Rust Secret Service wrapper と固定 command の既存 suite に対応する |
+| その他 private helper | 62 | Go-only のまま保持。Rust 本番に helper を公開して行数を増やさない |
+
+62 行は direct derivation/candidates 13、Local State 20、unpad 7、private Linux error-map 7、legacy-supported 5、prefix-strip 5、host-digest-strip 5 である。任意/非正 PBKDF2 iteration・length・multiblock、command が trim する前の末尾 CR/LF password、実 Secret Service が返せない helper error 入力を、本番の到達可能な比較へ読み替えない。
+
+追加 State は nested duplicate object の merge、null で既存値が残る場合、type error の先行/後行、Unicode simple-fold field 名、malformed UTF-8 と unpaired surrogate の Go replacement を含む。private State 21 行を比較済みとするための公開 helper は追加しない。実 keysource 21 counterpart の鍵 bytes、error、command と State の順序で到達可能な振る舞いを確認する。
+
+### プロファイル、SQLite と parser の比較範囲
+
+Firefox の 60 行のうち、直接 provider 対象は discovery 20、process-boundary Read 17、公式 shell Read 7 の計 44 行である。invalid query 1 行は query constructor での拒否として区別する。safe-ID helper 11、default-root 2、Go test hook snapshot 2 はこの直接 44 行へ加算しない。default-root の通常接続は接続 import の対象にも含まれるが、個別 fixture 全体の一致を意味しない。
+
+Safari の直接 provider 対象は discovery 7 と Read 19 の計 26 行で、query constructor 1 行を別に記録する。parser fixture の malformed 16、genuine slice panic 1、選択した正常入力 10 の計 27 specimen を、非公開 parser のまま Read から再利用する。これは raw parser の cookie 構造全フィールドの比較ではない。invalid UTF-8 value、invalid UTF-8 domain/name/path、empty fields の raw parser 直接出力 3 行をそのまま Rust raw parser API の比較済み件数へ加えない。
+
+SQLite 42 行は process/CSV/argv/error 33 と公式 shell/所有 DB 9 に分ける。実 helper child と `SystemHostProcess` を使う command 観測、公式 binary の SHA/version、実 DB/schema/lock の fixture を比較する候補を用意する。ホストを Windows とする source-driven mock 33 行は Windows native process 実行を意味しない。readonly flags と固定 SQL、parameter-map の意味を比較し、Go map の順序を新しい契約にしない。
+
+### native secret の source-driven 比較と所有権
+
+54 行の Go evidence は Darwin secret 14、Darwin mapping 8、Windows DPAPI 11、Windows routing 21 を保持する。Rust の Darwin keysource には Go の private `kind(77)` 入力がないため、mapping の unknown-kind-defaults-to-chrome 1 行は Go-only である。残る 7 行は本番 keysource の error/command 属性を比較し、成功時の raw password helper 出力と derived key 出力を混同しない。
+
+共有 DPAPI 処理は native ABI 依存の直前から input lifetime、DATA_BLOB、optional null、flags 0、output validation/copy、post-copy context、LocalFree を所有する。直接 DPAPI 11 行は context-check 回数も含む native allocation 観測と比較する予定。Windows routing 21 行では Go-only な injected context-check instrumentation を除いた実 keysource/decoder と native allocation の観測を比較し、除いた field を一致済みと記録しない。
+
+source の native failure と nonnull zero-size output は free owner を作る前に返るため、LocalFree 0 回のまま保持する。mock teardown による残余 allocation 解放を production LocalFree と数えない。uint32::MAX を超える input は source 条件の確認だけであり、巨大 allocation を実行していない。これらは Linux 上の source-driven ABI boundary mock で、Darwin/Windows native compile/link/run や実 Keychain/DPAPI の許可済み integration の証拠ではない。
+
+### byte と cancellation の表現
+
+`BrowserProfile`/`CookieByteProfile` の ID は bytes、path は native `PathBuf` とする。Unix の raw profile 名を bytes と native OsString のまま渡す候補であり、String compatibility method は strict UTF-8 変換を行う。raw CLI argument と複数 profile 診断の stderr 全 bytes は依然として String 境界があり、任意の invalid UTF-8 引数・診断の parity は未確立である。Windows の drive/UNC/native raw-name、全 environment 値と path grammar の実行証拠は残る。現在の Go `os.UserHomeDir` source が Windows の USERPROFILE を読むことは確認できるが、Windows 上の native discovery を実行した証拠ではない。
+
+Go の `nil` slice と非 nil empty slice は `SecretBytes(Vec<u8>)`/`Vec` に独立の状態を持たない。`cipher-gcm-empty-plaintext` の成功 nil bytes は成功 empty SecretBytes に対応付け、error を作らない。error は Result/optional error として区別し、public Read の失敗では部分値を返さない。private DecodedCookies の部分結果、public Read の error/空成功、秘密値の `<redacted>` を別に確認する。この対応を Go の slice identity の完全一致と記録しない。
+
+Safari の pre-canceled Read は成功し得る元の挙動を維持し、parser loop に新しい cancellation polling を加えない。genuine malformed page-count panic は invalid-format へ置換せず、blocking task の JoinError panic を呼び出し側へ再送出する候補である。future drop が開始済み blocking job/native call を止める保証はない。adapter の once-close、read/close error join、job と依存の lifetime を維持し、任意の drop/close/panic/並行 schedule の完了を個別比較から推定しない。
+
+### RED、最終 gate と保存の条件
+
+実 API RED `/tmp/pixiv-browser-backend-api-red.log` は欠落 app browser modules/API により exit 101 である。実 `DecodedCookies` API RED `/tmp/pixiv-browser-decoded-outcome-api-red.log` は、従来 Result に values/error/into_result がないため exit 101 となる。どちらも未実装 API の証拠として残す。環境設定 failure、別の compile repair、初回から成功した追加行と意味的な RED を混同しない。
+
+本稿では focused GREEN、root import 82 cases/84 observations、全 workspace gate、本番 release、関連 Go/validator、独立 review の成功をまだ宣言しない。最終文書には実 command、exit、時間、ログ SHA、tested source/test hashes、失敗履歴、ignored/scaffold の扱いを、実結果が揃った時点で記録する。新しい ignored ケースは予定せず、既存 11 ignored を失敗回避に流用しない。
+
+元 434 Go production/module paths、旧 fixture、native/vendor、full check script と期待値は保持する。provider manifest の published fixture baseline は foundation 6 fixture を含む 103 ファイルであり、foundation 前の 97 ファイルと別に記録する。既存 673 ledger ID/status/verified-platform を変えず、実 source/test 対応と現在の differences だけを更新する。
+
+現代 Safari、Chromium の新 version/app-bound、Local State/profile の全 grammar、全 SQLite schema/type/row-width/permission/locking/cancel、実 secrets/platform/distribution は引き続き必要である。実 credential/account/browser/keyring、外部 media、persistent access と host trust/settings の変更は行わず、拒否された supplemental probe は再実行しない。
+
+### Current focused verification
+
+Actual focused runs now pass Chromium5, native-secret7, Firefox/Safari10, SQLite8, backend13 and existing CLI browser8 top-level tests. The connected native import target passes5 top-level tests, including all82 scenarios/84 complete observations in its owned child and a separate real binary invalid-UTF8 Firefox rejection. Full workspace gate/release and final independent approval remain pending. Preliminary all-target strict Clippy passes. No new ignored case was added.
+
+Full/deep Local State JSON grammar remains unverified. Independent source review found serde_json1.0.151 IgnoredAny skips unknown nested containers iteratively, so its default recursion limit alone does not establish a provider mismatch; no depth128 incompatibility is claimed without an actual Go/Rust witness. The API RED logs are missing-API compile witnesses, not semantic failure counts. Official SQLite PATH omission, POSIX lock-release test ordering, four nil cookie inputs and an unfrozen mixed-case unknown-name premise are preserved as separate setup/harness failures. Captured Go expectations did not change.
+
+
+### Final native-backend verification
+
+The unchanged required script passes all four stages (exit0,386 seconds):846 visible passes,0 failures,11 unchanged existing ignored,309 summaries/297 Running targets/5 doc targets, optimized release53.24 seconds. Seven existing visible child summaries and the connected test's ordinary child-entry scaffold are not separate feature contracts. All8,855 protected inputs match. Fresh related Go records485 named passes (22 top-level,463 nested),8 package passes and2 ordinary child-entry skips outside their child environment; actual capture parents execute those child contracts. Vet/gofmt/validator pass. The additional147 provider oracle has capture+3 byte-exact replays+race/vet/gofmt and related suites with no skips.
+
+The current connected target matches all82 scenarios/84 complete16-field observations and full discovery objects, actual commands, raw session bytes/errors, state/config/output and SDK traces. Its real binary smoke exercises the ordinary system factory with an owned invalid-UTF8 Firefox cookie and rejects before identity; it is not successful authenticated network/native import evidence. Focused failures and API RED witnesses remain separately preserved in [backend provenance](provenance/browser-cookie-backend.json). No existing Go fixture expected value, test assertion or mandatory gate stage was removed.
+
+Source/tests are frozen after this gate. Independent final review and signed publication are recorded separately; no verified platform or ledger status is promoted. The normal factory is connected in this candidate; historical foundation-unimplemented wording above applies only to the earlier published foundation.

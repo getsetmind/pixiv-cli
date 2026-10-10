@@ -1,0 +1,312 @@
+{
+  "reference": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "published_base": "39470c5491930150aeebffafefcd944bfd2e56bf",
+  "cases": 147,
+  "operations": {
+    "decrypt_encrypted": 61,
+    "provider_read": 22,
+    "linux_encryption_keys": 34,
+    "local_state_encrypted_key": 21,
+    "linux_decrypt_encrypted": 9
+  },
+  "source_input_correspondence": {
+    "existing_cipher_helper_inputs_actual_decrypt_encrypted": 51,
+    "existing_provider_actual_decrypt_encrypted": 10,
+    "existing_linux_keys_actual_encryption_keys": 13,
+    "existing_rows_actual_public_Read": 12,
+    "supplemental_LocalState_actual_decoder_and_acquisition": {
+      "state_bodies": 21,
+      "cases": 42
+    },
+    "real_linux_actual_decrypt_encrypted": 9,
+    "supplemental_actual_public_Read": 10
+  },
+  "preservation": {
+    "go_production_modules": {
+      "count": 434,
+      "changed": []
+    },
+    "published_fixtures": {
+      "count": 103,
+      "changed": []
+    },
+    "frozen_go_production_modules": {
+      "count": 434,
+      "changed": []
+    },
+    "old_crypto_cases": {
+      "count": 159,
+      "objects_identical": true,
+      "bytes_identical": true,
+      "sha256": "aca537839752502488fcb6075605d911c89d7a326ff435dd090c1f6401597abf"
+    }
+  },
+  "owned_sha256": {
+    "internal/browsercookies/chromium/migration_provider_correspondence_test.go": "935a86e150f8007f08b2efcc35d42e7e8dc9aa328860cf5c3528470b005a1f59",
+    "crates/pixiv-cli/tests/fixtures/browser-chromium-provider.json": "4983114facd5cd815e9ec9006ff5d0bc01e86535029a192d0dc80642f9263846"
+  },
+  "sources": {
+    "crates/pixiv-cli/tests/fixtures/browser-chromium-crypto.json": "aca537839752502488fcb6075605d911c89d7a326ff435dd090c1f6401597abf",
+    "go.mod": "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c",
+    "go.sum": "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e",
+    "internal/browsercookies/browsercookies.go": "1b1e373c3a240f54d8b0d255ad5ae5b753b2eae0c8e506df1615e3b9190a3e6b",
+    "internal/browsercookies/chromium/chromecrypto.go": "24c0323d3d5bef2e2f0ab6d120391ea622494995374b71515069daab25ea0cf7",
+    "internal/browsercookies/chromium/chromium.go": "bca8e41df3d25be82fa0fa0a1f85e42c5fa354d4602ccb943bb69845c57bb877",
+    "internal/browsercookies/chromium/darwin.go": "7a4f1b58488b12d362734e4a6c23a3f79daa6644fa138cae14920a155cc71bd3",
+    "internal/browsercookies/chromium/decrypt.go": "dde205f1b323b991ee0eef6ef73ce72e427981edcc46da3d64dc59224cf52da4",
+    "internal/browsercookies/chromium/legacy_blob_other.go": "5b7a4339a3ff0a001e63e1b6b4383c788ba84ab30527794c2c6db462cd143275",
+    "internal/browsercookies/chromium/legacy_blob_windows.go": "95bb94121cad6da1451e6bb0b39e86de984debc9f8725f0dce7cbe39e32c8257",
+    "internal/browsercookies/chromium/legacy_keys_unix.go": "d37eaa8ee973929ef43f45fbd041e2fd37a4829ee26027c5e6b798100a5a69f7",
+    "internal/browsercookies/chromium/linux.go": "890b6bcc30417743625b5248a6902d868a5db2edefcde02a7437a57d24070247",
+    "internal/browsercookies/chromium/migration_cookie_crypto_test.go": "1bf0ff6b1963bac2a5c47fdd911ab5ab095cd89bd1482c045ba65f2deee312ba",
+    "internal/browsercookies/chromium/windows.go": "d3d470187901a5f3f60017ab11ef9badf823d687b494873fc170992f59b442f9",
+    "internal/browsercookies/secret/darwin.go": "cbe58d241f11be2e7a0312ee6ddc2857338050ee3cdbc278607f78ba261a3e47",
+    "internal/browsercookies/secret/linux.go": "cd3005379d2328b3a0edbfe513d3fc804f75f16d0446d303527f295b8b05a627",
+    "internal/browsercookies/secret/secret.go": "a273cc81348c6e66e9bbc92d6152a8a657f59474e7624322b68fa0263c723798",
+    "internal/browsercookies/secret/windows.go": "00cdc3350afabdc27921d7aca15c55dba0330a02bd82b6dc2c204721231ca654",
+    "internal/browsercookies/sqliteio/sqliteio.go": "d922ed106d3a70cd4c0fa79297edb57cbe9adff051816aa3cc8218aaf4b2c902"
+  },
+  "boundaries": {
+    "linux_keys": "Actual unchanged provider.encryptionKeys and decryptEncrypted using the existing owned synthetic secret-tool process, real LookPath/CommandContext/Output, and owned Local State files; no real keyring, browser, account, credentials or network",
+    "local_state": "Actual unchanged localStateEncryptedKey and encryptionKeys for bounded nested duplicate objects, null-merging, type-error ordering, Unicode simple-fold field names, malformed UTF-8 and unpaired surrogate Go JSON replacement",
+    "provider_cipher": "Actual unchanged provider.decryptEncrypted for all 51 existing blob/key helper vectors and all 10 existing provider vectors; existing encryptionKeyOverride is the named original key-acquisition dependency boundary; outputs are recaptured, never projected from helper outputs",
+    "public_read": "Actual unchanged provider.Read, sqliteio.Query, CSV parser, rowsToSnapshot and decryptEncrypted with an owned test-binary sqlite3 CSV process and owned empty Cookies placeholder; this tests process/CSV/Read correspondence, not native SQLite query execution; original encryptionKeyOverride or owned secret-tool boundary is named per case",
+    "read_trace": "Exact sqlite flags, SQL and sorted parameter commands; only the owned absolute database path is asserted in Go rather than stored; map iteration order is not a contract",
+    "scope": "Go Linux runtime only; no Darwin or Windows runtime claim; unreachable PBKDF2 primitive iteration/key-length shapes remain in the existing Go-only helper corpus"
+  },
+  "checks": {
+    "capture": {
+      "command": "PIXIV_CAPTURE_BROWSER_CHROMIUM_PROVIDER=1 go test ./internal/browsercookies/chromium -run '^TestMigrationChromiumProviderCorrespondence$' -count=1 -v",
+      "exit_code": 0,
+      "log": "/tmp/browser-provider-capture.log",
+      "log_sha256": "75e87e70af67d8eea5a3bfde002ac9a1d5e43111b22a54c5d9773837dc07329e",
+      "top_level_pass_count": 1,
+      "all_pass_count": 1,
+      "skip_count": 0,
+      "package_seconds": [
+        [
+          "github.com/FlanChanXwO/pixiv-cli/internal/browsercookies/chromium",
+          "0.278"
+        ]
+      ]
+    },
+    "replay1": {
+      "command": "go test ./internal/browsercookies/chromium -run '^TestMigrationChromiumProviderCorrespondence$' -count=1 -v",
+      "exit_code": 0,
+      "log": "/tmp/browser-provider-replay1.log",
+      "log_sha256": "b3c006e21299fe72c811253bf17e303c3def2a067318d0c253b01d001807bade",
+      "top_level_pass_count": 1,
+      "all_pass_count": 1,
+      "skip_count": 0,
+      "package_seconds": [
+        [
+          "github.com/FlanChanXwO/pixiv-cli/internal/browsercookies/chromium",
+          "0.254"
+        ]
+      ]
+    },
+    "replay2": {
+      "command": "go test ./internal/browsercookies/chromium -run '^TestMigrationChromiumProviderCorrespondence$' -count=1 -v",
+      "exit_code": 0,
+      "log": "/tmp/browser-provider-replay2.log",
+      "log_sha256": "93669718e828597d38db0da64bbeb126b47590f1aca0b25aa1e21da5c1d1d726",
+      "top_level_pass_count": 1,
+      "all_pass_count": 1,
+      "skip_count": 0,
+      "package_seconds": [
+        [
+          "github.com/FlanChanXwO/pixiv-cli/internal/browsercookies/chromium",
+          "0.246"
+        ]
+      ]
+    },
+    "replay3": {
+      "command": "go test ./internal/browsercookies/chromium -run '^TestMigrationChromiumProviderCorrespondence$' -count=1 -v",
+      "exit_code": 0,
+      "log": "/tmp/browser-provider-replay3.log",
+      "log_sha256": "77d507c88c8cfc6781666ab8456c04caba3ed9314e34713cc5817fd6f9029149",
+      "top_level_pass_count": 1,
+      "all_pass_count": 1,
+      "skip_count": 0,
+      "package_seconds": [
+        [
+          "github.com/FlanChanXwO/pixiv-cli/internal/browsercookies/chromium",
+          "0.255"
+        ]
+      ]
+    },
+    "race": {
+      "command": "go test -race ./internal/browsercookies/chromium -run '^TestMigrationChromiumProviderCorrespondence$' -count=1 -v",
+      "exit_code": 0,
+      "log": "/tmp/browser-provider-race.log",
+      "log_sha256": "20fae846c8a1c60086bb5e205bdd366b92a2afc4bcbd31822f8ce97f2dd6c2f1",
+      "top_level_pass_count": 1,
+      "all_pass_count": 1,
+      "skip_count": 0,
+      "package_seconds": [
+        [
+          "github.com/FlanChanXwO/pixiv-cli/internal/browsercookies/chromium",
+          "52.177"
+        ]
+      ]
+    },
+    "vet": {
+      "command": "go vet ./internal/browsercookies/chromium ./internal/browsercookies/secret ./internal/browsercookies/sqliteio",
+      "exit_code": 0,
+      "log": "/tmp/browser-provider-vet.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "top_level_pass_count": 0,
+      "all_pass_count": 0,
+      "skip_count": 0,
+      "package_seconds": []
+    },
+    "gofmt": {
+      "command": "gofmt -l internal/browsercookies/chromium/migration_provider_correspondence_test.go (assert empty output)",
+      "exit_code": 0,
+      "log": "/tmp/browser-provider-gofmt.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "top_level_pass_count": 0,
+      "all_pass_count": 0,
+      "skip_count": 0,
+      "package_seconds": []
+    },
+    "related": {
+      "command": "go test ./internal/browsercookies/chromium ./internal/browsercookies/secret ./internal/browsercookies/sqliteio -count=1 -v",
+      "exit_code": 0,
+      "log": "/tmp/browser-provider-related.log",
+      "log_sha256": "c8692480f4dfde7729bb28822c182dac5db1c84a51489cdeec02691c2211d3a7",
+      "top_level_pass_count": 28,
+      "all_pass_count": 70,
+      "skip_count": 0,
+      "package_seconds": [
+        [
+          "github.com/FlanChanXwO/pixiv-cli/internal/browsercookies/chromium",
+          "0.321"
+        ],
+        [
+          "github.com/FlanChanXwO/pixiv-cli/internal/browsercookies/secret",
+          "0.007"
+        ],
+        [
+          "github.com/FlanChanXwO/pixiv-cli/internal/browsercookies/sqliteio",
+          "0.121"
+        ]
+      ]
+    },
+    "sourcehash": {
+      "command": "Compare434 preserved Go production/module SHA256 to baseline and git show frozenGo:path; compare103 published fixture SHA256 to foundation baseline and old159-case fixture bytes/case objects",
+      "exit_code": 0,
+      "log": "/tmp/browser-provider-sourcehash.log",
+      "log_sha256": "91dd29e4795bd94339e5e56969e354a8a9fa54e92a268501dab77c4621939564",
+      "top_level_pass_count": 0,
+      "all_pass_count": 0,
+      "skip_count": 0,
+      "package_seconds": []
+    }
+  },
+  "toolchain": {
+    "environment_files": {
+      "/tmp/quantus-toolchain-env.txt": "8134ecf516ad2127e04f96a198500da34104dde9107cdae71ab4f5eda80c218e",
+      "/tmp/pixiv-fanbox-native-build-env.sh": "fa2134c87740f5a737348bb8ebe118fe6c5c05b856f24cc96203aeb214e7d284"
+    },
+    "go_path": "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go",
+    "go_sha256": "30969f97169d7f43fe6a085873d75613adc21e30818a8c61d95bd27275df4624",
+    "go_version": "go1.27.1",
+    "official_sqlite_path": "/workspace/scratch/cd334a12dde3/sqlite-toolchain/sqlite3",
+    "official_sqlite_sha256": "a948747fbdbbf3827101254067b7ea480bad8b13732decbf750da75026c3e38d",
+    "official_sqlite_use": "Related existing Go suites only; new147 correspondence cases use clearly-labeled owned SQLite CSV process"
+  },
+  "cipher_helper_provider_differences": [
+    {
+      "source_case_id": "legacy-zero-iv-no-unpad",
+      "provider_case_id": "cipher-legacy-zero-iv-no-unpad",
+      "observed_differences": {
+        "value_hex": {
+          "helper": "7631318282828282828282828282828282828282828282828282828282828282ffffffffffffffffffffffffffffffff",
+          "actual_provider": "ffffffffffffffffffffffffffffffff"
+        }
+      }
+    },
+    {
+      "source_case_id": "legacy-key-over-16-truncated",
+      "provider_case_id": "cipher-legacy-key-over-16-truncated",
+      "observed_differences": {
+        "value_hex": {
+          "helper": "7631318282828282828282828282828282828282828282828282828282828282ffffffffffffffffffffffffffffffff",
+          "actual_provider": "ffffffffffffffffffffffffffffffff"
+        }
+      }
+    },
+    {
+      "source_case_id": "legacy-length-0",
+      "provider_case_id": "cipher-legacy-length-0",
+      "observed_differences": {
+        "class": {
+          "helper": "encrypted_malformed",
+          "actual_provider": "encrypted_format_unknown"
+        },
+        "error": {
+          "helper": "browsercookies: encrypted cookie value is malformed",
+          "actual_provider": "browsercookies: cookie value uses an unknown encryption format"
+        }
+      }
+    },
+    {
+      "source_case_id": "legacy-length-3",
+      "provider_case_id": "cipher-legacy-length-3",
+      "observed_differences": {
+        "class": {
+          "helper": "encrypted_malformed",
+          "actual_provider": "encrypted_format_unknown"
+        },
+        "error": {
+          "helper": "browsercookies: encrypted cookie value is malformed",
+          "actual_provider": "browsercookies: cookie value uses an unknown encryption format"
+        }
+      }
+    },
+    {
+      "source_case_id": "legacy-length-16",
+      "provider_case_id": "cipher-legacy-length-16",
+      "observed_differences": {
+        "class": {
+          "helper": "encrypted_malformed",
+          "actual_provider": "encrypted_format_unknown"
+        },
+        "error": {
+          "helper": "browsercookies: encrypted cookie value is malformed",
+          "actual_provider": "browsercookies: cookie value uses an unknown encryption format"
+        }
+      }
+    },
+    {
+      "source_case_id": "legacy-length-31",
+      "provider_case_id": "cipher-legacy-length-31",
+      "observed_differences": {
+        "class": {
+          "helper": "encrypted_malformed",
+          "actual_provider": "encrypted_format_unknown"
+        },
+        "error": {
+          "helper": "browsercookies: encrypted cookie value is malformed",
+          "actual_provider": "browsercookies: cookie value uses an unknown encryption format"
+        }
+      }
+    }
+  ],
+  "execution_scope": {
+    "owned_repository_files": [
+      "internal/browsercookies/chromium/migration_provider_correspondence_test.go",
+      "crates/pixiv-cli/tests/fixtures/browser-chromium-provider.json"
+    ],
+    "Cargo_builds_by_this_worker": 0,
+    "Rust_or_Cargo_edits_by_this_worker": 0,
+    "Go_production_module_edits": 0,
+    "old_fixture_edits": 0,
+    "real_browser_cookie_keyring_account_network_access": false
+  },
+  "elapsed_work_window_utc": {
+    "assigned": "2026-10-10T13:10:32Z",
+    "validation_ready": "2026-10-10T13:17:20Z"
+  }
+}

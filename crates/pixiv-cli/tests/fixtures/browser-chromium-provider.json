@@ -1,0 +1,3778 @@
+{
+  "reference": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "environment": "linux/amd64",
+  "go_version": "go1.27.1",
+  "sources": {
+    "crates/pixiv-cli/tests/fixtures/browser-chromium-crypto.json": "aca537839752502488fcb6075605d911c89d7a326ff435dd090c1f6401597abf",
+    "go.mod": "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c",
+    "go.sum": "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e",
+    "internal/browsercookies/browsercookies.go": "1b1e373c3a240f54d8b0d255ad5ae5b753b2eae0c8e506df1615e3b9190a3e6b",
+    "internal/browsercookies/chromium/chromecrypto.go": "24c0323d3d5bef2e2f0ab6d120391ea622494995374b71515069daab25ea0cf7",
+    "internal/browsercookies/chromium/chromium.go": "bca8e41df3d25be82fa0fa0a1f85e42c5fa354d4602ccb943bb69845c57bb877",
+    "internal/browsercookies/chromium/darwin.go": "7a4f1b58488b12d362734e4a6c23a3f79daa6644fa138cae14920a155cc71bd3",
+    "internal/browsercookies/chromium/decrypt.go": "dde205f1b323b991ee0eef6ef73ce72e427981edcc46da3d64dc59224cf52da4",
+    "internal/browsercookies/chromium/legacy_blob_other.go": "5b7a4339a3ff0a001e63e1b6b4383c788ba84ab30527794c2c6db462cd143275",
+    "internal/browsercookies/chromium/legacy_blob_windows.go": "95bb94121cad6da1451e6bb0b39e86de984debc9f8725f0dce7cbe39e32c8257",
+    "internal/browsercookies/chromium/legacy_keys_unix.go": "d37eaa8ee973929ef43f45fbd041e2fd37a4829ee26027c5e6b798100a5a69f7",
+    "internal/browsercookies/chromium/linux.go": "890b6bcc30417743625b5248a6902d868a5db2edefcde02a7437a57d24070247",
+    "internal/browsercookies/chromium/migration_cookie_crypto_test.go": "1bf0ff6b1963bac2a5c47fdd911ab5ab095cd89bd1482c045ba65f2deee312ba",
+    "internal/browsercookies/chromium/windows.go": "d3d470187901a5f3f60017ab11ef9badf823d687b494873fc170992f59b442f9",
+    "internal/browsercookies/secret/darwin.go": "cbe58d241f11be2e7a0312ee6ddc2857338050ee3cdbc278607f78ba261a3e47",
+    "internal/browsercookies/secret/linux.go": "cd3005379d2328b3a0edbfe513d3fc804f75f16d0446d303527f295b8b05a627",
+    "internal/browsercookies/secret/secret.go": "a273cc81348c6e66e9bbc92d6152a8a657f59474e7624322b68fa0263c723798",
+    "internal/browsercookies/secret/windows.go": "00cdc3350afabdc27921d7aca15c55dba0330a02bd82b6dc2c204721231ca654",
+    "internal/browsercookies/sqliteio/sqliteio.go": "d922ed106d3a70cd4c0fa79297edb57cbe9adff051816aa3cc8218aaf4b2c902"
+  },
+  "boundaries": {
+    "linux_keys": "Actual unchanged provider.encryptionKeys and decryptEncrypted using the existing owned synthetic secret-tool process, real LookPath/CommandContext/Output, and owned Local State files; no real keyring, browser, account, credentials or network",
+    "local_state": "Actual unchanged localStateEncryptedKey and encryptionKeys for bounded nested duplicate objects, null-merging, type-error ordering, Unicode simple-fold field names, malformed UTF-8 and unpaired surrogate Go JSON replacement",
+    "provider_cipher": "Actual unchanged provider.decryptEncrypted for all 51 existing blob/key helper vectors and all 10 existing provider vectors; existing encryptionKeyOverride is the named original key-acquisition dependency boundary; outputs are recaptured, never projected from helper outputs",
+    "public_read": "Actual unchanged provider.Read, sqliteio.Query, CSV parser, rowsToSnapshot and decryptEncrypted with an owned test-binary sqlite3 CSV process and owned empty Cookies placeholder; this tests process/CSV/Read correspondence, not native SQLite query execution; original encryptionKeyOverride or owned secret-tool boundary is named per case",
+    "read_trace": "Exact sqlite flags, SQL and sorted parameter commands; only the owned absolute database path is asserted in Go rather than stored; map iteration order is not a contract",
+    "scope": "Go Linux runtime only; no Darwin or Windows runtime claim; unreachable PBKDF2 primitive iteration/key-length shapes remain in the existing Go-only helper corpus"
+  },
+  "cases": [
+    {
+      "id": "cipher-gcm-v10-aes128-raw",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130000102030405060708090a0bfdc03a10145819b6016326c559948b2db826c4464682d7ac",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "gcm-v10-aes128-raw"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 1,
+        "value_hex": "00fffe0d0a2c2280",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "cipher-cbc-v10-aes128-raw",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "7631308b5a11db6cdb87609011e2259a79b3e4",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "cbc-v10-aes128-raw"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 1,
+        "value_hex": "00fffe0d0a2c2280",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "cipher-gcm-v11-aes128-raw",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763131000102030405060708090a0bfdc03a10145819b6016326c559948b2db826c4464682d7ac",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "gcm-v11-aes128-raw"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 1,
+        "value_hex": "00fffe0d0a2c2280",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "cipher-cbc-v11-aes128-raw",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "7631318b5a11db6cdb87609011e2259a79b3e4",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "cbc-v11-aes128-raw"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 1,
+        "value_hex": "00fffe0d0a2c2280",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "cipher-gcm-v10-aes192-raw",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130000102030405060708090a0b667611ab655832aab05087ffcc906dbd7ccc049af41c4644",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "303132333435363738396162636465666768696a6b6c6d6e"
+        ],
+        "source_case_id": "gcm-v10-aes192-raw"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 1,
+        "value_hex": "00fffe0d0a2c2280",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "cipher-cbc-v10-aes192-raw",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130a28ca9a54e6dad0c9541869ad0565c90",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "303132333435363738396162636465666768696a6b6c6d6e"
+        ],
+        "source_case_id": "cbc-v10-aes192-raw"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 1,
+        "value_hex": "00fffe0d0a2c2280",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "cipher-gcm-v11-aes192-raw",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763131000102030405060708090a0b667611ab655832aab05087ffcc906dbd7ccc049af41c4644",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "303132333435363738396162636465666768696a6b6c6d6e"
+        ],
+        "source_case_id": "gcm-v11-aes192-raw"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 1,
+        "value_hex": "00fffe0d0a2c2280",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "cipher-cbc-v11-aes192-raw",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763131a28ca9a54e6dad0c9541869ad0565c90",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "303132333435363738396162636465666768696a6b6c6d6e"
+        ],
+        "source_case_id": "cbc-v11-aes192-raw"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 1,
+        "value_hex": "00fffe0d0a2c2280",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "cipher-gcm-v10-aes256-raw",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130000102030405060708090a0bc86cdc31a16a01691754b2ba66f4e37cdbdf8924509b87fb",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "303132333435363738396162636465666768696a6b6c6d6e6f70717273747576"
+        ],
+        "source_case_id": "gcm-v10-aes256-raw"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 1,
+        "value_hex": "00fffe0d0a2c2280",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "cipher-cbc-v10-aes256-raw",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "7631303ff040f7a0335cd57c35bb1126b6a1f2",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "303132333435363738396162636465666768696a6b6c6d6e6f70717273747576"
+        ],
+        "source_case_id": "cbc-v10-aes256-raw"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 1,
+        "value_hex": "00fffe0d0a2c2280",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "cipher-gcm-v11-aes256-raw",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763131000102030405060708090a0bc86cdc31a16a01691754b2ba66f4e37cdbdf8924509b87fb",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "303132333435363738396162636465666768696a6b6c6d6e6f70717273747576"
+        ],
+        "source_case_id": "gcm-v11-aes256-raw"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 1,
+        "value_hex": "00fffe0d0a2c2280",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "cipher-cbc-v11-aes256-raw",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "7631313ff040f7a0335cd57c35bb1126b6a1f2",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "303132333435363738396162636465666768696a6b6c6d6e6f70717273747576"
+        ],
+        "source_case_id": "cbc-v11-aes256-raw"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 1,
+        "value_hex": "00fffe0d0a2c2280",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "cipher-value-gcm-before-cbc",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130000102030405060708090a0bfdc03a10145819b6016326c559948b2db826c4464682d7ac",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "value-gcm-before-cbc"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 1,
+        "value_hex": "00fffe0d0a2c2280",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "cipher-value-gcm-fails-cbc-succeeds",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "7631318b5a11db6cdb87609011e2259a79b3e4",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "value-gcm-fails-cbc-succeeds"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 1,
+        "value_hex": "00fffe0d0a2c2280",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "cipher-gcm-empty-plaintext",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763131000102030405060708090a0b177173456edff466e8d83efa7d609e8a",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "303132333435363738396162636465666768696a6b6c6d6e6f70717273747576"
+        ],
+        "source_case_id": "gcm-empty-plaintext"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 1,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "cipher-cbc-full-padding-empty-plaintext",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130176c295a595d7193d095f1ce05665ab6",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "cbc-full-padding-empty-plaintext"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 1,
+        "value_hex": "",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "cipher-gcm-invalid-key-0",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130000102030405060708090a0bfdc03a10145819b6016326c559948b2db826c4464682d7ac",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          ""
+        ],
+        "source_case_id": "gcm-invalid-key-0"
+      },
+      "output": {
+        "class": "encrypted_malformed",
+        "error": "browsercookies: encrypted cookie value is malformed",
+        "key_calls": 1,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "cipher-gcm-invalid-key-15",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130000102030405060708090a0bfdc03a10145819b6016326c559948b2db826c4464682d7ac",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b"
+        ],
+        "source_case_id": "gcm-invalid-key-15"
+      },
+      "output": {
+        "class": "encrypted_malformed",
+        "error": "browsercookies: encrypted cookie value is malformed",
+        "key_calls": 1,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "cipher-gcm-invalid-key-17",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130000102030405060708090a0bfdc03a10145819b6016326c559948b2db826c4464682d7ac",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b"
+        ],
+        "source_case_id": "gcm-invalid-key-17"
+      },
+      "output": {
+        "class": "encrypted_malformed",
+        "error": "browsercookies: encrypted cookie value is malformed",
+        "key_calls": 1,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "cipher-gcm-invalid-key-23",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130000102030405060708090a0bfdc03a10145819b6016326c559948b2db826c4464682d7ac",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b"
+        ],
+        "source_case_id": "gcm-invalid-key-23"
+      },
+      "output": {
+        "class": "encrypted_malformed",
+        "error": "browsercookies: encrypted cookie value is malformed",
+        "key_calls": 1,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "cipher-gcm-invalid-key-25",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130000102030405060708090a0bfdc03a10145819b6016326c559948b2db826c4464682d7ac",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b"
+        ],
+        "source_case_id": "gcm-invalid-key-25"
+      },
+      "output": {
+        "class": "encrypted_malformed",
+        "error": "browsercookies: encrypted cookie value is malformed",
+        "key_calls": 1,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "cipher-gcm-invalid-key-31",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130000102030405060708090a0bfdc03a10145819b6016326c559948b2db826c4464682d7ac",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b"
+        ],
+        "source_case_id": "gcm-invalid-key-31"
+      },
+      "output": {
+        "class": "encrypted_malformed",
+        "error": "browsercookies: encrypted cookie value is malformed",
+        "key_calls": 1,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "cipher-gcm-invalid-key-33",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130000102030405060708090a0bfdc03a10145819b6016326c559948b2db826c4464682d7ac",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b"
+        ],
+        "source_case_id": "gcm-invalid-key-33"
+      },
+      "output": {
+        "class": "encrypted_malformed",
+        "error": "browsercookies: encrypted cookie value is malformed",
+        "key_calls": 1,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "cipher-cbc-invalid-key-0",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "7631318b5a11db6cdb87609011e2259a79b3e4",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          ""
+        ],
+        "source_case_id": "cbc-invalid-key-0"
+      },
+      "output": {
+        "class": "encrypted_malformed",
+        "error": "browsercookies: encrypted cookie value is malformed",
+        "key_calls": 1,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "cipher-cbc-invalid-key-15",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "7631318b5a11db6cdb87609011e2259a79b3e4",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b"
+        ],
+        "source_case_id": "cbc-invalid-key-15"
+      },
+      "output": {
+        "class": "encrypted_malformed",
+        "error": "browsercookies: encrypted cookie value is malformed",
+        "key_calls": 1,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "cipher-cbc-invalid-key-17",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "7631318b5a11db6cdb87609011e2259a79b3e4",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b"
+        ],
+        "source_case_id": "cbc-invalid-key-17"
+      },
+      "output": {
+        "class": "encrypted_malformed",
+        "error": "browsercookies: encrypted cookie value is malformed",
+        "key_calls": 1,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "cipher-cbc-invalid-key-31",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "7631318b5a11db6cdb87609011e2259a79b3e4",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b6b"
+        ],
+        "source_case_id": "cbc-invalid-key-31"
+      },
+      "output": {
+        "class": "encrypted_malformed",
+        "error": "browsercookies: encrypted cookie value is malformed",
+        "key_calls": 1,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "cipher-cbc-key-33-truncated-to-32",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "7631303ff040f7a0335cd57c35bb1126b6a1f2",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "303132333435363738396162636465666768696a6b6c6d6e6f70717273747576ff"
+        ],
+        "source_case_id": "cbc-key-33-truncated-to-32"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 1,
+        "value_hex": "00fffe0d0a2c2280",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "cipher-cbc-key-48-truncated-to-32",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "7631303ff040f7a0335cd57c35bb1126b6a1f2",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "303132333435363738396162636465666768696a6b6c6d6e6f70717273747576ffffffffffffffffffffffffffffffff"
+        ],
+        "source_case_id": "cbc-key-48-truncated-to-32"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 1,
+        "value_hex": "00fffe0d0a2c2280",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "cipher-gcm-tag-corruption",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130000102030405060708090a0bfdc03a10145819b6016326c559948b2db826c4464682d7ad",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "gcm-tag-corruption"
+      },
+      "output": {
+        "class": "encrypted_malformed",
+        "error": "browsercookies: encrypted cookie value is malformed",
+        "key_calls": 1,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "cipher-gcm-nonce-corruption",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130010102030405060708090a0bfdc03a10145819b6016326c559948b2db826c4464682d7ac",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "gcm-nonce-corruption"
+      },
+      "output": {
+        "class": "encrypted_malformed",
+        "error": "browsercookies: encrypted cookie value is malformed",
+        "key_calls": 1,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "cipher-gcm-rejects-aad-bound-ciphertext",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130000102030405060708090a0bfdc03a10145819b63ce201a814a940b5d5924d18660e542b",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "gcm-rejects-aad-bound-ciphertext"
+      },
+      "output": {
+        "class": "encrypted_malformed",
+        "error": "browsercookies: encrypted cookie value is malformed",
+        "key_calls": 1,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "cipher-value-layout-",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "value-layout-"
+      },
+      "output": {
+        "class": "encrypted_format_unknown",
+        "error": "browsercookies: cookie value uses an unknown encryption format",
+        "key_calls": 0,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "cipher-value-layout-763130",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "value-layout-763130"
+      },
+      "output": {
+        "class": "encrypted_malformed",
+        "error": "browsercookies: encrypted cookie value is malformed",
+        "key_calls": 1,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "cipher-value-layout-763131000000000000000000000000000000000000000000000000000000",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763131000000000000000000000000000000000000000000000000000000",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "value-layout-763131000000000000000000000000000000000000000000000000000000"
+      },
+      "output": {
+        "class": "encrypted_malformed",
+        "error": "browsercookies: encrypted cookie value is malformed",
+        "key_calls": 1,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "cipher-value-layout-763130000000000000000000000000000000",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130000000000000000000000000000000",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "value-layout-763130000000000000000000000000000000"
+      },
+      "output": {
+        "class": "encrypted_malformed",
+        "error": "browsercookies: encrypted cookie value is malformed",
+        "key_calls": 1,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "cipher-value-layout-7631300000000000000000000000000000000000",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "7631300000000000000000000000000000000000",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "value-layout-7631300000000000000000000000000000000000"
+      },
+      "output": {
+        "class": "encrypted_malformed",
+        "error": "browsercookies: encrypted cookie value is malformed",
+        "key_calls": 1,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "cipher-value-layout-763230000102030405060708090a0bfdc03a10145819b6016326c559948b2db826c4464682d7ac",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763230000102030405060708090a0bfdc03a10145819b6016326c559948b2db826c4464682d7ac",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "value-layout-763230000102030405060708090a0bfdc03a10145819b6016326c559948b2db826c4464682d7ac"
+      },
+      "output": {
+        "class": "encrypted_format_unknown",
+        "error": "browsercookies: cookie value uses an unknown encryption format",
+        "key_calls": 0,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "cipher-value-layout-563130000102030405060708090a0bfdc03a10145819b6016326c559948b2db826c4464682d7ac",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "563130000102030405060708090a0bfdc03a10145819b6016326c559948b2db826c4464682d7ac",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "value-layout-563130000102030405060708090a0bfdc03a10145819b6016326c559948b2db826c4464682d7ac"
+      },
+      "output": {
+        "class": "encrypted_format_unknown",
+        "error": "browsercookies: cookie value uses an unknown encryption format",
+        "key_calls": 0,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "cipher-cbc-padding-00000000000000000000000000000000",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "76313092f3e260a3927b6043f3e17f0db54132",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "cbc-padding-00000000000000000000000000000000"
+      },
+      "output": {
+        "class": "encrypted_malformed",
+        "error": "browsercookies: encrypted cookie value is malformed",
+        "key_calls": 1,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "cipher-cbc-padding-78787878787878787878787878787811",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130c9f45b399652641081f2c2a9d738e846",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "cbc-padding-78787878787878787878787878787811"
+      },
+      "output": {
+        "class": "encrypted_malformed",
+        "error": "browsercookies: encrypted cookie value is malformed",
+        "key_calls": 1,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "cipher-cbc-padding-78787878787878787878787878787802",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "7631306f1f3c9a3716a0b302dc0efc96ecc073",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "cbc-padding-78787878787878787878787878787802"
+      },
+      "output": {
+        "class": "encrypted_malformed",
+        "error": "browsercookies: encrypted cookie value is malformed",
+        "key_calls": 1,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "cipher-cbc-padding-10101010101010101010101010101010",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130176c295a595d7193d095f1ce05665ab6",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "cbc-padding-10101010101010101010101010101010"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 1,
+        "value_hex": "",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "cipher-cbc-padding-78787878787878787878787878787801",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130242c83f258db515cb1d7b96beeba4522",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "cbc-padding-78787878787878787878787878787801"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 1,
+        "value_hex": "787878787878787878787878787878",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "cipher-legacy-zero-iv-no-unpad",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "8c9dc60bfa3b5fc32f2e4a5c1eddbe6ac3db5970b1e6418fdbe429d769b062adf381b395a2e70f73caa63aacd63b9ba7",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "legacy-zero-iv-no-unpad"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 1,
+        "value_hex": "ffffffffffffffffffffffffffffffff",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "cipher-legacy-key-over-16-truncated",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "8c9dc60bfa3b5fc32f2e4a5c1eddbe6ac3db5970b1e6418fdbe429d769b062adf381b395a2e70f73caa63aacd63b9ba7",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "3031323334353637383961626364656600fffe0d0a2c2280"
+        ],
+        "source_case_id": "legacy-key-over-16-truncated"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 1,
+        "value_hex": "ffffffffffffffffffffffffffffffff",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "cipher-legacy-key-short",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "8c9dc60bfa3b5fc32f2e4a5c1eddbe6ac3db5970b1e6418fdbe429d769b062adf381b395a2e70f73caa63aacd63b9ba7",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "303132333435363738396162636465"
+        ],
+        "source_case_id": "legacy-key-short"
+      },
+      "output": {
+        "class": "encrypted_malformed",
+        "error": "browsercookies: encrypted cookie value is malformed",
+        "key_calls": 1,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "cipher-legacy-length-0",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "legacy-length-0"
+      },
+      "output": {
+        "class": "encrypted_format_unknown",
+        "error": "browsercookies: cookie value uses an unknown encryption format",
+        "key_calls": 0,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "cipher-legacy-length-3",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "010203",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "legacy-length-3"
+      },
+      "output": {
+        "class": "encrypted_format_unknown",
+        "error": "browsercookies: cookie value uses an unknown encryption format",
+        "key_calls": 0,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "cipher-legacy-length-16",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "00000000000000000000000000000000",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "legacy-length-16"
+      },
+      "output": {
+        "class": "encrypted_format_unknown",
+        "error": "browsercookies: cookie value uses an unknown encryption format",
+        "key_calls": 0,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "cipher-legacy-length-31",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "00000000000000000000000000000000000000000000000000000000000000",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "legacy-length-31"
+      },
+      "output": {
+        "class": "encrypted_format_unknown",
+        "error": "browsercookies: cookie value uses an unknown encryption format",
+        "key_calls": 0,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "existing-provider-candidate-second-succeeds",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130000102030405060708090a0bfdc03a10145819b6016326c559948b2db826c4464682d7ac",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "303132333435363738396162636465666768696a6b6c6d6e6f70717273747576",
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "provider-candidate-second-succeeds"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 1,
+        "value_hex": "00fffe0d0a2c2280",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "existing-provider-duplicate-candidates-kept-by-override",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130000102030405060708090a0bfdc03a10145819b6016326c559948b2db826c4464682d7ac",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "303132333435363738396162636465666768696a6b6c6d6e6f70717273747576",
+          "303132333435363738396162636465666768696a6b6c6d6e6f70717273747576",
+          "30313233343536373839616263646566",
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "provider-duplicate-candidates-kept-by-override"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 1,
+        "value_hex": "00fffe0d0a2c2280",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "existing-provider-empty-candidates",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130000102030405060708090a0bfdc03a10145819b6016326c559948b2db826c4464682d7ac",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [],
+        "source_case_id": "provider-empty-candidates"
+      },
+      "output": {
+        "class": "encrypted_malformed",
+        "error": "browsercookies: encrypted cookie value is malformed",
+        "key_calls": 1,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "existing-provider-key-error-before-malformed",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "access",
+        "key_source": "encryption_key_override",
+        "keys_hex": [],
+        "source_case_id": "provider-key-error-before-malformed"
+      },
+      "output": {
+        "class": "secret_service_access",
+        "error": "browsercookies: Linux Secret Service access failed",
+        "key_calls": 1,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "existing-provider-short-legacy-before-key-acquisition",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763230",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "access",
+        "key_source": "encryption_key_override",
+        "keys_hex": [],
+        "source_case_id": "provider-short-legacy-before-key-acquisition"
+      },
+      "output": {
+        "class": "encrypted_format_unknown",
+        "error": "browsercookies: cookie value uses an unknown encryption format",
+        "key_calls": 0,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "existing-provider-legacy-valid",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "8c9dc60bfa3b5fc32f2e4a5c1eddbe6ac3db5970b1e6418fdbe429d769b062adf381b395a2e70f73caa63aacd63b9ba7",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "303132333435363738396162636465666768696a6b6c6d6e6f70717273747576",
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "provider-legacy-valid"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 1,
+        "value_hex": "ffffffffffffffffffffffffffffffff",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "existing-provider-legacy-exhausted",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "provider-legacy-exhausted"
+      },
+      "output": {
+        "class": "encrypted_malformed",
+        "error": "browsercookies: encrypted cookie value is malformed",
+        "key_calls": 1,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "existing-provider-cancel-before-format",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "",
+        "cancel_inside_key_hook": false,
+        "context": "canceled",
+        "key_error": "access",
+        "key_source": "encryption_key_override",
+        "keys_hex": [],
+        "source_case_id": "provider-cancel-before-format"
+      },
+      "output": {
+        "class": "context_canceled",
+        "error": "context canceled",
+        "key_calls": 0,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "existing-provider-deadline-before-format",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130",
+        "cancel_inside_key_hook": false,
+        "context": "deadline",
+        "key_error": "access",
+        "key_source": "encryption_key_override",
+        "keys_hex": [],
+        "source_case_id": "provider-deadline-before-format"
+      },
+      "output": {
+        "class": "context_deadline_exceeded",
+        "error": "context deadline exceeded",
+        "key_calls": 0,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "existing-provider-cancel-inside-key-hook-not-polled",
+      "operation": "decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130000102030405060708090a0bfdc03a10145819b6016326c559948b2db826c4464682d7ac",
+        "cancel_inside_key_hook": true,
+        "context": "active",
+        "key_error": "",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "source_case_id": "provider-cancel-inside-key-hook-not-polled"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 1,
+        "value_hex": "00fffe0d0a2c2280",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "read-rows-plain-raw-no-keys",
+      "operation": "provider_read",
+      "input": {
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "csv_hex": "2e66616e626f782e63632c2200fffe0d0a2c222280222c0a",
+        "database_mode": "owned_placeholder",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "profile_id": "Profile 1",
+        "query_host": ".fanbox.cc",
+        "query_name": "FANBOXSESSID",
+        "rows_hex": [
+          [
+            "2e66616e626f782e6363",
+            "00fffe0d0a2c2280",
+            ""
+          ]
+        ],
+        "source_case_id": "rows-plain-raw-no-keys",
+        "state_body_hex": "7b7d"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 0,
+        "secret_strings": [
+          "\u003credacted\u003e"
+        ],
+        "sqlite_called": true,
+        "sqlite_flags": [
+          "-readonly",
+          "-noheader",
+          "-csv",
+          "-newline",
+          "\n"
+        ],
+        "sqlite_parameters": [
+          ".parameter set @h1 .fanbox.cc",
+          ".parameter set @h2 fanbox.cc",
+          ".parameter set @n FANBOXSESSID"
+        ],
+        "sqlite_sql": "SELECT host_key, value, hex(encrypted_value) FROM cookies WHERE (host_key = @h1 OR host_key = @h2) AND name = @n;",
+        "values_hex": [
+          "00fffe0a2c2280"
+        ],
+        "values_nil": false
+      }
+    },
+    {
+      "id": "read-rows-plain-canceled-still-returned",
+      "operation": "provider_read",
+      "input": {
+        "cancel_inside_key_hook": false,
+        "context": "canceled",
+        "csv_hex": "2e66616e626f782e63632c2200fffe0d0a2c222280222c222009220a",
+        "database_mode": "owned_placeholder",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "profile_id": "Profile 1",
+        "query_host": ".fanbox.cc",
+        "query_name": "FANBOXSESSID",
+        "rows_hex": [
+          [
+            "2e66616e626f782e6363",
+            "00fffe0d0a2c2280",
+            "2009"
+          ]
+        ],
+        "source_case_id": "rows-plain-canceled-still-returned",
+        "state_body_hex": "7b7d"
+      },
+      "output": {
+        "class": "context_canceled",
+        "error": "context canceled",
+        "key_calls": 0,
+        "secret_strings": [],
+        "sqlite_called": false,
+        "sqlite_flags": [],
+        "sqlite_parameters": [],
+        "sqlite_sql": "",
+        "values_hex": [],
+        "values_nil": true
+      }
+    },
+    {
+      "id": "read-rows-encrypted-overrides-plaintext",
+      "operation": "provider_read",
+      "input": {
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "csv_hex": "2e66616e626f782e63632c73796e7468657469632d756e757365642d706c61696e746578742c373633313331303030313032303330343035303630373038303930613062636234666132393733663831613336623066646236303762363234623134393030316262363338343232646135326238323930356262353766373933303537373565653836316533666163326261343739343334636161376565336333656630366666623634663138646337636235340a",
+        "database_mode": "owned_placeholder",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "profile_id": "Profile 1",
+        "query_host": ".fanbox.cc",
+        "query_name": "FANBOXSESSID",
+        "rows_hex": [
+          [
+            "2e66616e626f782e6363",
+            "73796e7468657469632d756e757365642d706c61696e74657874",
+            "37363331333130303031303230333034303530363037303830393061306263623466613239373366383161333662306664623630376236323462313439303031626236333834323264613532623832393035626235376637393330353737356565383631653366616332626134373934333463616137656533633365663036666662363466313864633763623534"
+          ]
+        ],
+        "source_case_id": "rows-encrypted-overrides-plaintext",
+        "state_body_hex": "7b7d"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 1,
+        "secret_strings": [
+          "\u003credacted\u003e"
+        ],
+        "sqlite_called": true,
+        "sqlite_flags": [
+          "-readonly",
+          "-noheader",
+          "-csv",
+          "-newline",
+          "\n"
+        ],
+        "sqlite_parameters": [
+          ".parameter set @h1 .fanbox.cc",
+          ".parameter set @h2 fanbox.cc",
+          ".parameter set @n FANBOXSESSID"
+        ],
+        "sqlite_sql": "SELECT host_key, value, hex(encrypted_value) FROM cookies WHERE (host_key = @h1 OR host_key = @h2) AND name = @n;",
+        "values_hex": [
+          "00fffe0d0a2c2280"
+        ],
+        "values_nil": false
+      }
+    },
+    {
+      "id": "read-rows-row-host-exact-digest-mismatch",
+      "operation": "provider_read",
+      "input": {
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "csv_hex": "66616e626f782e63632c2c373633313331303030313032303330343035303630373038303930613062636234666132393733663831613336623066646236303762363234623134393030316262363338343232646135326238323930356262353766373933303537373565653836316533666163326261343739343334636161376565336333656630366666623634663138646337636235340a",
+        "database_mode": "owned_placeholder",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "profile_id": "Profile 1",
+        "query_host": ".fanbox.cc",
+        "query_name": "FANBOXSESSID",
+        "rows_hex": [
+          [
+            "66616e626f782e6363",
+            "",
+            "37363331333130303031303230333034303530363037303830393061306263623466613239373366383161333662306664623630376236323462313439303031626236333834323264613532623832393035626235376637393330353737356565383631653366616332626134373934333463616137656533633365663036666662363466313864633763623534"
+          ]
+        ],
+        "source_case_id": "rows-row-host-exact-digest-mismatch",
+        "state_body_hex": "7b7d"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 1,
+        "secret_strings": [
+          "\u003credacted\u003e"
+        ],
+        "sqlite_called": true,
+        "sqlite_flags": [
+          "-readonly",
+          "-noheader",
+          "-csv",
+          "-newline",
+          "\n"
+        ],
+        "sqlite_parameters": [
+          ".parameter set @h1 .fanbox.cc",
+          ".parameter set @h2 fanbox.cc",
+          ".parameter set @n FANBOXSESSID"
+        ],
+        "sqlite_sql": "SELECT host_key, value, hex(encrypted_value) FROM cookies WHERE (host_key = @h1 OR host_key = @h2) AND name = @n;",
+        "values_hex": [
+          "3670668a21f5985de7fd6761a2d0a4bd016c347e256918f35e6c51a41838ae1b00fffe0d0a2c2280"
+        ],
+        "values_nil": false
+      }
+    },
+    {
+      "id": "read-rows-encrypted-trims-hex-whitespace",
+      "operation": "provider_read",
+      "input": {
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "csv_hex": "2e66616e626f782e63632c2c2220093736333133303030303130323033303430353036303730383039306130626664633033613130313435383139623630313633323663353539393438623264623832366334343634363832643761630d0a220a",
+        "database_mode": "owned_placeholder",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "profile_id": "Profile 1",
+        "query_host": ".fanbox.cc",
+        "query_name": "FANBOXSESSID",
+        "rows_hex": [
+          [
+            "2e66616e626f782e6363",
+            "",
+            "20093736333133303030303130323033303430353036303730383039306130626664633033613130313435383139623630313633323663353539393438623264623832366334343634363832643761630d0a"
+          ]
+        ],
+        "source_case_id": "rows-encrypted-trims-hex-whitespace",
+        "state_body_hex": "7b7d"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 1,
+        "secret_strings": [
+          "\u003credacted\u003e"
+        ],
+        "sqlite_called": true,
+        "sqlite_flags": [
+          "-readonly",
+          "-noheader",
+          "-csv",
+          "-newline",
+          "\n"
+        ],
+        "sqlite_parameters": [
+          ".parameter set @h1 .fanbox.cc",
+          ".parameter set @h2 fanbox.cc",
+          ".parameter set @n FANBOXSESSID"
+        ],
+        "sqlite_sql": "SELECT host_key, value, hex(encrypted_value) FROM cookies WHERE (host_key = @h1 OR host_key = @h2) AND name = @n;",
+        "values_hex": [
+          "00fffe0d0a2c2280"
+        ],
+        "values_nil": false
+      }
+    },
+    {
+      "id": "read-rows-malformed-hex-before-cancel",
+      "operation": "provider_read",
+      "input": {
+        "cancel_inside_key_hook": false,
+        "context": "canceled",
+        "csv_hex": "2e66616e626f782e63632c2c7a7a0a",
+        "database_mode": "owned_placeholder",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "profile_id": "Profile 1",
+        "query_host": ".fanbox.cc",
+        "query_name": "FANBOXSESSID",
+        "rows_hex": [
+          [
+            "2e66616e626f782e6363",
+            "",
+            "7a7a"
+          ]
+        ],
+        "source_case_id": "rows-malformed-hex-before-cancel",
+        "state_body_hex": "7b7d"
+      },
+      "output": {
+        "class": "context_canceled",
+        "error": "context canceled",
+        "key_calls": 0,
+        "secret_strings": [],
+        "sqlite_called": false,
+        "sqlite_flags": [],
+        "sqlite_parameters": [],
+        "sqlite_sql": "",
+        "values_hex": [],
+        "values_nil": true
+      }
+    },
+    {
+      "id": "read-rows-encrypted-cancel-before-key",
+      "operation": "provider_read",
+      "input": {
+        "cancel_inside_key_hook": false,
+        "context": "canceled",
+        "csv_hex": "2e66616e626f782e63632c2c3736333133303030303130323033303430353036303730383039306130626664633033613130313435383139623630313633323663353539393438623264623832366334343634363832643761630a",
+        "database_mode": "owned_placeholder",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "profile_id": "Profile 1",
+        "query_host": ".fanbox.cc",
+        "query_name": "FANBOXSESSID",
+        "rows_hex": [
+          [
+            "2e66616e626f782e6363",
+            "",
+            "373633313330303030313032303330343035303630373038303930613062666463303361313031343538313962363031363332366335353939343862326462383236633434363436383264376163"
+          ]
+        ],
+        "source_case_id": "rows-encrypted-cancel-before-key",
+        "state_body_hex": "7b7d"
+      },
+      "output": {
+        "class": "context_canceled",
+        "error": "context canceled",
+        "key_calls": 0,
+        "secret_strings": [],
+        "sqlite_called": false,
+        "sqlite_flags": [],
+        "sqlite_parameters": [],
+        "sqlite_sql": "",
+        "values_hex": [],
+        "values_nil": true
+      }
+    },
+    {
+      "id": "read-rows-short-row-before-cancel",
+      "operation": "provider_read",
+      "input": {
+        "cancel_inside_key_hook": false,
+        "context": "canceled",
+        "csv_hex": "2e66616e626f782e63632c706c61696e0a",
+        "database_mode": "owned_placeholder",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "profile_id": "Profile 1",
+        "query_host": ".fanbox.cc",
+        "query_name": "FANBOXSESSID",
+        "rows_hex": [
+          [
+            "2e66616e626f782e6363",
+            "706c61696e"
+          ]
+        ],
+        "source_case_id": "rows-short-row-before-cancel",
+        "state_body_hex": "7b7d"
+      },
+      "output": {
+        "class": "context_canceled",
+        "error": "context canceled",
+        "key_calls": 0,
+        "secret_strings": [],
+        "sqlite_called": false,
+        "sqlite_flags": [],
+        "sqlite_parameters": [],
+        "sqlite_sql": "",
+        "values_hex": [],
+        "values_nil": true
+      }
+    },
+    {
+      "id": "read-rows-extra-column-ignored",
+      "operation": "provider_read",
+      "input": {
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "csv_hex": "2e66616e626f782e63632c2200fffe0d0a2c222280222c2c65787472610a",
+        "database_mode": "owned_placeholder",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "profile_id": "Profile 1",
+        "query_host": ".fanbox.cc",
+        "query_name": "FANBOXSESSID",
+        "rows_hex": [
+          [
+            "2e66616e626f782e6363",
+            "00fffe0d0a2c2280",
+            "",
+            "6578747261"
+          ]
+        ],
+        "source_case_id": "rows-extra-column-ignored",
+        "state_body_hex": "7b7d"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 0,
+        "secret_strings": [
+          "\u003credacted\u003e"
+        ],
+        "sqlite_called": true,
+        "sqlite_flags": [
+          "-readonly",
+          "-noheader",
+          "-csv",
+          "-newline",
+          "\n"
+        ],
+        "sqlite_parameters": [
+          ".parameter set @h1 .fanbox.cc",
+          ".parameter set @h2 fanbox.cc",
+          ".parameter set @n FANBOXSESSID"
+        ],
+        "sqlite_sql": "SELECT host_key, value, hex(encrypted_value) FROM cookies WHERE (host_key = @h1 OR host_key = @h2) AND name = @n;",
+        "values_hex": [
+          "00fffe0a2c2280"
+        ],
+        "values_nil": false
+      }
+    },
+    {
+      "id": "read-rows-partial-on-later-error",
+      "operation": "provider_read",
+      "input": {
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "csv_hex": "2e66616e626f782e63632c2200fffe0d0a2c222280222c0a2e66616e626f782e63632c2c7a0a",
+        "database_mode": "owned_placeholder",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "profile_id": "Profile 1",
+        "query_host": ".fanbox.cc",
+        "query_name": "FANBOXSESSID",
+        "rows_hex": [
+          [
+            "2e66616e626f782e6363",
+            "00fffe0d0a2c2280",
+            ""
+          ],
+          [
+            "2e66616e626f782e6363",
+            "",
+            "7a"
+          ]
+        ],
+        "source_case_id": "rows-partial-on-later-error",
+        "state_body_hex": "7b7d"
+      },
+      "output": {
+        "class": "encrypted_format_unknown",
+        "error": "browsercookies: cookie value uses an unknown encryption format",
+        "key_calls": 0,
+        "secret_strings": [],
+        "sqlite_called": true,
+        "sqlite_flags": [
+          "-readonly",
+          "-noheader",
+          "-csv",
+          "-newline",
+          "\n"
+        ],
+        "sqlite_parameters": [
+          ".parameter set @h1 .fanbox.cc",
+          ".parameter set @h2 fanbox.cc",
+          ".parameter set @n FANBOXSESSID"
+        ],
+        "sqlite_sql": "SELECT host_key, value, hex(encrypted_value) FROM cookies WHERE (host_key = @h1 OR host_key = @h2) AND name = @n;",
+        "values_hex": [],
+        "values_nil": true
+      }
+    },
+    {
+      "id": "read-rows-per-row-key-acquisition",
+      "operation": "provider_read",
+      "input": {
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "csv_hex": "2e66616e626f782e63632c2c3736333133303030303130323033303430353036303730383039306130626664633033613130313435383139623630313633323663353539393438623264623832366334343634363832643761630a2e66616e626f782e63632c2c3736333133303030303130323033303430353036303730383039306130626664633033613130313435383139623630313633323663353539393438623264623832366334343634363832643761630a",
+        "database_mode": "owned_placeholder",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "profile_id": "Profile 1",
+        "query_host": ".fanbox.cc",
+        "query_name": "FANBOXSESSID",
+        "rows_hex": [
+          [
+            "2e66616e626f782e6363",
+            "",
+            "373633313330303030313032303330343035303630373038303930613062666463303361313031343538313962363031363332366335353939343862326462383236633434363436383264376163"
+          ],
+          [
+            "2e66616e626f782e6363",
+            "",
+            "373633313330303030313032303330343035303630373038303930613062666463303361313031343538313962363031363332366335353939343862326462383236633434363436383264376163"
+          ]
+        ],
+        "source_case_id": "rows-per-row-key-acquisition",
+        "state_body_hex": "7b7d"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 2,
+        "secret_strings": [
+          "\u003credacted\u003e",
+          "\u003credacted\u003e"
+        ],
+        "sqlite_called": true,
+        "sqlite_flags": [
+          "-readonly",
+          "-noheader",
+          "-csv",
+          "-newline",
+          "\n"
+        ],
+        "sqlite_parameters": [
+          ".parameter set @h1 .fanbox.cc",
+          ".parameter set @h2 fanbox.cc",
+          ".parameter set @n FANBOXSESSID"
+        ],
+        "sqlite_sql": "SELECT host_key, value, hex(encrypted_value) FROM cookies WHERE (host_key = @h1 OR host_key = @h2) AND name = @n;",
+        "values_hex": [
+          "00fffe0d0a2c2280",
+          "00fffe0d0a2c2280"
+        ],
+        "values_nil": false
+      }
+    },
+    {
+      "id": "read-rows-empty-row-set",
+      "operation": "provider_read",
+      "input": {
+        "cancel_inside_key_hook": false,
+        "context": "canceled",
+        "csv_hex": "",
+        "database_mode": "owned_placeholder",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "profile_id": "Profile 1",
+        "query_host": ".fanbox.cc",
+        "query_name": "FANBOXSESSID",
+        "rows_hex": [],
+        "source_case_id": "rows-empty-row-set",
+        "state_body_hex": "7b7d"
+      },
+      "output": {
+        "class": "context_canceled",
+        "error": "context canceled",
+        "key_calls": 0,
+        "secret_strings": [],
+        "sqlite_called": false,
+        "sqlite_flags": [],
+        "sqlite_parameters": [],
+        "sqlite_sql": "",
+        "values_hex": [],
+        "values_nil": true
+      }
+    },
+    {
+      "id": "existing-linux-keys-chrome-missing-state-legacy-candidates",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "source_case_id": "linux-keys-chrome-missing-state-legacy-candidates",
+        "state_body_hex": "",
+        "state_mode": "missing"
+      },
+      "output": {
+        "class": "",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "",
+        "keys_hex": [
+          "3337115768aa521d6e796f23bd12dc217aa78fd0e1634368fd698d1dafce9785",
+          "ad47d040c184e403f3afc7b04054ec52",
+          "b776e42be10bedd6baabfa6b30e4eefe"
+        ],
+        "keys_nil": false
+      }
+    },
+    {
+      "id": "existing-linux-keys-edge-missing-state-legacy-candidates",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "edge",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "source_case_id": "linux-keys-edge-missing-state-legacy-candidates",
+        "state_body_hex": "",
+        "state_mode": "missing"
+      },
+      "output": {
+        "class": "",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "microsoft-edge"
+        ],
+        "error": "",
+        "keys_hex": [
+          "3337115768aa521d6e796f23bd12dc217aa78fd0e1634368fd698d1dafce9785",
+          "ad47d040c184e403f3afc7b04054ec52",
+          "b776e42be10bedd6baabfa6b30e4eefe"
+        ],
+        "keys_nil": false
+      }
+    },
+    {
+      "id": "existing-linux-keys-raw-key",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "source_case_id": "linux-keys-raw-key",
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a224d4445794d7a51314e6a63344f5746695932526c5a673d3d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "keys_nil": false
+      }
+    },
+    {
+      "id": "existing-linux-keys-raw-unrecognized-state-version",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "source_case_id": "linux-keys-raw-unrecognized-state-version",
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a22646a4977227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "",
+        "keys_hex": [
+          "763230"
+        ],
+        "keys_nil": false
+      }
+    },
+    {
+      "id": "existing-linux-keys-wrapped-key-second-candidate",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "source_case_id": "linux-keys-wrapped-key-second-candidate",
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a22646a457841414543417751464267634943516f4c4e4f34742f75384f54714e596243685148792b7547324c53334e516248473172374765724e4f44426956513d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "keys_nil": false
+      }
+    },
+    {
+      "id": "existing-linux-keys-wrapped-empty-key-rejected",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "source_case_id": "linux-keys-wrapped-empty-key-rejected",
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a22646a457741414543417751464267634943516f4c513072417674653772314878315378734750626244773d3d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "encrypted_malformed",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "browsercookies: encrypted cookie value is malformed",
+        "keys_hex": [],
+        "keys_nil": true
+      }
+    },
+    {
+      "id": "existing-linux-keys-wrapped-cbc-not-unwrapped",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "source_case_id": "linux-keys-wrapped-cbc-not-unwrapped",
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a22646a457733476253414f7256484b2b6a2b6959334c484d62323737584174354d33572b515a2b3373506d78453335453d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "encrypted_malformed",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "browsercookies: encrypted cookie value is malformed",
+        "keys_hex": [],
+        "keys_nil": true
+      }
+    },
+    {
+      "id": "existing-linux-keys-dpapi-key-format-unknown",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "source_case_id": "linux-keys-dpapi-key-format-unknown",
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a225246424255456c6962473969227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "encrypted_format_unknown",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "browsercookies: cookie value uses an unknown encryption format",
+        "keys_hex": [],
+        "keys_nil": true
+      }
+    },
+    {
+      "id": "existing-linux-keys-malformed-state-after-secret-success",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "source_case_id": "linux-keys-malformed-state-after-secret-success",
+        "state_body_hex": "7b",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "encrypted_format_unknown",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "browsercookies: cookie value uses an unknown encryption format",
+        "keys_hex": [],
+        "keys_nil": true
+      }
+    },
+    {
+      "id": "existing-linux-keys-missing-secret-before-malformed-state",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "missing",
+        "source_case_id": "linux-keys-missing-secret-before-malformed-state",
+        "state_body_hex": "7b",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "secret_service_unavailable",
+        "command_args": [],
+        "error": "browsercookies: Linux Secret Service is unavailable",
+        "keys_hex": [],
+        "keys_nil": true
+      }
+    },
+    {
+      "id": "existing-linux-keys-failing-secret-before-malformed-state",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "edge",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "fail",
+        "source_case_id": "linux-keys-failing-secret-before-malformed-state",
+        "state_body_hex": "7b",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "secret_service_access",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "microsoft-edge"
+        ],
+        "error": "browsercookies: Linux Secret Service access failed",
+        "keys_hex": [],
+        "keys_nil": true
+      }
+    },
+    {
+      "id": "existing-linux-keys-pre-cancel-before-state",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "canceled",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "source_case_id": "linux-keys-pre-cancel-before-state",
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a224d4445794d7a51314e6a63344f5746695932526c5a673d3d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "context_canceled",
+        "command_args": [],
+        "error": "context canceled",
+        "keys_hex": [],
+        "keys_nil": true
+      }
+    },
+    {
+      "id": "existing-linux-keys-cancel-running-secret",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "wait",
+        "source_case_id": "linux-keys-cancel-running-secret",
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a224d4445794d7a51314e6a63344f5746695932526c5a673d3d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "context_canceled",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "context canceled",
+        "keys_hex": [],
+        "keys_nil": true
+      }
+    },
+    {
+      "id": "state-duplicate-objects-last-key",
+      "operation": "local_state_encrypted_key",
+      "input": {
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a224141453d227d2c226f735f6372797074223a7b22656e637279707465645f6b6579223a2241674d3d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "present": true,
+        "value_hex": "0203",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "keys-state-duplicate-objects-last-key",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a224141453d227d2c226f735f6372797074223a7b22656e637279707465645f6b6579223a2241674d3d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "",
+        "keys_hex": [
+          "0203"
+        ],
+        "keys_nil": false
+      }
+    },
+    {
+      "id": "state-duplicate-objects-empty-retains",
+      "operation": "local_state_encrypted_key",
+      "input": {
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a224141453d227d2c226f735f6372797074223a7b7d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "present": true,
+        "value_hex": "0001",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "keys-state-duplicate-objects-empty-retains",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a224141453d227d2c226f735f6372797074223a7b7d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "",
+        "keys_hex": [
+          "0001"
+        ],
+        "keys_nil": false
+      }
+    },
+    {
+      "id": "state-duplicate-object-null-retains",
+      "operation": "local_state_encrypted_key",
+      "input": {
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a224141453d227d2c226f735f6372797074223a6e756c6c7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "present": true,
+        "value_hex": "0001",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "keys-state-duplicate-object-null-retains",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a224141453d227d2c226f735f6372797074223a6e756c6c7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "",
+        "keys_hex": [
+          "0001"
+        ],
+        "keys_nil": false
+      }
+    },
+    {
+      "id": "state-null-then-object",
+      "operation": "local_state_encrypted_key",
+      "input": {
+        "state_body_hex": "7b226f735f6372797074223a6e756c6c2c226f735f6372797074223a7b22656e637279707465645f6b6579223a224141453d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "present": true,
+        "value_hex": "0001",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "keys-state-null-then-object",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "state_body_hex": "7b226f735f6372797074223a6e756c6c2c226f735f6372797074223a7b22656e637279707465645f6b6579223a224141453d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "",
+        "keys_hex": [
+          "0001"
+        ],
+        "keys_nil": false
+      }
+    },
+    {
+      "id": "state-duplicate-key-null-retains",
+      "operation": "local_state_encrypted_key",
+      "input": {
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a224141453d222c22656e637279707465645f6b6579223a6e756c6c7d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "present": true,
+        "value_hex": "0001",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "keys-state-duplicate-key-null-retains",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a224141453d222c22656e637279707465645f6b6579223a6e756c6c7d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "",
+        "keys_hex": [
+          "0001"
+        ],
+        "keys_nil": false
+      }
+    },
+    {
+      "id": "state-null-string-last-string",
+      "operation": "local_state_encrypted_key",
+      "input": {
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a6e756c6c2c22656e637279707465645f6b6579223a224141453d222c22656e637279707465645f6b6579223a2241674d3d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "present": true,
+        "value_hex": "0203",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "keys-state-null-string-last-string",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a6e756c6c2c22656e637279707465645f6b6579223a224141453d222c22656e637279707465645f6b6579223a2241674d3d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "",
+        "keys_hex": [
+          "0203"
+        ],
+        "keys_nil": false
+      }
+    },
+    {
+      "id": "state-string-null-empty-erases",
+      "operation": "local_state_encrypted_key",
+      "input": {
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a224141453d222c22656e637279707465645f6b6579223a6e756c6c2c22656e637279707465645f6b6579223a22227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "present": false,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "keys-state-string-null-empty-erases",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a224141453d222c22656e637279707465645f6b6579223a6e756c6c2c22656e637279707465645f6b6579223a22227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "",
+        "keys_hex": [
+          "3337115768aa521d6e796f23bd12dc217aa78fd0e1634368fd698d1dafce9785",
+          "ad47d040c184e403f3afc7b04054ec52",
+          "b776e42be10bedd6baabfa6b30e4eefe"
+        ],
+        "keys_nil": false
+      }
+    },
+    {
+      "id": "state-type-error-before-valid-key",
+      "operation": "local_state_encrypted_key",
+      "input": {
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a312c22656e637279707465645f6b6579223a224141453d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "encrypted_format_unknown",
+        "error": "browsercookies: cookie value uses an unknown encryption format",
+        "present": true,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "keys-state-type-error-before-valid-key",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a312c22656e637279707465645f6b6579223a224141453d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "encrypted_format_unknown",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "browsercookies: cookie value uses an unknown encryption format",
+        "keys_hex": [],
+        "keys_nil": true
+      }
+    },
+    {
+      "id": "state-type-error-after-valid-key",
+      "operation": "local_state_encrypted_key",
+      "input": {
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a224141453d222c22656e637279707465645f6b6579223a312c22656e637279707465645f6b6579223a6e756c6c7d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "encrypted_format_unknown",
+        "error": "browsercookies: cookie value uses an unknown encryption format",
+        "present": true,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "keys-state-type-error-after-valid-key",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a224141453d222c22656e637279707465645f6b6579223a312c22656e637279707465645f6b6579223a6e756c6c7d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "encrypted_format_unknown",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "browsercookies: cookie value uses an unknown encryption format",
+        "keys_hex": [],
+        "keys_nil": true
+      }
+    },
+    {
+      "id": "state-crypt-type-error-before-object",
+      "operation": "local_state_encrypted_key",
+      "input": {
+        "state_body_hex": "7b226f735f6372797074223a312c226f735f6372797074223a7b22656e637279707465645f6b6579223a224141453d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "encrypted_format_unknown",
+        "error": "browsercookies: cookie value uses an unknown encryption format",
+        "present": true,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "keys-state-crypt-type-error-before-object",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "state_body_hex": "7b226f735f6372797074223a312c226f735f6372797074223a7b22656e637279707465645f6b6579223a224141453d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "encrypted_format_unknown",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "browsercookies: cookie value uses an unknown encryption format",
+        "keys_hex": [],
+        "keys_nil": true
+      }
+    },
+    {
+      "id": "state-crypt-type-error-after-object",
+      "operation": "local_state_encrypted_key",
+      "input": {
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a224141453d227d2c226f735f6372797074223a5b5d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "encrypted_format_unknown",
+        "error": "browsercookies: cookie value uses an unknown encryption format",
+        "present": true,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "keys-state-crypt-type-error-after-object",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a224141453d227d2c226f735f6372797074223a5b5d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "encrypted_format_unknown",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "browsercookies: cookie value uses an unknown encryption format",
+        "keys_hex": [],
+        "keys_nil": true
+      }
+    },
+    {
+      "id": "state-long-s-fold-field",
+      "operation": "local_state_encrypted_key",
+      "input": {
+        "state_body_hex": "7b226fc5bf5f6372797074223a7b22656e637279707465645f6b6579223a224141453d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "present": true,
+        "value_hex": "0001",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "keys-state-long-s-fold-field",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "state_body_hex": "7b226fc5bf5f6372797074223a7b22656e637279707465645f6b6579223a224141453d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "",
+        "keys_hex": [
+          "0001"
+        ],
+        "keys_nil": false
+      }
+    },
+    {
+      "id": "state-kelvin-fold-field",
+      "operation": "local_state_encrypted_key",
+      "input": {
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645fe284aa6579223a224141453d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "present": true,
+        "value_hex": "0001",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "keys-state-kelvin-fold-field",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645fe284aa6579223a224141453d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "",
+        "keys_hex": [
+          "0001"
+        ],
+        "keys_nil": false
+      }
+    },
+    {
+      "id": "state-escaped-fold-fields",
+      "operation": "local_state_encrypted_key",
+      "input": {
+        "state_body_hex": "7b226f5c75303137665f6372797074223a7b22656e637279707465645f5c75323132616579223a224141453d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "present": true,
+        "value_hex": "0001",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "keys-state-escaped-fold-fields",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "state_body_hex": "7b226f5c75303137665f6372797074223a7b22656e637279707465645f5c75323132616579223a224141453d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "",
+        "keys_hex": [
+          "0001"
+        ],
+        "keys_nil": false
+      }
+    },
+    {
+      "id": "state-invalid-utf8-unknown-value-accepted",
+      "operation": "local_state_encrypted_key",
+      "input": {
+        "state_body_hex": "7b2269676e6f726564223a22ff222c226f735f6372797074223a7b22656e637279707465645f6b6579223a224141453d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "present": true,
+        "value_hex": "0001",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "keys-state-invalid-utf8-unknown-value-accepted",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "state_body_hex": "7b2269676e6f726564223a22ff222c226f735f6372797074223a7b22656e637279707465645f6b6579223a224141453d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "",
+        "keys_hex": [
+          "0001"
+        ],
+        "keys_nil": false
+      }
+    },
+    {
+      "id": "state-invalid-utf8-field-replaced-unmatched",
+      "operation": "local_state_encrypted_key",
+      "input": {
+        "state_body_hex": "7b226fff735f6372797074223a7b22656e637279707465645f6b6579223a224141453d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "present": false,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "keys-state-invalid-utf8-field-replaced-unmatched",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "state_body_hex": "7b226fff735f6372797074223a7b22656e637279707465645f6b6579223a224141453d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "",
+        "keys_hex": [
+          "3337115768aa521d6e796f23bd12dc217aa78fd0e1634368fd698d1dafce9785",
+          "ad47d040c184e403f3afc7b04054ec52",
+          "b776e42be10bedd6baabfa6b30e4eefe"
+        ],
+        "keys_nil": false
+      }
+    },
+    {
+      "id": "state-invalid-utf8-key-value-replaced",
+      "operation": "local_state_encrypted_key",
+      "input": {
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a224141ff453d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "encrypted_format_unknown",
+        "error": "browsercookies: cookie value uses an unknown encryption format",
+        "present": true,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "keys-state-invalid-utf8-key-value-replaced",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a224141ff453d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "encrypted_format_unknown",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "browsercookies: cookie value uses an unknown encryption format",
+        "keys_hex": [],
+        "keys_nil": true
+      }
+    },
+    {
+      "id": "state-unpaired-high-surrogate-ignored-accepted",
+      "operation": "local_state_encrypted_key",
+      "input": {
+        "state_body_hex": "7b2269676e6f726564223a225c7564383030222c226f735f6372797074223a7b22656e637279707465645f6b6579223a224141453d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "present": true,
+        "value_hex": "0001",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "keys-state-unpaired-high-surrogate-ignored-accepted",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "state_body_hex": "7b2269676e6f726564223a225c7564383030222c226f735f6372797074223a7b22656e637279707465645f6b6579223a224141453d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "",
+        "keys_hex": [
+          "0001"
+        ],
+        "keys_nil": false
+      }
+    },
+    {
+      "id": "state-unpaired-low-surrogate-ignored-accepted",
+      "operation": "local_state_encrypted_key",
+      "input": {
+        "state_body_hex": "7b2269676e6f726564223a225c7564666666222c226f735f6372797074223a7b22656e637279707465645f6b6579223a224141453d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "present": true,
+        "value_hex": "0001",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "keys-state-unpaired-low-surrogate-ignored-accepted",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "state_body_hex": "7b2269676e6f726564223a225c7564666666222c226f735f6372797074223a7b22656e637279707465645f6b6579223a224141453d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "",
+        "keys_hex": [
+          "0001"
+        ],
+        "keys_nil": false
+      }
+    },
+    {
+      "id": "state-unpaired-surrogate-key-value-replaced",
+      "operation": "local_state_encrypted_key",
+      "input": {
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a225c7564383030227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "encrypted_format_unknown",
+        "error": "browsercookies: cookie value uses an unknown encryption format",
+        "present": true,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "keys-state-unpaired-surrogate-key-value-replaced",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a225c7564383030227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "encrypted_format_unknown",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "browsercookies: cookie value uses an unknown encryption format",
+        "keys_hex": [],
+        "keys_nil": true
+      }
+    },
+    {
+      "id": "state-null-key-legacy-fallback",
+      "operation": "local_state_encrypted_key",
+      "input": {
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a6e756c6c7d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "present": false,
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "keys-state-null-key-legacy-fallback",
+      "operation": "linux_encryption_keys",
+      "input": {
+        "browser": "chrome",
+        "context": "active",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a6e756c6c7d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "",
+        "keys_hex": [
+          "3337115768aa521d6e796f23bd12dc217aa78fd0e1634368fd698d1dafce9785",
+          "ad47d040c184e403f3afc7b04054ec52",
+          "b776e42be10bedd6baabfa6b30e4eefe"
+        ],
+        "keys_nil": false
+      }
+    },
+    {
+      "id": "linux-decrypt-raw-state-gcm",
+      "operation": "linux_decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130000102030405060708090a0bfdc03a10145819b6016326c559948b2db826c4464682d7ac",
+        "browser": "chrome",
+        "context": "active",
+        "key_source": "linux_secret_tool",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a224d4445794d7a51314e6a63344f5746695932526c5a673d3d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "",
+        "value_hex": "00fffe0d0a2c2280",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "linux-decrypt-raw-state-cbc",
+      "operation": "linux_decrypt_encrypted",
+      "input": {
+        "blob_hex": "7631318b5a11db6cdb87609011e2259a79b3e4",
+        "browser": "chrome",
+        "context": "active",
+        "key_source": "linux_secret_tool",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a224d4445794d7a51314e6a63344f5746695932526c5a673d3d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "",
+        "value_hex": "00fffe0d0a2c2280",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "linux-decrypt-wrapped-state-gcm",
+      "operation": "linux_decrypt_encrypted",
+      "input": {
+        "blob_hex": "763131000102030405060708090a0bfdc03a10145819b6016326c559948b2db826c4464682d7ac",
+        "browser": "chrome",
+        "context": "active",
+        "key_source": "linux_secret_tool",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a22646a457841414543417751464267634943516f4c4e4f34742f75384f54714e596243685148792b7547324c53334e516248473172374765724e4f44426956513d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "",
+        "value_hex": "00fffe0d0a2c2280",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "linux-decrypt-missing-state-cbc-second-candidate",
+      "operation": "linux_decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130be6b7e434e4518a31f3b222d0fd17658",
+        "browser": "chrome",
+        "context": "active",
+        "key_source": "linux_secret_tool",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "state_body_hex": "",
+        "state_mode": "missing"
+      },
+      "output": {
+        "class": "",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "",
+        "value_hex": "00fffe0d0a2c2280",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "linux-decrypt-missing-state-gcm-third-candidate",
+      "operation": "linux_decrypt_encrypted",
+      "input": {
+        "blob_hex": "763131000102030405060708090a0b57228be8a8a7b26aa6e916311b804f708929f910ff01cc5c",
+        "browser": "chrome",
+        "context": "active",
+        "key_source": "linux_secret_tool",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "success",
+        "state_body_hex": "",
+        "state_mode": "missing"
+      },
+      "output": {
+        "class": "",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "",
+        "value_hex": "00fffe0d0a2c2280",
+        "value_nil": false
+      }
+    },
+    {
+      "id": "linux-decrypt-secret-failure-before-malformed-blob-state",
+      "operation": "linux_decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130",
+        "browser": "chrome",
+        "context": "active",
+        "key_source": "linux_secret_tool",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "fail",
+        "state_body_hex": "7b",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "secret_service_access",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "browsercookies: Linux Secret Service access failed",
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "linux-decrypt-unknown-layout-before-missing-secret",
+      "operation": "linux_decrypt_encrypted",
+      "input": {
+        "blob_hex": "763230",
+        "browser": "chrome",
+        "context": "active",
+        "key_source": "linux_secret_tool",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "missing",
+        "state_body_hex": "7b",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "encrypted_format_unknown",
+        "command_args": [],
+        "error": "browsercookies: cookie value uses an unknown encryption format",
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "linux-decrypt-pre-cancel-before-format-secret-state",
+      "operation": "linux_decrypt_encrypted",
+      "input": {
+        "blob_hex": "763230",
+        "browser": "chrome",
+        "context": "canceled",
+        "key_source": "linux_secret_tool",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "missing",
+        "state_body_hex": "7b",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "context_canceled",
+        "command_args": [],
+        "error": "context canceled",
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "linux-decrypt-cancel-running-secret",
+      "operation": "linux_decrypt_encrypted",
+      "input": {
+        "blob_hex": "763130000102030405060708090a0bfdc03a10145819b6016326c559948b2db826c4464682d7ac",
+        "browser": "chrome",
+        "context": "active",
+        "key_source": "linux_secret_tool",
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "secret_mode": "wait",
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a224d4445794d7a51314e6a63344f5746695932526c5a673d3d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "context_canceled",
+        "command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "error": "context canceled",
+        "value_hex": "",
+        "value_nil": true
+      }
+    },
+    {
+      "id": "read-empty-success-non-nil",
+      "operation": "provider_read",
+      "input": {
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "csv_hex": "",
+        "database_mode": "owned_placeholder",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "profile_id": "Profile 1",
+        "query_host": ".fanbox.cc",
+        "query_name": "FANBOXSESSID",
+        "state_body_hex": "7b7d"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 0,
+        "secret_strings": [],
+        "sqlite_called": true,
+        "sqlite_flags": [
+          "-readonly",
+          "-noheader",
+          "-csv",
+          "-newline",
+          "\n"
+        ],
+        "sqlite_parameters": [
+          ".parameter set @h1 .fanbox.cc",
+          ".parameter set @h2 fanbox.cc",
+          ".parameter set @n FANBOXSESSID"
+        ],
+        "sqlite_sql": "SELECT host_key, value, hex(encrypted_value) FROM cookies WHERE (host_key = @h1 OR host_key = @h2) AND name = @n;",
+        "values_hex": [],
+        "values_nil": false
+      }
+    },
+    {
+      "id": "read-short-row-active",
+      "operation": "provider_read",
+      "input": {
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "csv_hex": "2e66616e626f782e63632c706c61696e0a",
+        "database_mode": "owned_placeholder",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "profile_id": "Profile 1",
+        "query_host": ".fanbox.cc",
+        "query_name": "FANBOXSESSID",
+        "state_body_hex": "7b7d"
+      },
+      "output": {
+        "class": "query_failed",
+        "error": "browsercookies: cookie database query failed",
+        "key_calls": 0,
+        "secret_strings": [],
+        "sqlite_called": true,
+        "sqlite_flags": [
+          "-readonly",
+          "-noheader",
+          "-csv",
+          "-newline",
+          "\n"
+        ],
+        "sqlite_parameters": [
+          ".parameter set @h1 .fanbox.cc",
+          ".parameter set @h2 fanbox.cc",
+          ".parameter set @n FANBOXSESSID"
+        ],
+        "sqlite_sql": "SELECT host_key, value, hex(encrypted_value) FROM cookies WHERE (host_key = @h1 OR host_key = @h2) AND name = @n;",
+        "values_hex": [],
+        "values_nil": true
+      }
+    },
+    {
+      "id": "read-malformed-csv",
+      "operation": "provider_read",
+      "input": {
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "csv_hex": "22756e7465726d696e617465640a",
+        "database_mode": "owned_placeholder",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "profile_id": "Profile 1",
+        "query_host": ".fanbox.cc",
+        "query_name": "FANBOXSESSID",
+        "state_body_hex": "7b7d"
+      },
+      "output": {
+        "class": "query_failed",
+        "error": "browsercookies: cookie database query failed",
+        "key_calls": 0,
+        "secret_strings": [],
+        "sqlite_called": true,
+        "sqlite_flags": [
+          "-readonly",
+          "-noheader",
+          "-csv",
+          "-newline",
+          "\n"
+        ],
+        "sqlite_parameters": [
+          ".parameter set @h1 .fanbox.cc",
+          ".parameter set @h2 fanbox.cc",
+          ".parameter set @n FANBOXSESSID"
+        ],
+        "sqlite_sql": "SELECT host_key, value, hex(encrypted_value) FROM cookies WHERE (host_key = @h1 OR host_key = @h2) AND name = @n;",
+        "values_hex": [],
+        "values_nil": true
+      }
+    },
+    {
+      "id": "read-query-before-profile-cancel",
+      "operation": "provider_read",
+      "input": {
+        "cancel_inside_key_hook": false,
+        "context": "canceled",
+        "csv_hex": "2e66616e626f782e63632c73796e7468657469632d756e757365642d706c61696e746578742c373633313331303030313032303330343035303630373038303930613062636234666132393733663831613336623066646236303762363234623134393030316262363338343232646135326238323930356262353766373933303537373565653836316533666163326261343739343334636161376565336333656630366666623634663138646337636235340a",
+        "database_mode": "owned_placeholder",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "profile_id": "../bad",
+        "query_host": "",
+        "query_name": "FANBOXSESSID",
+        "state_body_hex": "7b7d"
+      },
+      "output": {
+        "class": "query_invalid",
+        "error": "browsercookies: invalid cookie query",
+        "key_calls": 0,
+        "secret_strings": [],
+        "sqlite_called": false,
+        "sqlite_flags": [],
+        "sqlite_parameters": [],
+        "sqlite_sql": "",
+        "values_hex": [],
+        "values_nil": true
+      }
+    },
+    {
+      "id": "read-profile-before-cancel",
+      "operation": "provider_read",
+      "input": {
+        "cancel_inside_key_hook": false,
+        "context": "canceled",
+        "csv_hex": "2e66616e626f782e63632c73796e7468657469632d756e757365642d706c61696e746578742c373633313331303030313032303330343035303630373038303930613062636234666132393733663831613336623066646236303762363234623134393030316262363338343232646135326238323930356262353766373933303537373565653836316533666163326261343739343334636161376565336333656630366666623634663138646337636235340a",
+        "database_mode": "owned_placeholder",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "profile_id": "../bad",
+        "query_host": ".fanbox.cc",
+        "query_name": "FANBOXSESSID",
+        "state_body_hex": "7b7d"
+      },
+      "output": {
+        "class": "invalid_profile_id",
+        "error": "browsercookies: invalid profile identifier",
+        "key_calls": 0,
+        "secret_strings": [],
+        "sqlite_called": false,
+        "sqlite_flags": [],
+        "sqlite_parameters": [],
+        "sqlite_sql": "",
+        "values_hex": [],
+        "values_nil": true
+      }
+    },
+    {
+      "id": "read-missing-db-before-cancel",
+      "operation": "provider_read",
+      "input": {
+        "cancel_inside_key_hook": false,
+        "context": "canceled",
+        "csv_hex": "2e66616e626f782e63632c73796e7468657469632d756e757365642d706c61696e746578742c373633313331303030313032303330343035303630373038303930613062636234666132393733663831613336623066646236303762363234623134393030316262363338343232646135326238323930356262353766373933303537373565653836316533666163326261343739343334636161376565336333656630366666623634663138646337636235340a",
+        "database_mode": "missing",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "profile_id": "Profile 1",
+        "query_host": ".fanbox.cc",
+        "query_name": "FANBOXSESSID",
+        "state_body_hex": "7b7d"
+      },
+      "output": {
+        "class": "database_not_found",
+        "error": "browsercookies: browser cookie database not found",
+        "key_calls": 0,
+        "secret_strings": [],
+        "sqlite_called": false,
+        "sqlite_flags": [],
+        "sqlite_parameters": [],
+        "sqlite_sql": "",
+        "values_hex": [],
+        "values_nil": true
+      }
+    },
+    {
+      "id": "read-cancel-inside-key-then-plaintext-success",
+      "operation": "provider_read",
+      "input": {
+        "cancel_inside_key_hook": true,
+        "context": "active",
+        "csv_hex": "2e66616e626f782e63632c73796e7468657469632d756e757365642d706c61696e746578742c373633313331303030313032303330343035303630373038303930613062636234666132393733663831613336623066646236303762363234623134393030316262363338343232646135326238323930356262353766373933303537373565653836316533666163326261343739343334636161376565336333656630366666623634663138646337636235340a2e66616e626f782e63632c2200fffe0d0a2c222280222c0a",
+        "database_mode": "owned_placeholder",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "profile_id": "Profile 1",
+        "query_host": ".fanbox.cc",
+        "query_name": "FANBOXSESSID",
+        "state_body_hex": "7b7d"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 1,
+        "secret_strings": [
+          "\u003credacted\u003e",
+          "\u003credacted\u003e"
+        ],
+        "sqlite_called": true,
+        "sqlite_flags": [
+          "-readonly",
+          "-noheader",
+          "-csv",
+          "-newline",
+          "\n"
+        ],
+        "sqlite_parameters": [
+          ".parameter set @h1 .fanbox.cc",
+          ".parameter set @h2 fanbox.cc",
+          ".parameter set @n FANBOXSESSID"
+        ],
+        "sqlite_sql": "SELECT host_key, value, hex(encrypted_value) FROM cookies WHERE (host_key = @h1 OR host_key = @h2) AND name = @n;",
+        "values_hex": [
+          "00fffe0d0a2c2280",
+          "00fffe0a2c2280"
+        ],
+        "values_nil": false
+      }
+    },
+    {
+      "id": "read-cancel-inside-key-then-encrypted-discards",
+      "operation": "provider_read",
+      "input": {
+        "cancel_inside_key_hook": true,
+        "context": "active",
+        "csv_hex": "2e66616e626f782e63632c73796e7468657469632d756e757365642d706c61696e746578742c373633313331303030313032303330343035303630373038303930613062636234666132393733663831613336623066646236303762363234623134393030316262363338343232646135326238323930356262353766373933303537373565653836316533666163326261343739343334636161376565336333656630366666623634663138646337636235340a2e66616e626f782e63632c73796e7468657469632d756e757365642d706c61696e746578742c373633313331303030313032303330343035303630373038303930613062636234666132393733663831613336623066646236303762363234623134393030316262363338343232646135326238323930356262353766373933303537373565653836316533666163326261343739343334636161376565336333656630366666623634663138646337636235340a",
+        "database_mode": "owned_placeholder",
+        "key_source": "encryption_key_override",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "profile_id": "Profile 1",
+        "query_host": ".fanbox.cc",
+        "query_name": "FANBOXSESSID",
+        "state_body_hex": "7b7d"
+      },
+      "output": {
+        "class": "context_canceled",
+        "error": "context canceled",
+        "key_calls": 1,
+        "secret_strings": [],
+        "sqlite_called": true,
+        "sqlite_flags": [
+          "-readonly",
+          "-noheader",
+          "-csv",
+          "-newline",
+          "\n"
+        ],
+        "sqlite_parameters": [
+          ".parameter set @h1 .fanbox.cc",
+          ".parameter set @h2 fanbox.cc",
+          ".parameter set @n FANBOXSESSID"
+        ],
+        "sqlite_sql": "SELECT host_key, value, hex(encrypted_value) FROM cookies WHERE (host_key = @h1 OR host_key = @h2) AND name = @n;",
+        "values_hex": [],
+        "values_nil": true
+      }
+    },
+    {
+      "id": "read-real-linux-key-and-read",
+      "operation": "provider_read",
+      "input": {
+        "browser": "chrome",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "csv_hex": "2e66616e626f782e63632c73796e7468657469632d756e757365642d706c61696e746578742c373633313331303030313032303330343035303630373038303930613062636234666132393733663831613336623066646236303762363234623134393030316262363338343232646135326238323930356262353766373933303537373565653836316533666163326261343739343334636161376565336333656630366666623634663138646337636235340a",
+        "database_mode": "owned_placeholder",
+        "key_source": "linux_secret_tool",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "profile_id": "Profile 1",
+        "query_host": ".fanbox.cc",
+        "query_name": "FANBOXSESSID",
+        "secret_mode": "success",
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a224d4445794d7a51314e6a63344f5746695932526c5a673d3d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "",
+        "error": "",
+        "key_calls": 0,
+        "secret_command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "secret_strings": [
+          "\u003credacted\u003e"
+        ],
+        "sqlite_called": true,
+        "sqlite_flags": [
+          "-readonly",
+          "-noheader",
+          "-csv",
+          "-newline",
+          "\n"
+        ],
+        "sqlite_parameters": [
+          ".parameter set @h1 .fanbox.cc",
+          ".parameter set @h2 fanbox.cc",
+          ".parameter set @n FANBOXSESSID"
+        ],
+        "sqlite_sql": "SELECT host_key, value, hex(encrypted_value) FROM cookies WHERE (host_key = @h1 OR host_key = @h2) AND name = @n;",
+        "values_hex": [
+          "00fffe0d0a2c2280"
+        ],
+        "values_nil": false
+      }
+    },
+    {
+      "id": "read-real-linux-secret-failure-discards-plaintext",
+      "operation": "provider_read",
+      "input": {
+        "browser": "chrome",
+        "cancel_inside_key_hook": false,
+        "context": "active",
+        "csv_hex": "2e66616e626f782e63632c2200fffe0d0a2c222280222c0a2e66616e626f782e63632c73796e7468657469632d756e757365642d706c61696e746578742c373633313331303030313032303330343035303630373038303930613062636234666132393733663831613336623066646236303762363234623134393030316262363338343232646135326238323930356262353766373933303537373565653836316533666163326261343739343334636161376565336333656630366666623634663138646337636235340a",
+        "database_mode": "owned_placeholder",
+        "key_source": "linux_secret_tool",
+        "keys_hex": [
+          "30313233343536373839616263646566"
+        ],
+        "password_hex": "73796e7468657469632d70617373776f72640d0a",
+        "profile_id": "Profile 1",
+        "query_host": ".fanbox.cc",
+        "query_name": "FANBOXSESSID",
+        "secret_mode": "fail",
+        "state_body_hex": "7b226f735f6372797074223a7b22656e637279707465645f6b6579223a224d4445794d7a51314e6a63344f5746695932526c5a673d3d227d7d",
+        "state_mode": "file"
+      },
+      "output": {
+        "class": "secret_service_access",
+        "error": "browsercookies: Linux Secret Service access failed",
+        "key_calls": 0,
+        "secret_command_args": [
+          "lookup",
+          "xdg:schema",
+          "chrome_libsecret",
+          "application",
+          "chrome"
+        ],
+        "secret_strings": [],
+        "sqlite_called": true,
+        "sqlite_flags": [
+          "-readonly",
+          "-noheader",
+          "-csv",
+          "-newline",
+          "\n"
+        ],
+        "sqlite_parameters": [
+          ".parameter set @h1 .fanbox.cc",
+          ".parameter set @h2 fanbox.cc",
+          ".parameter set @n FANBOXSESSID"
+        ],
+        "sqlite_sql": "SELECT host_key, value, hex(encrypted_value) FROM cookies WHERE (host_key = @h1 OR host_key = @h2) AND name = @n;",
+        "values_hex": [],
+        "values_nil": true
+      }
+    }
+  ]
+}
