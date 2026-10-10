@@ -1,0 +1,281 @@
+{
+  "frozen_go": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "published_base": "99246d8bfb8712caa0903426953423850836cefe",
+  "environment": "linux/amd64; TZ=UTC; owned home/config/SQLite/source files; constructor overrides and in-memory SDK/source HTTP endpoints",
+  "toolchain": "go version go1.27.1 linux/amd64",
+  "go_env_sources": [
+    "/tmp/quantus-toolchain-env.txt",
+    "/tmp/pixiv-fanbox-native-build-env.sh"
+  ],
+  "case_count": 148,
+  "case_groups": {
+    "default-provider": 6,
+    "source": 9,
+    "stdin": 8,
+    "provider": 7,
+    "all": 3,
+    "partial": 3,
+    "all-failed": 3,
+    "single-failed": 3,
+    "empty": 3,
+    "failure": 5,
+    "cancel": 4,
+    "unsupported-flag": 17,
+    "flag-conflict": 5,
+    "proxy": 16,
+    "output": 2,
+    "config": 7,
+    "writer": 16,
+    "warning-writer": 8,
+    "close-failure": 4,
+    "startup": 1,
+    "keyword": 12,
+    "image": 4,
+    "pipeline": 2
+  },
+  "exact_replay_count": 3,
+  "final_successful_checks": [
+    "capture-audited",
+    "replay-audited",
+    "race-audited",
+    "vet-audited",
+    "gofmt-audited"
+  ],
+  "protected_go_count": 434,
+  "protected_published_fixture_count": 104,
+  "protection_byte_equal": true,
+  "selected_race_top_level_count": 16,
+  "selected_race_top_level_tests": [
+    "TestMigrationReverseSearchCLIPreservesConnectedRootContracts",
+    "TestImageSearchJSONDoesNotOpenPixivSDK",
+    "TestImageSearchFailureDoesNotLeakPrivateCauseAcrossCLIOutput",
+    "TestImageSearchBuildsReverseSearchWithCLIProxyOverride",
+    "TestCLIReverseSearchClosesSearcherOnceAndKeepsJSONOnStdout",
+    "TestCommandUsesReverseSearchForHTTPSourceWithoutOpeningPixivSDK",
+    "TestCommandPassesReverseSearchProviderAndProxyOverride",
+    "TestCommandUsesReverseSearchForRegularFile",
+    "TestCommandDoesNotFallbackInvalidHTTPSourceToKeywordSearch",
+    "TestCommandJSONOutputPreservesStableSolverErrorAndSafeCause",
+    "TestCommandJSONOutputContainsReverseSearchEnvelopeAndRecords",
+    "TestCommandNDJSONOutputsOnlyRecordsAndWarnsOnPartial",
+    "TestCommandHumanOutputUsesFilteredSafeSummary",
+    "TestCommandRejectsSearchFlagsForImageSourceBeforeCallingService",
+    "TestCommandRejectsJSONAndNDJSONConflictBeforeCallingService",
+    "TestCommandRejectsInvalidReverseSearchProviderBeforeCallingService"
+  ],
+  "executed_boundary_counts": {
+    "reverse_search_cases": 101,
+    "reverse_constructor_cases": 102,
+    "source_http_cases": 91,
+    "sdk_constructor_cases": 12,
+    "sdk_completed_oauth_search_cases": 3,
+    "pipeline_consumer_cases": 2,
+    "successful_exit_cases": 66
+  },
+  "owned_artifacts": {
+    "internal/cli/migration_reverse_search_test.go": {
+      "sha256": "dcd35b759ae7d5de4c46f860cf75af5221c745816f8eac60a724429d8b3825e7",
+      "bytes": 51277
+    },
+    "crates/pixiv-cli/tests/fixtures/reverse-search-cli.json": {
+      "sha256": "09bd4517c2e57e7a287fac0401192ece60c82d224f5fd80ae72c2e64d815f098",
+      "bytes": 1618505
+    },
+    "/tmp/reverse-cli-protected-before.json": {
+      "sha256": "1878e94a2970d67c87e543928710c1e128afb3da32c23a97ace39e3e1fa78fb6",
+      "bytes": 147877
+    },
+    "/tmp/reverse-cli-protected-after.json": {
+      "sha256": "ac7941daf3b41aa08cafe97950d9d2afd80395a7ba723e30e552bcbbe738737c",
+      "bytes": 162941
+    },
+    "/tmp/reverse-cli-related-source-hashes.json": {
+      "sha256": "64f1870481a6f11a6f925593f103f14c8c485c70ef280f074129b9dc79d834d7",
+      "bytes": 3011
+    },
+    "/tmp/reverse-cli-differences.json": {
+      "sha256": "1105650d922c785d1b5c987eb73768a86bee3c46e6f6c7e3eee88a01da27de9c",
+      "bytes": 20676
+    },
+    "/tmp/reverse-cli-147-startup-only-validation-manifest.json": {
+      "sha256": "7298ed15a419fa7180ed19b5f0d731c2529981dfd1fae71510ac7b678486b16e",
+      "bytes": 11061
+    },
+    "/tmp/reverse-cli-147-startup-only-audit-witness.json": {
+      "sha256": "9b52290e2269a928c0c50c16ba21a17f92d34d863a423a7a9d3f4e48af7c99c3",
+      "bytes": 1730
+    }
+  },
+  "checks": [
+    {
+      "label": "capture",
+      "exit": 1,
+      "log": "/tmp/reverse-cli-capture.log",
+      "log_sha256": "77f075b030efddc16b07c9c4f586ee22e9a01ae56786961eae12289b2f011b56",
+      "command": "source /tmp/quantus-toolchain-env.txt; source /tmp/pixiv-fanbox-native-build-env.sh; go test ./internal/cli -run \"^TestMigrationReverseSearch\" -count=1 -migration-capture-reverse-search-cli",
+      "started": "2026-10-10T13:54:42Z",
+      "finished": "2026-10-10T13:54:48Z",
+      "seconds": "6"
+    },
+    {
+      "label": "capture-final",
+      "exit": 0,
+      "log": "/tmp/reverse-cli-capture-final.log",
+      "log_sha256": "2dcbce32c3e333182595b8570f2869753c8a4fb0f7fcb782549f0239d7e40067",
+      "command": "source /tmp/quantus-toolchain-env.txt; source /tmp/pixiv-fanbox-native-build-env.sh; go test ./internal/cli -run \"^TestMigrationReverseSearch\" -count=1 -migration-capture-reverse-search-cli",
+      "started": "2026-10-10T13:56:03Z",
+      "finished": "2026-10-10T13:56:08Z",
+      "seconds": "5"
+    },
+    {
+      "label": "replay",
+      "exit": 1,
+      "log": "/tmp/reverse-cli-replay.log",
+      "log_sha256": "30a6d3b172a8756eae317a4e38fb96c2c6f95cb02abf1f11a7509ce7dd54412b",
+      "command": "source /tmp/quantus-toolchain-env.txt; source /tmp/pixiv-fanbox-native-build-env.sh; go test ./internal/cli -run \"^TestMigrationReverseSearchCLIPreservesConnectedRootContracts$\" -count=3",
+      "started": "2026-10-10T13:56:54Z",
+      "finished": "2026-10-10T13:57:00Z",
+      "seconds": "6"
+    },
+    {
+      "label": "diagnose",
+      "exit": 1,
+      "log": "/tmp/reverse-cli-diagnose.log",
+      "log_sha256": "3b1fc0d4cec921f0df7c5f8a15affafbbd52ab17ff07d653507b0828c76b593f"
+    },
+    {
+      "label": "capture-isolated",
+      "exit": 0,
+      "log": "/tmp/reverse-cli-capture-isolated.log",
+      "log_sha256": "4281c3dc0c119d86b8a20090e6b94d8d911a07c2a9742b9f0f6f49003d237b8f",
+      "command": "source /tmp/quantus-toolchain-env.txt; source /tmp/pixiv-fanbox-native-build-env.sh; go test ./internal/cli -run \"^TestMigrationReverseSearchCLIPreservesConnectedRootContracts$\" -count=1 -migration-capture-reverse-search-cli",
+      "started": "2026-10-10T13:59:19Z",
+      "finished": "2026-10-10T13:59:24Z",
+      "seconds": "5"
+    },
+    {
+      "label": "replay-isolated",
+      "exit": 0,
+      "log": "/tmp/reverse-cli-replay-isolated.log",
+      "log_sha256": "18ce14dd0939ecc81264e46eddaf03af75fe5815352d3189af58f5f9d1a83350",
+      "command": "source /tmp/quantus-toolchain-env.txt; source /tmp/pixiv-fanbox-native-build-env.sh; go test ./internal/cli -run \"^TestMigrationReverseSearchCLIPreservesConnectedRootContracts$\" -count=3",
+      "started": "2026-10-10T13:59:53Z",
+      "finished": "2026-10-10T13:59:59Z",
+      "seconds": "6"
+    },
+    {
+      "label": "race",
+      "exit": 0,
+      "log": "/tmp/reverse-cli-race.log",
+      "log_sha256": "8ee525818a25883d83bfc22c2863edc50d49b6113c8bd74eb5122456a5ff7895",
+      "command": "source /tmp/quantus-toolchain-env.txt; source /tmp/pixiv-fanbox-native-build-env.sh; go test -race ./internal/cli ./internal/cli/commands/pixiv/search -run \"^(TestMigrationReverseSearchCLIPreservesConnectedRootContracts|TestImageSearch.*|TestCLIReverseSearch.*|TestCommand.*ReverseSearch.*|TestCommand.*Image.*|TestCommand.*Source.*|TestCommandJSONOutput.*|TestCommandNDJSON.*|TestCommandHumanOutput.*|TestCommandRejectsJSONAndNDJSONConflictBeforeCallingService)$\" -count=1",
+      "started": "2026-10-10T14:00:27Z",
+      "finished": "2026-10-10T14:00:38Z",
+      "seconds": "11"
+    },
+    {
+      "label": "vet",
+      "exit": 0,
+      "log": "/tmp/reverse-cli-vet.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "command": "source /tmp/quantus-toolchain-env.txt; source /tmp/pixiv-fanbox-native-build-env.sh; go vet ./internal/cli ./internal/cli/commands/pixiv/search",
+      "started": "2026-10-10T14:00:52Z",
+      "finished": "2026-10-10T14:00:52Z",
+      "seconds": "0"
+    },
+    {
+      "label": "gofmt",
+      "exit": 0,
+      "log": "/tmp/reverse-cli-gofmt.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "command": "gofmt -l internal/cli/migration_reverse_search_test.go",
+      "started": "2026-10-10T14:01:41Z",
+      "finished": "2026-10-10T14:01:41Z",
+      "seconds": "0"
+    },
+    {
+      "label": "capture-neutral",
+      "exit": 0,
+      "log": "/tmp/reverse-cli-capture-neutral.log",
+      "log_sha256": "00b00818de6706e0c88e61372b214a8df9199ad241c11bce5dc4e0d7a68c05c6",
+      "command": "source /tmp/quantus-toolchain-env.txt; source /tmp/pixiv-fanbox-native-build-env.sh; go test ./internal/cli -run \"^TestMigrationReverseSearchCLIPreservesConnectedRootContracts$\" -count=1 -migration-capture-reverse-search-cli",
+      "started": "2026-10-10T14:04:00Z",
+      "finished": "2026-10-10T14:04:05Z",
+      "seconds": "5"
+    },
+    {
+      "label": "capture-audited",
+      "exit": 0,
+      "log": "/tmp/reverse-cli-capture-audited.log",
+      "log_sha256": "aa9fca6d6eaf63e76cffad5fb1dfe8d849d7614f1bee8fd6933603cc165e9aa2",
+      "command": "source /tmp/quantus-toolchain-env.txt; source /tmp/pixiv-fanbox-native-build-env.sh; go test ./internal/cli -run \"^TestMigrationReverseSearchCLIPreservesConnectedRootContracts$\" -count=1 -migration-capture-reverse-search-cli",
+      "started": "2026-10-10T14:07:54Z",
+      "finished": "2026-10-10T14:07:59Z",
+      "seconds": "5"
+    },
+    {
+      "label": "replay-audited",
+      "exit": 0,
+      "log": "/tmp/reverse-cli-replay-audited.log",
+      "log_sha256": "82fabcab5a701e8bcd84507fcb618c038ce979dd05ccb13a3752c7282bb506e6",
+      "command": "source /tmp/quantus-toolchain-env.txt; source /tmp/pixiv-fanbox-native-build-env.sh; go test ./internal/cli -run \"^TestMigrationReverseSearchCLIPreservesConnectedRootContracts$\" -count=3",
+      "started": "2026-10-10T14:09:09Z",
+      "finished": "2026-10-10T14:09:15Z",
+      "seconds": "6"
+    },
+    {
+      "label": "race-audited",
+      "exit": 0,
+      "log": "/tmp/reverse-cli-race-audited.log",
+      "log_sha256": "67f34eab82b7c5eb9c78c75324b4cca5f8e53e36b211a2b5d5c6d30e044d36c8",
+      "command": "source /tmp/quantus-toolchain-env.txt; source /tmp/pixiv-fanbox-native-build-env.sh; go test -race ./internal/cli ./internal/cli/commands/pixiv/search -run \"^(TestMigrationReverseSearchCLIPreservesConnectedRootContracts|TestImageSearch.*|TestCLIReverseSearch.*|TestCommand.*ReverseSearch.*|TestCommand.*Image.*|TestCommand.*Source.*|TestCommandJSONOutput.*|TestCommandNDJSON.*|TestCommandHumanOutput.*|TestCommandRejectsJSONAndNDJSONConflictBeforeCallingService)$\" -count=1",
+      "started": "2026-10-10T14:09:47Z",
+      "finished": "2026-10-10T14:09:59Z",
+      "seconds": "12"
+    },
+    {
+      "label": "vet-audited",
+      "exit": 0,
+      "log": "/tmp/reverse-cli-vet-audited.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "command": "source /tmp/quantus-toolchain-env.txt; source /tmp/pixiv-fanbox-native-build-env.sh; go vet ./internal/cli ./internal/cli/commands/pixiv/search",
+      "started": "2026-10-10T14:10:16Z",
+      "finished": "2026-10-10T14:10:16Z",
+      "seconds": "0"
+    },
+    {
+      "label": "gofmt-audited",
+      "exit": 0,
+      "log": "/tmp/reverse-cli-gofmt-audited.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "command": "gofmt -l internal/cli/migration_reverse_search_test.go",
+      "started": "2026-10-10T14:10:54Z",
+      "finished": "2026-10-10T14:10:54Z",
+      "seconds": "0"
+    },
+    {
+      "label": "selected-tests",
+      "exit": 0,
+      "log": "/tmp/reverse-cli-selected-tests.log",
+      "log_sha256": "5d65977eb11a2810a1a1869766eae843b438f31fd44f2f9a3604f2b9834ef1b4",
+      "command": "go test ./internal/cli ./internal/cli/commands/pixiv/search -list ^(TestMigrationReverseSearchCLIPreservesConnectedRootContracts|TestImageSearch.*|TestCLIReverseSearch.*|TestCommand.*ReverseSearch.*|TestCommand.*Image.*|TestCommand.*Source.*|TestCommandJSONOutput.*|TestCommandNDJSON.*|TestCommandHumanOutput.*|TestCommandRejectsJSONAndNDJSONConflictBeforeCallingService)$"
+    }
+  ],
+  "limits": [
+    "Each observation is captured through the actual RunContext root, startup/configuration, source routing, command owner, presentation, error envelope, and resource closure. No custom presenter or expectation projection is used.",
+    "The original newCLIReverseSearch constructor port is replaced with the genuine SourceLoader, Facade, and Aggregator plus synthetic terminal provider ports. This proves connected CLI ownership and projection, not provider HTTP upload/protocol or native browser equivalence.",
+    "Native ascii2d requires its dedicated Chrome 146 browser transport. Ordinary net/http source/SDK mocks do not satisfy that requirement; native transport, TLS fingerprints, browser challenges, and third-party uploads are not exercised.",
+    "Only owned synthetic payloads and account credentials are used. Source and SDK transports reject unexpected destinations and never open a network socket; no user credentials, external copyrighted media, browser sessions, or host registration/settings are accessed.",
+    "Keyword no-account cases retain the original SDK constructor. Saved-account keyword cases inject the existing SDK constructor port with the genuine account service, SQLite repository, Facade, Gate, Scheduler, config option resolver, public OAuth/search SDK, and an in-memory HTTP endpoint.",
+    "Output pipe selection uses a real owned pipe file descriptor with a capturing writer. Pipe failures are injected EPIPE and cover the actual root exit decision; kernel SIGPIPE delivery and shell child process behavior are not exercised.",
+    "Relative owned source filenames avoid path normalization. Configuration and credential environment aliases are absent unless explicitly provided by an input; PIXIV_REQUEST_INTERVAL=0 avoids pacing delays. Entire stdout/stderr, domain responses, constructor values, request fields, provider payload reads, account changes, and close state are retained byte-for-byte. Concurrent provider scheduling order is not asserted; per-provider counts and fixed provider output order are retained.",
+    "Protected source inventory is exactly the 434 production Go/module paths at the frozen revision and the 104 published crate fixtures at the published base. Test additions are separate from production sources. No Rust changes, Cargo execution, commits, or pushes are performed by this capture.",
+    "The denied supplemental multiplex/upload probe is not retried and is not represented as completed evidence."
+  ],
+  "rejected_witnesses": {
+    "initial_capture": "A guessed root filter command was unavailable. It was replaced with actual RunContext NDJSON consumed through genuine pipeline.ConsumeNDJSONRecords, and complete parsed records were captured.",
+    "initial_replay": "The execution environment lowercase https_proxy alias had not been removed. Its dynamic constructor values varied between processes. The full 170-field mismatch is preserved; observations were not normalized.",
+    "startup_only_capture": "Empty PIXIV_LOG_LEVEL was a present invalid value. A stable 147-row replay/race/vet was rejected after actual row auditing showed intended success cases never reached source/provider work. The full rejected fixture was overwritten before its standalone copy was saved; its exact SHA/size, gate logs, and verbatim observed row-audit samples are preserved. All environment aliases are now absent unless an input explicitly supplies them, and independent stage assertions guard every case group.",
+    "synthetic_sdk_reply": "The declared keyword mock search input now uses next_url:null. An empty-string next_url was rejected by the actual SDK and was never accepted as proof of successful saved-account search."
+  }
+}

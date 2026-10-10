@@ -1,0 +1,113 @@
+{
+  "reference": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "published_base": "99246d8bfb8712caa0903426953423850836cefe",
+  "environment": "linux/amd64",
+  "go_version": "go1.27.1",
+  "case_count": 99,
+  "operation_counts": {
+    "facade_aggregate": 43,
+    "facade_lifecycle": 16,
+    "snapshot_lifecycle": 2,
+    "source_load": 33,
+    "source_redirect": 5
+  },
+  "owned_file_sha256": {
+    "internal/services/reversesearch/migration_core_test.go": "370bacecfb5bc8862014124e90ecf3e9552309967fceb1776d3aa987f4008f77",
+    "crates/pixiv-cli/tests/fixtures/reverse-search-core.json": "c4aae96b0c931e250c45413936aabbc5a548fbffc5046848473a91b531d3cc49"
+  },
+  "frozen_source_sha256": {
+    "go.mod": "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c",
+    "go.sum": "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e",
+    "internal/services/reversesearch/aggregator.go": "d86e5483ad5d8f5f930703655516c5430b97e57e84838532256c60f8faca1d08",
+    "internal/services/reversesearch/contracts.go": "dd6e7df4143baab4ef8afc5dbc80f428391dc90e47c7e8f5eeae2dc7568522df",
+    "internal/services/reversesearch/errors.go": "8d7d8964cae1a095aa3bcff72e56b36b9e3d27c9844bd6e6301210164569b4f0",
+    "internal/services/reversesearch/facade.go": "860d5a37c56669ed32cb8213e36b23d111e149a65c17fc093d7803c90d5ed486",
+    "internal/services/reversesearch/normalize.go": "c27745819b542c91c639237123b4a86435741e5e6934e9e14c103bdd59716a68",
+    "internal/services/reversesearch/source.go": "e42ac2585b190ff8092afca916e02a643160904e81c685571d45bc3cf8c82e0f"
+  },
+  "baseline_sha256": "24aafc99803ee28fc5dabb6fcc3e1faacca625725a19b0f9b911c46723157439",
+  "protected_maps": {
+    "production": {
+      "count": 434,
+      "exact_map_equal": true,
+      "map_sha256": "7a0ddafc0c4c1b1437a14fe496d1749adf35b2234d93b30e5370307c64397955",
+      "changed": []
+    },
+    "fixtures": {
+      "count": 104,
+      "exact_map_equal": true,
+      "map_sha256": "1ac5a615c0b11a67c8150fc0a8d8759efe8430975d92bcb6da2ca6f90734b745",
+      "changed": []
+    }
+  },
+  "validations": {
+    "capture": {
+      "command": "PIXIV_CAPTURE_REVERSE_CORE=1 go test ./internal/services/reversesearch -run ^TestMigrationReverseSearchCore$ -count=1 -v",
+      "exit": 0,
+      "log": "/tmp/reverse-core-final-capture.log",
+      "log_sha256": "27b032d1712b88c3da4a18cb92787c7f3a94bc723af934378419976e821f9ba9",
+      "elapsed_ns": null,
+      "core_runs": 1,
+      "core_row_passes": 99,
+      "top_level_passes": 1
+    },
+    "replay3": {
+      "command": "go test ./internal/services/reversesearch -run ^TestMigrationReverseSearchCore$ -count=3 -v",
+      "exit": 0,
+      "log": "/tmp/reverse-core-replay3.log",
+      "log_sha256": "de9a87121c01923a76056e92b4c9f71cdef7fe7a230060207506ad01f364b898",
+      "elapsed_ns": 442690515,
+      "core_runs": 3,
+      "core_row_passes": 297,
+      "top_level_passes": 3
+    },
+    "race": {
+      "command": "go test -race ./internal/services/reversesearch -count=1 -v",
+      "exit": 0,
+      "log": "/tmp/reverse-core-race.log",
+      "log_sha256": "01c3110901c5b77bfcb18b22518d4eb65248e6d23e8aa00ee58c9109f72dc2f6",
+      "elapsed_ns": 2250625163,
+      "core_runs": 1,
+      "core_row_passes": 99,
+      "top_level_passes": 28
+    },
+    "related_tests": {
+      "command": "go test ./internal/services/reversesearch -count=1 -v",
+      "exit": 0,
+      "log": "/tmp/reverse-core-related-tests.log",
+      "log_sha256": "8dcf1f0ee9056bf87c119f1b72b13e1744ff96ff8da36556e8392817a77e1849",
+      "elapsed_ns": 456615488,
+      "core_runs": 1,
+      "core_row_passes": 99,
+      "top_level_passes": 28
+    },
+    "vet": {
+      "command": "go vet ./internal/services/reversesearch",
+      "exit": 0,
+      "log": "/tmp/reverse-core-vet.log",
+      "log_sha256": "8395dc9775875bf18b59c91edfb141d46cd1d0d28a5393f3bcf05b529087a594",
+      "elapsed_ns": 186028680,
+      "core_runs": 0,
+      "core_row_passes": 0,
+      "top_level_passes": 0
+    },
+    "gofmt": {
+      "command": "gofmt -l internal/services/reversesearch/migration_core_test.go",
+      "exit": 0,
+      "output_empty": true,
+      "log": "/tmp/reverse-core-gofmt.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "preliminary_evidence": {
+    "log": "/tmp/reverse-core-capture.log",
+    "log_sha256": "c7e46f0e1ec4781ef308d44425af0d5ebf4c1fa37f21d047fafc94432736339e",
+    "fixture": "/tmp/reverse-core-preliminary-fixture.json",
+    "fixture_sha256": "10969a1be1460b721c48ca8fa32e8b7a709d62a399975eda24c961bd9636bc3c",
+    "max_int64_before_use_number": 9223372036854776000,
+    "max_int64_after_use_number": 9223372036854775807,
+    "measurement_launch_failure_preserved": "/tmp/reverse-core-replay3-launch-failure.log",
+    "measurement_retry": "/usr/bin/time was unavailable before Go replay started; actual successful replay uses shell elapsed nanoseconds"
+  },
+  "safety_scope": "Owned synthetic files and http.Client RoundTripper bodies only. No Go production/module/sum changes, no Cargo/Rust changes/commands, no commit, network, credentials, uploads, registration or supplemental native probes."
+}

@@ -1,0 +1,62 @@
+{
+  "base_sha": "99246d8bfb8712caa0903426953423850836cefe",
+  "frozen_go": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "created_utc": "2026-10-10T14:14:13.059959+00:00",
+  "scope": "Go-first reverse contracts only; no reverse Rust implementation/platform promotion",
+  "validation": {
+    "related_go": {
+      "log": "/tmp/reverse-contracts-final-related-go.jsonl",
+      "log_sha256": "964a4d01a60aca93ea66164c4ed134ed27760ad6eebb78acb1fc70d784a73413",
+      "exit_code": 0,
+      "command": "GOPROXY=off GOSUMDB=off go test -json ./internal/services/reversesearch/... ./internal/cli ./internal/mcpserver/pixiv -run 'Reverse|ASCII2D|SauceNAO|Snapshot|Source|Facade|Aggregator|Normalize' -count=1",
+      "seconds": 5,
+      "named_passes": 767,
+      "top_level": 46,
+      "nested": 721,
+      "package_passes": 6,
+      "failures": 0,
+      "skips": 0
+    },
+    "vet": {
+      "log": "/tmp/reverse-contracts-final-vet.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exit_code": 0
+    },
+    "validator": {
+      "log": "/tmp/reverse-contracts-final-validator.log",
+      "log_sha256": "e77a048577b5d51ec78df33411e3f225328c1348bcfccbdc7d4d9f0e39a23bd8",
+      "exit_code": 0
+    },
+    "gofmt": {
+      "log": "/tmp/reverse-contracts-final-gofmt.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exit_code": 0
+    },
+    "diff_check": {
+      "log": "/tmp/reverse-contracts-final-diff-check.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exit_code": 0
+    }
+  },
+  "protected_go_production_module_files": 434,
+  "protected_published_fixtures": 104,
+  "protected_drift": [],
+  "unchanged_rust_gate_inputs": 5536,
+  "rust_gate_reuse": "provenance/reverse-unchanged-rust.json binds the just-published unchanged complete846pass/0fail/11ignored fullscript; no new reverse Rust gate claimed",
+  "pre_gate_manifest": "/tmp/reverse-contracts-final-inputs.json",
+  "pre_gate_manifest_sha256": "01778155f4e8f7428430a477df5138d41a1409174d771317c4c69acf58c42aa8",
+  "source_test_fixture_dependency_gate_input_drift": [],
+  "post_gate_document_only_updates": [
+    "docs/migration/reverse-search-contracts.md"
+  ],
+  "preserved_ledger_ids_status_platforms": 673,
+  "new_fixture_count": 5,
+  "seals": {
+    "docs/migration/provenance/reverse-core-go.json": "8aa3c80bd6a13da117890f305f14234671b12468495edf7eff471111d2edc8e7",
+    "docs/migration/provenance/reverse-saucenao-go.json": "c2531324be900792c723076463c276334223fbaf9536424b3a5d8f27363033b9",
+    "docs/migration/provenance/reverse-ascii2d-go.json": "2d113dcb44eedbad78594189986a2c1682865d74f97d49268fcbe95fa9bbaed8",
+    "docs/migration/provenance/reverse-cli-go.json": "a1ff2e20dfca579033de01194554945c8b580f242a4d5c6117957d8c161332fc",
+    "docs/migration/provenance/reverse-mcp-go.json": "566887fd29b5b0f6a0c96120ab29470b917b771ae2b714a03838748154ff8aa6"
+  },
+  "limitations": "Finite owned Linux Go protocols/entrypoint seams. No Rust parity/live provider/native ASCII fingerprint/socket/proxy/platform equivalence. MCP Searcher fixture and test-binary stdio are distinct from shipped CLI/provider integration. Denied supplemental probes remain denied."
+}

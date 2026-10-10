@@ -1,0 +1,231 @@
+{
+  "completed_utc": "2026-10-10T13:59:46.519304+00:00",
+  "frozen_go": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "published_base": "99246d8bfb8712caa0903426953423850836cefe",
+  "repository": "/workspace/scratch/cd334a12dde3/pixiv-cli-rs",
+  "owned_files": {
+    "internal/mcpserver/pixiv/migration_reverse_search_test.go": {
+      "sha256": "3770b99069eda1a585f52fa5e296decd60f91bd2fe095fc609836980d1db5f37",
+      "bytes": 25374
+    },
+    "crates/pixiv-cli/tests/fixtures/reverse-search-mcp.json": {
+      "sha256": "456fb6b3f1f8c670e94dee18bb78845f511fb923492c541c07105f1d1e2bc30f",
+      "bytes": 237710
+    }
+  },
+  "source_manifest": "/tmp/reverse-mcp-source-manifest.json",
+  "source_manifest_sha256": "78307b44497c32f6c480414556c61af4dcbb20b4a9efd18cf22dc97ef54ea188",
+  "toolchain": "/tmp/reverse-mcp-toolchain.txt",
+  "toolchain_sha256": "90b0645f068d5deb95079766162897ce51351ef0a515bf112c9cdd286288e943",
+  "environment_scripts": [
+    "/tmp/quantus-toolchain-env.txt",
+    "/tmp/pixiv-fanbox-native-build-env.sh"
+  ],
+  "network_dependency_downloads": "disabled through GOPROXY=off, GOSUMDB=off; existing cached modules",
+  "protection": "/tmp/reverse-mcp-protected.json",
+  "protection_sha256": "dc05b9662e50f79411b78630dec3da5386d67ba35d8313e0d10582ab5eb9de01",
+  "counts": {
+    "isolated_connected_tool_cases": 52,
+    "isolated_searcher_calls": 33,
+    "isolated_jsonrpc_invalid_params_errors": 16,
+    "isolated_mcp_error_envelopes": 27,
+    "isolated_success_envelopes": 9,
+    "stable_domain_error_codes": 18,
+    "lifecycle_sequences": 2,
+    "lifecycle_tools_calls": 5,
+    "owned_stdio_child_initialize_responses": 1,
+    "owned_stdio_child_tool_responses": 3,
+    "total_tool_calls_per_capture_or_replay": 60,
+    "actual_sdk_sessions": 55,
+    "owned_stdio_processes": 1,
+    "frozen_production_modules": 434,
+    "published_crate_fixtures": 104,
+    "final_race_mcp_top_level_tests": 10,
+    "final_race_existing_cli_top_level_tests": 7
+  },
+  "coverage": [
+    "Actual registered reverse_search tools/list JSON-RPC schema, complete input/output schema and nested additionalProperties",
+    "Required source, object/array/null/type errors, closed properties, provider enum including rejected explicit empty provider",
+    "Default SauceNAO, four explicit provider overrides, startup provider, PixivOnly true/false, unrelated account Execute remains unused",
+    "Complete result envelope, empty slices, evidence nil-to-empty, quota, artwork/user record mapping, external-only match, duplicate record preservation, invalid identity type/id",
+    "All 18 declared stable error-code values including unknown, exact safe text, provider error preservation, successful records retained on domain failure, synthetic private cause/source redaction",
+    "Actual SDK cancellation emits notifications/cancelled, propagated request context stops Searcher, canceled response retains safe envelope, same session reused",
+    "Two calls enter the same Searcher before either is released; B completes before A; same session reused; repeated Close is safe, calls after Close rejected",
+    "MCP SDK session/server does not call caller-owned optional Searcher Close; existing real CLI composition tests separately confirm Close ownership and startup proxy options",
+    "Owned Go test-binary child uses production registered server and genuine StdioTransport; bounded process, synthetic responses, protocol-only stdout, empty stderr, graceful EOF"
+  ],
+  "gate_status": {
+    "capture": "passed",
+    "final_three_byte_exact_replays": "passed",
+    "selected_race": "passed",
+    "vet": "passed",
+    "gofmt": "passed",
+    "protection": "passed"
+  },
+  "failed_witness": {
+    "run": "race",
+    "reason": "Broad selector also picked up concurrent CLI worker tests before its pipeline harness fix. TestMigrationReverseSearchNDJSONRecordsFeedActualRecordPipeline failed with unknown command filter for pixiv. MCP and all pre-existing CLI selected tests passed. Narrowed final selector excludes unrelated new CLI migration tests; no fixture expectations or production code changed."
+  },
+  "limitations": [
+    "MCP service seam uses synthetic reversesearch.Searcher dependency fixtures, not a live provider adapter, source loader, HTTP stack or media upload",
+    "Stdio process is the owned Go test binary with genuine registered server, not the shipped pixiv CLI composition or saved account/credential startup",
+    "Account startup HTTPS proxy is injected in connected MCP tests; it is not exposed by the tool schema or carried by reversesearch.Request. Actual proxy construction precedence is covered separately by existing CLI tests. Real proxy traffic is unverified",
+    "Native ASCII2D fingerprint transport remains required and unverified. Denied supplemental multiplex, unfinished HEAD/upload probes were not retried",
+    "No Rust implementation or Rust comparison, Cargo, production Go changes, go.mod/go.sum changes, commits, accounts, credentials, external media, third-party uploads, external provider network or host/system changes"
+  ],
+  "runs": {
+    "replay-1": {
+      "command": "go test ./internal/mcpserver/pixiv -run ^TestMigrationMCPReverseSearchMatchesFrozenConnectedWire$ -count=1 -timeout=60s",
+      "exit_code": 0,
+      "wall_seconds": 4,
+      "started_utc": "2026-10-10T13:53:56Z",
+      "finished_utc": "2026-10-10T13:54:00Z",
+      "log": "/tmp/reverse-mcp-replay-1.log",
+      "log_sha256": "b0957d6dfeedcb9706de23ad98d371225467ed82962e2dbab33a298020bf213e",
+      "package_results": [
+        [
+          "github.com/FlanChanXwO/pixiv-cli/internal/mcpserver/pixiv",
+          "2.139s"
+        ]
+      ]
+    },
+    "replay-2": {
+      "command": "go test ./internal/mcpserver/pixiv -run ^TestMigrationMCPReverseSearchMatchesFrozenConnectedWire$ -count=1 -timeout=60s",
+      "exit_code": 0,
+      "wall_seconds": 3,
+      "started_utc": "2026-10-10T13:54:00Z",
+      "finished_utc": "2026-10-10T13:54:03Z",
+      "log": "/tmp/reverse-mcp-replay-2.log",
+      "log_sha256": "10c48bd135869c565d076ece680b9ecf57218771adfbad240908345b7d017f87",
+      "package_results": [
+        [
+          "github.com/FlanChanXwO/pixiv-cli/internal/mcpserver/pixiv",
+          "2.283s"
+        ]
+      ]
+    },
+    "replay-3": {
+      "command": "go test ./internal/mcpserver/pixiv -run ^TestMigrationMCPReverseSearchMatchesFrozenConnectedWire$ -count=1 -timeout=60s",
+      "exit_code": 0,
+      "wall_seconds": 4,
+      "started_utc": "2026-10-10T13:54:03Z",
+      "finished_utc": "2026-10-10T13:54:07Z",
+      "log": "/tmp/reverse-mcp-replay-3.log",
+      "log_sha256": "96a0c76b8fc6e6af7f43ce7cd062390efef12b69b06725422b0e50668b1db23d",
+      "package_results": [
+        [
+          "github.com/FlanChanXwO/pixiv-cli/internal/mcpserver/pixiv",
+          "2.235s"
+        ]
+      ]
+    },
+    "race": {
+      "command": "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go test -race ./internal/mcpserver/pixiv ./internal/cli -run \\^\\(TestMigrationMCPReverseSearch.\\*\\|TestReverseSearch.\\*\\|TestMCPStdioKeepsJSONRPCOnStdout\\|Test.\\*ReverseSearch.\\*\\|TestCloseState.\\*\\)\\$ -count=1 -timeout=120s -v",
+      "exit_code": 1,
+      "wall_seconds": 39,
+      "started_utc": "2026-10-10T13:54:35Z",
+      "finished_utc": "2026-10-10T13:55:14Z",
+      "log": "/tmp/reverse-mcp-race.log",
+      "log_sha256": "7794d51726aa38620c015a3b85f1430395ce6494dc0365f41d0ca6f384463740",
+      "package_results": [
+        [
+          "github.com/FlanChanXwO/pixiv-cli/internal/mcpserver/pixiv",
+          "33.589s"
+        ]
+      ]
+    },
+    "race-selected": {
+      "command": "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go test -race ./internal/mcpserver/pixiv ./internal/cli -run \\^\\(TestMigrationMCPReverseSearch.\\*\\|TestReverseSearch.\\*\\|TestMCPStdioKeepsJSONRPCOnStdout\\|TestImageSearchBuildsReverseSearchWithCLIProxyOverride\\|TestMCPReverseSearchUsesStartupConfigAndProxySnapshot\\|TestMCPReverseSearchUsesConfiguredServiceProxyBeforeGlobal\\|TestMCPReverseSearchPassesConfiguredUserAgentToAssembly\\|TestCloseStateClosesInReverseOrderOnceAndJoinsErrors\\|TestCLIReverseSearchClosesSearcherOnceAndKeepsJSONOnStdout\\|TestMCPReverseSearchRegistersSearcherForStdioLifetime\\)\\$ -count=1 -timeout=180s -v",
+      "exit_code": 0,
+      "wall_seconds": 38,
+      "started_utc": "2026-10-10T13:56:29Z",
+      "finished_utc": "2026-10-10T13:57:07Z",
+      "log": "/tmp/reverse-mcp-race-selected.log",
+      "log_sha256": "27ddad81be7735c86b06040c09dab6d2fc4c66fe41fddac0c6df646bb450e4f2",
+      "package_results": [
+        [
+          "github.com/FlanChanXwO/pixiv-cli/internal/mcpserver/pixiv",
+          "32.552s"
+        ],
+        [
+          "github.com/FlanChanXwO/pixiv-cli/internal/cli",
+          "1.557s"
+        ]
+      ]
+    },
+    "vet": {
+      "command": "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go vet ./internal/mcpserver/pixiv ./internal/cli",
+      "exit_code": 0,
+      "wall_seconds": 0,
+      "started_utc": "2026-10-10T13:57:07Z",
+      "finished_utc": "2026-10-10T13:57:07Z",
+      "log": "/tmp/reverse-mcp-vet.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "package_results": []
+    },
+    "gofmt": {
+      "command": "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/gofmt -l internal/mcpserver/pixiv/migration_reverse_search_test.go",
+      "exit_code": 0,
+      "wall_seconds": 0,
+      "started_utc": "2026-10-10T13:57:07Z",
+      "finished_utc": "2026-10-10T13:57:07Z",
+      "log": "/tmp/reverse-mcp-gofmt.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "package_results": []
+    },
+    "final-replay-1": {
+      "command": "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go test ./internal/mcpserver/pixiv -run ^TestMigrationMCPReverseSearchMatchesFrozenConnectedWire$ -count=1 -timeout=120s",
+      "exit_code": 0,
+      "wall_seconds": 4,
+      "started_utc": "2026-10-10T13:58:07Z",
+      "finished_utc": "2026-10-10T13:58:11Z",
+      "log": "/tmp/reverse-mcp-final-replay-1.log",
+      "log_sha256": "250ab2145d40c99bbd9f8595d152f4f8622624cf405b614496a92f419256ec4d",
+      "package_results": [
+        [
+          "github.com/FlanChanXwO/pixiv-cli/internal/mcpserver/pixiv",
+          "2.009s"
+        ]
+      ]
+    },
+    "final-replay-2": {
+      "command": "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go test ./internal/mcpserver/pixiv -run ^TestMigrationMCPReverseSearchMatchesFrozenConnectedWire$ -count=1 -timeout=120s",
+      "exit_code": 0,
+      "wall_seconds": 3,
+      "started_utc": "2026-10-10T13:58:11Z",
+      "finished_utc": "2026-10-10T13:58:14Z",
+      "log": "/tmp/reverse-mcp-final-replay-2.log",
+      "log_sha256": "067f04210d0478361146a8961a15a91a2062d6f87d197fb1ca3074d2f2f63d42",
+      "package_results": [
+        [
+          "github.com/FlanChanXwO/pixiv-cli/internal/mcpserver/pixiv",
+          "1.988s"
+        ]
+      ]
+    },
+    "final-replay-3": {
+      "command": "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go test ./internal/mcpserver/pixiv -run ^TestMigrationMCPReverseSearchMatchesFrozenConnectedWire$ -count=1 -timeout=120s",
+      "exit_code": 0,
+      "wall_seconds": 3,
+      "started_utc": "2026-10-10T13:58:14Z",
+      "finished_utc": "2026-10-10T13:58:17Z",
+      "log": "/tmp/reverse-mcp-final-replay-3.log",
+      "log_sha256": "0cbeba2b7c8dbd009561244d7c7a78c03450835ee93f41508dfb84f4eb3608bc",
+      "package_results": [
+        [
+          "github.com/FlanChanXwO/pixiv-cli/internal/mcpserver/pixiv",
+          "2.192s"
+        ]
+      ]
+    },
+    "capture": {
+      "command": "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go test ./internal/mcpserver/pixiv -run ^TestMigrationMCPReverseSearchMatchesFrozenConnectedWire$ -count=1 -timeout=60s -migration-update-mcp-reverse-search",
+      "exit_code": 0,
+      "log": "/tmp/reverse-mcp-capture.log",
+      "log_sha256": "27dfddb6986c18be322d15153101dd78342ca9b2e313058f02701cea7e421b3d",
+      "package_seconds": 2.061,
+      "wall_seconds": null,
+      "timing_note": "Initial capture did not record wall time; package duration is from the actual Go log. Final test source only increases bounded context from 30s to 90s."
+    }
+  }
+}

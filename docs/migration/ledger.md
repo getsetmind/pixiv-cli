@@ -50,3 +50,7 @@ go test ./scripts/tests/migration -run '^TestMigration(SDK|MCP)' -count=1 -args 
 ```
 
 上記の git diff は追跡中のファイルの比較であり、新規・未追跡の本番 Go ファイルは別途 status で確認する。manifest は通常のテストから自動更新しない。
+
+## Reverse-search Go-first evidence
+
+The CLI search and MCP reverse_search entries now link actual connected Go test producers before Rust implementation. Their existing status and verified_platforms are unchanged. This contracts-only boundary is documented in [reverse-search-contracts.md](reverse-search-contracts.md); fixture count is evidence, not feature completion.

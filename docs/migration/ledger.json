@@ -2747,7 +2747,12 @@
         "internal/cli/migration_search_options_test.go#TestMigrationSearchSelectorsPreserveRealStartupScope",
         "sdk/pixiv/migration_user_search_wire_test.go#TestMigrationUserWirePreservesRawFieldMatchingOrderAndValidation",
         "crates/pixiv-sdk/tests/user_wire.rs#user_wire_matches_go_case_folding_ordered_merges_nulls_and_validation",
-        "crates/pixiv-sdk/tests/user_wire_transport.rs"
+        "crates/pixiv-sdk/tests/user_wire_transport.rs",
+        "internal/services/reversesearch/migration_core_test.go",
+        "internal/services/reversesearch/saucenao/migration_protocol_test.go",
+        "internal/services/reversesearch/ascii2d/migration_protocol_test.go",
+        "internal/services/reversesearch/ascii2d/migration_solver_test.go",
+        "internal/cli/migration_reverse_search_test.go"
       ],
       "verified_platforms": [
         "windows-amd64",
@@ -2774,7 +2779,8 @@
         "search --type user の309ケースで直接 SDK・保存済み account・実子プロセスの入力、出力、論理ページ、writer 失敗、禁止 flag と起動順を Linux amd64 で比較。pixiv user search の互換入口、全 flag/help・TTY、実 HTTPS・取消/deadline・pool と他 OS/arch は未移植または未検証。workspace の必須チェック（Formatter・Clippy・162 tests・release build）は Linux amd64 で成功。",
         "selector の従来 fixture は認証済み owner/SDK を注入した比較であり、SDK 内の sort validation error を実起動へ流用していた差を解消。既存の SDK error/envelope の比較を維持し、別の Go real-startup 99ケースで隔離 HOME の未認証診断と config/DB 作成順を比較する。bookmark/date/options/page の子プロセスを一時 HOME/USERPROFILE へ隔離し、実ホームは参照しない。",
         "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。",
-        "当時のGo root検証はLinux CLI inventory snapshot不在で失敗した。record checkpointで既存capture flagから実Linux Cobra登録を採取し、元Windows snapshotとbyte一致を確認した。登録inventoryの不足は解消したが、Linux全CLI動作・全flag/help/TTY/native hooks・他platformの検証とは扱わない。"
+        "当時のGo root検証はLinux CLI inventory snapshot不在で失敗した。record checkpointで既存capture flagから実Linux Cobra登録を採取し、元Windows snapshotとbyte一致を確認した。登録inventoryの不足は解消したが、Linux全CLI動作・全flag/help/TTY/native hooks・他platformの検証とは扱わない。",
+        "Reverse search Go-first contracts-only checkpoint: actual source/snapshot/facade/aggregator, SauceNAO and ASCII2D public protocols, root CLI and registered MCP synthetic boundaries are captured before Rust. No reverse Rust implementation or native Chrome146/runtime/platform equivalence is claimed; status/platforms remain unchanged. See reverse-search-contracts.md and reverse-search-contracts provenance."
       ]
     },
     {
@@ -4552,9 +4558,17 @@
         "key": "reverse_search"
       },
       "rust_sources": [],
-      "tests": [],
+      "tests": [
+        "internal/services/reversesearch/migration_core_test.go",
+        "internal/services/reversesearch/saucenao/migration_protocol_test.go",
+        "internal/services/reversesearch/ascii2d/migration_protocol_test.go",
+        "internal/services/reversesearch/ascii2d/migration_solver_test.go",
+        "internal/mcpserver/pixiv/migration_reverse_search_test.go"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Reverse search Go-first contracts-only checkpoint: actual source/snapshot/facade/aggregator, SauceNAO and ASCII2D public protocols, root CLI and registered MCP synthetic boundaries are captured before Rust. No reverse Rust implementation or native Chrome146/runtime/platform equivalence is claimed; status/platforms remain unchanged. See reverse-search-contracts.md and reverse-search-contracts provenance."
+      ]
     },
     {
       "id": "mcp:pixiv:search_illust",

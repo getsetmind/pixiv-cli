@@ -1,0 +1,309 @@
+{
+  "task": "Freeze bounded original ASCII2D provider contracts",
+  "created_utc": "2026-10-10T14:10:43.769529+00:00",
+  "reference_commit": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "published_baseline": "99246d8bfb8712caa0903426953423850836cefe",
+  "go_version": "go1.27.1",
+  "actual_go_binary": "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go",
+  "toolchain_env": {
+    "CC": "gcc",
+    "CGO_ENABLED": "1",
+    "CXX": "g++",
+    "GOARCH": "amd64",
+    "GOCACHE": "/workspace/scratch/cd334a12dde3/go-cache",
+    "GOMODCACHE": "/workspace/scratch/cd334a12dde3/go-path/pkg/mod",
+    "GOOS": "linux",
+    "GOPATH": "/workspace/scratch/cd334a12dde3/go-path",
+    "GOROOT": "/workspace/scratch/cd334a12dde3/go-toolchain/go",
+    "GOTOOLCHAIN": "local"
+  },
+  "toolchain_input_sha256_lines": [
+    "30969f97169d7f43fe6a085873d75613adc21e30818a8c61d95bd27275df4624  /workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go",
+    "8134ecf516ad2127e04f96a198500da34104dde9107cdae71ab4f5eda80c218e  /tmp/quantus-toolchain-env.txt",
+    "fa2134c87740f5a737348bb8ebe118fe6c5c05b856f24cc96203aeb214e7d284  /tmp/pixiv-fanbox-native-build-env.sh",
+    "2dd5f9db8a8359c310ad8a2366d17d95da9341146579bfabc9a7f94dad07d159  /tmp/pixiv-rust-validation-env.sh"
+  ],
+  "source_sha256": {
+    "internal/services/reversesearch/ascii2d/client.go": "a92e94d8cb7c42805d66df3bd7d2c6f08beb315218fbcde42f2b674fbb1890e9",
+    "internal/services/reversesearch/ascii2d/html.go": "683a37188dc9823b0f0ab77904ae00a13fb85f38572dd44a6960c214c1635e0b",
+    "internal/services/reversesearch/ascii2d/solver.go": "ae70c6b2f8012f985c87da72efc85749acb69b3589ef93016c95c2062828c82a",
+    "internal/services/reversesearch/ascii2d/solver_state.go": "898ce8f370b759ed3a27f02898a57da70981c26f598b0096f3129c3945d34008",
+    "internal/services/reversesearch/ascii2d/transport.go": "a489d18b93012f2a1ef186bb570a0d295197919f1557c90aa2384cfb267ddfa5",
+    "internal/services/reversesearch/contracts.go": "dd6e7df4143baab4ef8afc5dbc80f428391dc90e47c7e8f5eeae2dc7568522df",
+    "internal/services/reversesearch/errors.go": "8d7d8964cae1a095aa3bcff72e56b36b9e3d27c9844bd6e6301210164569b4f0",
+    "internal/services/reversesearch/source.go": "e42ac2585b190ff8092afca916e02a643160904e81c685571d45bc3cf8c82e0f"
+  },
+  "owned_file_sha256": {
+    "internal/services/reversesearch/ascii2d/migration_protocol_test.go": "3c4f80cf17744de50d572d65bc22604ac1d2f200799bf8c6310af774fa5de2db",
+    "internal/services/reversesearch/ascii2d/migration_solver_test.go": "34eb97d539a8b822301927c598cbb81961d2b4caa57d5fd3550278861d9a83b1",
+    "crates/pixiv-cli/tests/fixtures/reverse-ascii2d.json": "ea3173b6bc86a79326df55779ed00b503217b40fe1b1602d1e197fba6fd5934f"
+  },
+  "fixture_bytes": 1543021,
+  "case_counts": {
+    "public_port_rows": 192,
+    "source_driven_private_cache_rows": 12,
+    "private_session_close_observation_rows": 2
+  },
+  "boundaries": {
+    "public": "Actual frozen public New/Preflight/Upload/Session.Search/Close via original http.Client and synthetic ports. Complete actual multipart wire is read and independently compared with fixed Go framing; every MIME parameter and header key/value, ordered raw header block, delimiter and terminator is captured. Only generated boundary tokens at declared positions are masked; all provider outcomes and body ownership observations are unchanged from the earlier capture.",
+    "private": "Actual solverStateCache expiry, invalidation, closed/failure state and concurrent waiter cancellation helper observations are separately named and never projected as Client outputs. Two public Upload rows additionally name private session-client Close observations."
+  },
+  "preservation": {
+    "baseline": "/tmp/reverse-search-preservation-baseline.json",
+    "baseline_sha256": "24aafc99803ee28fc5dabb6fcc3e1faacca625725a19b0f9b911c46723157439",
+    "application_go_and_module_files": 434,
+    "published_fixtures": 104,
+    "published_json": 102,
+    "published_pem": 2,
+    "changes": 0,
+    "report": "/tmp/reverse-ascii2d-preservation-after.json"
+  },
+  "validation": [
+    {
+      "name": "capture",
+      "command": "go test ./internal/services/reversesearch/ascii2d -run \\^TestMigrationASCII2DProtocolFrozenGo\\$ -count=1 -capture-reverse-ascii2d=/tmp/reverse-ascii2d-capture.json -v",
+      "exit": 0,
+      "seconds": 1.389961635,
+      "started_utc": "2026-10-10T14:09:11.425430209Z",
+      "finished_utc": "2026-10-10T14:09:12.831982589Z",
+      "log": "/tmp/reverse-ascii2d-capture.log",
+      "log_sha256": "9f54ae3434b26f51827dda65311954dc1bbbfedcf25d192ad3042f33ac37bcec",
+      "top_level_passes": 1,
+      "subtest_passes": 192
+    },
+    {
+      "name": "replay-1",
+      "command": "go test ./internal/services/reversesearch/ascii2d -run \\^TestMigrationASCII2DProtocolFrozenGo\\$ -count=1 -v",
+      "exit": 0,
+      "seconds": 0.890068234,
+      "started_utc": "2026-10-10T14:09:12.840260275Z",
+      "finished_utc": "2026-10-10T14:09:13.743100943Z",
+      "log": "/tmp/reverse-ascii2d-replay-1.log",
+      "log_sha256": "dec3fe35bb821fa261f8ba4e9256b23d40d6adf12b18c32231418f58178f62ad",
+      "top_level_passes": 1,
+      "subtest_passes": 192
+    },
+    {
+      "name": "recapture-1",
+      "command": "go test ./internal/services/reversesearch/ascii2d -run \\^TestMigrationASCII2DProtocolFrozenGo\\$ -count=1 -capture-reverse-ascii2d=/tmp/reverse-ascii2d-recapture-1.json",
+      "exit": 0,
+      "seconds": 0.814888611,
+      "started_utc": "2026-10-10T14:09:13.745199206Z",
+      "finished_utc": "2026-10-10T14:09:14.575171747Z",
+      "log": "/tmp/reverse-ascii2d-recapture-1.log",
+      "log_sha256": "70a4649b62f99b9d1ea5f5ec532be534d1e4c8ffc15ff947d9add5e7c19190aa",
+      "top_level_passes": 0,
+      "subtest_passes": 0
+    },
+    {
+      "name": "replay-2",
+      "command": "go test ./internal/services/reversesearch/ascii2d -run \\^TestMigrationASCII2DProtocolFrozenGo\\$ -count=1 -v",
+      "exit": 0,
+      "seconds": 0.828614184,
+      "started_utc": "2026-10-10T14:09:14.579876994Z",
+      "finished_utc": "2026-10-10T14:09:15.423149611Z",
+      "log": "/tmp/reverse-ascii2d-replay-2.log",
+      "log_sha256": "fb69c074c3fc9d610b4dbf38cbccbe6c04839efa4896ba45fdb9220f8ca60252",
+      "top_level_passes": 1,
+      "subtest_passes": 192
+    },
+    {
+      "name": "recapture-2",
+      "command": "go test ./internal/services/reversesearch/ascii2d -run \\^TestMigrationASCII2DProtocolFrozenGo\\$ -count=1 -capture-reverse-ascii2d=/tmp/reverse-ascii2d-recapture-2.json",
+      "exit": 0,
+      "seconds": 0.710034883,
+      "started_utc": "2026-10-10T14:09:15.425419823Z",
+      "finished_utc": "2026-10-10T14:09:16.149178661Z",
+      "log": "/tmp/reverse-ascii2d-recapture-2.log",
+      "log_sha256": "001849e76f29ffaeccc898a098e8580ec946795c078c341dc4fb12996a0a7505",
+      "top_level_passes": 0,
+      "subtest_passes": 0
+    },
+    {
+      "name": "replay-3",
+      "command": "go test ./internal/services/reversesearch/ascii2d -run \\^TestMigrationASCII2DProtocolFrozenGo\\$ -count=1 -v",
+      "exit": 0,
+      "seconds": 0.77866949,
+      "started_utc": "2026-10-10T14:09:16.154630533Z",
+      "finished_utc": "2026-10-10T14:09:16.947174429Z",
+      "log": "/tmp/reverse-ascii2d-replay-3.log",
+      "log_sha256": "3ab454ee042575c9a078d2cf0ecba51e59c5f14c21d490c7da05c87a08d0c263",
+      "top_level_passes": 1,
+      "subtest_passes": 192
+    },
+    {
+      "name": "recapture-3",
+      "command": "go test ./internal/services/reversesearch/ascii2d -run \\^TestMigrationASCII2DProtocolFrozenGo\\$ -count=1 -capture-reverse-ascii2d=/tmp/reverse-ascii2d-recapture-3.json",
+      "exit": 0,
+      "seconds": 0.858428963,
+      "started_utc": "2026-10-10T14:09:16.950397334Z",
+      "finished_utc": "2026-10-10T14:09:17.822807948Z",
+      "log": "/tmp/reverse-ascii2d-recapture-3.log",
+      "log_sha256": "526b1eb5b14cc93d5688e062afa4a736e4bc0e32f607bf89dd4bfb5f46f29d48",
+      "top_level_passes": 0,
+      "subtest_passes": 0
+    },
+    {
+      "name": "race",
+      "command": "go test -race ./internal/services/reversesearch/ascii2d -count=1 -v",
+      "exit": 0,
+      "seconds": 5.373210146,
+      "started_utc": "2026-10-10T14:09:17.828206750Z",
+      "finished_utc": "2026-10-10T14:09:23.216409136Z",
+      "log": "/tmp/reverse-ascii2d-race.log",
+      "log_sha256": "010bb795ba0b8e6a64b1398b12befbab3b031146185793d42bb72ee8247fc0a4",
+      "top_level_passes": 42,
+      "subtest_passes": 226
+    },
+    {
+      "name": "vet",
+      "command": "go vet ./internal/services/reversesearch/ascii2d",
+      "exit": 0,
+      "seconds": 0.198631407,
+      "started_utc": "2026-10-10T14:09:23.218504725Z",
+      "finished_utc": "2026-10-10T14:09:23.431382878Z",
+      "log": "/tmp/reverse-ascii2d-vet.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "top_level_passes": 0,
+      "subtest_passes": 0
+    },
+    {
+      "name": "gofmt",
+      "command": "gofmt -l internal/services/reversesearch/ascii2d/migration_protocol_test.go internal/services/reversesearch/ascii2d/migration_solver_test.go",
+      "exit": 0,
+      "seconds": 0.006146373,
+      "started_utc": "2026-10-10T14:09:23.434576173Z",
+      "finished_utc": "2026-10-10T14:09:23.454234945Z",
+      "log": "/tmp/reverse-ascii2d-gofmt.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "top_level_passes": 0,
+      "subtest_passes": 0
+    }
+  ],
+  "byte_exact_fresh_replays": [
+    {
+      "fresh_capture": "/tmp/reverse-ascii2d-recapture-1.json",
+      "byte_exact": true,
+      "sha256": "ea3173b6bc86a79326df55779ed00b503217b40fe1b1602d1e197fba6fd5934f"
+    },
+    {
+      "fresh_capture": "/tmp/reverse-ascii2d-recapture-2.json",
+      "byte_exact": true,
+      "sha256": "ea3173b6bc86a79326df55779ed00b503217b40fe1b1602d1e197fba6fd5934f"
+    },
+    {
+      "fresh_capture": "/tmp/reverse-ascii2d-recapture-3.json",
+      "byte_exact": true,
+      "sha256": "ea3173b6bc86a79326df55779ed00b503217b40fe1b1602d1e197fba6fd5934f"
+    }
+  ],
+  "findings": [
+    "Successful result-page parsing may return success when cancellation occurs while reading its HTML; this is captured rather than changed.",
+    "Close is idempotent across the client and private session-client lifecycle; Upload after Close without a challenge can still succeed.",
+    "Upload challenge replay creates a fresh jar/CSRF and reopens the identical snapshot once; solver state is reused on later challenges, while the second challenge within one recovery attempt fails.",
+    "Result-page challenges retain upstream_http_status and do not invoke solver recovery.",
+    "The original parser preserves raw external link strings and does not assign ArtworkID/UserID; normalization belongs to the outer reverse-search layer."
+  ],
+  "limitations": [
+    "No third-party request, credential, real image upload, external browser, OS registration, host trust/settings, native TLS or HTTP/2 run occurs.",
+    "Chrome_146 profile and default direct solver transport remain source-anchored requirements; injected ordinary transports are not native fingerprint evidence. Denied supplemental multiplex/unfinished HEAD/upload native probes are not retried.",
+    "The generated multipart boundary token alone is masked at its declared Content-Type and delimiter positions. Every Content-Type parameter/key, boundary length/lowercase-hex/decoded-byte properties, all parsed part header keys/values, actual ordered raw header blocks, delimiters and closing terminator are observed. Complete wire equality validates exact fixed Go framing with no preamble or epilogue. Small complete wire bytes and payload bytes are recorded with only boundary tokens masked; large owned zero-padded payloads retain exact byte count/SHA256 and undergo the same full wire equality assertion. Intentional CloseUpload cases do not read or claim complete multipart body framing.",
+    "Nil and zero client/session receiver cases call public methods; CloseFromSession reaches private session client solely to observe source lifecycle sharing and is explicitly named. Solver dependency ports receive a deterministic synthetic session name after New; random-name generation remains source-anchored. Canceled solves are allowed to finish before final Close observations.",
+    "Private cache cases separately freeze actual solverStateCache helper state and barriers; they are not projected as public Client outputs. Native connection/decompression/proxy behavior and platform verification remain unexecuted.",
+    "Go freeze only; no Rust parity, native fingerprint or platform verification is established. No Rust/Cargo, production, existing Go test, baseline fixture, commit, network or host trust/settings change occurred."
+  ],
+  "harness_development_logs": [
+    "/tmp/reverse-ascii2d-initial.log",
+    "/tmp/reverse-ascii2d-initial-2.log",
+    "/tmp/reverse-ascii2d-initial-3.log",
+    "/tmp/reverse-ascii2d-initial-4.log",
+    "/tmp/reverse-ascii2d-initial-5.log"
+  ],
+  "harness_development_note": "Initial failures were owned script scheduling/terminal-step omissions; only the new test harness was corrected. The production source and expected behavior were unchanged. Final capture/replays use the final complete observations.",
+  "multipart_runtime_evidence": {
+    "multipart_requests": 101,
+    "complete_wire_framing_asserted": 98,
+    "intentional_unread_body_cases": 3,
+    "content_type_parameter_keys_and_full_value_asserted": true,
+    "all_parsed_and_ordered_raw_part_headers_observed": true,
+    "boundary_properties": {
+      "length": 60,
+      "decoded_bytes": 30,
+      "lowercase_hex": true
+    },
+    "full_wire_equality_assertion": "Independent fixed header/field-order/CRLF/framing reconstruction using the actual boundary and observed payload bytes must equal the complete original request body; this rejects unobserved headers, preamble, epilogue, framing or line-ending changes.",
+    "unread_body_observations": "Complete framing is false and preamble/epilogue are null when the pipe is intentionally closed without reading its body."
+  },
+  "framing_review_revision": {
+    "reason": "Independent review correctly identified that the previous producer discarded Content-Type parameters, MIME header details and raw framing despite its boundary-only omission claim. The producer now captures and validates those actual runtime bytes without changing any original provider outcomes.",
+    "previous_manifest": "/tmp/reverse-ascii2d-before-framing-manifest.json",
+    "previous_manifest_sha256": "470af728137110fc2805f189dfa92247399fd121ebfbf2477183d2a7390b91ff",
+    "previous_fixture": "/tmp/reverse-ascii2d-before-framing-fixture.json",
+    "previous_fixture_sha256": "4d620ae80e33cafe012f85d03245b83c5d989d772cf330656dca50921a2ef0cc",
+    "previous_validation_logs": [
+      {
+        "name": "capture",
+        "preserved_log": "/tmp/reverse-ascii2d-before-framing-capture.log",
+        "sha256": "96610ed7a37333534fa823e64f83e9cd6aa5564055ab40c3148ae53094813d02",
+        "exit": 0
+      },
+      {
+        "name": "replay-1",
+        "preserved_log": "/tmp/reverse-ascii2d-before-framing-replay-1.log",
+        "sha256": "cfe0bffe5d91c8da1e3fad767a48c6ed03d19b2223bfe6b098c4494eb2141fb5",
+        "exit": 0
+      },
+      {
+        "name": "recapture-1",
+        "preserved_log": "/tmp/reverse-ascii2d-before-framing-recapture-1.log",
+        "sha256": "60bebd455b9ebe9c7ec6c01ed24f92e08bf41c7b64f97b383dd0fcb015545e8a",
+        "exit": 0
+      },
+      {
+        "name": "replay-2",
+        "preserved_log": "/tmp/reverse-ascii2d-before-framing-replay-2.log",
+        "sha256": "74c32c1d614dfbdff1e8bb6dac81becac4f6700ca7027a107fb7eb232efec7e8",
+        "exit": 0
+      },
+      {
+        "name": "recapture-2",
+        "preserved_log": "/tmp/reverse-ascii2d-before-framing-recapture-2.log",
+        "sha256": "b0857188d5e5c46e6646461d468ea13d73bb8b8dab192fd50577cfe67602db8f",
+        "exit": 0
+      },
+      {
+        "name": "replay-3",
+        "preserved_log": "/tmp/reverse-ascii2d-before-framing-replay-3.log",
+        "sha256": "15c020a33b7ff4b084082f23b8cac6d519540fb315beb3f77c0cf3f3ef87c04a",
+        "exit": 0
+      },
+      {
+        "name": "recapture-3",
+        "preserved_log": "/tmp/reverse-ascii2d-before-framing-recapture-3.log",
+        "sha256": "95368ec8b4d80e2b6f51498e4a82f13394dffd2a5874cf3623245f530f15a2ae",
+        "exit": 0
+      },
+      {
+        "name": "race",
+        "preserved_log": "/tmp/reverse-ascii2d-before-framing-race.log",
+        "sha256": "60670b5dcc11bdc1979fa3a67e8466ae8473280efdb6021cce73d19c8029c9d0",
+        "exit": 0
+      },
+      {
+        "name": "vet",
+        "preserved_log": "/tmp/reverse-ascii2d-before-framing-vet.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "exit": 0
+      },
+      {
+        "name": "gofmt",
+        "preserved_log": "/tmp/reverse-ascii2d-before-framing-gofmt.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "exit": 0
+      }
+    ],
+    "framing_precheck_log": "/tmp/reverse-ascii2d-framing-precheck.log",
+    "owned_harness_compile_failure_log": "/tmp/reverse-ascii2d-framing-compile-failure.log",
+    "unchanged_prior_outcomes_and_body_ownership": true
+  }
+}

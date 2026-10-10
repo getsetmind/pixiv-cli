@@ -2084,3 +2084,7 @@ Unix raw profile-ID bytesを保持する候補であるが、raw CLI argument/st
 
 
 Native browser continuation final gate: unchanged script exit0,386 seconds,846 visible passes/0fail/11 unchanged ignored, release53.24 seconds and8,855 protected input hashes unchanged. Connected82case/84 complete observations and a separate real binary Firefox rejection smoke pass. Fresh Go485 named/8package passes includes2 ordinary child-entry dispatch skips; supplementary provider147 capture/replay3/race/vet has0 skips. Native OS/runtime/ABI, authenticated native imports, full/deep parser/path/env/modern formats, raw CLI/stderr bytes and all prior compatibility/lifecycle/distribution debts remain open. This bounded native factory connection does not complete the migration. See [current backend verification](browser-cookie-contracts.md#final-native-backend-verification).
+
+## Reverse image search: connected Go-first freeze (2026-10-10)
+
+The next connected workflow begins with actual unchanged Go contracts for source snapshot, facade/aggregator normalization, SauceNAO, ASCII2D, root CLI and registered MCP. [Boundary documentation](reverse-search-contracts.md) separates each execution boundary, public/private cache observations, owned stdio and native/platform limits. This contracts-only checkpoint introduces no Rust runtime implementation and no status or verified-platform promotion. Protected Go production/module and previously published fixture inventories remain byte-exact. Native Chrome146 requirements and the denied supplemental native-probe scope remain explicit.
