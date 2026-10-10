@@ -186,6 +186,7 @@ impl UpdateCommand {
             startup.preparation.ensure_update_config()?;
             startup.preparation.start_update_diagnostics()?;
         }
+        let context = startup.preparation.scoped_update_context(context);
         self.execute(context, build_info, host, output, diagnostics)
             .await
     }
@@ -200,6 +201,9 @@ pub struct UpdateStartup<'a> {
 pub trait UpdatePreparation {
     fn ensure_update_config(&self) -> Result<(), CommandError>;
     fn start_update_diagnostics(&self) -> Result<(), CommandError>;
+    fn scoped_update_context(&self, context: CallerContext) -> CallerContext {
+        context
+    }
 }
 
 #[derive(Clone, Debug, Default, Eq, PartialEq)]

@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "frozen_go": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "toolchain": "go1.27.1",
+  "supplemental_go_only_same_package_rows": 6,
+  "primary_root_actual_runcontext_rows_unchanged": 19,
+  "prior_fixed_clock_cause_assertions_unchanged": 4,
+  "source_sha256": {
+    "crates/pixiv-cli/tests/fixtures/diagnostics-root.json": "61128f4a87f6a9ac32f35e41c20ac76baa99c9cf148b7cfd14fbd2d612df63e7",
+    "docs/migration/provenance/updater-contracts-baseline.json": "d36a8ee61c519b74211b7def61a2425e6126278d8ea13d8b24e40392b3f03edd",
+    "go.mod": "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c",
+    "go.sum": "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e",
+    "internal/cli/commands/lifecycle.go": "d81bfb1a664832ec707dba371a102da56baa05f3aa079905dad48de309e38080",
+    "internal/cli/commands/update/automatic_check.go": "20db84c6bedf70d53a39103f5c69607399da838dbfcf397dc5b57d5798bb350f",
+    "internal/cli/commands/update/production.go": "21205c5d8ceb339f671914963161a495ca8bf66f2a347d49bb6165e59c0d000b",
+    "internal/cli/commands/update/update.go": "b1fd7290eabe0dd73355c2c65a234ff17c85736950e45c0af8e9f30e3c331d98",
+    "internal/cli/commands/update/update_cmd.go": "2422b577f3538bc0bb1cfc17e27a2bd9a3e14a7a72b1981cb9291af5be28b88d",
+    "internal/cli/composition.go": "61606c01971156607d6e632cbf417a63c8e7f02b4c673172ee3db9392dc0f9fc",
+    "internal/cli/diagnostics/diagnostics.go": "88b5c5f4a4ca3b13bef00bdebf1d9d787e6e32f1fe90f3d6abb3a30d2d9516d9",
+    "internal/cli/execution.go": "627d8d8ccd6e7c35508abe0daab3209d3daf34dbf1927ab6f9f70145b623c864",
+    "internal/cli/migration_diagnostics_connected_test.go": "799065d451c09f227e167c9c9c86dbbd352356ec6fd432b990998c43465fd837",
+    "internal/cli/migration_diagnostics_joined_test.go": "f77df66c0ca4218abe9b22338dd04a5a46b2dc9e05f57ef49284cdb431d4d08e",
+    "internal/cli/migration_update_connected_test.go": "aaa65c7730acab24c9c864705bbc2555fe5b91c1264f4eb3a0a9e19518e4ce84",
+    "internal/cli/pipeline/records.go": "c4a94d230db4ca95661baeac26c6f912ab6ade7c8a3808bff05878609152eb29",
+    "internal/cli/root.go": "afbb8c2d7a90ccbe3ce124e9e2ee68ec463b9d020ba161d0d1cb270d1e1e7b1e",
+    "internal/shared/buildinfo/buildinfo.go": "f1d207133ada61dc518fd2db18ff918cce20d50b26e5667101578ee8f81468ae",
+    "internal/shared/diagnostics/diagnostics.go": "aecd4045f50f6bcf4cd20f316d680cbfb28e657f919ce1c0700dfdad8d5ddc76",
+    "internal/update/automatic_check.go": "6e3ed70bd9c82213a42a4272912d212f907bad23e2eda718864a6b42e63c2f1c",
+    "internal/update/coordinator.go": "7ddc8b681e9c27fe088236d6d5fe6973b2cdce6bfb8b86a0213194647f320968",
+    "internal/update/reexports.go": "1ec99e116a0a3322486290ed02b089ce870108de6163c818ecf210da9ea12c07"
+  },
+  "normalization": "None; the real Presenter receives its existing fixed-clock dependency",
+  "capture_command": "GOPROXY=off GOWORK=off CGO_ENABLED=1 go test -mod=readonly -run '^TestMigrationDiagnosticsJoinedClassificationFrozen$' ./internal/cli -count=1 -v -args -migration-capture-diagnostics-joined",
+  "replay_command": "bash crates/pixiv-cli/tests/support/diagnostics_root_joined_go_replay.sh",
+  "verified_gates": {
+    "capture": "pass",
+    "supplemental6_and_primary19_plus_prior4_count3_replays": "pass",
+    "gofmt": "pass",
+    "go_vet_cli_and_diagnostics": "pass",
+    "primary_producer_and_fixture_immutable": "pass",
+    "protected_frozen_source_and_published_fixture_guard": "pass"
+  },
+  "environment_sources": [
+    "/tmp/quantus-toolchain-env.txt",
+    "/tmp/pixiv-fanbox-native-build-env.sh"
+  ],
+  "results": [
+    {
+      "name": "pipeline/diagnostic-error",
+      "exit": 1,
+      "stderr": "",
+      "errors_as_startup": false,
+      "errors_as_pipeline": true,
+      "errors_is_epipe": false,
+      "final_error_type": "*errors.joinError"
+    },
+    {
+      "name": "pipeline/diagnostic-epipe-ordinary",
+      "exit": 1,
+      "stderr": "",
+      "errors_as_startup": false,
+      "errors_as_pipeline": true,
+      "errors_is_epipe": true,
+      "final_error_type": "*errors.joinError"
+    },
+    {
+      "name": "pipeline/diagnostic-epipe-ndjson",
+      "exit": 0,
+      "stderr": "",
+      "errors_as_startup": false,
+      "errors_as_pipeline": true,
+      "errors_is_epipe": true,
+      "final_error_type": "*errors.joinError"
+    },
+    {
+      "name": "startup/diagnostic-error",
+      "exit": 1,
+      "stderr": "owned startup cause\n",
+      "errors_as_startup": true,
+      "errors_as_pipeline": false,
+      "errors_is_epipe": false,
+      "final_error_type": "*errors.joinError"
+    },
+    {
+      "name": "startup/diagnostic-epipe-ordinary",
+      "exit": 1,
+      "stderr": "owned startup cause\n",
+      "errors_as_startup": true,
+      "errors_as_pipeline": false,
+      "errors_is_epipe": true,
+      "final_error_type": "*errors.joinError"
+    },
+    {
+      "name": "startup/diagnostic-epipe-ndjson",
+      "exit": 0,
+      "stderr": "",
+      "errors_as_startup": true,
+      "errors_as_pipeline": false,
+      "errors_is_epipe": true,
+      "final_error_type": "*errors.joinError"
+    }
+  ],
+  "limitations": [
+    "Six Go-only same-package lifecycle witnesses invoke the unchanged actual app.finishDiagnostics and exitWithNDJSONScope with real source error types and a real fixed-clock Presenter. They are supplemental source classification evidence, not six actual RunContext/startup/download business executions.",
+    "A pipeline business error means its own record diagnostics have already been emitted. This witness starts with that error and observes that the root does not append another ordinary error or envelope after diagnostics are joined. It does not synthesize a record processor or claim full download/mutation parity.",
+    "The startup business error is supplied after Presenter start solely to freeze recursive errors.As and its bare-cause exit formatting. Normal production startup hooks run before diagnostic start; this is a joined-error classification witness, not evidence that ordinary startup is diagnosed after beginning a command.",
+    "NDJSON errors.Is(EPIPE) wins before both startup and pipeline errors.As classification. Diagnostic EPIPE is a source-wrapped cause joined with the business error; stdout is never written. Ordinary writer failure and diagnostic EPIPE cases retain exact source identity/type flags, attempted bytes, write counts and final stderr. Fixed clock means no normalization is applied.",
+    "Primary diagnostics-root19 fixture, its producer and its prior four fixed-clock cause assertions remain byte-identical. The unchanged 434 frozen Go production/module files and 110 preexisting published fixtures are verified by the existing updater source guard. No Cargo, external network, real account, media, browser, native registration, or host settings action occurs."
+  ]
+}

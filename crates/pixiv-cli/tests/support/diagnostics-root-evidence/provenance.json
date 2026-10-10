@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "frozen_go": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "capture_head": "40faef3f48af16be4acf3044f103532d518449c1",
+  "toolchain": "go1.27.1",
+  "actual_root_rows": 19,
+  "fixed_clock_finish_cause_assertions": 4,
+  "source_sha256": {
+    "docs/migration/provenance/updater-contracts-baseline.json": "d36a8ee61c519b74211b7def61a2425e6126278d8ea13d8b24e40392b3f03edd",
+    "go.mod": "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c",
+    "go.sum": "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e",
+    "internal/cli/commands/lifecycle.go": "d81bfb1a664832ec707dba371a102da56baa05f3aa079905dad48de309e38080",
+    "internal/cli/commands/update/automatic_check.go": "20db84c6bedf70d53a39103f5c69607399da838dbfcf397dc5b57d5798bb350f",
+    "internal/cli/commands/update/production.go": "21205c5d8ceb339f671914963161a495ca8bf66f2a347d49bb6165e59c0d000b",
+    "internal/cli/commands/update/update.go": "b1fd7290eabe0dd73355c2c65a234ff17c85736950e45c0af8e9f30e3c331d98",
+    "internal/cli/commands/update/update_cmd.go": "2422b577f3538bc0bb1cfc17e27a2bd9a3e14a7a72b1981cb9291af5be28b88d",
+    "internal/cli/composition.go": "61606c01971156607d6e632cbf417a63c8e7f02b4c673172ee3db9392dc0f9fc",
+    "internal/cli/diagnostics/diagnostics.go": "88b5c5f4a4ca3b13bef00bdebf1d9d787e6e32f1fe90f3d6abb3a30d2d9516d9",
+    "internal/cli/execution.go": "627d8d8ccd6e7c35508abe0daab3209d3daf34dbf1927ab6f9f70145b623c864",
+    "internal/cli/migration_diagnostics_connected_test.go": "799065d451c09f227e167c9c9c86dbbd352356ec6fd432b990998c43465fd837",
+    "internal/cli/migration_update_connected_test.go": "aaa65c7730acab24c9c864705bbc2555fe5b91c1264f4eb3a0a9e19518e4ce84",
+    "internal/cli/root.go": "afbb8c2d7a90ccbe3ce124e9e2ee68ec463b9d020ba161d0d1cb270d1e1e7b1e",
+    "internal/shared/buildinfo/buildinfo.go": "f1d207133ada61dc518fd2db18ff918cce20d50b26e5667101578ee8f81468ae",
+    "internal/shared/diagnostics/diagnostics.go": "aecd4045f50f6bcf4cd20f316d680cbfb28e657f919ce1c0700dfdad8d5ddc76",
+    "internal/update/automatic_check.go": "6e3ed70bd9c82213a42a4272912d212f907bad23e2eda718864a6b42e63c2f1c",
+    "internal/update/coordinator.go": "7ddc8b681e9c27fe088236d6d5fe6973b2cdce6bfb8b86a0213194647f320968",
+    "internal/update/reexports.go": "1ec99e116a0a3322486290ed02b089ce870108de6163c818ecf210da9ea12c07"
+  },
+  "protected_inventory": {
+    "unchanged_frozen_go_production_and_module_files": 434,
+    "unchanged_preexisting_published_fixtures": 110,
+    "verifier": "updaterCLISources with updater-contracts-baseline.json"
+  },
+  "capture_command": "GOPROXY=off GOWORK=off CGO_ENABLED=1 go test -mod=readonly -run '^TestMigrationDiagnosticsRoot' ./internal/cli -count=1 -v -args -migration-capture-diagnostics-root",
+  "replay_command": "bash crates/pixiv-cli/tests/support/diagnostics_root_go_replay.sh",
+  "environment_sources": [
+    "/tmp/quantus-toolchain-env.txt",
+    "/tmp/pixiv-fanbox-native-build-env.sh"
+  ],
+  "verified_gates": {
+    "actual_root_capture": "pass",
+    "normalized_replay_count_3": "pass",
+    "raw_evidence_normalizes_to_unchanged_fixture": "pass",
+    "first_error_and_joined_source_cause_checks": "pass",
+    "gofmt": "pass",
+    "go_vet_cli_and_diagnostics": "pass",
+    "related_diagnostics_tests": "pass",
+    "protected_source_and_fixture_hashes": "pass"
+  },
+  "normalization": {
+    "text": "Only validated [Pixiv CLI] or [FANBOX CLI] root narrative HH:MM:SS spans become 03:04:05",
+    "json": "Only the first time field of validated root-module started/completed/failed records for the exact command path becomes 2000-01-02T03:04:05Z",
+    "writer_lengths": "Length and accepted N change only by the timestamp byte delta for that specific captured write",
+    "never_normalized": [
+      "stdout",
+      "ordinary_error_text_or_envelopes",
+      "module",
+      "kind",
+      "operation",
+      "reason",
+      "trace",
+      "writer_error_or_order",
+      "context",
+      "duration",
+      "subsystem_records"
+    ]
+  },
+  "important_results": [
+    "Diagnostic-only writer EPIPE does not change emitted completed to failed; finish wraps the diagnostic cause afterward",
+    "errors.Is traverses the diagnostic wrapper and joined errors, so NDJSON suppresses diagnostic-only EPIPE and business-plus-diagnostic EPIPE",
+    "errors.As traverses joined usageError; ordinary joined usage and diagnostic writer failure exits 2",
+    "The first diagnostic EPIPE remains the presenter cause after a different later diagnostic writer failure",
+    "Resource close runs before finish diagnostics, including close-error failed events",
+    "Diagnostic scope replaces the parent sink and request number while preserving incoming value, deadline, Done identity, and cancellation"
+  ],
+  "boundary_limits": [
+    "Linux/amd64 actual Go RunContext/root lifecycle; unchanged frozen production/module bytes and existing published fixture inventory are verified by the existing updater source guard. No Cargo, real accounts, external HTTP, media, browser, registration, host settings, or HKCU actions occur.",
+    "Ten ordinary rows reuse updaterCLIObserve/setup and its final guarded synthetic constructors. Update retains the real coordinator/release checker with a validated official-endpoint in-memory HTTP response. Cleanup rows retain real command owners/account services and owned temporary SQLite. FANBOX creators invalid-kind validation selects the FANBOX root module without creating services or reaching HTTP. Automatic checks are disabled by the owned config. Existing updater fixture's four runtime/diagnostic-writer/join rows remain unchanged and are not duplicated here.",
+    "Nine search rows use the production root and command owner through the existing SDK execution constructor seam. The synthetic execution port does not invoke its SDK callback, open accounts, or fetch data; it writes a bounded owned marker or returns an owned business error. These rows establish connected root scope/cleanup/finish/join/exit semantics, not complete search business execution or output encoding parity. Explicit --json=false ordinary rows retain the root machine-error envelope policy while avoiding the JSON spool whose real execution callback must initialize it.",
+    "startDiagnostics uses the real clock and provides no clock injection. Raw accepted stderr bytes and all captured write payloads are retained separately in diagnostics-root-evidence/raw-capture.json. Comparison replaces only validated root text HH:MM:SS spans or the first validated root JSON time property. All module/kind/operation/reason bytes, stdout, ordinary errors, write order/results and context observations remain exact. JSON write length and accepted length changes are derived solely from that timestamp replacement. No duration, trace, error, account or subsystem record is normalized.",
+    "Updater producer write payloads are reconstructed only from accepted byte counts, so rejected stdout EPIPE has an empty payload and retains its exact attempted length/error. Synthetic SDK rows record full attempted writer payloads including failed diagnostic EPIPE writes. The root JSON diagnostic-only EPIPE still emits completed; finish then returns wrapped EPIPE. Current NDJSON scope suppresses any joined EPIPE, including a simultaneous ordinary business failure; this behavior is frozen rather than improved in the expectation."
+  ],
+  "safe_development_adjustments": [
+    "An initial CGO_ENABLED=0 compile hit the unchanged deliberate ugoira stub rejection; final gates use CGO_ENABLED=1 with the already prepared native archive and make no Cargo calls",
+    "A non-invoking synthetic detail executor leaves the DTO unfilled and an explicit JSON search executor leaves its spool uninitialized; these discarded local harness shapes were corrected to a documented non-invoking search execution seam with NDJSON or explicit --json=false. No external action or production edit occurred"
+  ],
+  "raw_row_names": [
+    "update/text-success",
+    "update/json-success",
+    "update/text-business-failure",
+    "update/json-business-failure",
+    "exclude/quiet-config",
+    "exclude/non-debug",
+    "fanbox/module",
+    "cleanup/success-before-completed",
+    "cleanup/failure-before-failed",
+    "epipe/ordinary-stdout",
+    "scope/deadline-value",
+    "scope/canceled-deadline-value",
+    "epipe/ndjson-stdout-and-diagnostics",
+    "epipe/explicit-json-false-stdout-and-diagnostics",
+    "epipe/ndjson-diagnostics-only",
+    "epipe/explicit-json-false-diagnostics-only",
+    "epipe/ndjson-business-plus-diagnostics",
+    "epipe/explicit-json-false-business-plus-diagnostics",
+    "join/usage-plus-diagnostics"
+  ]
+}

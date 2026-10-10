@@ -119,6 +119,14 @@ impl DictionaryCommand {
         (parsed.ndjson, parsed.json_changed || parsed.ndjson)
     }
 
+    pub fn leaf_name(&self) -> Option<&'static str> {
+        match self.operation {
+            Operation::Group | Operation::Help(Topic::Group) => None,
+            Operation::Article(_) | Operation::Help(Topic::Article) => Some("article"),
+            Operation::Search(_) | Operation::Help(Topic::Search) => Some("search"),
+        }
+    }
+
     pub fn requires_runtime(&self) -> bool {
         !matches!(self.operation, Operation::Help(_))
     }

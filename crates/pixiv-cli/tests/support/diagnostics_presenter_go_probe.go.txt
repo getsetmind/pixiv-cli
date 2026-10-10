@@ -1,0 +1,562 @@
+package main
+
+import (
+	"bytes"
+	"encoding/base64"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io"
+	"os"
+	"regexp"
+	"runtime"
+	"sort"
+	"strings"
+	"sync"
+	"sync/atomic"
+	"time"
+	"unicode/utf8"
+
+	cli "github.com/FlanChanXwO/pixiv-cli/internal/cli/diagnostics"
+	core "github.com/FlanChanXwO/pixiv-cli/internal/shared/diagnostics"
+)
+
+const frozen = "4b4426487ef18bed276706daec385e0d0a6979f9"
+
+type clockInput struct {
+	Year, Month, Day, Hour, Minute, Second, Nanosecond, OffsetSeconds int
+}
+
+func (c clockInput) value() time.Time {
+	return time.Date(c.Year, time.Month(c.Month), c.Day, c.Hour, c.Minute, c.Second, c.Nanosecond, time.FixedZone("synthetic", c.OffsetSeconds))
+}
+
+var fixed = clockInput{2026, 8, 8, 12, 21, 18, 123456789, 8 * 60 * 60}
+
+type eventInput struct {
+	Module      string            `json:"module"`
+	Kind        string            `json:"kind"`
+	Operation   string            `json:"operation"`
+	Resource    string            `json:"resource"`
+	Route       string            `json:"route"`
+	Target      string            `json:"target"`
+	Proxy       string            `json:"proxy"`
+	UserAgent   string            `json:"user_agent"`
+	Reason      string            `json:"reason"`
+	Status      int               `json:"status"`
+	Count       int               `json:"count"`
+	RequestID   uint64            `json:"request_id"`
+	DurationNS  int64             `json:"duration_ns"`
+	StringBytes map[string]string `json:"go_string_bytes_base64,omitempty"`
+}
+
+func input(e core.Event) eventInput {
+	v := eventInput{Module: string(e.Module), Kind: string(e.Kind), Operation: e.Operation, Resource: e.Resource, Route: e.Route, Target: e.Target, Proxy: e.Proxy, UserAgent: e.UserAgent, Reason: string(e.Reason), Status: e.Status, Count: e.Count, RequestID: e.RequestID, DurationNS: int64(e.Duration)}
+	for name, value := range map[string]string{"module": v.Module, "kind": v.Kind, "operation": v.Operation, "resource": v.Resource, "route": v.Route, "target": v.Target, "proxy": v.Proxy, "user_agent": v.UserAgent, "reason": v.Reason} {
+		if !utf8.ValidString(value) {
+			if v.StringBytes == nil {
+				v.StringBytes = map[string]string{}
+			}
+			v.StringBytes[name] = base64.StdEncoding.EncodeToString([]byte(value))
+		}
+	}
+	return v
+}
+
+type output struct {
+	Bytes string `json:"output_base64"`
+	UTF8  bool   `json:"output_is_utf8"`
+	Text  string `json:"output_text,omitempty"`
+}
+
+func observed(data []byte) output {
+	v := output{Bytes: base64.StdEncoding.EncodeToString(data), UTF8: utf8.Valid(data)}
+	if v.UTF8 {
+		v.Text = string(data)
+	}
+	return v
+}
+
+func errText(err error) string {
+	if err == nil {
+		return ""
+	}
+	return err.Error()
+}
+
+type renderRow struct {
+	Name          string     `json:"name"`
+	Compatibility string     `json:"compatibility"`
+	Constructor   string     `json:"constructor"`
+	Format        string     `json:"format"`
+	Clock         clockInput `json:"clock"`
+	Event         eventInput `json:"event"`
+	Output        output     `json:"output"`
+	ClockCalls    int        `json:"clock_calls"`
+	Error         string     `json:"error"`
+	NilWriter     bool       `json:"nil_writer,omitempty"`
+}
+
+func render(name string, event core.Event, clock clockInput, constructor, format, compatibility string) renderRow {
+	var sink bytes.Buffer
+	calls := 0
+	now := func() time.Time { calls++; return clock.value() }
+	var p *cli.Presenter
+	if constructor == "clock" {
+		p = cli.NewPresenterWithClock(&sink, now)
+	} else {
+		p = cli.NewPresenterWithFormat(&sink, format, now)
+	}
+	p.Emit(event)
+	return renderRow{name, compatibility, constructor, format, clock, input(event), observed(sink.Bytes()), calls, errText(p.Err()), false}
+}
+
+type eventCase struct {
+	name          string
+	event         core.Event
+	clock         clockInput
+	compatibility string
+}
+
+func renderCases() []renderRow {
+	modules := []core.Module{core.ModulePixivCLI, core.ModuleFanboxCLI, core.ModulePixivMCP, core.ModuleFanboxMCP, core.ModulePixivAccount, core.ModulePixivAuth, core.ModuleFanboxAuth, core.ModulePixivAuthDB, core.ModuleFanboxAuthDB, core.ModulePixivConfig, core.ModuleFanboxConfig, core.ModulePixivNetwork, core.ModuleFanboxNetwork, core.ModuleFanboxSolver, core.ModulePixivDownload, core.ModuleFanboxDownload}
+	kinds := []core.EventKind{core.EventStarted, core.EventCompleted, core.EventFailed, core.EventNetworkRequest, core.EventChallenge, core.EventSolverStarted, core.EventSolverCompleted, core.EventReplay, core.EventDownload, core.EventAccount, core.EventConfiguration}
+	var cases []eventCase
+	add := func(name string, event core.Event) { cases = append(cases, eventCase{name, event, fixed, "shared"}) }
+	for i, kind := range kinds {
+		add("kind_"+string(kind)+"_populated", core.Event{Module: modules[i], Kind: kind, Operation: "retrieving", Resource: "/v1/search?synthetic=query#synthetic", Route: "App API?synthetic=route", Target: "synthetic/file?synthetic=target", Proxy: "https://synthetic-user:synthetic-password@proxy.example.test:7890/path?synthetic=query#synthetic", UserAgent: "synthetic user-agent never rendered", Reason: core.ReasonToolFailed, Status: 429, Count: 3, RequestID: 17, Duration: 1550 * time.Millisecond})
+		add("kind_"+string(kind)+"_empty", core.Event{Module: modules[(i+11)%len(modules)], Kind: kind})
+	}
+	add("unknown_kind", core.Event{Module: "Synthetic module", Kind: "synthetic-unknown", Operation: "ignored"})
+	add("empty_event", core.Event{})
+	add("completed_without_request_duration", core.Event{Module: core.ModulePixivCLI, Kind: core.EventCompleted, Operation: "pixiv version", Duration: 1550 * time.Millisecond})
+	add("completed_request_without_duration", core.Event{Module: core.ModulePixivMCP, Kind: core.EventCompleted, RequestID: ^uint64(0)})
+	add("network_status_without_request", core.Event{Module: core.ModulePixivNetwork, Kind: core.EventNetworkRequest, Status: 200})
+	add("network_negative_status_count", core.Event{Module: core.ModuleFanboxNetwork, Kind: core.EventNetworkRequest, Operation: "fetching", Status: -1, Count: -3})
+	add("challenge_request_without_status", core.Event{Module: core.ModuleFanboxNetwork, Kind: core.EventChallenge, RequestID: 1})
+	add("challenge_status_without_request", core.Event{Module: core.ModuleFanboxNetwork, Kind: core.EventChallenge, Status: 403})
+	add("replay_request_without_route", core.Event{Module: core.ModuleFanboxNetwork, Kind: core.EventReplay, RequestID: 1})
+	add("replay_route_without_request", core.Event{Module: core.ModuleFanboxNetwork, Kind: core.EventReplay, Route: "ignored route"})
+	add("download_negative_count", core.Event{Module: core.ModulePixivDownload, Kind: core.EventDownload, Count: -3, Target: "synthetic destination"})
+	add("account_negative_count", core.Event{Module: core.ModulePixivAccount, Kind: core.EventAccount, Count: -3, Resource: "uid 7"})
+	reasons := []core.Reason{core.ReasonNone, core.ReasonCommandFailed, core.ReasonToolFailed, core.ReasonChallenge, core.ReasonSolverUnavailable, core.ReasonSolverFailed, core.ReasonMalformedSolver, core.ReasonAccountFrozen, core.ReasonAccountExhausted, core.ReasonConfigurationFailed, core.ReasonAuthenticationFailed, "synthetic-unknown"}
+	for i, reason := range reasons {
+		e := core.Event{Module: core.ModulePixivCLI, Kind: core.EventFailed, Operation: "pixiv command", Reason: reason}
+		if i%2 == 1 {
+			e.RequestID = 23
+		}
+		add(fmt.Sprintf("failure_reason_%02d", i), e)
+	}
+	for _, ns := range []int64{1, 999999, 1000000, 1499999999, -1, -999999, -1000000, -9223372036854775808, 9223372036854775807} {
+		add(fmt.Sprintf("duration_%d_ns", ns), core.Event{Module: core.ModulePixivCLI, Kind: core.EventCompleted, Operation: "work", RequestID: 3, Duration: time.Duration(ns)})
+	}
+	add("url_credentials_without_query", core.Event{Module: core.ModulePixivNetwork, Kind: core.EventNetworkRequest, Operation: "https://synthetic-user:synthetic-password@operation.example.test/work", Resource: "https://synthetic-user:synthetic-password@resource.example.test/path", Route: "https://synthetic-user:synthetic-password@route.example.test/path", Proxy: "https://synthetic-user:synthetic-password@proxy.example.test/path"})
+	add("url_credentials_with_query", core.Event{Module: "https://synthetic-user:synthetic-password@module.example.test/path?synthetic=query", Kind: core.EventNetworkRequest, Operation: "https://synthetic-user:synthetic-password@operation.example.test/path#synthetic", Resource: "https://synthetic-user:synthetic-password@resource.example.test/path?synthetic=query", Route: "https://synthetic-user:synthetic-password@route.example.test/path?synthetic=query", Proxy: "https://synthetic-user:synthetic-password@proxy.example.test/path"})
+	add("invalid_url_parse_falls_back_to_prefix", core.Event{Module: core.ModulePixivNetwork, Kind: core.EventNetworkRequest, Operation: "http://[broken?synthetic=query", Resource: "relative%invalid?synthetic=query", Route: "http://[broken#synthetic", Proxy: "http://[broken?synthetic=query"})
+	add("query_fragment_empty_and_escaped_path", core.Event{Module: core.ModulePixivNetwork, Kind: core.EventNetworkRequest, Operation: "?synthetic=query", Resource: "https://resource.example.test/path%3Fkept?synthetic=query", Route: "#synthetic", Proxy: "https://[::1]:7890/path%23kept?synthetic=query"})
+	add("relative_and_opaque_urls", core.Event{Module: core.ModulePixivNetwork, Kind: core.EventNetworkRequest, Operation: "mailto:synthetic@example.test?synthetic=query", Resource: "//synthetic-user:synthetic-password@resource.example.test/path?synthetic=query", Route: "relative\\path?synthetic=query", Proxy: "proxy.example.test:7890"})
+	add("plain_and_invalid_proxy_fallback", core.Event{Module: core.ModulePixivNetwork, Kind: core.EventNetworkRequest, Resource: "/safe", Proxy: "synthetic proxy?synthetic=query"})
+	for i, control := range []string{"\r", "\n", "\x00"} {
+		add(fmt.Sprintf("unsafe_control_%d", i), core.Event{Module: core.ModulePixivNetwork, Kind: core.EventNetworkRequest, Operation: "before" + control + "after", Resource: "before" + control + "after", Route: "before" + control + "after", Proxy: "before" + control + "after", Reason: core.Reason("before" + control + "after")})
+		add(fmt.Sprintf("unsafe_download_target_%d", i), core.Event{Module: core.ModulePixivDownload, Kind: core.EventDownload, Target: "before" + control + "after", Count: 1})
+	}
+	add("text_module_is_raw", core.Event{Module: "Synthetic\nmodule\x00", Kind: core.EventStarted, Operation: "work"})
+	add("unknown_kind_reason_json_sanitized", core.Event{Module: core.ModulePixivCLI, Kind: "started?synthetic=query", Reason: "command failed#synthetic", Operation: "work"})
+	add("tabs_quotes_html_and_json_separators", core.Event{Module: "Synthetic\t<&>", Kind: core.EventStarted, Operation: "quoted \"work\"\t<&>\u2028\u2029"})
+	add("unicode_noncapitalizing_started", core.Event{Module: core.ModulePixivCLI, Kind: core.EventStarted, Operation: "éclair 日本語 😀"})
+	add("unicode_capitalizing_completed", core.Event{Module: core.ModulePixivCLI, Kind: core.EventCompleted, Operation: "éclair"})
+	add("unicode_capitalizing_download", core.Event{Module: core.ModulePixivDownload, Kind: core.EventDownload, Operation: "😀 download", Target: "https://synthetic.example.test/日本語?synthetic=query"})
+	add("target_url_and_user_agent_omission", core.Event{Module: core.ModulePixivDownload, Kind: core.EventDownload, Target: "https://synthetic-user:synthetic-password@target.example.test/path?synthetic=query#synthetic", UserAgent: "synthetic omitted user-agent", Count: 2})
+	add("target_credentials_without_query", core.Event{Module: core.ModulePixivDownload, Kind: core.EventDownload, Target: "https://synthetic-user:synthetic-password@target.example.test/path"})
+	for name, clock := range map[string]clockInput{"utc": {2026, 8, 8, 12, 21, 18, 0, 0}, "trailing_fraction_zeroes": {2026, 8, 8, 12, 21, 18, 123450000, 0}, "subminute_zone_offset": {2026, 8, 8, 12, 21, 18, 1, 19845}, "negative_zone_offset": {2026, 8, 8, 12, 21, 18, 999999999, -12600}, "year_zero": {0, 1, 1, 0, 0, 0, 0, 0}, "year_ten_thousand": {10000, 1, 1, 0, 0, 0, 0, 0}} {
+		cases = append(cases, eventCase{"clock_" + name, core.Event{Module: core.ModulePixivCLI, Kind: core.EventStarted}, clock, "shared"})
+	}
+	cases = append(cases, eventCase{"invalid_go_string_bytes", core.Event{Module: "Synthetic\xff", Kind: core.EventCompleted, Operation: "\xffwork", Resource: "\xfepath"}, fixed, "go_only_string_representation"})
+	sort.Slice(cases, func(i, j int) bool { return cases[i].name < cases[j].name })
+	var rows []renderRow
+	for _, c := range cases {
+		for _, format := range []string{"text", "json"} {
+			rows = append(rows, render(c.name+"_"+format, c.event, c.clock, "format", format, c.compatibility))
+		}
+	}
+	for _, format := range []string{"", "JSON", "ndjson", " text ", "synthetic"} {
+		rows = append(rows, render("fallback_format_"+fmt.Sprintf("%q", format), core.Event{Module: core.ModulePixivCLI, Kind: core.EventStarted, Operation: "work"}, fixed, "format", format, "shared"))
+	}
+	rows = append(rows, render("clock_constructor_text", core.Event{Module: core.ModulePixivCLI, Kind: core.EventStarted, Operation: "work"}, fixed, "clock", "text", "shared"))
+	return rows
+}
+
+type writerStep struct {
+	Count string `json:"count"`
+	Error string `json:"error"`
+}
+
+type writeCall struct {
+	Method    string `json:"method"`
+	Record    output `json:"record"`
+	ReturnedN int    `json:"returned_n"`
+	Error     string `json:"error"`
+}
+
+type errorState struct {
+	Error   string `json:"error"`
+	IsFirst bool   `json:"is_first_error_identity"`
+	IsLater bool   `json:"is_later_error_identity"`
+}
+
+type writerOnly struct {
+	steps        []writerStep
+	calls        []writeCall
+	stored       bytes.Buffer
+	first, later error
+}
+
+func (w *writerOnly) record(data []byte, method string) (int, error) {
+	step := writerStep{"all", ""}
+	if len(w.calls) < len(w.steps) {
+		step = w.steps[len(w.calls)]
+	}
+	n := len(data)
+	switch step.Count {
+	case "zero":
+		n = 0
+	case "short":
+		n = len(data) - 1
+	case "negative":
+		n = -1
+	case "over":
+		n = len(data) + 1
+	}
+	var err error
+	switch step.Error {
+	case "first":
+		err = w.first
+	case "later":
+		err = w.later
+	}
+	w.calls = append(w.calls, writeCall{method, observed(data), n, errText(err)})
+	if n > 0 && n <= len(data) {
+		_, _ = w.stored.Write(data[:n])
+	}
+	return n, err
+}
+
+func (w *writerOnly) Write(data []byte) (int, error) { return w.record(data, "Write") }
+
+type stringWriter struct{ *writerOnly }
+
+func (w stringWriter) WriteString(value string) (int, error) {
+	return w.record([]byte(value), "WriteString")
+}
+
+type writerRow struct {
+	Name                   string       `json:"name"`
+	Compatibility          string       `json:"compatibility"`
+	Format                 string       `json:"format"`
+	Clock                  clockInput   `json:"clock"`
+	ImplementsStringWriter bool         `json:"implements_string_writer"`
+	Steps                  []writerStep `json:"steps"`
+	Events                 []eventInput `json:"events"`
+	Calls                  []writeCall  `json:"calls"`
+	Stored                 output       `json:"stored_output"`
+	AfterEach              []errorState `json:"error_after_each_emit"`
+	ClockCalls             int          `json:"clock_calls"`
+}
+
+func writerCases() []writerRow {
+	var rows []writerRow
+	for _, spec := range []struct {
+		name, format  string
+		stringWriter  bool
+		steps         []writerStep
+		compatibility string
+	}{
+		{"first_error_preserved_write", "text", false, []writerStep{{"zero", "first"}, {"short", "later"}, {"all", ""}}, "shared"},
+		{"first_error_preserved_stringwriter", "json", true, []writerStep{{"short", "first"}, {"zero", "later"}, {"all", ""}}, "shared"},
+		{"short_nil_error_write", "text", false, []writerStep{{"zero", ""}, {"short", ""}, {"all", ""}}, "shared"},
+		{"short_nil_error_stringwriter", "json", true, []writerStep{{"short", ""}, {"zero", ""}, {"all", ""}}, "shared"},
+		{"success_before_first_error", "json", false, []writerStep{{"all", ""}, {"all", "first"}, {"all", "later"}}, "shared"},
+		{"invalid_writer_counts", "text", false, []writerStep{{"negative", ""}, {"over", ""}, {"all", ""}}, "go_only_writer_contract_violation"},
+	} {
+		w := &writerOnly{steps: spec.steps, calls: []writeCall{}, first: errors.New("synthetic first writer error"), later: errors.New("synthetic later writer error")}
+		var sink io.Writer = w
+		if spec.stringWriter {
+			sink = stringWriter{w}
+		}
+		row := writerRow{Name: spec.name, Compatibility: spec.compatibility, Format: spec.format, Clock: fixed, ImplementsStringWriter: spec.stringWriter, Steps: spec.steps, Events: []eventInput{}, AfterEach: []errorState{}}
+		p := cli.NewPresenterWithFormat(sink, spec.format, func() time.Time { row.ClockCalls++; return fixed.value() })
+		for _, kind := range []core.EventKind{core.EventStarted, core.EventCompleted, core.EventFailed} {
+			e := core.Event{Module: core.ModulePixivCLI, Kind: kind, Operation: "synthetic command", Reason: core.ReasonCommandFailed}
+			row.Events = append(row.Events, input(e))
+			p.Emit(e)
+			err := p.Err()
+			row.AfterEach = append(row.AfterEach, errorState{errText(err), err == w.first, err == w.later})
+		}
+		row.Calls, row.Stored = w.calls, observed(w.stored.Bytes())
+		rows = append(rows, row)
+	}
+	return rows
+}
+
+type defaultRow struct {
+	Name              string     `json:"name"`
+	Constructor       string     `json:"constructor"`
+	Format            string     `json:"format"`
+	NilWriter         bool       `json:"nil_writer"`
+	NilClock          bool       `json:"nil_clock"`
+	Event             eventInput `json:"event"`
+	NormalizedOutput  string     `json:"normalized_output"`
+	ClockInCallWindow bool       `json:"clock_in_call_window"`
+	Error             string     `json:"error"`
+}
+
+func defaults() []defaultRow {
+	var rows []defaultRow
+	event := core.Event{Module: core.ModulePixivCLI, Kind: core.EventStarted, Operation: "work"}
+	for _, spec := range []struct {
+		name, constructor, format string
+		nilWriter                 bool
+	}{
+		{"default_constructor", "default", "text", false},
+		{"nil_clock_constructor", "clock", "text", false},
+		{"nil_clock_text_format", "format", "text", false},
+		{"nil_clock_json_format", "format", "json", false},
+		{"nil_writer_default_constructor", "default", "text", true},
+		{"nil_writer_clock_constructor", "clock", "text", true},
+		{"nil_writer_json_format", "format", "json", true},
+	} {
+		var b bytes.Buffer
+		var sink io.Writer = &b
+		if spec.nilWriter {
+			sink = nil
+		}
+		var p *cli.Presenter
+		switch spec.constructor {
+		case "default":
+			p = cli.NewPresenter(sink)
+		case "clock":
+			p = cli.NewPresenterWithClock(sink, nil)
+		default:
+			p = cli.NewPresenterWithFormat(sink, spec.format, nil)
+		}
+		before := time.Now()
+		p.Emit(event)
+		after := time.Now()
+		row := defaultRow{Name: spec.name, Constructor: spec.constructor, Format: spec.format, NilWriter: spec.nilWriter, NilClock: true, Event: input(event), Error: errText(p.Err()), ClockInCallWindow: true}
+		if !spec.nilWriter && spec.format == "json" {
+			var record map[string]any
+			if err := json.Unmarshal(b.Bytes(), &record); err != nil {
+				panic(err)
+			}
+			stamp := record["time"].(string)
+			parsed, err := time.Parse(time.RFC3339Nano, stamp)
+			row.ClockInCallWindow = err == nil && !parsed.Before(before) && !parsed.After(after)
+			row.NormalizedOutput = strings.Replace(b.String(), stamp, "<LOCAL_CLOCK>", 1)
+		} else if !spec.nilWriter {
+			r := regexp.MustCompile(`\[Pixiv CLI\] ([0-9]{2}:[0-9]{2}:[0-9]{2}) Started work\.\n`)
+			match := r.FindStringSubmatch(b.String())
+			row.ClockInCallWindow = len(match) == 2 && (match[1] == before.Format("15:04:05") || match[1] == after.Format("15:04:05"))
+			if len(match) == 2 {
+				row.NormalizedOutput = strings.Replace(b.String(), match[1], "<LOCAL_CLOCK>", 1)
+			}
+		}
+		if !row.ClockInCallWindow {
+			panic("default clock is outside observed call window")
+		}
+		rows = append(rows, row)
+	}
+	return rows
+}
+
+type nilWriter struct{}
+
+func (w *nilWriter) Write(data []byte) (int, error) {
+	if w == nil {
+		panic("synthetic typed-nil writer")
+	}
+	return len(data), nil
+}
+
+type goOnlyRow struct {
+	Name          string `json:"name"`
+	Compatibility string `json:"compatibility"`
+	Panic         string `json:"panic"`
+	Error         string `json:"error"`
+	ClockCalls    int    `json:"clock_calls"`
+	Writes        int    `json:"writes"`
+}
+
+func catch(f func()) (panicText string) {
+	defer func() {
+		if value := recover(); value != nil {
+			panicText = fmt.Sprint(value)
+		}
+	}()
+	f()
+	return ""
+}
+
+func goOnly() []goOnlyRow {
+	var rows []goOnlyRow
+	var nilPresenter *cli.Presenter
+	rows = append(rows, goOnlyRow{Name: "nil_presenter_receiver", Compatibility: "go_only_nil_receiver", Panic: catch(func() { nilPresenter.Emit(core.Event{}) }), Error: errText(nilPresenter.Err())})
+	for _, name := range []string{"typed_nil_writer", "injected_clock_panics"} {
+		row := goOnlyRow{Name: name, Compatibility: "go_only_nil_type_or_panic"}
+		w := &writerOnly{calls: []writeCall{}}
+		var sink io.Writer = w
+		if name == "typed_nil_writer" {
+			var typedNil *nilWriter
+			sink = typedNil
+		}
+		p := cli.NewPresenterWithFormat(sink, "text", func() time.Time {
+			row.ClockCalls++
+			if name == "injected_clock_panics" {
+				panic("synthetic injected clock panic")
+			}
+			return fixed.value()
+		})
+		row.Panic = catch(func() { p.Emit(core.Event{Module: core.ModulePixivCLI, Kind: core.EventStarted}) })
+		row.Error, row.Writes = errText(p.Err()), len(w.calls)
+		rows = append(rows, row)
+	}
+	return rows
+}
+
+type concurrentWriter struct {
+	active, max atomic.Int64
+	mu          sync.Mutex
+	records     []string
+}
+
+func updateMax(max *atomic.Int64, value int64) {
+	for old := max.Load(); value > old; old = max.Load() {
+		if max.CompareAndSwap(old, value) {
+			return
+		}
+	}
+}
+
+func (w *concurrentWriter) Write(data []byte) (int, error) {
+	active := w.active.Add(1)
+	updateMax(&w.max, active)
+	for i := 0; i < 8; i++ {
+		runtime.Gosched()
+	}
+	w.mu.Lock()
+	w.records = append(w.records, string(data))
+	w.mu.Unlock()
+	w.active.Add(-1)
+	return len(data), nil
+}
+
+type concurrentRow struct {
+	Name                     string       `json:"name"`
+	Format                   string       `json:"format"`
+	Clock                    clockInput   `json:"clock"`
+	Events                   []eventInput `json:"events"`
+	SortedRecords            []output     `json:"sorted_records"`
+	ClockCalls               int64        `json:"clock_calls"`
+	MaxConcurrentClockCalls  int64        `json:"max_concurrent_clock_calls"`
+	MaxConcurrentWriterCalls int64        `json:"max_concurrent_writer_calls"`
+	IntactSingleRecords      bool         `json:"intact_single_records"`
+	Error                    string       `json:"error"`
+}
+
+func concurrency() []concurrentRow {
+	var rows []concurrentRow
+	for _, format := range []string{"text", "json"} {
+		const count = 32
+		w := &concurrentWriter{records: []string{}}
+		var clockCalls, active, maximum atomic.Int64
+		var barrier, workers sync.WaitGroup
+		barrier.Add(count)
+		p := cli.NewPresenterWithFormat(w, format, func() time.Time {
+			clockCalls.Add(1)
+			updateMax(&maximum, active.Add(1))
+			barrier.Done()
+			barrier.Wait()
+			active.Add(-1)
+			return fixed.value()
+		})
+		row := concurrentRow{Name: "concurrent_intact_records_" + format, Format: format, Clock: fixed, Events: []eventInput{}, SortedRecords: []output{}, IntactSingleRecords: true}
+		for i := 0; i < count; i++ {
+			e := core.Event{Module: core.ModulePixivMCP, Kind: core.EventStarted, Operation: fmt.Sprintf("synthetic-operation-%02d", i), RequestID: uint64(i + 1)}
+			row.Events = append(row.Events, input(e))
+			workers.Add(1)
+			go func() { defer workers.Done(); p.Emit(e) }()
+		}
+		workers.Wait()
+		sort.Strings(w.records)
+		for _, record := range w.records {
+			row.SortedRecords = append(row.SortedRecords, observed([]byte(record)))
+			if strings.Count(record, "\n") != 1 || !strings.HasSuffix(record, "\n") {
+				row.IntactSingleRecords = false
+			}
+		}
+		row.ClockCalls, row.MaxConcurrentClockCalls, row.MaxConcurrentWriterCalls, row.Error = clockCalls.Load(), maximum.Load(), w.max.Load(), errText(p.Err())
+		if len(w.records) != count || !row.IntactSingleRecords || row.MaxConcurrentWriterCalls != 1 || row.MaxConcurrentClockCalls != count {
+			panic("concurrent presenter record contract failed")
+		}
+		rows = append(rows, row)
+	}
+	return rows
+}
+
+func extraCases() []renderRow {
+	var rows []renderRow
+	cases := []eventCase{
+		{"started_request_empty_operation", core.Event{Module: core.ModulePixivMCP, Kind: core.EventStarted, RequestID: 7}, fixed, "shared"},
+		{"completed_no_request_empty_operation_duration", core.Event{Module: core.ModulePixivCLI, Kind: core.EventCompleted, Duration: 1500 * time.Millisecond}, fixed, "shared"},
+		{"failed_request_empty_operation", core.Event{Module: core.ModulePixivMCP, Kind: core.EventFailed, RequestID: 7, Reason: core.ReasonCommandFailed}, fixed, "shared"},
+		{"network_request_empty_operation", core.Event{Module: core.ModulePixivNetwork, Kind: core.EventNetworkRequest, RequestID: 7, Resource: "/safe", Route: "App API"}, fixed, "shared"},
+		{"malformed_credential_urls_without_query", core.Event{Module: core.ModulePixivNetwork, Kind: core.EventNetworkRequest, Resource: "https://synthetic-user:synthetic-password@resource.example.test/%invalid", Proxy: "https://synthetic-user:synthetic-password@proxy.example.test/%invalid"}, fixed, "shared"},
+		{"malformed_credential_urls_with_query", core.Event{Module: core.ModulePixivNetwork, Kind: core.EventNetworkRequest, Operation: "https://synthetic-user:synthetic-password@operation.example.test/%invalid?synthetic=query", Resource: "https://synthetic-user:synthetic-password@resource.example.test/%invalid?synthetic=query", Route: "https://synthetic-user:synthetic-password@route.example.test/%invalid#synthetic", Proxy: "https://synthetic-user:synthetic-password@proxy.example.test/%invalid?synthetic=query"}, fixed, "shared"},
+		{"relative_proxy_and_force_query", core.Event{Module: core.ModulePixivNetwork, Kind: core.EventNetworkRequest, Resource: "https://synthetic.example.test/path?", Route: "https://synthetic.example.test/path#", Proxy: "//synthetic-user:synthetic-password@proxy.example.test:7890/path?"}, fixed, "shared"},
+		{"positive_fraction_rounding_150ms", core.Event{Module: core.ModulePixivCLI, Kind: core.EventCompleted, Duration: 150 * time.Millisecond}, fixed, "shared"},
+		{"positive_fraction_rounding_250ms", core.Event{Module: core.ModulePixivCLI, Kind: core.EventCompleted, Duration: 250 * time.Millisecond}, fixed, "shared"},
+		{"signed_integer_bounds", core.Event{Module: core.ModulePixivNetwork, Kind: core.EventNetworkRequest, Status: 9223372036854775807, Count: -9223372036854775808}, fixed, "shared_on_64_bit_go"},
+	}
+	for _, c := range cases {
+		for _, format := range []string{"text", "json"} {
+			rows = append(rows, render(c.name+"_"+format, c.event, c.clock, "format", format, c.compatibility))
+		}
+	}
+	for _, format := range []string{"text", "json"} {
+		calls := 0
+		e := core.Event{Module: core.ModulePixivCLI, Kind: core.EventStarted, Operation: "work"}
+		p := cli.NewPresenterWithFormat(nil, format, func() time.Time { calls++; return fixed.value() })
+		p.Emit(e)
+		rows = append(rows, renderRow{"nil_writer_injected_clock_" + format, "shared", "format", format, fixed, input(e), observed(nil), calls, errText(p.Err()), true})
+	}
+	return rows
+}
+
+func main() {
+	if len(os.Args) == 2 && os.Args[1] == "--extra" {
+		fixture := struct {
+			Schema int         `json:"schema_version"`
+			Frozen string      `json:"frozen_go_ref"`
+			Render []renderRow `json:"render_cases"`
+		}{1, frozen, extraCases()}
+		encoder := json.NewEncoder(os.Stdout)
+		encoder.SetIndent("", "  ")
+		if err := encoder.Encode(fixture); err != nil {
+			panic(err)
+		}
+		return
+	}
+	fixture := struct {
+		Schema     int             `json:"schema_version"`
+		Frozen     string          `json:"frozen_go_ref"`
+		Render     []renderRow     `json:"render_cases"`
+		Writers    []writerRow     `json:"writer_cases"`
+		Defaults   []defaultRow    `json:"default_cases"`
+		GoOnly     []goOnlyRow     `json:"go_only_cases"`
+		Concurrent []concurrentRow `json:"concurrent_cases"`
+	}{1, frozen, renderCases(), writerCases(), defaults(), goOnly(), concurrency()}
+	encoder := json.NewEncoder(os.Stdout)
+	encoder.SetIndent("", "  ")
+	if err := encoder.Encode(fixture); err != nil {
+		panic(err)
+	}
+}

@@ -1,0 +1,243 @@
+{
+  "schema_version": 1,
+  "reviewed_utc": "2026-10-10T19:04:30Z",
+  "reviewer_role": "Independent reviewer of Rust; author of Go capture only. No Rust source or test edits and no Cargo execution by reviewer.",
+  "frozen_go_ref": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "verdict": "Approved within frozen224 Presenter observation scope at final source SHAceb6e1461f5f5e48276e8408bacff5d7c2570f8aa8983fd11aadceb044fad3f6; minimal signed-minute semantic correction and subsequent equivalent let-chain style correction are both reviewed with actual terminal evidence",
+  "scope": {
+    "total_go_observations": 224,
+    "original_primary": 188,
+    "original_additive": 22,
+    "new_offset_additive": 14,
+    "shared_semantics_or_64_bit_runtime": 218,
+    "explicit_go_only_representations_or_invalid_writer_contract_cases": 6,
+    "clock_panic_rust_witness_retained": true,
+    "rust_presenter_test_functions": 8
+  },
+  "source_sha256": {
+    "crates/pixiv-cli/src/diagnostics.rs": "ceb6e1461f5f5e48276e8408bacff5d7c2570f8aa8983fd11aadceb044fad3f6",
+    "crates/pixiv-cli/tests/diagnostics_presenter.rs": "796ba4b7769092f599097598a3d6703c5891bb65e697df0e65b005f4f991befd",
+    "crates/pixiv-cli/tests/support/diagnostics_presenter.rs": "7d8b9410641985c427815ee9e541f5d55b3bbd744edd7119f502655b4b7fd856",
+    "crates/pixiv-cli/tests/fixtures/diagnostics-presenter.json": "f083043ee9dec6329eeb16c11ce6363df7d585ea141f3008a392c9d6bd46f575",
+    "crates/pixiv-cli/tests/fixtures/diagnostics-presenter-extra.json": "057cf9182cf8a055cf31555fff30fd044724a457a312e6ddf2d5f09070e191eb",
+    "crates/pixiv-cli/tests/fixtures/diagnostics-presenter-offset.json": "791ca31201b588a5c682ce0430df12da3e335006f8c552c74a0e78eb810a10c5",
+    "crates/pixiv-sdk/src/diagnostics.rs": "e94201065bf1c0fb880c110b8b1c6e0129ca13d728a6db4078eb47cc015fd886",
+    "crates/pixiv-cli/tests/support/diagnostics_presenter_offset_go_probe.go.txt": "c43deab08fd61237bdba31d4220847c69698b688a9e5a9b34033fbcc5f1c9659",
+    "crates/pixiv-cli/tests/support/diagnostics_presenter_offset_go_provenance.json": "166735a134ed793e4237fba1a37b2a51bff9c46c47eacd4c0c8a57ef62e26242"
+  },
+  "historical_review": {
+    "path": "docs/migration/provenance/root-diagnostics-presenter-review.json",
+    "sha256": "511c28259b116709df2161d3b7bc7b7672f3c9513b319350d8fbd49bfd73fa46",
+    "preserved_unchanged": true,
+    "meaning": "Original review remains the historical finding against old source b8e3deff9479bb8452aa165bc7a7f41778f4c60cf735f64618602d3c71af543b; this new review supersedes only its unresolved offset status for corrected source"
+  },
+  "change_audit": {
+    "production": "Reversing only the three-line signed-minute sign selection produces byte-identical original reviewed Rust source hash. No API, record, narrative, URL parser, writer, concurrency or other production change.",
+    "test": "Removing only frozen_signed_subminute_clock_offsets_match_exact_go_records produces byte-identical original reviewed Rust test source hash. Shared support helper, SDK diagnostics and both original fixtures remain byte-identical.",
+    "go_first": "Supplement14 actual Go captures completed18:58:40 and old defective Rust source was independently observed unchanged at18:59:50; existing supplemental provenance preserves capture and source evidence.",
+    "final_style": "Exactly one nested-if at hostname port suffix classification became an equivalent short-circuit let-chain. Reversing only that syntax restores byte-identical approved signed-minute source SHA4a1fe807994e1220955c86869e8d6df8ae333b22c6222e6c29540fdb439344c3. No allow/expectation/probe changes; all other reviewed paths retain identical hashes."
+  },
+  "resolved_finding": {
+    "id": "presenter-clock-negative-subminute-offset",
+    "old_behavior": "Raw negative subminute offset selected -00:00",
+    "frozen_go_behavior": "offset/60 truncates toward zero; sign is selected from truncated signed minutes, giving +00:00 for offsets -1 through -59 seconds",
+    "corrected_behavior": "Rust uses signed minutes = offset/60, selects sign from minutes<0, then uses unsigned_abs only for formatting. Raw offset==0 still renders Z. This matches official Go fast and general formatter branches.",
+    "bounded_edge_cases": [
+      "-1 and -59 seconds -> +00:00",
+      "-60 seconds -> -00:01",
+      "+1 and +59 seconds -> +00:00",
+      "+60 seconds -> +00:01",
+      "0 seconds -> Z"
+    ],
+    "text_behavior": "Local HH:MM:SS remains12:21:18 for all seven inputs; additive test compares both formats exactly"
+  },
+  "new_test_review": {
+    "location": "crates/pixiv-cli/tests/diagnostics_presenter.rs:90-139",
+    "fixture_count_assertion": 14,
+    "ordered_offset_pairs_asserted": true,
+    "all_rows_shared_and_format_constructor_asserted": true,
+    "nil_writer_rejected": true,
+    "one_complete_byte_record_assertion": true,
+    "clock_calls_and_error_assertions": true,
+    "base64_is_authoritative": true,
+    "timestamp_normalization": false,
+    "filtered_skipped_or_ignored_additive_rows": 0,
+    "result": "Every additive row uses normal public Presenter with captured event/clock input; expected bytes come from frozen Go fixture, not copied Rust formatter calculations"
+  },
+  "reviewed_actual_evidence": {
+    "semantic_red": {
+      "path": "/tmp/root-diagnostics-offset-red.log",
+      "bytes": 457828,
+      "sha256": "266c3b411a1c417213c584f6300d1f705d677a3038be0ab832e7777faef9ac97",
+      "observed": "The test actually ran and failed on clock_offset_-1_seconds_json. Exact compared byte records differ only at minus versus plus timezone sign. Terminal0 passed/1 failed; seven other Presenter tests filtered out.",
+      "exit_code": 101,
+      "exit_code_source": "Independently read /tmp/root-diagnostics-offset-red.exit=101 as well as terminal semantic failure"
+    },
+    "green_related": {
+      "path": "/tmp/root-diagnostics-related-focused1.log",
+      "bytes": 459962,
+      "sha256": "56e06e07278cce24a0909c42f101e7609b6a0d84a62ccbe1d564c0a45903fd42",
+      "observed": "Eight Presenter, seven command-session, five main, ten updater CLI and six updater main tests passed;36 total,0 failures,0 ignored across these five binaries",
+      "exit_code": 0,
+      "exit_code_source": "Independently read /tmp/root-diagnostics-related-focused1.exit=0 as well as all five terminal success results",
+      "review_scope": "Other28 related passes are regression context, not independent approval of root/session/updater semantic implementations"
+    },
+    "strict_clippy_initial": {
+      "path": "/tmp/root-diagnostics-focused-clippy1.log",
+      "bytes": 458132,
+      "sha256": "bae1f219a3b2fe1e62a6043085d3eff7266f013aa0081c1ab67989442b712914",
+      "observed": "Strict focused Clippy rejected nested-if as collapsible_if at diagnostics.rs481. This was lint/style failure, not semantic failure. Minimal let-chain replaced it without suppressing the lint.",
+      "exit_code": 101,
+      "exit_code_source": "Parent reported; actual lint error independently read"
+    },
+    "post_style_presenter_green": {
+      "path": "/tmp/root-diagnostics-presenter-final-focused.log",
+      "bytes": 456800,
+      "sha256": "d04f5fa6f915195d6ca7ad98b4dc636858f60774c88b4274e98f7c0e9d7c03d2",
+      "exit_path": "/tmp/root-diagnostics-presenter-final-focused.exit",
+      "exit_code": 0,
+      "independently_read_exit": true,
+      "observed": "All8 Presenter test functions, including full original210 and additive14 observations, passed with0 failures/0 ignored;0.02s test runtime. Actual log and terminal exit read independently."
+    },
+    "post_style_strict_focused_clippy": {
+      "path": "/tmp/root-diagnostics-focused-clippy2.log",
+      "bytes": 455967,
+      "sha256": "1a98ac62c5c2722924923a46df196071dc2168358e3d0f08fb2cdf2fc5840c1f",
+      "exit_path": "/tmp/root-diagnostics-focused-clippy2.exit",
+      "exit_code": 0,
+      "independently_read_exit": true,
+      "parent_reported_scope": "cargo clippy -p pixiv-cli-rs --all-targets -- -D warnings",
+      "observed": "Terminal dev-profile finished successfully; no error diagnostic in log. Vendor dependencies still emit displayed warnings and are not represented as globally warning-free. Reviewer did not run Cargo."
+    }
+  },
+  "retained_previous_approval": [
+    "Exact base64 byte comparison, including valid-Unicode input yielding invalid capitalization output",
+    "No hidden normalization of JSON omission/null/numeric/time fields or text/record bytes",
+    "Frozen malformed URL and userinfo preservation quirks retained, not silently improved",
+    "Single write, ignored successful short counts, direct first error source/Arc identity and continued later writes",
+    "Rendering clock remains outside writer mutex; full concurrent records compare after sorting only unspecified emission order",
+    "Default clock normalization remains limited to validated emitted clock token; nil-writer invocation separately observed",
+    "Explicit Go-only nil/type/invalid-input/count witnesses remain named and callback panic remains exercised",
+    "Production contains no fixture names, test-only behavior or test functions"
+  ],
+  "limitations": [
+    "Approval covers these224 captured observations and declared language mappings, not unrestricted time/date/URL grammar or whole migration",
+    "Go arbitrary invalid-string/nil/type identities and invalid writer-contract values do not become equivalent Rust API representations",
+    "Chrono clock representable ranges/leap seconds and native local timezone behavior remain broader boundaries",
+    "Only thin inherited SDK Scope connection was independently reviewed; all root lifecycle/cleanup/context and updater semantics belong to separate owner reviews",
+    "No Cargo, full formatter/Clippy/workspace/release gate, new executable probe, native OS/architecture run or external effect was performed by reviewer",
+    "Parent-provided focused logs do not replace required final aggregate gate",
+    "Review approval binds exact listed hashes; later code/fixture changes require reassessment",
+    "Post-style strict focused CLI/all-target Clippy and focused Presenter tests passed, but do not substitute for required final workspace-wide formatter/Clippy/tests/release gate"
+  ],
+  "effects": "Only this follow-up review JSON was written; original review and all source/test/fixture files were unchanged by reviewer.",
+  "pre_style_followup_stage": {
+    "artifact_sha256": "7b6a8c8e73b933550fac76423541c3114670bcf5bb58ed97c7dcda71a1213017",
+    "preserved_full_review": {
+      "schema_version": 1,
+      "reviewed_utc": "2026-10-10T19:02:16Z",
+      "reviewer_role": "Independent reviewer of Rust; author of Go capture only. No Rust source or test edits and no Cargo execution by reviewer.",
+      "frozen_go_ref": "4b4426487ef18bed276706daec385e0d0a6979f9",
+      "verdict": "Approved within frozen224 Presenter observation scope; previously reported negative-subminute offset defect is resolved by exact minimal source change and actual Go-first RED/GREEN evidence",
+      "scope": {
+        "total_go_observations": 224,
+        "original_primary": 188,
+        "original_additive": 22,
+        "new_offset_additive": 14,
+        "shared_semantics_or_64_bit_runtime": 218,
+        "explicit_go_only_representations_or_invalid_writer_contract_cases": 6,
+        "clock_panic_rust_witness_retained": true,
+        "rust_presenter_test_functions": 8
+      },
+      "source_sha256": {
+        "crates/pixiv-cli/src/diagnostics.rs": "4a1fe807994e1220955c86869e8d6df8ae333b22c6222e6c29540fdb439344c3",
+        "crates/pixiv-cli/tests/diagnostics_presenter.rs": "796ba4b7769092f599097598a3d6703c5891bb65e697df0e65b005f4f991befd",
+        "crates/pixiv-cli/tests/support/diagnostics_presenter.rs": "7d8b9410641985c427815ee9e541f5d55b3bbd744edd7119f502655b4b7fd856",
+        "crates/pixiv-cli/tests/fixtures/diagnostics-presenter.json": "f083043ee9dec6329eeb16c11ce6363df7d585ea141f3008a392c9d6bd46f575",
+        "crates/pixiv-cli/tests/fixtures/diagnostics-presenter-extra.json": "057cf9182cf8a055cf31555fff30fd044724a457a312e6ddf2d5f09070e191eb",
+        "crates/pixiv-cli/tests/fixtures/diagnostics-presenter-offset.json": "791ca31201b588a5c682ce0430df12da3e335006f8c552c74a0e78eb810a10c5",
+        "crates/pixiv-sdk/src/diagnostics.rs": "e94201065bf1c0fb880c110b8b1c6e0129ca13d728a6db4078eb47cc015fd886",
+        "crates/pixiv-cli/tests/support/diagnostics_presenter_offset_go_probe.go.txt": "c43deab08fd61237bdba31d4220847c69698b688a9e5a9b34033fbcc5f1c9659",
+        "crates/pixiv-cli/tests/support/diagnostics_presenter_offset_go_provenance.json": "166735a134ed793e4237fba1a37b2a51bff9c46c47eacd4c0c8a57ef62e26242"
+      },
+      "historical_review": {
+        "path": "docs/migration/provenance/root-diagnostics-presenter-review.json",
+        "sha256": "511c28259b116709df2161d3b7bc7b7672f3c9513b319350d8fbd49bfd73fa46",
+        "preserved_unchanged": true,
+        "meaning": "Original review remains the historical finding against old source b8e3deff9479bb8452aa165bc7a7f41778f4c60cf735f64618602d3c71af543b; this new review supersedes only its unresolved offset status for corrected source"
+      },
+      "change_audit": {
+        "production": "Reversing only the three-line signed-minute sign selection produces byte-identical original reviewed Rust source hash. No API, record, narrative, URL parser, writer, concurrency or other production change.",
+        "test": "Removing only frozen_signed_subminute_clock_offsets_match_exact_go_records produces byte-identical original reviewed Rust test source hash. Shared support helper, SDK diagnostics and both original fixtures remain byte-identical.",
+        "go_first": "Supplement14 actual Go captures completed18:58:40 and old defective Rust source was independently observed unchanged at18:59:50; existing supplemental provenance preserves capture and source evidence."
+      },
+      "resolved_finding": {
+        "id": "presenter-clock-negative-subminute-offset",
+        "old_behavior": "Raw negative subminute offset selected -00:00",
+        "frozen_go_behavior": "offset/60 truncates toward zero; sign is selected from truncated signed minutes, giving +00:00 for offsets -1 through -59 seconds",
+        "corrected_behavior": "Rust uses signed minutes = offset/60, selects sign from minutes<0, then uses unsigned_abs only for formatting. Raw offset==0 still renders Z. This matches official Go fast and general formatter branches.",
+        "bounded_edge_cases": [
+          "-1 and -59 seconds -> +00:00",
+          "-60 seconds -> -00:01",
+          "+1 and +59 seconds -> +00:00",
+          "+60 seconds -> +00:01",
+          "0 seconds -> Z"
+        ],
+        "text_behavior": "Local HH:MM:SS remains12:21:18 for all seven inputs; additive test compares both formats exactly"
+      },
+      "new_test_review": {
+        "location": "crates/pixiv-cli/tests/diagnostics_presenter.rs:90-139",
+        "fixture_count_assertion": 14,
+        "ordered_offset_pairs_asserted": true,
+        "all_rows_shared_and_format_constructor_asserted": true,
+        "nil_writer_rejected": true,
+        "one_complete_byte_record_assertion": true,
+        "clock_calls_and_error_assertions": true,
+        "base64_is_authoritative": true,
+        "timestamp_normalization": false,
+        "filtered_skipped_or_ignored_additive_rows": 0,
+        "result": "Every additive row uses normal public Presenter with captured event/clock input; expected bytes come from frozen Go fixture, not copied Rust formatter calculations"
+      },
+      "reviewed_actual_evidence": {
+        "semantic_red": {
+          "path": "/tmp/root-diagnostics-offset-red.log",
+          "bytes": 457828,
+          "sha256": "266c3b411a1c417213c584f6300d1f705d677a3038be0ab832e7777faef9ac97",
+          "observed": "The test actually ran and failed on clock_offset_-1_seconds_json. Exact compared byte records differ only at minus versus plus timezone sign. Terminal0 passed/1 failed; seven other Presenter tests filtered out.",
+          "exit_code": 101,
+          "exit_code_source": "Parent reported; terminal failing test result independently read"
+        },
+        "green_related": {
+          "path": "/tmp/root-diagnostics-related-focused1.log",
+          "bytes": 459962,
+          "sha256": "56e06e07278cce24a0909c42f101e7609b6a0d84a62ccbe1d564c0a45903fd42",
+          "observed": "Eight Presenter, seven command-session, five main, ten updater CLI and six updater main tests passed;36 total,0 failures,0 ignored across these five binaries",
+          "exit_code": 0,
+          "exit_code_source": "Parent reported; all five terminal success results independently read",
+          "review_scope": "Other28 related passes are regression context, not independent approval of root/session/updater semantic implementations"
+        }
+      },
+      "retained_previous_approval": [
+        "Exact base64 byte comparison, including valid-Unicode input yielding invalid capitalization output",
+        "No hidden normalization of JSON omission/null/numeric/time fields or text/record bytes",
+        "Frozen malformed URL and userinfo preservation quirks retained, not silently improved",
+        "Single write, ignored successful short counts, direct first error source/Arc identity and continued later writes",
+        "Rendering clock remains outside writer mutex; full concurrent records compare after sorting only unspecified emission order",
+        "Default clock normalization remains limited to validated emitted clock token; nil-writer invocation separately observed",
+        "Explicit Go-only nil/type/invalid-input/count witnesses remain named and callback panic remains exercised",
+        "Production contains no fixture names, test-only behavior or test functions"
+      ],
+      "limitations": [
+        "Approval covers these224 captured observations and declared language mappings, not unrestricted time/date/URL grammar or whole migration",
+        "Go arbitrary invalid-string/nil/type identities and invalid writer-contract values do not become equivalent Rust API representations",
+        "Chrono clock representable ranges/leap seconds and native local timezone behavior remain broader boundaries",
+        "Only thin inherited SDK Scope connection was independently reviewed; all root lifecycle/cleanup/context and updater semantics belong to separate owner reviews",
+        "No Cargo, full formatter/Clippy/workspace/release gate, new executable probe, native OS/architecture run or external effect was performed by reviewer",
+        "Parent-provided focused logs do not replace required final aggregate gate",
+        "Review approval binds exact listed hashes; later code/fixture changes require reassessment"
+      ],
+      "effects": "Only this follow-up review JSON was written; original review and all source/test/fixture files were unchanged by reviewer."
+    },
+    "meaning": "This nested record retains the complete scoped review of signed-minute semantic correction before the legitimate strict-Clippy style change; it is historical evidence, not the final source hash."
+  }
+}

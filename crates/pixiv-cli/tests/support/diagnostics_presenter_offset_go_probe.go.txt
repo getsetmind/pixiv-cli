@@ -1,0 +1,82 @@
+package main
+
+import (
+	"bytes"
+	"encoding/base64"
+	"encoding/json"
+	"fmt"
+	"os"
+	"time"
+
+	cli "github.com/FlanChanXwO/pixiv-cli/internal/cli/diagnostics"
+	core "github.com/FlanChanXwO/pixiv-cli/internal/shared/diagnostics"
+)
+
+type clockInput struct {
+	Year, Month, Day, Hour, Minute, Second, Nanosecond, OffsetSeconds int
+}
+
+func (c clockInput) value() time.Time {
+	return time.Date(c.Year, time.Month(c.Month), c.Day, c.Hour, c.Minute, c.Second, c.Nanosecond, time.FixedZone("synthetic", c.OffsetSeconds))
+}
+
+type eventInput struct {
+	Module     string `json:"module"`
+	Kind       string `json:"kind"`
+	Operation  string `json:"operation"`
+	Resource   string `json:"resource"`
+	Route      string `json:"route"`
+	Target     string `json:"target"`
+	Proxy      string `json:"proxy"`
+	UserAgent  string `json:"user_agent"`
+	Reason     string `json:"reason"`
+	Status     int    `json:"status"`
+	Count      int    `json:"count"`
+	RequestID  uint64 `json:"request_id"`
+	DurationNS int64  `json:"duration_ns"`
+}
+
+type output struct {
+	Bytes string `json:"output_base64"`
+	UTF8  bool   `json:"output_is_utf8"`
+	Text  string `json:"output_text,omitempty"`
+}
+
+type renderRow struct {
+	Name          string     `json:"name"`
+	Compatibility string     `json:"compatibility"`
+	Constructor   string     `json:"constructor"`
+	Format        string     `json:"format"`
+	Clock         clockInput `json:"clock"`
+	Event         eventInput `json:"event"`
+	Output        output     `json:"output"`
+	ClockCalls    int        `json:"clock_calls"`
+	Error         string     `json:"error"`
+}
+
+func main() {
+	fixture := struct {
+		Schema int         `json:"schema_version"`
+		Frozen string      `json:"frozen_go_ref"`
+		Render []renderRow `json:"render_cases"`
+	}{1, "4b4426487ef18bed276706daec385e0d0a6979f9", []renderRow{}}
+	for _, offset := range []int{-1, -59, -60, 1, 59, 60, 0} {
+		for _, format := range []string{"text", "json"} {
+			clock := clockInput{2026, 8, 8, 12, 21, 18, 123456789, offset}
+			var sink bytes.Buffer
+			row := renderRow{Name: fmt.Sprintf("clock_offset_%d_seconds_%s", offset, format), Compatibility: "shared", Constructor: "format", Format: format, Clock: clock, Event: eventInput{Module: string(core.ModulePixivCLI), Kind: string(core.EventStarted), Operation: "work"}}
+			presenter := cli.NewPresenterWithFormat(&sink, format, func() time.Time { row.ClockCalls++; return clock.value() })
+			presenter.Emit(core.Event{Module: core.ModulePixivCLI, Kind: core.EventStarted, Operation: "work"})
+			if err := presenter.Err(); err != nil {
+				row.Error = err.Error()
+			}
+			row.Output = output{base64.StdEncoding.EncodeToString(sink.Bytes()), true, sink.String()}
+			fixture.Render = append(fixture.Render, row)
+		}
+	}
+	encoder := json.NewEncoder(os.Stdout)
+	encoder.SetIndent("", "  ")
+	if err := encoder.Encode(fixture); err != nil {
+		panic(err)
+	}
+}

@@ -6,9 +6,11 @@ pub mod auth_transfer;
 pub mod auth_validation;
 pub mod bookmark_lists;
 pub mod bookmark_reads;
+pub mod command_diagnostics;
 pub mod comment_mutations;
 pub mod comment_reads;
 pub mod config_commands;
+pub mod diagnostics;
 pub mod dictionary;
 pub mod download;
 pub mod fanbox;
@@ -131,6 +133,43 @@ impl CommandError {
         match self {
             Self::Output(error) => error.kind() == io::ErrorKind::BrokenPipe,
             Self::Joined(errors) => errors.iter().any(Self::is_broken_pipe),
+            Self::State(error) => {
+                let mut cause: Option<&(dyn std::error::Error + 'static)> = Some(error.as_ref());
+                while let Some(error) = cause {
+                    if error
+                        .downcast_ref::<io::Error>()
+                        .is_some_and(|error| error.kind() == io::ErrorKind::BrokenPipe)
+                    {
+                        return true;
+                    }
+                    cause = error.source();
+                }
+                false
+            }
+            _ => false,
+        }
+    }
+    pub fn is_usage(&self) -> bool {
+        self.usage_message().is_some()
+    }
+    fn usage_message(&self) -> Option<&str> {
+        match self {
+            Self::Usage(message) => Some(message),
+            Self::Joined(errors) => errors.iter().find_map(Self::usage_message),
+            _ => None,
+        }
+    }
+    fn startup_message(&self) -> Option<&str> {
+        match self {
+            Self::Startup(message) => Some(message),
+            Self::Joined(errors) => errors.iter().find_map(Self::startup_message),
+            _ => None,
+        }
+    }
+    fn is_pipeline(&self) -> bool {
+        match self {
+            Self::Pipeline => true,
+            Self::Joined(errors) => errors.iter().any(Self::is_pipeline),
             _ => false,
         }
     }
@@ -176,19 +215,19 @@ pub fn finish_command<W: Write>(
     let Err(error) = result else {
         return 0;
     };
-    if let CommandError::Startup(message) = &error {
+    if ndjson_output && error.is_broken_pipe() {
+        return 0;
+    }
+    if let Some(message) = error.startup_message() {
         let _ = diagnostics.write(format!("{message}\n").as_bytes());
         return 1;
     }
-    if matches!(error, CommandError::Pipeline) {
-        return 1;
-    }
-    if matches!(error, CommandError::Usage(_)) {
-        let _ = diagnostics.write(format!("error: {error}\n").as_bytes());
+    if let Some(message) = error.usage_message() {
+        let _ = diagnostics.write(format!("error: {message}\n").as_bytes());
         return 2;
     }
-    if ndjson_output && error.is_broken_pipe() {
-        return 0;
+    if error.is_pipeline() {
+        return 1;
     }
     if machine_output {
         let mut body = serde_json::json!({"code": error.code(), "message": error.to_string()});

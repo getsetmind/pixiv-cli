@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "reviewer_role": "Independent read-only review; authored frozen Go fixtures, did not implement the reviewed Rust code",
+  "decision": "approve_bounded_command_diagnostics_session_and_direct_joined_error_classification",
+  "reviewed_sha256": {
+    "crates/pixiv-cli/src/command_diagnostics.rs": "0277e6e9efde5183daba34a287edfae75a81433886c58ca64b52709492690cb0",
+    "crates/pixiv-cli/src/lib.rs": "86442c9b40cad6f842238122e6c7edb14aae5125c5277eadcfc447573d4123f1",
+    "crates/pixiv-cli/tests/command_diagnostics.rs": "8793f7af3b68c20806ce6b41bfa5f487aba548b1507c8c6762cc4e6b35a1a7b1",
+    "crates/pixiv-sdk/src/context.rs": "ccdaba94a61bcd150221a0fa78d8ef6427ffd502f52e3129d762ed63e258348d",
+    "crates/pixiv-sdk/src/diagnostics.rs": "e94201065bf1c0fb880c110b8b1c6e0129ca13d728a6db4078eb47cc015fd886",
+    "crates/pixiv-cli/tests/fixtures/diagnostics-root.json": "61128f4a87f6a9ac32f35e41c20ac76baa99c9cf148b7cfd14fbd2d612df63e7",
+    "crates/pixiv-cli/tests/fixtures/diagnostics-root-joined.json": "dc9b370bf0d4a3b095b54e8039c375be388b966e37e1ec30810b684ab8b117c5",
+    "internal/cli/migration_diagnostics_connected_test.go": "799065d451c09f227e167c9c9c86dbbd352356ec6fd432b990998c43465fd837",
+    "internal/cli/migration_diagnostics_joined_test.go": "f77df66c0ca4218abe9b22338dd04a5a46b2dc9e05f57ef49284cdb431d4d08e"
+  },
+  "scope": [
+    "CommandDiagnostics start/finish record semantics for a fresh per-command session",
+    "Direct CommandError::Joined traversal for Usage, Startup and Pipeline and source-wrapped diagnostic io::Error EPIPE",
+    "Context and CallerContext diagnostic scope decoration preserving parent error/deadline/cancelled/value/extension ports",
+    "Quiet config and non-debug session exclusions",
+    "Seven targeted Rust session tests and their bounded use of frozen Go expectations"
+  ],
+  "findings": [
+    {
+      "severity": "medium",
+      "finding": "Top-level-only Pipeline and Startup classification lost Go errors.As behavior when a diagnostic writer error created Joined; Pipeline then appended an unwanted envelope/error line",
+      "status": "resolved in reviewed snapshot",
+      "evidence": "startup_message and is_pipeline recursively inspect Joined; finish_command now applies NDJSON EPIPE, Startup, Usage, Pipeline, then ordinary error handling. The sealed six-row Go supplement captures exact exit/final stderr/started-failed attempts. Genuine Rust Pipeline RED preceded the correction"
+    },
+    {
+      "severity": "medium_verification_gap",
+      "finding": "The original context test compared absent deadline/error values and did not exercise extension/cancellation forwarding",
+      "status": "resolved for bounded advertised ports",
+      "evidence": "Added scoped_context_delegates_deadline_extensions_and_cancel_future uses a real future deadline, extension(TypeId), parent cancellation, and a bounded await of the decorated cancelled future; source delegation preserves parent ports. Pending-future scheduling races are not claimed"
+    }
+  ],
+  "confirmed_semantics": [
+    "Started records retain selected Pixiv/FANBOX module and CLI request number zero",
+    "Finish chooses completed/failed from business plus cleanup before joining any diagnostic sink error",
+    "Diagnostic writer failure does not cancel business execution and the first EPIPE stays discoverable through DiagnosticWriteError::source after a different later writer failure",
+    "NDJSON EPIPE suppression precedes Startup, Usage and Pipeline classification and can suppress other joined business errors, matching the captured Go behavior",
+    "Joined ordinary Usage emits only its business message with exit 2; joined Startup emits only its bare business cause with exit 1; joined Pipeline adds no ordinary business error line and exits 1",
+    "Context scope decoration replaces the diagnostic sink without replacing parent value/deadline/error/cancelled/extension behavior"
+  ],
+  "coverage_precision": {
+    "go_actual_runcontext_rows": 19,
+    "rust_use_of_primary19": "Root started/finish diagnostic record-byte projection only; feeds a synthetic business result inferred from each sealed expected finish record. It does not replay all 19 root business, writer, state, or exit observations",
+    "go_supplemental_source_rows": 6,
+    "rust_use_of_supplemental6": "Fixed-clock session+finish_command classification, exact final error stderr and first two diagnostic payloads. No actual startup/download business run",
+    "rust_targeted_session_tests": 7
+  },
+  "verification": {
+    "reviewer_cargo_calls": 0,
+    "parent_supplied_cargo_log": "/tmp/root-diagnostics-joined-focused2.log",
+    "parent_supplied_cargo_log_sha256": "7cabf3179736233e73b7ecd2b132de99750b9357fa15d65f75dd11298ffc4656",
+    "parent_supplied_cargo_result": "7 passed; 0 failed",
+    "reviewer_go_capture_replays": "Primary19/prior4 unchanged; supplemental6 fixed-clock capture passed; two count=3 combined replay/gofmt/vet gate runs passed",
+    "supplemental_fixture_sha256": "dc9b370bf0d4a3b095b54e8039c375be388b966e37e1ec30810b684ab8b117c5"
+  },
+  "limits": [
+    "Main/startup/update wiring and actual CLI subprocess integration are outside this review; they are being reviewed separately",
+    "CommandDiagnostics::start has no EnsureConfig argument. Actual root callers must gate it with the frozen lifecycle requirement; FANBOX auth list must remain silent at debug because Go EnsureConfig=false",
+    "The cleanup test feeds an already-joined cleanup result. It does not itself prove the main executor closes resources before calling finish",
+    "Linux/amd64 Go evidence and targeted Rust session execution only. No native Windows/Darwin compilation or runtime, ABI, registration, HKCU, browser, account, network, or media approval is implied",
+    "Raw errno 32 EPIPE assertions are Unix/Linux witnesses; they do not establish Windows native error-number semantics",
+    "No all-root parity, all 19 complete Rust root observations, full workspace gates, generic arbitrary boxed error-tree equivalence, or language-wide compatibility claim is approved",
+    "The approval covers only the listed byte snapshots and direct Session/core boundary. Later source changes require a scoped re-review"
+  ]
+}

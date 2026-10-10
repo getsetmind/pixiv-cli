@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "frozen_go_ref": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "scope": "14 additive actual public frozen Presenter observations with same local clock fields and offsets -1,-59,-60,+1,+59,+60,0 seconds in exact text and JSON formats; no original210/sourcefixture changes",
+  "toolchain": {
+    "version": "go version go1.27.1 linux/amd64",
+    "compiler_sha256": "3780fc07130d6d45096373acf062cc316940d253e2a1d892ece03a3bdd0d21d4",
+    "official_rfc3339_formatter_sha256": "14b2a58fa295cca1a4f99467f5a5059418ed266a2298316124af97ffa014f271"
+  },
+  "artifacts": {
+    "crates/pixiv-cli/tests/fixtures/diagnostics-presenter-offset.json": {
+      "bytes": 14755,
+      "sha256": "791ca31201b588a5c682ce0430df12da3e335006f8c552c74a0e78eb810a10c5"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics_presenter_offset_go_probe.go.txt": {
+      "bytes": 2855,
+      "sha256": "c43deab08fd61237bdba31d4220847c69698b688a9e5a9b34033fbcc5f1c9659"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics_presenter_offset_go_replay.sh": {
+      "bytes": 1227,
+      "sha256": "9f4a0e976654761b951f03b86b60aca76de0ba2e3ca0915627374a380c34f7bb"
+    }
+  },
+  "frozen_production_sources": {
+    "internal/cli/diagnostics/diagnostics.go": {
+      "bytes": 9195,
+      "sha256": "88b5c5f4a4ca3b13bef00bdebf1d9d787e6e32f1fe90f3d6abb3a30d2d9516d9"
+    },
+    "internal/shared/diagnostics/diagnostics.go": {
+      "bytes": 5873,
+      "sha256": "aecd4045f50f6bcf4cd20f316d680cbfb28e657f919ce1c0700dfdad8d5ddc76"
+    }
+  },
+  "preserved_previous_captures": {
+    "crates/pixiv-cli/tests/fixtures/diagnostics-presenter.json": {
+      "bytes": 289090,
+      "sha256": "f083043ee9dec6329eeb16c11ce6363df7d585ea141f3008a392c9d6bd46f575"
+    },
+    "crates/pixiv-cli/tests/fixtures/diagnostics-presenter-extra.json": {
+      "bytes": 28460,
+      "sha256": "057cf9182cf8a055cf31555fff30fd044724a457a312e6ddf2d5f09070e191eb"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics_presenter_go_probe.go.txt": {
+      "bytes": 28329,
+      "sha256": "b438ddb13c92d6e06a0435c94c8d338f88e4a2c4a08b04e3356f015967eba040"
+    },
+    "crates/pixiv-cli/tests/fixtures/updater-cli-owner.json": {
+      "bytes": 743701,
+      "sha256": "af6170a64755f9336bee105a9eef8ac94fa196d46284a424cc10153c1a642e8d"
+    }
+  },
+  "observation_count": 14,
+  "offset_seconds": [
+    -1,
+    -59,
+    -60,
+    1,
+    59,
+    60,
+    0
+  ],
+  "clock_calls_per_emit": 1,
+  "go_json_offsets": {
+    "-1": "+00:00",
+    "-59": "+00:00",
+    "-60": "-00:01",
+    "1": "+00:00",
+    "59": "+00:00",
+    "60": "+00:01",
+    "0": "Z"
+  },
+  "text_behavior": "All local clock inputs render same12:21:18, independent of offset representation",
+  "cause": "Official Go appendFormatRFC3339 selects sign after offset/60 truncation, so negative subminute offsets have nonzero raw offset but zero truncated minutes and choose +00:00",
+  "commands": [
+    "source approved /tmp/quantus-toolchain-env.txt and /tmp/pixiv-fanbox-native-build-env.sh",
+    "Copy visible .go.txt to owned temporary main.go under CLI tests/support",
+    "GOPROXY=off GOWORK=off GOTOOLCHAIN=local CGO_ENABLED=0 official Go go run -mod=readonly main.go; repeat and compare complete stdout bytes",
+    "CGO_ENABLED=1 official Go go run -race -mod=readonly main.go; compare complete stdout bytes",
+    "CGO_ENABLED=0 go vet -mod=readonly main.go",
+    "gofmt -w probe; final gofmt -l probe empty",
+    "bash diagnostics_presenter_offset_go_replay.sh; repeat with --race"
+  ],
+  "validation": {
+    "capture_repeat_byte_identical": true,
+    "race_capture_byte_identical": true,
+    "race_stderr_empty": true,
+    "probe_vet_exit": 0,
+    "gofmt_listing_empty": true,
+    "replay_bash_syntax_exit": 0,
+    "final_replay_exit": 0,
+    "final_race_replay_exit": 0,
+    "captured_before_rust_correction": true,
+    "provenance_written_utc": "2026-10-10T18:59:38Z"
+  },
+  "actual_logs": {
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-offset-evidence/capture.log": {
+      "bytes": 177,
+      "sha256": "dfc6c998e4ed1b5806c1c0971775ce45e132797beaa973cbaf31787d9052da6d"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-offset-evidence/capture.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-offset-evidence/final-race-replay.log": {
+      "bytes": 132,
+      "sha256": "e0d655516f9fb7a4361fc1630ee800549e6b8481d2ff5b727e245692658e1fb5"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-offset-evidence/final-replay.log": {
+      "bytes": 132,
+      "sha256": "e0d655516f9fb7a4361fc1630ee800549e6b8481d2ff5b727e245692658e1fb5"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-offset-evidence/gofmt.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-offset-evidence/probe-vet.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-offset-evidence/race.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-offset-evidence/repeat.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "compressed_actual_capture_stdout": {
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-offset-evidence/repeat.json.gz": {
+      "original_bytes": 14755,
+      "original_sha256": "791ca31201b588a5c682ce0430df12da3e335006f8c552c74a0e78eb810a10c5",
+      "compressed_bytes": 1010,
+      "compressed_sha256": "8b1389bbb23929db357018881834242a33765f7d901129d4f591326f3403a8f5"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-offset-evidence/race.json.gz": {
+      "original_bytes": 14755,
+      "original_sha256": "791ca31201b588a5c682ce0430df12da3e335006f8c552c74a0e78eb810a10c5",
+      "compressed_bytes": 1010,
+      "compressed_sha256": "8b1389bbb23929db357018881834242a33765f7d901129d4f591326f3403a8f5"
+    }
+  },
+  "review_finding": "docs/migration/provenance/root-diagnostics-presenter-review.json records original source-proven gap before these runtime observations",
+  "normalization": "None; output_base64 is authoritative for complete actual bytes, with output_text cross-checked",
+  "limitations": [
+    "No Rust/Cargo or implementation edits by this capture worker",
+    "No original fixture expectation or original probe changes",
+    "No network/browser/native/account/upload or denied supplemental probe effects",
+    "Clock-offset witness is not unrestricted clock/date/URL/IO or root-lifecycle verification"
+  ],
+  "unchanged_rust_candidate_observed_after_capture": {
+    "path": "crates/pixiv-cli/src/diagnostics.rs",
+    "sha256": "b8e3deff9479bb8452aa165bc7a7f41778f4c60cf735f64618602d3c71af543b",
+    "observed_utc": "2026-10-10T18:59:50Z",
+    "meaning": "A read-only sha256sum returned the independently reviewed defective source bytes after Go capture/repeat/race/vet completed. The source subsequently changed; this is historical Go-first sequence evidence."
+  }
+}

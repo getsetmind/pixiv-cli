@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "reviewed_utc": "2026-10-10T18:57:46Z",
+  "reviewer_role": "Independent read-only reviewer; authored frozen Go capture but did not author Rust Presenter or Rust tests",
+  "frozen_go_ref": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "scope": "Rust CLI Presenter and tests/support against unchanged primary188 and additive22 Go observations; thin existing SDK Scope connection only. Root lifecycle implementation is not reviewed here.",
+  "verdict": "Scoped approval of frozen210 fixture replay and explicit mappings; one concrete source-proven clock gap beyond those fixtures remains unresolved",
+  "source_sha256": {
+    "crates/pixiv-cli/src/diagnostics.rs": "b8e3deff9479bb8452aa165bc7a7f41778f4c60cf735f64618602d3c71af543b",
+    "crates/pixiv-cli/tests/diagnostics_presenter.rs": "fe52f7a5bae301eef3e956f06ab029a973b129eb992d6dbe928a8ea518232650",
+    "crates/pixiv-cli/tests/support/diagnostics_presenter.rs": "7d8b9410641985c427815ee9e541f5d55b3bbd744edd7119f502655b4b7fd856",
+    "crates/pixiv-cli/tests/fixtures/diagnostics-presenter.json": "f083043ee9dec6329eeb16c11ce6363df7d585ea141f3008a392c9d6bd46f575",
+    "crates/pixiv-cli/tests/fixtures/diagnostics-presenter-extra.json": "057cf9182cf8a055cf31555fff30fd044724a457a312e6ddf2d5f09070e191eb",
+    "crates/pixiv-sdk/src/diagnostics.rs": "e94201065bf1c0fb880c110b8b1c6e0129ca13d728a6db4078eb47cc015fd886",
+    "crates/pixiv-cli/src/lib.rs": "2da8a7820eac25eeb0294e8799dcc9c227edc08842df6a1014903d5de3138c56",
+    "internal/cli/diagnostics/diagnostics.go": "88b5c5f4a4ca3b13bef00bdebf1d9d787e6e32f1fe90f3d6abb3a30d2d9516d9",
+    "internal/shared/diagnostics/diagnostics.go": "aecd4045f50f6bcf4cd20f316d680cbfb28e657f919ce1c0700dfdad8d5ddc76",
+    "crates/pixiv-cli/tests/support/diagnostics_presenter_go_provenance.json": "8441988be362126e19b62cf2d17e9ad9c065121393b9daaa52c4a8fac7e4a4b8"
+  },
+  "official_go_stdlib_sha256": {
+    "src/time/format_rfc3339.go": "14b2a58fa295cca1a4f99467f5a5059418ed266a2298316124af97ffa014f271",
+    "src/time/format.go": "f2b75d1440a46231523d3be86925b52c59c5f23657658e24514f2daa588e575d",
+    "src/time/time.go": "7d992810b162f65e02cea4d60fd0d90af59b3cafa2c8926ca08083d5c73451dc",
+    "src/net/url/url.go": "44c33f88526abf3b5955d6c97297be5c9d228e741b33e52c940dcac5a496e091"
+  },
+  "reviewed_runtime_evidence": {
+    "path": "/tmp/diagnostics-presenter-focused2.log",
+    "sha256": "6beffe628ba9b5f0894fa4265d4036805a334abd0e05b599caeed5cd132fa735",
+    "bytes": 456727,
+    "terminal_result": "7 passed; 0 failed; 0 ignored; seven Presenter tests, 0.01s test runtime",
+    "execution": "Existing parent-run focused2 log read only; reviewer ran no Cargo or executable probe",
+    "initial_compile_red_and_schema_missing_output_text": "Reported preserved by parent; not reclassified as semantic Rust behavior RED; these logs were not independently reread"
+  },
+  "fixture_inventory": {
+    "primary": 188,
+    "extra": 22,
+    "total": 210,
+    "shared_semantics_and_64_bit_runtime_rows": 204,
+    "six_explicit_go_only_representation_or_invalid_writer_rows": 6,
+    "clock_panic_additional_rust_witness": true
+  },
+  "approved_checks": [
+    {
+      "subject": "Authoritative output bytes",
+      "result": "190 representable render rows compare capture bytes directly with base64 decoded Go bytes. Invalid capitalization output is Vec<u8> and is not lossily decoded or normalized. output_text is merely cross-validated when output_is_utf8=true."
+    },
+    {
+      "subject": "Omissions and JSON spellings",
+      "result": "Declared fields and zero/empty omitempty checks match Go; Target/UserAgent remain omitted. Signed submillisecond duration division truncates toward zero. go_json_escape matches required HTML/U+2028/U+2029 spellings. Complete JSON byte records are compared, stronger than allowed key-order normalization."
+    },
+    {
+      "subject": "Narrative and redaction",
+      "result": "All declared module/kind/reason cases and captured network/route/resource/proxy fallbacks retain Go behavior, including unsanitized text Module, query-dependent safeText credential removal, and malformed URL prefix/userinfo quirk. Parser does not read fixture names or expected values."
+    },
+    {
+      "subject": "Durations and capitalization",
+      "result": "Duration Seconds arithmetic matches actual Go quotient/remainder conversion; one-decimal tie cases and int64 extrema compare. Byte-oriented capitalize reproduces Go first-byte replacement/corruption rather than Unicode-cleaning it."
+    },
+    {
+      "subject": "Writer ownership and first error",
+      "result": "One full-record Write call is made per emit; no write_all, retries or flush. Short/zero nil-error writes are ignored. Error source tokens and retained Arc identity are tested after every emission; attempts continue after the first error. Partial stored bytes before Err are explicitly modeled in the test writer."
+    },
+    {
+      "subject": "Default and injected clocks",
+      "result": "Constructor and format fallbacks cover default/nil clock, nil writer and injected-clock calls. Only default emitted clock token is normalized after call-window validation; nil-writer window boolean is vacuous but separate injected-clock nil-writer rows observe clock_calls=1."
+    },
+    {
+      "subject": "Concurrency",
+      "result": "Rendering and injected clock invocation precede sink mutex acquisition. 32-way clock barrier and max Writer calls=1 are checked. Sorting changes only unspecified concurrent record order; full records, count, byte values and single newline remain exact."
+    },
+    {
+      "subject": "Scope",
+      "result": "Normal SDK Scope integration inherits module when empty and overwrites request ID, then reaches the real Presenter for text/JSON. Does not establish every Go Context/child/nil scope case."
+    },
+    {
+      "subject": "Explicit representation exclusions",
+      "result": "Two arbitrary-invalid-Go-string input rows and one invalid io.Writer count row are excluded by exact names/labels. Nil receiver and typed-nil writer are explicit witnesses. Clock callback panic is actually exercised in Rust catch_unwind and leaves no writer attempt/retained error. No unexplained skip or ignored Rust test was found."
+    },
+    {
+      "subject": "Tests versus production",
+      "result": "Presenter production file contains no fixture/test-only branch or test module. Test helper mock fields describe inputs/effects rather than supplying Presenter expected output. Current three events/error-states/calls per writer row are equal-length and checked."
+    }
+  ],
+  "findings": [
+    {
+      "id": "presenter-clock-negative-subminute-offset",
+      "severity": "bounded compatibility defect",
+      "status": "unresolved source-proven boundary; not covered by frozen210 fixtures",
+      "rust_location": "crates/pixiv-cli/src/diagnostics.rs:158-164",
+      "go_locations": [
+        "Official Go src/time/format_rfc3339.go:47-56 (fast RFC3339 path)",
+        "Official Go src/time/format.go:789-797 (general formatting path)"
+      ],
+      "input": "Public injected clock with same local components 2026-08-08 12:21:18.123456789 and FixedZone offset -1 through -59 seconds; both Go and Rust clock types can represent it",
+      "go_expected_timestamp": "2026-08-08T12:21:18.123456789+00:00",
+      "rust_current_timestamp": "2026-08-08T12:21:18.123456789-00:00",
+      "reason": "Go chooses sign from zone := offset/60 after integer truncation; negative offsets whose truncated minutes equal0 take the positive branch. Rust chooses sign from raw offset<0. Existing subminute fixture offset19845 is positive and cannot detect this.",
+      "required_next_step": "Freeze additive actual public frozen-Go clock observations before a genuine Rust RED/fix; do not change any existing fixture expectation. No supplemental runtime capture was run by this read-only reviewer."
+    }
+  ],
+  "limitations": [
+    "Approval is for frozen210 replay and its declared Rust language mappings, not all public clock/URL/IO values or whole migration",
+    "Unrestricted timestamp/URL parser equivalence remains unproved; custom URL parser is examined against official source and captured rows only",
+    "Chrono clock representable ranges/leap-second representations and Go arbitrary string/nil/type identities are distinct",
+    "No new runtime probe, Cargo, aggregate formatter/Clippy/workspace/release gate, native platform or external effect was performed",
+    "Root started/completed/failed order, cleanup, writer-error joining and full context composition belong to separate owner work",
+    "Read source hashes bind this review; code or fixture changes require reassessment"
+  ],
+  "effects": "Only this review JSON was written. Existing source/test/fixture/expectation files remain unchanged by the reviewer."
+}

@@ -1,4 +1,5 @@
 use clap::{Args, CommandFactory, FromArgMatches, Parser, Subcommand};
+use pixiv_cli_rs::command_diagnostics::CommandDiagnostics;
 use pixiv_cli_rs::search::{SearchInput, SearchOptions};
 use pixiv_cli_rs::update::{
     AutomaticCheckHost, AutomaticCommand, AutomaticRuntime, PostSuccessFuture, PostSuccessPolicy,
@@ -8,7 +9,10 @@ use pixiv_cli_rs::{
     CommandError, DetailOutput, detail_artwork_id, finish_command, saved_artwork_detail,
 };
 use pixiv_sdk::{Error, Reason};
-use std::io::{self, IsTerminal, Write};
+use std::{
+    cell::RefCell,
+    io::{self, IsTerminal, Write},
+};
 
 #[derive(Parser)]
 #[command(name = "pixiv", version = build_version(), about = "Pixiv CLI and MCP server")]
@@ -320,6 +324,7 @@ async fn main() {
         }
     };
     let root_context = owner.context();
+    let diagnostics = RefCell::new(CommandDiagnostics::new(Some(Box::new(io::stderr())), None));
     let raw_args: Vec<String> = std::env::args().skip(1).collect();
     if let Some(result) = root_flags(&raw_args) {
         let exit = finish_command(result, false, false, &mut io::stderr().lock());
@@ -333,15 +338,16 @@ async fn main() {
         let machine = UpdateCommand::machine_output_requested(&raw_args[1..]);
         let result = match UpdateCommand::parse(&raw_args[1..]) {
             Ok(command) => {
+                let host = SystemUpdateHost::with_diagnostics(&diagnostics);
                 command
                     .execute_with_startup(
                         std::sync::Arc::new(root_context.clone()),
                         pixiv_app::update::BuildInfo::current(),
-                        &SystemUpdateHost,
+                        &host,
                         UpdateStartup {
                             context: &root_context,
                             hooks: &pixiv_cli_rs::startup::SystemStartupHooks::system(),
-                            preparation: &SystemUpdateHost,
+                            preparation: &host,
                         },
                         &mut io::stdout(),
                         &mut io::stderr(),
@@ -350,6 +356,7 @@ async fn main() {
             }
             Err(error) => Err(error),
         };
+        let result = diagnostics.borrow().finish(result);
         let exit = finish_command(result, false, machine, &mut io::stderr().lock());
         if exit != 0 {
             drop(owner);
@@ -358,7 +365,9 @@ async fn main() {
         return;
     }
     if pixiv_cli_rs::fanbox::is_fanbox_route(&raw_args) {
-        let (result, ndjson, machine) = execute_fanbox(&root_context, &raw_args).await;
+        let (result, ndjson, machine) =
+            execute_fanbox(&root_context, &raw_args, &diagnostics).await;
+        let result = diagnostics.borrow().finish(result);
         let exit = finish_command(result, ndjson, machine, &mut io::stderr().lock());
         if exit != 0 {
             drop(owner);
@@ -367,7 +376,8 @@ async fn main() {
         return;
     }
     if std::env::args().nth(1).as_deref() == Some("download") {
-        let (result, ndjson, machine) = execute_download(&root_context).await;
+        let (result, ndjson, machine) = execute_download(&root_context, &diagnostics).await;
+        let result = diagnostics.borrow().finish(result);
         let exit = finish_command(result, ndjson, machine, &mut io::stderr().lock());
         if exit != 0 {
             drop(owner);
@@ -376,7 +386,8 @@ async fn main() {
         return;
     }
     if std::env::args().nth(1).as_deref() == Some("auth") {
-        let (result, machine) = execute_auth(&root_context).await;
+        let (result, machine) = execute_auth(&root_context, &diagnostics).await;
+        let result = diagnostics.borrow().finish(result);
         let exit = finish_command(result, false, machine, &mut io::stderr().lock());
         if exit != 0 {
             drop(owner);
@@ -394,7 +405,8 @@ async fn main() {
         return;
     }
     if std::env::args().nth(1).as_deref() == Some("dic") {
-        let (result, ndjson, machine) = execute_dictionary(&root_context).await;
+        let (result, ndjson, machine) = execute_dictionary(&root_context, &diagnostics).await;
+        let result = diagnostics.borrow().finish(result);
         let exit = finish_command(result, ndjson, machine, &mut io::stderr().lock());
         if exit != 0 {
             drop(owner);
@@ -654,14 +666,17 @@ async fn main() {
             options.ndjson || (options.json.is_none() && !io::stdout().is_terminal())
         }
     };
+    let result = execute(
+        args,
+        &root_context,
+        &mut ndjson_output,
+        &automatic_from_matches(&matches),
+        &diagnostics,
+    )
+    .await;
+    let result = diagnostics.borrow().finish(result);
     let exit = finish_command(
-        execute(
-            args,
-            &root_context,
-            &mut ndjson_output,
-            &automatic_from_matches(&matches),
-        )
-        .await,
+        result,
         ndjson_output,
         machine_output,
         &mut io::stderr().lock(),
@@ -679,6 +694,7 @@ async fn execute_data(
     resources: &mut DataResources,
     automatic: &AutomaticCommand,
     automatic_done: &mut bool,
+    diagnostics: &RefCell<CommandDiagnostics>,
 ) -> Result<(), CommandError> {
     if let Command::Ugoira { options, .. } = &args.command {
         options.validate_arguments()?;
@@ -849,15 +865,20 @@ async fn execute_data(
         config
             .ensure_defaults()
             .map_err(pixiv_app::scheduler::SchedulerError::from)?;
-        config
+        let runtime = config
             .current()
             .and_then(|snapshot| snapshot.runtime())
             .map_err(pixiv_app::scheduler::SchedulerError::from)?;
+        diagnostics
+            .borrow_mut()
+            .start(&runtime, &automatic.names.join(" "));
         Some((directory, config))
     } else {
         None
     };
 
+    let context = diagnostics.borrow().context(root_context);
+    let root_context = &context;
     match &mut args.command {
         Command::Ugoira {
             options,
@@ -1814,18 +1835,21 @@ async fn execute_data(
     }
 }
 
-fn fanbox_runtime()
--> Result<(std::path::PathBuf, std::sync::Arc<pixiv_app::config::Store>), CommandError> {
+fn fanbox_runtime(
+    diagnostics: &RefCell<CommandDiagnostics>,
+    operation: &str,
+) -> Result<(std::path::PathBuf, std::sync::Arc<pixiv_app::config::Store>), CommandError> {
     let directory = pixiv_app::callback_handler::app_data_directory()
         .map_err(|error| CommandError::MessageText(error.to_string()))?;
     let config = std::sync::Arc::new(pixiv_app::config::Store::new(directory.join("config.toml")));
     config
         .ensure_defaults()
         .map_err(pixiv_app::scheduler::SchedulerError::from)?;
-    config
+    let runtime = config
         .current()
         .and_then(|snapshot| snapshot.runtime())
         .map_err(pixiv_app::scheduler::SchedulerError::from)?;
+    diagnostics.borrow_mut().start(&runtime, operation);
     Ok((directory, config))
 }
 
@@ -1868,12 +1892,17 @@ fn close_fanbox_database(
 async fn execute_fanbox(
     root_context: &pixiv_app::lifecycle::Context,
     args: &[String],
+    diagnostics: &RefCell<CommandDiagnostics>,
 ) -> (Result<(), CommandError>, bool, bool) {
     use pixiv_cli_rs::{fanbox, fanbox_auth, fanbox_mcp};
     let mut ndjson = false;
     let mut machine = false;
     let result = async {
         let route = fanbox::command_route(args);
+        let operation = std::iter::once("pixiv")
+            .chain(route.path.iter().map(String::as_str))
+            .collect::<Vec<_>>()
+            .join(" ");
         if route.path.get(1).is_none_or(|part| part != "auth")
             && let Some(help) = fanbox::help_route(args)?
         {
@@ -1900,7 +1929,9 @@ async fn execute_fanbox(
             ["fanbox", "mcp"] => {
                 let command = fanbox_mcp::McpCommand::parse(&route.args)?;
                 pixiv_cli_rs::startup::run_system_startup(root_context, &mut io::stderr())?;
-                let (directory, config) = fanbox_runtime()?;
+                let (directory, config) = fanbox_runtime(diagnostics, &operation)?;
+                let context = diagnostics.borrow().context(root_context);
+                let root_context = &context;
                 command
                     .run(fanbox_mcp::Data {
                         service_factory: move || fanbox_service(directory, config),
@@ -1934,11 +1965,13 @@ async fn execute_fanbox(
                     &pixiv_cli_rs::startup::SystemStartupHooks::system(),
                     &mut io::stderr(),
                     || {
-                        runtime = Some(fanbox_runtime()?);
+                        runtime = Some(fanbox_runtime(diagnostics, &operation)?);
                         Ok(())
                     },
                 )?;
                 let (directory, config) = runtime.expect("FANBOX read startup was resolved");
+                let context = diagnostics.borrow().context(root_context);
+                let root_context = &context;
                 let mut owned_database = None;
                 let result = command
                     .execute(
@@ -2026,11 +2059,13 @@ async fn execute_fanbox(
                     &pixiv_cli_rs::startup::SystemStartupHooks::system(),
                     &mut io::stderr(),
                     || {
-                        runtime = Some(fanbox_runtime()?);
+                        runtime = Some(fanbox_runtime(diagnostics, &operation)?);
                         Ok(())
                     },
                 )?;
                 let (directory, config) = runtime.expect("FANBOX download startup was resolved");
+                let context = diagnostics.borrow().context(root_context);
+                let root_context = &context;
                 let download_path = config
                     .current()
                     .and_then(|snapshot| snapshot.runtime())
@@ -2066,12 +2101,17 @@ async fn execute_fanbox(
 
 async fn execute_dictionary(
     root_context: &pixiv_app::lifecycle::Context,
+    diagnostics: &RefCell<CommandDiagnostics>,
 ) -> (Result<(), CommandError>, bool, bool) {
     use pixiv_cli_rs::dictionary::{DictionaryCommand, service};
     let args: Vec<String> = std::env::args().skip(2).collect();
     let (ndjson, machine) = DictionaryCommand::output_policy_requested(&args);
     let result = async {
         let command = DictionaryCommand::parse_root(&args)?;
+        let path: Vec<String> = std::iter::once("dic")
+            .chain(command.leaf_name())
+            .map(str::to_owned)
+            .collect();
         let config = if command.requires_runtime() {
             pixiv_cli_rs::startup::run_system_startup(root_context, &mut io::stderr())?;
             let directory = pixiv_app::callback_handler::app_data_directory()
@@ -2080,14 +2120,21 @@ async fn execute_dictionary(
             config
                 .ensure_defaults()
                 .map_err(pixiv_app::scheduler::SchedulerError::from)?;
-            config
+            let runtime = config
                 .current()
                 .and_then(|snapshot| snapshot.runtime())
                 .map_err(pixiv_app::scheduler::SchedulerError::from)?;
+            let operation = std::iter::once("pixiv")
+                .chain(path.iter().map(String::as_str))
+                .collect::<Vec<_>>()
+                .join(" ");
+            diagnostics.borrow_mut().start(&runtime, &operation);
             Some(config)
         } else {
             None
         };
+        let context = diagnostics.borrow().context(root_context);
+        let root_context = &context;
         if command.render_help("pixiv dic").is_some() {
             command.write_help("pixiv dic", io::stdout());
             return Ok(());
@@ -2111,11 +2158,7 @@ async fn execute_dictionary(
             .await;
         automatic_result(
             result,
-            &automatic_from_path(
-                &["dic".into(), args.first().cloned().unwrap_or_default()],
-                &args,
-                false,
-            ),
+            &automatic_from_path(&path, &args, false),
             root_context,
         )
         .await
@@ -2183,6 +2226,7 @@ impl std::error::Error for DownloadConfigReadError {
 
 async fn execute_download(
     root_context: &pixiv_app::lifecycle::Context,
+    diagnostics: &RefCell<CommandDiagnostics>,
 ) -> (Result<(), CommandError>, bool, bool) {
     let args: Vec<String> = std::env::args().skip(2).collect();
     let (ndjson, machine) = pixiv_cli_rs::download::DownloadCommand::output_policy_requested(&args);
@@ -2197,7 +2241,7 @@ async fn execute_download(
             io::stdout().write_all(help.as_bytes())?;
             return Ok(());
         }
-        let context = root_context.clone();
+        let mut context = root_context.clone();
         if command.requires_startup() {
             pixiv_cli_rs::startup::run_system_startup(&context, &mut io::stderr())?;
         }
@@ -2213,7 +2257,7 @@ async fn execute_download(
             store
                 .ensure_defaults()
                 .map_err(pixiv_app::scheduler::SchedulerError::from)?;
-            store
+            let runtime = store
                 .current()
                 .and_then(|snapshot| snapshot.runtime())
                 .map_err(|error| {
@@ -2228,7 +2272,10 @@ async fn execute_download(
                         pixiv_app::scheduler::SchedulerError::from(error).into()
                     }
                 })?;
+            diagnostics.borrow_mut().start(&runtime, "pixiv download");
+            context = diagnostics.borrow().context(root_context);
         }
+        let root_context = &context;
         let automatic = automatic_from_path(&["download".into()], &args, false);
         let post_success = |policy: PostSuccessPolicy| -> PostSuccessFuture<'_> {
             let mut automatic = automatic.clone();
@@ -2254,6 +2301,7 @@ async fn execute_download(
 
 async fn execute_auth(
     root_context: &pixiv_app::lifecycle::Context,
+    diagnostics: &RefCell<CommandDiagnostics>,
 ) -> (Result<(), CommandError>, bool) {
     let args: Vec<String> = std::env::args().skip(2).collect();
     let machine = pixiv_cli_rs::auth_accounts::machine_output_requested(&args);
@@ -2278,16 +2326,6 @@ async fn execute_auth(
         } else {
             std::path::PathBuf::new()
         };
-        if command.requires_startup() {
-            let store = pixiv_app::config::Store::new(&path);
-            store
-                .ensure_defaults()
-                .map_err(pixiv_app::scheduler::SchedulerError::from)?;
-            store
-                .current()
-                .and_then(|snapshot| snapshot.runtime())
-                .map_err(pixiv_app::scheduler::SchedulerError::from)?;
-        }
         drop(input);
         use pixiv_cli_rs::auth_accounts::AuthCommand;
         let auth_path: Vec<String> = match &command {
@@ -2317,6 +2355,25 @@ async fn execute_auth(
             }
             _ => vec!["auth".into()],
         };
+        if command.requires_startup() {
+            let store = pixiv_app::config::Store::new(&path);
+            store
+                .ensure_defaults()
+                .map_err(pixiv_app::scheduler::SchedulerError::from)?;
+            let runtime = store
+                .current()
+                .and_then(|snapshot| snapshot.runtime())
+                .map_err(pixiv_app::scheduler::SchedulerError::from)?;
+            diagnostics.borrow_mut().start(
+                &runtime,
+                &std::iter::once("pixiv")
+                    .chain(auth_path.iter().map(String::as_str))
+                    .collect::<Vec<_>>()
+                    .join(" "),
+            );
+        }
+        let context = diagnostics.borrow().context(&context);
+        let root_context = &context;
         let automatic = automatic_from_path(&auth_path, &args, !command.requires_config());
         let post_success = |policy: PostSuccessPolicy| -> PostSuccessFuture<'_> {
             let mut automatic = automatic.clone();
@@ -2384,8 +2441,18 @@ fn build_version() -> &'static str {
     option_env!("PIXIV_BUILD_VERSION").unwrap_or("dev")
 }
 
-struct SystemUpdateHost;
-impl SystemUpdateHost {
+struct SystemUpdateHost<'a> {
+    diagnostics: Option<&'a RefCell<CommandDiagnostics>>,
+}
+impl<'a> SystemUpdateHost<'a> {
+    fn automatic() -> Self {
+        Self { diagnostics: None }
+    }
+    fn with_diagnostics(diagnostics: &'a RefCell<CommandDiagnostics>) -> Self {
+        Self {
+            diagnostics: Some(diagnostics),
+        }
+    }
     fn store(&self) -> Result<pixiv_app::config::Store, CommandError> {
         let directory = pixiv_app::callback_handler::app_data_directory()
             .map_err(|error| CommandError::State(Box::new(error)))?;
@@ -2398,7 +2465,7 @@ impl SystemUpdateHost {
             .map_err(|error| CommandError::State(Box::new(error)))
     }
 }
-impl UpdateHost for SystemUpdateHost {
+impl UpdateHost for SystemUpdateHost<'_> {
     fn load_update_runtime_config(&self) -> Result<UpdateRuntime, CommandError> {
         self.runtime().map(|runtime| UpdateRuntime {
             https_proxy: runtime.https_proxy,
@@ -2417,17 +2484,31 @@ impl UpdateHost for SystemUpdateHost {
         .map_err(CommandError::State)
     }
 }
-impl UpdatePreparation for SystemUpdateHost {
+impl UpdatePreparation for SystemUpdateHost<'_> {
     fn ensure_update_config(&self) -> Result<(), CommandError> {
         self.store()?
             .ensure_defaults()
             .map_err(|error| CommandError::State(Box::new(error)))
     }
     fn start_update_diagnostics(&self) -> Result<(), CommandError> {
-        self.runtime().map(|_| ())
+        let runtime = self.runtime()?;
+        if let Some(diagnostics) = self.diagnostics {
+            diagnostics.borrow_mut().start(&runtime, "pixiv update");
+        }
+        Ok(())
+    }
+    fn scoped_update_context(
+        &self,
+        context: pixiv_app::update::CallerContext,
+    ) -> pixiv_app::update::CallerContext {
+        if let Some(diagnostics) = self.diagnostics {
+            diagnostics.borrow().caller_context(context)
+        } else {
+            context
+        }
     }
 }
-impl AutomaticCheckHost for SystemUpdateHost {
+impl AutomaticCheckHost for SystemUpdateHost<'_> {
     fn load_automatic_update_runtime_config(&self) -> Result<AutomaticRuntime, CommandError> {
         self.runtime().map(|runtime| AutomaticRuntime {
             enabled: runtime.update_check_enabled,
@@ -2504,7 +2585,7 @@ async fn automatic_result(
         command,
         std::sync::Arc::new(context.clone()),
         pixiv_app::update::BuildInfo::current(),
-        &SystemUpdateHost,
+        &SystemUpdateHost::automatic(),
         &mut io::stderr(),
     )
     .await
@@ -2555,6 +2636,7 @@ async fn execute(
     root_context: &pixiv_app::lifecycle::Context,
     ndjson_output: &mut bool,
     automatic: &AutomaticCommand,
+    diagnostics: &RefCell<CommandDiagnostics>,
 ) -> Result<(), CommandError> {
     let mut resources = DataResources::default();
     let mut automatic_done = false;
@@ -2565,12 +2647,14 @@ async fn execute(
         &mut resources,
         automatic,
         &mut automatic_done,
+        diagnostics,
     )
     .await;
+    let context = diagnostics.borrow().context(root_context);
     let result = if automatic_done {
         result
     } else {
-        automatic_result(result, automatic, root_context).await
+        automatic_result(result, automatic, &context).await
     };
     pixiv_cli_rs::finish_with_cleanup(result, resources.close())
 }

@@ -35,6 +35,14 @@ impl OwnedHome {
         self.directory.path().join(".pixiv-cli/config.toml")
     }
     pub fn run(&self, args: &[&str], input: &str) -> Output {
+        self.run_with_environment(args, input, &[])
+    }
+    pub fn run_with_environment(
+        &self,
+        args: &[&str],
+        input: &str,
+        environment: &[(&str, &str)],
+    ) -> Output {
         let mut command = Command::new(env!("CARGO_BIN_EXE_pixiv"));
         command
             .args(args)
@@ -48,6 +56,7 @@ impl OwnedHome {
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped());
+        command.envs(environment.iter().copied());
         deny_network(&mut command);
         let mut child = command.spawn().unwrap();
         if let Some(mut stdin) = child.stdin.take() {

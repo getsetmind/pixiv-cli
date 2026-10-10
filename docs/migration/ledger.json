@@ -11,17 +11,27 @@
       },
       "rust_sources": [
         "crates/pixiv-cli/src/interrupt.rs",
-        "crates/pixiv-cli/src/main.rs"
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/diagnostics.rs",
+        "crates/pixiv-cli/src/command_diagnostics.rs",
+        "crates/pixiv-cli/src/dictionary/mod.rs"
       ],
       "tests": [
         "cmd/pixiv/migration_interrupt_test.go",
         "cmd/pixiv/migration_interrupt_windows_source_test.go",
-        "crates/pixiv-cli/tests/cli_interrupt.rs"
+        "crates/pixiv-cli/tests/cli_interrupt.rs",
+        "internal/cli/migration_diagnostics_connected_test.go",
+        "internal/cli/migration_diagnostics_joined_test.go",
+        "crates/pixiv-cli/tests/diagnostics_presenter.rs",
+        "crates/pixiv-cli/tests/command_diagnostics.rs",
+        "internal/cli/migration_diagnostics_dictionary_path_test.go",
+        "crates/pixiv-cli/tests/root_main_diagnostics.rs"
       ],
       "verified_platforms": [],
       "differences": [
         "実Rust mainのowned signal contextを全dispatchへ明示伝播する。Go root-entry12行のうち10download/OAuth行はowned Unix SIGINTとgenuine SDK/Execution/local saveのRust SPIでobservable fields比較、MCP SIGINT/EOF2行は実Rust binaryを比較する。Go physical HTTP connection closed countersをRust request/body future dropsと同一視しない。",
-        "Go Stopのhandler unregisterに対しTokioはUnix process-wide handlerをdrop後も保持する具体差分。Windows CtrlC/CtrlBreak mappingはinstalled Go stdlib go1.27.1のsource-only契約でnative Windows compile/run未実施。全signal/EOF/IO/clock/TTY/並行scheduleは未検証。"
+        "Go Stopのhandler unregisterに対しTokioはUnix process-wide handlerをdrop後も保持する具体差分。Windows CtrlC/CtrlBreak mappingはinstalled Go stdlib go1.27.1のsource-only契約でnative Windows compile/run未実施。全signal/EOF/IO/clock/TTY/並行scheduleは未検証。",
+        "Root diagnostic Presenter and command scope are connected through normal writer/clock/context ports. Go-first Presenter210 observations, actual RunContext19 rows, fixed-clock cause4 and joined Pipeline/Startup6 witnesses are separate evidence classes. Exact bytes, first writer cause, continued attempts, cleanup-before-finish and NDJSON wrapped/joined EPIPE suppression are retained. Main/native validation remains bounded; actual resource Close errors, multi-Unwrap/Done-channel identities and full historical root matrix are not established. See docs/migration/root-diagnostics.md and current-feature-coverage.md; no platform/status promotion. Additive signed-clock offset14 and dictionary scalar-flag canonical-path8 witnesses preserve prior fixtures; actual Linux main compares two prior whole-output rows and eight path supplement rows, with separate routing/exclusion smoke tests. Process-exit database reopening is not an instrumented internal Close-order witness."
       ]
     },
     {
@@ -3013,7 +3023,7 @@
       ],
       "verified_platforms": [],
       "differences": [
-        "Connected Rust update/config/proxy/source/cache/coordinator/signed-install and ordinary-success automatic checker are implemented at bounded synthetic/owned boundaries; status is in_progress with no verified platform. Original Go1148 observations stay unchanged, with new Go-first URL/time13, HTTP7 and archive30 cases. CLI library109 rows and bounded actual binary18 parser/help observations do not prove all root158: production debug diagnostic events/writer-fault joining and wider parser/root metadata remain unfinished. Root owner order preserves per-call lease/client-before-hook versus registered DB/reverse closer-after-hook. Auth retained database Arc cannot report wider Go Close errors. See docs/migration/updater-implementation.md and its separate terminal validation/review artifacts.",
+        "Connected Rust update/config/proxy/source/cache/coordinator/signed-install and ordinary-success automatic checker are implemented at bounded synthetic/owned boundaries; status is in_progress with no verified platform. Original Go1148 observations stay unchanged, with new Go-first URL/time13, HTTP7 and archive30 cases. CLI library109 rows and bounded actual binary18 parser/help observations do not prove all root158: root debug diagnostics/writer-fault joining now connect through the separate root-diagnostics checkpoint, while full historical root/parser/metadata and native cleanup verification remain unfinished. Root owner order preserves per-call lease/client-before-hook versus registered DB/reverse closer-after-hook. Auth retained database Arc cannot report wider Go Close errors. See docs/migration/updater-implementation.md and its separate terminal validation/review artifacts.",
         "Native Go-install source provenance (debug.ReadBuildInfo mapping), arbitrary parser/raw-byte/URL/checksum/archive/version grammar, physical transport/proxy/redirect/source timing, syscall/cache/replacement/future-drop/concurrent schedules and all native OS/arch remain unverified. Linux source-driven Windows replacement26 is not native Windows ABI/runtime or ACL evidence. Signed Install199 uses a public checker mock; separate native Linux preflight41 (16 concrete checker/25 default installer) executes only a visible owned Go helper and preserves started-process signal-killed classification separately from caller Context. Actual root sealed capture/replays use ordinary owners and synthetic external ports; private policy/nil factories, dynamic Go error layout/context object identity and native install provenance are not Rust runtime evidence. Started native child cancellation retains signal-killed error membership separately from caller context. Earlier wrong-scope TOML public-probe attempts failed DNS/network without response/accounts and remain discarded history; final fail-closed capture is synthetic.",
         "Existing SDK Context/client ownership/idle-close, Accept: */*, relay HTTP/2, pacing, signal restoration, destructive repeated Windows association cleanup and native/platform/distribution/license debts remain. Full six-platform release packaging/licensing/install scripts/signing/publication/handler/PATH are distinct required work; frozen install.sh/install.cmd do not verify checksums.json Ed25519. No denied supplemental native probe retry, feature removal, empty success or Go fallback."
       ]

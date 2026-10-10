@@ -1,0 +1,1044 @@
+{
+  "schema_version": 1,
+  "frozen_go": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "toolchain": "go1.27.1",
+  "source_sha256": {
+    "crates/pixiv-cli/tests/fixtures/diagnostics-root-joined.json": "dc9b370bf0d4a3b095b54e8039c375be388b966e37e1ec30810b684ab8b117c5",
+    "crates/pixiv-cli/tests/fixtures/diagnostics-root.json": "61128f4a87f6a9ac32f35e41c20ac76baa99c9cf148b7cfd14fbd2d612df63e7",
+    "docs/migration/provenance/updater-contracts-baseline.json": "d36a8ee61c519b74211b7def61a2425e6126278d8ea13d8b24e40392b3f03edd",
+    "go.mod": "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c",
+    "go.sum": "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e",
+    "internal/cli/commands/lifecycle.go": "d81bfb1a664832ec707dba371a102da56baa05f3aa079905dad48de309e38080",
+    "internal/cli/commands/pixiv/dic/article.go": "3a269ed0c18e2b6c4d4de3ac26e555fb540b75a9ff53f65e80c7305795fcc494",
+    "internal/cli/commands/pixiv/dic/dic.go": "291a50c64e94cfce5251a98bead928b3d802712521748e0061870f9f4a3c67db",
+    "internal/cli/commands/pixiv/dic/search.go": "c8d0b86236b2cccd161c2c1b3c6e518b23c7dabea5d1c9985ac82cccb954387b",
+    "internal/cli/commands/update/automatic_check.go": "20db84c6bedf70d53a39103f5c69607399da838dbfcf397dc5b57d5798bb350f",
+    "internal/cli/commands/update/production.go": "21205c5d8ceb339f671914963161a495ca8bf66f2a347d49bb6165e59c0d000b",
+    "internal/cli/commands/update/update.go": "b1fd7290eabe0dd73355c2c65a234ff17c85736950e45c0af8e9f30e3c331d98",
+    "internal/cli/commands/update/update_cmd.go": "2422b577f3538bc0bb1cfc17e27a2bd9a3e14a7a72b1981cb9291af5be28b88d",
+    "internal/cli/composition.go": "61606c01971156607d6e632cbf417a63c8e7f02b4c673172ee3db9392dc0f9fc",
+    "internal/cli/diagnostics/diagnostics.go": "88b5c5f4a4ca3b13bef00bdebf1d9d787e6e32f1fe90f3d6abb3a30d2d9516d9",
+    "internal/cli/execution.go": "627d8d8ccd6e7c35508abe0daab3209d3daf34dbf1927ab6f9f70145b623c864",
+    "internal/cli/migration_diagnostics_connected_test.go": "799065d451c09f227e167c9c9c86dbbd352356ec6fd432b990998c43465fd837",
+    "internal/cli/migration_diagnostics_dictionary_path_test.go": "b6f4c24d630b892ca78bf66238b8d4f6cb09706ac72a3411ceafbd52a4252836",
+    "internal/cli/migration_diagnostics_joined_test.go": "f77df66c0ca4218abe9b22338dd04a5a46b2dc9e05f57ef49284cdb431d4d08e",
+    "internal/cli/migration_update_connected_test.go": "aaa65c7730acab24c9c864705bbc2555fe5b91c1264f4eb3a0a9e19518e4ce84",
+    "internal/cli/root.go": "afbb8c2d7a90ccbe3ce124e9e2ee68ec463b9d020ba161d0d1cb270d1e1e7b1e",
+    "internal/services/dic/transport.go": "8c7839a95f90f570c4ac453e40a0a900584142b92d17aa1dc5a2c80c4450a9d9",
+    "internal/shared/buildinfo/buildinfo.go": "f1d207133ada61dc518fd2db18ff918cce20d50b26e5667101578ee8f81468ae",
+    "internal/shared/diagnostics/diagnostics.go": "aecd4045f50f6bcf4cd20f316d680cbfb28e657f919ce1c0700dfdad8d5ddc76",
+    "internal/update/automatic_check.go": "6e3ed70bd9c82213a42a4272912d212f907bad23e2eda718864a6b42e63c2f1c",
+    "internal/update/coordinator.go": "7ddc8b681e9c27fe088236d6d5fe6973b2cdce6bfb8b86a0213194647f320968",
+    "internal/update/reexports.go": "1ec99e116a0a3322486290ed02b089ce870108de6163c818ecf210da9ea12c07",
+    "module:github.com/spf13/cobra@v1.10.1/command.go": "797ff14415e5fe31a22f7be52525cc0c809e1e8b6450e42d52afeb4f08389e61"
+  },
+  "source_grammar": [
+    "Pinned Cobra v1.10.1 Command.Find walks subcommands after stripFlags removes --flag value pairs and --flag=value tokens. argsMinusFirstX skips scalar flag values when removing the actual subcommand token, so a value equal to search/article is not removed as the leaf.",
+    "dic.New binds Normal to the group; unannotated search/article leaves inherit StartupHooks=true, EnsureConfig=true, AutomaticUpdate=true, MCP=false. Both leaves require exactly one positional argument before root pre-run hooks.",
+    "Article owns scalar --lang (default ja), --no-counters and --json/-j. Its RunE checks ja/en and returns usageError before requesting its anonymous dictionary reader. Invalid language therefore fails after startup/config and started diagnostics with canonical path pixiv dic article, then failed and usage exit 2.",
+    "Search owns integer --page and --limit/-n, --json/-j and --ndjson. Invalid integer scalar values fail ParseFlags before positional validation/startup/config/diagnostics. --lang is not a search flag, and search rejects it as an unknown option before startup. Each parsed target and Changed flag state are independently captured by a fresh production Cobra root."
+  ],
+  "limitations": [
+    "Eight actual Go RunContext/root dictionary failure rows use owned config, debug JSON diagnostics and disabled automatic update. The existing final updater setup/observer isolates home and stubs startup/account/update ports. http.DefaultTransport is additionally replaced by a fail-closed in-memory RoundTripper before roots are constructed; zero HTTP attempts are asserted. There is no HTTP, DNS, TLS, account, media, browser, registration, HKCU or Cargo action.",
+    "All four article rows stop at language validation before reader use; all four search rows stop at flag parsing before startup. These capture ordered grammar/canonical diagnostic path and failure bytes, not dictionary HTTP success or post-success automatic checking.",
+    "Root presenter clock is unchanged. Exact raw accepted stderr and writer observations are retained separately. Only validated canonical root JSON time positions are normalized by the already sealed primary normalizer; byte-length changes come solely from that timestamp substitution. Ordinary parser/usage errors, target, requirements, flag values/Changed state, stdout, trace, counters and config remain exact.",
+    "Primary root19 and joined-source6 producers/fixtures remain byte-identical. Existing updater source guard verifies the unchanged 434 frozen Go production/module files and 110 preexisting published fixtures. The Cobra source is version-pinned in unchanged go.mod/go.sum and its actual cached source hash is captured explicitly."
+  ],
+  "cases": [
+    {
+      "name": "article/preleaf-lang-search",
+      "evidence_class": "behavioral",
+      "input": {
+        "boundary": "actual-root-RunContext",
+        "args": [
+          "dic",
+          "--lang",
+          "search",
+          "article",
+          "owned",
+          "--json"
+        ],
+        "stdin": "",
+        "version": "v1.2.3",
+        "config_before": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+        "cache_before": null,
+        "environment": {
+          "PIXIV_LOG_FORMAT": "json",
+          "PIXIV_LOG_LEVEL": "debug"
+        },
+        "seed_accounts": false,
+        "source": "",
+        "release_tag": "",
+        "release_prerelease": false
+      },
+      "observation": {
+        "exit": 2,
+        "stdout": "",
+        "stderr": "{\"time\":\"2000-01-02T03:04:05Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"started\",\"operation\":\"pixiv dic article\"}\n{\"time\":\"2000-01-02T03:04:05Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"failed\",\"operation\":\"pixiv dic article\",\"reason\":\"command failed\"}\nerror: --lang must be one of: ja, en\n",
+        "trace": [
+          "startup.cleanup",
+          "startup.supported",
+          "runtime.load/config_exists=true",
+          "stderr.write",
+          "stderr.write",
+          "stderr.write"
+        ],
+        "output_writes": [],
+        "error_writes": [
+          {
+            "length": 118,
+            "n": 118,
+            "error": ""
+          },
+          {
+            "length": 143,
+            "n": 143,
+            "error": ""
+          },
+          {
+            "length": 37,
+            "n": 37,
+            "error": ""
+          }
+        ],
+        "stdin_reads": 0,
+        "stdin_bytes": 0,
+        "target": "pixiv dic article",
+        "parser_error": "",
+        "flags": [
+          {
+            "name": "help",
+            "type": "bool",
+            "default": "false",
+            "value": "false",
+            "changed": false,
+            "shorthand": "h",
+            "no_opt_default": "true",
+            "usage": "help for article"
+          },
+          {
+            "name": "json",
+            "type": "bool",
+            "default": "false",
+            "value": "true",
+            "changed": true,
+            "shorthand": "j",
+            "no_opt_default": "true",
+            "usage": "print JSON"
+          },
+          {
+            "name": "lang",
+            "type": "string",
+            "default": "ja",
+            "value": "search",
+            "changed": true,
+            "shorthand": "",
+            "no_opt_default": "",
+            "usage": "article language: ja or en"
+          },
+          {
+            "name": "no-counters",
+            "type": "bool",
+            "default": "false",
+            "value": "false",
+            "changed": false,
+            "shorthand": "",
+            "no_opt_default": "true",
+            "usage": "skip the view and work counters"
+          }
+        ],
+        "lifecycle": {
+          "StartupHooks": true,
+          "EnsureConfig": true,
+          "AutomaticUpdate": true,
+          "MCP": false
+        },
+        "runtime_calls": 1,
+        "update_proxies": [],
+        "automatic_proxies": [],
+        "detections": [],
+        "requests": [],
+        "commands": [],
+        "installs": [],
+        "account_factories": 0,
+        "sdk_factories": 0,
+        "fanbox_factories": 0,
+        "database_before": false,
+        "database_after": false,
+        "config_after": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+        "cache_after": null,
+        "accounts_after": [],
+        "owned_files": {}
+      },
+      "http_attempts": 0
+    },
+    {
+      "name": "article/preleaf-lang-article",
+      "evidence_class": "behavioral",
+      "input": {
+        "boundary": "actual-root-RunContext",
+        "args": [
+          "dic",
+          "--lang",
+          "article",
+          "article",
+          "owned",
+          "--json"
+        ],
+        "stdin": "",
+        "version": "v1.2.3",
+        "config_before": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+        "cache_before": null,
+        "environment": {
+          "PIXIV_LOG_FORMAT": "json",
+          "PIXIV_LOG_LEVEL": "debug"
+        },
+        "seed_accounts": false,
+        "source": "",
+        "release_tag": "",
+        "release_prerelease": false
+      },
+      "observation": {
+        "exit": 2,
+        "stdout": "",
+        "stderr": "{\"time\":\"2000-01-02T03:04:05Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"started\",\"operation\":\"pixiv dic article\"}\n{\"time\":\"2000-01-02T03:04:05Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"failed\",\"operation\":\"pixiv dic article\",\"reason\":\"command failed\"}\nerror: --lang must be one of: ja, en\n",
+        "trace": [
+          "startup.cleanup",
+          "startup.supported",
+          "runtime.load/config_exists=true",
+          "stderr.write",
+          "stderr.write",
+          "stderr.write"
+        ],
+        "output_writes": [],
+        "error_writes": [
+          {
+            "length": 118,
+            "n": 118,
+            "error": ""
+          },
+          {
+            "length": 143,
+            "n": 143,
+            "error": ""
+          },
+          {
+            "length": 37,
+            "n": 37,
+            "error": ""
+          }
+        ],
+        "stdin_reads": 0,
+        "stdin_bytes": 0,
+        "target": "pixiv dic article",
+        "parser_error": "",
+        "flags": [
+          {
+            "name": "help",
+            "type": "bool",
+            "default": "false",
+            "value": "false",
+            "changed": false,
+            "shorthand": "h",
+            "no_opt_default": "true",
+            "usage": "help for article"
+          },
+          {
+            "name": "json",
+            "type": "bool",
+            "default": "false",
+            "value": "true",
+            "changed": true,
+            "shorthand": "j",
+            "no_opt_default": "true",
+            "usage": "print JSON"
+          },
+          {
+            "name": "lang",
+            "type": "string",
+            "default": "ja",
+            "value": "article",
+            "changed": true,
+            "shorthand": "",
+            "no_opt_default": "",
+            "usage": "article language: ja or en"
+          },
+          {
+            "name": "no-counters",
+            "type": "bool",
+            "default": "false",
+            "value": "false",
+            "changed": false,
+            "shorthand": "",
+            "no_opt_default": "true",
+            "usage": "skip the view and work counters"
+          }
+        ],
+        "lifecycle": {
+          "StartupHooks": true,
+          "EnsureConfig": true,
+          "AutomaticUpdate": true,
+          "MCP": false
+        },
+        "runtime_calls": 1,
+        "update_proxies": [],
+        "automatic_proxies": [],
+        "detections": [],
+        "requests": [],
+        "commands": [],
+        "installs": [],
+        "account_factories": 0,
+        "sdk_factories": 0,
+        "fanbox_factories": 0,
+        "database_before": false,
+        "database_after": false,
+        "config_after": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+        "cache_after": null,
+        "accounts_after": [],
+        "owned_files": {}
+      },
+      "http_attempts": 0
+    },
+    {
+      "name": "article/preleaf-lang-equals-search",
+      "evidence_class": "behavioral",
+      "input": {
+        "boundary": "actual-root-RunContext",
+        "args": [
+          "dic",
+          "--lang=search",
+          "article",
+          "owned",
+          "--json"
+        ],
+        "stdin": "",
+        "version": "v1.2.3",
+        "config_before": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+        "cache_before": null,
+        "environment": {
+          "PIXIV_LOG_FORMAT": "json",
+          "PIXIV_LOG_LEVEL": "debug"
+        },
+        "seed_accounts": false,
+        "source": "",
+        "release_tag": "",
+        "release_prerelease": false
+      },
+      "observation": {
+        "exit": 2,
+        "stdout": "",
+        "stderr": "{\"time\":\"2000-01-02T03:04:05Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"started\",\"operation\":\"pixiv dic article\"}\n{\"time\":\"2000-01-02T03:04:05Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"failed\",\"operation\":\"pixiv dic article\",\"reason\":\"command failed\"}\nerror: --lang must be one of: ja, en\n",
+        "trace": [
+          "startup.cleanup",
+          "startup.supported",
+          "runtime.load/config_exists=true",
+          "stderr.write",
+          "stderr.write",
+          "stderr.write"
+        ],
+        "output_writes": [],
+        "error_writes": [
+          {
+            "length": 118,
+            "n": 118,
+            "error": ""
+          },
+          {
+            "length": 143,
+            "n": 143,
+            "error": ""
+          },
+          {
+            "length": 37,
+            "n": 37,
+            "error": ""
+          }
+        ],
+        "stdin_reads": 0,
+        "stdin_bytes": 0,
+        "target": "pixiv dic article",
+        "parser_error": "",
+        "flags": [
+          {
+            "name": "help",
+            "type": "bool",
+            "default": "false",
+            "value": "false",
+            "changed": false,
+            "shorthand": "h",
+            "no_opt_default": "true",
+            "usage": "help for article"
+          },
+          {
+            "name": "json",
+            "type": "bool",
+            "default": "false",
+            "value": "true",
+            "changed": true,
+            "shorthand": "j",
+            "no_opt_default": "true",
+            "usage": "print JSON"
+          },
+          {
+            "name": "lang",
+            "type": "string",
+            "default": "ja",
+            "value": "search",
+            "changed": true,
+            "shorthand": "",
+            "no_opt_default": "",
+            "usage": "article language: ja or en"
+          },
+          {
+            "name": "no-counters",
+            "type": "bool",
+            "default": "false",
+            "value": "false",
+            "changed": false,
+            "shorthand": "",
+            "no_opt_default": "true",
+            "usage": "skip the view and work counters"
+          }
+        ],
+        "lifecycle": {
+          "StartupHooks": true,
+          "EnsureConfig": true,
+          "AutomaticUpdate": true,
+          "MCP": false
+        },
+        "runtime_calls": 1,
+        "update_proxies": [],
+        "automatic_proxies": [],
+        "detections": [],
+        "requests": [],
+        "commands": [],
+        "installs": [],
+        "account_factories": 0,
+        "sdk_factories": 0,
+        "fanbox_factories": 0,
+        "database_before": false,
+        "database_after": false,
+        "config_after": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+        "cache_after": null,
+        "accounts_after": [],
+        "owned_files": {}
+      },
+      "http_attempts": 0
+    },
+    {
+      "name": "article/postleaf-lang-search",
+      "evidence_class": "behavioral",
+      "input": {
+        "boundary": "actual-root-RunContext",
+        "args": [
+          "dic",
+          "article",
+          "owned",
+          "--lang",
+          "search",
+          "--json"
+        ],
+        "stdin": "",
+        "version": "v1.2.3",
+        "config_before": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+        "cache_before": null,
+        "environment": {
+          "PIXIV_LOG_FORMAT": "json",
+          "PIXIV_LOG_LEVEL": "debug"
+        },
+        "seed_accounts": false,
+        "source": "",
+        "release_tag": "",
+        "release_prerelease": false
+      },
+      "observation": {
+        "exit": 2,
+        "stdout": "",
+        "stderr": "{\"time\":\"2000-01-02T03:04:05Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"started\",\"operation\":\"pixiv dic article\"}\n{\"time\":\"2000-01-02T03:04:05Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"failed\",\"operation\":\"pixiv dic article\",\"reason\":\"command failed\"}\nerror: --lang must be one of: ja, en\n",
+        "trace": [
+          "startup.cleanup",
+          "startup.supported",
+          "runtime.load/config_exists=true",
+          "stderr.write",
+          "stderr.write",
+          "stderr.write"
+        ],
+        "output_writes": [],
+        "error_writes": [
+          {
+            "length": 118,
+            "n": 118,
+            "error": ""
+          },
+          {
+            "length": 143,
+            "n": 143,
+            "error": ""
+          },
+          {
+            "length": 37,
+            "n": 37,
+            "error": ""
+          }
+        ],
+        "stdin_reads": 0,
+        "stdin_bytes": 0,
+        "target": "pixiv dic article",
+        "parser_error": "",
+        "flags": [
+          {
+            "name": "help",
+            "type": "bool",
+            "default": "false",
+            "value": "false",
+            "changed": false,
+            "shorthand": "h",
+            "no_opt_default": "true",
+            "usage": "help for article"
+          },
+          {
+            "name": "json",
+            "type": "bool",
+            "default": "false",
+            "value": "true",
+            "changed": true,
+            "shorthand": "j",
+            "no_opt_default": "true",
+            "usage": "print JSON"
+          },
+          {
+            "name": "lang",
+            "type": "string",
+            "default": "ja",
+            "value": "search",
+            "changed": true,
+            "shorthand": "",
+            "no_opt_default": "",
+            "usage": "article language: ja or en"
+          },
+          {
+            "name": "no-counters",
+            "type": "bool",
+            "default": "false",
+            "value": "false",
+            "changed": false,
+            "shorthand": "",
+            "no_opt_default": "true",
+            "usage": "skip the view and work counters"
+          }
+        ],
+        "lifecycle": {
+          "StartupHooks": true,
+          "EnsureConfig": true,
+          "AutomaticUpdate": true,
+          "MCP": false
+        },
+        "runtime_calls": 1,
+        "update_proxies": [],
+        "automatic_proxies": [],
+        "detections": [],
+        "requests": [],
+        "commands": [],
+        "installs": [],
+        "account_factories": 0,
+        "sdk_factories": 0,
+        "fanbox_factories": 0,
+        "database_before": false,
+        "database_after": false,
+        "config_after": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+        "cache_after": null,
+        "accounts_after": [],
+        "owned_files": {}
+      },
+      "http_attempts": 0
+    },
+    {
+      "name": "search/preleaf-page-article",
+      "evidence_class": "behavioral",
+      "input": {
+        "boundary": "actual-root-RunContext",
+        "args": [
+          "dic",
+          "--page",
+          "article",
+          "search",
+          "owned",
+          "--json"
+        ],
+        "stdin": "",
+        "version": "v1.2.3",
+        "config_before": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+        "cache_before": null,
+        "environment": {
+          "PIXIV_LOG_FORMAT": "json",
+          "PIXIV_LOG_LEVEL": "debug"
+        },
+        "seed_accounts": false,
+        "source": "",
+        "release_tag": "",
+        "release_prerelease": false
+      },
+      "observation": {
+        "exit": 1,
+        "stdout": "",
+        "stderr": "error: invalid argument \"article\" for \"--page\" flag: strconv.ParseInt: parsing \"article\": invalid syntax\n",
+        "trace": [
+          "stderr.write"
+        ],
+        "output_writes": [],
+        "error_writes": [
+          {
+            "length": 105,
+            "n": 105,
+            "error": ""
+          }
+        ],
+        "stdin_reads": 0,
+        "stdin_bytes": 0,
+        "target": "pixiv dic search",
+        "parser_error": "invalid argument \"article\" for \"--page\" flag: strconv.ParseInt: parsing \"article\": invalid syntax",
+        "flags": [
+          {
+            "name": "help",
+            "type": "bool",
+            "default": "false",
+            "value": "false",
+            "changed": false,
+            "shorthand": "h",
+            "no_opt_default": "true",
+            "usage": "help for search"
+          },
+          {
+            "name": "json",
+            "type": "bool",
+            "default": "false",
+            "value": "false",
+            "changed": false,
+            "shorthand": "j",
+            "no_opt_default": "true",
+            "usage": "print JSON"
+          },
+          {
+            "name": "limit",
+            "type": "int",
+            "default": "0",
+            "value": "0",
+            "changed": false,
+            "shorthand": "n",
+            "no_opt_default": "",
+            "usage": "maximum results; 0 returns every article on the page"
+          },
+          {
+            "name": "ndjson",
+            "type": "bool",
+            "default": "false",
+            "value": "false",
+            "changed": false,
+            "shorthand": "",
+            "no_opt_default": "true",
+            "usage": "print one encyclopedia article as JSON per line"
+          },
+          {
+            "name": "page",
+            "type": "int",
+            "default": "1",
+            "value": "0",
+            "changed": false,
+            "shorthand": "",
+            "no_opt_default": "",
+            "usage": "1-based result page"
+          }
+        ],
+        "lifecycle": {
+          "StartupHooks": true,
+          "EnsureConfig": true,
+          "AutomaticUpdate": true,
+          "MCP": false
+        },
+        "runtime_calls": 0,
+        "update_proxies": [],
+        "automatic_proxies": [],
+        "detections": [],
+        "requests": [],
+        "commands": [],
+        "installs": [],
+        "account_factories": 0,
+        "sdk_factories": 0,
+        "fanbox_factories": 0,
+        "database_before": false,
+        "database_after": false,
+        "config_after": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+        "cache_after": null,
+        "accounts_after": [],
+        "owned_files": {}
+      },
+      "http_attempts": 0
+    },
+    {
+      "name": "search/preleaf-limit-search",
+      "evidence_class": "behavioral",
+      "input": {
+        "boundary": "actual-root-RunContext",
+        "args": [
+          "dic",
+          "--limit",
+          "search",
+          "search",
+          "owned",
+          "--json"
+        ],
+        "stdin": "",
+        "version": "v1.2.3",
+        "config_before": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+        "cache_before": null,
+        "environment": {
+          "PIXIV_LOG_FORMAT": "json",
+          "PIXIV_LOG_LEVEL": "debug"
+        },
+        "seed_accounts": false,
+        "source": "",
+        "release_tag": "",
+        "release_prerelease": false
+      },
+      "observation": {
+        "exit": 1,
+        "stdout": "",
+        "stderr": "error: invalid argument \"search\" for \"-n, --limit\" flag: strconv.ParseInt: parsing \"search\": invalid syntax\n",
+        "trace": [
+          "stderr.write"
+        ],
+        "output_writes": [],
+        "error_writes": [
+          {
+            "length": 108,
+            "n": 108,
+            "error": ""
+          }
+        ],
+        "stdin_reads": 0,
+        "stdin_bytes": 0,
+        "target": "pixiv dic search",
+        "parser_error": "invalid argument \"search\" for \"-n, --limit\" flag: strconv.ParseInt: parsing \"search\": invalid syntax",
+        "flags": [
+          {
+            "name": "help",
+            "type": "bool",
+            "default": "false",
+            "value": "false",
+            "changed": false,
+            "shorthand": "h",
+            "no_opt_default": "true",
+            "usage": "help for search"
+          },
+          {
+            "name": "json",
+            "type": "bool",
+            "default": "false",
+            "value": "false",
+            "changed": false,
+            "shorthand": "j",
+            "no_opt_default": "true",
+            "usage": "print JSON"
+          },
+          {
+            "name": "limit",
+            "type": "int",
+            "default": "0",
+            "value": "0",
+            "changed": false,
+            "shorthand": "n",
+            "no_opt_default": "",
+            "usage": "maximum results; 0 returns every article on the page"
+          },
+          {
+            "name": "ndjson",
+            "type": "bool",
+            "default": "false",
+            "value": "false",
+            "changed": false,
+            "shorthand": "",
+            "no_opt_default": "true",
+            "usage": "print one encyclopedia article as JSON per line"
+          },
+          {
+            "name": "page",
+            "type": "int",
+            "default": "1",
+            "value": "1",
+            "changed": false,
+            "shorthand": "",
+            "no_opt_default": "",
+            "usage": "1-based result page"
+          }
+        ],
+        "lifecycle": {
+          "StartupHooks": true,
+          "EnsureConfig": true,
+          "AutomaticUpdate": true,
+          "MCP": false
+        },
+        "runtime_calls": 0,
+        "update_proxies": [],
+        "automatic_proxies": [],
+        "detections": [],
+        "requests": [],
+        "commands": [],
+        "installs": [],
+        "account_factories": 0,
+        "sdk_factories": 0,
+        "fanbox_factories": 0,
+        "database_before": false,
+        "database_after": false,
+        "config_after": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+        "cache_after": null,
+        "accounts_after": [],
+        "owned_files": {}
+      },
+      "http_attempts": 0
+    },
+    {
+      "name": "search/preleaf-lang-article",
+      "evidence_class": "behavioral",
+      "input": {
+        "boundary": "actual-root-RunContext",
+        "args": [
+          "dic",
+          "--lang",
+          "article",
+          "search",
+          "owned",
+          "--json"
+        ],
+        "stdin": "",
+        "version": "v1.2.3",
+        "config_before": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+        "cache_before": null,
+        "environment": {
+          "PIXIV_LOG_FORMAT": "json",
+          "PIXIV_LOG_LEVEL": "debug"
+        },
+        "seed_accounts": false,
+        "source": "",
+        "release_tag": "",
+        "release_prerelease": false
+      },
+      "observation": {
+        "exit": 2,
+        "stdout": "",
+        "stderr": "error: unknown option '--lang'\n",
+        "trace": [
+          "stderr.write"
+        ],
+        "output_writes": [],
+        "error_writes": [
+          {
+            "length": 31,
+            "n": 31,
+            "error": ""
+          }
+        ],
+        "stdin_reads": 0,
+        "stdin_bytes": 0,
+        "target": "pixiv dic search",
+        "parser_error": "unknown flag: --lang",
+        "flags": [
+          {
+            "name": "help",
+            "type": "bool",
+            "default": "false",
+            "value": "false",
+            "changed": false,
+            "shorthand": "h",
+            "no_opt_default": "true",
+            "usage": "help for search"
+          },
+          {
+            "name": "json",
+            "type": "bool",
+            "default": "false",
+            "value": "false",
+            "changed": false,
+            "shorthand": "j",
+            "no_opt_default": "true",
+            "usage": "print JSON"
+          },
+          {
+            "name": "limit",
+            "type": "int",
+            "default": "0",
+            "value": "0",
+            "changed": false,
+            "shorthand": "n",
+            "no_opt_default": "",
+            "usage": "maximum results; 0 returns every article on the page"
+          },
+          {
+            "name": "ndjson",
+            "type": "bool",
+            "default": "false",
+            "value": "false",
+            "changed": false,
+            "shorthand": "",
+            "no_opt_default": "true",
+            "usage": "print one encyclopedia article as JSON per line"
+          },
+          {
+            "name": "page",
+            "type": "int",
+            "default": "1",
+            "value": "1",
+            "changed": false,
+            "shorthand": "",
+            "no_opt_default": "",
+            "usage": "1-based result page"
+          }
+        ],
+        "lifecycle": {
+          "StartupHooks": true,
+          "EnsureConfig": true,
+          "AutomaticUpdate": true,
+          "MCP": false
+        },
+        "runtime_calls": 0,
+        "update_proxies": [],
+        "automatic_proxies": [],
+        "detections": [],
+        "requests": [],
+        "commands": [],
+        "installs": [],
+        "account_factories": 0,
+        "sdk_factories": 0,
+        "fanbox_factories": 0,
+        "database_before": false,
+        "database_after": false,
+        "config_after": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+        "cache_after": null,
+        "accounts_after": [],
+        "owned_files": {}
+      },
+      "http_attempts": 0
+    },
+    {
+      "name": "search/postleaf-lang-search",
+      "evidence_class": "behavioral",
+      "input": {
+        "boundary": "actual-root-RunContext",
+        "args": [
+          "dic",
+          "search",
+          "owned",
+          "--lang",
+          "search",
+          "--json"
+        ],
+        "stdin": "",
+        "version": "v1.2.3",
+        "config_before": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+        "cache_before": null,
+        "environment": {
+          "PIXIV_LOG_FORMAT": "json",
+          "PIXIV_LOG_LEVEL": "debug"
+        },
+        "seed_accounts": false,
+        "source": "",
+        "release_tag": "",
+        "release_prerelease": false
+      },
+      "observation": {
+        "exit": 2,
+        "stdout": "",
+        "stderr": "error: unknown option '--lang'\n",
+        "trace": [
+          "stderr.write"
+        ],
+        "output_writes": [],
+        "error_writes": [
+          {
+            "length": 31,
+            "n": 31,
+            "error": ""
+          }
+        ],
+        "stdin_reads": 0,
+        "stdin_bytes": 0,
+        "target": "pixiv dic search",
+        "parser_error": "unknown flag: --lang",
+        "flags": [
+          {
+            "name": "help",
+            "type": "bool",
+            "default": "false",
+            "value": "false",
+            "changed": false,
+            "shorthand": "h",
+            "no_opt_default": "true",
+            "usage": "help for search"
+          },
+          {
+            "name": "json",
+            "type": "bool",
+            "default": "false",
+            "value": "false",
+            "changed": false,
+            "shorthand": "j",
+            "no_opt_default": "true",
+            "usage": "print JSON"
+          },
+          {
+            "name": "limit",
+            "type": "int",
+            "default": "0",
+            "value": "0",
+            "changed": false,
+            "shorthand": "n",
+            "no_opt_default": "",
+            "usage": "maximum results; 0 returns every article on the page"
+          },
+          {
+            "name": "ndjson",
+            "type": "bool",
+            "default": "false",
+            "value": "false",
+            "changed": false,
+            "shorthand": "",
+            "no_opt_default": "true",
+            "usage": "print one encyclopedia article as JSON per line"
+          },
+          {
+            "name": "page",
+            "type": "int",
+            "default": "1",
+            "value": "1",
+            "changed": false,
+            "shorthand": "",
+            "no_opt_default": "",
+            "usage": "1-based result page"
+          }
+        ],
+        "lifecycle": {
+          "StartupHooks": true,
+          "EnsureConfig": true,
+          "AutomaticUpdate": true,
+          "MCP": false
+        },
+        "runtime_calls": 0,
+        "update_proxies": [],
+        "automatic_proxies": [],
+        "detections": [],
+        "requests": [],
+        "commands": [],
+        "installs": [],
+        "account_factories": 0,
+        "sdk_factories": 0,
+        "fanbox_factories": 0,
+        "database_before": false,
+        "database_after": false,
+        "config_after": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+        "cache_after": null,
+        "accounts_after": [],
+        "owned_files": {}
+      },
+      "http_attempts": 0
+    }
+  ]
+}

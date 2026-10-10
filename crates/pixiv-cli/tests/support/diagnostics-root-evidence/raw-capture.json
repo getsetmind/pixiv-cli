@@ -1,0 +1,1456 @@
+[
+  {
+    "name": "update/text-success",
+    "evidence_class": "behavioral",
+    "representation_scope": "Actual RunContext/root/Cobra/startup/config/finish/exit with existing updater producer's synthetic external constructors; business command owner remains real",
+    "input": {
+      "boundary": "actual-root-RunContext",
+      "args": [
+        "update",
+        "--check"
+      ],
+      "stdin": "",
+      "version": "v1.2.3",
+      "config_before": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+      "cache_before": null,
+      "environment": {
+        "PIXIV_LOG_FORMAT": "text",
+        "PIXIV_LOG_LEVEL": "debug"
+      },
+      "seed_accounts": false,
+      "source": "release",
+      "release_tag": "v1.3.0",
+      "release_prerelease": false
+    },
+    "observation": {
+      "exit": 0,
+      "stdout": "source: release\ncurrent version: v1.2.3\nlatest version: v1.3.0\nupdate available: yes\n",
+      "stderr": "[Pixiv CLI] 18:48:26 Started pixiv update.\n[Pixiv CLI] 18:48:26 Pixiv update completed successfully.\n",
+      "trace": [
+        "startup.cleanup",
+        "startup.supported",
+        "runtime.load/config_exists=true",
+        "stderr.write",
+        "runtime.load/config_exists=true",
+        "update.factory",
+        "update.detect",
+        "update.http",
+        "stdout.write",
+        "stderr.write"
+      ],
+      "output_writes": [
+        {
+          "payload": "source: release\ncurrent version: v1.2.3\nlatest version: v1.3.0\nupdate available: yes\n",
+          "length": 85,
+          "n": 85,
+          "error": ""
+        }
+      ],
+      "error_writes": [
+        {
+          "payload": "[Pixiv CLI] 18:48:26 Started pixiv update.\n",
+          "length": 43,
+          "n": 43,
+          "error": ""
+        },
+        {
+          "payload": "[Pixiv CLI] 18:48:26 Pixiv update completed successfully.\n",
+          "length": 58,
+          "n": 58,
+          "error": ""
+        }
+      ],
+      "runtime_calls": 2,
+      "target": "pixiv update",
+      "database_before": false,
+      "database_after": false,
+      "accounts_after": [],
+      "requests": [
+        {
+          "method": "GET",
+          "url": "https://api.github.com/repos/FlanChanXwO/pixiv-cli/releases",
+          "headers": {
+            "User-Agent": [
+              "pixiv-cli"
+            ]
+          },
+          "has_deadline": false,
+          "canceled": false
+        }
+      ]
+    }
+  },
+  {
+    "name": "update/json-success",
+    "evidence_class": "behavioral",
+    "representation_scope": "Actual RunContext/root/Cobra/startup/config/finish/exit with existing updater producer's synthetic external constructors; business command owner remains real",
+    "input": {
+      "boundary": "actual-root-RunContext",
+      "args": [
+        "update",
+        "--check",
+        "--json"
+      ],
+      "stdin": "",
+      "version": "v1.2.3",
+      "config_before": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+      "cache_before": null,
+      "environment": {
+        "PIXIV_LOG_FORMAT": "json",
+        "PIXIV_LOG_LEVEL": "debug"
+      },
+      "seed_accounts": false,
+      "source": "release",
+      "release_tag": "v1.3.0",
+      "release_prerelease": false
+    },
+    "observation": {
+      "exit": 0,
+      "stdout": "{\n  \"source\": \"release\",\n  \"current_version\": \"v1.2.3\",\n  \"latest_version\": \"v1.3.0\",\n  \"latest_prerelease\": false,\n  \"update_available\": true\n}\n",
+      "stderr": "{\"time\":\"2026-10-10T18:48:26.091685181Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"started\",\"operation\":\"pixiv update\"}\n{\"time\":\"2026-10-10T18:48:26.091831448Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"completed\",\"operation\":\"pixiv update\"}\n",
+      "trace": [
+        "startup.cleanup",
+        "startup.supported",
+        "runtime.load/config_exists=true",
+        "stderr.write",
+        "runtime.load/config_exists=true",
+        "update.factory",
+        "update.detect",
+        "update.http",
+        "stdout.write",
+        "stderr.write"
+      ],
+      "output_writes": [
+        {
+          "payload": "{\n  \"source\": \"release\",\n  \"current_version\": \"v1.2.3\",\n  \"latest_version\": \"v1.3.0\",\n  \"latest_prerelease\": false,\n  \"update_available\": true\n}\n",
+          "length": 145,
+          "n": 145,
+          "error": ""
+        }
+      ],
+      "error_writes": [
+        {
+          "payload": "{\"time\":\"2026-10-10T18:48:26.091685181Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"started\",\"operation\":\"pixiv update\"}\n",
+          "length": 123,
+          "n": 123,
+          "error": ""
+        },
+        {
+          "payload": "{\"time\":\"2026-10-10T18:48:26.091831448Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"completed\",\"operation\":\"pixiv update\"}\n",
+          "length": 125,
+          "n": 125,
+          "error": ""
+        }
+      ],
+      "runtime_calls": 2,
+      "target": "pixiv update",
+      "database_before": false,
+      "database_after": false,
+      "accounts_after": [],
+      "requests": [
+        {
+          "method": "GET",
+          "url": "https://api.github.com/repos/FlanChanXwO/pixiv-cli/releases",
+          "headers": {
+            "User-Agent": [
+              "pixiv-cli"
+            ]
+          },
+          "has_deadline": false,
+          "canceled": false
+        }
+      ]
+    }
+  },
+  {
+    "name": "update/text-business-failure",
+    "evidence_class": "behavioral",
+    "representation_scope": "Actual RunContext/root/Cobra/startup/config/finish/exit with existing updater producer's synthetic external constructors; business command owner remains real",
+    "input": {
+      "boundary": "actual-root-RunContext",
+      "args": [
+        "update",
+        "--check"
+      ],
+      "stdin": "",
+      "version": "v1.2.3",
+      "config_before": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+      "cache_before": null,
+      "environment": {
+        "PIXIV_LOG_FORMAT": "text",
+        "PIXIV_LOG_LEVEL": "debug"
+      },
+      "seed_accounts": false,
+      "source": "release",
+      "release_tag": "v1.3.0",
+      "release_prerelease": false,
+      "failure": "checker"
+    },
+    "observation": {
+      "exit": 1,
+      "stdout": "",
+      "stderr": "[Pixiv CLI] 18:48:26 Started pixiv update.\n[Pixiv CLI] 18:48:26 Pixiv update failed: the command returned an error.\nerror: check available releases: owned release checker failure\n",
+      "trace": [
+        "startup.cleanup",
+        "startup.supported",
+        "runtime.load/config_exists=true",
+        "stderr.write",
+        "runtime.load/config_exists=true",
+        "update.factory",
+        "update.detect",
+        "stderr.write",
+        "stderr.write"
+      ],
+      "output_writes": [],
+      "error_writes": [
+        {
+          "payload": "[Pixiv CLI] 18:48:26 Started pixiv update.\n",
+          "length": 43,
+          "n": 43,
+          "error": ""
+        },
+        {
+          "payload": "[Pixiv CLI] 18:48:26 Pixiv update failed: the command returned an error.\n",
+          "length": 73,
+          "n": 73,
+          "error": ""
+        },
+        {
+          "payload": "error: check available releases: owned release checker failure\n",
+          "length": 63,
+          "n": 63,
+          "error": ""
+        }
+      ],
+      "runtime_calls": 2,
+      "target": "pixiv update",
+      "database_before": false,
+      "database_after": false,
+      "accounts_after": [],
+      "requests": []
+    }
+  },
+  {
+    "name": "update/json-business-failure",
+    "evidence_class": "behavioral",
+    "representation_scope": "Actual RunContext/root/Cobra/startup/config/finish/exit with existing updater producer's synthetic external constructors; business command owner remains real",
+    "input": {
+      "boundary": "actual-root-RunContext",
+      "args": [
+        "update",
+        "--check",
+        "--json"
+      ],
+      "stdin": "",
+      "version": "v1.2.3",
+      "config_before": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+      "cache_before": null,
+      "environment": {
+        "PIXIV_LOG_FORMAT": "json",
+        "PIXIV_LOG_LEVEL": "debug"
+      },
+      "seed_accounts": false,
+      "source": "release",
+      "release_tag": "v1.3.0",
+      "release_prerelease": false,
+      "failure": "checker"
+    },
+    "observation": {
+      "exit": 1,
+      "stdout": "",
+      "stderr": "{\"time\":\"2026-10-10T18:48:26.094325014Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"started\",\"operation\":\"pixiv update\"}\n{\"time\":\"2026-10-10T18:48:26.094393806Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"failed\",\"operation\":\"pixiv update\",\"reason\":\"command failed\"}\n{\"error\":{\"code\":\"command_failed\",\"message\":\"check available releases: owned release checker failure\"}}\n",
+      "trace": [
+        "startup.cleanup",
+        "startup.supported",
+        "runtime.load/config_exists=true",
+        "stderr.write",
+        "runtime.load/config_exists=true",
+        "update.factory",
+        "update.detect",
+        "stderr.write",
+        "stderr.write"
+      ],
+      "output_writes": [],
+      "error_writes": [
+        {
+          "payload": "{\"time\":\"2026-10-10T18:48:26.094325014Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"started\",\"operation\":\"pixiv update\"}\n",
+          "length": 123,
+          "n": 123,
+          "error": ""
+        },
+        {
+          "payload": "{\"time\":\"2026-10-10T18:48:26.094393806Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"failed\",\"operation\":\"pixiv update\",\"reason\":\"command failed\"}\n",
+          "length": 148,
+          "n": 148,
+          "error": ""
+        },
+        {
+          "payload": "{\"error\":{\"code\":\"command_failed\",\"message\":\"check available releases: owned release checker failure\"}}\n",
+          "length": 104,
+          "n": 104,
+          "error": ""
+        }
+      ],
+      "runtime_calls": 2,
+      "target": "pixiv update",
+      "database_before": false,
+      "database_after": false,
+      "accounts_after": [],
+      "requests": []
+    }
+  },
+  {
+    "name": "exclude/quiet-config",
+    "evidence_class": "behavioral",
+    "representation_scope": "Actual RunContext/root/Cobra/startup/config/finish/exit with existing updater producer's synthetic external constructors; business command owner remains real",
+    "input": {
+      "boundary": "actual-root-RunContext",
+      "args": [
+        "config",
+        "get",
+        "request_interval"
+      ],
+      "stdin": "",
+      "version": "v1.2.3",
+      "config_before": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+      "cache_before": null,
+      "environment": {
+        "PIXIV_LOG_FORMAT": "text",
+        "PIXIV_LOG_LEVEL": "debug"
+      },
+      "seed_accounts": false,
+      "source": "release",
+      "release_tag": "v1.3.0",
+      "release_prerelease": false
+    },
+    "observation": {
+      "exit": 0,
+      "stdout": "0s\n",
+      "stderr": "",
+      "trace": [
+        "startup.cleanup",
+        "startup.supported",
+        "stdout.write",
+        "runtime.load/config_exists=true"
+      ],
+      "output_writes": [
+        {
+          "payload": "0s\n",
+          "length": 3,
+          "n": 3,
+          "error": ""
+        }
+      ],
+      "error_writes": [],
+      "runtime_calls": 1,
+      "target": "pixiv config get",
+      "database_before": false,
+      "database_after": false,
+      "accounts_after": [],
+      "requests": []
+    }
+  },
+  {
+    "name": "exclude/non-debug",
+    "evidence_class": "behavioral",
+    "representation_scope": "Actual RunContext/root/Cobra/startup/config/finish/exit with existing updater producer's synthetic external constructors; business command owner remains real",
+    "input": {
+      "boundary": "actual-root-RunContext",
+      "args": [
+        "update",
+        "--check"
+      ],
+      "stdin": "",
+      "version": "v1.2.3",
+      "config_before": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+      "cache_before": null,
+      "environment": {
+        "PIXIV_LOG_FORMAT": "text",
+        "PIXIV_LOG_LEVEL": "info"
+      },
+      "seed_accounts": false,
+      "source": "release",
+      "release_tag": "v1.3.0",
+      "release_prerelease": false
+    },
+    "observation": {
+      "exit": 0,
+      "stdout": "source: release\ncurrent version: v1.2.3\nlatest version: v1.3.0\nupdate available: yes\n",
+      "stderr": "",
+      "trace": [
+        "startup.cleanup",
+        "startup.supported",
+        "runtime.load/config_exists=true",
+        "runtime.load/config_exists=true",
+        "update.factory",
+        "update.detect",
+        "update.http",
+        "stdout.write"
+      ],
+      "output_writes": [
+        {
+          "payload": "source: release\ncurrent version: v1.2.3\nlatest version: v1.3.0\nupdate available: yes\n",
+          "length": 85,
+          "n": 85,
+          "error": ""
+        }
+      ],
+      "error_writes": [],
+      "runtime_calls": 2,
+      "target": "pixiv update",
+      "database_before": false,
+      "database_after": false,
+      "accounts_after": [],
+      "requests": [
+        {
+          "method": "GET",
+          "url": "https://api.github.com/repos/FlanChanXwO/pixiv-cli/releases",
+          "headers": {
+            "User-Agent": [
+              "pixiv-cli"
+            ]
+          },
+          "has_deadline": false,
+          "canceled": false
+        }
+      ]
+    }
+  },
+  {
+    "name": "fanbox/module",
+    "evidence_class": "behavioral",
+    "representation_scope": "Actual RunContext/root/Cobra/startup/config/finish/exit with existing updater producer's synthetic external constructors; business command owner remains real",
+    "input": {
+      "boundary": "actual-root-RunContext",
+      "args": [
+        "fanbox",
+        "creators",
+        "--kind=invalid",
+        "--json"
+      ],
+      "stdin": "",
+      "version": "v1.2.3",
+      "config_before": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+      "cache_before": null,
+      "environment": {
+        "PIXIV_LOG_FORMAT": "json",
+        "PIXIV_LOG_LEVEL": "debug"
+      },
+      "seed_accounts": false,
+      "source": "release",
+      "release_tag": "v1.3.0",
+      "release_prerelease": false
+    },
+    "observation": {
+      "exit": 1,
+      "stdout": "",
+      "stderr": "{\"time\":\"2026-10-10T18:48:26.097367931Z\",\"level\":\"DEBUG\",\"module\":\"FANBOX CLI\",\"kind\":\"started\",\"operation\":\"pixiv fanbox creators\"}\n{\"time\":\"2026-10-10T18:48:26.097379238Z\",\"level\":\"DEBUG\",\"module\":\"FANBOX CLI\",\"kind\":\"failed\",\"operation\":\"pixiv fanbox creators\",\"reason\":\"command failed\"}\n{\"error\":{\"code\":\"command_failed\",\"message\":\"kind must be one of: supporting, following\"}}\n",
+      "trace": [
+        "startup.cleanup",
+        "startup.supported",
+        "runtime.load/config_exists=true",
+        "stderr.write",
+        "stderr.write",
+        "stderr.write"
+      ],
+      "output_writes": [],
+      "error_writes": [
+        {
+          "payload": "{\"time\":\"2026-10-10T18:48:26.097367931Z\",\"level\":\"DEBUG\",\"module\":\"FANBOX CLI\",\"kind\":\"started\",\"operation\":\"pixiv fanbox creators\"}\n",
+          "length": 133,
+          "n": 133,
+          "error": ""
+        },
+        {
+          "payload": "{\"time\":\"2026-10-10T18:48:26.097379238Z\",\"level\":\"DEBUG\",\"module\":\"FANBOX CLI\",\"kind\":\"failed\",\"operation\":\"pixiv fanbox creators\",\"reason\":\"command failed\"}\n",
+          "length": 158,
+          "n": 158,
+          "error": ""
+        },
+        {
+          "payload": "{\"error\":{\"code\":\"command_failed\",\"message\":\"kind must be one of: supporting, following\"}}\n",
+          "length": 91,
+          "n": 91,
+          "error": ""
+        }
+      ],
+      "runtime_calls": 1,
+      "target": "pixiv fanbox creators",
+      "database_before": false,
+      "database_after": false,
+      "accounts_after": [],
+      "requests": []
+    }
+  },
+  {
+    "name": "cleanup/success-before-completed",
+    "evidence_class": "behavioral",
+    "representation_scope": "Actual RunContext/root/Cobra/startup/config/finish/exit with existing updater producer's synthetic external constructors; business command owner remains real",
+    "input": {
+      "boundary": "actual-root-RunContext",
+      "args": [
+        "auth",
+        "list",
+        "--json"
+      ],
+      "stdin": "",
+      "version": "v1.2.3",
+      "config_before": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+      "cache_before": null,
+      "environment": {
+        "PIXIV_LOG_FORMAT": "text",
+        "PIXIV_LOG_LEVEL": "debug"
+      },
+      "seed_accounts": true,
+      "source": "release",
+      "release_tag": "v1.3.0",
+      "release_prerelease": false
+    },
+    "observation": {
+      "exit": 0,
+      "stdout": "{\n  \"default_user_id\": 42,\n  \"accounts\": [\n    {\n      \"user_id\": 42,\n      \"username\": \"owned account\",\n      \"default\": true,\n      \"has_token\": true,\n      \"schedulable\": true,\n      \"eligible\": true\n    }\n  ]\n}\n",
+      "stderr": "[Pixiv CLI] 18:48:26 Started pixiv auth list.\n[Pixiv CLI] 18:48:26 Pixiv auth list completed successfully.\n",
+      "trace": [
+        "startup.cleanup",
+        "startup.supported",
+        "runtime.load/config_exists=true",
+        "stderr.write",
+        "account.factory",
+        "database.open",
+        "stdout.write",
+        "runtime.load/config_exists=true",
+        "database.close",
+        "stderr.write"
+      ],
+      "output_writes": [
+        {
+          "payload": "{\n  \"default_user_id\": 42,\n  \"accounts\": [\n    {\n      \"user_id\": 42,\n      \"username\": \"owned account\",\n      \"default\": true,\n      \"has_token\": true,\n      \"schedulable\": true,\n      \"eligible\": true\n    }\n  ]\n}\n",
+          "length": 215,
+          "n": 215,
+          "error": ""
+        }
+      ],
+      "error_writes": [
+        {
+          "payload": "[Pixiv CLI] 18:48:26 Started pixiv auth list.\n",
+          "length": 46,
+          "n": 46,
+          "error": ""
+        },
+        {
+          "payload": "[Pixiv CLI] 18:48:26 Pixiv auth list completed successfully.\n",
+          "length": 61,
+          "n": 61,
+          "error": ""
+        }
+      ],
+      "runtime_calls": 2,
+      "target": "pixiv auth list",
+      "database_before": true,
+      "database_after": true,
+      "accounts_after": [
+        {
+          "refresh": "synthetic-refresh-42",
+          "revision": 1,
+          "user_id": 42,
+          "username": "owned account"
+        }
+      ],
+      "requests": []
+    }
+  },
+  {
+    "name": "cleanup/failure-before-failed",
+    "evidence_class": "behavioral",
+    "representation_scope": "Actual RunContext/root/Cobra/startup/config/finish/exit with existing updater producer's synthetic external constructors; business command owner remains real",
+    "input": {
+      "boundary": "actual-root-RunContext",
+      "args": [
+        "auth",
+        "list",
+        "--json"
+      ],
+      "stdin": "",
+      "version": "v1.2.3",
+      "config_before": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+      "cache_before": null,
+      "environment": {
+        "PIXIV_LOG_FORMAT": "text",
+        "PIXIV_LOG_LEVEL": "debug"
+      },
+      "seed_accounts": true,
+      "source": "release",
+      "release_tag": "v1.3.0",
+      "release_prerelease": false,
+      "close_error": true
+    },
+    "observation": {
+      "exit": 1,
+      "stdout": "{\n  \"default_user_id\": 42,\n  \"accounts\": [\n    {\n      \"user_id\": 42,\n      \"username\": \"owned account\",\n      \"default\": true,\n      \"has_token\": true,\n      \"schedulable\": true,\n      \"eligible\": true\n    }\n  ]\n}\n",
+      "stderr": "[Pixiv CLI] 18:48:26 Started pixiv auth list.\n[Pixiv CLI] 18:48:26 Pixiv auth list failed: the command returned an error.\n{\"error\":{\"code\":\"command_failed\",\"message\":\"owned database close failure\"}}\n",
+      "trace": [
+        "startup.cleanup",
+        "startup.supported",
+        "runtime.load/config_exists=true",
+        "stderr.write",
+        "account.factory",
+        "database.open",
+        "stdout.write",
+        "runtime.load/config_exists=true",
+        "database.close",
+        "stderr.write",
+        "stderr.write"
+      ],
+      "output_writes": [
+        {
+          "payload": "{\n  \"default_user_id\": 42,\n  \"accounts\": [\n    {\n      \"user_id\": 42,\n      \"username\": \"owned account\",\n      \"default\": true,\n      \"has_token\": true,\n      \"schedulable\": true,\n      \"eligible\": true\n    }\n  ]\n}\n",
+          "length": 215,
+          "n": 215,
+          "error": ""
+        }
+      ],
+      "error_writes": [
+        {
+          "payload": "[Pixiv CLI] 18:48:26 Started pixiv auth list.\n",
+          "length": 46,
+          "n": 46,
+          "error": ""
+        },
+        {
+          "payload": "[Pixiv CLI] 18:48:26 Pixiv auth list failed: the command returned an error.\n",
+          "length": 76,
+          "n": 76,
+          "error": ""
+        },
+        {
+          "payload": "{\"error\":{\"code\":\"command_failed\",\"message\":\"owned database close failure\"}}\n",
+          "length": 77,
+          "n": 77,
+          "error": ""
+        }
+      ],
+      "runtime_calls": 2,
+      "target": "pixiv auth list",
+      "database_before": true,
+      "database_after": true,
+      "accounts_after": [
+        {
+          "refresh": "synthetic-refresh-42",
+          "revision": 1,
+          "user_id": 42,
+          "username": "owned account"
+        }
+      ],
+      "requests": []
+    }
+  },
+  {
+    "name": "epipe/ordinary-stdout",
+    "evidence_class": "behavioral",
+    "representation_scope": "Actual RunContext/root/Cobra/startup/config/finish/exit with existing updater producer's synthetic external constructors; business command owner remains real",
+    "input": {
+      "boundary": "actual-root-RunContext",
+      "args": [
+        "update",
+        "--check"
+      ],
+      "stdin": "",
+      "version": "v1.2.3",
+      "config_before": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+      "cache_before": null,
+      "environment": {
+        "PIXIV_LOG_FORMAT": "text",
+        "PIXIV_LOG_LEVEL": "debug"
+      },
+      "seed_accounts": false,
+      "source": "release",
+      "release_tag": "v1.3.0",
+      "release_prerelease": false,
+      "stdout_writer": "epipe"
+    },
+    "observation": {
+      "exit": 1,
+      "stdout": "",
+      "stderr": "[Pixiv CLI] 18:48:26 Started pixiv update.\n[Pixiv CLI] 18:48:26 Pixiv update failed: the command returned an error.\nerror: broken pipe\n",
+      "trace": [
+        "startup.cleanup",
+        "startup.supported",
+        "runtime.load/config_exists=true",
+        "stderr.write",
+        "runtime.load/config_exists=true",
+        "update.factory",
+        "update.detect",
+        "update.http",
+        "stdout.write",
+        "stderr.write",
+        "stderr.write"
+      ],
+      "output_writes": [
+        {
+          "payload": "",
+          "length": 85,
+          "n": 0,
+          "error": "broken pipe"
+        }
+      ],
+      "error_writes": [
+        {
+          "payload": "[Pixiv CLI] 18:48:26 Started pixiv update.\n",
+          "length": 43,
+          "n": 43,
+          "error": ""
+        },
+        {
+          "payload": "[Pixiv CLI] 18:48:26 Pixiv update failed: the command returned an error.\n",
+          "length": 73,
+          "n": 73,
+          "error": ""
+        },
+        {
+          "payload": "error: broken pipe\n",
+          "length": 19,
+          "n": 19,
+          "error": ""
+        }
+      ],
+      "runtime_calls": 2,
+      "target": "pixiv update",
+      "database_before": false,
+      "database_after": false,
+      "accounts_after": [],
+      "requests": [
+        {
+          "method": "GET",
+          "url": "https://api.github.com/repos/FlanChanXwO/pixiv-cli/releases",
+          "headers": {
+            "User-Agent": [
+              "pixiv-cli"
+            ]
+          },
+          "has_deadline": false,
+          "canceled": false
+        }
+      ]
+    }
+  },
+  {
+    "name": "scope/deadline-value",
+    "evidence_class": "behavioral",
+    "representation_scope": "Actual RunContext/root/search owner with existing SDK execution constructor seam; synthetic execution writes owned output or returns owned business failure without calling the SDK callback; observes root context, resource-close, diagnostics, join and exit policy only",
+    "input": {
+      "boundary": "actual-root-RunContext",
+      "args": [
+        "search",
+        "owned",
+        "--ndjson"
+      ],
+      "stdin": "",
+      "version": "v1.2.3",
+      "config_before": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+      "cache_before": null,
+      "environment": {
+        "PIXIV_LOG_FORMAT": "json",
+        "PIXIV_LOG_LEVEL": "debug"
+      },
+      "seed_accounts": false,
+      "source": "release",
+      "release_tag": "v1.3.0",
+      "release_prerelease": false,
+      "synthetic_sdk_execution": true,
+      "write_owned_output": true
+    },
+    "observation": {
+      "exit": 0,
+      "stdout": "{\"owned\":true}\n",
+      "stderr": "{\"time\":\"2026-10-10T18:48:26.106964393Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"started\",\"operation\":\"pixiv search\"}\n{\"time\":\"2026-10-10T18:48:26.107016931Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"completed\",\"operation\":\"pixiv search\"}\n",
+      "trace": [
+        "startup.cleanup",
+        "startup.supported",
+        "runtime.load",
+        "stderr.write",
+        "sdk.synthetic.factory",
+        "sdk.synthetic.execute",
+        "stdout.write",
+        "runtime.load",
+        "sdk.synthetic.close",
+        "stderr.write"
+      ],
+      "output_writes": [
+        {
+          "payload": "{\"owned\":true}\n",
+          "length": 15,
+          "n": 15,
+          "error": ""
+        }
+      ],
+      "error_writes": [
+        {
+          "payload": "{\"time\":\"2026-10-10T18:48:26.106964393Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"started\",\"operation\":\"pixiv search\"}\n",
+          "length": 123,
+          "n": 123,
+          "error": ""
+        },
+        {
+          "payload": "{\"time\":\"2026-10-10T18:48:26.107016931Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"completed\",\"operation\":\"pixiv search\"}\n",
+          "length": 125,
+          "n": 125,
+          "error": ""
+        }
+      ],
+      "runtime_calls": 2,
+      "target": "pixiv search",
+      "context": {
+        "scope_present": true,
+        "value": "owned context value",
+        "deadline": "2099-01-02T03:04:05Z",
+        "deadline_preserved": true,
+        "done_preserved": true,
+        "canceled": false,
+        "state_context_equals_execution": true,
+        "parent_sink_calls": 0
+      },
+      "database_before": false,
+      "database_after": false,
+      "accounts_after": [],
+      "requests": []
+    }
+  },
+  {
+    "name": "scope/canceled-deadline-value",
+    "evidence_class": "behavioral",
+    "representation_scope": "Actual RunContext/root/search owner with existing SDK execution constructor seam; synthetic execution writes owned output or returns owned business failure without calling the SDK callback; observes root context, resource-close, diagnostics, join and exit policy only",
+    "input": {
+      "boundary": "actual-root-RunContext",
+      "args": [
+        "search",
+        "owned",
+        "--ndjson"
+      ],
+      "stdin": "",
+      "version": "v1.2.3",
+      "config_before": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+      "cache_before": null,
+      "environment": {
+        "PIXIV_LOG_FORMAT": "json",
+        "PIXIV_LOG_LEVEL": "debug"
+      },
+      "seed_accounts": false,
+      "source": "release",
+      "release_tag": "v1.3.0",
+      "release_prerelease": false,
+      "canceled": true,
+      "synthetic_sdk_execution": true
+    },
+    "observation": {
+      "exit": 0,
+      "stdout": "",
+      "stderr": "{\"time\":\"2026-10-10T18:48:26.107869328Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"started\",\"operation\":\"pixiv search\"}\n{\"time\":\"2026-10-10T18:48:26.107915987Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"completed\",\"operation\":\"pixiv search\"}\n",
+      "trace": [
+        "startup.cleanup",
+        "startup.supported",
+        "runtime.load",
+        "stderr.write",
+        "sdk.synthetic.factory",
+        "sdk.synthetic.execute",
+        "runtime.load",
+        "sdk.synthetic.close",
+        "stderr.write"
+      ],
+      "output_writes": [],
+      "error_writes": [
+        {
+          "payload": "{\"time\":\"2026-10-10T18:48:26.107869328Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"started\",\"operation\":\"pixiv search\"}\n",
+          "length": 123,
+          "n": 123,
+          "error": ""
+        },
+        {
+          "payload": "{\"time\":\"2026-10-10T18:48:26.107915987Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"completed\",\"operation\":\"pixiv search\"}\n",
+          "length": 125,
+          "n": 125,
+          "error": ""
+        }
+      ],
+      "runtime_calls": 2,
+      "target": "pixiv search",
+      "context": {
+        "scope_present": true,
+        "value": "owned context value",
+        "deadline": "2099-01-02T03:04:05Z",
+        "deadline_preserved": true,
+        "done_preserved": true,
+        "canceled": true,
+        "state_context_equals_execution": true,
+        "parent_sink_calls": 0
+      },
+      "database_before": false,
+      "database_after": false,
+      "accounts_after": [],
+      "requests": []
+    }
+  },
+  {
+    "name": "epipe/ndjson-stdout-and-diagnostics",
+    "evidence_class": "behavioral",
+    "representation_scope": "Actual RunContext/root/search owner with existing SDK execution constructor seam; synthetic execution writes owned output or returns owned business failure without calling the SDK callback; observes root context, resource-close, diagnostics, join and exit policy only",
+    "input": {
+      "boundary": "actual-root-RunContext",
+      "args": [
+        "search",
+        "owned",
+        "--ndjson"
+      ],
+      "stdin": "",
+      "version": "v1.2.3",
+      "config_before": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+      "cache_before": null,
+      "environment": {
+        "PIXIV_LOG_FORMAT": "json",
+        "PIXIV_LOG_LEVEL": "debug"
+      },
+      "seed_accounts": false,
+      "source": "release",
+      "release_tag": "v1.3.0",
+      "release_prerelease": false,
+      "stdout_writer": "epipe",
+      "stderr_writer": "root-diagnostic-epipe",
+      "synthetic_sdk_execution": true,
+      "write_owned_output": true
+    },
+    "observation": {
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "trace": [
+        "startup.cleanup",
+        "startup.supported",
+        "runtime.load",
+        "stderr.write",
+        "sdk.synthetic.factory",
+        "sdk.synthetic.execute",
+        "stdout.write",
+        "sdk.synthetic.close",
+        "stderr.write"
+      ],
+      "output_writes": [
+        {
+          "payload": "{\"owned\":true}\n",
+          "length": 15,
+          "n": 0,
+          "error": "broken pipe"
+        }
+      ],
+      "error_writes": [
+        {
+          "payload": "{\"time\":\"2026-10-10T18:48:26.109374875Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"started\",\"operation\":\"pixiv search\"}\n",
+          "length": 123,
+          "n": 0,
+          "error": "broken pipe"
+        },
+        {
+          "payload": "{\"time\":\"2026-10-10T18:48:26.109395716Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"failed\",\"operation\":\"pixiv search\",\"reason\":\"command failed\"}\n",
+          "length": 148,
+          "n": 0,
+          "error": "broken pipe"
+        }
+      ],
+      "runtime_calls": 1,
+      "target": "pixiv search",
+      "context": {
+        "scope_present": true,
+        "value": "owned context value",
+        "deadline": "2099-01-02T03:04:05Z",
+        "deadline_preserved": true,
+        "done_preserved": true,
+        "canceled": false,
+        "state_context_equals_execution": true,
+        "parent_sink_calls": 0
+      },
+      "database_before": false,
+      "database_after": false,
+      "accounts_after": [],
+      "requests": []
+    }
+  },
+  {
+    "name": "epipe/explicit-json-false-stdout-and-diagnostics",
+    "evidence_class": "behavioral",
+    "representation_scope": "Actual RunContext/root/search owner with existing SDK execution constructor seam; synthetic execution writes owned output or returns owned business failure without calling the SDK callback; observes root context, resource-close, diagnostics, join and exit policy only",
+    "input": {
+      "boundary": "actual-root-RunContext",
+      "args": [
+        "search",
+        "owned",
+        "--json=false"
+      ],
+      "stdin": "",
+      "version": "v1.2.3",
+      "config_before": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+      "cache_before": null,
+      "environment": {
+        "PIXIV_LOG_FORMAT": "json",
+        "PIXIV_LOG_LEVEL": "debug"
+      },
+      "seed_accounts": false,
+      "source": "release",
+      "release_tag": "v1.3.0",
+      "release_prerelease": false,
+      "stdout_writer": "epipe",
+      "stderr_writer": "root-diagnostic-epipe",
+      "synthetic_sdk_execution": true,
+      "write_owned_output": true
+    },
+    "observation": {
+      "exit": 1,
+      "stdout": "",
+      "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"broken pipe\\nwrite diagnostics: broken pipe\"}}\n",
+      "trace": [
+        "startup.cleanup",
+        "startup.supported",
+        "runtime.load",
+        "stderr.write",
+        "sdk.synthetic.factory",
+        "sdk.synthetic.execute",
+        "stdout.write",
+        "sdk.synthetic.close",
+        "stderr.write",
+        "stderr.write"
+      ],
+      "output_writes": [
+        {
+          "payload": "{\"owned\":true}\n",
+          "length": 15,
+          "n": 0,
+          "error": "broken pipe"
+        }
+      ],
+      "error_writes": [
+        {
+          "payload": "{\"time\":\"2026-10-10T18:48:26.110416303Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"started\",\"operation\":\"pixiv search\"}\n",
+          "length": 123,
+          "n": 0,
+          "error": "broken pipe"
+        },
+        {
+          "payload": "{\"time\":\"2026-10-10T18:48:26.110434129Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"failed\",\"operation\":\"pixiv search\",\"reason\":\"command failed\"}\n",
+          "length": 148,
+          "n": 0,
+          "error": "broken pipe"
+        },
+        {
+          "payload": "{\"error\":{\"code\":\"command_failed\",\"message\":\"broken pipe\\nwrite diagnostics: broken pipe\"}}\n",
+          "length": 92,
+          "n": 92,
+          "error": ""
+        }
+      ],
+      "runtime_calls": 1,
+      "target": "pixiv search",
+      "context": {
+        "scope_present": true,
+        "value": "owned context value",
+        "deadline": "2099-01-02T03:04:05Z",
+        "deadline_preserved": true,
+        "done_preserved": true,
+        "canceled": false,
+        "state_context_equals_execution": true,
+        "parent_sink_calls": 0
+      },
+      "database_before": false,
+      "database_after": false,
+      "accounts_after": [],
+      "requests": []
+    }
+  },
+  {
+    "name": "epipe/ndjson-diagnostics-only",
+    "evidence_class": "behavioral",
+    "representation_scope": "Actual RunContext/root/search owner with existing SDK execution constructor seam; synthetic execution writes owned output or returns owned business failure without calling the SDK callback; observes root context, resource-close, diagnostics, join and exit policy only",
+    "input": {
+      "boundary": "actual-root-RunContext",
+      "args": [
+        "search",
+        "owned",
+        "--ndjson"
+      ],
+      "stdin": "",
+      "version": "v1.2.3",
+      "config_before": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+      "cache_before": null,
+      "environment": {
+        "PIXIV_LOG_FORMAT": "json",
+        "PIXIV_LOG_LEVEL": "debug"
+      },
+      "seed_accounts": false,
+      "source": "release",
+      "release_tag": "v1.3.0",
+      "release_prerelease": false,
+      "stderr_writer": "root-diagnostic-epipe",
+      "synthetic_sdk_execution": true
+    },
+    "observation": {
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "trace": [
+        "startup.cleanup",
+        "startup.supported",
+        "runtime.load",
+        "stderr.write",
+        "sdk.synthetic.factory",
+        "sdk.synthetic.execute",
+        "runtime.load",
+        "sdk.synthetic.close",
+        "stderr.write"
+      ],
+      "output_writes": [],
+      "error_writes": [
+        {
+          "payload": "{\"time\":\"2026-10-10T18:48:26.111165496Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"started\",\"operation\":\"pixiv search\"}\n",
+          "length": 123,
+          "n": 0,
+          "error": "broken pipe"
+        },
+        {
+          "payload": "{\"time\":\"2026-10-10T18:48:26.111210644Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"completed\",\"operation\":\"pixiv search\"}\n",
+          "length": 125,
+          "n": 0,
+          "error": "broken pipe"
+        }
+      ],
+      "runtime_calls": 2,
+      "target": "pixiv search",
+      "context": {
+        "scope_present": true,
+        "value": "owned context value",
+        "deadline": "2099-01-02T03:04:05Z",
+        "deadline_preserved": true,
+        "done_preserved": true,
+        "canceled": false,
+        "state_context_equals_execution": true,
+        "parent_sink_calls": 0
+      },
+      "database_before": false,
+      "database_after": false,
+      "accounts_after": [],
+      "requests": []
+    }
+  },
+  {
+    "name": "epipe/explicit-json-false-diagnostics-only",
+    "evidence_class": "behavioral",
+    "representation_scope": "Actual RunContext/root/search owner with existing SDK execution constructor seam; synthetic execution writes owned output or returns owned business failure without calling the SDK callback; observes root context, resource-close, diagnostics, join and exit policy only",
+    "input": {
+      "boundary": "actual-root-RunContext",
+      "args": [
+        "search",
+        "owned",
+        "--json=false"
+      ],
+      "stdin": "",
+      "version": "v1.2.3",
+      "config_before": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+      "cache_before": null,
+      "environment": {
+        "PIXIV_LOG_FORMAT": "json",
+        "PIXIV_LOG_LEVEL": "debug"
+      },
+      "seed_accounts": false,
+      "source": "release",
+      "release_tag": "v1.3.0",
+      "release_prerelease": false,
+      "stderr_writer": "root-diagnostic-epipe",
+      "synthetic_sdk_execution": true
+    },
+    "observation": {
+      "exit": 1,
+      "stdout": "",
+      "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"write diagnostics: broken pipe\"}}\n",
+      "trace": [
+        "startup.cleanup",
+        "startup.supported",
+        "runtime.load",
+        "stderr.write",
+        "sdk.synthetic.factory",
+        "sdk.synthetic.execute",
+        "runtime.load",
+        "sdk.synthetic.close",
+        "stderr.write",
+        "stderr.write"
+      ],
+      "output_writes": [],
+      "error_writes": [
+        {
+          "payload": "{\"time\":\"2026-10-10T18:48:26.112679867Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"started\",\"operation\":\"pixiv search\"}\n",
+          "length": 123,
+          "n": 0,
+          "error": "broken pipe"
+        },
+        {
+          "payload": "{\"time\":\"2026-10-10T18:48:26.112724043Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"completed\",\"operation\":\"pixiv search\"}\n",
+          "length": 125,
+          "n": 0,
+          "error": "broken pipe"
+        },
+        {
+          "payload": "{\"error\":{\"code\":\"command_failed\",\"message\":\"write diagnostics: broken pipe\"}}\n",
+          "length": 79,
+          "n": 79,
+          "error": ""
+        }
+      ],
+      "runtime_calls": 2,
+      "target": "pixiv search",
+      "context": {
+        "scope_present": true,
+        "value": "owned context value",
+        "deadline": "2099-01-02T03:04:05Z",
+        "deadline_preserved": true,
+        "done_preserved": true,
+        "canceled": false,
+        "state_context_equals_execution": true,
+        "parent_sink_calls": 0
+      },
+      "database_before": false,
+      "database_after": false,
+      "accounts_after": [],
+      "requests": []
+    }
+  },
+  {
+    "name": "epipe/ndjson-business-plus-diagnostics",
+    "evidence_class": "behavioral",
+    "representation_scope": "Actual RunContext/root/search owner with existing SDK execution constructor seam; synthetic execution writes owned output or returns owned business failure without calling the SDK callback; observes root context, resource-close, diagnostics, join and exit policy only",
+    "input": {
+      "boundary": "actual-root-RunContext",
+      "args": [
+        "search",
+        "owned",
+        "--ndjson"
+      ],
+      "stdin": "",
+      "version": "v1.2.3",
+      "config_before": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+      "cache_before": null,
+      "environment": {
+        "PIXIV_LOG_FORMAT": "json",
+        "PIXIV_LOG_LEVEL": "debug"
+      },
+      "seed_accounts": false,
+      "source": "release",
+      "release_tag": "v1.3.0",
+      "release_prerelease": false,
+      "failure": "owned-business",
+      "stderr_writer": "root-diagnostic-epipe",
+      "synthetic_sdk_execution": true
+    },
+    "observation": {
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "trace": [
+        "startup.cleanup",
+        "startup.supported",
+        "runtime.load",
+        "stderr.write",
+        "sdk.synthetic.factory",
+        "sdk.synthetic.execute",
+        "sdk.synthetic.close",
+        "stderr.write"
+      ],
+      "output_writes": [],
+      "error_writes": [
+        {
+          "payload": "{\"time\":\"2026-10-10T18:48:26.113372547Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"started\",\"operation\":\"pixiv search\"}\n",
+          "length": 123,
+          "n": 0,
+          "error": "broken pipe"
+        },
+        {
+          "payload": "{\"time\":\"2026-10-10T18:48:26.113389792Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"failed\",\"operation\":\"pixiv search\",\"reason\":\"command failed\"}\n",
+          "length": 148,
+          "n": 0,
+          "error": "broken pipe"
+        }
+      ],
+      "runtime_calls": 1,
+      "target": "pixiv search",
+      "context": {
+        "scope_present": true,
+        "value": "owned context value",
+        "deadline": "2099-01-02T03:04:05Z",
+        "deadline_preserved": true,
+        "done_preserved": true,
+        "canceled": false,
+        "state_context_equals_execution": true,
+        "parent_sink_calls": 0
+      },
+      "database_before": false,
+      "database_after": false,
+      "accounts_after": [],
+      "requests": []
+    }
+  },
+  {
+    "name": "epipe/explicit-json-false-business-plus-diagnostics",
+    "evidence_class": "behavioral",
+    "representation_scope": "Actual RunContext/root/search owner with existing SDK execution constructor seam; synthetic execution writes owned output or returns owned business failure without calling the SDK callback; observes root context, resource-close, diagnostics, join and exit policy only",
+    "input": {
+      "boundary": "actual-root-RunContext",
+      "args": [
+        "search",
+        "owned",
+        "--json=false"
+      ],
+      "stdin": "",
+      "version": "v1.2.3",
+      "config_before": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+      "cache_before": null,
+      "environment": {
+        "PIXIV_LOG_FORMAT": "json",
+        "PIXIV_LOG_LEVEL": "debug"
+      },
+      "seed_accounts": false,
+      "source": "release",
+      "release_tag": "v1.3.0",
+      "release_prerelease": false,
+      "failure": "owned-business",
+      "stderr_writer": "root-diagnostic-epipe",
+      "synthetic_sdk_execution": true
+    },
+    "observation": {
+      "exit": 1,
+      "stdout": "",
+      "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"owned business failure\\nwrite diagnostics: broken pipe\"}}\n",
+      "trace": [
+        "startup.cleanup",
+        "startup.supported",
+        "runtime.load",
+        "stderr.write",
+        "sdk.synthetic.factory",
+        "sdk.synthetic.execute",
+        "sdk.synthetic.close",
+        "stderr.write",
+        "stderr.write"
+      ],
+      "output_writes": [],
+      "error_writes": [
+        {
+          "payload": "{\"time\":\"2026-10-10T18:48:26.114287816Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"started\",\"operation\":\"pixiv search\"}\n",
+          "length": 123,
+          "n": 0,
+          "error": "broken pipe"
+        },
+        {
+          "payload": "{\"time\":\"2026-10-10T18:48:26.114332002Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"failed\",\"operation\":\"pixiv search\",\"reason\":\"command failed\"}\n",
+          "length": 148,
+          "n": 0,
+          "error": "broken pipe"
+        },
+        {
+          "payload": "{\"error\":{\"code\":\"command_failed\",\"message\":\"owned business failure\\nwrite diagnostics: broken pipe\"}}\n",
+          "length": 103,
+          "n": 103,
+          "error": ""
+        }
+      ],
+      "runtime_calls": 1,
+      "target": "pixiv search",
+      "context": {
+        "scope_present": true,
+        "value": "owned context value",
+        "deadline": "2099-01-02T03:04:05Z",
+        "deadline_preserved": true,
+        "done_preserved": true,
+        "canceled": false,
+        "state_context_equals_execution": true,
+        "parent_sink_calls": 0
+      },
+      "database_before": false,
+      "database_after": false,
+      "accounts_after": [],
+      "requests": []
+    }
+  },
+  {
+    "name": "join/usage-plus-diagnostics",
+    "evidence_class": "behavioral",
+    "representation_scope": "Actual RunContext/root/search owner with existing SDK execution constructor seam; synthetic execution writes owned output or returns owned business failure without calling the SDK callback; observes root context, resource-close, diagnostics, join and exit policy only",
+    "input": {
+      "boundary": "actual-root-RunContext",
+      "args": [
+        "search",
+        "owned",
+        "--json=false"
+      ],
+      "stdin": "",
+      "version": "v1.2.3",
+      "config_before": "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=false\n",
+      "cache_before": null,
+      "environment": {
+        "PIXIV_LOG_FORMAT": "json",
+        "PIXIV_LOG_LEVEL": "debug"
+      },
+      "seed_accounts": false,
+      "source": "release",
+      "release_tag": "v1.3.0",
+      "release_prerelease": false,
+      "failure": "owned-usage",
+      "stderr_writer": "root-diagnostic-error",
+      "synthetic_sdk_execution": true
+    },
+    "observation": {
+      "exit": 2,
+      "stdout": "",
+      "stderr": "error: owned business usage\n",
+      "trace": [
+        "startup.cleanup",
+        "startup.supported",
+        "runtime.load",
+        "stderr.write",
+        "sdk.synthetic.factory",
+        "sdk.synthetic.execute",
+        "sdk.synthetic.close",
+        "stderr.write",
+        "stderr.write"
+      ],
+      "output_writes": [],
+      "error_writes": [
+        {
+          "payload": "{\"time\":\"2026-10-10T18:48:26.115815898Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"started\",\"operation\":\"pixiv search\"}\n",
+          "length": 123,
+          "n": 0,
+          "error": "owned diagnostic writer failure"
+        },
+        {
+          "payload": "{\"time\":\"2026-10-10T18:48:26.115842047Z\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"failed\",\"operation\":\"pixiv search\",\"reason\":\"command failed\"}\n",
+          "length": 148,
+          "n": 0,
+          "error": "owned diagnostic writer failure"
+        },
+        {
+          "payload": "error: owned business usage\n",
+          "length": 28,
+          "n": 28,
+          "error": ""
+        }
+      ],
+      "runtime_calls": 1,
+      "target": "pixiv search",
+      "context": {
+        "scope_present": true,
+        "value": "owned context value",
+        "deadline": "2099-01-02T03:04:05Z",
+        "deadline_preserved": true,
+        "done_preserved": true,
+        "canceled": false,
+        "state_context_equals_execution": true,
+        "parent_sink_calls": 0
+      },
+      "database_before": false,
+      "database_after": false,
+      "accounts_after": [],
+      "requests": []
+    }
+  }
+]

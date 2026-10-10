@@ -1,0 +1,421 @@
+{
+  "schema_version": 1,
+  "frozen_go_ref": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "published_base": "40faef3f48af16be4acf3044f103532d518449c1",
+  "scope": "210 actual frozen public CLI Presenter observations using synthetic events/writers/clocks only; existing CLI and shared Scope tests rerun without changing their oracles",
+  "observation_counts": {
+    "primary": {
+      "render_cases": 170,
+      "writer_cases": 6,
+      "default_cases": 7,
+      "go_only_cases": 3,
+      "concurrent_cases": 2,
+      "total": 188
+    },
+    "additive": {
+      "render_cases": 22,
+      "total": 22
+    },
+    "total": 210,
+    "shared_semantics_or_64_bit_runtime": 204,
+    "explicit_go_only_representations_or_writer_contract_violations": 6
+  },
+  "toolchain": {
+    "version": "go version go1.27.1 linux/amd64",
+    "compiler_sha256": "3780fc07130d6d45096373acf062cc316940d253e2a1d892ece03a3bdd0d21d4",
+    "go_binary_sha256": "30969f97169d7f43fe6a085873d75613adc21e30818a8c61d95bd27275df4624",
+    "race_c_compiler": "gcc (Debian 14.2.0-19) 14.2.0",
+    "stdlib_non_test_source_sha256": {
+      "src/encoding/json/decode.go": "1632161a34c8286722716a48ba0b5e0c3d117a2e017e79ace676403808a16e6e",
+      "src/encoding/json/encode.go": "8ff45e82c60c6e29d11fe57ce0c59d79f40ef0d53be28ac36617482a7463b217",
+      "src/encoding/json/fold.go": "30c457bbab4e4cb4a92b74dcfa428cd977a76a18b98fa603c7cf64a9a9ebb2f0",
+      "src/encoding/json/indent.go": "9ef9eac29fc4cc9d94bf305976891eb5e78a2644acd4f07ed7a0c186991ac908",
+      "src/encoding/json/scanner.go": "2b16dd215274dfa8e0806b53cca144684d5b9c8a02319cf5ce10120c50e6eef2",
+      "src/encoding/json/stream.go": "065501364e4954cf1c8f1887900248d4c0983593b8c058b2fe7997d9635b793d",
+      "src/encoding/json/tables.go": "74f7f392e1cc22890b72959647b9e5facda591a890c81f8167b532d31adc561e",
+      "src/encoding/json/tags.go": "e7300718fc8862f4dbc8bbdde33e4a0335124bb028e68062b52d3c042c374d6e",
+      "src/encoding/json/v2_decode.go": "d82e2e8ac32bc64c967b02769fc1fc6e2e5e9d7aae384673709e6af4669bc3fe",
+      "src/encoding/json/v2_encode.go": "8d3601b3a4c652b90ece3b9c5f5b1bcb7ad155eb85e625372a158c1dd9e8c414",
+      "src/encoding/json/v2_indent.go": "f8ac9f3dba216cc5577ca731268db70c7667a1c0d7bb61f436ffd3db92a8f500",
+      "src/encoding/json/v2_inject.go": "f1fbf89a12eab3f6f6e53d23d801cd4c5f3a2901c0f20aaa3369c9e025560e58",
+      "src/encoding/json/v2_options.go": "253e7ccb9c38463ab47b5c78e1bc1f103b2e95f976dfe0805e23f4922d59ab0a",
+      "src/encoding/json/v2_scanner.go": "d3f720d1a0a001f010c8556dc01507d99d78d6640c953f95c256a6c398fa20ad",
+      "src/encoding/json/v2_stream.go": "ae20daf462b86bf14884637fc2e8256aaadd9bba91c580fbb6840020e6a12898",
+      "src/net/url/encoding_table.go": "274e5ad203d6c38c41fe435eb9e5fc65ae1a38e98b44daa9b6355ba0d3fdac09",
+      "src/net/url/gen_encoding_table.go": "cd0f5020e4a5aa9741411afb4ab1bf73b9e9f40cd950e2bb9b369a773fdd9033",
+      "src/net/url/url.go": "44c33f88526abf3b5955d6c97297be5c9d228e741b33e52c940dcac5a496e091",
+      "src/fmt/doc.go": "1f560df68a2578929f14b0ded40fb743aa5279d9c9ccbdfd31e21a199a369082",
+      "src/fmt/errors.go": "01fd304868493a3aa1198cc79a56274930f687353e9405211ca063c1b8195ea6",
+      "src/fmt/format.go": "a668c0d6bb23f6ac929b73ef661a65be2225a9f665052a2ce02c4c58339c3335",
+      "src/fmt/print.go": "10d7cd625d83a15f70b6e61641d3cebd4e4d49d7e0f2a24d5d2b59988074d2f7",
+      "src/fmt/scan.go": "ac416ad4fba7f9901c737a203950d5d57220d1401e4bc7f0a2420389b88a86cd",
+      "src/io/io.go": "3945d328a9072e4f5970b7d4bc0eb834eec29fd22889a1ed9f3fb76ad41c3274",
+      "src/io/multi.go": "acb61a128d4e49dcc8b5dcd268ee1bd61008fd97af0e459f839166e3ae51384e",
+      "src/io/pipe.go": "75ef56f505592fcffb188bf7660c6ea6abede3f2701b500d6946fa519c37e233",
+      "src/strconv/bytealg.go": "210ed5dd413d26575dabbb917c047ba52a144d133414f5e06b9595a4b30d3c60",
+      "src/strconv/bytealg_bootstrap.go": "2d0fd3eb11f2db64c3c3212de4a3d99e6a344c0a3ac5dff0c925460e758814da",
+      "src/strconv/doc.go": "aea030aeaf555c48ae648dad6421aca2cb9df369265ab31bb1cdf956dac8ce97",
+      "src/strconv/isprint.go": "e6f4b35fbf38f9c9c8b251e5d3cf94daa880789cb89825f11f9734ba4a42e9ff",
+      "src/strconv/makeisprint.go": "225e414c850c0aabd9cef26c098a393cc7f811a296a9379569a90d2ced4261ec",
+      "src/strconv/number.go": "dda43e8c91d95f9dea0c46b2fec6637e5520cae099e40c5965dca0e41bbaab9e",
+      "src/strconv/quote.go": "6602960ec8777de9926c1d02fbf5cb0828d4aefa38083865f4af17b6892c09a2",
+      "src/internal/strconv/atob.go": "6938f9a33a3daf57d7bada9b6c38b4cc26487c3e613c42c3512a055bed10d6f9",
+      "src/internal/strconv/atoc.go": "b64c4e2aab7fc61aca026d5709a8be703cde3dfd42c78f25489e4687e41785bb",
+      "src/internal/strconv/atof.go": "b3322257fd15836b2ed9355599a767915382c040665391e01a6af35548b9b643",
+      "src/internal/strconv/atoi.go": "bd69756b79c2f007ce7900bea400051f9f9da600c9c6bad656e46900331663d8",
+      "src/internal/strconv/ctoa.go": "12e247aedfb8b2ede713f28aed0717770463e103886d63d595bf8fe09f445155",
+      "src/internal/strconv/decimal.go": "23bd45989d0b5a7b441c45873bf43f210fdf8381132fc74424d381216ac3a8b4",
+      "src/internal/strconv/deps.go": "052459732bddd00d8584351fb6a906566fc664ea40cbb125a6084c266ec32238",
+      "src/internal/strconv/ftoa.go": "93b2dbb223f9c8928ab3c3b6f44a74de0378cf64f56e978c3431c9554de5d9be",
+      "src/internal/strconv/itoa.go": "d84e249b4334bab64a916061a45366a2d77becf6f4e5cf9d917527efddfc245f",
+      "src/internal/strconv/pow10gen.go": "e0a692cccad7c449e442eee8f82a1b0443aabdaffffc9eaa35813e2150786f55",
+      "src/internal/strconv/pow10tab.go": "aae7690406fa6f2295cdc98d5a164a2ecd97ad92d5b828ca418c78ba2a48fe36",
+      "src/internal/strconv/uscale.go": "bd6b0f22f08b35182c18103b1dad93590bb54f007da1eda908daf44f4331a8b8",
+      "src/strings/builder.go": "ffe3e09dbe0d4ce455964566a825dcd0a99fa7a2488f04c9dc22aefb0ee37735",
+      "src/strings/clone.go": "5c18eb3b45b7d9ae63d0cc43f9e337c077de05dd47fd5a1ea49dafeb7e1b862b",
+      "src/strings/compare.go": "af4e0fa7dfe63018d9808f89a4c511eeb8d773bd6f3b030f1c9592a1e0de7a85",
+      "src/strings/iter.go": "067603fe06f2cec8ec607f9c9d469493901820f76af7f9e3e51136824fe8b04a",
+      "src/strings/reader.go": "cceec92b1c65a8b3b2b5fc2991ea0a54b1bf6c5fb75981de5fa91c7b2dadbb6d",
+      "src/strings/replace.go": "fbe8467c532ea7e5cdb848577423c4f218cbe2776907fb5c8c091006c786cdba",
+      "src/strings/search.go": "4fdef1f79f6e854789d9140b17ce2c2bbdbf0d4067a801e42607cf7877698cd1",
+      "src/strings/strings.go": "a81bdf73a308277c322e35d0c602e3813f57b6f769c091f8f8962c8884a45ea3",
+      "src/time/embed.go": "5daabe771bf4e20d29b7923a75cc42ae7cb1172869bb78182f93494abb3f5cb7",
+      "src/time/format.go": "f2b75d1440a46231523d3be86925b52c59c5f23657658e24514f2daa588e575d",
+      "src/time/format_rfc3339.go": "14b2a58fa295cca1a4f99467f5a5059418ed266a2298316124af97ffa014f271",
+      "src/time/genzabbrs.go": "1d1b12d0e016479f27766f10651ecdfad361ec012ed436ce3b8b58b558cc6a11",
+      "src/time/sleep.go": "58489f2ea41f5032921eaa448c215d7ffffcb9fb0b43c1aad891c20bed342dc5",
+      "src/time/sys_plan9.go": "28ced9e0a0803c92b909277f65755dca13a2d8efba24bcbf00cd64ac2eb64e4b",
+      "src/time/sys_unix.go": "dfb95fb684453c7314fc9a31dacb6bb6de7fa3ccc1752b9bb7f2741a062911d5",
+      "src/time/sys_windows.go": "2136406a64f507a80d90aaf03207f38b473629e16c6bff77811b0bb339e74310",
+      "src/time/tick.go": "9a98e97fd49f59f359ed4fb8c4eb8e35c2db59bb10bfc2b5ce33147aceb825ea",
+      "src/time/time.go": "7d992810b162f65e02cea4d60fd0d90af59b3cafa2c8926ca08083d5c73451dc",
+      "src/time/zoneinfo.go": "198928e8d2573d88d8743db57b86777a26506f17ef2b0283882a9f5c884979b7",
+      "src/time/zoneinfo_abbrs_windows.go": "fdabcbf35b6e9613c7e12bc44a10701cabf08c1760aef7be07f58609dfb89ead",
+      "src/time/zoneinfo_android.go": "dbb2e2e040b3659bff57db555a6189d684c4043adb78751ccdf6fb83d249b98e",
+      "src/time/zoneinfo_goroot.go": "984267b22b58101becfd3612f836c3e32a6f4190e149e257315a4179ec279992",
+      "src/time/zoneinfo_ios.go": "21a72d79ece61edf14d1ea9b939d3139896e71580f1e5874a1d05993e2a171c2",
+      "src/time/zoneinfo_js.go": "6c2afceb75692e77ec4f43915755e161dbed1100ca9e5ab6500c759d7ff01bb7",
+      "src/time/zoneinfo_plan9.go": "1a86edf092d178ff3de2fae5eef2458e4a1c8508754d237ed421a7d6bc9fdde3",
+      "src/time/zoneinfo_read.go": "812b0025c6e4face22e709053183d59e03e71e3c1459187350f4088587f4a134",
+      "src/time/zoneinfo_unix.go": "d2001a2351a080f1a47ebb3999be74f99caceb4a8f1ea6369a3c843fa0442f08",
+      "src/time/zoneinfo_wasip1.go": "c40d93c1c35037105c24c5c33316b8c45966be401d797053aabc73f92de8729a",
+      "src/time/zoneinfo_windows.go": "831f1d99fc109507783841c65f0e196f063a1ce6490354869bf6df68aa626434"
+    }
+  },
+  "go_sources": {
+    "internal/cli/diagnostics/diagnostics.go": {
+      "sha256": "88b5c5f4a4ca3b13bef00bdebf1d9d787e6e32f1fe90f3d6abb3a30d2d9516d9",
+      "matches_reference": true
+    },
+    "internal/shared/diagnostics/diagnostics.go": {
+      "sha256": "aecd4045f50f6bcf4cd20f316d680cbfb28e657f919ce1c0700dfdad8d5ddc76",
+      "matches_reference": true
+    },
+    "internal/cli/diagnostics/diagnostics_test.go": {
+      "sha256": "9768a05d9fda73a28048567150f11f2f0bd3137940421541fc60d53f0d42637b",
+      "matches_reference": true
+    },
+    "internal/shared/diagnostics/diagnostics_test.go": {
+      "sha256": "1c856282d21f2703968cd3e6f551937c1283f993161aaf33a151e599c65b6915",
+      "matches_reference": true
+    }
+  },
+  "preserved_published_inputs": {
+    "go.mod": {
+      "sha256": "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c",
+      "matches_reference": true
+    },
+    "go.sum": {
+      "sha256": "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e",
+      "matches_reference": true
+    },
+    "crates/pixiv-cli/tests/fixtures/updater-cli-owner.json": {
+      "sha256": "af6170a64755f9336bee105a9eef8ac94fa196d46284a424cc10153c1a642e8d",
+      "matches_reference": true
+    },
+    "docs/migration/contracts/diagnostics.json": {
+      "sha256": "320b8dbf9428127876ba69aa36beadbfe47af563333053d9cdbaf40ca066f245",
+      "matches_reference": true
+    }
+  },
+  "artifacts": {
+    "crates/pixiv-cli/tests/support/diagnostics_presenter_go_probe.go.txt": {
+      "bytes": 28329,
+      "sha256": "b438ddb13c92d6e06a0435c94c8d338f88e4a2c4a08b04e3356f015967eba040"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics_presenter_go_replay.sh": {
+      "bytes": 1819,
+      "sha256": "421a7e3733eedfcfa1c5ce7b2b6ab1e04cb7c4eed677335808f2d774de1648fd"
+    },
+    "crates/pixiv-cli/tests/fixtures/diagnostics-presenter.json": {
+      "bytes": 289090,
+      "sha256": "f083043ee9dec6329eeb16c11ce6363df7d585ea141f3008a392c9d6bd46f575"
+    },
+    "crates/pixiv-cli/tests/fixtures/diagnostics-presenter-extra.json": {
+      "bytes": 28460,
+      "sha256": "057cf9182cf8a055cf31555fff30fd044724a457a312e6ddf2d5f09070e191eb"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-evidence/coverage-audit.json": {
+      "bytes": 2024,
+      "sha256": "23add6d17175749e852bef982a27382443b9ec9535660beb83c89ab12184355e"
+    }
+  },
+  "capture_environment": {
+    "GOPROXY": "off",
+    "GOWORK": "off",
+    "GOTOOLCHAIN": "local",
+    "ordinary_CGO_ENABLED": "0",
+    "race_CGO_ENABLED": "1",
+    "module_mode": "-mod=readonly",
+    "toolchain_setup": [
+      "/tmp/quantus-toolchain-env.txt",
+      "/tmp/pixiv-fanbox-native-build-env.sh"
+    ]
+  },
+  "capture_commands": [
+    "gofmt -w crates/pixiv-cli/tests/support/diagnostics_presenter_go_probe.go.txt",
+    "Copy visible .go.txt into owned temporary main.go under crates/pixiv-cli/tests/support; official Go go run -mod=readonly main.go; --extra captures only additive rows",
+    "Repeat both captures and compare all stdout bytes",
+    "go run -race -mod=readonly main.go; repeat with --extra; compare all stdout bytes",
+    "go vet -mod=readonly main.go",
+    "go test -mod=readonly -count=1 -v ./internal/cli/diagnostics ./internal/shared/diagnostics",
+    "go vet -mod=readonly ./internal/cli/diagnostics ./internal/shared/diagnostics",
+    "gofmt -l probe and actual CLI/shared diagnostic Go sources; require empty listing",
+    "bash crates/pixiv-cli/tests/support/diagnostics_presenter_go_replay.sh; repeat with --race"
+  ],
+  "validation": {
+    "capture_repeat_byte_identical": true,
+    "primary_preserved_after_additive_source_changes": true,
+    "race_capture_byte_identical": true,
+    "race_stderr_empty": true,
+    "probe_go_vet_passed": true,
+    "packages_go_vet_passed": true,
+    "related_go_tests_passed": 6,
+    "source_and_probe_gofmt_empty": true,
+    "replay_script_bash_syntax_passed": true,
+    "final_replay_exit": 0,
+    "final_race_replay_exit": 0,
+    "fixture_utf8_base64_consistency_audit_passed": true,
+    "unique_observation_names": true,
+    "initial_capture_started_utc": "2026-10-10T18:34:54Z",
+    "initial_capture_finished_utc": "2026-10-10T18:34:55Z",
+    "additive_race_capture_started_utc": "2026-10-10T18:37:05Z",
+    "additive_race_capture_finished_utc": "2026-10-10T18:37:08Z",
+    "provenance_written_utc": "2026-10-10T18:41:56Z"
+  },
+  "coverage": {
+    "module_labels": [
+      "Pixiv CLI",
+      "FANBOX CLI",
+      "Pixiv MCP server",
+      "FANBOX MCP server",
+      "Pixiv account pool",
+      "Pixiv authentication",
+      "FANBOX authentication",
+      "Pixiv authentication database",
+      "FANBOX authentication database",
+      "Pixiv configuration",
+      "FANBOX configuration",
+      "Pixiv network",
+      "FANBOX network",
+      "FANBOX FlareSolverr",
+      "Pixiv download",
+      "FANBOX download"
+    ],
+    "event_kinds": [
+      "started",
+      "completed",
+      "failed",
+      "network_request",
+      "challenge",
+      "solver_started",
+      "solver_completed",
+      "replay",
+      "download",
+      "account",
+      "configuration"
+    ],
+    "reasons": [
+      "",
+      "command failed",
+      "tool failed",
+      "challenge required",
+      "solver unavailable",
+      "solver failed",
+      "malformed solver response",
+      "account frozen",
+      "account pool exhausted",
+      "configuration failed",
+      "authentication failed"
+    ],
+    "unknown_kind_reason_and_module": true,
+    "constructors": [
+      "NewPresenter",
+      "NewPresenterWithClock",
+      "NewPresenterWithFormat"
+    ],
+    "invalid_format_fallbacks": [
+      "",
+      "JSON",
+      "ndjson",
+      " text ",
+      "synthetic"
+    ],
+    "request_id_unsigned_max": true,
+    "signed_duration_min_max": true,
+    "signed_status_count_bounds_64_bit_go": true,
+    "duration_millisecond_truncation_and_omission": true,
+    "duration_decimal_tie_rounding": true,
+    "target_user_agent_json_omission": true,
+    "writer_methods": [
+      "Write",
+      "WriteString"
+    ],
+    "continued_writes_after_error": true,
+    "first_writer_error_direct_identity": true,
+    "short_writes_without_error_ignored": true,
+    "default_time_normalization": "Only emitted time token is replaced after validation against the before/after call window",
+    "concurrency_normalization": "Only nondeterministic record order is sorted; each byte record is intact and compared exactly",
+    "valid_utf8_input_invalid_output_rows": [
+      "unicode_capitalizing_completed_text",
+      "unicode_capitalizing_download_text"
+    ]
+  },
+  "actual_logs": {
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-evidence/capture-repeat.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-evidence/capture.log": {
+      "bytes": 212,
+      "sha256": "532816895034043c9c18520d842bc5793d2a73f92299913a54ca327682da951f"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-evidence/capture.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-evidence/extra-capture.log": {
+      "bytes": 243,
+      "sha256": "c28034ffa642605ac2426ae71afa69433c4b5dc3979e6d88e51957f5ad67d54b"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-evidence/extra-capture.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-evidence/extra-repeat.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-evidence/final-primary-repeat.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-evidence/final-probe-vet.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-evidence/final-race-replay.log": {
+      "bytes": 924,
+      "sha256": "873e6fbc0bf0552ab69bd8bb8903482eae3d295994500c18220cd30239372c1b"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-evidence/final-replay.log": {
+      "bytes": 924,
+      "sha256": "53fce1a41828156e8b8fa6c870d00237d04ed7f72e5b62cbd4035d673b1d42c9"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-evidence/frozen-sources.log": {
+      "bytes": 744,
+      "sha256": "a266b09a3bee66fb3eceb4e2963ca7a900e2ff918e472114f2ffa21db4eb824b"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-evidence/gofmt.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-evidence/packages-test.log": {
+      "bytes": 797,
+      "sha256": "0fd02c619e0c5ef5daf3d9980848de01bcc7ca823261589143a135c790ef7922"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-evidence/packages-vet.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-evidence/probe-vet.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-evidence/race-extra.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-evidence/race-primary.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "compressed_actual_capture_stdout": {
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-evidence/capture-repeat.json.gz": {
+      "original_bytes": 289090,
+      "original_sha256": "f083043ee9dec6329eeb16c11ce6363df7d585ea141f3008a392c9d6bd46f575",
+      "compressed_bytes": 14179,
+      "compressed_sha256": "46a969696147246b907aae479d8842556fb1c0c7f775939cb20677c97bd17f1c",
+      "matches_fixture": "crates/pixiv-cli/tests/fixtures/diagnostics-presenter.json"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-evidence/extra-repeat.json.gz": {
+      "original_bytes": 28460,
+      "original_sha256": "057cf9182cf8a055cf31555fff30fd044724a457a312e6ddf2d5f09070e191eb",
+      "compressed_bytes": 2583,
+      "compressed_sha256": "d36d9cebda80a9707258ab809561f1f647f5ced69496af59a2e9c9fb6d54899d",
+      "matches_fixture": "crates/pixiv-cli/tests/fixtures/diagnostics-presenter-extra.json"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-evidence/final-primary-repeat.json.gz": {
+      "original_bytes": 289090,
+      "original_sha256": "f083043ee9dec6329eeb16c11ce6363df7d585ea141f3008a392c9d6bd46f575",
+      "compressed_bytes": 14179,
+      "compressed_sha256": "46a969696147246b907aae479d8842556fb1c0c7f775939cb20677c97bd17f1c",
+      "matches_fixture": "crates/pixiv-cli/tests/fixtures/diagnostics-presenter.json"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-evidence/race-extra.json.gz": {
+      "original_bytes": 28460,
+      "original_sha256": "057cf9182cf8a055cf31555fff30fd044724a457a312e6ddf2d5f09070e191eb",
+      "compressed_bytes": 2583,
+      "compressed_sha256": "d36d9cebda80a9707258ab809561f1f647f5ced69496af59a2e9c9fb6d54899d",
+      "matches_fixture": "crates/pixiv-cli/tests/fixtures/diagnostics-presenter-extra.json"
+    },
+    "crates/pixiv-cli/tests/support/diagnostics-presenter-evidence/race-primary.json.gz": {
+      "original_bytes": 289090,
+      "original_sha256": "f083043ee9dec6329eeb16c11ce6363df7d585ea141f3008a392c9d6bd46f575",
+      "compressed_bytes": 14179,
+      "compressed_sha256": "46a969696147246b907aae479d8842556fb1c0c7f775939cb20677c97bd17f1c",
+      "matches_fixture": "crates/pixiv-cli/tests/fixtures/diagnostics-presenter.json"
+    }
+  },
+  "representation_mapping": {
+    "output_base64": "Authoritative exact bytes. output_text only appears for valid UTF-8; valid Unicode input can yield invalid Go output and must not be decoded with replacement before comparing",
+    "invalid_go_string_bytes": "Two render rows explicitly require arbitrary invalid input Go string bytes unavailable to Rust String. go_string_bytes_base64 retains exact input bytes; marshaled replacement text is not a new expectation",
+    "writer_counts": "One invalid_writer_counts row covers negative and over-reported nil-error counts violating io.Writer contract; separate Go-only witness. Valid zero/short nil-error writes remain shared behavior",
+    "nil_type_panic": "Three separately labeled Go API/runtime rows cover nil Presenter receiver, typed-nil Writer and injected clock panic. Rust may add callback catch_unwind witness without asserting Go nil identities",
+    "writer_identity": "Direct Go error equality is captured after every Emit: first error object is retained unchanged, no wrapping or replacement, and later full-record writes continue",
+    "string_writer": "io.StringWriter is selected when available; equivalent Rust logical emission is one Write::write of full record, without write_all/retry",
+    "concurrency": "Barrier reaches32 concurrent injected clock calls outside sink lock; actual maximum Writer calls is1; only nondeterministic record ordering is sorted, every record remains byte-exact",
+    "architecture": "signed_integer_bounds is Go int64 on official linux/amd64; no 32-bit Go representation is inferred",
+    "nil_writer_default_clock": "Nil-writer default-clock rows observe only discarded output and nil Err; their clock_in_call_window=true is vacuous because no timestamp is emitted. Actual clock invocation with a nil writer is independently captured by both supplemental nil_writer_injected_clock rows (clock_calls=1)."
+  },
+  "known_frozen_quirks": [
+    "Text Module bypasses safeText; JSON Module does not",
+    "safeText preserves userinfo when no query/fragment exists",
+    "Malformed percent escape parsing falls back to prefix truncation and can preserve synthetic userinfo with or without query/fragment",
+    "First-byte Unicode capitalization can produce invalid output UTF-8",
+    "150ms formats as0.1 seconds and250ms as0.2 seconds",
+    "Nonzero positive/negative submillisecond JSON duration truncates to0 and is omitted; negative text duration is not narrated",
+    "Target and UserAgent are omitted from JSON"
+  ],
+  "capture_metadata_correction": "Two provenance assembly attempts assumed pre-Go1.27 strconv source paths and failed before writing. Actual Go1.27.1 source paths were inspected and all present non-test package sources hashed. Capture/test/vet/race/replay results and fixture bytes were unchanged.",
+  "limitations": [
+    "No Rust implementation/tests or Cargo commands changed or run by this worker",
+    "No docs/ledger or Go production/go.mod/go.sum edits, commits or pushes",
+    "No network, user accounts, native/browser/registration, upload or executable-release effects",
+    "Presenter fixture does not prove root lifecycle/cleanup/writer-error joining or every shared Scope semantic; those are separate owner tasks",
+    "Previously denied supplemental multiplex/unfinished-HEAD/upload probe was not retried",
+    "Only JSON object key order may be normalized per strategy; omission/null/numbers/times and text/output bytes remain exact",
+    "Native OS and six-platform equivalence unverified"
+  ]
+}
