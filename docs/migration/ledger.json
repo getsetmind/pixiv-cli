@@ -1812,7 +1812,8 @@
         "crates/pixiv-app/src/config.rs",
         "crates/pixiv-app/src/config/files.rs",
         "crates/pixiv-app/src/config/mutations.rs",
-        "crates/pixiv-cli/src/fanbox_browser.rs"
+        "crates/pixiv-cli/src/fanbox_browser.rs",
+        "crates/pixiv-cli/src/fanbox_download.rs"
       ],
       "tests": [
         "internal/cli/migration_fanbox_help_routing_test.go",
@@ -1832,12 +1833,21 @@
         "crates/pixiv-cli/tests/fanbox_browser.rs",
         "sdk/fanbox/migration_opaque_credentials_test.go",
         "crates/pixiv-sdk/tests/fixtures/fanbox-opaque-credentials.json",
-        "crates/pixiv-sdk/tests/fanbox_opaque_credentials.rs"
+        "crates/pixiv-sdk/tests/fanbox_opaque_credentials.rs",
+        "internal/cli/migration_fanbox_download_test.go",
+        "crates/pixiv-cli/tests/fixtures/fanbox-download.json",
+        "crates/pixiv-cli/tests/fanbox_download.rs",
+        "crates/pixiv-cli/tests/fanbox_download_parser.rs",
+        "sdk/fanbox/migration_save_resource_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-save-resource.json",
+        "crates/pixiv-sdk/tests/fanbox_save_resource.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "FANBOX download/save/replay, native browser extraction and the global automatic update checker remain unimplemented. Native compressed-wire/HEAD/Range/concurrent decode, arbitrary abort-body cleanup, complete public SDK lifecycle/Accept behavior and HTTP/2 relay remain unfinished; existing pacing/signal/Windows repeated-cleanup/distribution debts are unchanged.",
-        "Concrete malformed parser/SQLite Scan text, nil-slice ownership and arbitrary invalid-UTF8 String inputs remain separately unmapped. Unrestricted service/trim/saved byte schedules remain unverified beyond the bounded comparisons; custom String-only session factory cannot represent arbitrary Go byte strings. Physical Go seccomp fields are not Rust evidence. Unrestricted parser/TTY/IO/SQLite concurrency and non-Linux/platform verification remain open; no verified platform is added."
+        "Native browser extraction and the global automatic update checker remain unimplemented. Native compressed-wire/HEAD/Range/concurrent decode, arbitrary abort-body cleanup, complete public SDK lifecycle/Accept behavior and HTTP/2 relay remain unfinished; existing pacing/signal/Windows destructive repeated-cleanup/distribution debts are unchanged. FANBOX has no Go MCP download tool or CLI JSON/NDJSON/record/template/pool/replay surface to invent or silently remove.",
+        "Concrete malformed parser/SQLite Scan text, nil-slice ownership and arbitrary invalid-UTF8 String inputs remain separately unmapped. Unrestricted service/trim/saved byte schedules remain unverified beyond the bounded comparisons; custom String-only session factory cannot represent arbitrary Go byte strings. Physical Go seccomp fields are not Rust evidence. Unrestricted parser/TTY/IO/SQLite concurrency and non-Linux/platform verification remain open; no verified platform is added.",
+        "Bounded FANBOX download/save continuation: see docs/migration/fanbox-download.md. Genuine Go CLI183 scenarios/184 executions and SDK277 rows/285 saves compare source, paging, resource requests, atomic files, progress, cancellation, partial results, writer faults and normal lease/database cleanup. No platform or whole migration is promoted to verified.",
+        "Unrestricted shorthand/TTY/IO grammar, arbitrary invalid-UTF8 stdin and decoded URL-path String representations, SQLite physical layout/driver text, future-Drop async body close, filesystem close syscall errors, symlink/race/disk-full/sync/chmod failures and other platforms remain unverified. Existing denied supplemental multiplex/unfinished-HEAD/upload probe is not retried; no native browser, live account or external media operation is exercised."
       ]
     },
     {
@@ -2095,15 +2105,32 @@
     },
     {
       "id": "cli:pixiv fanbox download",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv fanbox download"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/fanbox_download.rs",
+        "crates/pixiv-cli/src/fanbox.rs",
+        "crates/pixiv-cli/src/fanbox/help.rs",
+        "crates/pixiv-cli/src/fanbox_auth.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_fanbox_download_test.go",
+        "crates/pixiv-cli/tests/fixtures/fanbox-download.json",
+        "crates/pixiv-cli/tests/fanbox_download.rs",
+        "crates/pixiv-cli/tests/fanbox_download_parser.rs",
+        "sdk/fanbox/migration_save_resource_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-save-resource.json",
+        "crates/pixiv-sdk/tests/fanbox_save_resource.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Bounded FANBOX download/save continuation: see docs/migration/fanbox-download.md. Genuine Go CLI183 scenarios/184 executions and SDK277 rows/285 saves compare source, paging, resource requests, atomic files, progress, cancellation, partial results, writer faults and normal lease/database cleanup. No platform or whole migration is promoted to verified.",
+        "Unrestricted shorthand/TTY/IO grammar, arbitrary invalid-UTF8 stdin and decoded URL-path String representations, SQLite physical layout/driver text, future-Drop async body close, filesystem close syscall errors, symlink/race/disk-full/sync/chmod failures and other platforms remain unverified. Existing denied supplemental multiplex/unfinished-HEAD/upload probe is not retried; no native browser, live account or external media operation is exercised."
+      ]
     },
     {
       "id": "cli:pixiv fanbox home",
@@ -7491,17 +7518,28 @@
       },
       "rust_sources": [
         "crates/pixiv-sdk/src/fanbox/resource.rs",
-        "crates/pixiv-sdk/src/fanbox/safe_media_body.rs"
+        "crates/pixiv-sdk/src/fanbox/safe_media_body.rs",
+        "crates/pixiv-sdk/src/fanbox/options.rs",
+        "crates/pixiv-sdk/src/save.rs"
       ],
       "tests": [
         "sdk/fanbox/migration_resource_reads_test.go",
         "crates/pixiv-sdk/tests/fixtures/fanbox-resource-reads.json",
-        "crates/pixiv-sdk/tests/fanbox_resource_reads.rs"
+        "crates/pixiv-sdk/tests/fanbox_resource_reads.rs",
+        "internal/cli/migration_fanbox_download_test.go",
+        "crates/pixiv-cli/tests/fixtures/fanbox-download.json",
+        "crates/pixiv-cli/tests/fanbox_download.rs",
+        "crates/pixiv-cli/tests/fanbox_download_parser.rs",
+        "sdk/fanbox/migration_save_resource_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-save-resource.json",
+        "crates/pixiv-sdk/tests/fanbox_save_resource.rs"
       ],
       "verified_platforms": [],
       "differences": [
         "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion.",
-        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified.",
+        "Bounded FANBOX download/save continuation: see docs/migration/fanbox-download.md. Genuine Go CLI183 scenarios/184 executions and SDK277 rows/285 saves compare source, paging, resource requests, atomic files, progress, cancellation, partial results, writer faults and normal lease/database cleanup. No platform or whole migration is promoted to verified.",
+        "Unrestricted shorthand/TTY/IO grammar, arbitrary invalid-UTF8 stdin and decoded URL-path String representations, SQLite physical layout/driver text, future-Drop async body close, filesystem close syscall errors, symlink/race/disk-full/sync/chmod failures and other platforms remain unverified. Existing denied supplemental multiplex/unfinished-HEAD/upload probe is not retried; no native browser, live account or external media operation is exercised."
       ]
     },
     {
@@ -7552,15 +7590,30 @@
     },
     {
       "id": "sdk/fanbox:Client.SaveResource",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:Client.SaveResource"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/resource.rs",
+        "crates/pixiv-sdk/src/fanbox/options.rs",
+        "crates/pixiv-sdk/src/save.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_fanbox_download_test.go",
+        "crates/pixiv-cli/tests/fixtures/fanbox-download.json",
+        "crates/pixiv-cli/tests/fanbox_download.rs",
+        "crates/pixiv-cli/tests/fanbox_download_parser.rs",
+        "sdk/fanbox/migration_save_resource_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-save-resource.json",
+        "crates/pixiv-sdk/tests/fanbox_save_resource.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Bounded FANBOX download/save continuation: see docs/migration/fanbox-download.md. Genuine Go CLI183 scenarios/184 executions and SDK277 rows/285 saves compare source, paging, resource requests, atomic files, progress, cancellation, partial results, writer faults and normal lease/database cleanup. No platform or whole migration is promoted to verified.",
+        "Unrestricted shorthand/TTY/IO grammar, arbitrary invalid-UTF8 stdin and decoded URL-path String representations, SQLite physical layout/driver text, future-Drop async body close, filesystem close syscall errors, symlink/race/disk-full/sync/chmod failures and other platforms remain unverified. Existing denied supplemental multiplex/unfinished-HEAD/upload probe is not retried; no native browser, live account or external media operation is exercised."
+      ]
     },
     {
       "id": "sdk/fanbox:Client.Supporting",

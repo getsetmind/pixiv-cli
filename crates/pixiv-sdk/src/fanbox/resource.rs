@@ -7,13 +7,18 @@ use crate::{
     Error, Reason, Result,
     context::RequestContext,
     error::Cause,
-    resource::{OpenResourceRequest, Resource, ResourceRef, ResourceResponse},
+    resource::{
+        OpenResourceRequest, Resource, ResourceRef, ResourceResponse, SaveOptions, SaveProgress,
+        SavedResource,
+    },
+    save::Destination,
 };
+use futures_util::FutureExt;
 use serde::{
     Deserialize, Deserializer, Serialize,
     de::{IgnoredAny, MapAccess, Visitor},
 };
-use std::{fmt, sync::Arc};
+use std::{fmt, panic::AssertUnwindSafe, path::Path, sync::Arc};
 
 #[derive(Default, Serialize)]
 struct ResourceIdentity {
@@ -287,6 +292,89 @@ impl Client {
             &response.headers,
             ResourceBody::new(context, body),
         ))
+    }
+    pub async fn save_resource(
+        &self,
+        context: Arc<dyn RequestContext>,
+        reference: ResourceRef,
+        options: SaveOptions,
+    ) -> Result<SavedResource> {
+        if options.path.trim().is_empty() {
+            return Err(resource_error(
+                "SaveResource",
+                Reason::InvalidArgument,
+                "destination path is required",
+            ));
+        }
+        let mut response = self
+            .open_resource(
+                context.clone(),
+                OpenResourceRequest {
+                    reference,
+                    method: "GET".into(),
+                    ..Default::default()
+                },
+            )
+            .await?;
+        let written = AssertUnwindSafe(async {
+            if !(200..300).contains(&response.status_code) {
+                return Err(resource_error(
+                    "SaveResource",
+                    Reason::UpstreamError,
+                    "resource returned a non-success status",
+                ));
+            }
+            let local = || {
+                resource_error(
+                    "SaveResource",
+                    Reason::LocalStateError,
+                    "cannot write resource",
+                )
+            };
+            let mut destination =
+                Destination::create(Path::new(&options.path)).map_err(|_| local())?;
+            let mut done = 0;
+            let mut buffer = [0u8; 64 * 1024];
+            loop {
+                if context.error().is_some() {
+                    return Err(local());
+                }
+                let read = response.body.read(&mut buffer).await;
+                if read.count > buffer.len() {
+                    return Err(local());
+                }
+                if read.count > 0 {
+                    done += read.count as i64;
+                    if let Some(progress) = &options.progress {
+                        progress(SaveProgress { total: 0, done });
+                    }
+                    destination
+                        .write(&buffer[..read.count])
+                        .map_err(|_| local())?;
+                }
+                if read.error.is_some() {
+                    return Err(local());
+                }
+                if read.eof {
+                    break;
+                }
+            }
+            destination
+                .publish(Path::new(&options.path))
+                .map_err(|_| local())?;
+            Ok(SavedResource {
+                path: options.path,
+                size: done,
+                content_type: String::new(),
+            })
+        })
+        .catch_unwind()
+        .await;
+        let _ = response.body.close().await;
+        match written {
+            Ok(result) => result,
+            Err(panic) => std::panic::resume_unwind(panic),
+        }
     }
 }
 /// A fallible byte stream retaining simultaneous bytes and errors, with explicit caller-owned close.

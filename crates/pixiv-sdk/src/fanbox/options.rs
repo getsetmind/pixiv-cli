@@ -1,5 +1,8 @@
 use super::{Failure, transport::RawTransport};
-use crate::{Reason, reference::decode_url_component};
+use crate::{
+    Reason,
+    reference::{decode_url_component, decode_url_component_bytes},
+};
 use std::{fmt, sync::Arc};
 use url::Url;
 
@@ -82,14 +85,18 @@ pub(crate) fn parse_url(raw: &str) -> Option<ParsedUrl> {
         Url::parse(&format!("{scheme}://{host}{}", &rest[boundary..])).ok()
     })?;
     parsed.host_str()?;
-    let mut wire = format!("{}://{authority}{path}", scheme.to_ascii_lowercase());
+    let escaped_path = crate::oauth::LoginUrl::parse(raw)?.escaped_path();
+    let mut wire = format!(
+        "{}://{authority}{escaped_path}",
+        scheme.to_ascii_lowercase()
+    );
     if let Some(query) = query {
         wire.push('?');
         wire.push_str(query);
     }
     if !fragment.is_empty() {
         wire.push('#');
-        wire.push_str(fragment);
+        wire.push_str(&escaped_fragment(fragment)?);
     }
     Some(ParsedUrl {
         parsed,
@@ -99,6 +106,25 @@ pub(crate) fn parse_url(raw: &str) -> Option<ParsedUrl> {
         query: query.map(str::to_owned),
         fragment: fragment.into(),
     })
+}
+
+fn escaped_fragment(raw: &str) -> Option<String> {
+    if raw
+        .bytes()
+        .all(|byte| byte.is_ascii_alphanumeric() || b"-._~!$&'()*+,;=:@/[]?%".contains(&byte))
+    {
+        return Some(raw.into());
+    }
+    let mut escaped = String::new();
+    for byte in decode_url_component_bytes(raw, false)? {
+        if byte.is_ascii_alphanumeric() || b"-._~!()*$&+,/:;=?@".contains(&byte) {
+            escaped.push(char::from(byte));
+        } else {
+            use std::fmt::Write;
+            let _ = write!(escaped, "%{byte:02X}");
+        }
+    }
+    Some(escaped)
 }
 pub(crate) fn validate_proxy_url(raw: &str) -> std::result::Result<String, Failure> {
     if raw.trim().is_empty() {

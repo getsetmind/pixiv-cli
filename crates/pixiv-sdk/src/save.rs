@@ -31,18 +31,20 @@ pub struct SavedResource {
     pub content_type: String,
 }
 
-struct Destination {
+pub(crate) struct Destination {
     file: Option<File>,
     temporary: PathBuf,
 }
 impl Drop for Destination {
     fn drop(&mut self) {
         drop(self.file.take());
-        let _ = fs::remove_file(&self.temporary);
+        if fs::remove_file(&self.temporary).is_err() {
+            let _ = fs::remove_dir(&self.temporary);
+        }
     }
 }
 impl Destination {
-    fn create(path: &Path) -> io::Result<Self> {
+    pub(crate) fn create(path: &Path) -> io::Result<Self> {
         let parent = path
             .parent()
             .filter(|parent| !parent.as_os_str().is_empty())
@@ -83,7 +85,10 @@ impl Destination {
             "cannot allocate atomic destination",
         ))
     }
-    fn publish(&mut self, path: &Path) -> io::Result<()> {
+    pub(crate) fn write(&mut self, bytes: &[u8]) -> io::Result<()> {
+        self.file.as_mut().unwrap().write_all(bytes)
+    }
+    pub(crate) fn publish(&mut self, path: &Path) -> io::Result<()> {
         self.file.as_ref().unwrap().sync_all()?;
         drop(self.file.take());
         #[cfg(unix)]
@@ -136,12 +141,7 @@ pub(crate) async fn write<R: AsyncRead + Unpin + Send>(
         if let Some(progress) = &options.progress {
             progress(SaveProgress { total, done });
         }
-        destination
-            .file
-            .as_mut()
-            .unwrap()
-            .write_all(&buffer[..count])
-            .map_err(local)?;
+        destination.write(&buffer[..count]).map_err(local)?;
     }
     destination
         .publish(Path::new(&options.path))

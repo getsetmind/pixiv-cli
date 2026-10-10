@@ -14,6 +14,7 @@ pub mod download;
 pub mod fanbox;
 pub mod fanbox_auth;
 pub mod fanbox_browser;
+pub mod fanbox_download;
 pub mod fanbox_mcp;
 pub mod interrupt;
 mod json_spool;

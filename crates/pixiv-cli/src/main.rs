@@ -1754,12 +1754,19 @@ fn fanbox_service(
     directory: std::path::PathBuf,
     config: std::sync::Arc<pixiv_app::config::Store>,
 ) -> Result<Option<std::sync::Arc<pixiv_app::fanbox_facade::Facade>>, CommandError> {
+    fanbox_service_owned(directory, config, &mut None)
+}
+
+fn fanbox_service_owned(
+    directory: std::path::PathBuf,
+    config: std::sync::Arc<pixiv_app::config::Store>,
+    owned: &mut Option<std::sync::Arc<std::sync::Mutex<pixiv_app::database::Database>>>,
+) -> Result<Option<std::sync::Arc<pixiv_app::fanbox_facade::Facade>>, CommandError> {
     let database = pixiv_app::database::Database::open(directory)
         .map_err(|error| CommandError::State(Box::new(error)))?;
-    let accounts = pixiv_app::fanbox_account_service::AccountService::from_store(
-        std::sync::Arc::new(std::sync::Mutex::new(database)),
-        config,
-    );
+    let database = std::sync::Arc::new(std::sync::Mutex::new(database));
+    *owned = Some(database.clone());
+    let accounts = pixiv_app::fanbox_account_service::AccountService::from_store(database, config);
     Ok(Some(std::sync::Arc::new(
         pixiv_app::fanbox_facade::Facade::new(Some(std::sync::Arc::new(accounts))),
     )))
@@ -1788,7 +1795,7 @@ impl pixiv_cli_rs::fanbox_auth::AutomaticUpdateHooks for SystemFanboxAuthUpdateH
     }
 }
 
-fn close_fanbox_auth_database(
+fn close_fanbox_database(
     database: std::sync::Arc<std::sync::Mutex<pixiv_app::database::Database>>,
 ) -> Result<(), CommandError> {
     let database = std::sync::Arc::try_unwrap(database).map_err(|_| {
@@ -1814,6 +1821,16 @@ async fn execute_fanbox(
         if route.path.get(1).is_none_or(|part| part != "auth")
             && let Some(help) = fanbox::help_route(args)?
         {
+            if route.path.get(1).is_some_and(|part| part == "download") {
+                return pixiv_cli_rs::fanbox_download::DownloadCommand::parse(args)?
+                    .execute(
+                        root_context,
+                        std::path::Path::new("."),
+                        || Ok(None),
+                        &mut io::stdout().lock(),
+                    )
+                    .await;
+            }
             io::stdout().write_all(help.as_bytes())?;
             return Ok(());
         }
@@ -1932,16 +1949,55 @@ async fn execute_fanbox(
                     );
                 }
                 if let Some(database) = owned_database {
-                    result = pixiv_cli_rs::finish_with_cleanup(
-                        result,
-                        close_fanbox_auth_database(database),
-                    );
+                    result =
+                        pixiv_cli_rs::finish_with_cleanup(result, close_fanbox_database(database));
                 }
                 result
             }
-            ["fanbox", "download"] => Err(CommandError::Message(
-                "FANBOX download commands are pending Rust migration",
-            )),
+            ["fanbox", "download"] => {
+                let mut runtime = None;
+                let command = pixiv_cli_rs::fanbox_download::prepare_root(
+                    root_context,
+                    args,
+                    &mut io::stdin().lock(),
+                    io::stdin().is_terminal(),
+                    &pixiv_cli_rs::startup::SystemStartupHooks::system(),
+                    &mut io::stderr(),
+                    || {
+                        runtime = Some(fanbox_runtime()?);
+                        Ok(())
+                    },
+                )?;
+                let (directory, config) = runtime.expect("FANBOX download startup was resolved");
+                let download_path = config
+                    .current()
+                    .and_then(|snapshot| snapshot.runtime())
+                    .map_err(pixiv_app::scheduler::SchedulerError::from)?
+                    .download_path;
+                let mut owned_database = None;
+                let mut result = command
+                    .execute(
+                        root_context,
+                        std::path::Path::new(&download_path),
+                        || fanbox_service_owned(directory, config, &mut owned_database),
+                        &mut io::stdout().lock(),
+                    )
+                    .await;
+                if result.is_ok() {
+                    let release = option_env!("PIXIV_BUILD_VERSION").unwrap_or("dev") != "dev";
+                    command.post_success(
+                        root_context,
+                        release,
+                        &SystemFanboxAuthUpdateHooks,
+                        &mut io::stderr(),
+                    );
+                }
+                if let Some(database) = owned_database {
+                    result =
+                        pixiv_cli_rs::finish_with_cleanup(result, close_fanbox_database(database));
+                }
+                result
+            }
             _ => Err(CommandError::Message("usage: pixiv fanbox <command>")),
         }
     }

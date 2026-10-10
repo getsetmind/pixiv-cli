@@ -95,6 +95,51 @@ pub fn is_fanbox_route(args: &[String]) -> bool {
         .is_some_and(|path| path == "fanbox")
 }
 
+pub(crate) fn download_flag_args(args: &[String]) -> Vec<String> {
+    let mut expanded = Vec::new();
+    let mut positional = false;
+    let mut proxy_value = false;
+    for argument in args {
+        if positional || proxy_value {
+            expanded.push(argument.clone());
+            proxy_value = false;
+            continue;
+        }
+        if argument == "--" {
+            positional = true;
+        }
+        if argument == "--proxy" {
+            proxy_value = true;
+        }
+        if let Some(short) = argument
+            .strip_prefix('-')
+            .filter(|short| short.starts_with('h'))
+        {
+            let mut rest = short;
+            while let Some(suffix) = rest.strip_prefix('h') {
+                if let Some(value) = suffix.strip_prefix('=').filter(|value| !value.is_empty()) {
+                    expanded.push(format!("-h={value}"));
+                    rest = "";
+                    break;
+                }
+                expanded.push("-h".into());
+                rest = suffix;
+            }
+            if let Some(unknown) = rest.chars().next() {
+                expanded.push(format!("-{unknown}"));
+            }
+        } else if let Some(short) = argument
+            .strip_prefix('-')
+            .filter(|short| !short.starts_with('-') && !short.is_empty())
+        {
+            expanded.push(format!("-{}", short.chars().next().unwrap()));
+        } else {
+            expanded.push(argument.clone());
+        }
+    }
+    expanded
+}
+
 pub fn help_route(args: &[String]) -> Result<Option<String>, CommandError> {
     let route = command_route(args);
     if route.path.first().is_none_or(|part| part != "fanbox") {
@@ -102,13 +147,18 @@ pub fn help_route(args: &[String]) -> Result<Option<String>, CommandError> {
     }
     let leaf = route.path.last().map(String::as_str).unwrap_or("fanbox");
     let mut help = false;
+    let arguments = if leaf == "download" {
+        download_flag_args(&route.args)
+    } else {
+        route.args.clone()
+    };
     let mut positions = 0;
     let mut index = 0;
-    while index < route.args.len() {
-        let token = &route.args[index];
+    while index < arguments.len() {
+        let token = &arguments[index];
         index += 1;
         if token == "--" {
-            positions += route.args.len() - index;
+            positions += arguments.len() - index;
             break;
         }
         if !token.starts_with('-') || token == "-" {
@@ -117,6 +167,7 @@ pub fn help_route(args: &[String]) -> Result<Option<String>, CommandError> {
         }
         let (flag, value) = token
             .split_once('=')
+            .filter(|(flag, _)| *flag != "-")
             .map_or((token.as_str(), None), |(flag, value)| (flag, Some(value)));
         let boolean = matches!(
             flag,
@@ -141,7 +192,7 @@ pub fn help_route(args: &[String]) -> Result<Option<String>, CommandError> {
         } else if let Some(value) = value {
             value
         } else {
-            let value = route.args.get(index).ok_or_else(|| {
+            let value = arguments.get(index).ok_or_else(|| {
                 CommandError::MessageText(format!("flag needs an argument: {flag}"))
             })?;
             index += 1;
@@ -195,7 +246,6 @@ fn flags(leaf: &str) -> Vec<Flag> {
             | "status"
             | "use"
             | "remove"
-            | "download"
     ) {
         flags.push(Flag {
             name: "json",
@@ -206,7 +256,7 @@ fn flags(leaf: &str) -> Vec<Flag> {
     }
     if matches!(
         leaf,
-        "creators" | "home" | "post" | "posts" | "supporting" | "tags" | "download"
+        "creators" | "home" | "post" | "posts" | "supporting" | "tags"
     ) {
         flags.push(Flag {
             name: "ndjson",
@@ -318,6 +368,7 @@ fn render(path: &[String]) -> String {
     let parameter = match leaf {
         "post" => " POST_ID",
         "posts" => " SOURCE",
+        "download" => " SOURCE...",
         "tags" => " CREATOR",
         "status" => " [UID]",
         "remove" => " UID",

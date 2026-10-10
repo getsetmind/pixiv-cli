@@ -1,5 +1,6 @@
 mod help;
 use crate::{CommandError, DetailOutput};
+pub(crate) use help::download_flag_args;
 pub use help::{command_route, help_route, is_fanbox_route};
 use std::io::Read;
 
@@ -415,7 +416,7 @@ impl ReadCommand {
             .ok_or(CommandError::Message(self.usage()))
     }
 }
-struct OwnedLease(Lease<Arc<Client>, SchedulerError>);
+pub(crate) struct OwnedLease(pub(crate) Lease<Arc<Client>, SchedulerError>);
 impl Drop for OwnedLease {
     fn drop(&mut self) {
         let _ = self.0.close();
@@ -502,14 +503,14 @@ fn write_json<W: Write, T: Serialize>(
     Ok(())
 }
 
-enum PostSource {
+pub(crate) enum PostSource {
     Home,
     Supporting,
     Creator(String),
     Tag(String, String),
     Single(String),
 }
-async fn resolve_posts(
+pub(crate) async fn resolve_posts(
     client: &Client,
     context: &Context,
     source: &str,
@@ -532,7 +533,7 @@ async fn resolve_posts(
         Ok(PostSource::Creator(source.into()))
     }
 }
-async fn fetch_posts(
+pub(crate) async fn fetch_posts(
     client: &Client,
     context: &Context,
     source: &PostSource,

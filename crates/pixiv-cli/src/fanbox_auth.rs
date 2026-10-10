@@ -395,37 +395,53 @@ impl AuthCommand {
         if !release || self.help_changed || self.help.is_some() || self.leaf.is_empty() {
             return;
         }
-        let warning = |out: &mut W, action: &str, error: CommandError| {
-            let _ = out.write(format!("warning: {action}: {error}\n").as_bytes());
-        };
-        let runtime = match hooks.runtime() {
-            Ok(v) => v,
-            Err(e) => {
-                warning(diagnostics, "load automatic update configuration", e);
-                return;
-            }
-        };
-        if !runtime.enabled {
-            return;
-        }
-        if self.proxy.is_some() && self.no_proxy.is_some() {
-            warning(
-                diagnostics,
-                "read automatic update proxy override",
-                CommandError::Message("use either --proxy or --no-proxy, not both"),
-            );
-            return;
-        }
-        let proxy = if self.no_proxy.is_some() {
-            ""
-        } else {
-            self.proxy.as_deref().unwrap_or(&runtime.https_proxy)
-        };
-        if let Err(e) = hooks.check(context, proxy) {
-            warning(diagnostics, "create automatic update checker", e);
-        }
+        run_automatic_update(
+            context,
+            self.proxy.as_deref(),
+            self.no_proxy,
+            hooks,
+            diagnostics,
+        );
     }
 }
+pub(crate) fn run_automatic_update<W: Write>(
+    context: &Context,
+    proxy: Option<&str>,
+    no_proxy: Option<bool>,
+    hooks: &dyn AutomaticUpdateHooks,
+    diagnostics: &mut W,
+) {
+    let warning = |out: &mut W, action: &str, error: CommandError| {
+        let _ = out.write(format!("warning: {action}: {error}\n").as_bytes());
+    };
+    let runtime = match hooks.runtime() {
+        Ok(v) => v,
+        Err(e) => {
+            warning(diagnostics, "load automatic update configuration", e);
+            return;
+        }
+    };
+    if !runtime.enabled {
+        return;
+    }
+    if proxy.is_some() && no_proxy.is_some() {
+        warning(
+            diagnostics,
+            "read automatic update proxy override",
+            CommandError::Message("use either --proxy or --no-proxy, not both"),
+        );
+        return;
+    }
+    let proxy = if no_proxy.is_some() {
+        ""
+    } else {
+        proxy.unwrap_or(&runtime.https_proxy)
+    };
+    if let Err(e) = hooks.check(context, proxy) {
+        warning(diagnostics, "create automatic update checker", e);
+    }
+}
+
 fn uid(value: &str) -> Result<i64, CommandError> {
     value
         .trim()
