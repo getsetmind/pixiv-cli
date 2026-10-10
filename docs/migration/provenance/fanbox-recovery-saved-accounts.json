@@ -1,0 +1,370 @@
+{
+  "additional_limitations": [
+    "Nil Service/Repository pointer and interface panic boundaries have explicit observation rows; Rust non-null ownership cannot represent their exact Go shape",
+    "modernc RowsAffected errors and OS I/O commit failures are retained by source but not separately injected; genuine deferred-FK commit failures are observed",
+    "No Rust implementation, Rust fixture consumer, Cargo command, native platform run, external account, browser, or network verification was performed in this slice",
+    "Two Go/Rust interoperability tests remain opt-in and were skipped; nil-context helper skips in ordinary runs because parent contract executes five bounded owned subprocess probes"
+  ],
+  "baseline": "33c6866ae7b87c195c20263f1a7074c091b08227",
+  "before_after_hashes_equal": true,
+  "commands": {
+    "capture_leases": "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go test ./internal/services/fanbox -run '^TestMigrationFanboxSavedAccountOwnedLeases$' -count=1 -migration-capture-fanbox-saved-leases",
+    "capture_repository": "../go-toolchain/go/bin/go test ./internal/storage/database -run '^TestMigrationFanboxSavedRepositoryFrozenGo$' -count=1 -timeout=60s -v -migration-capture-fanbox-saved-repository",
+    "capture_service": "../go-toolchain/go/bin/go test ./internal/services/fanbox/account -run '^TestMigrationFanboxSavedServiceFrozenGo$' -count=1 -timeout=60s -v -migration-capture-fanbox-saved-service",
+    "gofmt": "../go-toolchain/go/bin/gofmt -l internal/storage/database/migration_fanbox_saved_accounts_test.go internal/services/fanbox/account/migration_saved_accounts_test.go internal/services/fanbox/migration_saved_accounts_test.go; require empty output",
+    "lease_race_replay": "{ time /workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go test -race ./internal/services/fanbox -run '^TestMigrationFanboxSavedAccountOwnedLeases$' -count=1; }",
+    "lease_replay": "{ time /workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go test ./internal/services/fanbox -run '^TestMigrationFanboxSavedAccountOwnedLeases$' -count=1; }",
+    "race": "../go-toolchain/go/bin/go test -race ./internal/storage/database ./internal/services/fanbox/account ./internal/services/fanbox ./internal/shared/lifecycle ./internal/config/settings -count=1 -timeout=180s -v",
+    "related": "../go-toolchain/go/bin/go test ./internal/storage/database ./internal/services/fanbox/account ./internal/services/fanbox ./internal/shared/lifecycle ./internal/config/settings -count=1 -timeout=180s -v",
+    "replay": "../go-toolchain/go/bin/go test ./internal/storage/database ./internal/services/fanbox/account ./internal/services/fanbox -run '^TestMigrationFanboxSaved(RepositoryFrozenGo|ServiceFrozenGo|AccountOwnedLeases)$' -count=1 -timeout=90s -v",
+    "vet": "../go-toolchain/go/bin/go vet ./internal/storage/database ./internal/services/fanbox/account ./internal/services/fanbox ./internal/shared/lifecycle ./internal/config/settings"
+  },
+  "date": "2026-10-10",
+  "development_runs": [
+    {
+      "counts_as_pass": false,
+      "exit_marker": "/tmp/fanbox-saved-service-capture.exit",
+      "exit_marker_origin": "Recorded observed write_stdin Ctrl-C exit 130 because shell was interrupted before its marker write",
+      "name": "initial service capture interrupted after nil-context database mutex deadlock",
+      "original_tee_log": "/tmp/fanbox-saved-service-capture.log",
+      "sha256": "362fa1912fdf38e5b6a07ebc1d6ab2202bc7c791266719bffe37ca05a1eda570",
+      "tool_returned_exit": 130
+    },
+    {
+      "counts_as_pass": false,
+      "exit": 1,
+      "exit_marker": "/tmp/fanbox-saved-accounts-replay.exit",
+      "name": "initial combined replay had canonical object key-order comparison bug, corrected losslessly",
+      "original_tee_log": "/tmp/fanbox-saved-accounts-replay.log",
+      "sha256": "fa1de379b2dad5a9aed2a6444f8e1a47aa0d80342d6b6a8d5f02024b62506528"
+    },
+    {
+      "counts_as_pass": false,
+      "exit": 127,
+      "exit_marker": "/tmp/fanbox-saved-accounts-lease-timing-helper-unavailable-replay.exit",
+      "go_invocation_started": false,
+      "name": "unavailable /usr/bin/time helper prevented lease replay invocation before Go started",
+      "original_tee_log": "/tmp/fanbox-saved-accounts-lease-timing-helper-unavailable-replay.log",
+      "sha256": "c77e611a89f58480f4c0c46b2b2ac1e6d1a96a23843031551a870dd8c49265ab"
+    },
+    {
+      "counts_as_pass": false,
+      "exit": 127,
+      "exit_marker": "/tmp/fanbox-saved-accounts-lease-timing-helper-unavailable-vet.exit",
+      "go_invocation_started": false,
+      "name": "unavailable /usr/bin/time helper prevented lease vet invocation before Go started",
+      "original_tee_log": "/tmp/fanbox-saved-accounts-lease-timing-helper-unavailable-vet.log",
+      "sha256": "cc951aa06436e8e227035c7f7f424998f80334ff2619ec2349c71b3e5bbb7bae"
+    }
+  ],
+  "driver_version": "v1.40.1",
+  "environment": {
+    "GOCACHE": "/workspace/scratch/cd334a12dde3/go-cache",
+    "GOMODCACHE": "/workspace/scratch/cd334a12dde3/go-path/pkg/mod",
+    "GOPATH": "/workspace/scratch/cd334a12dde3/go-path",
+    "GOPROXY": "off",
+    "GOSUMDB": "off",
+    "go_binary": "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go"
+  },
+  "format_version": 1,
+  "fresh_case_counts": {
+    "leases": 84,
+    "repository": 75,
+    "service": 162
+  },
+  "fresh_case_total": 321,
+  "go_only": {
+    "leases": [
+      "Nil context, facade, account opener, callback, and raw nil SDK client are Go API boundary cases; Rust must record its explicit type-level correspondence.",
+      "Pointer identity, error object identity, Go concrete error types, and panic values are retained as Go-only observations instead of being silently normalized away.",
+      "A closer panic consumes sync.Once; later closes return nil because the closer did not finish assigning its error. Concurrent panic records one panic without assigning it to a scheduling-dependent goroutine.",
+      "Attempt.Commit is idempotent; nil Attempt.Commit and nil Attempt.Committed are safe. FANBOX Facade does not replay any uncommitted or committed rate-limited attempt."
+    ],
+    "repository": [
+      "typed SQLite extended error code and exact text",
+      "private scanFanboxAccount and ListFanbox partial row discard",
+      "database/sql cancellation/deadline/closed errors",
+      "Deferred foreign-key commit failure leaves a transaction visible in the same Go driver connection and next BeginTx fails until DB.Close rolls it back; owned fixture captures durable reopened rows"
+    ],
+    "service": [
+      "OpenSessionFunc raw nil,nil causes Go nil-pointer panic and partial client+error is returned without idle-close",
+      "private selectedUserID and isDefault error ordering, repeated storage reads, missing-default masking",
+      "nil caller context reaches database/sql panic with its mutex locked; each poisoned handle is isolated to an owned subprocess and never reused or closed; SDK nil context instead returns request-build failure",
+      "private SDK protocol session option values are inspected read-only using reflection; no production API is expanded",
+      "Standard Account formatting verbs are redacted and private session is omitted by default JSON; unsupported %p on a value bypasses fmt.Formatter and exposes session bytes in its invalid-format diagnostic, an explicit Go-only security defect"
+    ]
+  },
+  "go_version": "go1.27.1",
+  "historical_fixture_or_passes_reused": false,
+  "limitations": {
+    "leases": [
+      "The real public SDK client uses an explicitly injected synthetic HTTP transport; construction and release perform no external I/O.",
+      "Actual injected transport CloseIdleConnections is observed even though SDK Options documentation says the caller-owned HTTP client is never closed. Frozen Go behavior is retained without treating the documentation as the result.",
+      "Idle-close callback invocation does not establish physical native TCP/TLS/HTTP2 cleanup, active-request shutdown, or a native platform transport contract.",
+      "Saved account selection, credential verification, database state, and connection option loading belong to separate fixture sections; this section fixes the Facade AccountOpener ownership boundary.",
+      "No live FANBOX account, browser, user home, stored credential, TLS peer, or supplemental HTTP2 multiplex/upload probe is used."
+    ],
+    "repository": [
+      "All SQLite and configuration paths are owned temporary files; no user account or external network is used",
+      "CreatedAt and UpdatedAt values produced by wall clock are range-checked and represented as current-time; all other timestamps retain exact values",
+      "Malformed scan rows use an owned unconstrained SQLite table; released schema still retains NOT NULL and CHECK constraints",
+      "Native Windows ACL and cross-platform SQLite driver diagnostics are not established"
+    ],
+    "service": [
+      "All sessions, identities, config bodies, storage-port failures and HTTP responses are synthetic; production SDK parsing and actual SQLite/config writes are executed",
+      "Recognized config environment variables are cleared in the test process and restored afterwards; no user paths or real account state are accessed",
+      "Wall-clock generated validated_at/created_at/updated_at are range checked and represented as current-time",
+      "Runtime config parsing and leaf option override are captured here; private CLI composition translator precedence is a separate startup contract",
+      "Native TLS, remote validation, browser cookie extraction and Windows ACL are not exercised"
+    ]
+  },
+  "log_capture": "Commands merged stderr into stdout through tee to the named original log; set -o pipefail and PIPESTATUS[0] produced each exit marker. Lease replay timing used Bash time with TIMEFORMAT=elapsed_seconds=%3R.",
+  "logs": [
+    {
+      "all_subtests_passed": 0,
+      "bytes": 266,
+      "exit": 0,
+      "exit_marker": "/tmp/fanbox-saved-repository-capture-commit.exit",
+      "exit_marker_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "name": "repository capture",
+      "original_tee_log": "/tmp/fanbox-saved-repository-capture-commit.log",
+      "package_results": [
+        "ok  \tgithub.com/FlanChanXwO/pixiv-cli/internal/storage/database\t0.076s"
+      ],
+      "sha256": "f611930988845e00d14a4dec590654d492c5200c46ff13e32d18dbb1a768bb26",
+      "skipped_tests": [],
+      "top_level_tests_passed": 1,
+      "top_level_tests_skipped": 0
+    },
+    {
+      "all_subtests_passed": 0,
+      "bytes": 14273,
+      "exit": 0,
+      "exit_marker": "/tmp/fanbox-saved-service-capture-frozen.exit",
+      "exit_marker_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "name": "service capture",
+      "original_tee_log": "/tmp/fanbox-saved-service-capture-frozen.log",
+      "package_results": [
+        "ok  \tgithub.com/FlanChanXwO/pixiv-cli/internal/services/fanbox/account\t0.282s"
+      ],
+      "sha256": "3c6c684d7239e6bc75349c8429e70583c35bb5af3948ca322fc1d331ec5d69bd",
+      "skipped_tests": [],
+      "top_level_tests_passed": 1,
+      "top_level_tests_skipped": 0
+    },
+    {
+      "all_subtests_passed": 0,
+      "bytes": 70,
+      "exit": 0,
+      "exit_marker": "/tmp/fanbox-saved-accounts-lease-final-capture.exit",
+      "exit_marker_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "name": "leases capture",
+      "original_tee_log": "/tmp/fanbox-saved-accounts-lease-final-capture.log",
+      "package_results": [
+        "ok  \tgithub.com/FlanChanXwO/pixiv-cli/internal/services/fanbox\t0.017s"
+      ],
+      "sha256": "3eb9d01c4b15cdd907ca7697d05631b532bc85c98f6549ca531eaaaa1e71210c",
+      "skipped_tests": [],
+      "top_level_tests_passed": 0,
+      "top_level_tests_skipped": 0
+    },
+    {
+      "all_subtests_passed": 83,
+      "bytes": 28524,
+      "exit": 0,
+      "exit_marker": "/tmp/fanbox-saved-accounts-replay-frozen.exit",
+      "exit_marker_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "name": "unchanged replay",
+      "original_tee_log": "/tmp/fanbox-saved-accounts-replay-frozen.log",
+      "package_results": [
+        "ok  \tgithub.com/FlanChanXwO/pixiv-cli/internal/storage/database\t0.080s",
+        "ok  \tgithub.com/FlanChanXwO/pixiv-cli/internal/services/fanbox/account\t0.548s",
+        "ok  \tgithub.com/FlanChanXwO/pixiv-cli/internal/services/fanbox\t0.029s"
+      ],
+      "sha256": "b09ad480e15b16282e78f9571442ecd81a5fd7edb2473d41f6492f0852855a8e",
+      "skipped_tests": [],
+      "top_level_tests_passed": 3,
+      "top_level_tests_skipped": 0
+    },
+    {
+      "all_subtests_passed": 362,
+      "bytes": 98834,
+      "exit": 0,
+      "exit_marker": "/tmp/fanbox-saved-accounts-related-frozen.exit",
+      "exit_marker_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "name": "full related Go packages",
+      "original_tee_log": "/tmp/fanbox-saved-accounts-related-frozen.log",
+      "package_results": [
+        "ok  \tgithub.com/FlanChanXwO/pixiv-cli/internal/storage/database\t0.355s",
+        "ok  \tgithub.com/FlanChanXwO/pixiv-cli/internal/services/fanbox/account\t0.338s",
+        "ok  \tgithub.com/FlanChanXwO/pixiv-cli/internal/services/fanbox\t0.027s",
+        "ok  \tgithub.com/FlanChanXwO/pixiv-cli/internal/shared/lifecycle\t0.004s",
+        "ok  \tgithub.com/FlanChanXwO/pixiv-cli/internal/config/settings\t0.048s"
+      ],
+      "sha256": "db78c543eec3c2256759d554d0a3ebb5c3771c89f54d99dc90bab013b39ba4c2",
+      "skipped_tests": [
+        "TestMigrationAccountsGoRustCredentialInteroperability (0.00s)",
+        "TestMigrationDatabaseGoRustFileInteroperability (0.00s)",
+        "TestMigrationFanboxSavedNilContextProbe (0.00s)"
+      ],
+      "top_level_tests_passed": 142,
+      "top_level_tests_skipped": 3
+    },
+    {
+      "all_subtests_passed": 362,
+      "bytes": 98834,
+      "exit": 0,
+      "exit_marker": "/tmp/fanbox-saved-accounts-race-frozen.exit",
+      "exit_marker_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "name": "full related Go race",
+      "original_tee_log": "/tmp/fanbox-saved-accounts-race-frozen.log",
+      "package_results": [
+        "ok  \tgithub.com/FlanChanXwO/pixiv-cli/internal/storage/database\t5.408s",
+        "ok  \tgithub.com/FlanChanXwO/pixiv-cli/internal/services/fanbox/account\t9.837s",
+        "ok  \tgithub.com/FlanChanXwO/pixiv-cli/internal/services/fanbox\t1.176s",
+        "ok  \tgithub.com/FlanChanXwO/pixiv-cli/internal/shared/lifecycle\t1.014s",
+        "ok  \tgithub.com/FlanChanXwO/pixiv-cli/internal/config/settings\t1.182s"
+      ],
+      "sha256": "b1d8b58b15951e14e9e6cfafada0b8c413ed859abdc43105c6917334086d7a2e",
+      "skipped_tests": [
+        "TestMigrationAccountsGoRustCredentialInteroperability (0.00s)",
+        "TestMigrationDatabaseGoRustFileInteroperability (0.00s)",
+        "TestMigrationFanboxSavedNilContextProbe (0.00s)"
+      ],
+      "top_level_tests_passed": 142,
+      "top_level_tests_skipped": 3
+    },
+    {
+      "all_subtests_passed": 0,
+      "bytes": 0,
+      "exit": 0,
+      "exit_marker": "/tmp/fanbox-saved-accounts-vet-frozen.exit",
+      "exit_marker_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "name": "full related Go vet",
+      "original_tee_log": "/tmp/fanbox-saved-accounts-vet-frozen.log",
+      "package_results": [],
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "skipped_tests": [],
+      "top_level_tests_passed": 0,
+      "top_level_tests_skipped": 0
+    },
+    {
+      "all_subtests_passed": 0,
+      "bytes": 0,
+      "exit": 0,
+      "exit_marker": "/tmp/fanbox-saved-accounts-gofmt-frozen.exit",
+      "exit_marker_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "name": "gofmt",
+      "original_tee_log": "/tmp/fanbox-saved-accounts-gofmt-frozen.log",
+      "package_results": [],
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "skipped_tests": [],
+      "top_level_tests_passed": 0,
+      "top_level_tests_skipped": 0
+    },
+    {
+      "all_subtests_passed": 0,
+      "bytes": 92,
+      "exit": 0,
+      "exit_marker": "/tmp/fanbox-saved-accounts-lease-final-replay.exit",
+      "exit_marker_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "name": "leases unchanged replay",
+      "original_tee_log": "/tmp/fanbox-saved-accounts-lease-final-replay.log",
+      "package_results": [
+        "ok  \tgithub.com/FlanChanXwO/pixiv-cli/internal/services/fanbox\t0.017s"
+      ],
+      "sha256": "8debe23835fbbf12f7e214523c1cdab535d7968ba55f806778c597853cd6a459",
+      "skipped_tests": [],
+      "top_level_tests_passed": 0,
+      "top_level_tests_skipped": 0
+    },
+    {
+      "all_subtests_passed": 0,
+      "bytes": 92,
+      "exit": 0,
+      "exit_marker": "/tmp/fanbox-saved-accounts-lease-final-race-replay.exit",
+      "exit_marker_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "name": "leases final unchanged race replay",
+      "original_tee_log": "/tmp/fanbox-saved-accounts-lease-final-race-replay.log",
+      "package_results": [
+        "ok  \tgithub.com/FlanChanXwO/pixiv-cli/internal/services/fanbox\t1.158s"
+      ],
+      "sha256": "d0d6ae2fd102e48118514550c5733cf518cb2c5cdcb3deb45857ae3a1c899915",
+      "skipped_tests": [],
+      "top_level_tests_passed": 0,
+      "top_level_tests_skipped": 0
+    },
+    {
+      "all_subtests_passed": 0,
+      "bytes": 0,
+      "exit": 0,
+      "exit_marker": "/tmp/fanbox-saved-accounts-lease-final-gofmt.exit",
+      "exit_marker_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "name": "leases final gofmt",
+      "original_tee_log": "/tmp/fanbox-saved-accounts-lease-final-gofmt.log",
+      "package_results": [],
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "skipped_tests": [],
+      "top_level_tests_passed": 0,
+      "top_level_tests_skipped": 0
+    },
+    {
+      "all_subtests_passed": 0,
+      "bytes": 22,
+      "exit": 0,
+      "exit_marker": "/tmp/fanbox-saved-accounts-lease-final-vet.exit",
+      "exit_marker_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "name": "leases final vet",
+      "original_tee_log": "/tmp/fanbox-saved-accounts-lease-final-vet.log",
+      "package_results": [],
+      "sha256": "1c74cde5e6bdab92c67c4957825af547dac8ba0d26d2cb51fab8d85a4d85370a",
+      "skipped_tests": [],
+      "top_level_tests_passed": 0,
+      "top_level_tests_skipped": 0
+    }
+  ],
+  "owned_new_files_sha256": {
+    "crates/pixiv-app/tests/fixtures/fanbox-saved-accounts.json": "77dc6f24a44d27220e69987698b1e562382fbece23d895abcd31b13b906de221",
+    "internal/services/fanbox/account/migration_saved_accounts_test.go": "4bf13041a18ef7ab168d4546b1407ca1f7f4dbba6450b7a52e452a51866e5606",
+    "internal/services/fanbox/migration_saved_accounts_test.go": "162d96b5bffb3ae01a913e594ad350721654bf74f42e321bbbc6d8009c360d1e",
+    "internal/storage/database/migration_fanbox_saved_accounts_test.go": "6850bea6daa67e7c359c36807ed1ef7637e01ccbdcdc89dcb6789949a0b4ab8a"
+  },
+  "scope": "Go-first FANBOX saved account/default/once-owned lease contract recovery only",
+  "source_commit": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "source_dependency_guards_sha256": {
+    "go.mod": "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c",
+    "go.sum": "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e",
+    "internal/config/settings/auth.go": "78729a90d7a71fe5793f469be5770d1acb565ac2945bf252b893dfcec392981e",
+    "internal/config/settings/config.go": "591900e2f5648642a6296eb1306cbf0b2fa25d8f5c06f4d61d6625d5340d73b3",
+    "internal/config/settings/defaults.go": "3dbfbf1f18510bd296c30bba74468732150ee0249f6f3744289cf22f870b0753",
+    "internal/config/settings/document.go": "533602371c7a318b686f2ed506f03341c5890d53b7e86e3940234f7eb7a26ebd",
+    "internal/config/settings/paths.go": "f81e702c53e232fa5cbf7f910aec0a60f343547d1f5bcdbdcc21b3efdd3c6b31",
+    "internal/config/settings/schema.go": "ff41a9f3cda2c29ef1474784440e82600ba56f65883e21d35fcb31483b04ab7e",
+    "internal/config/settings/snapshot.go": "137a245260ccf8be8e26210fa4c91edecf342a8a6d69d72c77dd11fec4843609",
+    "internal/config/settings/store.go": "c5b418cd50e17dce27d4e0f5f499e4d293e0527e07d335e80da9a5fe2711feec",
+    "internal/config/settings/values.go": "35738fb8fdfdbc1d2cf27e541547325d3bae633b12fc2a28b58b1785177f1788",
+    "internal/services/fanbox/account/accounts.go": "261ae6e5339086f205d7662e435ac664e626d8800cd9937789867bfc82b473bc",
+    "internal/services/fanbox/account/fanbox.go": "0e7af911bd41245607d7bb0e1dc0206776785ddb88cd45f9344f927d2c9b72a8",
+    "internal/services/fanbox/fanbox.go": "694071130c0a6ad5c1ae174df2dead5ca6d929f9a8826e09c1ab86b5fecfe9e7",
+    "internal/services/fanbox/protocol/cookie.go": "692013694d29e4fe67cee7641c4dcdafe73158bea107666c194e6305d33b45a9",
+    "internal/services/fanbox/protocol/identity.go": "10ba481b43e3ec7d0bdaa2defbbd629c4b5bb2aa169c5bff99c8e756de8143d9",
+    "internal/services/fanbox/protocol/protocol.go": "c153337aa61756f5d5ea36ec32ca272e68da8a1604c1d4a4e4d6bcb2c957fdd3",
+    "internal/services/fanbox/protocol/solver.go": "e55464b091fa6720b7134a9487684c6c0969f9b4921384ea0e091d634782fcea",
+    "internal/shared/lifecycle/attempt.go": "5f329d3433b77b30a33570f8425d9742e4ac1fb09012aee2a628f6f14578d614",
+    "internal/shared/lifecycle/lease.go": "9715a8f3592aa0269b6f85b1a52751f2e0f2947e34fb133836fb1ef07172b381",
+    "internal/shared/lifecycle/lifecycle.go": "2c5524fc40cc2202ba06934e01369824909ad2bd7f0f43478ceab9e344298384",
+    "internal/storage/database/database.go": "2937e7cbd131e2aa064494b1a7482ef25bf285a5b4c20e734e44d6f1d8aac61e",
+    "internal/storage/database/migrate.go": "5a464652668c61e04e4439adcf9717fc949211d60ac311b494ae1d37cff12c96",
+    "internal/storage/database/migrations/0001_initial.sql": "9b4f2e2c94a19a0958720dc824897b2eb6b47249b465ff097c49b1ff6ae60d37",
+    "internal/storage/database/migrations/0002_fanbox_creator_id_not_null.sql": "ff4f91ea6c57b68e6b311ba7eb07beac191c5f2c3be2eae5a828c33cc91207d7",
+    "internal/storage/database/migrations/0003_pixiv_account_schedulable.sql": "21e7b42d42cf46939fc73d4a75115724b722d2e013208a46af85c730d3e37dcd",
+    "internal/storage/database/repository.go": "75abdfe0d16877d6cff0820efe705a0bb013ceb58088e372ea1a69c95e913477",
+    "sdk/error.go": "d8e48078c464f18a26cdcf32828e423dd948f17061269b222f82e08a8cee0041",
+    "sdk/fanbox/errors.go": "523577a066e3d53ce9eced8c7afbe29f422a75ce6aca58bc3b5b6fbf8da59909",
+    "sdk/fanbox/fanbox.go": "2208576144b94b89efd57b6f054ee018268812d52d556fd0758e2ee322577542",
+    "sdk/fanbox/models.go": "1dd3928aa6752c51f114c678eef3b0a2b4784a275ec80fcdbbd61006407e4623",
+    "sdk/fanbox/ops.go": "868b3b68de07d7638af5f9dd3ab1be8f0c9751f222c05c7776cde092052a7c8d"
+  },
+  "sqlite_version": "3.50.4",
+  "working_directory": "/workspace/scratch/cd334a12dde3/pixiv-cli-rs"
+}

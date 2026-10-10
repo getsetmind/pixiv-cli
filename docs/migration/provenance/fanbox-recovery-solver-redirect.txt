@@ -1,0 +1,37 @@
+source_and_fixture_sha256
+40a96c8b674c9f5f9185f9b9be49616b6ccd108c9375c76531d54de7f4896da2  internal/services/fanbox/protocol/migration_solver_redirect_test.go
+6a8db01180325dc9074984b4b763250d0029118889ed7e5141a8ae1554709651  crates/pixiv-sdk/tests/fixtures/fanbox-solver-redirect.json
+e55464b091fa6720b7134a9487684c6c0969f9b4921384ea0e091d634782fcea  internal/services/fanbox/protocol/solver.go
+c153337aa61756f5d5ea36ec32ca272e68da8a1604c1d4a4e4d6bcb2c957fdd3  internal/services/fanbox/protocol/protocol.go
+692013694d29e4fe67cee7641c4dcdafe73158bea107666c194e6305d33b45a9  internal/services/fanbox/protocol/cookie.go
+aecd4045f50f6bcf4cd20f316d680cbfb28e657f919ce1c0700dfdad8d5ddc76  internal/shared/diagnostics/diagnostics.go
+ced3428a85206de8de79c10de38d34951e0b9823c0ccb68ff51329d048a1f7b9  ../go-toolchain/go/src/net/http/client.go
+0b32a0b4ee51e00e3410764f3b2ffe1163dccb9cad548b097f47db85893a2f44  ../go-toolchain/go/src/net/http/response.go
+
+original_tee_log_sha256
+6400449305d7d11e15a6740b6759169c3c291f66456a65b13273d06374ca5326  ../fanbox-solver-redirect-logs/gofmt.log
+81afce033b9103cc5d5fd76eecd28a52983d997ff121639e62e44f98bf551e91  ../fanbox-solver-redirect-logs/capture.log
+7ea1fab60dd0ba464ec0f0dd32a3980fd1c4d564c3607017f5f69c773f321386  ../fanbox-solver-redirect-logs/capture-final.log
+3d8fe0e346599081dcb3e909b7734ed537ed6ddc285fc27a16c0128d7a02852a  ../fanbox-solver-redirect-logs/replay.log
+96f7fba3b3664983ee4981b0bb23db9f3cd7dd1c726f99b03111979793281f5f  ../fanbox-solver-redirect-logs/race.log
+d721eb58b293157412c9e4eea6e93d2fe78d226e3ac650429c69e547d5938846  ../fanbox-solver-redirect-logs/vet.log
+f6e19fa4b63fbc68a900e49bfc63953615fe9374c52439b824a9f01c8b6e0a1f  ../fanbox-solver-redirect-logs/gofmt-final.log
+
+scoped_source_anchors
+78:	ResponseCloseAtReturn int                               `json:"response_close_at_return"`
+127:func (body *migrationSolverRedirectBody) Close() error {
+139:func TestMigrationFanboxSolverRedirectClosesMalformedLocationBeforePolicy(t *testing.T) {
+207:			} else if len(control.Callbacks) != 1 || len(solver.Callbacks) != 1 || !solver.Error.SolverFailed || control.ResponseCloseAtReturn != 0 {
+237:func migrationCaptureSolverRedirect(t *testing.T, input migrationSolverRedirectInput, solver bool) migrationSolverRedirectResult {
+289:		state, err := session.solveFlareSolverr(ctx)
+301:		response, err := client.Do(request)
+308:		result.ResponseCloseAtReturn = body.closeCount
+317:		result.ResponseCloseAtReturn = body.closeCount
+325:	for cause := operationError; cause != nil; cause = errors.Unwrap(cause) {
+
+fixture_count
+case_rows=3
+real_client_executions=6
+malformed_location: control=1/0, solver=1/0
+malformed_location_close_error: control=1/0, solver=1/0
+valid_location_no_follow: control=1/1, solver=1/1

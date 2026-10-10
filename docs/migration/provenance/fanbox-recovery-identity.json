@@ -1,0 +1,160 @@
+{
+  "created_at_utc": "2026-10-10T05:35:07.703084+00:00",
+  "source_commit": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "go_version": "go1.27.1",
+  "case_count": 309,
+  "families": {
+    "api_request": 18,
+    "api_url": 2,
+    "classification": 13,
+    "constructor": 17,
+    "credentials_format": 10,
+    "current_user": 20,
+    "dto": 2,
+    "identity": 67,
+    "identity_body": 14,
+    "json_body": 6,
+    "json_decode": 10,
+    "media_url_validation_only": 12,
+    "native_proxy": 19,
+    "normalize_cookie": 26,
+    "protocol": 1,
+    "redirect": 22,
+    "session_format": 5,
+    "solver_options": 32,
+    "user_agent": 8,
+    "validate_session": 5
+  },
+  "case_rows_reaching_injected_transport": 116,
+  "total_injected_requests": 140,
+  "ledger_ids": [
+    "sdk/fanbox:Client",
+    "sdk/fanbox:Client.CloseIdleConnections",
+    "sdk/fanbox:Client.CurrentUser",
+    "sdk/fanbox:Client.ValidateSession",
+    "sdk/fanbox:CurrentUserRequest",
+    "sdk/fanbox:FlareSolverrOptions",
+    "sdk/fanbox:Open",
+    "sdk/fanbox:OpenWith",
+    "sdk/fanbox:Options",
+    "sdk/fanbox:SessionCredentials",
+    "sdk/fanbox:SessionCredentials.Format",
+    "sdk/fanbox:SessionCredentials.GoString",
+    "sdk/fanbox:SessionCredentials.String",
+    "sdk/fanbox:ToUserDTO",
+    "sdk/fanbox:User",
+    "sdk/fanbox:UserDTO"
+  ],
+  "sha256": {
+    "sdk/fanbox/migration_identity_protocol_test.go": "65784f3eaf202bc3799e7ee252c6c75e8e6b3a2ab259ef0b273db9f1e56b7015",
+    "crates/pixiv-sdk/tests/fixtures/fanbox-identity-protocol.json": "cab8573fbc51a49be2eadb540c25d5386739edc2329eaa80e0ca4d9f6e2c611b"
+  },
+  "checks": {
+    "capture-final": {
+      "exit": 0,
+      "log": "/tmp/fanbox-identity-recovery/capture-final.log",
+      "sha256": "5648fd3ad8d8ae20dd09dde441698b386b80549c5015907b7ae4fa88e32dc5d5",
+      "command": "go test ./sdk/fanbox -run \\^TestMigrationFanboxIdentityProtocolFrozenGo\\$ -count=1 -v -args -migration-capture-fanbox-identity-protocol"
+    },
+    "replay": {
+      "exit": 0,
+      "log": "/tmp/fanbox-identity-recovery/replay.log",
+      "sha256": "4bb1e26dc5a05d2c3d64c383df0e1e718a169c7f80464e996c7b7e09e47b5f12",
+      "command": "go test ./sdk/fanbox -run \\^TestMigrationFanboxIdentityProtocolFrozenGo\\$ -count=1 -v"
+    },
+    "related": {
+      "exit": 0,
+      "log": "/tmp/fanbox-identity-recovery/related.log",
+      "sha256": "c7eae79d12e51ecf71787d4ce16bebe25df3279f206a8ec18d1e336b94454702",
+      "command": "go test ./sdk/fanbox ./internal/services/fanbox/protocol -count=1"
+    },
+    "race": {
+      "exit": 0,
+      "log": "/tmp/fanbox-identity-recovery/race.log",
+      "sha256": "bb4a0d28cb5672e92eb0671d473319ed4816a38bf29390e7b20451c1dcb63388",
+      "command": "go test -race ./sdk/fanbox ./internal/services/fanbox/protocol -count=1"
+    },
+    "vet": {
+      "exit": 0,
+      "log": "/tmp/fanbox-identity-recovery/vet.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "command": "go vet ./sdk/fanbox ./internal/services/fanbox/protocol"
+    },
+    "gofmt": {
+      "exit": 0,
+      "log": "/tmp/fanbox-identity-recovery/gofmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "command": "gofmt -l sdk/fanbox/migration_identity_protocol_test.go"
+    }
+  },
+  "source_sha256": {
+    "go.mod": "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c",
+    "go.sum": "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e",
+    "internal/services/fanbox/protocol/cookie.go": "692013694d29e4fe67cee7641c4dcdafe73158bea107666c194e6305d33b45a9",
+    "internal/services/fanbox/protocol/identity.go": "10ba481b43e3ec7d0bdaa2defbbd629c4b5bb2aa169c5bff99c8e756de8143d9",
+    "internal/services/fanbox/protocol/protocol.go": "c153337aa61756f5d5ea36ec32ca272e68da8a1604c1d4a4e4d6bcb2c957fdd3",
+    "internal/services/fanbox/protocol/solver.go": "e55464b091fa6720b7134a9487684c6c0969f9b4921384ea0e091d634782fcea",
+    "sdk/error.go": "d8e48078c464f18a26cdcf32828e423dd948f17061269b222f82e08a8cee0041",
+    "sdk/fanbox/dto.go": "860f6d3f18d083526681cf86112dbbdb7faa382e1f9cac3e35b543f56c2df505",
+    "sdk/fanbox/errors.go": "523577a066e3d53ce9eced8c7afbe29f422a75ce6aca58bc3b5b6fbf8da59909",
+    "sdk/fanbox/fanbox.go": "2208576144b94b89efd57b6f054ee018268812d52d556fd0758e2ee322577542",
+    "sdk/fanbox/models.go": "1dd3928aa6752c51f114c678eef3b0a2b4784a275ec80fcdbbd61006407e4623",
+    "sdk/fanbox/ops.go": "868b3b68de07d7638af5f9dd3ab1be8f0c9751f222c05c7776cde092052a7c8d",
+    "sdk/fanbox/request.go": "deea7897788f1013297fc3cf03a7b71ff0d893335d6434d1908feb2245ece263"
+  },
+  "go_stdlib_sha256": {
+    "net/http/client.go": "ced3428a85206de8de79c10de38d34951e0b9823c0ccb68ff51329d048a1f7b9",
+    "net/http/request.go": "c3257079994b4e4f74f01cef72508919983ba31f91fcf599d348e9d52cec1540",
+    "net/http/response.go": "0b32a0b4ee51e00e3410764f3b2ffe1163dccb9cad548b097f47db85893a2f44"
+  },
+  "dependencies": [
+    {
+      "module": "github.com/bogdanfinn/fhttp",
+      "sum": "h1:LiQyHOY3i0QoxxNB7nq27/nGNNbtPj0fuBPozhR7Ws4=",
+      "version": "v0.6.8",
+      "zip_sha256": "51f74cb0f96633810038f94773bdbf0356c98a23d9de9eada3008521ae97f3cb"
+    },
+    {
+      "module": "github.com/bogdanfinn/tls-client",
+      "sum": "h1:KiFAlED55DJ8Fcocn+/1nX6PrDFcttIHAf/GDkV6KN8=",
+      "version": "v1.15.1",
+      "zip_sha256": "01aa0c1f09bc29397b97090a9fb03677ce22491f8a1cdd0a0dc7cdbce16cf031"
+    },
+    {
+      "module": "github.com/bogdanfinn/utls",
+      "sum": "h1:OuJ497cc7F3yKNVHRsYPQdGggmk5x6+V5ZlrCR7fOLU=",
+      "version": "v1.7.7-barnius",
+      "zip_sha256": "6e21ca668a463b41d3a4f92449e69872dbb0056b1d41b14b760e1237894203ef"
+    },
+    {
+      "module": "golang.org/x/net",
+      "sum": "h1:zyQRTTrjc33Lhh0fBgT/H3oZq9WuvRR5gPC70xpDiQU=",
+      "version": "v0.48.0",
+      "zip_sha256": "cf5206797e66bbe72fc13542d53a57d069a563cebb6d045c07a870eb4fd888c9"
+    }
+  ],
+  "go_only_projections": [
+    "go_only_format: Go fmt syntax and type spellings; credential redaction remains semantic",
+    "go_only_error_tree: concrete Go error types and unwrap/join topology; message/classification/context identity remain semantic",
+    "go_only_matches_reason: Go errors.Is with sdk.Error reason-only sentinel",
+    "go_only_read_calls and go_only_events: injected reader calls, sizes and ordering under Go io/net/http/json",
+    "go_only_injected_client_unchanged: Go pointer/dependency ownership comparison"
+  ],
+  "limitations": [
+    "new capture after filesystem replacement; no lost fixture bytes, historical row count or prototype passes reused",
+    "owned synthetic inputs and genuine injected *http.Client/RoundTripper only; no external accounts, services, browser, media reads or trust changes",
+    "media host policy validation only; HEAD, resource opening/reopening, content families, native TLS/HTTP2/Accept/decompression, timeout/pacing and platform lifecycle are later families",
+    "solver option validation only; solver recovery/control/state is a separate contract family",
+    "nil Client/Session CloseIdleConnections are exercised; constructor-created native idle closure does not prove physical socket cleanup",
+    "synthetic session value is projected to [SYNTHETIC_SESSION] in observed Cookie headers; no real credential enters fixture"
+  ],
+  "environment": {
+    "GOCACHE": "/workspace/scratch/cd334a12dde3/go-cache",
+    "GOPATH": "/workspace/scratch/cd334a12dde3/go-path",
+    "GOMODCACHE": "/workspace/scratch/cd334a12dde3/go-path/pkg/mod",
+    "GOPROXY": "off",
+    "GOSUMDB": "off",
+    "GOTOOLCHAIN": "local",
+    "toolchain": "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go"
+  }
+}

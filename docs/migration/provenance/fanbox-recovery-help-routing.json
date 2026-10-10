@@ -1,0 +1,143 @@
+{
+  "checkpoint": "Go-only recovered FANBOX CLI help and parser contracts",
+  "checkout_base": "33c6866ae7b87c195c20263f1a7074c091b08227",
+  "frozen_go_reference": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "toolchain": "go1.27.1 linux/amd64",
+  "environment_source": "/tmp/quantus-toolchain-env.txt",
+  "offline_dependencies": {
+    "GOPROXY": "off",
+    "GOSUMDB": "off",
+    "GOPATH": "/workspace/scratch/cd334a12dde3/go-path",
+    "GOCACHE": "/workspace/scratch/cd334a12dde3/go-cache"
+  },
+  "artifacts": {
+    "internal/cli/migration_fanbox_help_routing_test.go": {
+      "sha256": "0317b2b85bfc20f1e94a6069a734406ab42152592424332725375c04ebb13142",
+      "bytes": 16297
+    },
+    "crates/pixiv-cli/tests/fixtures/fanbox-help-routing.json": {
+      "sha256": "5301528abea777cb93ba1c5153714a90dbb79393d253d0c7aeb6793bfcf06b74",
+      "bytes": 32519
+    }
+  },
+  "case_count": 22,
+  "source_anchor_count": 19,
+  "go_only_parser_source_anchor_count": 2,
+  "sources": {
+    "go.mod": "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c",
+    "go.sum": "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e",
+    "internal/cli/commands/fanbox/auth/account.go": "837c39642939e0a147e1b5b092627360802b0fa6d844133ddae90276e524ca2a",
+    "internal/cli/commands/fanbox/auth/auth.go": "3506065bca51b047551efc9f5f480da4d660884c21d9497a6bc02228ebe51333",
+    "internal/cli/commands/fanbox/download/download.go": "f59e8c95b683d456e36920ea711125ad269b8f644854d3ac4f9d2065d585c6c5",
+    "internal/cli/commands/fanbox/fanbox.go": "31d3642468868be03c1bd2b8c7ee02f96c9dcdf461d8f573c03e511a8a4e5468",
+    "internal/cli/commands/fanbox/mcp/mcp.go": "afce033c7a6c10acf21319a73a7821ed863c8d416dade3a68a420c8bf3a42f63",
+    "internal/cli/commands/fanbox/post/post.go": "1987bb1ca3d509754b0d7358b2d4c9195998a1ea549a195858de3376b269a4bd",
+    "internal/cli/commands/lifecycle.go": "d81bfb1a664832ec707dba371a102da56baa05f3aa079905dad48de309e38080",
+    "internal/cli/composition.go": "61606c01971156607d6e632cbf417a63c8e7f02b4c673172ee3db9392dc0f9fc",
+    "internal/cli/execution.go": "627d8d8ccd6e7c35508abe0daab3209d3daf34dbf1927ab6f9f70145b623c864",
+    "internal/cli/invocation/invocation.go": "003804b7f4c5edc8e4533cc39db0301edf7bfa59e3d4b610ed7e4d3f31e91e33",
+    "internal/cli/pipeline/action.go": "74c540329878d2f87db3643056dc0f1d58cde5d4f98d90e9bec4421cd189161c",
+    "internal/cli/pipeline/pipeline.go": "294d15b516da78e677dfde04a59daf97d5c1adff76e0328bb43d0d3bfe7e7d3c",
+    "internal/cli/pipeline/records.go": "c4a94d230db4ca95661baeac26c6f912ab6ade7c8a3808bff05878609152eb29",
+    "internal/cli/root.go": "afbb8c2d7a90ccbe3ce124e9e2ee68ec463b9d020ba161d0d1cb270d1e1e7b1e",
+    "internal/config/paths/paths.go": "f054bc3a76c8c457a79e15a1f6e440e9809caae6f31baa25bbd52485c1aea9d2",
+    "internal/config/settings/paths.go": "f81e702c53e232fa5cbf7f910aec0a60f343547d1f5bcdbdcc21b3efdd3c6b31",
+    "internal/config/settings/store.go": "c5b418cd50e17dce27d4e0f5f499e4d293e0527e07d335e80da9a5fe2711feec"
+  },
+  "go_only_parser_sources": {
+    "github.com/spf13/cobra@v1.10.1/command.go": "797ff14415e5fe31a22f7be52525cc0c809e1e8b6450e42d52afeb4f08389e61",
+    "github.com/spf13/pflag@v1.0.9/flag.go": "5699e18dd47610cf862dca1bb046f5d00a652fd412d9ac2c1a0f79b9c691c8cb"
+  },
+  "ledger_ids_bounded_help_parser_only": [
+    "cli:pixiv fanbox",
+    "cli:pixiv fanbox auth",
+    "cli:pixiv fanbox auth import",
+    "cli:pixiv fanbox auth status",
+    "cli:pixiv fanbox mcp"
+  ],
+  "checks": {
+    "capture": {
+      "original_tee_log": "/tmp/pixiv-fanbox-help-routing-recovery/capture.log",
+      "sha256": "03d052e432352bac23feb978432f1157be41b40377fe65c02ffa6d05542541bd",
+      "command": "go test ./internal/cli -run ^TestMigrationFanboxHelpRouting$ -count=1 -v -migration-capture-fanbox-help-routing",
+      "started_utc": "2026-10-10T05:39:51Z",
+      "ended_utc": "2026-10-10T05:39:54Z",
+      "exit": 0,
+      "wall_seconds": 2.82
+    },
+    "replay": {
+      "original_tee_log": "/tmp/pixiv-fanbox-help-routing-recovery/replay.log",
+      "sha256": "a128a35b027649ff113b5e1d11f10b987c8ec2724d1342f06003e96464fbea10",
+      "command": "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go test ./internal/cli -run \\^TestMigrationFanboxHelpRouting\\$ -count=1 -v",
+      "started_utc": "2026-10-10T05:40:10Z",
+      "ended_utc": "2026-10-10T05:40:12Z",
+      "exit": 0,
+      "wall_seconds": 1.44
+    },
+    "race": {
+      "original_tee_log": "/tmp/pixiv-fanbox-help-routing-recovery/race.log",
+      "sha256": "353c4cbe16f9505eee62ddf7fb3198fd00b20bb555ad5572114bc45cb8bf2614",
+      "command": "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go test -race ./internal/cli -run \\^TestMigrationFanboxHelpRouting\\$ -count=1 -v",
+      "started_utc": "2026-10-10T05:40:12Z",
+      "ended_utc": "2026-10-10T05:40:24Z",
+      "exit": 0,
+      "wall_seconds": 12.513
+    },
+    "vet": {
+      "original_tee_log": "/tmp/pixiv-fanbox-help-routing-recovery/vet.log",
+      "sha256": "ebdd26b5ee8cbce7854f71f12307725b73387617f719d3d7343df00e09e8664f",
+      "command": "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go vet ./internal/cli",
+      "started_utc": "2026-10-10T05:40:24Z",
+      "ended_utc": "2026-10-10T05:40:25Z",
+      "exit": 0,
+      "wall_seconds": 0.784
+    },
+    "gofmt": {
+      "original_tee_log": "/tmp/pixiv-fanbox-help-routing-recovery/gofmt.log",
+      "sha256": "1019473b8030de3a95069aa6d479fd5eec3d30c515eed406b520a3317c457ebd",
+      "command": "/bin/bash -c result=\\$\\(/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/gofmt\\ -l\\ internal/cli/migration_fanbox_help_routing_test.go\\)\\;\\ printf\\ \\\"%s\\\"\\ \\\"\\$result\\\"\\;\\ test\\ -z\\ \\\"\\$result\\\"",
+      "started_utc": "2026-10-10T05:40:25Z",
+      "ended_utc": "2026-10-10T05:40:25Z",
+      "exit": 0,
+      "wall_seconds": 0.004
+    },
+    "related": {
+      "original_tee_log": "/tmp/pixiv-fanbox-help-routing-recovery/related.log",
+      "sha256": "224c9e08fcf30e75e5f31c2e118666b9b1627e71048374d718f704074991b518",
+      "command": "go test ./internal/cli ./internal/cli/commands/fanbox/auth ./internal/cli/commands/fanbox/mcp -run ^Test(MigrationFanboxHelpRouting|RunNoArgsPrintsCoreHelpOnly|RootHelpOmitsRemovedPersistentFlags|NonNetworkCommandsRejectProxyFlags|RunParseErrorsSkipStartup|CommandExplicitJSONRequiresTheFlag|CommandExplicitJSONIgnoresCommandsWithoutTheFlag|MigrationCLIContractKeepsCommandsAliasesAndFlags|NewPreservesAuthCommandSurface|AuthReadCommandsRejectProxyConflictBeforeOpeningStore|CommandRejectsProxyConflictBeforeResolvingService)$ -timeout=60s -count=1 -v",
+      "started_utc": "2026-10-10T05:41:59Z",
+      "ended_utc": "2026-10-10T05:42:00Z",
+      "exit": 0,
+      "wall_seconds": 1.447
+    }
+  },
+  "related_coverage": {
+    "new_actual_Run_owned_children": 22,
+    "existing_top_level_tests": 10,
+    "no_mode_child_helper_selected": false,
+    "full_internal_cli_package_run": false
+  },
+  "preserved_previous_attempts": {
+    "capture-initial.log": {
+      "path": "/tmp/pixiv-fanbox-help-routing-recovery/capture-initial.log",
+      "sha256": "35405560f4a81d27ae575e3b6218ea440778d4f84c73795b8a53ee55ae75f46b"
+    },
+    "replay-initial.log": {
+      "path": "/tmp/pixiv-fanbox-help-routing-recovery/replay-initial.log",
+      "sha256": "7351834fc51c0037b8ec45bded2eff4fd556b408677b393ab533f07c443bacc1"
+    }
+  },
+  "execution_setup_failure": {
+    "path": "/tmp/pixiv-fanbox-help-routing-recovery/capture-time-unavailable.log",
+    "sha256": "5df9bf3eafac99787406548e38b0aff5cc9a15f7aa1b912ad3312e44141011ae",
+    "exit": 127,
+    "description": "/usr/bin/time unavailable; Go did not run. Replaced with Bash builtin time for all successful checks."
+  },
+  "limitations": [
+    "Go-only recovery checkpoint; this fixture makes no Rust FANBOX parity claim.",
+    "Actual cli.Run invocations execute inside bounded disposable Go test children, not separately built cmd/pixiv executables.",
+    "Owned HOME/USERPROFILE/XDG paths, process-wide socket/connect/exec denial, forbidden dependency canaries and unchanged owned-home file modes/content establish no observed CLI side effects; timestamps are not compared.",
+    "Linux/amd64 capture and replay only; native browser, accounts, network, platform integrations, content operations and denied supplemental native HTTP2/upload probes are outside this fixture.",
+    "Go-only parser spelling rows retain exact pflag diagnostics; go_only_find_* records Cobra Find before execution rather than a portable final-command identity."
+  ]
+}

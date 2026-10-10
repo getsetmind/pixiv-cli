@@ -1,0 +1,390 @@
+{
+  "reference": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "go_version": "go1.27.1",
+  "sources": [
+    {
+      "path": "internal/services/fanbox/protocol/solver.go",
+      "sha256": "e55464b091fa6720b7134a9487684c6c0969f9b4921384ea0e091d634782fcea"
+    },
+    {
+      "path": "internal/services/fanbox/protocol/protocol.go",
+      "sha256": "c153337aa61756f5d5ea36ec32ca272e68da8a1604c1d4a4e4d6bcb2c957fdd3"
+    },
+    {
+      "path": "internal/services/fanbox/protocol/cookie.go",
+      "sha256": "692013694d29e4fe67cee7641c4dcdafe73158bea107666c194e6305d33b45a9"
+    },
+    {
+      "path": "internal/shared/diagnostics/diagnostics.go",
+      "sha256": "aecd4045f50f6bcf4cd20f316d680cbfb28e657f919ce1c0700dfdad8d5ddc76"
+    }
+  ],
+  "net_http_client_sha256": "ced3428a85206de8de79c10de38d34951e0b9823c0ccb68ff51329d048a1f7b9",
+  "net_http_response_sha256": "0b32a0b4ee51e00e3410764f3b2ffe1163dccb9cad548b097f47db85893a2f44",
+  "evidence": "Byte-identical fixed Go solver and Session constructor, genuine injected standard *http.Client.Do, synthetic owned RoundTripper responses, tracked response Read/Close and redirect policy. Direct Client.Do and actual solveFlareSolverr receive the same three inputs. Every private solverState field is captured.",
+  "limitations": [
+    "No external network, account, browser, host trust or native TLS/HTTP2 operation is performed.",
+    "The direct solver control boundary is tested; challenge detection, shared waiters, business replay and public SDK error mapping remain separate contracts.",
+    "Synthetic response Close errors are captured at the control boundary; physical native stream cancellation is not established."
+  ],
+  "cases": [
+    {
+      "input": {
+        "name": "malformed_location",
+        "location": "https://%",
+        "close_error": ""
+      },
+      "control": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "http://solver.example/v1",
+            "header": {
+              "Accept": [
+                "application/json"
+              ],
+              "Content-Type": [
+                "application/json"
+              ]
+            },
+            "body": "{\"cmd\":\"request.get\",\"url\":\"https://www.fanbox.cc/\"}"
+          }
+        ],
+        "callbacks": [],
+        "trace": [
+          "transport.request",
+          "response.close",
+          "client.return"
+        ],
+        "response_returned": false,
+        "response_status": 0,
+        "response_close_at_return": 1,
+        "response_close_count": 1,
+        "response_read_count": 0,
+        "response_bytes_read": 0,
+        "consumer_close_error": "",
+        "error": {
+          "chain": [
+            {
+              "type": "*url.Error",
+              "message": "Post \"http://solver.example/v1\": failed to parse Location header \"https://%\": parse \"https://%\": invalid URL escape \"%\""
+            },
+            {
+              "type": "*errors.errorString",
+              "message": "failed to parse Location header \"https://%\": parse \"https://%\": invalid URL escape \"%\""
+            }
+          ],
+          "url": "http://solver.example/v1",
+          "operation": "Post",
+          "timeout": false,
+          "temporary": false,
+          "canceled": false,
+          "deadline": false,
+          "close_error_retained": false,
+          "solver_unavailable": false,
+          "solver_failed": false,
+          "malformed_solver": false
+        },
+        "state": null,
+        "diagnostic_reason": ""
+      },
+      "solver": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "http://solver.example/v1",
+            "header": {
+              "Accept": [
+                "application/json"
+              ],
+              "Content-Type": [
+                "application/json"
+              ]
+            },
+            "body": "{\"cmd\":\"request.get\",\"url\":\"https://www.fanbox.cc/\"}"
+          }
+        ],
+        "callbacks": [],
+        "trace": [
+          "transport.request",
+          "response.close",
+          "solver.return"
+        ],
+        "response_returned": false,
+        "response_status": 0,
+        "response_close_at_return": 1,
+        "response_close_count": 1,
+        "response_read_count": 0,
+        "response_bytes_read": 0,
+        "consumer_close_error": "",
+        "error": {
+          "chain": [
+            {
+              "type": "*errors.errorString",
+              "message": "fanbox: FlareSolverr service unavailable"
+            }
+          ],
+          "url": "",
+          "operation": "",
+          "timeout": false,
+          "temporary": false,
+          "canceled": false,
+          "deadline": false,
+          "close_error_retained": false,
+          "solver_unavailable": true,
+          "solver_failed": false,
+          "malformed_solver": false
+        },
+        "state": {
+          "user_agent": "",
+          "clearance": "",
+          "expires_at": "0001-01-01T00:00:00Z",
+          "has_expiry": false
+        },
+        "diagnostic_reason": "solver unavailable"
+      }
+    },
+    {
+      "input": {
+        "name": "malformed_location_close_error",
+        "location": "https://%",
+        "close_error": "solver redirect close failure"
+      },
+      "control": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "http://solver.example/v1",
+            "header": {
+              "Accept": [
+                "application/json"
+              ],
+              "Content-Type": [
+                "application/json"
+              ]
+            },
+            "body": "{\"cmd\":\"request.get\",\"url\":\"https://www.fanbox.cc/\"}"
+          }
+        ],
+        "callbacks": [],
+        "trace": [
+          "transport.request",
+          "response.close",
+          "client.return"
+        ],
+        "response_returned": false,
+        "response_status": 0,
+        "response_close_at_return": 1,
+        "response_close_count": 1,
+        "response_read_count": 0,
+        "response_bytes_read": 0,
+        "consumer_close_error": "",
+        "error": {
+          "chain": [
+            {
+              "type": "*url.Error",
+              "message": "Post \"http://solver.example/v1\": failed to parse Location header \"https://%\": parse \"https://%\": invalid URL escape \"%\""
+            },
+            {
+              "type": "*errors.errorString",
+              "message": "failed to parse Location header \"https://%\": parse \"https://%\": invalid URL escape \"%\""
+            }
+          ],
+          "url": "http://solver.example/v1",
+          "operation": "Post",
+          "timeout": false,
+          "temporary": false,
+          "canceled": false,
+          "deadline": false,
+          "close_error_retained": false,
+          "solver_unavailable": false,
+          "solver_failed": false,
+          "malformed_solver": false
+        },
+        "state": null,
+        "diagnostic_reason": ""
+      },
+      "solver": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "http://solver.example/v1",
+            "header": {
+              "Accept": [
+                "application/json"
+              ],
+              "Content-Type": [
+                "application/json"
+              ]
+            },
+            "body": "{\"cmd\":\"request.get\",\"url\":\"https://www.fanbox.cc/\"}"
+          }
+        ],
+        "callbacks": [],
+        "trace": [
+          "transport.request",
+          "response.close",
+          "solver.return"
+        ],
+        "response_returned": false,
+        "response_status": 0,
+        "response_close_at_return": 1,
+        "response_close_count": 1,
+        "response_read_count": 0,
+        "response_bytes_read": 0,
+        "consumer_close_error": "",
+        "error": {
+          "chain": [
+            {
+              "type": "*errors.errorString",
+              "message": "fanbox: FlareSolverr service unavailable"
+            }
+          ],
+          "url": "",
+          "operation": "",
+          "timeout": false,
+          "temporary": false,
+          "canceled": false,
+          "deadline": false,
+          "close_error_retained": false,
+          "solver_unavailable": true,
+          "solver_failed": false,
+          "malformed_solver": false
+        },
+        "state": {
+          "user_agent": "",
+          "clearance": "",
+          "expires_at": "0001-01-01T00:00:00Z",
+          "has_expiry": false
+        },
+        "diagnostic_reason": "solver unavailable"
+      }
+    },
+    {
+      "input": {
+        "name": "valid_location_no_follow",
+        "location": "https://solver.example/next",
+        "close_error": ""
+      },
+      "control": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "http://solver.example/v1",
+            "header": {
+              "Accept": [
+                "application/json"
+              ],
+              "Content-Type": [
+                "application/json"
+              ]
+            },
+            "body": "{\"cmd\":\"request.get\",\"url\":\"https://www.fanbox.cc/\"}"
+          }
+        ],
+        "callbacks": [
+          {
+            "method": "GET",
+            "url": "https://solver.example/next",
+            "via_count": 1,
+            "response_status": 302,
+            "response_close_count": 0
+          }
+        ],
+        "trace": [
+          "transport.request",
+          "redirect.policy",
+          "client.return",
+          "consumer.close",
+          "response.close"
+        ],
+        "response_returned": true,
+        "response_status": 302,
+        "response_close_at_return": 0,
+        "response_close_count": 1,
+        "response_read_count": 0,
+        "response_bytes_read": 0,
+        "consumer_close_error": "",
+        "error": {
+          "chain": [],
+          "url": "",
+          "operation": "",
+          "timeout": false,
+          "temporary": false,
+          "canceled": false,
+          "deadline": false,
+          "close_error_retained": false,
+          "solver_unavailable": false,
+          "solver_failed": false,
+          "malformed_solver": false
+        },
+        "state": null,
+        "diagnostic_reason": ""
+      },
+      "solver": {
+        "requests": [
+          {
+            "method": "POST",
+            "url": "http://solver.example/v1",
+            "header": {
+              "Accept": [
+                "application/json"
+              ],
+              "Content-Type": [
+                "application/json"
+              ]
+            },
+            "body": "{\"cmd\":\"request.get\",\"url\":\"https://www.fanbox.cc/\"}"
+          }
+        ],
+        "callbacks": [
+          {
+            "method": "GET",
+            "url": "https://solver.example/next",
+            "via_count": 1,
+            "response_status": 302,
+            "response_close_count": 0
+          }
+        ],
+        "trace": [
+          "transport.request",
+          "redirect.policy",
+          "response.close",
+          "solver.return"
+        ],
+        "response_returned": false,
+        "response_status": 0,
+        "response_close_at_return": 1,
+        "response_close_count": 1,
+        "response_read_count": 0,
+        "response_bytes_read": 0,
+        "consumer_close_error": "",
+        "error": {
+          "chain": [
+            {
+              "type": "*errors.errorString",
+              "message": "fanbox: FlareSolverr could not solve challenge"
+            }
+          ],
+          "url": "",
+          "operation": "",
+          "timeout": false,
+          "temporary": false,
+          "canceled": false,
+          "deadline": false,
+          "close_error_retained": false,
+          "solver_unavailable": false,
+          "solver_failed": true,
+          "malformed_solver": false
+        },
+        "state": {
+          "user_agent": "",
+          "clearance": "",
+          "expires_at": "0001-01-01T00:00:00Z",
+          "has_expiry": false
+        },
+        "diagnostic_reason": "solver failed"
+      }
+    }
+  ]
+}

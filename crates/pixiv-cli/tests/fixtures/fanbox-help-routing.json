@@ -1,0 +1,753 @@
+{
+  "reference": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "environment": "linux/amd64",
+  "sources": {
+    "go.mod": "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c",
+    "go.sum": "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e",
+    "internal/cli/commands/fanbox/auth/account.go": "837c39642939e0a147e1b5b092627360802b0fa6d844133ddae90276e524ca2a",
+    "internal/cli/commands/fanbox/auth/auth.go": "3506065bca51b047551efc9f5f480da4d660884c21d9497a6bc02228ebe51333",
+    "internal/cli/commands/fanbox/download/download.go": "f59e8c95b683d456e36920ea711125ad269b8f644854d3ac4f9d2065d585c6c5",
+    "internal/cli/commands/fanbox/fanbox.go": "31d3642468868be03c1bd2b8c7ee02f96c9dcdf461d8f573c03e511a8a4e5468",
+    "internal/cli/commands/fanbox/mcp/mcp.go": "afce033c7a6c10acf21319a73a7821ed863c8d416dade3a68a420c8bf3a42f63",
+    "internal/cli/commands/fanbox/post/post.go": "1987bb1ca3d509754b0d7358b2d4c9195998a1ea549a195858de3376b269a4bd",
+    "internal/cli/commands/lifecycle.go": "d81bfb1a664832ec707dba371a102da56baa05f3aa079905dad48de309e38080",
+    "internal/cli/composition.go": "61606c01971156607d6e632cbf417a63c8e7f02b4c673172ee3db9392dc0f9fc",
+    "internal/cli/execution.go": "627d8d8ccd6e7c35508abe0daab3209d3daf34dbf1927ab6f9f70145b623c864",
+    "internal/cli/invocation/invocation.go": "003804b7f4c5edc8e4533cc39db0301edf7bfa59e3d4b610ed7e4d3f31e91e33",
+    "internal/cli/pipeline/action.go": "74c540329878d2f87db3643056dc0f1d58cde5d4f98d90e9bec4421cd189161c",
+    "internal/cli/pipeline/pipeline.go": "294d15b516da78e677dfde04a59daf97d5c1adff76e0328bb43d0d3bfe7e7d3c",
+    "internal/cli/pipeline/records.go": "c4a94d230db4ca95661baeac26c6f912ab6ade7c8a3808bff05878609152eb29",
+    "internal/cli/root.go": "afbb8c2d7a90ccbe3ce124e9e2ee68ec463b9d020ba161d0d1cb270d1e1e7b1e",
+    "internal/config/paths/paths.go": "f054bc3a76c8c457a79e15a1f6e440e9809caae6f31baa25bbd52485c1aea9d2",
+    "internal/config/settings/paths.go": "f81e702c53e232fa5cbf7f910aec0a60f343547d1f5bcdbdcc21b3efdd3c6b31",
+    "internal/config/settings/store.go": "c5b418cd50e17dce27d4e0f5f499e4d293e0527e07d335e80da9a5fe2711feec"
+  },
+  "go_only_parser_sources": {
+    "github.com/spf13/cobra@v1.10.1/command.go": "797ff14415e5fe31a22f7be52525cc0c809e1e8b6450e42d52afeb4f08389e61",
+    "github.com/spf13/pflag@v1.0.9/flag.go": "5699e18dd47610cf862dca1bb046f5d00a652fd412d9ac2c1a0f79b9c691c8cb"
+  },
+  "limitations": [
+    "Go-only recovery checkpoint; this fixture makes no Rust FANBOX parity claim.",
+    "Actual cli.Run invocations execute inside bounded disposable Go test children, not separately built cmd/pixiv executables.",
+    "Owned HOME/USERPROFILE/XDG paths, process-wide socket/connect/exec denial, forbidden dependency canaries and unchanged owned-home file modes/content establish no observed CLI side effects; timestamps are not compared.",
+    "Linux/amd64 capture and replay only; native browser, accounts, network, platform integrations, content operations and denied supplemental native HTTP2/upload probes are outside this fixture.",
+    "Go-only parser spelling rows retain exact pflag diagnostics; go_only_find_* records Cobra Find before execution rather than a portable final-command identity."
+  ],
+  "cases": [
+    {
+      "name": "fanbox-group-help",
+      "comparison": "exact",
+      "input": {
+        "args": [
+          "fanbox",
+          "--help"
+        ],
+        "config_before": null
+      },
+      "observation": {
+        "exit": 0,
+        "stdout": "Browse and download Pixiv FANBOX content\n\nUsage:\n  pixiv fanbox [flags]\n  pixiv fanbox [command]\n\nAvailable Commands:\n  auth        Manage local FANBOX authentication\n  creators    List supporting or following FANBOX creators\n  download    Download posts and their assets from FANBOX\n  home        Browse the FANBOX home feed\n  mcp         Run the FANBOX MCP stdio server\n  post        Show one FANBOX post\n  posts       List posts from a creator, tag, post, or FANBOX URL\n  supporting  Browse posts from supporting creators\n  tags        List tags used by a FANBOX creator\n\nFlags:\n  -h, --help           help for fanbox\n      --no-proxy       use a direct native FANBOX connection for this command\n      --proxy string   native FANBOX proxy URL (HTTP or HTTPS CONNECT)\n\nUse \"pixiv fanbox [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "calls": [],
+        "stdin_reads": 0,
+        "home_before": [],
+        "home_after": [],
+        "socket_denied": true,
+        "exec_denied": true,
+        "go_only_find_command": "pixiv fanbox",
+        "go_only_find_args": [
+          "--help"
+        ],
+        "go_only_find_error": "",
+        "go_only_child_exit_code": 0
+      }
+    },
+    {
+      "name": "fanbox-group-bare",
+      "comparison": "exact",
+      "input": {
+        "args": [
+          "fanbox"
+        ],
+        "config_before": null
+      },
+      "observation": {
+        "exit": 0,
+        "stdout": "Browse and download Pixiv FANBOX content\n\nUsage:\n  pixiv fanbox [flags]\n  pixiv fanbox [command]\n\nAvailable Commands:\n  auth        Manage local FANBOX authentication\n  creators    List supporting or following FANBOX creators\n  download    Download posts and their assets from FANBOX\n  home        Browse the FANBOX home feed\n  mcp         Run the FANBOX MCP stdio server\n  post        Show one FANBOX post\n  posts       List posts from a creator, tag, post, or FANBOX URL\n  supporting  Browse posts from supporting creators\n  tags        List tags used by a FANBOX creator\n\nFlags:\n  -h, --help           help for fanbox\n      --no-proxy       use a direct native FANBOX connection for this command\n      --proxy string   native FANBOX proxy URL (HTTP or HTTPS CONNECT)\n\nUse \"pixiv fanbox [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "calls": [],
+        "stdin_reads": 0,
+        "home_before": [],
+        "home_after": [],
+        "socket_denied": true,
+        "exec_denied": true,
+        "go_only_find_command": "pixiv fanbox",
+        "go_only_find_args": [],
+        "go_only_find_error": "",
+        "go_only_child_exit_code": 0
+      }
+    },
+    {
+      "name": "proxy-auth-space-is-group",
+      "comparison": "exact",
+      "input": {
+        "args": [
+          "fanbox",
+          "--proxy",
+          "auth",
+          "--help"
+        ],
+        "config_before": null
+      },
+      "observation": {
+        "exit": 0,
+        "stdout": "Browse and download Pixiv FANBOX content\n\nUsage:\n  pixiv fanbox [flags]\n  pixiv fanbox [command]\n\nAvailable Commands:\n  auth        Manage local FANBOX authentication\n  creators    List supporting or following FANBOX creators\n  download    Download posts and their assets from FANBOX\n  home        Browse the FANBOX home feed\n  mcp         Run the FANBOX MCP stdio server\n  post        Show one FANBOX post\n  posts       List posts from a creator, tag, post, or FANBOX URL\n  supporting  Browse posts from supporting creators\n  tags        List tags used by a FANBOX creator\n\nFlags:\n  -h, --help           help for fanbox\n      --no-proxy       use a direct native FANBOX connection for this command\n      --proxy string   native FANBOX proxy URL (HTTP or HTTPS CONNECT)\n\nUse \"pixiv fanbox [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "calls": [],
+        "stdin_reads": 0,
+        "home_before": [],
+        "home_after": [],
+        "socket_denied": true,
+        "exec_denied": true,
+        "go_only_find_command": "pixiv fanbox",
+        "go_only_find_args": [
+          "--proxy",
+          "auth",
+          "--help"
+        ],
+        "go_only_find_error": "",
+        "go_only_child_exit_code": 0
+      }
+    },
+    {
+      "name": "proxy-auth-equals-is-group",
+      "comparison": "exact",
+      "input": {
+        "args": [
+          "fanbox",
+          "--proxy=auth",
+          "--help"
+        ],
+        "config_before": null
+      },
+      "observation": {
+        "exit": 0,
+        "stdout": "Browse and download Pixiv FANBOX content\n\nUsage:\n  pixiv fanbox [flags]\n  pixiv fanbox [command]\n\nAvailable Commands:\n  auth        Manage local FANBOX authentication\n  creators    List supporting or following FANBOX creators\n  download    Download posts and their assets from FANBOX\n  home        Browse the FANBOX home feed\n  mcp         Run the FANBOX MCP stdio server\n  post        Show one FANBOX post\n  posts       List posts from a creator, tag, post, or FANBOX URL\n  supporting  Browse posts from supporting creators\n  tags        List tags used by a FANBOX creator\n\nFlags:\n  -h, --help           help for fanbox\n      --no-proxy       use a direct native FANBOX connection for this command\n      --proxy string   native FANBOX proxy URL (HTTP or HTTPS CONNECT)\n\nUse \"pixiv fanbox [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "calls": [],
+        "stdin_reads": 0,
+        "home_before": [],
+        "home_after": [],
+        "socket_denied": true,
+        "exec_denied": true,
+        "go_only_find_command": "pixiv fanbox",
+        "go_only_find_args": [
+          "--proxy=auth",
+          "--help"
+        ],
+        "go_only_find_error": "",
+        "go_only_child_exit_code": 0
+      }
+    },
+    {
+      "name": "proxy-mcp-space-is-group",
+      "comparison": "exact",
+      "input": {
+        "args": [
+          "fanbox",
+          "--proxy",
+          "mcp",
+          "--help"
+        ],
+        "config_before": null
+      },
+      "observation": {
+        "exit": 0,
+        "stdout": "Browse and download Pixiv FANBOX content\n\nUsage:\n  pixiv fanbox [flags]\n  pixiv fanbox [command]\n\nAvailable Commands:\n  auth        Manage local FANBOX authentication\n  creators    List supporting or following FANBOX creators\n  download    Download posts and their assets from FANBOX\n  home        Browse the FANBOX home feed\n  mcp         Run the FANBOX MCP stdio server\n  post        Show one FANBOX post\n  posts       List posts from a creator, tag, post, or FANBOX URL\n  supporting  Browse posts from supporting creators\n  tags        List tags used by a FANBOX creator\n\nFlags:\n  -h, --help           help for fanbox\n      --no-proxy       use a direct native FANBOX connection for this command\n      --proxy string   native FANBOX proxy URL (HTTP or HTTPS CONNECT)\n\nUse \"pixiv fanbox [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "calls": [],
+        "stdin_reads": 0,
+        "home_before": [],
+        "home_after": [],
+        "socket_denied": true,
+        "exec_denied": true,
+        "go_only_find_command": "pixiv fanbox",
+        "go_only_find_args": [
+          "--proxy",
+          "mcp",
+          "--help"
+        ],
+        "go_only_find_error": "",
+        "go_only_child_exit_code": 0
+      }
+    },
+    {
+      "name": "proxy-auth-before-fanbox-is-group",
+      "comparison": "exact",
+      "input": {
+        "args": [
+          "--proxy",
+          "auth",
+          "fanbox",
+          "--help"
+        ],
+        "config_before": null
+      },
+      "observation": {
+        "exit": 0,
+        "stdout": "Browse and download Pixiv FANBOX content\n\nUsage:\n  pixiv fanbox [flags]\n  pixiv fanbox [command]\n\nAvailable Commands:\n  auth        Manage local FANBOX authentication\n  creators    List supporting or following FANBOX creators\n  download    Download posts and their assets from FANBOX\n  home        Browse the FANBOX home feed\n  mcp         Run the FANBOX MCP stdio server\n  post        Show one FANBOX post\n  posts       List posts from a creator, tag, post, or FANBOX URL\n  supporting  Browse posts from supporting creators\n  tags        List tags used by a FANBOX creator\n\nFlags:\n  -h, --help           help for fanbox\n      --no-proxy       use a direct native FANBOX connection for this command\n      --proxy string   native FANBOX proxy URL (HTTP or HTTPS CONNECT)\n\nUse \"pixiv fanbox [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "calls": [],
+        "stdin_reads": 0,
+        "home_before": [],
+        "home_after": [],
+        "socket_denied": true,
+        "exec_denied": true,
+        "go_only_find_command": "pixiv fanbox",
+        "go_only_find_args": [
+          "--proxy",
+          "auth",
+          "--help"
+        ],
+        "go_only_find_error": "",
+        "go_only_child_exit_code": 0
+      }
+    },
+    {
+      "name": "auth-group-help",
+      "comparison": "exact",
+      "input": {
+        "args": [
+          "fanbox",
+          "auth",
+          "--help"
+        ],
+        "config_before": null
+      },
+      "observation": {
+        "exit": 0,
+        "stdout": "Manage local FANBOX authentication\n\nUsage:\n  pixiv fanbox auth [flags]\n  pixiv fanbox auth [command]\n\nAvailable Commands:\n  import      Import a FANBOX session\n  list        List FANBOX accounts\n  remove      Remove a FANBOX account\n  status      Show the default FANBOX account\n  use         Set the default FANBOX account\n\nFlags:\n  -h, --help   help for auth\n\nGlobal Flags:\n      --no-proxy       use a direct native FANBOX connection for this command\n      --proxy string   native FANBOX proxy URL (HTTP or HTTPS CONNECT)\n\nUse \"pixiv fanbox auth [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "calls": [],
+        "stdin_reads": 0,
+        "home_before": [],
+        "home_after": [],
+        "socket_denied": true,
+        "exec_denied": true,
+        "go_only_find_command": "pixiv fanbox auth",
+        "go_only_find_args": [
+          "--help"
+        ],
+        "go_only_find_error": "",
+        "go_only_child_exit_code": 0
+      }
+    },
+    {
+      "name": "auth-before-proxy-auth-value",
+      "comparison": "exact",
+      "input": {
+        "args": [
+          "fanbox",
+          "auth",
+          "--proxy",
+          "auth",
+          "--help"
+        ],
+        "config_before": null
+      },
+      "observation": {
+        "exit": 0,
+        "stdout": "Manage local FANBOX authentication\n\nUsage:\n  pixiv fanbox auth [flags]\n  pixiv fanbox auth [command]\n\nAvailable Commands:\n  import      Import a FANBOX session\n  list        List FANBOX accounts\n  remove      Remove a FANBOX account\n  status      Show the default FANBOX account\n  use         Set the default FANBOX account\n\nFlags:\n  -h, --help   help for auth\n\nGlobal Flags:\n      --no-proxy       use a direct native FANBOX connection for this command\n      --proxy string   native FANBOX proxy URL (HTTP or HTTPS CONNECT)\n\nUse \"pixiv fanbox auth [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "calls": [],
+        "stdin_reads": 0,
+        "home_before": [],
+        "home_after": [],
+        "socket_denied": true,
+        "exec_denied": true,
+        "go_only_find_command": "pixiv fanbox auth",
+        "go_only_find_args": [
+          "--proxy",
+          "auth",
+          "--help"
+        ],
+        "go_only_find_error": "",
+        "go_only_child_exit_code": 0
+      }
+    },
+    {
+      "name": "auth-after-proxy-auth-value",
+      "comparison": "exact",
+      "input": {
+        "args": [
+          "fanbox",
+          "--proxy",
+          "auth",
+          "auth",
+          "--help"
+        ],
+        "config_before": null
+      },
+      "observation": {
+        "exit": 0,
+        "stdout": "Manage local FANBOX authentication\n\nUsage:\n  pixiv fanbox auth [flags]\n  pixiv fanbox auth [command]\n\nAvailable Commands:\n  import      Import a FANBOX session\n  list        List FANBOX accounts\n  remove      Remove a FANBOX account\n  status      Show the default FANBOX account\n  use         Set the default FANBOX account\n\nFlags:\n  -h, --help   help for auth\n\nGlobal Flags:\n      --no-proxy       use a direct native FANBOX connection for this command\n      --proxy string   native FANBOX proxy URL (HTTP or HTTPS CONNECT)\n\nUse \"pixiv fanbox auth [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "calls": [],
+        "stdin_reads": 0,
+        "home_before": [],
+        "home_after": [],
+        "socket_denied": true,
+        "exec_denied": true,
+        "go_only_find_command": "pixiv fanbox auth",
+        "go_only_find_args": [
+          "--proxy",
+          "auth",
+          "--help"
+        ],
+        "go_only_find_error": "",
+        "go_only_child_exit_code": 0
+      }
+    },
+    {
+      "name": "mcp-leaf-help",
+      "comparison": "exact",
+      "input": {
+        "args": [
+          "fanbox",
+          "mcp",
+          "--help"
+        ],
+        "config_before": null
+      },
+      "observation": {
+        "exit": 0,
+        "stdout": "Run the FANBOX MCP stdio server\n\nUsage:\n  pixiv fanbox mcp [flags]\n\nExamples:\npixiv fanbox mcp\n\nFlags:\n  -h, --help   help for mcp\n\nGlobal Flags:\n      --no-proxy       use a direct native FANBOX connection for this command\n      --proxy string   native FANBOX proxy URL (HTTP or HTTPS CONNECT)\n",
+        "stderr": "",
+        "calls": [],
+        "stdin_reads": 0,
+        "home_before": [],
+        "home_after": [],
+        "socket_denied": true,
+        "exec_denied": true,
+        "go_only_find_command": "pixiv fanbox mcp",
+        "go_only_find_args": [
+          "--help"
+        ],
+        "go_only_find_error": "",
+        "go_only_child_exit_code": 0
+      }
+    },
+    {
+      "name": "import-help-bypasses-browser",
+      "comparison": "exact",
+      "input": {
+        "args": [
+          "fanbox",
+          "auth",
+          "import",
+          "--from-browser",
+          "chrome",
+          "--help"
+        ],
+        "config_before": null
+      },
+      "observation": {
+        "exit": 0,
+        "stdout": "Import a FANBOX session\n\nUsage:\n  pixiv fanbox auth import [flags]\n\nExamples:\npixiv fanbox auth import\n\nFlags:\n      --default               set the imported account as the default FANBOX account\n      --from-browser string   read the FANBOXSESSID value from a browser profile\n  -h, --help                  help for import\n      --json                  print JSON\n      --profile string        browser profile identifier when the browser has multiple profiles\n\nGlobal Flags:\n      --no-proxy       use a direct native FANBOX connection for this command\n      --proxy string   native FANBOX proxy URL (HTTP or HTTPS CONNECT)\n",
+        "stderr": "",
+        "calls": [],
+        "stdin_reads": 0,
+        "home_before": [],
+        "home_after": [],
+        "socket_denied": true,
+        "exec_denied": true,
+        "go_only_find_command": "pixiv fanbox auth import",
+        "go_only_find_args": [
+          "--from-browser",
+          "chrome",
+          "--help"
+        ],
+        "go_only_find_error": "",
+        "go_only_child_exit_code": 0
+      }
+    },
+    {
+      "name": "status-help-remains-plain-with-json",
+      "comparison": "exact",
+      "input": {
+        "args": [
+          "fanbox",
+          "auth",
+          "status",
+          "--json",
+          "--help"
+        ],
+        "config_before": null
+      },
+      "observation": {
+        "exit": 0,
+        "stdout": "Show the default FANBOX account\n\nUsage:\n  pixiv fanbox auth status [UID] [flags]\n\nFlags:\n  -h, --help   help for status\n      --json   print JSON\n\nGlobal Flags:\n      --no-proxy       use a direct native FANBOX connection for this command\n      --proxy string   native FANBOX proxy URL (HTTP or HTTPS CONNECT)\n",
+        "stderr": "",
+        "calls": [],
+        "stdin_reads": 0,
+        "home_before": [],
+        "home_after": [],
+        "socket_denied": true,
+        "exec_denied": true,
+        "go_only_find_command": "pixiv fanbox auth status",
+        "go_only_find_args": [
+          "--json",
+          "--help"
+        ],
+        "go_only_find_error": "",
+        "go_only_child_exit_code": 0
+      }
+    },
+    {
+      "name": "help-before-auth-token",
+      "comparison": "exact",
+      "input": {
+        "args": [
+          "fanbox",
+          "--help",
+          "auth"
+        ],
+        "config_before": null
+      },
+      "observation": {
+        "exit": 0,
+        "stdout": "Browse and download Pixiv FANBOX content\n\nUsage:\n  pixiv fanbox [flags]\n  pixiv fanbox [command]\n\nAvailable Commands:\n  auth        Manage local FANBOX authentication\n  creators    List supporting or following FANBOX creators\n  download    Download posts and their assets from FANBOX\n  home        Browse the FANBOX home feed\n  mcp         Run the FANBOX MCP stdio server\n  post        Show one FANBOX post\n  posts       List posts from a creator, tag, post, or FANBOX URL\n  supporting  Browse posts from supporting creators\n  tags        List tags used by a FANBOX creator\n\nFlags:\n  -h, --help           help for fanbox\n      --no-proxy       use a direct native FANBOX connection for this command\n      --proxy string   native FANBOX proxy URL (HTTP or HTTPS CONNECT)\n\nUse \"pixiv fanbox [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "calls": [],
+        "stdin_reads": 0,
+        "home_before": [],
+        "home_after": [],
+        "socket_denied": true,
+        "exec_denied": true,
+        "go_only_find_command": "pixiv fanbox",
+        "go_only_find_args": [
+          "--help",
+          "auth"
+        ],
+        "go_only_find_error": "",
+        "go_only_child_exit_code": 0
+      }
+    },
+    {
+      "name": "terminator-makes-auth-and-help-positional",
+      "comparison": "exact",
+      "input": {
+        "args": [
+          "fanbox",
+          "--",
+          "auth",
+          "--help"
+        ],
+        "config_before": null
+      },
+      "observation": {
+        "exit": 1,
+        "stdout": "",
+        "stderr": "error: usage: pixiv fanbox \u003ccommand\u003e\n",
+        "calls": [],
+        "stdin_reads": 0,
+        "home_before": [],
+        "home_after": [],
+        "socket_denied": true,
+        "exec_denied": true,
+        "go_only_find_command": "pixiv fanbox",
+        "go_only_find_args": [
+          "--",
+          "auth",
+          "--help"
+        ],
+        "go_only_find_error": "",
+        "go_only_child_exit_code": 0
+      }
+    },
+    {
+      "name": "help-value-scan-past-terminator-finds-auth",
+      "comparison": "exact",
+      "input": {
+        "args": [
+          "fanbox",
+          "--help",
+          "--",
+          "auth"
+        ],
+        "config_before": null
+      },
+      "observation": {
+        "exit": 0,
+        "stdout": "Manage local FANBOX authentication\n\nUsage:\n  pixiv fanbox auth [flags]\n  pixiv fanbox auth [command]\n\nAvailable Commands:\n  import      Import a FANBOX session\n  list        List FANBOX accounts\n  remove      Remove a FANBOX account\n  status      Show the default FANBOX account\n  use         Set the default FANBOX account\n\nFlags:\n  -h, --help   help for auth\n\nGlobal Flags:\n      --no-proxy       use a direct native FANBOX connection for this command\n      --proxy string   native FANBOX proxy URL (HTTP or HTTPS CONNECT)\n\nUse \"pixiv fanbox auth [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "calls": [],
+        "stdin_reads": 0,
+        "home_before": [],
+        "home_after": [],
+        "socket_denied": true,
+        "exec_denied": true,
+        "go_only_find_command": "pixiv fanbox auth",
+        "go_only_find_args": [
+          "--help",
+          "--"
+        ],
+        "go_only_find_error": "",
+        "go_only_child_exit_code": 0
+      }
+    },
+    {
+      "name": "terminator-as-proxy-value-retains-auth-route",
+      "comparison": "exact",
+      "input": {
+        "args": [
+          "fanbox",
+          "--proxy",
+          "--",
+          "auth",
+          "--help"
+        ],
+        "config_before": null
+      },
+      "observation": {
+        "exit": 0,
+        "stdout": "Manage local FANBOX authentication\n\nUsage:\n  pixiv fanbox auth [flags]\n  pixiv fanbox auth [command]\n\nAvailable Commands:\n  import      Import a FANBOX session\n  list        List FANBOX accounts\n  remove      Remove a FANBOX account\n  status      Show the default FANBOX account\n  use         Set the default FANBOX account\n\nFlags:\n  -h, --help   help for auth\n\nGlobal Flags:\n      --no-proxy       use a direct native FANBOX connection for this command\n      --proxy string   native FANBOX proxy URL (HTTP or HTTPS CONNECT)\n\nUse \"pixiv fanbox auth [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "calls": [],
+        "stdin_reads": 0,
+        "home_before": [],
+        "home_after": [],
+        "socket_denied": true,
+        "exec_denied": true,
+        "go_only_find_command": "pixiv fanbox auth",
+        "go_only_find_args": [
+          "--proxy",
+          "--",
+          "--help"
+        ],
+        "go_only_find_error": "",
+        "go_only_child_exit_code": 0
+      }
+    },
+    {
+      "name": "missing-proxy-value",
+      "comparison": "go-only-parser-spelling",
+      "input": {
+        "args": [
+          "fanbox",
+          "--proxy"
+        ],
+        "config_before": null
+      },
+      "observation": {
+        "exit": 1,
+        "stdout": "",
+        "stderr": "error: flag needs an argument: --proxy\n",
+        "calls": [],
+        "stdin_reads": 0,
+        "home_before": [],
+        "home_after": [],
+        "socket_denied": true,
+        "exec_denied": true,
+        "go_only_find_command": "pixiv fanbox",
+        "go_only_find_args": [
+          "--proxy"
+        ],
+        "go_only_find_error": "",
+        "go_only_child_exit_code": 0
+      }
+    },
+    {
+      "name": "unknown-flag-precedes-help",
+      "comparison": "exact",
+      "input": {
+        "args": [
+          "fanbox",
+          "--unknown",
+          "--help"
+        ],
+        "config_before": null
+      },
+      "observation": {
+        "exit": 2,
+        "stdout": "",
+        "stderr": "error: unknown option '--unknown'\n",
+        "calls": [],
+        "stdin_reads": 0,
+        "home_before": [],
+        "home_after": [],
+        "socket_denied": true,
+        "exec_denied": true,
+        "go_only_find_command": "pixiv fanbox",
+        "go_only_find_args": [
+          "--unknown",
+          "--help"
+        ],
+        "go_only_find_error": "",
+        "go_only_child_exit_code": 0
+      }
+    },
+    {
+      "name": "invalid-no-proxy-boolean-precedes-help",
+      "comparison": "go-only-parser-spelling",
+      "input": {
+        "args": [
+          "fanbox",
+          "--no-proxy=invalid",
+          "--help"
+        ],
+        "config_before": null
+      },
+      "observation": {
+        "exit": 1,
+        "stdout": "",
+        "stderr": "error: invalid argument \"invalid\" for \"--no-proxy\" flag: strconv.ParseBool: parsing \"invalid\": invalid syntax\n",
+        "calls": [],
+        "stdin_reads": 0,
+        "home_before": [],
+        "home_after": [],
+        "socket_denied": true,
+        "exec_denied": true,
+        "go_only_find_command": "pixiv fanbox",
+        "go_only_find_args": [
+          "--no-proxy=invalid",
+          "--help"
+        ],
+        "go_only_find_error": "",
+        "go_only_child_exit_code": 0
+      }
+    },
+    {
+      "name": "auth-help-bypasses-extra-args",
+      "comparison": "exact",
+      "input": {
+        "args": [
+          "fanbox",
+          "auth",
+          "extra",
+          "--help"
+        ],
+        "config_before": null
+      },
+      "observation": {
+        "exit": 0,
+        "stdout": "Manage local FANBOX authentication\n\nUsage:\n  pixiv fanbox auth [flags]\n  pixiv fanbox auth [command]\n\nAvailable Commands:\n  import      Import a FANBOX session\n  list        List FANBOX accounts\n  remove      Remove a FANBOX account\n  status      Show the default FANBOX account\n  use         Set the default FANBOX account\n\nFlags:\n  -h, --help   help for auth\n\nGlobal Flags:\n      --no-proxy       use a direct native FANBOX connection for this command\n      --proxy string   native FANBOX proxy URL (HTTP or HTTPS CONNECT)\n\nUse \"pixiv fanbox auth [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "calls": [],
+        "stdin_reads": 0,
+        "home_before": [],
+        "home_after": [],
+        "socket_denied": true,
+        "exec_denied": true,
+        "go_only_find_command": "pixiv fanbox auth",
+        "go_only_find_args": [
+          "extra",
+          "--help"
+        ],
+        "go_only_find_error": "",
+        "go_only_child_exit_code": 0
+      }
+    },
+    {
+      "name": "proxy-auth-group-help-bypasses-malformed-config",
+      "comparison": "exact",
+      "input": {
+        "args": [
+          "fanbox",
+          "--proxy",
+          "auth",
+          "--help"
+        ],
+        "config_before": "[unfinished\n"
+      },
+      "observation": {
+        "exit": 0,
+        "stdout": "Browse and download Pixiv FANBOX content\n\nUsage:\n  pixiv fanbox [flags]\n  pixiv fanbox [command]\n\nAvailable Commands:\n  auth        Manage local FANBOX authentication\n  creators    List supporting or following FANBOX creators\n  download    Download posts and their assets from FANBOX\n  home        Browse the FANBOX home feed\n  mcp         Run the FANBOX MCP stdio server\n  post        Show one FANBOX post\n  posts       List posts from a creator, tag, post, or FANBOX URL\n  supporting  Browse posts from supporting creators\n  tags        List tags used by a FANBOX creator\n\nFlags:\n  -h, --help           help for fanbox\n      --no-proxy       use a direct native FANBOX connection for this command\n      --proxy string   native FANBOX proxy URL (HTTP or HTTPS CONNECT)\n\nUse \"pixiv fanbox [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "calls": [],
+        "stdin_reads": 0,
+        "home_before": [
+          {
+            "path": ".pixiv-cli",
+            "mode": "drwx------"
+          },
+          {
+            "path": ".pixiv-cli/config.toml",
+            "mode": "-rw-------",
+            "sha256": "6fbad2969167b4ff13af0e965f1b6cbab89ba047f7bf1daa27f6496d8c3f87c8"
+          }
+        ],
+        "home_after": [
+          {
+            "path": ".pixiv-cli",
+            "mode": "drwx------"
+          },
+          {
+            "path": ".pixiv-cli/config.toml",
+            "mode": "-rw-------",
+            "sha256": "6fbad2969167b4ff13af0e965f1b6cbab89ba047f7bf1daa27f6496d8c3f87c8"
+          }
+        ],
+        "socket_denied": true,
+        "exec_denied": true,
+        "go_only_find_command": "pixiv fanbox",
+        "go_only_find_args": [
+          "--proxy",
+          "auth",
+          "--help"
+        ],
+        "go_only_find_error": "",
+        "go_only_child_exit_code": 0
+      }
+    },
+    {
+      "name": "mcp-help-bypasses-malformed-config",
+      "comparison": "exact",
+      "input": {
+        "args": [
+          "fanbox",
+          "mcp",
+          "--help"
+        ],
+        "config_before": "[unfinished\n"
+      },
+      "observation": {
+        "exit": 0,
+        "stdout": "Run the FANBOX MCP stdio server\n\nUsage:\n  pixiv fanbox mcp [flags]\n\nExamples:\npixiv fanbox mcp\n\nFlags:\n  -h, --help   help for mcp\n\nGlobal Flags:\n      --no-proxy       use a direct native FANBOX connection for this command\n      --proxy string   native FANBOX proxy URL (HTTP or HTTPS CONNECT)\n",
+        "stderr": "",
+        "calls": [],
+        "stdin_reads": 0,
+        "home_before": [
+          {
+            "path": ".pixiv-cli",
+            "mode": "drwx------"
+          },
+          {
+            "path": ".pixiv-cli/config.toml",
+            "mode": "-rw-------",
+            "sha256": "6fbad2969167b4ff13af0e965f1b6cbab89ba047f7bf1daa27f6496d8c3f87c8"
+          }
+        ],
+        "home_after": [
+          {
+            "path": ".pixiv-cli",
+            "mode": "drwx------"
+          },
+          {
+            "path": ".pixiv-cli/config.toml",
+            "mode": "-rw-------",
+            "sha256": "6fbad2969167b4ff13af0e965f1b6cbab89ba047f7bf1daa27f6496d8c3f87c8"
+          }
+        ],
+        "socket_denied": true,
+        "exec_denied": true,
+        "go_only_find_command": "pixiv fanbox mcp",
+        "go_only_find_args": [
+          "--help"
+        ],
+        "go_only_find_error": "",
+        "go_only_child_exit_code": 0
+      }
+    }
+  ]
+}
