@@ -1,0 +1,101 @@
+{
+  "base": "7078b729cc4dd48ee2b28f8eedcb758bacbc3a0f",
+  "frozen_go": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "counts": {
+    "rows": 126,
+    "tool_calls": 159,
+    "registered_tools": 11,
+    "stdio_schedules": 3,
+    "source_owner_files": 51
+  },
+  "sha256": {
+    "internal/mcpserver/fanbox/migration_read_tools_test.go": "cbd82cad5ad217c1b416f817e4e227d9a195aaad6cbcec807b22329d30794287",
+    "crates/pixiv-mcp/tests/fixtures/fanbox-read-tools.json": "ba2cf5c4e517d0ad75954821b0f7cece3c256366d3afc15c12d987dbfcd0599b"
+  },
+  "commands": {
+    "capture": {
+      "log": "capture-review-cleanup.jsonl",
+      "test_pass_events": 130,
+      "top_level": 2,
+      "nested": 128,
+      "no_mode_child_scaffolds": 1,
+      "meaningful_pass_events": 129,
+      "fail_events": 0,
+      "skip_events": 0,
+      "package_results": [
+        {
+          "Package": "github.com/FlanChanXwO/pixiv-cli/internal/mcpserver/fanbox",
+          "Action": "pass",
+          "Elapsed": 1.11
+        }
+      ]
+    },
+    "replay_x3": {
+      "log": "replay3-review-cleanup.jsonl",
+      "test_pass_events": 390,
+      "top_level": 6,
+      "nested": 384,
+      "no_mode_child_scaffolds": 3,
+      "meaningful_pass_events": 387,
+      "fail_events": 0,
+      "skip_events": 0,
+      "package_results": [
+        {
+          "Package": "github.com/FlanChanXwO/pixiv-cli/internal/mcpserver/fanbox",
+          "Action": "pass",
+          "Elapsed": 3.713
+        }
+      ]
+    },
+    "race": {
+      "log": "race-review-cleanup.jsonl",
+      "test_pass_events": 130,
+      "top_level": 2,
+      "nested": 128,
+      "no_mode_child_scaffolds": 1,
+      "meaningful_pass_events": 129,
+      "fail_events": 0,
+      "skip_events": 0,
+      "package_results": [
+        {
+          "Package": "github.com/FlanChanXwO/pixiv-cli/internal/mcpserver/fanbox",
+          "Action": "pass",
+          "Elapsed": 14.574
+        }
+      ]
+    },
+    "related": {
+      "log": "related-review-cleanup.jsonl",
+      "test_pass_events": 168,
+      "top_level": 28,
+      "nested": 140,
+      "no_mode_child_scaffolds": 1,
+      "meaningful_pass_events": 167,
+      "fail_events": 0,
+      "skip_events": 0,
+      "package_results": [
+        {
+          "Package": "github.com/FlanChanXwO/pixiv-cli/internal/mcpserver/fanbox/internal/runtime",
+          "Action": "pass",
+          "Elapsed": 0.005
+        },
+        {
+          "Package": "github.com/FlanChanXwO/pixiv-cli/internal/mcpserver/fanbox",
+          "Action": "pass",
+          "Elapsed": 1.389
+        }
+      ]
+    }
+  },
+  "environment": "2026-10-10T17:55:47+09:00\ngo version go1.27.1 linux/amd64\nTZ=JST\ngofmt=",
+  "production_files": 434,
+  "existing_fixtures": 87,
+  "production_drift": [],
+  "existing_fixture_drift": [],
+  "fixture_preserved_after_final_capture": true,
+  "gofmt_empty": true,
+  "vet_empty": true,
+  "prior_logs": "All earlier logs retained, including first passing freeze and failed already-closed stdout cleanup attempts; review-cleanup logs govern final source bytes. Normal stdout os.ErrClosed handling is retained. Fixture unchanged after final capture.",
+  "review_cleanup": "Narrow parent-authorized owned cleanup only: registered idempotent in-memory shutdown before Client.Connect, drain on failed Connect, cancel-aware synthetic independent wait, deferred started-child cancel/Close/Wait fallback with one Wait, and no pre-reap stderr buffer read. No fixture input or expected observation changed.",
+  "remaining_owned_child_temp_roots": []
+}

@@ -1,0 +1,394 @@
+{
+  "scope": "Go-first saved-session FANBOX content CLI contracts only",
+  "frozen_go": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "published_base": "7078b729cc4dd48ee2b28f8eedcb758bacbc3a0f",
+  "head_at_manifest": "7078b729cc4dd48ee2b28f8eedcb758bacbc3a0f",
+  "recorded_utc": "2026-10-10T09:00:44.666478+00:00",
+  "owned_files": [
+    {
+      "path": "internal/cli/migration_fanbox_content_reads_test.go",
+      "sha256": "72bb7657531705841c76f0ef32471ac79265e9a522fe91affa978f5ba6324770",
+      "bytes": 43850
+    },
+    {
+      "path": "crates/pixiv-cli/tests/fixtures/fanbox-content-reads.json",
+      "sha256": "14eb6414dc0694598bbb85992bf134338e93c3cdc7e391bc5ac3f9e2e3b4ca1b",
+      "bytes": 838219
+    }
+  ],
+  "cases": 172,
+  "source_owner_family_paths": 159,
+  "frozen_go_production_module_paths": 434,
+  "frozen_go_production_differences": [],
+  "reused_byte_exact": [
+    {
+      "path": "crates/pixiv-app/tests/fixtures/fanbox-saved-accounts.json",
+      "sha256": "77dc6f24a44d27220e69987698b1e562382fbece23d895abcd31b13b906de221",
+      "cases": 321
+    },
+    {
+      "path": "crates/pixiv-cli/tests/fixtures/fanbox-help-routing.json",
+      "sha256": "5301528abea777cb93ba1c5153714a90dbb79393d253d0c7aeb6793bfcf06b74",
+      "cases": 22
+    }
+  ],
+  "toolchain": {
+    "CGO_ENABLED": "1",
+    "GOARCH": "amd64",
+    "GOMODCACHE": "/workspace/scratch/cd334a12dde3/go-path/pkg/mod",
+    "GOOS": "linux",
+    "GOPATH": "/workspace/scratch/cd334a12dde3/go-path",
+    "GOROOT": "/workspace/scratch/cd334a12dde3/go-toolchain/go",
+    "GOTOOLCHAIN": "local",
+    "GOVERSION": "go1.27.1"
+  },
+  "environment_files": [
+    {
+      "path": "/tmp/quantus-toolchain-env.txt",
+      "sha256": "8134ecf516ad2127e04f96a198500da34104dde9107cdae71ab4f5eda80c218e",
+      "used_for_go": true
+    },
+    {
+      "path": "/tmp/pixiv-rust-validation-env.sh",
+      "sha256": "2dd5f9db8a8359c310ad8a2366d17d95da9341146579bfabc9a7f94dad07d159",
+      "used_for_go": false
+    }
+  ],
+  "checks": [
+    {
+      "command": "source /tmp/quantus-toolchain-env.txt; go test ./internal/cli -run '^TestMigrationFanboxContentReads$' -count=1 -migration-capture-fanbox-content-reads -timeout=10m -json",
+      "exit_code": 0,
+      "log": "/tmp/fanbox-cli-content-reads/final-capture.jsonl",
+      "sha256": "6df20008142f492995b0f9a2d227e530d6defb7932e97a06c4f1318f12afe280",
+      "bytes": 169335,
+      "first_event": "2026-10-10T17:56:28.458297134+09:00",
+      "last_event": "2026-10-10T17:56:31.085480912+09:00",
+      "events": {
+        "pass_nested": 172,
+        "pass_top_level": 1,
+        "pass_package": 1
+      },
+      "package_elapsed_seconds": [
+        {
+          "package": "github.com/FlanChanXwO/pixiv-cli/internal/cli",
+          "seconds": 2.627
+        }
+      ]
+    },
+    {
+      "command": "source /tmp/quantus-toolchain-env.txt; go test ./internal/cli -run '^TestMigrationFanboxContentReads$' -count=3 -timeout=10m -json",
+      "exit_code": 0,
+      "log": "/tmp/fanbox-cli-content-reads/replay-x3.jsonl",
+      "sha256": "49a20cc2bffa051f5bc19084c94af26c5347246fb36705ec19cd8f00d5041ed8",
+      "bytes": 506720,
+      "first_event": "2026-10-10T17:56:50.186438496+09:00",
+      "last_event": "2026-10-10T17:56:57.553325657+09:00",
+      "events": {
+        "pass_nested": 516,
+        "pass_top_level": 3,
+        "pass_package": 1
+      },
+      "package_elapsed_seconds": [
+        {
+          "package": "github.com/FlanChanXwO/pixiv-cli/internal/cli",
+          "seconds": 7.367
+        }
+      ]
+    },
+    {
+      "command": "source /tmp/quantus-toolchain-env.txt; go test ./internal/cli -run '^TestMigrationFanboxContentReads$' -count=1 -race -timeout=10m -json",
+      "exit_code": 0,
+      "log": "/tmp/fanbox-cli-content-reads/race.jsonl",
+      "sha256": "b23387f85034dc0693da177302e125a933fc4d2374ef9291aa532095aacc503b",
+      "bytes": 169334,
+      "first_event": "2026-10-10T17:57:51.298996935+09:00",
+      "last_event": "2026-10-10T17:58:02.909741969+09:00",
+      "events": {
+        "pass_nested": 172,
+        "pass_top_level": 1,
+        "pass_package": 1
+      },
+      "package_elapsed_seconds": [
+        {
+          "package": "github.com/FlanChanXwO/pixiv-cli/internal/cli",
+          "seconds": 11.611
+        }
+      ]
+    },
+    {
+      "command": "source /tmp/quantus-toolchain-env.txt; go test ./internal/cli -run '^TestMigrationFanboxHelpRouting$' -count=1 -timeout=10m -json",
+      "exit_code": 0,
+      "log": "/tmp/fanbox-cli-content-reads/reused-help22.jsonl",
+      "sha256": "5489c0fbf1475ba8bf3550149800882ca7c7697f931d32a51b625a55d9e9af5a",
+      "bytes": 23382,
+      "first_event": "2026-10-10T17:58:16.307180177+09:00",
+      "last_event": "2026-10-10T17:58:16.538785473+09:00",
+      "events": {
+        "pass_nested": 22,
+        "pass_top_level": 1,
+        "pass_package": 1
+      },
+      "package_elapsed_seconds": [
+        {
+          "package": "github.com/FlanChanXwO/pixiv-cli/internal/cli",
+          "seconds": 0.232
+        }
+      ]
+    },
+    {
+      "command": "source /tmp/quantus-toolchain-env.txt; go test ./internal/storage/database ./internal/services/fanbox/account ./internal/services/fanbox -run '^TestMigrationFanbox(SavedRepositoryFrozenGo|SavedServiceFrozenGo|SavedAccountOwnedLeases)$' -count=1 -timeout=10m -json",
+      "exit_code": 0,
+      "log": "/tmp/fanbox-cli-content-reads/reused-saved321.jsonl",
+      "sha256": "97379a2b14b69ecb219067083218349583da9f51987518559e6847a5437f217e",
+      "bytes": 141386,
+      "first_event": "2026-10-10T17:58:17.235795769+09:00",
+      "last_event": "2026-10-10T17:58:17.688101675+09:00",
+      "events": {
+        "pass_top_level": 3,
+        "pass_package": 3,
+        "pass_nested": 83
+      },
+      "package_elapsed_seconds": [
+        {
+          "package": "github.com/FlanChanXwO/pixiv-cli/internal/storage/database",
+          "seconds": 0.107
+        },
+        {
+          "package": "github.com/FlanChanXwO/pixiv-cli/internal/services/fanbox",
+          "seconds": 0.021
+        },
+        {
+          "package": "github.com/FlanChanXwO/pixiv-cli/internal/services/fanbox/account",
+          "seconds": 0.338
+        }
+      ]
+    }
+  ],
+  "static_checks": [
+    {
+      "command": "source /tmp/quantus-toolchain-env.txt; go vet ./internal/cli",
+      "exit_code": 0,
+      "log": "/tmp/fanbox-cli-content-reads/vet.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "command": "source /tmp/quantus-toolchain-env.txt; gofmt -l internal/cli/migration_fanbox_content_reads_test.go",
+      "exit_code": 0,
+      "log": "/tmp/fanbox-cli-content-reads/gofmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  ],
+  "prior_attempts": [
+    {
+      "log": "/tmp/fanbox-cli-content-reads/initial-capture.log",
+      "sha256": "0221dbc42a4cf50df6b1b72de61057c5f2f6482239848b0e592b4485fce2198e",
+      "role": "Compile failed on an unused test-only import; no production change"
+    },
+    {
+      "log": "/tmp/fanbox-cli-content-reads/initial-capture-2.log",
+      "sha256": "ffb7aa21880c1dbc2ae424c7ebc4c72a059ddaa3f51171152a9d51f73fb35afb",
+      "role": "Source guard invocation failed because git ls-tree paths were cwd-relative"
+    },
+    {
+      "log": "/tmp/fanbox-cli-content-reads/initial-capture-3.log",
+      "sha256": "c741b74b66c21a86c4f86a1be1ec58676bb24d110315d244cf398c3c1fae2152",
+      "role": "Capture intentionally failed on initial byte-unchanged SQLite assertion; actual repeated PRAGMA user_version write identified"
+    },
+    {
+      "log": "/tmp/fanbox-cli-content-reads/initial-capture-4.log",
+      "sha256": "a202caea03763a9f5241d0d074ca852d841ad29338875a16fd0f7c8f7cdd397b",
+      "role": "Experimental 156-row capture; presenter input seeds reviewed before finalization"
+    },
+    {
+      "log": "/tmp/fanbox-cli-content-reads/initial-capture-5.log",
+      "sha256": "4e0204fa04fbd0d3d963a1b9171470d31573913c9d8746d6b8d702ae5767c9b7",
+      "role": "Experimental 167-row capture with genuine six-presenter success and real pipe output; superseded by final 172-row capture"
+    }
+  ],
+  "limitations": [
+    "Successful reads execute genuine CLI leaf presenters and root fanboxDataDeps/newFanboxAccountService composition, selected saved SQLite account/default/config, real Facade and public SDK. Only real HTTP transport and existing close policy are injected; no returned DTO is mocked.",
+    "Successful reads stop at the existing safe command/composition boundary. Actual successful cmd/pixiv subprocess startup, native handler/update effects and native networking remain unproved; bounded cli.Run failure children expose ordering with safe dependency canaries.",
+    "Process-wide socket/connect/exec denial is installed only after owned synthetic DB/config setup. It is reused unchanged from FANBOX help22; no browser, auth mutation, download, live media, persistent credentials, native registration, trust or update effect occurs.",
+    "Synthetic session literals appear only in fixture inputs/requests, never command output. Owned HOME and randomized CreateTemp basename suffix are replaced by explicit <HOME>/<RANDOM> in path-bearing errors/diagnostics only; presenter output and requests remain byte-exact.",
+    "Saved-account321 and help22 are referenced by unchanged byte hashes. This content capture does not replace their separate repository/service/lease or help/parser coverage.",
+    "Options observations occur before the command override because the actual account owner loads config before applying it; actual override pointers and SDK requests/errors separately prove presence and constructor precedence.",
+    "database.Open genuinely writes PRAGMA user_version on every open. Raw SQLite hashes preserve this physical write; account/schema/pool rows are checked unchanged. Only synthetic schema applied_at seeds are fixed before the before-snapshot.",
+    "SDK endpoint/cursor/wire/resource and MCP sibling captures own deeper contracts. Go nil/interface/panic/native compressed media/platform and forbidden multiplex/HEAD/upload probes are outside this CLI slice."
+  ],
+  "case_ids": [
+    "post-text",
+    "post-json",
+    "post-ndjson",
+    "posts-text",
+    "posts-json",
+    "posts-ndjson",
+    "home-text",
+    "home-json",
+    "home-ndjson",
+    "supporting-text",
+    "supporting-json",
+    "supporting-ndjson",
+    "creators-text",
+    "creators-json",
+    "creators-ndjson",
+    "tags-text",
+    "tags-json",
+    "tags-ndjson",
+    "post-zero-optional-summary",
+    "post-body-null-summary",
+    "creators-following",
+    "posts-source-numeric",
+    "posts-source-numeric-leading-zero",
+    "posts-source-post-url",
+    "posts-source-creator-url",
+    "posts-source-creator-subdomain-path",
+    "posts-source-tag-url",
+    "posts-source-unicode-numeric-is-creator",
+    "posts-source-space-numeric-is-creator",
+    "posts-source-http-url-rejected",
+    "posts-source-foreign-host-rejected",
+    "posts-source-unknown-path-rejected",
+    "posts-source-uppercase-scheme-is-creator",
+    "posts-source-whitespace-creator-rejected",
+    "posts-source-empty-creator-rejected",
+    "post-stdin",
+    "posts-stdin",
+    "tags-stdin",
+    "post-explicit-never-reads-stdin",
+    "home-never-reads-stdin",
+    "post-stdin-error",
+    "posts-stdin-empty",
+    "flags-negative-limit-before-page",
+    "flags-explicit-zero-page",
+    "flags-page-requires-positive-limit",
+    "flags-logical-offset-overflow",
+    "flags-json-false-still-conflicts-ndjson",
+    "flags-json-true-conflicts-ndjson",
+    "flags-kind-before-list-plan",
+    "flags-single-post-rejects-limit",
+    "flags-tags-rejects-page",
+    "flags-home-rejects-positionals",
+    "flags-post-rejects-extra-positional",
+    "flags-proxy-presence-conflicts-no-proxy-false",
+    "flags-limit-not-an-integer",
+    "flags-limit-int-overflow",
+    "pagination-omitted-one-batch",
+    "pagination-explicit-zero-all",
+    "pagination-positive-truncate",
+    "pagination-positive-span-pages",
+    "pagination-logical-page-skip",
+    "pagination-logical-page-empty",
+    "pagination-empty-continuing-first",
+    "pagination-empty-all",
+    "pagination-cycle-json",
+    "pagination-prefix-failure-json",
+    "pagination-cycle-ndjson",
+    "pagination-prefix-failure-ndjson",
+    "pagination-cycle-text",
+    "pagination-prefix-failure-text",
+    "pagination-unsafe-unconsumed-next",
+    "home-identity-cursor-two-pages",
+    "supporting-identity-cursor-two-pages",
+    "creators-identity-cursor-two-pages",
+    "tags-empty",
+    "home-empty-json",
+    "home-items-fallback",
+    "supporting-empty-posts-priority",
+    "saved-auto-first-sort-order",
+    "saved-explicit-default",
+    "saved-missing-default",
+    "saved-invalid-default",
+    "saved-global-proxy",
+    "saved-service-empty-proxy",
+    "saved-service-proxy",
+    "saved-command-empty-proxy",
+    "saved-command-proxy",
+    "saved-command-no-proxy",
+    "saved-no-proxy-false-preserves",
+    "saved-invalid-proxy",
+    "saved-agent-solver-independent",
+    "saved-invalid-agent",
+    "saved-malformed-config",
+    "saved-invalid-pool-config",
+    "saved-none-no-pixiv-fallback",
+    "saved-empty-no-pixiv-fallback",
+    "saved-invalid-no-pixiv-fallback",
+    "database-corrupt-before-options",
+    "database-missing-table-before-options",
+    "options-failure-after-selection",
+    "saved-selection-before-options",
+    "lease-close-after-text",
+    "lease-close-after-json",
+    "lease-close-after-ndjson",
+    "fetch-and-close-join",
+    "writer-post-text-error",
+    "writer-post-text-pipe",
+    "writer-post-text-short",
+    "writer-post-json-error",
+    "writer-post-json-pipe",
+    "writer-post-json-short",
+    "writer-post-ndjson-error",
+    "writer-post-ndjson-pipe",
+    "writer-post-ndjson-short",
+    "writer-posts-text-error",
+    "writer-posts-text-pipe",
+    "writer-posts-text-short",
+    "writer-posts-json-error",
+    "writer-posts-json-pipe",
+    "writer-posts-json-short",
+    "writer-posts-ndjson-error",
+    "writer-posts-ndjson-pipe",
+    "writer-posts-ndjson-short",
+    "writer-tags-text-error",
+    "writer-tags-text-pipe",
+    "writer-tags-text-short",
+    "writer-tags-json-error",
+    "writer-tags-json-pipe",
+    "writer-tags-json-short",
+    "writer-tags-ndjson-error",
+    "writer-tags-ndjson-pipe",
+    "writer-tags-ndjson-short",
+    "writer-creators-text-error",
+    "writer-creators-text-pipe",
+    "writer-creators-text-short",
+    "writer-creators-json-error",
+    "writer-creators-json-pipe",
+    "writer-creators-json-short",
+    "writer-creators-ndjson-error",
+    "writer-creators-ndjson-pipe",
+    "writer-creators-ndjson-short",
+    "ndjson-epipe-joined-close",
+    "json-temp-create-failure",
+    "sdk-failure-transport",
+    "sdk-failure-read",
+    "sdk-failure-close",
+    "sdk-failure-decode-close",
+    "sdk-failure-unauthorized",
+    "sdk-failure-forbidden",
+    "sdk-failure-malformed",
+    "cancel-before",
+    "cancel-transport",
+    "independent-saved-commands",
+    "root-startup-before-malformed-config",
+    "root-config-before-service",
+    "root-safe-stop-at-composition",
+    "root-flags-before-startup",
+    "root-stdin-error-before-startup",
+    "pagination-unsafe-consumed-next",
+    "post-missing-publish-time",
+    "tags-invalid-name",
+    "tagged-two-pages",
+    "saved-config-json-does-not-select-json",
+    "pipe-retains-text-post",
+    "pipe-retains-text-posts",
+    "pipe-retains-text-home",
+    "pipe-retains-text-supporting",
+    "pipe-retains-text-creators",
+    "pipe-retains-text-tags",
+    "flags-explicit-json-false-selects-text",
+    "flags-explicit-ndjson-false-selects-text",
+    "flags-page-one-positive-limit"
+  ]
+}

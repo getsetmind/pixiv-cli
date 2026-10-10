@@ -1,0 +1,69 @@
+{
+  "base_sha": "7078b729cc4dd48ee2b28f8eedcb758bacbc3a0f",
+  "created_utc": "2026-10-10T09:10:30.105097+00:00",
+  "scope": "Contracts-only checkpoint; no Rust implementation or new comparative Rust pass claimed. Existing successful full gate remains applicable to exact unchanged executable inputs.",
+  "rust_baseline": {
+    "log": "/tmp/pixiv-fanbox-json-dates-full-gates.log",
+    "sha256": "85083ed64f2b77ad9ca6b248665a7903a02b3bdb1fd987b135e6a50cf4db577e",
+    "exit": 0,
+    "snapshot": "/tmp/pixiv-fanbox-json-dates-full-gate-source-snapshot.json",
+    "snapshot_sha256": "721bd53ef9ec8d51bedd84ffa7db2050db2e6539cb058bf41be47e5ece9625d9",
+    "prior_total_paths": 8702,
+    "prior_non_document_paths": 8419,
+    "changed_prior_paths": [
+      "docs/migration/contracts.md",
+      "docs/migration/ledger.json",
+      "docs/migration/remaining-features.md"
+    ],
+    "raw_passes": 707,
+    "meaningful_passes": 705,
+    "failures": 0,
+    "existing_ignored": 11,
+    "limitations": "All prior executable/source/test/fixture/dependency/script bytes exact. New Go fixtures are not consumed by existing Rust tests. No new Rust replay or implementation coverage."
+  },
+  "current_contracts": {
+    "sdk_content_rows": 416,
+    "sdk_resource_rows": 243,
+    "cli_rows": 172,
+    "mcp_rows": 126,
+    "mcp_related_cleanup_no_test_package_skips": 12
+  },
+  "go_media80_replay": {
+    "log": "/tmp/pixiv-fanbox-read-media80-replay.log",
+    "sha256": "d8e70ba1bfadee9315065ee25a4fad33bc0eea9d7831dccfe8af1a81edff2c23",
+    "exit": 0,
+    "top_level_passes": 3,
+    "nested_passes": 240,
+    "failures": 0,
+    "skips": 0
+  },
+  "denied_scope": "Supplemental native multiplex/unfinished HEAD/upload probe remains denied and was not retried.",
+  "combined_go": {
+    "log": "/tmp/pixiv-fanbox-read-contracts-combined-go.log",
+    "sha256": "ef4878ad42625ecb7c381f6e8f23b44d6f726ceab891680bbdeff02b64ec5617",
+    "exit": 0,
+    "named_top_level_passes": 69,
+    "named_nested_passes": 1610,
+    "failures": 0,
+    "named_skips": [
+      {
+        "test": "TestMigrationFanboxContentReadsChild",
+        "reason": "no-mode owned child scaffold"
+      }
+    ],
+    "no_test_package_skips": 11,
+    "commands": [
+      "go test ./sdk/fanbox -count=1 -json",
+      "go test ./internal/cli -run ^TestMigrationFanboxContentReads -count=1 -json",
+      "go test ./internal/mcpserver/fanbox/... -count=1 -json",
+      "go vet ./sdk/fanbox/... ./internal/cli ./internal/mcpserver/fanbox/...",
+      "go test ./scripts/tests/migration -count=1 -json",
+      "empty gofmt on four new Go producers"
+    ]
+  },
+  "final_vet": {
+    "log": "/tmp/pixiv-fanbox-read-contracts-final-vet.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "exit": 0
+  }
+}

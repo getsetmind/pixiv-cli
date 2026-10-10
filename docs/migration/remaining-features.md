@@ -168,3 +168,8 @@ Fresh identity 47 and public solver 79 Go rows are mapped to the real SDK, with 
 
 
 The final parser/date full script passes all stages in 294 seconds, raw 707/meaningful 705 tests, failed 0, existing ignored 11 and optimized release 48.78s. The initial concurrent test-cleanup run remains interrupted/inconclusive; all stages rerun on final bytes. Fresh related Go/vet/gofmt/validator and independent source review pass. The next complete functional scope is saved-session content/resource reads: all eight content SDK endpoints, ResolveURL/OpenResource, six CLI content leaves and eleven MCP tools, including required native decoded-body integration using unchanged media 80. No pending auth/download/browser or native/platform boundary is silently removed.
+
+
+## FANBOX connected read contracts, implementation still pending
+
+Fresh Go-first SDK content416/resource243/CLI172/MCP126 captures preserve actual saved selection, endpoints, opaque reopening, distinct projections and real stdio cancellation/reuse/EOF. This durable checkpoint records contracts and provenance only; the connected Rust content/resource/facade/CLI/MCP implementation remains pending. See [read contract boundaries](fanbox-read-contracts.md). Fixture/schema counts do not increase verified platforms or establish feature completion. Existing media80/saved321/help22/parser/native rows remain unchanged.
