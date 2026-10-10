@@ -146,3 +146,8 @@ internal/media/ugoira/rust/vendor/zune-core/src/options/encoder.rs -whitespace
 internal/media/ugoira/rust/vendor/zune-jpeg/src/color_convert/avx.rs -whitespace
 internal/media/ugoira/rust/vendor/zune-jpeg/src/decoder.rs -whitespace
 internal/media/ugoira/rust/vendor/zune-jpeg/src/upsampler/portable_simd.rs -whitespace
+
+# Native FANBOX registry sources and mixed-line-ending reconstruction patches are
+# byte-audited together. Text conversion would invalidate the reproducible seal.
+third_party/rust/fanbox/** -text
+docs/migration/provenance/fanbox-native-source-records/** -text
