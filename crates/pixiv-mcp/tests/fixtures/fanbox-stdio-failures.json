@@ -1,0 +1,418 @@
+{
+  "boundary": "actual registered FANBOX mcp.Server.Run with injected public mcp.Connection failures; real saved SQLite/settings -\u003e Facade -\u003e public SDK injected HTTP; not StdioTransport OS IO or successful cmd/pixiv bootstrap",
+  "cases": [
+    {
+      "connection_closes": 1,
+      "frames": [
+        {
+          "id": 1,
+          "jsonrpc": "2.0",
+          "result": {
+            "capabilities": {
+              "logging": {},
+              "tools": {
+                "listChanged": true
+              }
+            },
+            "instructions": "FANBOX MCP server for browsing creators, posts, tags, and media resources.",
+            "protocolVersion": "2025-06-18",
+            "serverInfo": {
+              "name": "pixiv-cli-fanbox",
+              "version": "1.0.0"
+            }
+          }
+        }
+      ],
+      "name": "parse_failure",
+      "observation": {
+        "calls": [],
+        "config": "",
+        "config_after": "",
+        "database": [
+          {
+            "created_at": 11,
+            "credential_revision": 1,
+            "session": "fixture-session-secret-7",
+            "sort_order": 1,
+            "updated_at": 22,
+            "user_id": 7,
+            "validated_at": 30
+          },
+          {
+            "created_at": 11,
+            "credential_revision": 1,
+            "session": "fixture-session-secret-9",
+            "sort_order": 2,
+            "updated_at": 22,
+            "user_id": 9,
+            "validated_at": 30
+          }
+        ],
+        "diagnostics": [
+          {
+            "count": 0,
+            "duration_nonnegative": true,
+            "kind": "started",
+            "module": "FANBOX MCP server",
+            "operation": "tool fanbox_home",
+            "proxy": "",
+            "reason": "",
+            "request_id": 1,
+            "resource": "",
+            "route": "",
+            "status": 0,
+            "target": "",
+            "user_agent": ""
+          },
+          {
+            "count": 0,
+            "duration_nonnegative": true,
+            "kind": "network_request",
+            "module": "FANBOX network",
+            "operation": "retrieving",
+            "proxy": "",
+            "reason": "",
+            "request_id": 1,
+            "resource": "/post.listHome",
+            "route": "native transport",
+            "status": 200,
+            "target": "",
+            "user_agent": "fixture-agent"
+          },
+          {
+            "count": 0,
+            "duration_nonnegative": true,
+            "kind": "completed",
+            "module": "FANBOX MCP server",
+            "operation": "tool fanbox_home",
+            "proxy": "",
+            "reason": "",
+            "request_id": 1,
+            "resource": "",
+            "route": "",
+            "status": 0,
+            "target": "",
+            "user_agent": ""
+          }
+        ],
+        "lease_closes": 1,
+        "lease_opens": 1,
+        "max_live_leases": 1,
+        "name": "parse_failure",
+        "port": "lease",
+        "proxy": null,
+        "requests": [
+          {
+            "accept": "application/json, text/plain, */*",
+            "cookie": "FANBOXSESSID=fixture-session-secret-7",
+            "method": "GET",
+            "origin": "https://www.fanbox.cc",
+            "referer": "https://www.fanbox.cc/",
+            "url": "https://api.fanbox.cc/post.listHome?limit=10",
+            "user_agent": "fixture-agent"
+          }
+        ],
+        "responses": [
+          {
+            "body": "{\"body\":{\"items\":[{\"id\":\"post-1\",\"title\":\"fixture title 日本語\",\"publishedDatetime\":\"2024-06-01T10:20:30.456+09:00\",\"creatorId\":\"writer\",\"feeRequired\":500,\"isRestricted\":true,\"isPinned\":true,\"restrictedFor\":2,\"commentCount\":3,\"body\":{\"text\":\"fixture private body canary\",\"blocks\":[{\"type\":\"image\",\"imageId\":\"image-1\"},{\"type\":\"file\",\"fileId\":\"file-1\"},{\"type\":\"article\"},{\"type\":\"video\"},{\"type\":\"alien\"}],\"imageMap\":{\"image-1\":{\"id\":\"image-1\",\"extension\":\"png\",\"originalUrl\":\"https://downloads.fanbox.cc/image-1.png?signature=fixture-signed-secret\",\"thumbnailUrl\":\"https://i.pximg.net/thumb.png\"}},\"fileMap\":{\"file-1\":{\"id\":\"file-1\",\"name\":\"fixture.zip\",\"extension\":\"zip\",\"url\":\"https://i.pximg.net/file-1.zip?signature=fixture-signed-secret\"}}}}],\"nextUrl\":\"\"}}",
+            "close_failure": false,
+            "content_type": "application/json",
+            "read_failure": false,
+            "request": 1,
+            "status": 200
+          }
+        ],
+        "scenario": "eof_pending",
+        "trace": [
+          "port.open/proxy=nil",
+          "defaults.read",
+          "repository.list",
+          "repository.get/7",
+          "options.load",
+          "lease.open/1",
+          "request/1",
+          "owned.pending.request.released/1",
+          "body.read/1/64/nil",
+          "body.read/1/64/nil",
+          "body.read/1/128/nil",
+          "body.read/1/256/nil",
+          "body.read/1/254/nil",
+          "body.close/1",
+          "lease.close/1"
+        ]
+      },
+      "server_error": "unmarshaling jsonrpc message: unexpected end of JSON input"
+    },
+    {
+      "connection_closes": 1,
+      "frames": [
+        {
+          "id": 1,
+          "jsonrpc": "2.0",
+          "result": {
+            "capabilities": {
+              "logging": {},
+              "tools": {
+                "listChanged": true
+              }
+            },
+            "instructions": "FANBOX MCP server for browsing creators, posts, tags, and media resources.",
+            "protocolVersion": "2025-06-18",
+            "serverInfo": {
+              "name": "pixiv-cli-fanbox",
+              "version": "1.0.0"
+            }
+          }
+        }
+      ],
+      "name": "read_failure",
+      "observation": {
+        "calls": [],
+        "config": "",
+        "config_after": "",
+        "database": [
+          {
+            "created_at": 11,
+            "credential_revision": 1,
+            "session": "fixture-session-secret-7",
+            "sort_order": 1,
+            "updated_at": 22,
+            "user_id": 7,
+            "validated_at": 30
+          },
+          {
+            "created_at": 11,
+            "credential_revision": 1,
+            "session": "fixture-session-secret-9",
+            "sort_order": 2,
+            "updated_at": 22,
+            "user_id": 9,
+            "validated_at": 30
+          }
+        ],
+        "diagnostics": [
+          {
+            "count": 0,
+            "duration_nonnegative": true,
+            "kind": "started",
+            "module": "FANBOX MCP server",
+            "operation": "tool fanbox_home",
+            "proxy": "",
+            "reason": "",
+            "request_id": 1,
+            "resource": "",
+            "route": "",
+            "status": 0,
+            "target": "",
+            "user_agent": ""
+          },
+          {
+            "count": 0,
+            "duration_nonnegative": true,
+            "kind": "network_request",
+            "module": "FANBOX network",
+            "operation": "retrieving",
+            "proxy": "",
+            "reason": "",
+            "request_id": 1,
+            "resource": "/post.listHome",
+            "route": "native transport",
+            "status": 200,
+            "target": "",
+            "user_agent": "fixture-agent"
+          },
+          {
+            "count": 0,
+            "duration_nonnegative": true,
+            "kind": "completed",
+            "module": "FANBOX MCP server",
+            "operation": "tool fanbox_home",
+            "proxy": "",
+            "reason": "",
+            "request_id": 1,
+            "resource": "",
+            "route": "",
+            "status": 0,
+            "target": "",
+            "user_agent": ""
+          }
+        ],
+        "lease_closes": 1,
+        "lease_opens": 1,
+        "max_live_leases": 1,
+        "name": "read_failure",
+        "port": "lease",
+        "proxy": null,
+        "requests": [
+          {
+            "accept": "application/json, text/plain, */*",
+            "cookie": "FANBOXSESSID=fixture-session-secret-7",
+            "method": "GET",
+            "origin": "https://www.fanbox.cc",
+            "referer": "https://www.fanbox.cc/",
+            "url": "https://api.fanbox.cc/post.listHome?limit=10",
+            "user_agent": "fixture-agent"
+          }
+        ],
+        "responses": [
+          {
+            "body": "{\"body\":{\"items\":[{\"id\":\"post-1\",\"title\":\"fixture title 日本語\",\"publishedDatetime\":\"2024-06-01T10:20:30.456+09:00\",\"creatorId\":\"writer\",\"feeRequired\":500,\"isRestricted\":true,\"isPinned\":true,\"restrictedFor\":2,\"commentCount\":3,\"body\":{\"text\":\"fixture private body canary\",\"blocks\":[{\"type\":\"image\",\"imageId\":\"image-1\"},{\"type\":\"file\",\"fileId\":\"file-1\"},{\"type\":\"article\"},{\"type\":\"video\"},{\"type\":\"alien\"}],\"imageMap\":{\"image-1\":{\"id\":\"image-1\",\"extension\":\"png\",\"originalUrl\":\"https://downloads.fanbox.cc/image-1.png?signature=fixture-signed-secret\",\"thumbnailUrl\":\"https://i.pximg.net/thumb.png\"}},\"fileMap\":{\"file-1\":{\"id\":\"file-1\",\"name\":\"fixture.zip\",\"extension\":\"zip\",\"url\":\"https://i.pximg.net/file-1.zip?signature=fixture-signed-secret\"}}}}],\"nextUrl\":\"\"}}",
+            "close_failure": false,
+            "content_type": "application/json",
+            "read_failure": false,
+            "request": 1,
+            "status": 200
+          }
+        ],
+        "scenario": "eof_pending",
+        "trace": [
+          "port.open/proxy=nil",
+          "defaults.read",
+          "repository.list",
+          "repository.get/7",
+          "options.load",
+          "lease.open/1",
+          "request/1",
+          "owned.pending.request.released/1",
+          "body.read/1/64/nil",
+          "body.read/1/64/nil",
+          "body.read/1/128/nil",
+          "body.read/1/256/nil",
+          "body.read/1/254/nil",
+          "body.close/1",
+          "lease.close/1"
+        ]
+      },
+      "server_error": "owned read failure"
+    },
+    {
+      "connection_closes": 1,
+      "frames": [
+        {
+          "id": 1,
+          "jsonrpc": "2.0",
+          "result": {
+            "capabilities": {
+              "logging": {},
+              "tools": {
+                "listChanged": true
+              }
+            },
+            "instructions": "FANBOX MCP server for browsing creators, posts, tags, and media resources.",
+            "protocolVersion": "2025-06-18",
+            "serverInfo": {
+              "name": "pixiv-cli-fanbox",
+              "version": "1.0.0"
+            }
+          }
+        }
+      ],
+      "name": "write_failure",
+      "observation": {
+        "calls": [],
+        "config": "",
+        "config_after": "",
+        "database": [
+          {
+            "created_at": 11,
+            "credential_revision": 1,
+            "session": "fixture-session-secret-7",
+            "sort_order": 1,
+            "updated_at": 22,
+            "user_id": 7,
+            "validated_at": 30
+          },
+          {
+            "created_at": 11,
+            "credential_revision": 1,
+            "session": "fixture-session-secret-9",
+            "sort_order": 2,
+            "updated_at": 22,
+            "user_id": 9,
+            "validated_at": 30
+          }
+        ],
+        "diagnostics": [
+          {
+            "count": 0,
+            "duration_nonnegative": true,
+            "kind": "started",
+            "module": "FANBOX MCP server",
+            "operation": "tool fanbox_home",
+            "proxy": "",
+            "reason": "",
+            "request_id": 1,
+            "resource": "",
+            "route": "",
+            "status": 0,
+            "target": "",
+            "user_agent": ""
+          },
+          {
+            "count": 0,
+            "duration_nonnegative": true,
+            "kind": "failed",
+            "module": "FANBOX network",
+            "operation": "network request",
+            "proxy": "",
+            "reason": "",
+            "request_id": 1,
+            "resource": "",
+            "route": "native transport",
+            "status": 0,
+            "target": "",
+            "user_agent": ""
+          },
+          {
+            "count": 0,
+            "duration_nonnegative": true,
+            "kind": "failed",
+            "module": "FANBOX MCP server",
+            "operation": "tool fanbox_home",
+            "proxy": "",
+            "reason": "tool failed",
+            "request_id": 1,
+            "resource": "",
+            "route": "",
+            "status": 0,
+            "target": "",
+            "user_agent": ""
+          }
+        ],
+        "lease_closes": 1,
+        "lease_opens": 1,
+        "max_live_leases": 1,
+        "name": "write_failure",
+        "port": "lease",
+        "proxy": null,
+        "requests": [
+          {
+            "accept": "application/json, text/plain, */*",
+            "cookie": "FANBOXSESSID=fixture-session-secret-7",
+            "method": "GET",
+            "origin": "https://www.fanbox.cc",
+            "referer": "https://www.fanbox.cc/",
+            "url": "https://api.fanbox.cc/post.listHome?limit=10",
+            "user_agent": "fixture-agent"
+          }
+        ],
+        "responses": [],
+        "scenario": "cancel_reuse",
+        "trace": [
+          "port.open/proxy=nil",
+          "defaults.read",
+          "repository.list",
+          "repository.get/7",
+          "options.load",
+          "lease.open/1",
+          "request/1",
+          "owned.write.failure",
+          "request.canceled/1",
+          "lease.close/1"
+        ]
+      },
+      "server_error": "owned write failure"
+    }
+  ],
+  "frozen_go": "4b4426487ef18bed276706daec385e0d0a6979f9"
+}

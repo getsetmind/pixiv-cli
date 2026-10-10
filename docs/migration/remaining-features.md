@@ -173,3 +173,7 @@ The final parser/date full script passes all stages in 294 seconds, raw 707/mean
 ## FANBOX connected read contracts, implementation still pending
 
 Fresh Go-first SDK content416/resource243/CLI172/MCP126 captures preserve actual saved selection, endpoints, opaque reopening, distinct projections and real stdio cancellation/reuse/EOF. This durable checkpoint records contracts and provenance only; the connected Rust content/resource/facade/CLI/MCP implementation remains pending. See [read contract boundaries](fanbox-read-contracts.md). Fixture/schema counts do not increase verified platforms or establish feature completion. Existing media80/saved321/help22/parser/native rows remain unchanged.
+
+## FANBOX connected read continuation (2026-10-10)
+
+Saved-session SDK content/reference/resource, actual saved-account app composition, six CLI read leaves and eleven MCP tools are now connected in the candidate described by [fanbox-connected-reads.md](fanbox-connected-reads.md). Actual Linux binary tests cover help, argument/config/store stops, missing-account paths and MCP stdio/schema/errors; successful authenticated native reads remain unverified. The candidate's bounded scope does not complete FANBOX auth/browser session extraction, download/save/replay, all public lifecycle behavior, native compressed-wire/HEAD/Range/concurrent decoding, arbitrary abort-body cleanup or non-Linux runtime. These operations remain required for the whole migration. No pending feature is replaced with empty success.

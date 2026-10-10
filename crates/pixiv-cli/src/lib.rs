@@ -11,6 +11,8 @@ pub mod comment_reads;
 pub mod config_commands;
 pub mod dictionary;
 pub mod download;
+pub mod fanbox;
+pub mod fanbox_mcp;
 pub mod interrupt;
 mod json_spool;
 pub mod mutation;
@@ -57,6 +59,7 @@ pub enum CommandError {
     App(SchedulerError),
     State(Box<dyn std::error::Error + Send + Sync>),
     Pipeline,
+    Joined(Vec<CommandError>),
 }
 impl From<SchedulerError> for CommandError {
     fn from(error: SchedulerError) -> Self {
@@ -76,6 +79,15 @@ impl From<Error> for CommandError {
 impl fmt::Display for CommandError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
+            Self::Joined(errors) => {
+                for (index, error) in errors.iter().enumerate() {
+                    if index > 0 {
+                        f.write_str("\n")?;
+                    }
+                    error.fmt(f)?;
+                }
+                Ok(())
+            }
             Self::Sdk(error) => error.fmt(f),
             Self::LabeledSdk(label, error) => write!(f, "{label}: {error}"),
             Self::Message(message) => f.write_str(message),
@@ -94,6 +106,7 @@ impl fmt::Display for CommandError {
 impl std::error::Error for CommandError {
     fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
         match self {
+            Self::Joined(errors) => errors.first().map(|error| error as &dyn std::error::Error),
             Self::Sdk(error) | Self::LabeledSdk(_, error) => Some(error),
             Self::Output(error) => Some(error),
             Self::App(error) => Some(error),
@@ -107,6 +120,13 @@ impl std::error::Error for CommandError {
     }
 }
 impl CommandError {
+    pub fn is_broken_pipe(&self) -> bool {
+        match self {
+            Self::Output(error) => error.kind() == io::ErrorKind::BrokenPipe,
+            Self::Joined(errors) => errors.iter().any(Self::is_broken_pipe),
+            _ => false,
+        }
+    }
     pub fn code(&self) -> &str {
         self.sdk_error()
             .map(|error| error.code.as_str())
@@ -114,6 +134,7 @@ impl CommandError {
     }
     pub fn sdk_error(&self) -> Option<&Error> {
         match self {
+            Self::Joined(errors) => errors.iter().find_map(Self::sdk_error),
             Self::Sdk(error) | Self::LabeledSdk(_, error) => Some(error),
             Self::App(error) => error.classified(),
             Self::Message(_)
@@ -147,9 +168,7 @@ pub fn finish_command<W: Write>(
         let _ = writeln!(diagnostics, "error: {error}");
         return 2;
     }
-    if ndjson_output
-        && matches!(&error, CommandError::Output(cause) if cause.kind() == io::ErrorKind::BrokenPipe)
-    {
+    if ndjson_output && error.is_broken_pipe() {
         return 0;
     }
     if machine_output {

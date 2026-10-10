@@ -1,0 +1,50 @@
+{
+  "frozen_go": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "base_sha": "f56f27e178dbbbcc1020fabb0a7f60745aae8dfd",
+  "supplemental_rows": 3,
+  "producer": "internal/mcpserver/fanbox/migration_stdio_failures_test.go",
+  "fixture": "crates/pixiv-mcp/tests/fixtures/fanbox-stdio-failures.json",
+  "producer_sha256": "881212d26e512dd79b383d6da48a83f278ba576996c7a98a5e5236cf0bc2ee13",
+  "fixture_sha256": "2e17981ee1ec998f2a0bfc014e5cad4de85b62b83e71669d78505f86e00ad0bb",
+  "scope": "Actual registered FANBOX Server.Run with real saved SQLite/facade/SDK and owned custom public Connection; fatal parse/read drain without cancellation, fatal write cancels only owned inbound work then drains.",
+  "input_correction": "Before final fixture seal only, custom Connection closed-read error changed to io.EOF to match actual IOConnection. Preliminary capture retained. No sealed expectations changed.",
+  "rust_difference": "Rust malformed NDJSON returns InvalidData; the Go public DecodeMessage-layer returned error text remains separately un-compared. Frames and full saved SDK ownership traces remain strict.",
+  "limitations": [
+    "Synchronous Rust future Drop proves once-only lease release, not asynchronous RawBody.Close",
+    "Cooperative fatal-stdio drainage separately proves body close before lease close",
+    "Duplicate IDs, unrestricted concurrency, native OS and mid-body disconnect schedules unverified",
+    "Supplemental native multiplex/unfinished HEAD/upload probe remains denied and was not retried"
+  ],
+  "logs": {
+    "capture": {
+      "path": "/tmp/pixiv-fanbox-stdio-failures/final-capture.log",
+      "sha256": "88fee4a6a90977a5ecaec2a04e4d5d1bdaf2bf3585381e9176f7c2d29a346d2a",
+      "bytes": 71,
+      "exit": 0
+    },
+    "replay3": {
+      "path": "/tmp/pixiv-fanbox-stdio-failures/final-replay3.log",
+      "sha256": "0db438870884b7e10146fb31a99c3b39f2e1748d919992a95a93812ac68f8f5d",
+      "bytes": 71,
+      "exit": 0
+    },
+    "race": {
+      "path": "/tmp/pixiv-fanbox-stdio-failures/final-race.log",
+      "sha256": "bc1a890b8b4e10512fd130630d0ed91ae420be10b6a07d9d9cea270a779314a7",
+      "bytes": 71,
+      "exit": 0
+    },
+    "vet": {
+      "path": "/tmp/pixiv-fanbox-stdio-failures/final-vet.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "exit": 0
+    },
+    "gofmt": {
+      "path": "/tmp/pixiv-fanbox-stdio-failures/final-gofmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "exit": 0
+    }
+  }
+}

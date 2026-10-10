@@ -1,6 +1,5 @@
 use crate::{Error, Reason, Result, resource::ResourceRef};
 use std::{collections::BTreeMap, fmt};
-use tokio::io::AsyncRead;
 
 pub const RESOURCE_METHOD_GET: &str = "GET";
 pub const RESOURCE_METHOD_HEAD: &str = "HEAD";
@@ -51,19 +50,19 @@ impl OpenResourceRequest {
 
 pub type ResourceHeaders = BTreeMap<String, Vec<String>>;
 
-pub struct ResourceResponse<R: AsyncRead + Unpin + Send> {
+pub struct ResourceResponse<R> {
     pub status_code: i64,
     pub body: R,
     headers: ResourceHeaders,
 }
-impl<R: AsyncRead + Unpin + Send> fmt::Debug for ResourceResponse<R> {
+impl<R> fmt::Debug for ResourceResponse<R> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("ResourceResponse")
             .field("status_code", &self.status_code)
             .finish_non_exhaustive()
     }
 }
-impl<R: AsyncRead + Unpin + Send> ResourceResponse<R> {
+impl<R> ResourceResponse<R> {
     pub fn new(status_code: i64, source: &ResourceHeaders, body: R) -> Self {
         let mut headers = ResourceHeaders::new();
         for name in [

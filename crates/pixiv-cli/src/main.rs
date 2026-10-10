@@ -211,6 +211,8 @@ enum Command {
     Download,
     #[command(about = "Read the Pixiv encyclopedia (dic.pixiv.net)")]
     Dic,
+    #[command(about = "Browse and download Pixiv FANBOX content")]
+    Fanbox,
     #[command(args_override_self = true)]
     Comment {
         #[command(flatten)]
@@ -312,6 +314,16 @@ async fn main() {
         }
     };
     let root_context = owner.context();
+    let raw_args: Vec<String> = std::env::args().skip(1).collect();
+    if pixiv_cli_rs::fanbox::is_fanbox_route(&raw_args) {
+        let (result, ndjson, machine) = execute_fanbox(&root_context, &raw_args).await;
+        let exit = finish_command(result, ndjson, machine, &mut io::stderr().lock());
+        if exit != 0 {
+            drop(owner);
+            std::process::exit(exit);
+        }
+        return;
+    }
     if std::env::args().nth(1).as_deref() == Some("download") {
         let (result, ndjson, machine) = execute_download(&root_context).await;
         let exit = finish_command(result, ndjson, machine, &mut io::stderr().lock());
@@ -501,6 +513,7 @@ async fn main() {
         | Command::Download
         | Command::Config
         | Command::Dic
+        | Command::Fanbox
         | Command::Mcp { .. }
         | Command::Bookmark { .. }
         | Command::Follow { .. }
@@ -577,6 +590,7 @@ async fn main() {
         | Command::Download
         | Command::Config
         | Command::Dic
+        | Command::Fanbox
         | Command::Mcp { .. }
         | Command::Bookmark { .. }
         | Command::Follow { .. }
@@ -1700,6 +1714,7 @@ async fn execute(
         Command::Auth
         | Command::Config
         | Command::Dic
+        | Command::Fanbox
         | Command::Download
         | Command::Comment { .. }
         | Command::Mypixiv { .. }
@@ -1718,6 +1733,120 @@ async fn execute(
             unreachable!("commands use saved-account or local execution")
         }
     }
+}
+
+fn fanbox_runtime()
+-> Result<(std::path::PathBuf, std::sync::Arc<pixiv_app::config::Store>), CommandError> {
+    let directory = pixiv_app::callback_handler::app_data_directory()
+        .map_err(|error| CommandError::MessageText(error.to_string()))?;
+    let config = std::sync::Arc::new(pixiv_app::config::Store::new(directory.join("config.toml")));
+    config
+        .ensure_defaults()
+        .map_err(pixiv_app::scheduler::SchedulerError::from)?;
+    config
+        .current()
+        .and_then(|snapshot| snapshot.runtime())
+        .map_err(pixiv_app::scheduler::SchedulerError::from)?;
+    Ok((directory, config))
+}
+
+fn fanbox_service(
+    directory: std::path::PathBuf,
+    config: std::sync::Arc<pixiv_app::config::Store>,
+) -> Result<Option<std::sync::Arc<pixiv_app::fanbox_facade::Facade>>, CommandError> {
+    let database = pixiv_app::database::Database::open(directory)
+        .map_err(|error| CommandError::State(Box::new(error)))?;
+    let accounts = pixiv_app::fanbox_account_service::AccountService::from_store(
+        std::sync::Arc::new(std::sync::Mutex::new(database)),
+        config,
+    );
+    Ok(Some(std::sync::Arc::new(
+        pixiv_app::fanbox_facade::Facade::new(Some(std::sync::Arc::new(accounts))),
+    )))
+}
+
+async fn execute_fanbox(
+    root_context: &pixiv_app::lifecycle::Context,
+    args: &[String],
+) -> (Result<(), CommandError>, bool, bool) {
+    use pixiv_cli_rs::{fanbox, fanbox_mcp};
+    let mut ndjson = false;
+    let mut machine = false;
+    let result = async {
+        if let Some(help) = fanbox::help_route(args)? {
+            io::stdout().write_all(help.as_bytes())?;
+            return Ok(());
+        }
+        let route = fanbox::command_route(args);
+        match route
+            .path
+            .iter()
+            .map(String::as_str)
+            .collect::<Vec<_>>()
+            .as_slice()
+        {
+            ["fanbox", "mcp"] => {
+                let command = fanbox_mcp::McpCommand::parse(&route.args)?;
+                pixiv_cli_rs::startup::run_system_startup(root_context, &mut io::stderr())?;
+                let (directory, config) = fanbox_runtime()?;
+                command
+                    .run(fanbox_mcp::Data {
+                        service_factory: move || fanbox_service(directory, config),
+                        run_server: |facade, proxy| async move {
+                            let server = pixiv_mcp::fanbox::Server::saved(facade, proxy);
+                            pixiv_mcp::fanbox::stdio::serve(
+                                &server,
+                                Some(root_context),
+                                tokio::io::stdin(),
+                                &mut tokio::io::stdout(),
+                            )
+                            .await
+                            .map_err(Into::into)
+                        },
+                    })
+                    .await
+            }
+            [
+                "fanbox",
+                "creators" | "posts" | "tags" | "home" | "supporting" | "post",
+            ] => {
+                let requested = fanbox::ReadCommand::parse(args)?;
+                ndjson = requested.ndjson;
+                machine = requested.json.is_some() || ndjson;
+                let mut runtime = None;
+                let command = fanbox::prepare_root(
+                    root_context,
+                    args,
+                    &mut io::stdin().lock(),
+                    io::stdin().is_terminal(),
+                    &pixiv_cli_rs::startup::SystemStartupHooks::system(),
+                    &mut io::stderr(),
+                    || {
+                        runtime = Some(fanbox_runtime()?);
+                        Ok(())
+                    },
+                )?;
+                let (directory, config) = runtime.expect("FANBOX read startup was resolved");
+                command
+                    .execute(
+                        root_context,
+                        move || fanbox_service(directory, config),
+                        &mut io::stdout().lock(),
+                    )
+                    .await
+            }
+            ["fanbox"] => Err(CommandError::Message("usage: pixiv fanbox <command>")),
+            ["fanbox", "auth", ..] => Err(CommandError::Message(
+                "FANBOX authentication commands are pending Rust migration",
+            )),
+            ["fanbox", "download"] => Err(CommandError::Message(
+                "FANBOX download commands are pending Rust migration",
+            )),
+            _ => Err(CommandError::Message("usage: pixiv fanbox <command>")),
+        }
+    }
+    .await;
+    (result, ndjson, machine)
 }
 
 async fn execute_dictionary(

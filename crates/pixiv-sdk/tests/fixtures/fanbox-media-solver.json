@@ -1,0 +1,4860 @@
+{
+  "cases": [
+    {
+      "name": "solved_conditional_replay_then_cached_clearance",
+      "input": {
+        "resource": {
+          "kind": "post_file",
+          "mode": "cached",
+          "producer_document": "{\"body\":{\"post\":{\"body\":{\"files\":[{\"id\":\"resource-file\",\"name\":\"attachment.txt\",\"url\":\"https://downloads.fanbox.cc/original.bin?signature=old\"}]},\"creatorId\":\"resource-creator\",\"id\":\"resource-post\",\"publishedDatetime\":\"2024-01-02T03:04:05Z\",\"title\":\"Resource Post\"}}}",
+          "reopen_document": "{\"body\":{\"post\":{\"body\":{\"files\":[{\"id\":\"resource-file\",\"name\":\"attachment.txt\",\"url\":\"https://downloads.fanbox.cc/rotated.bin?signature=new\"}]},\"creatorId\":\"resource-creator\",\"id\":\"resource-post\",\"publishedDatetime\":\"2024-01-02T03:04:05Z\",\"title\":\"Resource Post\"}}}",
+          "ref_product": "",
+          "ref_payload": "",
+          "parse_text": "",
+          "parse_only": false,
+          "method": "",
+          "range": "bytes=1-4",
+          "if_none_match": "\"owned-etag\"",
+          "if_modified_since": "Wed, 21 Oct 2015 07:28:00 GMT",
+          "if_range": "\"owned-range\"",
+          "context": "",
+          "transport_error": "",
+          "transport_error_at_metadata": false,
+          "metadata": {
+            "status": 0,
+            "header": null,
+            "data": "",
+            "chunk": 0,
+            "read_error": "",
+            "error_with_last_bytes": false,
+            "close_error": "",
+            "nil_body": false,
+            "transport_content_length": 0,
+            "cancel_on_read": false,
+            "cancel_on_close": false
+          },
+          "media": [
+            {
+              "status": 403,
+              "header": {
+                "Cf-Mitigated": [
+                  "challenge"
+                ]
+              },
+              "data": "cf-chl owned media challenge",
+              "chunk": 0,
+              "read_error": "",
+              "error_with_last_bytes": false,
+              "close_error": "",
+              "nil_body": false,
+              "transport_content_length": 0,
+              "cancel_on_read": false,
+              "cancel_on_close": false
+            },
+            {
+              "status": 200,
+              "header": {
+                "Content-Length": [
+                  "5"
+                ],
+                "Content-Type": [
+                  "application/octet-stream"
+                ]
+              },
+              "data": "media",
+              "chunk": 0,
+              "read_error": "",
+              "error_with_last_bytes": false,
+              "close_error": "",
+              "nil_body": false,
+              "transport_content_length": 0,
+              "cancel_on_read": false,
+              "cancel_on_close": false
+            },
+            {
+              "status": 200,
+              "header": {
+                "Content-Length": [
+                  "5"
+                ],
+                "Content-Type": [
+                  "application/octet-stream"
+                ]
+              },
+              "data": "media",
+              "chunk": 0,
+              "read_error": "",
+              "error_with_last_bytes": false,
+              "close_error": "",
+              "nil_body": false,
+              "transport_content_length": 0,
+              "cancel_on_read": false,
+              "cancel_on_close": false
+            }
+          ],
+          "actions": [
+            {
+              "kind": "read",
+              "size": 2
+            },
+            {
+              "kind": "read",
+              "size": 8
+            },
+            {
+              "kind": "read",
+              "size": 8
+            },
+            {
+              "kind": "close"
+            },
+            {
+              "kind": "close"
+            }
+          ],
+          "repeat": 2,
+          "mutate_resource_header": false
+        },
+        "solver_steps": [
+          {
+            "status": 200,
+            "body": "{\"status\":\"ok\",\"solution\":{\n        \"userAgent\": \"synthetic-solver-agent\",\n        \"cookies\": [\n          {\n            \"name\": \"cf_clearance\",\n            \"value\": \"synthetic-clearance\",\n            \"expires\": null,\n            \"expiry\": null\n          }\n        ]\n      }}"
+          }
+        ],
+        "solver_proxy": "http://browser-proxy.example:8080"
+      },
+      "observation": {
+        "consumer_close_idle_calls": 0,
+        "control_requests": [
+          {
+            "accept": "application/json",
+            "body": "{\"cmd\":\"request.get\",\"url\":\"https://www.fanbox.cc/\",\"proxy\":\"http://browser-proxy.example:8080\"}",
+            "content_length": 96,
+            "content_type": "application/json",
+            "cookie": "",
+            "go_only_default_user_agent": "Go-http-client/1.1",
+            "go_only_protocol": "HTTP/1.1",
+            "method": "POST",
+            "origin": "",
+            "path": "/v1",
+            "referer": ""
+          }
+        ],
+        "final_ownership": [
+          {
+            "bytes_read": 267,
+            "close_calls": 1,
+            "name": "producer/metadata",
+            "read_calls": [
+              {
+                "after_close": false,
+                "error_kind": "",
+                "requested": 64,
+                "returned": 64
+              },
+              {
+                "after_close": false,
+                "error_kind": "",
+                "requested": 64,
+                "returned": 64
+              },
+              {
+                "after_close": false,
+                "error_kind": "",
+                "requested": 128,
+                "returned": 128
+              },
+              {
+                "after_close": false,
+                "error_kind": "",
+                "requested": 256,
+                "returned": 11
+              }
+            ]
+          },
+          {
+            "bytes_read": 28,
+            "close_calls": 1,
+            "name": "producer/media/0",
+            "read_calls": [
+              {
+                "after_close": false,
+                "error_kind": "",
+                "requested": 32768,
+                "returned": 28
+              },
+              {
+                "after_close": false,
+                "error_kind": "EOF",
+                "requested": 32768,
+                "returned": 0
+              }
+            ]
+          },
+          {
+            "bytes_read": 5,
+            "close_calls": 2,
+            "name": "producer/media/1",
+            "read_calls": [
+              {
+                "after_close": false,
+                "error_kind": "",
+                "requested": 2,
+                "returned": 2
+              },
+              {
+                "after_close": false,
+                "error_kind": "",
+                "requested": 8,
+                "returned": 3
+              },
+              {
+                "after_close": false,
+                "error_kind": "EOF",
+                "requested": 8,
+                "returned": 0
+              }
+            ]
+          },
+          {
+            "bytes_read": 5,
+            "close_calls": 2,
+            "name": "producer/media/2",
+            "read_calls": [
+              {
+                "after_close": false,
+                "error_kind": "",
+                "requested": 2,
+                "returned": 2
+              },
+              {
+                "after_close": false,
+                "error_kind": "",
+                "requested": 8,
+                "returned": 3
+              },
+              {
+                "after_close": false,
+                "error_kind": "EOF",
+                "requested": 8,
+                "returned": 0
+              }
+            ]
+          }
+        ],
+        "generated_resources": [
+          {
+            "dto": {
+              "ref": "eyJ2IjoxLCJwIjoiZmFuYm94IiwiZCI6ImV5SnJJam9pY0c5emRGOW1hV3hsSWl3aVl5STZJbkpsYzI5MWNtTmxMV055WldGMGIzSWlMQ0p3SWpvaWNtVnpiM1Z5WTJVdGNHOXpkQ0lzSW1FaU9pSnlaWE52ZFhKalpTMW1hV3hsSW4wPSJ9",
+              "requires_credentials": true
+            },
+            "expires_at": null,
+            "payload": "{\"k\":\"post_file\",\"c\":\"resource-creator\",\"p\":\"resource-post\",\"a\":\"resource-file\"}",
+            "ref": "eyJ2IjoxLCJwIjoiZmFuYm94IiwiZCI6ImV5SnJJam9pY0c5emRGOW1hV3hsSWl3aVl5STZJbkpsYzI5MWNtTmxMV055WldGMGIzSWlMQ0p3SWpvaWNtVnpiM1Z5WTJVdGNHOXpkQ0lzSW1FaU9pSnlaWE52ZFhKalpTMW1hV3hsSW4wPSJ9",
+            "request_headers": {
+              "Referer": "https://www.fanbox.cc/"
+            },
+            "requires_credentials": true,
+            "url": "https://downloads.fanbox.cc/original.bin?signature=old"
+          }
+        ],
+        "generation_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "eof": false,
+          "exact_eof": false,
+          "go_only_error_tree": [],
+          "message": "",
+          "reason": "",
+          "unexpected_eof": false
+        },
+        "outcomes": [
+          {
+            "headers_after_caller_copy_mutation": {
+              "Content-Length": [
+                "5"
+              ],
+              "Content-Type": [
+                "application/octet-stream"
+              ]
+            },
+            "open_error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "eof": false,
+              "exact_eof": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": "",
+              "unexpected_eof": false
+            },
+            "ownership_at_return": [
+              {
+                "bytes_read": 267,
+                "close_calls": 1,
+                "name": "producer/metadata",
+                "read_calls": [
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 64,
+                    "returned": 64
+                  },
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 64,
+                    "returned": 64
+                  },
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 128,
+                    "returned": 128
+                  },
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 256,
+                    "returned": 11
+                  }
+                ]
+              },
+              {
+                "bytes_read": 28,
+                "close_calls": 1,
+                "name": "producer/media/0",
+                "read_calls": [
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 32768,
+                    "returned": 28
+                  },
+                  {
+                    "after_close": false,
+                    "error_kind": "EOF",
+                    "requested": 32768,
+                    "returned": 0
+                  }
+                ]
+              },
+              {
+                "bytes_read": 0,
+                "close_calls": 0,
+                "name": "producer/media/1",
+                "read_calls": []
+              }
+            ],
+            "response": {
+              "accept_ranges": "",
+              "body_non_nil": true,
+              "cache_control": "",
+              "content_length": 5,
+              "content_range": "",
+              "content_type": "application/octet-stream",
+              "etag": "",
+              "headers": {
+                "Content-Length": [
+                  "5"
+                ],
+                "Content-Type": [
+                  "application/octet-stream"
+                ]
+              },
+              "last_modified": "",
+              "status": 200
+            },
+            "returned": true,
+            "steps": [
+              {
+                "action": {
+                  "kind": "read",
+                  "size": 2
+                },
+                "bytes": 2,
+                "data": "me",
+                "data_bytes": "bWU=",
+                "data_hex": "6d65",
+                "data_sha256": "2744ccd10c7533bd736ad890f9dd5cab2adb27b07d500b9493f29cdc420cb2e0",
+                "error": {
+                  "canceled": false,
+                  "deadline_exceeded": false,
+                  "eof": false,
+                  "exact_eof": false,
+                  "go_only_error_tree": [],
+                  "message": "",
+                  "reason": "",
+                  "unexpected_eof": false
+                },
+                "ownership": [
+                  {
+                    "bytes_read": 267,
+                    "close_calls": 1,
+                    "name": "producer/metadata",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 128,
+                        "returned": 128
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 256,
+                        "returned": 11
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 28,
+                    "close_calls": 1,
+                    "name": "producer/media/0",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 32768,
+                        "returned": 28
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 32768,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 2,
+                    "close_calls": 0,
+                    "name": "producer/media/1",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 2,
+                        "returned": 2
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "action": {
+                  "kind": "read",
+                  "size": 8
+                },
+                "bytes": 3,
+                "data": "dia",
+                "data_bytes": "ZGlh",
+                "data_hex": "646961",
+                "data_sha256": "0addcc1de26ee0f660d21b01c1afdff9f59efb989331fed17334cf8a6dcd8d6b",
+                "error": {
+                  "canceled": false,
+                  "deadline_exceeded": false,
+                  "eof": false,
+                  "exact_eof": false,
+                  "go_only_error_tree": [],
+                  "message": "",
+                  "reason": "",
+                  "unexpected_eof": false
+                },
+                "ownership": [
+                  {
+                    "bytes_read": 267,
+                    "close_calls": 1,
+                    "name": "producer/metadata",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 128,
+                        "returned": 128
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 256,
+                        "returned": 11
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 28,
+                    "close_calls": 1,
+                    "name": "producer/media/0",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 32768,
+                        "returned": 28
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 32768,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 5,
+                    "close_calls": 0,
+                    "name": "producer/media/1",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 2,
+                        "returned": 2
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 8,
+                        "returned": 3
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "action": {
+                  "kind": "read",
+                  "size": 8
+                },
+                "bytes": 0,
+                "data": "",
+                "data_bytes": "",
+                "data_hex": "",
+                "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "error": {
+                  "canceled": false,
+                  "deadline_exceeded": false,
+                  "eof": true,
+                  "exact_eof": true,
+                  "go_only_error_tree": [
+                    {
+                      "message": "EOF",
+                      "type": "*errors.errorString"
+                    }
+                  ],
+                  "message": "EOF",
+                  "reason": "",
+                  "unexpected_eof": false
+                },
+                "ownership": [
+                  {
+                    "bytes_read": 267,
+                    "close_calls": 1,
+                    "name": "producer/metadata",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 128,
+                        "returned": 128
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 256,
+                        "returned": 11
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 28,
+                    "close_calls": 1,
+                    "name": "producer/media/0",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 32768,
+                        "returned": 28
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 32768,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 5,
+                    "close_calls": 0,
+                    "name": "producer/media/1",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 2,
+                        "returned": 2
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 8,
+                        "returned": 3
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 8,
+                        "returned": 0
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "action": {
+                  "kind": "close"
+                },
+                "bytes": 0,
+                "data": "",
+                "error": {
+                  "canceled": false,
+                  "deadline_exceeded": false,
+                  "eof": false,
+                  "exact_eof": false,
+                  "go_only_error_tree": [],
+                  "message": "",
+                  "reason": "",
+                  "unexpected_eof": false
+                },
+                "ownership": [
+                  {
+                    "bytes_read": 267,
+                    "close_calls": 1,
+                    "name": "producer/metadata",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 128,
+                        "returned": 128
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 256,
+                        "returned": 11
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 28,
+                    "close_calls": 1,
+                    "name": "producer/media/0",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 32768,
+                        "returned": 28
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 32768,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 5,
+                    "close_calls": 1,
+                    "name": "producer/media/1",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 2,
+                        "returned": 2
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 8,
+                        "returned": 3
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 8,
+                        "returned": 0
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "action": {
+                  "kind": "close"
+                },
+                "bytes": 0,
+                "data": "",
+                "error": {
+                  "canceled": false,
+                  "deadline_exceeded": false,
+                  "eof": false,
+                  "exact_eof": false,
+                  "go_only_error_tree": [],
+                  "message": "",
+                  "reason": "",
+                  "unexpected_eof": false
+                },
+                "ownership": [
+                  {
+                    "bytes_read": 267,
+                    "close_calls": 1,
+                    "name": "producer/metadata",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 128,
+                        "returned": 128
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 256,
+                        "returned": 11
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 28,
+                    "close_calls": 1,
+                    "name": "producer/media/0",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 32768,
+                        "returned": 28
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 32768,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 5,
+                    "close_calls": 2,
+                    "name": "producer/media/1",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 2,
+                        "returned": 2
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 8,
+                        "returned": 3
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 8,
+                        "returned": 0
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "headers_after_caller_copy_mutation": {
+              "Content-Length": [
+                "5"
+              ],
+              "Content-Type": [
+                "application/octet-stream"
+              ]
+            },
+            "open_error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "eof": false,
+              "exact_eof": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": "",
+              "unexpected_eof": false
+            },
+            "ownership_at_return": [
+              {
+                "bytes_read": 267,
+                "close_calls": 1,
+                "name": "producer/metadata",
+                "read_calls": [
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 64,
+                    "returned": 64
+                  },
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 64,
+                    "returned": 64
+                  },
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 128,
+                    "returned": 128
+                  },
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 256,
+                    "returned": 11
+                  }
+                ]
+              },
+              {
+                "bytes_read": 28,
+                "close_calls": 1,
+                "name": "producer/media/0",
+                "read_calls": [
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 32768,
+                    "returned": 28
+                  },
+                  {
+                    "after_close": false,
+                    "error_kind": "EOF",
+                    "requested": 32768,
+                    "returned": 0
+                  }
+                ]
+              },
+              {
+                "bytes_read": 5,
+                "close_calls": 2,
+                "name": "producer/media/1",
+                "read_calls": [
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 2,
+                    "returned": 2
+                  },
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 8,
+                    "returned": 3
+                  },
+                  {
+                    "after_close": false,
+                    "error_kind": "EOF",
+                    "requested": 8,
+                    "returned": 0
+                  }
+                ]
+              },
+              {
+                "bytes_read": 0,
+                "close_calls": 0,
+                "name": "producer/media/2",
+                "read_calls": []
+              }
+            ],
+            "response": {
+              "accept_ranges": "",
+              "body_non_nil": true,
+              "cache_control": "",
+              "content_length": 5,
+              "content_range": "",
+              "content_type": "application/octet-stream",
+              "etag": "",
+              "headers": {
+                "Content-Length": [
+                  "5"
+                ],
+                "Content-Type": [
+                  "application/octet-stream"
+                ]
+              },
+              "last_modified": "",
+              "status": 200
+            },
+            "returned": true,
+            "steps": [
+              {
+                "action": {
+                  "kind": "read",
+                  "size": 2
+                },
+                "bytes": 2,
+                "data": "me",
+                "data_bytes": "bWU=",
+                "data_hex": "6d65",
+                "data_sha256": "2744ccd10c7533bd736ad890f9dd5cab2adb27b07d500b9493f29cdc420cb2e0",
+                "error": {
+                  "canceled": false,
+                  "deadline_exceeded": false,
+                  "eof": false,
+                  "exact_eof": false,
+                  "go_only_error_tree": [],
+                  "message": "",
+                  "reason": "",
+                  "unexpected_eof": false
+                },
+                "ownership": [
+                  {
+                    "bytes_read": 267,
+                    "close_calls": 1,
+                    "name": "producer/metadata",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 128,
+                        "returned": 128
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 256,
+                        "returned": 11
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 28,
+                    "close_calls": 1,
+                    "name": "producer/media/0",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 32768,
+                        "returned": 28
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 32768,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 5,
+                    "close_calls": 2,
+                    "name": "producer/media/1",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 2,
+                        "returned": 2
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 8,
+                        "returned": 3
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 8,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 2,
+                    "close_calls": 0,
+                    "name": "producer/media/2",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 2,
+                        "returned": 2
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "action": {
+                  "kind": "read",
+                  "size": 8
+                },
+                "bytes": 3,
+                "data": "dia",
+                "data_bytes": "ZGlh",
+                "data_hex": "646961",
+                "data_sha256": "0addcc1de26ee0f660d21b01c1afdff9f59efb989331fed17334cf8a6dcd8d6b",
+                "error": {
+                  "canceled": false,
+                  "deadline_exceeded": false,
+                  "eof": false,
+                  "exact_eof": false,
+                  "go_only_error_tree": [],
+                  "message": "",
+                  "reason": "",
+                  "unexpected_eof": false
+                },
+                "ownership": [
+                  {
+                    "bytes_read": 267,
+                    "close_calls": 1,
+                    "name": "producer/metadata",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 128,
+                        "returned": 128
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 256,
+                        "returned": 11
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 28,
+                    "close_calls": 1,
+                    "name": "producer/media/0",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 32768,
+                        "returned": 28
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 32768,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 5,
+                    "close_calls": 2,
+                    "name": "producer/media/1",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 2,
+                        "returned": 2
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 8,
+                        "returned": 3
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 8,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 5,
+                    "close_calls": 0,
+                    "name": "producer/media/2",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 2,
+                        "returned": 2
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 8,
+                        "returned": 3
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "action": {
+                  "kind": "read",
+                  "size": 8
+                },
+                "bytes": 0,
+                "data": "",
+                "data_bytes": "",
+                "data_hex": "",
+                "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "error": {
+                  "canceled": false,
+                  "deadline_exceeded": false,
+                  "eof": true,
+                  "exact_eof": true,
+                  "go_only_error_tree": [
+                    {
+                      "message": "EOF",
+                      "type": "*errors.errorString"
+                    }
+                  ],
+                  "message": "EOF",
+                  "reason": "",
+                  "unexpected_eof": false
+                },
+                "ownership": [
+                  {
+                    "bytes_read": 267,
+                    "close_calls": 1,
+                    "name": "producer/metadata",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 128,
+                        "returned": 128
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 256,
+                        "returned": 11
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 28,
+                    "close_calls": 1,
+                    "name": "producer/media/0",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 32768,
+                        "returned": 28
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 32768,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 5,
+                    "close_calls": 2,
+                    "name": "producer/media/1",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 2,
+                        "returned": 2
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 8,
+                        "returned": 3
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 8,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 5,
+                    "close_calls": 0,
+                    "name": "producer/media/2",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 2,
+                        "returned": 2
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 8,
+                        "returned": 3
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 8,
+                        "returned": 0
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "action": {
+                  "kind": "close"
+                },
+                "bytes": 0,
+                "data": "",
+                "error": {
+                  "canceled": false,
+                  "deadline_exceeded": false,
+                  "eof": false,
+                  "exact_eof": false,
+                  "go_only_error_tree": [],
+                  "message": "",
+                  "reason": "",
+                  "unexpected_eof": false
+                },
+                "ownership": [
+                  {
+                    "bytes_read": 267,
+                    "close_calls": 1,
+                    "name": "producer/metadata",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 128,
+                        "returned": 128
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 256,
+                        "returned": 11
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 28,
+                    "close_calls": 1,
+                    "name": "producer/media/0",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 32768,
+                        "returned": 28
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 32768,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 5,
+                    "close_calls": 2,
+                    "name": "producer/media/1",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 2,
+                        "returned": 2
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 8,
+                        "returned": 3
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 8,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 5,
+                    "close_calls": 1,
+                    "name": "producer/media/2",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 2,
+                        "returned": 2
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 8,
+                        "returned": 3
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 8,
+                        "returned": 0
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "action": {
+                  "kind": "close"
+                },
+                "bytes": 0,
+                "data": "",
+                "error": {
+                  "canceled": false,
+                  "deadline_exceeded": false,
+                  "eof": false,
+                  "exact_eof": false,
+                  "go_only_error_tree": [],
+                  "message": "",
+                  "reason": "",
+                  "unexpected_eof": false
+                },
+                "ownership": [
+                  {
+                    "bytes_read": 267,
+                    "close_calls": 1,
+                    "name": "producer/metadata",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 128,
+                        "returned": 128
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 256,
+                        "returned": 11
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 28,
+                    "close_calls": 1,
+                    "name": "producer/media/0",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 32768,
+                        "returned": 28
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 32768,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 5,
+                    "close_calls": 2,
+                    "name": "producer/media/1",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 2,
+                        "returned": 2
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 8,
+                        "returned": 3
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 8,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 5,
+                    "close_calls": 2,
+                    "name": "producer/media/2",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 2,
+                        "returned": 2
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 8,
+                        "returned": 3
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 8,
+                        "returned": 0
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "producer_close_idle_calls": 2,
+        "reference_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "eof": false,
+          "exact_eof": false,
+          "go_only_error_tree": [],
+          "message": "",
+          "reason": "",
+          "unexpected_eof": false
+        },
+        "requests": [
+          {
+            "client": "producer",
+            "content_length": 0,
+            "context_error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "eof": false,
+              "exact_eof": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": "",
+              "unexpected_eof": false
+            },
+            "context_value": "resource-context",
+            "has_body": false,
+            "headers": {
+              "Accept": [
+                "application/json, text/plain, */*"
+              ],
+              "Cookie": [
+                "FANBOXSESSID=resource-session-secret-canary"
+              ],
+              "Origin": [
+                "https://www.fanbox.cc"
+              ],
+              "Referer": [
+                "https://www.fanbox.cc/"
+              ],
+              "User-Agent": [
+                "resource-injected-agent"
+              ]
+            },
+            "host": "api.fanbox.cc",
+            "method": "GET",
+            "url": "https://api.fanbox.cc/post.info?postId=resource-post"
+          },
+          {
+            "client": "producer",
+            "content_length": 0,
+            "context_error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "eof": false,
+              "exact_eof": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": "",
+              "unexpected_eof": false
+            },
+            "context_value": "resource-context",
+            "has_body": false,
+            "headers": {
+              "Accept": [
+                "*/*"
+              ],
+              "Cookie": [
+                "FANBOXSESSID=resource-session-secret-canary"
+              ],
+              "If-Modified-Since": [
+                "Wed, 21 Oct 2015 07:28:00 GMT"
+              ],
+              "If-None-Match": [
+                "\"owned-etag\""
+              ],
+              "If-Range": [
+                "\"owned-range\""
+              ],
+              "Origin": [
+                "https://www.fanbox.cc"
+              ],
+              "Range": [
+                "bytes=1-4"
+              ],
+              "Referer": [
+                "https://www.fanbox.cc/"
+              ],
+              "User-Agent": [
+                "resource-injected-agent"
+              ]
+            },
+            "host": "downloads.fanbox.cc",
+            "method": "GET",
+            "url": "https://downloads.fanbox.cc/original.bin?signature=old"
+          },
+          {
+            "client": "producer",
+            "content_length": 0,
+            "context_error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "eof": false,
+              "exact_eof": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": "",
+              "unexpected_eof": false
+            },
+            "context_value": "resource-context",
+            "has_body": false,
+            "headers": {
+              "Accept": [
+                "*/*"
+              ],
+              "Cookie": [
+                "FANBOXSESSID=resource-session-secret-canary; cf_clearance=synthetic-clearance"
+              ],
+              "If-Modified-Since": [
+                "Wed, 21 Oct 2015 07:28:00 GMT"
+              ],
+              "If-None-Match": [
+                "\"owned-etag\""
+              ],
+              "If-Range": [
+                "\"owned-range\""
+              ],
+              "Origin": [
+                "https://www.fanbox.cc"
+              ],
+              "Range": [
+                "bytes=1-4"
+              ],
+              "Referer": [
+                "https://www.fanbox.cc/"
+              ],
+              "User-Agent": [
+                "synthetic-solver-agent"
+              ]
+            },
+            "host": "downloads.fanbox.cc",
+            "method": "GET",
+            "url": "https://downloads.fanbox.cc/original.bin?signature=old"
+          },
+          {
+            "client": "producer",
+            "content_length": 0,
+            "context_error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "eof": false,
+              "exact_eof": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": "",
+              "unexpected_eof": false
+            },
+            "context_value": "resource-context",
+            "has_body": false,
+            "headers": {
+              "Accept": [
+                "*/*"
+              ],
+              "Cookie": [
+                "FANBOXSESSID=resource-session-secret-canary; cf_clearance=synthetic-clearance"
+              ],
+              "If-Modified-Since": [
+                "Wed, 21 Oct 2015 07:28:00 GMT"
+              ],
+              "If-None-Match": [
+                "\"owned-etag\""
+              ],
+              "If-Range": [
+                "\"owned-range\""
+              ],
+              "Origin": [
+                "https://www.fanbox.cc"
+              ],
+              "Range": [
+                "bytes=1-4"
+              ],
+              "Referer": [
+                "https://www.fanbox.cc/"
+              ],
+              "User-Agent": [
+                "synthetic-solver-agent"
+              ]
+            },
+            "host": "downloads.fanbox.cc",
+            "method": "GET",
+            "url": "https://downloads.fanbox.cc/original.bin?signature=old"
+          }
+        ],
+        "selected_ref": "eyJ2IjoxLCJwIjoiZmFuYm94IiwiZCI6ImV5SnJJam9pY0c5emRGOW1hV3hsSWl3aVl5STZJbkpsYzI5MWNtTmxMV055WldGMGIzSWlMQ0p3SWpvaWNtVnpiM1Z5WTJVdGNHOXpkQ0lzSW1FaU9pSnlaWE52ZFhKalpTMW1hV3hsSW4wPSJ9",
+        "trace": [
+          "resource:https://api.fanbox.cc/post.info?postId=resource-post",
+          "close:producer/metadata",
+          "action:open",
+          "resource:https://downloads.fanbox.cc/original.bin?signature=old",
+          "close:producer/media/0",
+          "solver_control:POST /v1",
+          "resource:https://downloads.fanbox.cc/original.bin?signature=old",
+          "action:read",
+          "action:read",
+          "action:read",
+          "action:close",
+          "close:producer/media/1",
+          "action:close",
+          "close:producer/media/1",
+          "action:open",
+          "resource:https://downloads.fanbox.cc/original.bin?signature=old",
+          "action:read",
+          "action:read",
+          "action:read",
+          "action:close",
+          "close:producer/media/2",
+          "action:close",
+          "close:producer/media/2"
+        ]
+      }
+    },
+    {
+      "name": "solved_redirect_then_downloads_keeps_cookie_dropped",
+      "input": {
+        "resource": {
+          "kind": "post_file",
+          "mode": "cached",
+          "producer_document": "{\"body\":{\"post\":{\"body\":{\"files\":[{\"id\":\"resource-file\",\"name\":\"attachment.txt\",\"url\":\"https://downloads.fanbox.cc/original.bin?signature=old\"}]},\"creatorId\":\"resource-creator\",\"id\":\"resource-post\",\"publishedDatetime\":\"2024-01-02T03:04:05Z\",\"title\":\"Resource Post\"}}}",
+          "reopen_document": "{\"body\":{\"post\":{\"body\":{\"files\":[{\"id\":\"resource-file\",\"name\":\"attachment.txt\",\"url\":\"https://downloads.fanbox.cc/rotated.bin?signature=new\"}]},\"creatorId\":\"resource-creator\",\"id\":\"resource-post\",\"publishedDatetime\":\"2024-01-02T03:04:05Z\",\"title\":\"Resource Post\"}}}",
+          "ref_product": "",
+          "ref_payload": "",
+          "parse_text": "",
+          "parse_only": false,
+          "method": "",
+          "range": "bytes=1-4",
+          "if_none_match": "\"owned-etag\"",
+          "if_modified_since": "Wed, 21 Oct 2015 07:28:00 GMT",
+          "if_range": "\"owned-range\"",
+          "context": "",
+          "transport_error": "",
+          "transport_error_at_metadata": false,
+          "metadata": {
+            "status": 0,
+            "header": null,
+            "data": "",
+            "chunk": 0,
+            "read_error": "",
+            "error_with_last_bytes": false,
+            "close_error": "",
+            "nil_body": false,
+            "transport_content_length": 0,
+            "cancel_on_read": false,
+            "cancel_on_close": false
+          },
+          "media": [
+            {
+              "status": 403,
+              "header": {
+                "Cf-Mitigated": [
+                  "challenge"
+                ]
+              },
+              "data": "cf-chl owned media challenge",
+              "chunk": 0,
+              "read_error": "",
+              "error_with_last_bytes": false,
+              "close_error": "",
+              "nil_body": false,
+              "transport_content_length": 0,
+              "cancel_on_read": false,
+              "cancel_on_close": false
+            },
+            {
+              "status": 302,
+              "header": {
+                "Location": [
+                  "https://i.pximg.net/redirect-one"
+                ]
+              },
+              "data": "redirect",
+              "chunk": 0,
+              "read_error": "",
+              "error_with_last_bytes": false,
+              "close_error": "",
+              "nil_body": false,
+              "transport_content_length": 0,
+              "cancel_on_read": false,
+              "cancel_on_close": false
+            },
+            {
+              "status": 302,
+              "header": {
+                "Location": [
+                  "https://downloads.fanbox.cc/redirect-two"
+                ]
+              },
+              "data": "redirect",
+              "chunk": 0,
+              "read_error": "",
+              "error_with_last_bytes": false,
+              "close_error": "",
+              "nil_body": false,
+              "transport_content_length": 0,
+              "cancel_on_read": false,
+              "cancel_on_close": false
+            },
+            {
+              "status": 200,
+              "header": {
+                "Content-Length": [
+                  "5"
+                ],
+                "Content-Type": [
+                  "application/octet-stream"
+                ]
+              },
+              "data": "media",
+              "chunk": 0,
+              "read_error": "",
+              "error_with_last_bytes": false,
+              "close_error": "",
+              "nil_body": false,
+              "transport_content_length": 0,
+              "cancel_on_read": false,
+              "cancel_on_close": false
+            }
+          ],
+          "actions": [
+            {
+              "kind": "read",
+              "size": 2
+            },
+            {
+              "kind": "read",
+              "size": 8
+            },
+            {
+              "kind": "read",
+              "size": 8
+            },
+            {
+              "kind": "close"
+            },
+            {
+              "kind": "close"
+            }
+          ],
+          "repeat": 0,
+          "mutate_resource_header": false
+        },
+        "solver_steps": [
+          {
+            "status": 200,
+            "body": "{\"status\":\"ok\",\"solution\":{\n        \"userAgent\": \"synthetic-solver-agent\",\n        \"cookies\": [\n          {\n            \"name\": \"cf_clearance\",\n            \"value\": \"synthetic-clearance\",\n            \"expires\": null,\n            \"expiry\": null\n          }\n        ]\n      }}"
+          }
+        ],
+        "solver_proxy": "http://browser-proxy.example:8080"
+      },
+      "observation": {
+        "consumer_close_idle_calls": 0,
+        "control_requests": [
+          {
+            "accept": "application/json",
+            "body": "{\"cmd\":\"request.get\",\"url\":\"https://www.fanbox.cc/\",\"proxy\":\"http://browser-proxy.example:8080\"}",
+            "content_length": 96,
+            "content_type": "application/json",
+            "cookie": "",
+            "go_only_default_user_agent": "Go-http-client/1.1",
+            "go_only_protocol": "HTTP/1.1",
+            "method": "POST",
+            "origin": "",
+            "path": "/v1",
+            "referer": ""
+          }
+        ],
+        "final_ownership": [
+          {
+            "bytes_read": 267,
+            "close_calls": 1,
+            "name": "producer/metadata",
+            "read_calls": [
+              {
+                "after_close": false,
+                "error_kind": "",
+                "requested": 64,
+                "returned": 64
+              },
+              {
+                "after_close": false,
+                "error_kind": "",
+                "requested": 64,
+                "returned": 64
+              },
+              {
+                "after_close": false,
+                "error_kind": "",
+                "requested": 128,
+                "returned": 128
+              },
+              {
+                "after_close": false,
+                "error_kind": "",
+                "requested": 256,
+                "returned": 11
+              }
+            ]
+          },
+          {
+            "bytes_read": 28,
+            "close_calls": 1,
+            "name": "producer/media/0",
+            "read_calls": [
+              {
+                "after_close": false,
+                "error_kind": "",
+                "requested": 32768,
+                "returned": 28
+              },
+              {
+                "after_close": false,
+                "error_kind": "EOF",
+                "requested": 32768,
+                "returned": 0
+              }
+            ]
+          },
+          {
+            "bytes_read": 0,
+            "close_calls": 1,
+            "name": "producer/media/1",
+            "read_calls": []
+          },
+          {
+            "bytes_read": 0,
+            "close_calls": 1,
+            "name": "producer/media/2",
+            "read_calls": []
+          },
+          {
+            "bytes_read": 5,
+            "close_calls": 2,
+            "name": "producer/media/3",
+            "read_calls": [
+              {
+                "after_close": false,
+                "error_kind": "",
+                "requested": 2,
+                "returned": 2
+              },
+              {
+                "after_close": false,
+                "error_kind": "",
+                "requested": 8,
+                "returned": 3
+              },
+              {
+                "after_close": false,
+                "error_kind": "EOF",
+                "requested": 8,
+                "returned": 0
+              }
+            ]
+          }
+        ],
+        "generated_resources": [
+          {
+            "dto": {
+              "ref": "eyJ2IjoxLCJwIjoiZmFuYm94IiwiZCI6ImV5SnJJam9pY0c5emRGOW1hV3hsSWl3aVl5STZJbkpsYzI5MWNtTmxMV055WldGMGIzSWlMQ0p3SWpvaWNtVnpiM1Z5WTJVdGNHOXpkQ0lzSW1FaU9pSnlaWE52ZFhKalpTMW1hV3hsSW4wPSJ9",
+              "requires_credentials": true
+            },
+            "expires_at": null,
+            "payload": "{\"k\":\"post_file\",\"c\":\"resource-creator\",\"p\":\"resource-post\",\"a\":\"resource-file\"}",
+            "ref": "eyJ2IjoxLCJwIjoiZmFuYm94IiwiZCI6ImV5SnJJam9pY0c5emRGOW1hV3hsSWl3aVl5STZJbkpsYzI5MWNtTmxMV055WldGMGIzSWlMQ0p3SWpvaWNtVnpiM1Z5WTJVdGNHOXpkQ0lzSW1FaU9pSnlaWE52ZFhKalpTMW1hV3hsSW4wPSJ9",
+            "request_headers": {
+              "Referer": "https://www.fanbox.cc/"
+            },
+            "requires_credentials": true,
+            "url": "https://downloads.fanbox.cc/original.bin?signature=old"
+          }
+        ],
+        "generation_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "eof": false,
+          "exact_eof": false,
+          "go_only_error_tree": [],
+          "message": "",
+          "reason": "",
+          "unexpected_eof": false
+        },
+        "outcomes": [
+          {
+            "headers_after_caller_copy_mutation": {
+              "Content-Length": [
+                "5"
+              ],
+              "Content-Type": [
+                "application/octet-stream"
+              ]
+            },
+            "open_error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "eof": false,
+              "exact_eof": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": "",
+              "unexpected_eof": false
+            },
+            "ownership_at_return": [
+              {
+                "bytes_read": 267,
+                "close_calls": 1,
+                "name": "producer/metadata",
+                "read_calls": [
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 64,
+                    "returned": 64
+                  },
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 64,
+                    "returned": 64
+                  },
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 128,
+                    "returned": 128
+                  },
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 256,
+                    "returned": 11
+                  }
+                ]
+              },
+              {
+                "bytes_read": 28,
+                "close_calls": 1,
+                "name": "producer/media/0",
+                "read_calls": [
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 32768,
+                    "returned": 28
+                  },
+                  {
+                    "after_close": false,
+                    "error_kind": "EOF",
+                    "requested": 32768,
+                    "returned": 0
+                  }
+                ]
+              },
+              {
+                "bytes_read": 0,
+                "close_calls": 1,
+                "name": "producer/media/1",
+                "read_calls": []
+              },
+              {
+                "bytes_read": 0,
+                "close_calls": 1,
+                "name": "producer/media/2",
+                "read_calls": []
+              },
+              {
+                "bytes_read": 0,
+                "close_calls": 0,
+                "name": "producer/media/3",
+                "read_calls": []
+              }
+            ],
+            "response": {
+              "accept_ranges": "",
+              "body_non_nil": true,
+              "cache_control": "",
+              "content_length": 5,
+              "content_range": "",
+              "content_type": "application/octet-stream",
+              "etag": "",
+              "headers": {
+                "Content-Length": [
+                  "5"
+                ],
+                "Content-Type": [
+                  "application/octet-stream"
+                ]
+              },
+              "last_modified": "",
+              "status": 200
+            },
+            "returned": true,
+            "steps": [
+              {
+                "action": {
+                  "kind": "read",
+                  "size": 2
+                },
+                "bytes": 2,
+                "data": "me",
+                "data_bytes": "bWU=",
+                "data_hex": "6d65",
+                "data_sha256": "2744ccd10c7533bd736ad890f9dd5cab2adb27b07d500b9493f29cdc420cb2e0",
+                "error": {
+                  "canceled": false,
+                  "deadline_exceeded": false,
+                  "eof": false,
+                  "exact_eof": false,
+                  "go_only_error_tree": [],
+                  "message": "",
+                  "reason": "",
+                  "unexpected_eof": false
+                },
+                "ownership": [
+                  {
+                    "bytes_read": 267,
+                    "close_calls": 1,
+                    "name": "producer/metadata",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 128,
+                        "returned": 128
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 256,
+                        "returned": 11
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 28,
+                    "close_calls": 1,
+                    "name": "producer/media/0",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 32768,
+                        "returned": 28
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 32768,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 0,
+                    "close_calls": 1,
+                    "name": "producer/media/1",
+                    "read_calls": []
+                  },
+                  {
+                    "bytes_read": 0,
+                    "close_calls": 1,
+                    "name": "producer/media/2",
+                    "read_calls": []
+                  },
+                  {
+                    "bytes_read": 2,
+                    "close_calls": 0,
+                    "name": "producer/media/3",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 2,
+                        "returned": 2
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "action": {
+                  "kind": "read",
+                  "size": 8
+                },
+                "bytes": 3,
+                "data": "dia",
+                "data_bytes": "ZGlh",
+                "data_hex": "646961",
+                "data_sha256": "0addcc1de26ee0f660d21b01c1afdff9f59efb989331fed17334cf8a6dcd8d6b",
+                "error": {
+                  "canceled": false,
+                  "deadline_exceeded": false,
+                  "eof": false,
+                  "exact_eof": false,
+                  "go_only_error_tree": [],
+                  "message": "",
+                  "reason": "",
+                  "unexpected_eof": false
+                },
+                "ownership": [
+                  {
+                    "bytes_read": 267,
+                    "close_calls": 1,
+                    "name": "producer/metadata",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 128,
+                        "returned": 128
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 256,
+                        "returned": 11
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 28,
+                    "close_calls": 1,
+                    "name": "producer/media/0",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 32768,
+                        "returned": 28
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 32768,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 0,
+                    "close_calls": 1,
+                    "name": "producer/media/1",
+                    "read_calls": []
+                  },
+                  {
+                    "bytes_read": 0,
+                    "close_calls": 1,
+                    "name": "producer/media/2",
+                    "read_calls": []
+                  },
+                  {
+                    "bytes_read": 5,
+                    "close_calls": 0,
+                    "name": "producer/media/3",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 2,
+                        "returned": 2
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 8,
+                        "returned": 3
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "action": {
+                  "kind": "read",
+                  "size": 8
+                },
+                "bytes": 0,
+                "data": "",
+                "data_bytes": "",
+                "data_hex": "",
+                "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "error": {
+                  "canceled": false,
+                  "deadline_exceeded": false,
+                  "eof": true,
+                  "exact_eof": true,
+                  "go_only_error_tree": [
+                    {
+                      "message": "EOF",
+                      "type": "*errors.errorString"
+                    }
+                  ],
+                  "message": "EOF",
+                  "reason": "",
+                  "unexpected_eof": false
+                },
+                "ownership": [
+                  {
+                    "bytes_read": 267,
+                    "close_calls": 1,
+                    "name": "producer/metadata",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 128,
+                        "returned": 128
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 256,
+                        "returned": 11
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 28,
+                    "close_calls": 1,
+                    "name": "producer/media/0",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 32768,
+                        "returned": 28
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 32768,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 0,
+                    "close_calls": 1,
+                    "name": "producer/media/1",
+                    "read_calls": []
+                  },
+                  {
+                    "bytes_read": 0,
+                    "close_calls": 1,
+                    "name": "producer/media/2",
+                    "read_calls": []
+                  },
+                  {
+                    "bytes_read": 5,
+                    "close_calls": 0,
+                    "name": "producer/media/3",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 2,
+                        "returned": 2
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 8,
+                        "returned": 3
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 8,
+                        "returned": 0
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "action": {
+                  "kind": "close"
+                },
+                "bytes": 0,
+                "data": "",
+                "error": {
+                  "canceled": false,
+                  "deadline_exceeded": false,
+                  "eof": false,
+                  "exact_eof": false,
+                  "go_only_error_tree": [],
+                  "message": "",
+                  "reason": "",
+                  "unexpected_eof": false
+                },
+                "ownership": [
+                  {
+                    "bytes_read": 267,
+                    "close_calls": 1,
+                    "name": "producer/metadata",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 128,
+                        "returned": 128
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 256,
+                        "returned": 11
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 28,
+                    "close_calls": 1,
+                    "name": "producer/media/0",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 32768,
+                        "returned": 28
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 32768,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 0,
+                    "close_calls": 1,
+                    "name": "producer/media/1",
+                    "read_calls": []
+                  },
+                  {
+                    "bytes_read": 0,
+                    "close_calls": 1,
+                    "name": "producer/media/2",
+                    "read_calls": []
+                  },
+                  {
+                    "bytes_read": 5,
+                    "close_calls": 1,
+                    "name": "producer/media/3",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 2,
+                        "returned": 2
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 8,
+                        "returned": 3
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 8,
+                        "returned": 0
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "action": {
+                  "kind": "close"
+                },
+                "bytes": 0,
+                "data": "",
+                "error": {
+                  "canceled": false,
+                  "deadline_exceeded": false,
+                  "eof": false,
+                  "exact_eof": false,
+                  "go_only_error_tree": [],
+                  "message": "",
+                  "reason": "",
+                  "unexpected_eof": false
+                },
+                "ownership": [
+                  {
+                    "bytes_read": 267,
+                    "close_calls": 1,
+                    "name": "producer/metadata",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 128,
+                        "returned": 128
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 256,
+                        "returned": 11
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 28,
+                    "close_calls": 1,
+                    "name": "producer/media/0",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 32768,
+                        "returned": 28
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 32768,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 0,
+                    "close_calls": 1,
+                    "name": "producer/media/1",
+                    "read_calls": []
+                  },
+                  {
+                    "bytes_read": 0,
+                    "close_calls": 1,
+                    "name": "producer/media/2",
+                    "read_calls": []
+                  },
+                  {
+                    "bytes_read": 5,
+                    "close_calls": 2,
+                    "name": "producer/media/3",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 2,
+                        "returned": 2
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 8,
+                        "returned": 3
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 8,
+                        "returned": 0
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "producer_close_idle_calls": 2,
+        "reference_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "eof": false,
+          "exact_eof": false,
+          "go_only_error_tree": [],
+          "message": "",
+          "reason": "",
+          "unexpected_eof": false
+        },
+        "requests": [
+          {
+            "client": "producer",
+            "content_length": 0,
+            "context_error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "eof": false,
+              "exact_eof": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": "",
+              "unexpected_eof": false
+            },
+            "context_value": "resource-context",
+            "has_body": false,
+            "headers": {
+              "Accept": [
+                "application/json, text/plain, */*"
+              ],
+              "Cookie": [
+                "FANBOXSESSID=resource-session-secret-canary"
+              ],
+              "Origin": [
+                "https://www.fanbox.cc"
+              ],
+              "Referer": [
+                "https://www.fanbox.cc/"
+              ],
+              "User-Agent": [
+                "resource-injected-agent"
+              ]
+            },
+            "host": "api.fanbox.cc",
+            "method": "GET",
+            "url": "https://api.fanbox.cc/post.info?postId=resource-post"
+          },
+          {
+            "client": "producer",
+            "content_length": 0,
+            "context_error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "eof": false,
+              "exact_eof": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": "",
+              "unexpected_eof": false
+            },
+            "context_value": "resource-context",
+            "has_body": false,
+            "headers": {
+              "Accept": [
+                "*/*"
+              ],
+              "Cookie": [
+                "FANBOXSESSID=resource-session-secret-canary"
+              ],
+              "If-Modified-Since": [
+                "Wed, 21 Oct 2015 07:28:00 GMT"
+              ],
+              "If-None-Match": [
+                "\"owned-etag\""
+              ],
+              "If-Range": [
+                "\"owned-range\""
+              ],
+              "Origin": [
+                "https://www.fanbox.cc"
+              ],
+              "Range": [
+                "bytes=1-4"
+              ],
+              "Referer": [
+                "https://www.fanbox.cc/"
+              ],
+              "User-Agent": [
+                "resource-injected-agent"
+              ]
+            },
+            "host": "downloads.fanbox.cc",
+            "method": "GET",
+            "url": "https://downloads.fanbox.cc/original.bin?signature=old"
+          },
+          {
+            "client": "producer",
+            "content_length": 0,
+            "context_error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "eof": false,
+              "exact_eof": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": "",
+              "unexpected_eof": false
+            },
+            "context_value": "resource-context",
+            "has_body": false,
+            "headers": {
+              "Accept": [
+                "*/*"
+              ],
+              "Cookie": [
+                "FANBOXSESSID=resource-session-secret-canary; cf_clearance=synthetic-clearance"
+              ],
+              "If-Modified-Since": [
+                "Wed, 21 Oct 2015 07:28:00 GMT"
+              ],
+              "If-None-Match": [
+                "\"owned-etag\""
+              ],
+              "If-Range": [
+                "\"owned-range\""
+              ],
+              "Origin": [
+                "https://www.fanbox.cc"
+              ],
+              "Range": [
+                "bytes=1-4"
+              ],
+              "Referer": [
+                "https://www.fanbox.cc/"
+              ],
+              "User-Agent": [
+                "synthetic-solver-agent"
+              ]
+            },
+            "host": "downloads.fanbox.cc",
+            "method": "GET",
+            "url": "https://downloads.fanbox.cc/original.bin?signature=old"
+          },
+          {
+            "client": "producer",
+            "content_length": 0,
+            "context_error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "eof": false,
+              "exact_eof": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": "",
+              "unexpected_eof": false
+            },
+            "context_value": "resource-context",
+            "has_body": false,
+            "headers": {
+              "Accept": [
+                "*/*"
+              ],
+              "If-Modified-Since": [
+                "Wed, 21 Oct 2015 07:28:00 GMT"
+              ],
+              "If-None-Match": [
+                "\"owned-etag\""
+              ],
+              "If-Range": [
+                "\"owned-range\""
+              ],
+              "Origin": [
+                "https://www.fanbox.cc"
+              ],
+              "Range": [
+                "bytes=1-4"
+              ],
+              "Referer": [
+                "https://www.fanbox.cc/"
+              ],
+              "User-Agent": [
+                "synthetic-solver-agent"
+              ]
+            },
+            "host": "i.pximg.net",
+            "method": "GET",
+            "url": "https://i.pximg.net/redirect-one"
+          },
+          {
+            "client": "producer",
+            "content_length": 0,
+            "context_error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "eof": false,
+              "exact_eof": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": "",
+              "unexpected_eof": false
+            },
+            "context_value": "resource-context",
+            "has_body": false,
+            "headers": {
+              "Accept": [
+                "*/*"
+              ],
+              "If-Modified-Since": [
+                "Wed, 21 Oct 2015 07:28:00 GMT"
+              ],
+              "If-None-Match": [
+                "\"owned-etag\""
+              ],
+              "If-Range": [
+                "\"owned-range\""
+              ],
+              "Origin": [
+                "https://www.fanbox.cc"
+              ],
+              "Range": [
+                "bytes=1-4"
+              ],
+              "Referer": [
+                "https://www.fanbox.cc/"
+              ],
+              "User-Agent": [
+                "synthetic-solver-agent"
+              ]
+            },
+            "host": "downloads.fanbox.cc",
+            "method": "GET",
+            "url": "https://downloads.fanbox.cc/redirect-two"
+          }
+        ],
+        "selected_ref": "eyJ2IjoxLCJwIjoiZmFuYm94IiwiZCI6ImV5SnJJam9pY0c5emRGOW1hV3hsSWl3aVl5STZJbkpsYzI5MWNtTmxMV055WldGMGIzSWlMQ0p3SWpvaWNtVnpiM1Z5WTJVdGNHOXpkQ0lzSW1FaU9pSnlaWE52ZFhKalpTMW1hV3hsSW4wPSJ9",
+        "trace": [
+          "resource:https://api.fanbox.cc/post.info?postId=resource-post",
+          "close:producer/metadata",
+          "action:open",
+          "resource:https://downloads.fanbox.cc/original.bin?signature=old",
+          "close:producer/media/0",
+          "solver_control:POST /v1",
+          "resource:https://downloads.fanbox.cc/original.bin?signature=old",
+          "close:producer/media/1",
+          "resource:https://i.pximg.net/redirect-one",
+          "close:producer/media/2",
+          "resource:https://downloads.fanbox.cc/redirect-two",
+          "action:read",
+          "action:read",
+          "action:read",
+          "action:close",
+          "close:producer/media/3",
+          "action:close",
+          "close:producer/media/3"
+        ]
+      }
+    },
+    {
+      "name": "second_challenge_invalidates_before_next_reopen",
+      "input": {
+        "resource": {
+          "kind": "post_file",
+          "mode": "cached",
+          "producer_document": "{\"body\":{\"post\":{\"body\":{\"files\":[{\"id\":\"resource-file\",\"name\":\"attachment.txt\",\"url\":\"https://downloads.fanbox.cc/original.bin?signature=old\"}]},\"creatorId\":\"resource-creator\",\"id\":\"resource-post\",\"publishedDatetime\":\"2024-01-02T03:04:05Z\",\"title\":\"Resource Post\"}}}",
+          "reopen_document": "{\"body\":{\"post\":{\"body\":{\"files\":[{\"id\":\"resource-file\",\"name\":\"attachment.txt\",\"url\":\"https://downloads.fanbox.cc/rotated.bin?signature=new\"}]},\"creatorId\":\"resource-creator\",\"id\":\"resource-post\",\"publishedDatetime\":\"2024-01-02T03:04:05Z\",\"title\":\"Resource Post\"}}}",
+          "ref_product": "",
+          "ref_payload": "",
+          "parse_text": "",
+          "parse_only": false,
+          "method": "",
+          "range": "bytes=1-4",
+          "if_none_match": "\"owned-etag\"",
+          "if_modified_since": "Wed, 21 Oct 2015 07:28:00 GMT",
+          "if_range": "\"owned-range\"",
+          "context": "",
+          "transport_error": "",
+          "transport_error_at_metadata": false,
+          "metadata": {
+            "status": 0,
+            "header": null,
+            "data": "",
+            "chunk": 0,
+            "read_error": "",
+            "error_with_last_bytes": false,
+            "close_error": "",
+            "nil_body": false,
+            "transport_content_length": 0,
+            "cancel_on_read": false,
+            "cancel_on_close": false
+          },
+          "media": [
+            {
+              "status": 403,
+              "header": {
+                "Cf-Mitigated": [
+                  "challenge"
+                ]
+              },
+              "data": "cf-chl owned media challenge",
+              "chunk": 0,
+              "read_error": "",
+              "error_with_last_bytes": false,
+              "close_error": "",
+              "nil_body": false,
+              "transport_content_length": 0,
+              "cancel_on_read": false,
+              "cancel_on_close": false
+            },
+            {
+              "status": 403,
+              "header": {
+                "Cf-Mitigated": [
+                  "challenge"
+                ]
+              },
+              "data": "cf-chl owned media challenge",
+              "chunk": 0,
+              "read_error": "",
+              "error_with_last_bytes": false,
+              "close_error": "",
+              "nil_body": false,
+              "transport_content_length": 0,
+              "cancel_on_read": false,
+              "cancel_on_close": false
+            },
+            {
+              "status": 403,
+              "header": {
+                "Cf-Mitigated": [
+                  "challenge"
+                ]
+              },
+              "data": "cf-chl owned media challenge",
+              "chunk": 0,
+              "read_error": "",
+              "error_with_last_bytes": false,
+              "close_error": "",
+              "nil_body": false,
+              "transport_content_length": 0,
+              "cancel_on_read": false,
+              "cancel_on_close": false
+            },
+            {
+              "status": 200,
+              "header": {
+                "Content-Length": [
+                  "5"
+                ],
+                "Content-Type": [
+                  "application/octet-stream"
+                ]
+              },
+              "data": "media",
+              "chunk": 0,
+              "read_error": "",
+              "error_with_last_bytes": false,
+              "close_error": "",
+              "nil_body": false,
+              "transport_content_length": 0,
+              "cancel_on_read": false,
+              "cancel_on_close": false
+            }
+          ],
+          "actions": [
+            {
+              "kind": "read",
+              "size": 2
+            },
+            {
+              "kind": "read",
+              "size": 8
+            },
+            {
+              "kind": "read",
+              "size": 8
+            },
+            {
+              "kind": "close"
+            },
+            {
+              "kind": "close"
+            }
+          ],
+          "repeat": 2,
+          "mutate_resource_header": false
+        },
+        "solver_steps": [
+          {
+            "status": 200,
+            "body": "{\"status\":\"ok\",\"solution\":{\n        \"userAgent\": \"synthetic-solver-agent\",\n        \"cookies\": [\n          {\n            \"name\": \"cf_clearance\",\n            \"value\": \"synthetic-clearance\",\n            \"expires\": null,\n            \"expiry\": null\n          }\n        ]\n      }}"
+          },
+          {
+            "status": 200,
+            "body": "{\"status\":\"ok\",\"solution\":{\n        \"userAgent\": \"synthetic-solver-agent\",\n        \"cookies\": [\n          {\n            \"name\": \"cf_clearance\",\n            \"value\": \"synthetic-clearance\",\n            \"expires\": null,\n            \"expiry\": null\n          }\n        ]\n      }}"
+          }
+        ],
+        "solver_proxy": "http://browser-proxy.example:8080"
+      },
+      "observation": {
+        "consumer_close_idle_calls": 0,
+        "control_requests": [
+          {
+            "accept": "application/json",
+            "body": "{\"cmd\":\"request.get\",\"url\":\"https://www.fanbox.cc/\",\"proxy\":\"http://browser-proxy.example:8080\"}",
+            "content_length": 96,
+            "content_type": "application/json",
+            "cookie": "",
+            "go_only_default_user_agent": "Go-http-client/1.1",
+            "go_only_protocol": "HTTP/1.1",
+            "method": "POST",
+            "origin": "",
+            "path": "/v1",
+            "referer": ""
+          },
+          {
+            "accept": "application/json",
+            "body": "{\"cmd\":\"request.get\",\"url\":\"https://www.fanbox.cc/\",\"proxy\":\"http://browser-proxy.example:8080\"}",
+            "content_length": 96,
+            "content_type": "application/json",
+            "cookie": "",
+            "go_only_default_user_agent": "Go-http-client/1.1",
+            "go_only_protocol": "HTTP/1.1",
+            "method": "POST",
+            "origin": "",
+            "path": "/v1",
+            "referer": ""
+          }
+        ],
+        "final_ownership": [
+          {
+            "bytes_read": 267,
+            "close_calls": 1,
+            "name": "producer/metadata",
+            "read_calls": [
+              {
+                "after_close": false,
+                "error_kind": "",
+                "requested": 64,
+                "returned": 64
+              },
+              {
+                "after_close": false,
+                "error_kind": "",
+                "requested": 64,
+                "returned": 64
+              },
+              {
+                "after_close": false,
+                "error_kind": "",
+                "requested": 128,
+                "returned": 128
+              },
+              {
+                "after_close": false,
+                "error_kind": "",
+                "requested": 256,
+                "returned": 11
+              }
+            ]
+          },
+          {
+            "bytes_read": 28,
+            "close_calls": 1,
+            "name": "producer/media/0",
+            "read_calls": [
+              {
+                "after_close": false,
+                "error_kind": "",
+                "requested": 32768,
+                "returned": 28
+              },
+              {
+                "after_close": false,
+                "error_kind": "EOF",
+                "requested": 32768,
+                "returned": 0
+              }
+            ]
+          },
+          {
+            "bytes_read": 28,
+            "close_calls": 1,
+            "name": "producer/media/1",
+            "read_calls": [
+              {
+                "after_close": false,
+                "error_kind": "",
+                "requested": 32768,
+                "returned": 28
+              },
+              {
+                "after_close": false,
+                "error_kind": "EOF",
+                "requested": 32768,
+                "returned": 0
+              }
+            ]
+          },
+          {
+            "bytes_read": 28,
+            "close_calls": 1,
+            "name": "producer/media/2",
+            "read_calls": [
+              {
+                "after_close": false,
+                "error_kind": "",
+                "requested": 32768,
+                "returned": 28
+              },
+              {
+                "after_close": false,
+                "error_kind": "EOF",
+                "requested": 32768,
+                "returned": 0
+              }
+            ]
+          },
+          {
+            "bytes_read": 5,
+            "close_calls": 2,
+            "name": "producer/media/3",
+            "read_calls": [
+              {
+                "after_close": false,
+                "error_kind": "",
+                "requested": 2,
+                "returned": 2
+              },
+              {
+                "after_close": false,
+                "error_kind": "",
+                "requested": 8,
+                "returned": 3
+              },
+              {
+                "after_close": false,
+                "error_kind": "EOF",
+                "requested": 8,
+                "returned": 0
+              }
+            ]
+          }
+        ],
+        "generated_resources": [
+          {
+            "dto": {
+              "ref": "eyJ2IjoxLCJwIjoiZmFuYm94IiwiZCI6ImV5SnJJam9pY0c5emRGOW1hV3hsSWl3aVl5STZJbkpsYzI5MWNtTmxMV055WldGMGIzSWlMQ0p3SWpvaWNtVnpiM1Z5WTJVdGNHOXpkQ0lzSW1FaU9pSnlaWE52ZFhKalpTMW1hV3hsSW4wPSJ9",
+              "requires_credentials": true
+            },
+            "expires_at": null,
+            "payload": "{\"k\":\"post_file\",\"c\":\"resource-creator\",\"p\":\"resource-post\",\"a\":\"resource-file\"}",
+            "ref": "eyJ2IjoxLCJwIjoiZmFuYm94IiwiZCI6ImV5SnJJam9pY0c5emRGOW1hV3hsSWl3aVl5STZJbkpsYzI5MWNtTmxMV055WldGMGIzSWlMQ0p3SWpvaWNtVnpiM1Z5WTJVdGNHOXpkQ0lzSW1FaU9pSnlaWE52ZFhKalpTMW1hV3hsSW4wPSJ9",
+            "request_headers": {
+              "Referer": "https://www.fanbox.cc/"
+            },
+            "requires_credentials": true,
+            "url": "https://downloads.fanbox.cc/original.bin?signature=old"
+          }
+        ],
+        "generation_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "eof": false,
+          "exact_eof": false,
+          "go_only_error_tree": [],
+          "message": "",
+          "reason": "",
+          "unexpected_eof": false
+        },
+        "outcomes": [
+          {
+            "open_error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "eof": false,
+              "exact_eof": false,
+              "go_only_error_tree": [
+                {
+                  "message": "fanbox:OpenResource: challenge_required: fanbox: challenge required",
+                  "type": "*sdk.Error"
+                },
+                {
+                  "message": "fanbox: challenge required",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "fanbox:OpenResource: challenge_required: fanbox: challenge required",
+              "reason": "challenge_required",
+              "sdk": {
+                "detail": "",
+                "http_status": 0,
+                "operation": "OpenResource",
+                "product": "fanbox",
+                "retry_has_after": false,
+                "retry_safe": false,
+                "transport": ""
+              },
+              "unexpected_eof": false
+            },
+            "ownership_at_return": [
+              {
+                "bytes_read": 267,
+                "close_calls": 1,
+                "name": "producer/metadata",
+                "read_calls": [
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 64,
+                    "returned": 64
+                  },
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 64,
+                    "returned": 64
+                  },
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 128,
+                    "returned": 128
+                  },
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 256,
+                    "returned": 11
+                  }
+                ]
+              },
+              {
+                "bytes_read": 28,
+                "close_calls": 1,
+                "name": "producer/media/0",
+                "read_calls": [
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 32768,
+                    "returned": 28
+                  },
+                  {
+                    "after_close": false,
+                    "error_kind": "EOF",
+                    "requested": 32768,
+                    "returned": 0
+                  }
+                ]
+              },
+              {
+                "bytes_read": 28,
+                "close_calls": 1,
+                "name": "producer/media/1",
+                "read_calls": [
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 32768,
+                    "returned": 28
+                  },
+                  {
+                    "after_close": false,
+                    "error_kind": "EOF",
+                    "requested": 32768,
+                    "returned": 0
+                  }
+                ]
+              }
+            ],
+            "returned": false,
+            "steps": []
+          },
+          {
+            "headers_after_caller_copy_mutation": {
+              "Content-Length": [
+                "5"
+              ],
+              "Content-Type": [
+                "application/octet-stream"
+              ]
+            },
+            "open_error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "eof": false,
+              "exact_eof": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": "",
+              "unexpected_eof": false
+            },
+            "ownership_at_return": [
+              {
+                "bytes_read": 267,
+                "close_calls": 1,
+                "name": "producer/metadata",
+                "read_calls": [
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 64,
+                    "returned": 64
+                  },
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 64,
+                    "returned": 64
+                  },
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 128,
+                    "returned": 128
+                  },
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 256,
+                    "returned": 11
+                  }
+                ]
+              },
+              {
+                "bytes_read": 28,
+                "close_calls": 1,
+                "name": "producer/media/0",
+                "read_calls": [
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 32768,
+                    "returned": 28
+                  },
+                  {
+                    "after_close": false,
+                    "error_kind": "EOF",
+                    "requested": 32768,
+                    "returned": 0
+                  }
+                ]
+              },
+              {
+                "bytes_read": 28,
+                "close_calls": 1,
+                "name": "producer/media/1",
+                "read_calls": [
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 32768,
+                    "returned": 28
+                  },
+                  {
+                    "after_close": false,
+                    "error_kind": "EOF",
+                    "requested": 32768,
+                    "returned": 0
+                  }
+                ]
+              },
+              {
+                "bytes_read": 28,
+                "close_calls": 1,
+                "name": "producer/media/2",
+                "read_calls": [
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 32768,
+                    "returned": 28
+                  },
+                  {
+                    "after_close": false,
+                    "error_kind": "EOF",
+                    "requested": 32768,
+                    "returned": 0
+                  }
+                ]
+              },
+              {
+                "bytes_read": 0,
+                "close_calls": 0,
+                "name": "producer/media/3",
+                "read_calls": []
+              }
+            ],
+            "response": {
+              "accept_ranges": "",
+              "body_non_nil": true,
+              "cache_control": "",
+              "content_length": 5,
+              "content_range": "",
+              "content_type": "application/octet-stream",
+              "etag": "",
+              "headers": {
+                "Content-Length": [
+                  "5"
+                ],
+                "Content-Type": [
+                  "application/octet-stream"
+                ]
+              },
+              "last_modified": "",
+              "status": 200
+            },
+            "returned": true,
+            "steps": [
+              {
+                "action": {
+                  "kind": "read",
+                  "size": 2
+                },
+                "bytes": 2,
+                "data": "me",
+                "data_bytes": "bWU=",
+                "data_hex": "6d65",
+                "data_sha256": "2744ccd10c7533bd736ad890f9dd5cab2adb27b07d500b9493f29cdc420cb2e0",
+                "error": {
+                  "canceled": false,
+                  "deadline_exceeded": false,
+                  "eof": false,
+                  "exact_eof": false,
+                  "go_only_error_tree": [],
+                  "message": "",
+                  "reason": "",
+                  "unexpected_eof": false
+                },
+                "ownership": [
+                  {
+                    "bytes_read": 267,
+                    "close_calls": 1,
+                    "name": "producer/metadata",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 128,
+                        "returned": 128
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 256,
+                        "returned": 11
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 28,
+                    "close_calls": 1,
+                    "name": "producer/media/0",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 32768,
+                        "returned": 28
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 32768,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 28,
+                    "close_calls": 1,
+                    "name": "producer/media/1",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 32768,
+                        "returned": 28
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 32768,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 28,
+                    "close_calls": 1,
+                    "name": "producer/media/2",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 32768,
+                        "returned": 28
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 32768,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 2,
+                    "close_calls": 0,
+                    "name": "producer/media/3",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 2,
+                        "returned": 2
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "action": {
+                  "kind": "read",
+                  "size": 8
+                },
+                "bytes": 3,
+                "data": "dia",
+                "data_bytes": "ZGlh",
+                "data_hex": "646961",
+                "data_sha256": "0addcc1de26ee0f660d21b01c1afdff9f59efb989331fed17334cf8a6dcd8d6b",
+                "error": {
+                  "canceled": false,
+                  "deadline_exceeded": false,
+                  "eof": false,
+                  "exact_eof": false,
+                  "go_only_error_tree": [],
+                  "message": "",
+                  "reason": "",
+                  "unexpected_eof": false
+                },
+                "ownership": [
+                  {
+                    "bytes_read": 267,
+                    "close_calls": 1,
+                    "name": "producer/metadata",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 128,
+                        "returned": 128
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 256,
+                        "returned": 11
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 28,
+                    "close_calls": 1,
+                    "name": "producer/media/0",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 32768,
+                        "returned": 28
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 32768,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 28,
+                    "close_calls": 1,
+                    "name": "producer/media/1",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 32768,
+                        "returned": 28
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 32768,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 28,
+                    "close_calls": 1,
+                    "name": "producer/media/2",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 32768,
+                        "returned": 28
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 32768,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 5,
+                    "close_calls": 0,
+                    "name": "producer/media/3",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 2,
+                        "returned": 2
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 8,
+                        "returned": 3
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "action": {
+                  "kind": "read",
+                  "size": 8
+                },
+                "bytes": 0,
+                "data": "",
+                "data_bytes": "",
+                "data_hex": "",
+                "data_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "error": {
+                  "canceled": false,
+                  "deadline_exceeded": false,
+                  "eof": true,
+                  "exact_eof": true,
+                  "go_only_error_tree": [
+                    {
+                      "message": "EOF",
+                      "type": "*errors.errorString"
+                    }
+                  ],
+                  "message": "EOF",
+                  "reason": "",
+                  "unexpected_eof": false
+                },
+                "ownership": [
+                  {
+                    "bytes_read": 267,
+                    "close_calls": 1,
+                    "name": "producer/metadata",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 128,
+                        "returned": 128
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 256,
+                        "returned": 11
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 28,
+                    "close_calls": 1,
+                    "name": "producer/media/0",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 32768,
+                        "returned": 28
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 32768,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 28,
+                    "close_calls": 1,
+                    "name": "producer/media/1",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 32768,
+                        "returned": 28
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 32768,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 28,
+                    "close_calls": 1,
+                    "name": "producer/media/2",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 32768,
+                        "returned": 28
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 32768,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 5,
+                    "close_calls": 0,
+                    "name": "producer/media/3",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 2,
+                        "returned": 2
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 8,
+                        "returned": 3
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 8,
+                        "returned": 0
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "action": {
+                  "kind": "close"
+                },
+                "bytes": 0,
+                "data": "",
+                "error": {
+                  "canceled": false,
+                  "deadline_exceeded": false,
+                  "eof": false,
+                  "exact_eof": false,
+                  "go_only_error_tree": [],
+                  "message": "",
+                  "reason": "",
+                  "unexpected_eof": false
+                },
+                "ownership": [
+                  {
+                    "bytes_read": 267,
+                    "close_calls": 1,
+                    "name": "producer/metadata",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 128,
+                        "returned": 128
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 256,
+                        "returned": 11
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 28,
+                    "close_calls": 1,
+                    "name": "producer/media/0",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 32768,
+                        "returned": 28
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 32768,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 28,
+                    "close_calls": 1,
+                    "name": "producer/media/1",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 32768,
+                        "returned": 28
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 32768,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 28,
+                    "close_calls": 1,
+                    "name": "producer/media/2",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 32768,
+                        "returned": 28
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 32768,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 5,
+                    "close_calls": 1,
+                    "name": "producer/media/3",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 2,
+                        "returned": 2
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 8,
+                        "returned": 3
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 8,
+                        "returned": 0
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "action": {
+                  "kind": "close"
+                },
+                "bytes": 0,
+                "data": "",
+                "error": {
+                  "canceled": false,
+                  "deadline_exceeded": false,
+                  "eof": false,
+                  "exact_eof": false,
+                  "go_only_error_tree": [],
+                  "message": "",
+                  "reason": "",
+                  "unexpected_eof": false
+                },
+                "ownership": [
+                  {
+                    "bytes_read": 267,
+                    "close_calls": 1,
+                    "name": "producer/metadata",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 64,
+                        "returned": 64
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 128,
+                        "returned": 128
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 256,
+                        "returned": 11
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 28,
+                    "close_calls": 1,
+                    "name": "producer/media/0",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 32768,
+                        "returned": 28
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 32768,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 28,
+                    "close_calls": 1,
+                    "name": "producer/media/1",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 32768,
+                        "returned": 28
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 32768,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 28,
+                    "close_calls": 1,
+                    "name": "producer/media/2",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 32768,
+                        "returned": 28
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 32768,
+                        "returned": 0
+                      }
+                    ]
+                  },
+                  {
+                    "bytes_read": 5,
+                    "close_calls": 2,
+                    "name": "producer/media/3",
+                    "read_calls": [
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 2,
+                        "returned": 2
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "",
+                        "requested": 8,
+                        "returned": 3
+                      },
+                      {
+                        "after_close": false,
+                        "error_kind": "EOF",
+                        "requested": 8,
+                        "returned": 0
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "producer_close_idle_calls": 2,
+        "reference_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "eof": false,
+          "exact_eof": false,
+          "go_only_error_tree": [],
+          "message": "",
+          "reason": "",
+          "unexpected_eof": false
+        },
+        "requests": [
+          {
+            "client": "producer",
+            "content_length": 0,
+            "context_error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "eof": false,
+              "exact_eof": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": "",
+              "unexpected_eof": false
+            },
+            "context_value": "resource-context",
+            "has_body": false,
+            "headers": {
+              "Accept": [
+                "application/json, text/plain, */*"
+              ],
+              "Cookie": [
+                "FANBOXSESSID=resource-session-secret-canary"
+              ],
+              "Origin": [
+                "https://www.fanbox.cc"
+              ],
+              "Referer": [
+                "https://www.fanbox.cc/"
+              ],
+              "User-Agent": [
+                "resource-injected-agent"
+              ]
+            },
+            "host": "api.fanbox.cc",
+            "method": "GET",
+            "url": "https://api.fanbox.cc/post.info?postId=resource-post"
+          },
+          {
+            "client": "producer",
+            "content_length": 0,
+            "context_error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "eof": false,
+              "exact_eof": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": "",
+              "unexpected_eof": false
+            },
+            "context_value": "resource-context",
+            "has_body": false,
+            "headers": {
+              "Accept": [
+                "*/*"
+              ],
+              "Cookie": [
+                "FANBOXSESSID=resource-session-secret-canary"
+              ],
+              "If-Modified-Since": [
+                "Wed, 21 Oct 2015 07:28:00 GMT"
+              ],
+              "If-None-Match": [
+                "\"owned-etag\""
+              ],
+              "If-Range": [
+                "\"owned-range\""
+              ],
+              "Origin": [
+                "https://www.fanbox.cc"
+              ],
+              "Range": [
+                "bytes=1-4"
+              ],
+              "Referer": [
+                "https://www.fanbox.cc/"
+              ],
+              "User-Agent": [
+                "resource-injected-agent"
+              ]
+            },
+            "host": "downloads.fanbox.cc",
+            "method": "GET",
+            "url": "https://downloads.fanbox.cc/original.bin?signature=old"
+          },
+          {
+            "client": "producer",
+            "content_length": 0,
+            "context_error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "eof": false,
+              "exact_eof": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": "",
+              "unexpected_eof": false
+            },
+            "context_value": "resource-context",
+            "has_body": false,
+            "headers": {
+              "Accept": [
+                "*/*"
+              ],
+              "Cookie": [
+                "FANBOXSESSID=resource-session-secret-canary; cf_clearance=synthetic-clearance"
+              ],
+              "If-Modified-Since": [
+                "Wed, 21 Oct 2015 07:28:00 GMT"
+              ],
+              "If-None-Match": [
+                "\"owned-etag\""
+              ],
+              "If-Range": [
+                "\"owned-range\""
+              ],
+              "Origin": [
+                "https://www.fanbox.cc"
+              ],
+              "Range": [
+                "bytes=1-4"
+              ],
+              "Referer": [
+                "https://www.fanbox.cc/"
+              ],
+              "User-Agent": [
+                "synthetic-solver-agent"
+              ]
+            },
+            "host": "downloads.fanbox.cc",
+            "method": "GET",
+            "url": "https://downloads.fanbox.cc/original.bin?signature=old"
+          },
+          {
+            "client": "producer",
+            "content_length": 0,
+            "context_error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "eof": false,
+              "exact_eof": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": "",
+              "unexpected_eof": false
+            },
+            "context_value": "resource-context",
+            "has_body": false,
+            "headers": {
+              "Accept": [
+                "*/*"
+              ],
+              "Cookie": [
+                "FANBOXSESSID=resource-session-secret-canary"
+              ],
+              "If-Modified-Since": [
+                "Wed, 21 Oct 2015 07:28:00 GMT"
+              ],
+              "If-None-Match": [
+                "\"owned-etag\""
+              ],
+              "If-Range": [
+                "\"owned-range\""
+              ],
+              "Origin": [
+                "https://www.fanbox.cc"
+              ],
+              "Range": [
+                "bytes=1-4"
+              ],
+              "Referer": [
+                "https://www.fanbox.cc/"
+              ],
+              "User-Agent": [
+                "resource-injected-agent"
+              ]
+            },
+            "host": "downloads.fanbox.cc",
+            "method": "GET",
+            "url": "https://downloads.fanbox.cc/original.bin?signature=old"
+          },
+          {
+            "client": "producer",
+            "content_length": 0,
+            "context_error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "eof": false,
+              "exact_eof": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": "",
+              "unexpected_eof": false
+            },
+            "context_value": "resource-context",
+            "has_body": false,
+            "headers": {
+              "Accept": [
+                "*/*"
+              ],
+              "Cookie": [
+                "FANBOXSESSID=resource-session-secret-canary; cf_clearance=synthetic-clearance"
+              ],
+              "If-Modified-Since": [
+                "Wed, 21 Oct 2015 07:28:00 GMT"
+              ],
+              "If-None-Match": [
+                "\"owned-etag\""
+              ],
+              "If-Range": [
+                "\"owned-range\""
+              ],
+              "Origin": [
+                "https://www.fanbox.cc"
+              ],
+              "Range": [
+                "bytes=1-4"
+              ],
+              "Referer": [
+                "https://www.fanbox.cc/"
+              ],
+              "User-Agent": [
+                "synthetic-solver-agent"
+              ]
+            },
+            "host": "downloads.fanbox.cc",
+            "method": "GET",
+            "url": "https://downloads.fanbox.cc/original.bin?signature=old"
+          }
+        ],
+        "selected_ref": "eyJ2IjoxLCJwIjoiZmFuYm94IiwiZCI6ImV5SnJJam9pY0c5emRGOW1hV3hsSWl3aVl5STZJbkpsYzI5MWNtTmxMV055WldGMGIzSWlMQ0p3SWpvaWNtVnpiM1Z5WTJVdGNHOXpkQ0lzSW1FaU9pSnlaWE52ZFhKalpTMW1hV3hsSW4wPSJ9",
+        "trace": [
+          "resource:https://api.fanbox.cc/post.info?postId=resource-post",
+          "close:producer/metadata",
+          "action:open",
+          "resource:https://downloads.fanbox.cc/original.bin?signature=old",
+          "close:producer/media/0",
+          "solver_control:POST /v1",
+          "resource:https://downloads.fanbox.cc/original.bin?signature=old",
+          "close:producer/media/1",
+          "action:open",
+          "resource:https://downloads.fanbox.cc/original.bin?signature=old",
+          "close:producer/media/2",
+          "solver_control:POST /v1",
+          "resource:https://downloads.fanbox.cc/original.bin?signature=old",
+          "action:read",
+          "action:read",
+          "action:read",
+          "action:close",
+          "close:producer/media/3",
+          "action:close",
+          "close:producer/media/3"
+        ]
+      }
+    },
+    {
+      "name": "challenge_close_cancels_before_solver_start",
+      "input": {
+        "resource": {
+          "kind": "post_file",
+          "mode": "cached",
+          "producer_document": "{\"body\":{\"post\":{\"body\":{\"files\":[{\"id\":\"resource-file\",\"name\":\"attachment.txt\",\"url\":\"https://downloads.fanbox.cc/original.bin?signature=old\"}]},\"creatorId\":\"resource-creator\",\"id\":\"resource-post\",\"publishedDatetime\":\"2024-01-02T03:04:05Z\",\"title\":\"Resource Post\"}}}",
+          "reopen_document": "{\"body\":{\"post\":{\"body\":{\"files\":[{\"id\":\"resource-file\",\"name\":\"attachment.txt\",\"url\":\"https://downloads.fanbox.cc/rotated.bin?signature=new\"}]},\"creatorId\":\"resource-creator\",\"id\":\"resource-post\",\"publishedDatetime\":\"2024-01-02T03:04:05Z\",\"title\":\"Resource Post\"}}}",
+          "ref_product": "",
+          "ref_payload": "",
+          "parse_text": "",
+          "parse_only": false,
+          "method": "",
+          "range": "bytes=1-4",
+          "if_none_match": "\"owned-etag\"",
+          "if_modified_since": "Wed, 21 Oct 2015 07:28:00 GMT",
+          "if_range": "\"owned-range\"",
+          "context": "",
+          "transport_error": "",
+          "transport_error_at_metadata": false,
+          "metadata": {
+            "status": 0,
+            "header": null,
+            "data": "",
+            "chunk": 0,
+            "read_error": "",
+            "error_with_last_bytes": false,
+            "close_error": "",
+            "nil_body": false,
+            "transport_content_length": 0,
+            "cancel_on_read": false,
+            "cancel_on_close": false
+          },
+          "media": [
+            {
+              "status": 403,
+              "header": {
+                "Cf-Mitigated": [
+                  "challenge"
+                ]
+              },
+              "data": "cf-chl owned media challenge",
+              "chunk": 0,
+              "read_error": "",
+              "error_with_last_bytes": false,
+              "close_error": "",
+              "nil_body": false,
+              "transport_content_length": 0,
+              "cancel_on_read": false,
+              "cancel_on_close": true
+            }
+          ],
+          "actions": [
+            {
+              "kind": "read",
+              "size": 2
+            },
+            {
+              "kind": "read",
+              "size": 8
+            },
+            {
+              "kind": "read",
+              "size": 8
+            },
+            {
+              "kind": "close"
+            },
+            {
+              "kind": "close"
+            }
+          ],
+          "repeat": 0,
+          "mutate_resource_header": false
+        },
+        "solver_steps": [],
+        "solver_proxy": "http://browser-proxy.example:8080"
+      },
+      "observation": {
+        "consumer_close_idle_calls": 0,
+        "control_requests": [],
+        "final_ownership": [
+          {
+            "bytes_read": 267,
+            "close_calls": 1,
+            "name": "producer/metadata",
+            "read_calls": [
+              {
+                "after_close": false,
+                "error_kind": "",
+                "requested": 64,
+                "returned": 64
+              },
+              {
+                "after_close": false,
+                "error_kind": "",
+                "requested": 64,
+                "returned": 64
+              },
+              {
+                "after_close": false,
+                "error_kind": "",
+                "requested": 128,
+                "returned": 128
+              },
+              {
+                "after_close": false,
+                "error_kind": "",
+                "requested": 256,
+                "returned": 11
+              }
+            ]
+          },
+          {
+            "bytes_read": 28,
+            "close_calls": 1,
+            "name": "producer/media/0",
+            "read_calls": [
+              {
+                "after_close": false,
+                "error_kind": "",
+                "requested": 32768,
+                "returned": 28
+              },
+              {
+                "after_close": false,
+                "error_kind": "EOF",
+                "requested": 32768,
+                "returned": 0
+              }
+            ]
+          }
+        ],
+        "generated_resources": [
+          {
+            "dto": {
+              "ref": "eyJ2IjoxLCJwIjoiZmFuYm94IiwiZCI6ImV5SnJJam9pY0c5emRGOW1hV3hsSWl3aVl5STZJbkpsYzI5MWNtTmxMV055WldGMGIzSWlMQ0p3SWpvaWNtVnpiM1Z5WTJVdGNHOXpkQ0lzSW1FaU9pSnlaWE52ZFhKalpTMW1hV3hsSW4wPSJ9",
+              "requires_credentials": true
+            },
+            "expires_at": null,
+            "payload": "{\"k\":\"post_file\",\"c\":\"resource-creator\",\"p\":\"resource-post\",\"a\":\"resource-file\"}",
+            "ref": "eyJ2IjoxLCJwIjoiZmFuYm94IiwiZCI6ImV5SnJJam9pY0c5emRGOW1hV3hsSWl3aVl5STZJbkpsYzI5MWNtTmxMV055WldGMGIzSWlMQ0p3SWpvaWNtVnpiM1Z5WTJVdGNHOXpkQ0lzSW1FaU9pSnlaWE52ZFhKalpTMW1hV3hsSW4wPSJ9",
+            "request_headers": {
+              "Referer": "https://www.fanbox.cc/"
+            },
+            "requires_credentials": true,
+            "url": "https://downloads.fanbox.cc/original.bin?signature=old"
+          }
+        ],
+        "generation_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "eof": false,
+          "exact_eof": false,
+          "go_only_error_tree": [],
+          "message": "",
+          "reason": "",
+          "unexpected_eof": false
+        },
+        "outcomes": [
+          {
+            "open_error": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "eof": false,
+              "exact_eof": false,
+              "go_only_error_tree": [
+                {
+                  "message": "fanbox:OpenResource: upstream_error: context canceled",
+                  "type": "*sdk.Error"
+                },
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "fanbox:OpenResource: upstream_error: context canceled",
+              "reason": "upstream_error",
+              "sdk": {
+                "detail": "",
+                "http_status": 0,
+                "operation": "OpenResource",
+                "product": "fanbox",
+                "retry_has_after": false,
+                "retry_safe": false,
+                "transport": ""
+              },
+              "unexpected_eof": false
+            },
+            "ownership_at_return": [
+              {
+                "bytes_read": 267,
+                "close_calls": 1,
+                "name": "producer/metadata",
+                "read_calls": [
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 64,
+                    "returned": 64
+                  },
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 64,
+                    "returned": 64
+                  },
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 128,
+                    "returned": 128
+                  },
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 256,
+                    "returned": 11
+                  }
+                ]
+              },
+              {
+                "bytes_read": 28,
+                "close_calls": 1,
+                "name": "producer/media/0",
+                "read_calls": [
+                  {
+                    "after_close": false,
+                    "error_kind": "",
+                    "requested": 32768,
+                    "returned": 28
+                  },
+                  {
+                    "after_close": false,
+                    "error_kind": "EOF",
+                    "requested": 32768,
+                    "returned": 0
+                  }
+                ]
+              }
+            ],
+            "returned": false,
+            "steps": []
+          }
+        ],
+        "producer_close_idle_calls": 2,
+        "reference_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "eof": false,
+          "exact_eof": false,
+          "go_only_error_tree": [],
+          "message": "",
+          "reason": "",
+          "unexpected_eof": false
+        },
+        "requests": [
+          {
+            "client": "producer",
+            "content_length": 0,
+            "context_error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "eof": false,
+              "exact_eof": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": "",
+              "unexpected_eof": false
+            },
+            "context_value": "resource-context",
+            "has_body": false,
+            "headers": {
+              "Accept": [
+                "application/json, text/plain, */*"
+              ],
+              "Cookie": [
+                "FANBOXSESSID=resource-session-secret-canary"
+              ],
+              "Origin": [
+                "https://www.fanbox.cc"
+              ],
+              "Referer": [
+                "https://www.fanbox.cc/"
+              ],
+              "User-Agent": [
+                "resource-injected-agent"
+              ]
+            },
+            "host": "api.fanbox.cc",
+            "method": "GET",
+            "url": "https://api.fanbox.cc/post.info?postId=resource-post"
+          },
+          {
+            "client": "producer",
+            "content_length": 0,
+            "context_error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "eof": false,
+              "exact_eof": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": "",
+              "unexpected_eof": false
+            },
+            "context_value": "resource-context",
+            "has_body": false,
+            "headers": {
+              "Accept": [
+                "*/*"
+              ],
+              "Cookie": [
+                "FANBOXSESSID=resource-session-secret-canary"
+              ],
+              "If-Modified-Since": [
+                "Wed, 21 Oct 2015 07:28:00 GMT"
+              ],
+              "If-None-Match": [
+                "\"owned-etag\""
+              ],
+              "If-Range": [
+                "\"owned-range\""
+              ],
+              "Origin": [
+                "https://www.fanbox.cc"
+              ],
+              "Range": [
+                "bytes=1-4"
+              ],
+              "Referer": [
+                "https://www.fanbox.cc/"
+              ],
+              "User-Agent": [
+                "resource-injected-agent"
+              ]
+            },
+            "host": "downloads.fanbox.cc",
+            "method": "GET",
+            "url": "https://downloads.fanbox.cc/original.bin?signature=old"
+          }
+        ],
+        "selected_ref": "eyJ2IjoxLCJwIjoiZmFuYm94IiwiZCI6ImV5SnJJam9pY0c5emRGOW1hV3hsSWl3aVl5STZJbkpsYzI5MWNtTmxMV055WldGMGIzSWlMQ0p3SWpvaWNtVnpiM1Z5WTJVdGNHOXpkQ0lzSW1FaU9pSnlaWE52ZFhKalpTMW1hV3hsSW4wPSJ9",
+        "trace": [
+          "resource:https://api.fanbox.cc/post.info?postId=resource-post",
+          "close:producer/metadata",
+          "action:open",
+          "resource:https://downloads.fanbox.cc/original.bin?signature=old",
+          "close:producer/media/0"
+        ]
+      }
+    }
+  ],
+  "evidence": "Actual frozen public Client.Post and OpenResource with in-memory API/media transport and owned anonymous ordinary HTTP/1 solver POST. Stable generated ref, controlled conditional GET, one solve/replay, cached clearance, redirected credential removal, second-challenge invalidation, explicit repeated close and cancellation before solve are observed. No fabricated endpoint DTO replaces API decoding.",
+  "frozen_go_production_guard": {
+    "byte_equal_to_frozen_commit": true,
+    "path_count": 434,
+    "path_sha256_map_json_sha256": "7a0ddafc0c4c1b1437a14fe496d1749adf35b2234d93b30e5370307c64397955"
+  },
+  "go_only_projections": [
+    "Concrete error-tree types and source read-call topology remain Go-only; complete public error text/classification, request order, byte counts and close order/counts are retained.",
+    "Owned loopback solver protocol/default User-Agent strings are Go-only; endpoint/method/body/content-length and absence of business cookie, URL, origin and referer are retained."
+  ],
+  "go_stdlib_sha256": {
+    "context/context.go": "971f00ffa375b79d3f65e6da33cca3a493cc3fce091c589233abfb4283e29b7d",
+    "encoding/base64/base64.go": "15e67707bc3f0925f7f56bd4002106681c6b64ba5bf553b4d8cc0bb8eca71aa5",
+    "encoding/json/decode.go": "1632161a34c8286722716a48ba0b5e0c3d117a2e017e79ace676403808a16e6e",
+    "encoding/json/encode.go": "8ff45e82c60c6e29d11fe57ce0c59d79f40ef0d53be28ac36617482a7463b217",
+    "errors/join.go": "87da7c120f71d17e37f110ae1dc6af6493ec841a22ee825e13a6a8024a014dba",
+    "errors/wrap.go": "098116636610ae87dd80e49c4dbe6a2b6c37918d7e1af35ded005be621d68a40",
+    "io/io.go": "3945d328a9072e4f5970b7d4bc0eb834eec29fd22889a1ed9f3fb76ad41c3274",
+    "net/http/client.go": "ced3428a85206de8de79c10de38d34951e0b9823c0ccb68ff51329d048a1f7b9",
+    "net/http/header.go": "b4fa959c3db03d4ca67a487b3cbb25dcefecea45ca3dd10fef13cfc32fa6d80d",
+    "net/http/request.go": "c3257079994b4e4f74f01cef72508919983ba31f91fcf599d348e9d52cec1540",
+    "net/url/url.go": "44c33f88526abf3b5955d6c97297be5c9d228e741b33e52c940dcac5a496e091",
+    "strconv/number.go": "dda43e8c91d95f9dea0c46b2fec6637e5520cae099e40c5965dca0e41bbaab9e"
+  },
+  "go_version": "go1.27.1",
+  "limitations": [
+    "Only injected API/media and owned anonymous HTTP/1 solver; no external media, account, auth/browser, native peer/HEAD/multiplex/upload or system changes.",
+    "No physically concurrent body Read/Close, native compressed-wire, external solver or cross-platform execution is claimed. All sealed existing fixtures and 434 Go production/module paths remain unchanged."
+  ],
+  "protected_published_sdk_fixtures_sha256": {
+    "crates/pixiv-sdk/tests/fixtures/artwork-null-tags.json": "07bb487e38e1a6983dd50465613202fa3cdef6f9ff160ba65422e7b77cc74a76",
+    "crates/pixiv-sdk/tests/fixtures/artwork-series.json": "0050e74dfab825589de17b277dce620a961aaca2222291f7d9621477ead0023c",
+    "crates/pixiv-sdk/tests/fixtures/fanbox-context-ownership.json": "6c0d721eeb35314058c8f928114a9ea2c6bf76e92d468502fc543fd7651cc705",
+    "crates/pixiv-sdk/tests/fixtures/fanbox-identity-json-bytes.json": "8baf77f9538cb08d5a5b6bc0766e06b49dd8b3ef7f88f192027e7d58c9bdeb60",
+    "crates/pixiv-sdk/tests/fixtures/fanbox-identity-protocol.json": "cab8573fbc51a49be2eadb540c25d5386739edc2329eaa80e0ca4d9f6e2c611b",
+    "crates/pixiv-sdk/tests/fixtures/fanbox-identity-public-html.json": "fe0eee2fc4f5d08c717a223f0df043c003458c1893fe55e95f66ac4df043e388",
+    "crates/pixiv-sdk/tests/fixtures/fanbox-identity-tokenizer-regressions.json": "732d71a38a98407dbf874586c3f77412d4b34006ac916590e5593321da79129a",
+    "crates/pixiv-sdk/tests/fixtures/fanbox-media-body.json": "a3b48317ef6f4dba2c5ca6d6f5d935467eee273147b88ebeff776b286f60bce2",
+    "crates/pixiv-sdk/tests/fixtures/fanbox-native-profile.json": "df753a715efd28c016a2532fe544e992b00a1fe5ce58b756d807c13b9522dd62",
+    "crates/pixiv-sdk/tests/fixtures/fanbox-solver-json-dates.json": "6793ce0d58bca871bb3b081808ebdff1aa6af87f06404110107dfebfc0f9572e",
+    "crates/pixiv-sdk/tests/fixtures/fanbox-solver-public-aliases.json": "81e88cc966ae90cd837a8bde8ea7ad9fdeb83c4d3419f2509d55a64c19e745cf",
+    "crates/pixiv-sdk/tests/fixtures/fanbox-solver-public.json": "a908d47882462e698b67d80f2f48cfab578964e675029afe973a8a024711ba80",
+    "crates/pixiv-sdk/tests/fixtures/fanbox-solver-redirect.json": "6a8db01180325dc9074984b4b763250d0029118889ed7e5141a8ae1554709651",
+    "crates/pixiv-sdk/tests/fixtures/fanbox-solver-stream-completion.json": "bd16cb555f25b671541e6f3876f52c954d9d08f9c1965196d467734cc4fc6825",
+    "crates/pixiv-sdk/tests/fixtures/fanbox-solver.json": "45ed3d463ce1159290dbb6686490e754e30d4540a108754571a926b8bba6f382",
+    "crates/pixiv-sdk/tests/fixtures/login_environment_proxy.json": "8f4e8be8c7b1f06bc4fedc68fb687ce905567e68237ee5963852c6dcd93406dd",
+    "crates/pixiv-sdk/tests/fixtures/mypixiv.json": "db978fe17d857fa89cbf02b8dfdffe68e146d9b43a0c4b2e0a89035d399f06c9",
+    "crates/pixiv-sdk/tests/fixtures/novel-series.json": "1c001b1f01fc2e74c35f077534d019771d167a3fda0e636cd2863d853e3c5000",
+    "crates/pixiv-sdk/tests/fixtures/resource_percent_validation.json": "d6fbc84482b81aca55c32cdb562e02f3cdae305250da543390456d0bf29f8de5",
+    "crates/pixiv-sdk/tests/fixtures/resource_ref_diagnostics.json": "0d563c6f55a6c6751728a11f08b2037a4b4117b006827aee3545aa3317f13d20",
+    "crates/pixiv-sdk/tests/fixtures/timeline.json": "3f915e3438a963a06ab3aa0f573296b328761681a5bb87373c8958c09fa67156"
+  },
+  "published_base": "f56f27e178dbbbcc1020fabb0a7f60745aae8dfd",
+  "solver_seed_sha256": "a908d47882462e698b67d80f2f48cfab578964e675029afe973a8a024711ba80",
+  "source_commit": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "source_sha256": {
+    "internal/services/fanbox/endpoint/creator/creators/creators.go": "34208cfd9b3692a036405261e3f74a63b3f0d7086d73cba5e93b0fa68827042c",
+    "internal/services/fanbox/endpoint/post/info/info.go": "261a376310ac0286526815ae5b02c9b32f932c65c7474f284cc0688386faa5dd",
+    "internal/services/fanbox/endpoint/post/wire/wire.go": "30e4ea2119269d052ec6d31447c2cfef59a992b186c652e631d1c488b2df51aa",
+    "internal/services/fanbox/protocol/cookie.go": "692013694d29e4fe67cee7641c4dcdafe73158bea107666c194e6305d33b45a9",
+    "internal/services/fanbox/protocol/protocol.go": "c153337aa61756f5d5ea36ec32ca272e68da8a1604c1d4a4e4d6bcb2c957fdd3",
+    "internal/services/fanbox/protocol/solver.go": "e55464b091fa6720b7134a9487684c6c0969f9b4921384ea0e091d634782fcea",
+    "internal/services/fanbox/resource/resource.go": "d8f6e9373033ef93edf4b0c3c9e1bf917892433dc5dbdd2dde6cc67fafcd5be3",
+    "sdk/error.go": "d8e48078c464f18a26cdcf32828e423dd948f17061269b222f82e08a8cee0041",
+    "sdk/fanbox/dto.go": "860f6d3f18d083526681cf86112dbbdb7faa382e1f9cac3e35b543f56c2df505",
+    "sdk/fanbox/errors.go": "523577a066e3d53ce9eced8c7afbe29f422a75ce6aca58bc3b5b6fbf8da59909",
+    "sdk/fanbox/fanbox.go": "2208576144b94b89efd57b6f054ee018268812d52d556fd0758e2ee322577542",
+    "sdk/fanbox/models.go": "1dd3928aa6752c51f114c678eef3b0a2b4784a275ec80fcdbbd61006407e4623",
+    "sdk/fanbox/ops.go": "868b3b68de07d7638af5f9dd3ab1be8f0c9751f222c05c7776cde092052a7c8d",
+    "sdk/fanbox/request.go": "deea7897788f1013297fc3cf03a7b71ff0d893335d6434d1908feb2245ece263",
+    "sdk/fanbox/resource.go": "f4d2f8fd3f9787aecbba5fc026179d1f90483cd94cddd0421e95f05be631c8f1",
+    "sdk/ref.go": "9c7a7ff2dc8a91904d2a343268f4445a094ed7bb7c93c17971908280d4efaf8e",
+    "sdk/resource.go": "0ce748e4141e33c9fd9dfdfaa8d5a0dbd3176146718eb398fc40c970e375e446",
+    "sdk/resource_dto.go": "1e10bed9f04f199ce2b788b6ff8dc0e4faf55aac47363207f8e739f16c19df1e"
+  }
+}

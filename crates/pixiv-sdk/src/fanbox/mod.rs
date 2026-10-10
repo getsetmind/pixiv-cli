@@ -1,13 +1,23 @@
+mod content;
+mod cursor;
+mod decoded_body;
+pub mod dto;
 mod expiry_date;
 mod identity;
 mod json;
 pub mod models;
 pub mod native;
 pub mod options;
+mod reference;
+pub mod resource;
+mod safe_media_body;
 mod solver;
 pub mod transport;
-pub use models::{CurrentUserRequest, SessionCredentials, User, UserDto};
+pub use dto::*;
+pub use models::*;
 pub use options::{FlareSolverrOptions, Options};
+pub use reference::{Reference, ReferenceKind};
+pub use resource::ResourceBody;
 
 use crate::{
     Error, Reason, Result,
@@ -15,7 +25,11 @@ use crate::{
     diagnostics::Event,
     error::{Cause, is_canceled, is_deadline_exceeded},
 };
-use std::{error::Error as StdError, fmt, sync::Arc};
+use std::{
+    error::Error as StdError,
+    fmt,
+    sync::{Arc, Mutex},
+};
 use transport::{EmptyBody, Headers, RawBody, RawRequest, RawResponse, RawTransport, header};
 
 const WEB_BASE_URL: &str = "https://www.fanbox.cc/";
@@ -23,6 +37,8 @@ const IDENTITY_ACCEPT: &str = "text/html,application/xhtml+xml,application/xml;q
 
 pub struct Client {
     session: Session,
+    resources: Mutex<std::collections::HashMap<String, crate::resource::Resource>>,
+    user_id: tokio::sync::Mutex<i64>,
 }
 impl fmt::Display for Client {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -43,7 +59,11 @@ impl Client {
             format!("FANBOXSESSID={}", credentials.fanbox_sessid),
             options,
         )
-        .map(|session| Self { session })
+        .map(|session| Self {
+            session,
+            resources: Mutex::new(std::collections::HashMap::new()),
+            user_id: tokio::sync::Mutex::new(0),
+        })
         .map_err(|failure| failure.classify("Open"))
     }
     pub async fn current_user(
@@ -107,7 +127,38 @@ impl Session {
         &self,
         context: Arc<dyn RequestContext>,
     ) -> std::result::Result<RawResponse, Failure> {
-        let result = self.native_request(context.clone()).await;
+        self.request_at(
+            context,
+            WEB_BASE_URL,
+            "GET",
+            IDENTITY_ACCEPT,
+            Headers::new(),
+            false,
+        )
+        .await
+    }
+    async fn request_media(
+        &self,
+        context: Arc<dyn RequestContext>,
+        url: &str,
+        method: &str,
+        headers: Headers,
+    ) -> std::result::Result<RawResponse, Failure> {
+        self.request_at(context, url, method, "*/*", headers, true)
+            .await
+    }
+    async fn request_at(
+        &self,
+        context: Arc<dyn RequestContext>,
+        url: &str,
+        method: &str,
+        accept: &str,
+        headers: Headers,
+        media: bool,
+    ) -> std::result::Result<RawResponse, Failure> {
+        let result = self
+            .native_request_at(context.clone(), url, method, accept, headers.clone(), media)
+            .await;
         if !matches!(&result,Err(failure) if failure.code == Reason::ChallengeRequired) {
             return result;
         }
@@ -123,25 +174,36 @@ impl Session {
             route: "native transport".into(),
             ..Default::default()
         });
-        let result = self.native_request(context).await;
+        let result = self
+            .native_request_at(context, url, method, accept, headers, media)
+            .await;
         if matches!(&result,Err(failure) if failure.code == Reason::ChallengeRequired) {
             solver.invalidate();
         }
         result
     }
-    async fn native_request(
+    async fn native_request_at(
         &self,
         context: Arc<dyn RequestContext>,
+        url: &str,
+        method: &str,
+        accept: &str,
+        extra: Headers,
+        media: bool,
     ) -> std::result::Result<RawResponse, Failure> {
-        let mut target = options::parse_url(WEB_BASE_URL).expect("fixed FANBOX URL");
+        let mut target = options::parse_url(url)
+            .ok_or_else(|| Failure::message("FANBOX URL is not an allowed HTTPS URL"))?;
         let mut visited = std::collections::BTreeSet::new();
         let mut redirected = false;
         loop {
+            if media {
+                resource::validate_media_url(&target.wire)?;
+            }
             if target.parsed.scheme() != "https" || target.authority.contains('@') {
                 return Err(Failure::message("FANBOX URL is not an allowed HTTPS URL"));
             }
             let host = target.parsed.host_str().unwrap_or("").to_ascii_lowercase();
-            if host != "fanbox.cc" && !host.ends_with(".fanbox.cc") {
+            if !media && host != "fanbox.cc" && !host.ends_with(".fanbox.cc") {
                 return Err(Failure::message("FANBOX URL host is not allowed"));
             }
             if !visited.insert(target.wire.clone()) {
@@ -152,9 +214,21 @@ impl Session {
                 ("Origin".into(), vec!["https://www.fanbox.cc".into()]),
                 ("Referer".into(), vec![WEB_BASE_URL.into()]),
                 ("User-Agent".into(), vec![agent.clone()]),
-                ("Accept".into(), vec![IDENTITY_ACCEPT.into()]),
+                ("Accept".into(), vec![accept.into()]),
             ]);
-            if !redirected && matches!(host.as_str(), "www.fanbox.cc" | "api.fanbox.cc") {
+            for (key, values) in &extra {
+                headers
+                    .entry(key.clone())
+                    .or_default()
+                    .extend(values.clone());
+            }
+            if !redirected
+                && (if media {
+                    host == "downloads.fanbox.cc"
+                } else {
+                    matches!(host.as_str(), "www.fanbox.cc" | "api.fanbox.cc")
+                })
+            {
                 let mut cookie = self.cookie.clone();
                 if !clearance.is_empty() {
                     cookie.push_str("; cf_clearance=");
@@ -165,7 +239,7 @@ impl Session {
             let sent = self
                 .transport
                 .send(RawRequest {
-                    method: "GET".into(),
+                    method: method.into(),
                     url: target.wire.clone(),
                     logical_host: None,
                     headers,
@@ -175,19 +249,23 @@ impl Session {
                 })
                 .await;
             let mut response = match sent {
-                Ok(Some(response)) if response.body.is_some() || response.content_length <= 0 => {
+                Ok(Some(response))
+                    if response.body.is_some()
+                        || response.content_length <= 0
+                        || method == "HEAD" =>
+                {
                     response
                 }
                 Ok(_) => {
                     return Err(Failure {
                         code: Reason::UpstreamError,
-                        cause: failed_request(context.as_ref(), None),
+                        cause: failed_request(context.as_ref(), None, media),
                     });
                 }
                 Err(error) => {
                     return Err(Failure {
                         code: Reason::UpstreamError,
-                        cause: failed_request(context.as_ref(), Some(error.as_ref())),
+                        cause: failed_request(context.as_ref(), Some(error.as_ref()), media),
                     });
                 }
             };
@@ -208,7 +286,7 @@ impl Session {
                         }
                         return Err(Failure {
                             code: Reason::UpstreamError,
-                            cause: failed_request(context.as_ref(), None),
+                            cause: failed_request(context.as_ref(), None, media),
                         });
                     }
                 }
@@ -218,9 +296,19 @@ impl Session {
             context.emit(Event {
                 module: "FANBOX network".into(),
                 kind: "network_request".into(),
-                operation: "retrieving".into(),
+                operation: if media {
+                    "retrieving media"
+                } else {
+                    "retrieving"
+                }
+                .into(),
                 resource: target.parsed.path().into(),
-                route: "native transport".into(),
+                route: if media {
+                    "media transport"
+                } else {
+                    "native transport"
+                }
+                .into(),
                 proxy: self.proxy_url.clone(),
                 user_agent: agent,
                 status: i64::from(response.status),
@@ -272,12 +360,21 @@ fn redirect_target(target: &options::ParsedUrl, location: &str) -> Option<option
     }
     options::parse_url(&wire)
 }
-fn failed_request(context: &dyn RequestContext, error: Option<&(dyn StdError + 'static)>) -> Cause {
+fn failed_request(
+    context: &dyn RequestContext,
+    error: Option<&(dyn StdError + 'static)>,
+    media: bool,
+) -> Cause {
     context.emit(Event {
         module: "FANBOX network".into(),
         kind: "failed".into(),
         operation: "network request".into(),
-        route: "native transport".into(),
+        route: if media {
+            "media transport"
+        } else {
+            "native transport"
+        }
+        .into(),
         ..Default::default()
     });
     match error {

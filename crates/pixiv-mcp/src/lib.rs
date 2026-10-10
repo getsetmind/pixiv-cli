@@ -242,3 +242,5 @@ mod comment_mutations;
 pub use comment_mutations::{
     CommentMutation, CommentMutationInput, comment_mutation, comment_mutation_tool,
 };
+
+pub mod fanbox;

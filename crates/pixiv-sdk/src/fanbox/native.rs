@@ -57,6 +57,7 @@ impl NativeTransport {
     }
 
     async fn execute(&self, raw: RawRequest) -> Result<Option<RawResponse>, ExternalError> {
+        let is_head = raw.method == "HEAD";
         let mut headers = HeaderMap::new();
         for (name, values) in raw.headers {
             let name = HeaderName::from_bytes(name.as_bytes())?;
@@ -67,7 +68,14 @@ impl NativeTransport {
         if let Some(host) = raw.logical_host {
             headers.insert(wreq::header::HOST, HeaderValue::from_str(&host)?);
         }
-        if !headers.contains_key(wreq::header::ACCEPT_ENCODING) {
+        if !is_head
+            && headers
+                .get(wreq::header::RANGE)
+                .is_none_or(|value| value.as_bytes().is_empty())
+            && headers
+                .get(wreq::header::ACCEPT_ENCODING)
+                .is_none_or(|value| value.as_bytes().is_empty())
+        {
             headers.insert(
                 wreq::header::ACCEPT_ENCODING,
                 HeaderValue::from_static("gzip, deflate, br"),
@@ -79,6 +87,9 @@ impl NativeTransport {
                 HeaderValue::from_static("Go-http-client/2.0"),
             );
         }
+        let decode_http1 = headers
+            .get(wreq::header::ACCEPT_ENCODING)
+            .is_some_and(|value| value.as_bytes().windows(4).any(|window| window == b"gzip"));
         let mut order = OrigHeaderMap::new();
         let browser_headers = ["accept", "cookie", "origin", "referer"];
         if browser_headers
@@ -129,30 +140,53 @@ impl NativeTransport {
             response = self.client.execute(request) => response?,
         };
         let status = response.status().as_u16();
-        let content_length = response
+        let http2 = response.version() == wreq::Version::HTTP_2;
+        let stream_ended = http_body::Body::is_end_stream(&response);
+        let encoding = response
+            .headers()
+            .get(wreq::header::CONTENT_ENCODING)
+            .and_then(|value| value.to_str().ok())
+            .unwrap_or_default()
+            .to_owned();
+        let mut content_length = response
             .content_length()
             .and_then(|value| i64::try_from(value).ok())
             .unwrap_or(-1);
         let mut headers = Headers::new();
         for (name, value) in response.headers() {
             headers
-                .entry(name.to_string())
+                .entry(canonical_header(name.as_str()))
                 .or_default()
                 .push(value.to_str()?.into());
         }
         let stream = response
             .bytes_stream()
             .map(|chunk| chunk.map(|data| data.to_vec()));
+        let mut body: Box<dyn RawBody> = Box::new(NativeBody {
+            stream: Some(Box::pin(stream)),
+            buffer: vec![],
+            offset: 0,
+            context,
+        });
+        if !is_head
+            && (if http2 {
+                !stream_ended
+            } else {
+                content_length != 0 && decode_http1
+            })
+        {
+            body = super::decoded_body::decode_body(body, &encoding).await;
+            content_length = -1;
+            if !http2 {
+                headers.remove("Content-Encoding");
+                headers.remove("Content-Length");
+            }
+        }
         Ok(Some(RawResponse {
             status,
             headers,
             content_length,
-            body: Some(Box::new(NativeBody {
-                stream: Some(Box::pin(stream)),
-                buffer: vec![],
-                offset: 0,
-                context,
-            })),
+            body: Some(body),
         }))
     }
 }
@@ -239,4 +273,19 @@ impl RawBody for NativeBody {
         self.offset = 0;
         Box::pin(async { Ok(()) })
     }
+}
+
+fn canonical_header(name: &str) -> String {
+    let mut capital = true;
+    name.chars()
+        .map(|character| {
+            let result = if capital {
+                character.to_ascii_uppercase()
+            } else {
+                character.to_ascii_lowercase()
+            };
+            capital = character == '-';
+            result
+        })
+        .collect()
 }

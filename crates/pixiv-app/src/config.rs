@@ -72,6 +72,8 @@ impl fmt::Display for ConfigError {
                 let message = error.message();
                 if message.starts_with("duplicate key") {
                     formatter.write_str("toml: key path is already defined")
+                } else if message.starts_with("unclosed array,") {
+                    formatter.write_str("toml: array is incomplete")
                 } else if message.contains("expected `]`") {
                     formatter.write_str("toml: expected character ]")
                 } else {
@@ -455,7 +457,27 @@ impl Snapshot {
         let file = if body.trim().is_empty() {
             toml::Table::new()
         } else {
-            body.parse().map_err(ConfigError::Syntax)?
+            body.parse().map_err(|error: toml::de::Error| {
+                let invalid_control = error
+                    .span()
+                    .and_then(|span| {
+                        body.as_bytes().get(if span.is_empty() {
+                            span.start..span.start.saturating_add(1)
+                        } else {
+                            span
+                        })
+                    })
+                    .is_some_and(|bytes| {
+                        bytes
+                            .iter()
+                            .any(|byte| matches!(byte, 0..=8 | 11..=12 | 14..=31 | 127))
+                    });
+                if error.message().contains("visible characters") && invalid_control {
+                    ConfigError::Invalid("toml: invalid character".into())
+                } else {
+                    ConfigError::Syntax(error)
+                }
+            })?
         };
         Ok(Self {
             file,

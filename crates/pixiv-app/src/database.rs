@@ -1,6 +1,8 @@
 use rusqlite::{Connection, params};
 mod accounts;
+mod fanbox;
 pub use accounts::{AccountError, PixivAccount};
+pub use fanbox::FanboxAccountError;
 mod pool;
 pub use pool::{
     PoolCandidate, PoolChooser, PoolError, PoolSelectionKind, PoolSnapshot, PoolStatus,

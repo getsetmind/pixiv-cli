@@ -42,8 +42,13 @@ pub struct ResourceRef {
 
 impl ResourceRef {
     pub fn new(product: &str, payload: &[u8]) -> Result<Self> {
-        if product.is_empty() || payload.is_empty() {
-            return Err(reference_error("NewResourceRef"));
+        if product.is_empty() {
+            return Err(reference_error("NewResourceRef").with_detail("product is required"));
+        }
+        if payload.is_empty() {
+            return Err(
+                reference_error("NewResourceRef").with_detail("reference payload is required")
+            );
         }
         #[derive(Serialize)]
         struct Encoded<'a> {
@@ -214,6 +219,12 @@ impl<'de> Deserialize<'de> for Envelope {
                             let message = message.rsplit_once(" at line ").map_or(message.as_str(), |(message, _)| message);
                             if message.starts_with("illegal base64 data at input byte ") {
                                 de::Error::custom(format!("json: cannot unmarshal string into Go struct field resourceRefEnvelope.d of type []uint8: {message}"))
+                            } else if message.starts_with("invalid type: integer") || message.starts_with("invalid type: floating point") {
+                                de::Error::custom("json: cannot unmarshal number into Go struct field resourceRefEnvelope.d of type []uint8")
+                            } else if message.starts_with("invalid type: boolean") {
+                                de::Error::custom("json: cannot unmarshal bool into Go struct field resourceRefEnvelope.d of type []uint8")
+                            } else if message.starts_with("invalid type: map") {
+                                de::Error::custom("json: cannot unmarshal object into Go struct field resourceRefEnvelope.d of type []uint8")
                             } else {
                                 error
                             }
@@ -251,8 +262,10 @@ fn envelope_json_diagnostic(raw: &[u8], error: serde_json::Error) -> String {
         return format!("invalid character {character} looking for beginning of value");
     }
     let message = error.to_string();
-    if message.starts_with("json: cannot unmarshal string into Go struct field resourceRefEnvelope.d of type []uint8: illegal base64 data at input byte ") {
-        return message.rsplit_once(" at line ").map_or_else(|| message.clone(), |(message, _)| message.to_owned());
+    if message.starts_with("json: cannot unmarshal ") {
+        return message
+            .rsplit_once(" at line ")
+            .map_or_else(|| message.clone(), |(message, _)| message.to_owned());
     }
     // Other JSON syntax and type diagnostics still follow serde's parser.
     message

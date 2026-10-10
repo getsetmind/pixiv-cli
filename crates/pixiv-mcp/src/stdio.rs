@@ -637,16 +637,19 @@ fn missing_download_executor() -> Value {
     json!({"content":[{"type":"text","text":text}],"structuredContent":{"delivery":"local_path","items":[],"failures":[],"warnings":[],"files":[],"text":text},"isError":true})
 }
 
-async fn write_response<W: AsyncWrite + Unpin>(output: &mut W, response: Value) -> io::Result<()> {
+pub(crate) async fn write_response<W: AsyncWrite + Unpin>(
+    output: &mut W,
+    response: Value,
+) -> io::Result<()> {
     let mut encoded = serde_json::to_vec(&response)?;
     encoded.push(b'\n');
     output.write_all(&encoded).await?;
     output.flush().await
 }
-fn success(id: Value, result: Value) -> Value {
+pub(crate) fn success(id: Value, result: Value) -> Value {
     json!({"jsonrpc":"2.0","id":id,"result":result})
 }
-fn protocol_error(id: Value, code: i32, message: String) -> Value {
+pub(crate) fn protocol_error(id: Value, code: i32, message: String) -> Value {
     json!({"jsonrpc":"2.0","id":id,"error":{"code":code,"message":message}})
 }
 

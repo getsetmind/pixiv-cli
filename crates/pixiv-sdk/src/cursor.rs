@@ -1,6 +1,7 @@
 use crate::{
     Error, Reason, Result,
-    codec::{Payload, PayloadSeed, decode_base64, engine, normalize_json},
+    codec::{Payload, PayloadSeed, base64_diagnostic, decode_base64, engine, normalize_json},
+    error::Cause,
 };
 use base64::Engine;
 use serde::{
@@ -219,14 +220,20 @@ impl Cursor {
     }
 
     fn decode(&self, operation: &'static str) -> Result<Envelope> {
+        let cause = |message: String| {
+            Error::with_product("", Reason::InvalidCursor, operation)
+                .with_cause(Cause::Redacted(message))
+        };
         let raw = decode_base64(&self.text, true)
-            .map_err(|_| cursor_error(operation, "malformed cursor encoding"))?;
-        let normalized = normalize_json(&raw)
-            .map_err(|_| cursor_error(operation, "malformed cursor encoding"))?;
+            .map_err(|error| cause(base64_diagnostic(&self.text, true, error)))?;
+        let normalized = normalize_json(&raw).map_err(|error| cause(error.to_string()))?;
         let envelope: Envelope = serde_json::from_str(&normalized)
-            .map_err(|_| cursor_error(operation, "malformed cursor envelope"))?;
+            .map_err(|error| cause(cursor_json_diagnostic(&raw, error)))?;
         if envelope.version != 1 {
-            return Err(cursor_error(operation, "unsupported cursor format version"));
+            return Err(cause(format!(
+                "unsupported cursor format version {}",
+                envelope.version
+            )));
         }
         Ok(envelope)
     }
@@ -277,6 +284,9 @@ impl<'de> Deserialize<'de> for Envelope {
             type Value = Envelope;
             fn expecting(&self, f: &mut fmt::Formatter) -> fmt::Result {
                 f.write_str("a cursor envelope")
+            }
+            fn visit_unit<E: serde::de::Error>(self) -> std::result::Result<Envelope, E> {
+                Ok(Envelope::default())
             }
             fn visit_map<M: MapAccess<'de>>(
                 self,
@@ -334,6 +344,29 @@ impl<'de> Deserialize<'de> for Envelope {
                 Ok(envelope)
             }
         }
-        deserializer.deserialize_map(EnvelopeVisitor)
+        deserializer.deserialize_any(EnvelopeVisitor)
     }
+}
+
+fn cursor_json_diagnostic(raw: &[u8], error: serde_json::Error) -> String {
+    if error.is_eof() {
+        return "unexpected end of JSON input".into();
+    }
+    if let Some(&byte) = raw
+        .iter()
+        .find(|byte| !matches!(byte, b' ' | b'\t' | b'\r' | b'\n'))
+        && !matches!(
+            byte,
+            b'{' | b'[' | b'"' | b'-' | b'0'..=b'9' | b't' | b'f' | b'n'
+        )
+    {
+        let character = match byte {
+            b'\'' => "\"'\"".into(),
+            b'\\' => "'\\\\'".into(),
+            0x20..=0x7e => format!("'{}'", char::from(byte)),
+            _ => format!("'\\x{byte:02x}'"),
+        };
+        return format!("invalid character {character} looking for beginning of value");
+    }
+    error.to_string()
 }

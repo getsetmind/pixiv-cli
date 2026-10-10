@@ -2036,3 +2036,9 @@ Final related Go tests, vet, empty gofmt and migration validator pass with 39 to
 ## FANBOX saved-session read contracts-only continuation
 
 Fresh Go-first SDK content416/resource243/CLI172/MCP126 captures preserve actual saved selection, endpoints, opaque reopening, distinct projections and real stdio cancellation/reuse/EOF. This durable checkpoint records contracts and provenance only; the connected Rust content/resource/facade/CLI/MCP implementation remains pending. See [read contract boundaries](fanbox-read-contracts.md). Fixture/schema counts do not increase verified platforms or establish feature completion. Existing media80/saved321/help22/parser/native rows remain unchanged.
+
+## FANBOX connected saved-session read implementation
+
+The contracts-only `f56f27e178dbbbcc1020fabb0a7f60745aae8dfd` checkpoint is followed by the connected SDK/resource/saved-app/six-CLI-read/eleven-MCP-tool workflow documented in [fanbox-connected-reads.md](fanbox-connected-reads.md). Existing Go fixtures remain sealed. The four additional owned HTTP/1 media-solver schedules and three public-Connection fatal-stdio schedules were frozen and tested in Go before their Rust fixes; provenance is in [media solver](provenance/fanbox-media-solver-go.json) and [stdio failures](provenance/fanbox-stdio-failures-go.json).
+
+The real Rust binary now has FANBOX help/read/MCP routing, with Linux-only owned-child help/config/argument/missing-account and stdio/schema/error tests. Successful authenticated native binary reads, browser extraction and FANBOX auth/download remain unfinished. Private decoder component comparisons are not compressed-native-wire evidence. Synchronous future-drop lease cleanup is not asynchronous body close. Parser-layer and driver/OS message differences are retained explicitly. The existing denied supplemental native multiplex/unfinished HEAD/upload probe remains outside authorization and was not retried.

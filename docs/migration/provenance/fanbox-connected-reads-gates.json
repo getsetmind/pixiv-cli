@@ -1,0 +1,146 @@
+{
+  "created_utc": "2026-10-10T10:23:54.302116+00:00",
+  "base_sha": "f56f27e178dbbbcc1020fabb0a7f60745aae8dfd",
+  "frozen_go": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "rust_gate": {
+    "script": "scripts/check-rust.ps1",
+    "script_unchanged": true,
+    "exit": 0,
+    "stages": [
+      "fmt --all --check",
+      "strict workspace all-target Clippy",
+      "workspace all tests",
+      "workspace release build"
+    ],
+    "counts": {
+      "raw_passed": 753,
+      "failed": 0,
+      "ignored": 11,
+      "result_blocks": 294,
+      "native_child_passed": 6,
+      "top_level_passed": 747,
+      "top_level_no_mode_helper_passed": 3,
+      "substantive_top_level_passed": 744,
+      "substantive_including_native_child_passed": 750
+    },
+    "release_elapsed": "1m03s",
+    "native_witness_directory": "/tmp/pixiv-fanbox-connected-native-witness-final",
+    "native_scenarios": 6
+  },
+  "fresh_go": {
+    "scope": "Selected Test(PostDTO|CreatorDTO|MigrationFanbox) in sdk/fanbox, internal/cli, internal/mcpserver/fanbox/... plus migration validator; vet all these packages",
+    "exit": 0,
+    "counts": {
+      "top_level_passed": 23,
+      "nested_passed": 1608
+    },
+    "skips": [
+      {
+        "package": "github.com/FlanChanXwO/pixiv-cli/internal/mcpserver/fanbox/tools/creator",
+        "test": null
+      },
+      {
+        "package": "github.com/FlanChanXwO/pixiv-cli/internal/mcpserver/fanbox/tools/creatorposts",
+        "test": null
+      },
+      {
+        "package": "github.com/FlanChanXwO/pixiv-cli/internal/mcpserver/fanbox/tools/creators",
+        "test": null
+      },
+      {
+        "package": "github.com/FlanChanXwO/pixiv-cli/internal/mcpserver/fanbox/tools/creatortags",
+        "test": null
+      },
+      {
+        "package": "github.com/FlanChanXwO/pixiv-cli/internal/mcpserver/fanbox/tools/currentuser",
+        "test": null
+      },
+      {
+        "package": "github.com/FlanChanXwO/pixiv-cli/internal/mcpserver/fanbox/tools/home",
+        "test": null
+      },
+      {
+        "package": "github.com/FlanChanXwO/pixiv-cli/internal/mcpserver/fanbox/tools/openresource",
+        "test": null
+      },
+      {
+        "package": "github.com/FlanChanXwO/pixiv-cli/internal/mcpserver/fanbox/tools/post",
+        "test": null
+      },
+      {
+        "package": "github.com/FlanChanXwO/pixiv-cli/internal/mcpserver/fanbox/tools/resolveurl",
+        "test": null
+      },
+      {
+        "package": "github.com/FlanChanXwO/pixiv-cli/internal/mcpserver/fanbox/tools/supporting",
+        "test": null
+      },
+      {
+        "package": "github.com/FlanChanXwO/pixiv-cli/internal/mcpserver/fanbox/tools/taggedposts",
+        "test": null
+      },
+      {
+        "package": "github.com/FlanChanXwO/pixiv-cli/internal/cli",
+        "test": "TestMigrationFanboxContentReadsChild"
+      },
+      {
+        "package": "github.com/FlanChanXwO/pixiv-cli/internal/cli",
+        "test": "TestMigrationFanboxHelpRoutingChild"
+      }
+    ],
+    "vet_exit": 0,
+    "gofmt_output_empty": true,
+    "post_ledger_validator_exit": 0
+  },
+  "prior_failed_gate": {
+    "scope": "strictClippy only; tests/release not reached",
+    "exit": 1,
+    "fix": "Preserved Go single-write count semantics and factored private output format; no expectations changed"
+  },
+  "source_guards": {
+    "frozen_go_production_paths": 434,
+    "base_fixture_paths": 91,
+    "drift": [],
+    "full_gate_snapshot_paths": 8763
+  },
+  "ledger": {
+    "retained_ids": 673,
+    "changed_entries": 100,
+    "status_promotions_to_in_progress": 96,
+    "verified_platform_changes": 0
+  },
+  "logs": {
+    "/tmp/pixiv-fanbox-connected-full-gates-final.log": {
+      "sha256": "66589f5762e23315a325e9739f7d69bf2f84ea3dff13b115fb4b00b198e353cd",
+      "bytes": 1487885
+    },
+    "/tmp/pixiv-fanbox-connected-full-gates-attempt1-clippy.log": {
+      "sha256": "f0fba2c40553ae3a1ccb8b9e8e6393699b88edc3ef3d2665c441707dd02f9e4d",
+      "bytes": 457917
+    },
+    "/tmp/pixiv-fanbox-connected-final-go.log": {
+      "sha256": "142fb0b6c29a2c4d3ff31df68eeddaabca8cd4854f7833d5076eb92612511ffd",
+      "bytes": 1713200
+    },
+    "/tmp/pixiv-fanbox-connected-final-go-vet.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "/tmp/pixiv-fanbox-connected-final-go-gofmt.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "/tmp/pixiv-fanbox-connected-final-ledger-validator.log": {
+      "sha256": "af0eb0741db6e4716e81d74bac592dfe0d0c7d62fde72e3900653e72ec274e32",
+      "bytes": 6513
+    },
+    "/tmp/pixiv-fanbox-connected-full-gate-final-source-snapshot.json": {
+      "sha256": "b5fa007734809caca16af31d90cf83021096ed07187268c0fdc8de36cc0bd377",
+      "bytes": 1221022
+    },
+    "/tmp/pixiv-fanbox-connected-source-guards.json": {
+      "sha256": "f695036107cc4d6295712ba3b71891a4b7beeab89ba026a0ab2985c80ca3b9ae",
+      "bytes": 282
+    }
+  }
+}

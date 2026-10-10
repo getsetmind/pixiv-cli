@@ -2,7 +2,7 @@ use crate::CommandError;
 use pixiv_sdk::{dto::ArtworkDto, models::Artwork};
 use std::{
     fs::{File, OpenOptions},
-    io::{self, Seek, SeekFrom, Write},
+    io::{self, Read, Seek, SeekFrom, Write},
     path::PathBuf,
 };
 
@@ -87,7 +87,7 @@ impl JsonSpool {
     ) -> Result<(), CommandError> {
         self.append_dtos(items.iter().map(pixiv_sdk::dto::UserPreviewDto::from))
     }
-    fn append_dtos<T: serde::Serialize>(
+    pub(crate) fn append_dtos<T: serde::Serialize>(
         &mut self,
         items: impl IntoIterator<Item = T>,
     ) -> Result<(), CommandError> {
@@ -123,7 +123,7 @@ impl JsonSpool {
         ));
         Ok(())
     }
-    pub(crate) fn commit<W: Write>(&mut self, out: &mut W) -> Result<(), CommandError> {
+    fn rewind_for_commit(&mut self) -> Result<&mut File, CommandError> {
         let file = self.file.as_mut().expect("spool file is open");
         if self.first && !self.fields.is_empty() {
             file.write_all(b"]")?;
@@ -135,8 +135,25 @@ impl JsonSpool {
         }
         file.write_all(b"\n}\n")?;
         file.seek(SeekFrom::Start(0))?;
-        io::copy(file, out)?;
+        Ok(file)
+    }
+    pub(crate) fn commit<W: Write>(&mut self, out: &mut W) -> Result<(), CommandError> {
+        io::copy(self.rewind_for_commit()?, out)?;
         Ok(())
+    }
+    pub(crate) fn commit_fanbox<W: Write>(&mut self, out: &mut W) -> Result<(), CommandError> {
+        let file = self.rewind_for_commit()?;
+        let mut buffer = [0_u8; 32 * 1024];
+        loop {
+            let count = file.read(&mut buffer)?;
+            if count == 0 {
+                return Ok(());
+            }
+            let written = out.write(&buffer[..count])?;
+            if written < count {
+                return Err(io::Error::new(io::ErrorKind::WriteZero, "short write").into());
+            }
+        }
     }
 }
 

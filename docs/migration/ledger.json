@@ -1799,14 +1799,23 @@
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv fanbox"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/fanbox.rs",
+        "crates/pixiv-app/src/fanbox_account_service.rs",
+        "crates/pixiv-app/src/fanbox_facade.rs"
+      ],
       "tests": [
         "internal/cli/migration_fanbox_help_routing_test.go",
-        "crates/pixiv-cli/tests/fixtures/fanbox-help-routing.json"
+        "crates/pixiv-cli/tests/fixtures/fanbox-help-routing.json",
+        "internal/cli/migration_fanbox_content_reads_test.go",
+        "crates/pixiv-cli/tests/fanbox_saved_content_reads.rs",
+        "crates/pixiv-cli/tests/fanbox_binary_reads.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first help/parser routing only: 22 actual Run invocations in owned Linux children. Proxy values equal command names and Cobra help/terminator scanning are captured exactly; Rust routing/CLI owner, auth/browser/MCP work and non-Linux execution remain pending."
+        "Go-first help/parser routing only: 22 actual Run invocations in owned Linux children. Proxy values equal command names and Cobra help/terminator scanning are captured exactly; Rust routing/CLI owner, auth/browser/MCP work and non-Linux execution remain pending.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
@@ -1898,19 +1907,27 @@
     },
     {
       "id": "cli:pixiv fanbox creators",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv fanbox creators"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/fanbox.rs",
+        "crates/pixiv-app/src/fanbox_account_service.rs",
+        "crates/pixiv-app/src/fanbox_facade.rs"
+      ],
       "tests": [
         "internal/cli/migration_fanbox_content_reads_test.go",
-        "crates/pixiv-cli/tests/fixtures/fanbox-content-reads.json"
+        "crates/pixiv-cli/tests/fixtures/fanbox-content-reads.json",
+        "crates/pixiv-cli/tests/fanbox_saved_content_reads.rs",
+        "crates/pixiv-cli/tests/fanbox_binary_reads.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion."
+        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
@@ -1927,19 +1944,27 @@
     },
     {
       "id": "cli:pixiv fanbox home",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv fanbox home"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/fanbox.rs",
+        "crates/pixiv-app/src/fanbox_account_service.rs",
+        "crates/pixiv-app/src/fanbox_facade.rs"
+      ],
       "tests": [
         "internal/cli/migration_fanbox_content_reads_test.go",
-        "crates/pixiv-cli/tests/fixtures/fanbox-content-reads.json"
+        "crates/pixiv-cli/tests/fixtures/fanbox-content-reads.json",
+        "crates/pixiv-cli/tests/fanbox_saved_content_reads.rs",
+        "crates/pixiv-cli/tests/fanbox_binary_reads.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion."
+        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
@@ -1949,82 +1974,125 @@
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv fanbox mcp"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/fanbox.rs",
+        "crates/pixiv-app/src/fanbox_account_service.rs",
+        "crates/pixiv-app/src/fanbox_facade.rs",
+        "crates/pixiv-cli/src/fanbox_mcp.rs"
+      ],
       "tests": [
         "internal/cli/migration_fanbox_help_routing_test.go",
-        "crates/pixiv-cli/tests/fixtures/fanbox-help-routing.json"
+        "crates/pixiv-cli/tests/fixtures/fanbox-help-routing.json",
+        "internal/cli/migration_fanbox_content_reads_test.go",
+        "crates/pixiv-cli/tests/fanbox_saved_content_reads.rs",
+        "crates/pixiv-cli/tests/fanbox_binary_reads.rs",
+        "crates/pixiv-cli/tests/fanbox_mcp_stdio.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first help/parser routing only: 22 actual Run invocations in owned Linux children. Proxy values equal command names and Cobra help/terminator scanning are captured exactly; Rust routing/CLI owner, auth/browser/MCP work and non-Linux execution remain pending."
+        "Go-first help/parser routing only: 22 actual Run invocations in owned Linux children. Proxy values equal command names and Cobra help/terminator scanning are captured exactly; Rust routing/CLI owner, auth/browser/MCP work and non-Linux execution remain pending.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
       "id": "cli:pixiv fanbox post",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv fanbox post"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/fanbox.rs",
+        "crates/pixiv-app/src/fanbox_account_service.rs",
+        "crates/pixiv-app/src/fanbox_facade.rs"
+      ],
       "tests": [
         "internal/cli/migration_fanbox_content_reads_test.go",
-        "crates/pixiv-cli/tests/fixtures/fanbox-content-reads.json"
+        "crates/pixiv-cli/tests/fixtures/fanbox-content-reads.json",
+        "crates/pixiv-cli/tests/fanbox_saved_content_reads.rs",
+        "crates/pixiv-cli/tests/fanbox_binary_reads.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion."
+        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
       "id": "cli:pixiv fanbox posts",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv fanbox posts"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/fanbox.rs",
+        "crates/pixiv-app/src/fanbox_account_service.rs",
+        "crates/pixiv-app/src/fanbox_facade.rs"
+      ],
       "tests": [
         "internal/cli/migration_fanbox_content_reads_test.go",
-        "crates/pixiv-cli/tests/fixtures/fanbox-content-reads.json"
+        "crates/pixiv-cli/tests/fixtures/fanbox-content-reads.json",
+        "crates/pixiv-cli/tests/fanbox_saved_content_reads.rs",
+        "crates/pixiv-cli/tests/fanbox_binary_reads.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion."
+        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
       "id": "cli:pixiv fanbox supporting",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv fanbox supporting"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/fanbox.rs",
+        "crates/pixiv-app/src/fanbox_account_service.rs",
+        "crates/pixiv-app/src/fanbox_facade.rs"
+      ],
       "tests": [
         "internal/cli/migration_fanbox_content_reads_test.go",
-        "crates/pixiv-cli/tests/fixtures/fanbox-content-reads.json"
+        "crates/pixiv-cli/tests/fixtures/fanbox-content-reads.json",
+        "crates/pixiv-cli/tests/fanbox_saved_content_reads.rs",
+        "crates/pixiv-cli/tests/fanbox_binary_reads.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion."
+        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
       "id": "cli:pixiv fanbox tags",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv fanbox tags"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/fanbox.rs",
+        "crates/pixiv-app/src/fanbox_account_service.rs",
+        "crates/pixiv-app/src/fanbox_facade.rs"
+      ],
       "tests": [
         "internal/cli/migration_fanbox_content_reads_test.go",
-        "crates/pixiv-cli/tests/fixtures/fanbox-content-reads.json"
+        "crates/pixiv-cli/tests/fixtures/fanbox-content-reads.json",
+        "crates/pixiv-cli/tests/fanbox_saved_content_reads.rs",
+        "crates/pixiv-cli/tests/fanbox_binary_reads.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion."
+        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
@@ -3038,189 +3106,255 @@
     },
     {
       "id": "mcp:fanbox:fanbox_creator",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-fanbox.json",
         "key": "fanbox_creator"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-mcp/src/fanbox.rs",
+        "crates/pixiv-mcp/src/fanbox/schema.rs",
+        "crates/pixiv-mcp/src/fanbox/stdio.rs"
+      ],
       "tests": [
         "internal/mcpserver/fanbox/migration_read_tools_test.go",
-        "crates/pixiv-mcp/tests/fixtures/fanbox-read-tools.json"
+        "crates/pixiv-mcp/tests/fixtures/fanbox-read-tools.json",
+        "crates/pixiv-mcp/tests/fanbox_read_tools.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion."
+        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
       "id": "mcp:fanbox:fanbox_creator_posts",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-fanbox.json",
         "key": "fanbox_creator_posts"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-mcp/src/fanbox.rs",
+        "crates/pixiv-mcp/src/fanbox/schema.rs",
+        "crates/pixiv-mcp/src/fanbox/stdio.rs"
+      ],
       "tests": [
         "internal/mcpserver/fanbox/migration_read_tools_test.go",
-        "crates/pixiv-mcp/tests/fixtures/fanbox-read-tools.json"
+        "crates/pixiv-mcp/tests/fixtures/fanbox-read-tools.json",
+        "crates/pixiv-mcp/tests/fanbox_read_tools.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion."
+        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
       "id": "mcp:fanbox:fanbox_creator_tags",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-fanbox.json",
         "key": "fanbox_creator_tags"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-mcp/src/fanbox.rs",
+        "crates/pixiv-mcp/src/fanbox/schema.rs",
+        "crates/pixiv-mcp/src/fanbox/stdio.rs"
+      ],
       "tests": [
         "internal/mcpserver/fanbox/migration_read_tools_test.go",
-        "crates/pixiv-mcp/tests/fixtures/fanbox-read-tools.json"
+        "crates/pixiv-mcp/tests/fixtures/fanbox-read-tools.json",
+        "crates/pixiv-mcp/tests/fanbox_read_tools.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion."
+        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
       "id": "mcp:fanbox:fanbox_creators",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-fanbox.json",
         "key": "fanbox_creators"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-mcp/src/fanbox.rs",
+        "crates/pixiv-mcp/src/fanbox/schema.rs",
+        "crates/pixiv-mcp/src/fanbox/stdio.rs"
+      ],
       "tests": [
         "internal/mcpserver/fanbox/migration_read_tools_test.go",
-        "crates/pixiv-mcp/tests/fixtures/fanbox-read-tools.json"
+        "crates/pixiv-mcp/tests/fixtures/fanbox-read-tools.json",
+        "crates/pixiv-mcp/tests/fanbox_read_tools.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion."
+        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
       "id": "mcp:fanbox:fanbox_current_user",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-fanbox.json",
         "key": "fanbox_current_user"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-mcp/src/fanbox.rs",
+        "crates/pixiv-mcp/src/fanbox/schema.rs",
+        "crates/pixiv-mcp/src/fanbox/stdio.rs"
+      ],
       "tests": [
         "internal/mcpserver/fanbox/migration_read_tools_test.go",
-        "crates/pixiv-mcp/tests/fixtures/fanbox-read-tools.json"
+        "crates/pixiv-mcp/tests/fixtures/fanbox-read-tools.json",
+        "crates/pixiv-mcp/tests/fanbox_read_tools.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion."
+        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
       "id": "mcp:fanbox:fanbox_home",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-fanbox.json",
         "key": "fanbox_home"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-mcp/src/fanbox.rs",
+        "crates/pixiv-mcp/src/fanbox/schema.rs",
+        "crates/pixiv-mcp/src/fanbox/stdio.rs"
+      ],
       "tests": [
         "internal/mcpserver/fanbox/migration_read_tools_test.go",
-        "crates/pixiv-mcp/tests/fixtures/fanbox-read-tools.json"
+        "crates/pixiv-mcp/tests/fixtures/fanbox-read-tools.json",
+        "crates/pixiv-mcp/tests/fanbox_read_tools.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion."
+        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
       "id": "mcp:fanbox:fanbox_open_resource",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-fanbox.json",
         "key": "fanbox_open_resource"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-mcp/src/fanbox.rs",
+        "crates/pixiv-mcp/src/fanbox/schema.rs",
+        "crates/pixiv-mcp/src/fanbox/stdio.rs"
+      ],
       "tests": [
         "internal/mcpserver/fanbox/migration_read_tools_test.go",
-        "crates/pixiv-mcp/tests/fixtures/fanbox-read-tools.json"
+        "crates/pixiv-mcp/tests/fixtures/fanbox-read-tools.json",
+        "crates/pixiv-mcp/tests/fanbox_read_tools.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion."
+        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
       "id": "mcp:fanbox:fanbox_post",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-fanbox.json",
         "key": "fanbox_post"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-mcp/src/fanbox.rs",
+        "crates/pixiv-mcp/src/fanbox/schema.rs",
+        "crates/pixiv-mcp/src/fanbox/stdio.rs"
+      ],
       "tests": [
         "internal/mcpserver/fanbox/migration_read_tools_test.go",
-        "crates/pixiv-mcp/tests/fixtures/fanbox-read-tools.json"
+        "crates/pixiv-mcp/tests/fixtures/fanbox-read-tools.json",
+        "crates/pixiv-mcp/tests/fanbox_read_tools.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion."
+        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
       "id": "mcp:fanbox:fanbox_resolve_url",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-fanbox.json",
         "key": "fanbox_resolve_url"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-mcp/src/fanbox.rs",
+        "crates/pixiv-mcp/src/fanbox/schema.rs",
+        "crates/pixiv-mcp/src/fanbox/stdio.rs"
+      ],
       "tests": [
         "internal/mcpserver/fanbox/migration_read_tools_test.go",
-        "crates/pixiv-mcp/tests/fixtures/fanbox-read-tools.json"
+        "crates/pixiv-mcp/tests/fixtures/fanbox-read-tools.json",
+        "crates/pixiv-mcp/tests/fanbox_read_tools.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion."
+        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
       "id": "mcp:fanbox:fanbox_supporting",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-fanbox.json",
         "key": "fanbox_supporting"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-mcp/src/fanbox.rs",
+        "crates/pixiv-mcp/src/fanbox/schema.rs",
+        "crates/pixiv-mcp/src/fanbox/stdio.rs"
+      ],
       "tests": [
         "internal/mcpserver/fanbox/migration_read_tools_test.go",
-        "crates/pixiv-mcp/tests/fixtures/fanbox-read-tools.json"
+        "crates/pixiv-mcp/tests/fixtures/fanbox-read-tools.json",
+        "crates/pixiv-mcp/tests/fanbox_read_tools.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion."
+        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
       "id": "mcp:fanbox:fanbox_tagged_posts",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-fanbox.json",
         "key": "fanbox_tagged_posts"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-mcp/src/fanbox.rs",
+        "crates/pixiv-mcp/src/fanbox/schema.rs",
+        "crates/pixiv-mcp/src/fanbox/stdio.rs"
+      ],
       "tests": [
         "internal/mcpserver/fanbox/migration_read_tools_test.go",
-        "crates/pixiv-mcp/tests/fixtures/fanbox-read-tools.json"
+        "crates/pixiv-mcp/tests/fixtures/fanbox-read-tools.json",
+        "crates/pixiv-mcp/tests/fanbox_read_tools.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion."
+        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
@@ -6781,63 +6915,108 @@
     },
     {
       "id": "sdk/fanbox:Asset",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:Asset"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:AssetDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:AssetDTO"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:AssetKind",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:AssetKind"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:AssetKindFile",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:AssetKindFile"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:AssetKindImage",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:AssetKindImage"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:Client",
@@ -6861,7 +7040,9 @@
         "crates/pixiv-sdk/src/fanbox/profile.rs",
         "crates/pixiv-sdk/src/codec.rs",
         "crates/pixiv-sdk/src/fanbox/json.rs",
-        "crates/pixiv-sdk/src/fanbox/expiry_date.rs"
+        "crates/pixiv-sdk/src/fanbox/expiry_date.rs",
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
       ],
       "tests": [
         "sdk/fanbox/migration_identity_protocol_test.go",
@@ -6890,7 +7071,9 @@
         "crates/pixiv-sdk/tests/fixtures/fanbox-identity-json-bytes.json",
         "crates/pixiv-sdk/tests/fixtures/fanbox-solver-json-dates.json",
         "sdk/fanbox/migration_solver_stream_completion_test.go",
-        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-stream-completion.json"
+        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-stream-completion.json",
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
       ],
       "verified_platforms": [],
       "differences": [
@@ -6898,7 +7081,8 @@
         "Fresh Go-first solver124/context41/native6 observations are frozen. Native six owned scenarios verify the actual Go factory only; no Rust FANBOX native/solver/identity implementation or platform equivalence is claimed. Supplemental multiplex/HEAD/upload remains denied and was not retried. Repaired native evidence replaces the preliminary seal without changing production Go.",
         "Only the shared context/diagnostics foundation is implemented: 20 mapped frozen rows in 8 Rust tests plus 4 paused-clock regression tests. The 9 SDK-forwarding and 6 FANBOX lifecycle rows await production integration. Existing Pixiv Facade forwards caller context unchanged. Rust monotonic Instant/lazy error or awaited timer differs from independent Go Done timers; arbitrary Go comparable keys/interface identities/nil panics and wall-clock timestamps remain Go-only. Public app source paths are compatibility reexports; no verified_platforms is added.",
         "2026-10-10 public SDK identity/options/solver implementation: 156 representable public rows, actual public HTML67, SDK context8 and public solver93 map frozen Go. Private Session is not exported; no public test-only solver control transport. Raw native six-scenario comparison uses the request captured at Go Session boundary, not complete Session/application equivalence. Native/body decompression, resource/content, saved CLI/MCP, arbitrary Go type/nil cases and unrestricted native/platform behavior remain unfinished; no verified platform added. Current checkpoint aggregate gates and review are recorded separately.",
-        "Fresh Go-first public identity47/solver79 exact-byte rows cover surrogate replacement, invalid UTF-8, nesting10000, selected literal-NUL metadata and the two actual solver expiry layouts. Genuine Rust semantic RED precedes focused GREEN. First-root normalization excludes ignored later bytes. Scalar-root streaming timing and unrestricted grammar remain open; private nanoseconds/offset fields are source-derived rather than public capture assertions. Final aggregate gate/review evidence is recorded separately; no verified platform added."
+        "Fresh Go-first public identity47/solver79 exact-byte rows cover surrogate replacement, invalid UTF-8, nesting10000, selected literal-NUL metadata and the two actual solver expiry layouts. Genuine Rust semantic RED precedes focused GREEN. First-root normalization excludes ignored later bytes. Scalar-root streaming timing and unrestricted grammar remain open; private nanoseconds/offset fields are source-derived rather than public capture assertions. Final aggregate gate/review evidence is recorded separately; no verified platform added.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
@@ -6960,70 +7144,94 @@
     },
     {
       "id": "sdk/fanbox:Client.Creator",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:Client.Creator"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
       "tests": [
         "sdk/fanbox/migration_content_reads_test.go",
-        "crates/pixiv-sdk/tests/fixtures/fanbox-content-reads.json"
+        "crates/pixiv-sdk/tests/fixtures/fanbox-content-reads.json",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion."
+        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
       "id": "sdk/fanbox:Client.CreatorPosts",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:Client.CreatorPosts"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
       "tests": [
         "sdk/fanbox/migration_content_reads_test.go",
-        "crates/pixiv-sdk/tests/fixtures/fanbox-content-reads.json"
+        "crates/pixiv-sdk/tests/fixtures/fanbox-content-reads.json",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion."
+        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
       "id": "sdk/fanbox:Client.Creators",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:Client.Creators"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
       "tests": [
         "sdk/fanbox/migration_content_reads_test.go",
-        "crates/pixiv-sdk/tests/fixtures/fanbox-content-reads.json"
+        "crates/pixiv-sdk/tests/fixtures/fanbox-content-reads.json",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion."
+        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
       "id": "sdk/fanbox:Client.CreatorTags",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:Client.CreatorTags"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
       "tests": [
         "sdk/fanbox/migration_content_reads_test.go",
-        "crates/pixiv-sdk/tests/fixtures/fanbox-content-reads.json"
+        "crates/pixiv-sdk/tests/fixtures/fanbox-content-reads.json",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion."
+        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
@@ -7044,7 +7252,9 @@
         "crates/pixiv-sdk/src/fanbox/profile.rs",
         "crates/pixiv-sdk/src/codec.rs",
         "crates/pixiv-sdk/src/fanbox/json.rs",
-        "crates/pixiv-sdk/src/fanbox/expiry_date.rs"
+        "crates/pixiv-sdk/src/fanbox/expiry_date.rs",
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
       ],
       "tests": [
         "sdk/fanbox/migration_identity_protocol_test.go",
@@ -7072,7 +7282,9 @@
         "crates/pixiv-sdk/tests/fixtures/fanbox-identity-json-bytes.json",
         "crates/pixiv-sdk/tests/fixtures/fanbox-solver-json-dates.json",
         "sdk/fanbox/migration_solver_stream_completion_test.go",
-        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-stream-completion.json"
+        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-stream-completion.json",
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
       ],
       "verified_platforms": [],
       "differences": [
@@ -7080,75 +7292,99 @@
         "Fresh Go-first solver124/context41/native6 observations are frozen. Native six owned scenarios verify the actual Go factory only; no Rust FANBOX native/solver/identity implementation or platform equivalence is claimed. Supplemental multiplex/HEAD/upload remains denied and was not retried. Repaired native evidence replaces the preliminary seal without changing production Go.",
         "2026-10-10 public SDK identity/options/solver implementation: 156 representable public rows, actual public HTML67, SDK context8 and public solver93 map frozen Go. Private Session is not exported; no public test-only solver control transport. Raw native six-scenario comparison uses the request captured at Go Session boundary, not complete Session/application equivalence. Native/body decompression, resource/content, saved CLI/MCP, arbitrary Go type/nil cases and unrestricted native/platform behavior remain unfinished; no verified platform added. Current checkpoint aggregate gates and review are recorded separately.",
         "Independent review added separate actual Go14 tokenizer/identity fold/decimal-port and Go7 solver fold regressions. Genuine Rust runtime RED precedes callback-aligned duplicate recovery, Go ASCII-schema SimpleFold and preserved decimal authority fixes. Original309/public67/public93/core124/redirect3 input/observation expectations remain unchanged. Lone-surrogate replacement, JSON depth10000 and solver date grammar remain concrete next-slice gaps; native6 remains a bounded Linux raw factory comparison, not full Session/platform verification.",
-        "Fresh Go-first public identity47/solver79 exact-byte rows cover surrogate replacement, invalid UTF-8, nesting10000, selected literal-NUL metadata and the two actual solver expiry layouts. Genuine Rust semantic RED precedes focused GREEN. First-root normalization excludes ignored later bytes. Scalar-root streaming timing and unrestricted grammar remain open; private nanoseconds/offset fields are source-derived rather than public capture assertions. Final aggregate gate/review evidence is recorded separately; no verified platform added."
+        "Fresh Go-first public identity47/solver79 exact-byte rows cover surrogate replacement, invalid UTF-8, nesting10000, selected literal-NUL metadata and the two actual solver expiry layouts. Genuine Rust semantic RED precedes focused GREEN. First-root normalization excludes ignored later bytes. Scalar-root streaming timing and unrestricted grammar remain open; private nanoseconds/offset fields are source-derived rather than public capture assertions. Final aggregate gate/review evidence is recorded separately; no verified platform added.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
       "id": "sdk/fanbox:Client.Home",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:Client.Home"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
       "tests": [
         "sdk/fanbox/migration_content_reads_test.go",
-        "crates/pixiv-sdk/tests/fixtures/fanbox-content-reads.json"
+        "crates/pixiv-sdk/tests/fixtures/fanbox-content-reads.json",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion."
+        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
       "id": "sdk/fanbox:Client.OpenResource",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:Client.OpenResource"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/resource.rs",
+        "crates/pixiv-sdk/src/fanbox/safe_media_body.rs"
+      ],
       "tests": [
         "sdk/fanbox/migration_resource_reads_test.go",
-        "crates/pixiv-sdk/tests/fixtures/fanbox-resource-reads.json"
+        "crates/pixiv-sdk/tests/fixtures/fanbox-resource-reads.json",
+        "crates/pixiv-sdk/tests/fanbox_resource_reads.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion."
+        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
       "id": "sdk/fanbox:Client.Post",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:Client.Post"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
       "tests": [
         "sdk/fanbox/migration_content_reads_test.go",
-        "crates/pixiv-sdk/tests/fixtures/fanbox-content-reads.json"
+        "crates/pixiv-sdk/tests/fixtures/fanbox-content-reads.json",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion."
+        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
       "id": "sdk/fanbox:Client.ResolveURL",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:Client.ResolveURL"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
       "tests": [
         "sdk/fanbox/migration_content_reads_test.go",
-        "crates/pixiv-sdk/tests/fixtures/fanbox-content-reads.json"
+        "crates/pixiv-sdk/tests/fixtures/fanbox-content-reads.json",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion."
+        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
@@ -7165,36 +7401,48 @@
     },
     {
       "id": "sdk/fanbox:Client.Supporting",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:Client.Supporting"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
       "tests": [
         "sdk/fanbox/migration_content_reads_test.go",
-        "crates/pixiv-sdk/tests/fixtures/fanbox-content-reads.json"
+        "crates/pixiv-sdk/tests/fixtures/fanbox-content-reads.json",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion."
+        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
       "id": "sdk/fanbox:Client.TaggedPosts",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:Client.TaggedPosts"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
       "tests": [
         "sdk/fanbox/migration_content_reads_test.go",
-        "crates/pixiv-sdk/tests/fixtures/fanbox-content-reads.json"
+        "crates/pixiv-sdk/tests/fixtures/fanbox-content-reads.json",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion."
+        "Go-first saved-session read contracts only: docs/migration/fanbox-read-contracts.md. Connected Rust implementation and comparative replay remain pending; fixture counts establish neither feature nor platform completion.",
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
       ]
     },
     {
@@ -7249,159 +7497,276 @@
     },
     {
       "id": "sdk/fanbox:Creator",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:Creator"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:CreatorDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:CreatorDTO"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:CreatorListFollowing",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:CreatorListFollowing"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:CreatorListKind",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:CreatorListKind"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:CreatorListSupporting",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:CreatorListSupporting"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:CreatorPostsRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:CreatorPostsRequest"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:CreatorRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:CreatorRequest"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:CreatorsRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:CreatorsRequest"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:CreatorSummary",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:CreatorSummary"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:CreatorSummaryDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:CreatorSummaryDTO"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:CreatorTag",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:CreatorTag"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:CreatorTagDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:CreatorTagDTO"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:CreatorTagsRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:CreatorTagsRequest"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:CurrentUserRequest",
@@ -7455,27 +7820,45 @@
     },
     {
       "id": "sdk/fanbox:FileResource",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:FileResource"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:FileResourceDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:FileResourceDTO"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:FlareSolverrOptions",
@@ -7536,39 +7919,66 @@
     },
     {
       "id": "sdk/fanbox:HomeRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:HomeRequest"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:ImageResource",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:ImageResource"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:ImageResourceDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:ImageResourceDTO"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:Open",
@@ -7710,279 +8120,486 @@
     },
     {
       "id": "sdk/fanbox:Post",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:Post"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:PostArticleBlock",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:PostArticleBlock"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:PostArticleBlockDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:PostArticleBlockDTO"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:PostBlock",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:PostBlock"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:PostBlockArticle",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:PostBlockArticle"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:PostBlockDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:PostBlockDTO"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:PostBlockFile",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:PostBlockFile"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:PostBlockImage",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:PostBlockImage"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:PostBlockKind",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:PostBlockKind"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:PostBlockUnknown",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:PostBlockUnknown"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:PostBlockVideo",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:PostBlockVideo"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:PostBody",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:PostBody"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:PostBodyDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:PostBodyDTO"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:PostDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:PostDTO"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:PostFileBlock",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:PostFileBlock"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:PostFileBlockDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:PostFileBlockDTO"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:PostImageBlock",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:PostImageBlock"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:PostImageBlockDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:PostImageBlockDTO"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:PostRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:PostRequest"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:PostUnknownBlock",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:PostUnknownBlock"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:PostUnknownBlockDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:PostUnknownBlockDTO"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:PostVideoEmbed",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:PostVideoEmbed"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:PostVideoEmbedDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:PostVideoEmbedDTO"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:progressReader.Read",
@@ -7998,87 +8615,150 @@
     },
     {
       "id": "sdk/fanbox:Reference",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:Reference"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:ReferenceKind",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:ReferenceKind"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:ReferenceKindCreator",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:ReferenceKindCreator"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:ReferenceKindCreatorPosts",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:ReferenceKindCreatorPosts"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:ReferenceKindPost",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:ReferenceKindPost"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:ReferenceKindTag",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:ReferenceKindTag"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:ResolveURLRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:ResolveURLRequest"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:SessionCredentials",
@@ -8282,195 +8962,339 @@
     },
     {
       "id": "sdk/fanbox:SupportingRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:SupportingRequest"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:TaggedPostsRequest",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:TaggedPostsRequest"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:ToAssetDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:ToAssetDTO"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:ToCreatorDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:ToCreatorDTO"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:ToCreatorSummaryDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:ToCreatorSummaryDTO"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:ToCreatorTagDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:ToCreatorTagDTO"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:ToFileResourceDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:ToFileResourceDTO"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:ToImageResourceDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:ToImageResourceDTO"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:ToPostArticleBlockDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:ToPostArticleBlockDTO"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:ToPostBlockDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:ToPostBlockDTO"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:ToPostBodyDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:ToPostBodyDTO"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:ToPostDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:ToPostDTO"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:ToPostFileBlockDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:ToPostFileBlockDTO"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:ToPostImageBlockDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:ToPostImageBlockDTO"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:ToPostUnknownBlockDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:ToPostUnknownBlockDTO"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:ToPostVideoEmbedDTO",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:ToPostVideoEmbedDTO"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/content.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/dto.rs"
+      ],
+      "tests": [
+        "sdk/fanbox/migration_content_reads_test.go",
+        "crates/pixiv-sdk/tests/fanbox_content_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+      ]
     },
     {
       "id": "sdk/fanbox:ToUserDTO",
