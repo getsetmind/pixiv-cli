@@ -1,0 +1,38 @@
+{
+  "source_commit": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "source_sha256": {
+    "internal/storage/database/repository.go": "75abdfe0d16877d6cff0820efe705a0bb013ceb58088e372ea1a69c95e913477"
+  },
+  "go_version": "go1.27.1",
+  "driver_version": "v1.40.1",
+  "sqlite_version": "3.50.4",
+  "cases": [
+    {
+      "name": "trigger",
+      "trigger": "CREATE TRIGGER reject_refresh BEFORE UPDATE ON pixiv_account BEGIN SELECT RAISE(ABORT, 'owned fixture persist failure'); END;",
+      "message": "constraint failed: owned fixture persist failure (1811)",
+      "extended_code": 1811,
+      "token": "fixture-original",
+      "revision": 1,
+      "account_count": 1
+    },
+    {
+      "name": "unique",
+      "trigger": "",
+      "message": "constraint failed: UNIQUE constraint failed: pixiv_account.sort_order (2067)",
+      "extended_code": 2067,
+      "token": "fixture-original",
+      "revision": 1,
+      "account_count": 1
+    },
+    {
+      "name": "not_null",
+      "trigger": "CREATE TRIGGER reject_refresh BEFORE UPDATE ON pixiv_account BEGIN UPDATE pixiv_account SET username=NULL WHERE user_id=NEW.user_id; END;",
+      "message": "constraint failed: NOT NULL constraint failed: pixiv_account.username (1299)",
+      "extended_code": 1299,
+      "token": "fixture-original",
+      "revision": 1,
+      "account_count": 1
+    }
+  ]
+}

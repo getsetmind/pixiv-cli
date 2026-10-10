@@ -1,0 +1,2609 @@
+{
+  "reference": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "source_sha256": {
+    "internal/media/downloader/downloader.go": "2ea84cf1ab3eaf8bec1b3dc5b2f5162ba48071b0a7ae5e2a950043dcc4867979",
+    "internal/media/downloader/filename/filename.go": "e703ba7787b54a752cd9a697ca3e44a496e65618a48e29df7a5d41715d29dedb",
+    "internal/media/downloader/mime.go": "aa7e39c8d974c81214b0d61d2f0264803f68db1c9c9f50b14c34eecd2ce3eb64",
+    "internal/media/downloader/parallel/parallel.go": "80ec437492c2655164df91ac8ff1d7a0a20c7df14f1c9feb083b74fc1b5e571d",
+    "internal/media/ugoira/rust.go": "c5bec9ab428207fa279b305ba80c215e90f92d3cf3513a47270fd5199d906e3a",
+    "internal/media/ugoira/ugoira.go": "44fdf6867e56bc9beaa6f8be703d259cf92f55856f3329741b6ec3b8f49f3494",
+    "internal/shared/diagnostics/diagnostics.go": "aecd4045f50f6bcf4cd20f316d680cbfb28e657f919ce1c0700dfdad8d5ddc76",
+    "sdk/error.go": "d8e48078c464f18a26cdcf32828e423dd948f17061269b222f82e08a8cee0041",
+    "sdk/pixiv/resource.go": "e94cdf3b2d7f67e159bd2481a1c419e887d842c903107767c4004e4f6a529ed8",
+    "sdk/ref.go": "9c7a7ff2dc8a91904d2a343268f4445a094ed7bb7c93c17971908280d4efaf8e"
+  },
+  "reused_fixture_sha256": {
+    "crates/pixiv-app/tests/fixtures/ugoira_encoder.json": "88df4a179e7f5790953ac7507407bb9faa277bd736e16f5757928c63a303d662"
+  },
+  "evidence": "Actual frozen Go DownloadService.Download, genuine Manager and injected observing factory, public diagnostic scope, narrow owned detail/resource client, real isolated filesystem and native NewRustEncoder using SHA-pinned owned media. Expectations are captured only by PIXIV_UPDATE_ARTWORK_BATCH_FIXTURE=1. go_factory_observations describe Go-only injected factory and raw Manager request; they are not a Rust API contract. committed is derived from nonempty batch.Items, matching the actual MCP report wrapper; DownloadBatchResult does not expose it.",
+  "normalizations": [
+    "Temporary root replaced with ${ROOT}; separators slash; native ZIP random basename ugoira-${TEMP}.zip",
+    "GOMAXPROCS=1 stabilizes genuine Manager port trace; existing static concurrency test proves ordered reports under reversed completion",
+    "Diagnostics omit only duration after checking it is nonnegative; exact module/kind/operation/count/reason retained",
+    "Filesystem manifest is filepath.WalkDir order with exact bytes as hex; modes/timestamps not compared",
+    "Result observer initializes empty arrays uniformly; Go factory observations remain separately labeled and are excluded only from Rust comparison"
+  ],
+  "deferred": [
+    "Existing comprehensive static and ugoira fixtures retain quality/pages/template/native matrix and publication error breadth; this fixture tests the genuine ID-batch entry used by recommendation random",
+    "Native Windows/macOS, arbitrary Go open-string artwork Kind, full media workflow/SDK HTTP lifecycle and live network/accounts remain unverified in this scope"
+  ],
+  "cases": [
+    {
+      "name": "empty_ids",
+      "ids": [],
+      "artworks": [
+        {
+          "id": 42,
+          "kind": "illustration",
+          "title": "title",
+          "author": "author",
+          "author_id": 7,
+          "published_at": "2024-01-02T03:04:05Z",
+          "tags": [
+            " tag/a ",
+            "",
+            "   ",
+            "second"
+          ],
+          "page_count": 1,
+          "pages": [
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/42_p0.jpg?token=fixture#fragment",
+              "page_index": 0,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/png"
+            }
+          ]
+        }
+      ],
+      "filename_template": "{id}",
+      "directory_template": "",
+      "quality": "",
+      "format": "",
+      "pages": [],
+      "expected": {
+        "calls": [],
+        "items": [],
+        "failures": [],
+        "warnings": [],
+        "manifest": [],
+        "diagnostics": [],
+        "committed": false,
+        "error": "",
+        "error_kind": "",
+        "error_reason": "",
+        "original_error": false,
+        "go_factory_observations": [
+          {
+            "path": "${ROOT}",
+            "template": "{id}",
+            "context_error": "",
+            "requests": [
+              {
+                "ids": [],
+                "download_path": "${ROOT}",
+                "filename_template": "{id}",
+                "directory_template": "",
+                "pages": [],
+                "quality": "original",
+                "format": "gif"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "nonpositive_ids_ignored",
+      "ids": [
+        0,
+        -1,
+        -9223372036854775808
+      ],
+      "artworks": [
+        {
+          "id": 42,
+          "kind": "illustration",
+          "title": "title",
+          "author": "author",
+          "author_id": 7,
+          "published_at": "2024-01-02T03:04:05Z",
+          "tags": [
+            " tag/a ",
+            "",
+            "   ",
+            "second"
+          ],
+          "page_count": 1,
+          "pages": [
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/42_p0.jpg?token=fixture#fragment",
+              "page_index": 0,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/png"
+            }
+          ]
+        }
+      ],
+      "filename_template": "{id}",
+      "directory_template": "",
+      "quality": "",
+      "format": "",
+      "pages": [],
+      "expected": {
+        "calls": [],
+        "items": [],
+        "failures": [],
+        "warnings": [],
+        "manifest": [],
+        "diagnostics": [],
+        "committed": false,
+        "error": "",
+        "error_kind": "",
+        "error_reason": "",
+        "original_error": false,
+        "go_factory_observations": [
+          {
+            "path": "${ROOT}",
+            "template": "{id}",
+            "context_error": "",
+            "requests": [
+              {
+                "ids": [
+                  0,
+                  -1,
+                  -9223372036854775808
+                ],
+                "download_path": "${ROOT}",
+                "filename_template": "{id}",
+                "directory_template": "",
+                "pages": [],
+                "quality": "original",
+                "format": "gif"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "defaults_singleton",
+      "ids": [
+        42
+      ],
+      "artworks": [
+        {
+          "id": 42,
+          "kind": "illustration",
+          "title": "title",
+          "author": "author",
+          "author_id": 7,
+          "published_at": "2024-01-02T03:04:05Z",
+          "tags": [
+            " tag/a ",
+            "",
+            "   ",
+            "second"
+          ],
+          "page_count": 1,
+          "pages": [
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/42_p0.jpg?token=fixture#fragment",
+              "page_index": 0,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/png"
+            }
+          ]
+        }
+      ],
+      "filename_template": "{id}",
+      "directory_template": "",
+      "quality": "",
+      "format": "",
+      "pages": [],
+      "expected": {
+        "calls": [
+          {
+            "operation": "artwork",
+            "id": 42
+          },
+          {
+            "operation": "save_ref",
+            "source": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9",
+            "payload": "{\"k\":\"artwork\",\"id\":42,\"p\":0}",
+            "path": "${ROOT}/42.jpg",
+            "parent_exists": true
+          }
+        ],
+        "items": [
+          {
+            "id": 42,
+            "title": "title",
+            "author": "author",
+            "kind": "illustration",
+            "files": [
+              {
+                "path": "${ROOT}/42.png",
+                "page": 1,
+                "bytes": 15
+              }
+            ],
+            "quality": "",
+            "frames": null,
+            "frame_report": null
+          }
+        ],
+        "failures": [],
+        "warnings": [],
+        "manifest": [
+          {
+            "path": "${ROOT}",
+            "directory": true
+          },
+          {
+            "path": "${ROOT}/42.png",
+            "directory": false,
+            "body_hex": "73796e7468657469632d696d616765"
+          }
+        ],
+        "diagnostics": [],
+        "committed": true,
+        "error": "",
+        "error_kind": "",
+        "error_reason": "",
+        "original_error": false,
+        "go_factory_observations": [
+          {
+            "path": "${ROOT}",
+            "template": "{id}",
+            "context_error": "",
+            "requests": [
+              {
+                "ids": [
+                  42
+                ],
+                "download_path": "${ROOT}",
+                "filename_template": "{id}",
+                "directory_template": "",
+                "pages": [],
+                "quality": "original",
+                "format": "gif"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "duplicate_positive_ids_sorted",
+      "ids": [
+        99,
+        0,
+        42,
+        99,
+        -1,
+        42
+      ],
+      "artworks": [
+        {
+          "id": 99,
+          "kind": "illustration",
+          "title": "title",
+          "author": "author",
+          "author_id": 7,
+          "published_at": "2024-01-02T03:04:05Z",
+          "tags": [
+            " tag/a ",
+            "",
+            "   ",
+            "second"
+          ],
+          "page_count": 1,
+          "pages": [
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/42_p0.jpg?token=fixture#fragment",
+              "page_index": 0,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/png"
+            }
+          ]
+        },
+        {
+          "id": 42,
+          "kind": "illustration",
+          "title": "title",
+          "author": "author",
+          "author_id": 7,
+          "published_at": "2024-01-02T03:04:05Z",
+          "tags": [
+            " tag/a ",
+            "",
+            "   ",
+            "second"
+          ],
+          "page_count": 1,
+          "pages": [
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/42_p0.jpg?token=fixture#fragment",
+              "page_index": 0,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/png"
+            }
+          ]
+        }
+      ],
+      "filename_template": "{id}",
+      "directory_template": "",
+      "quality": "",
+      "format": "",
+      "pages": [],
+      "expected": {
+        "calls": [
+          {
+            "operation": "artwork",
+            "id": 42
+          },
+          {
+            "operation": "save_ref",
+            "source": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9",
+            "payload": "{\"k\":\"artwork\",\"id\":42,\"p\":0}",
+            "path": "${ROOT}/42.jpg",
+            "parent_exists": true
+          },
+          {
+            "operation": "artwork",
+            "id": 99
+          },
+          {
+            "operation": "save_ref",
+            "source": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvNU9Td2ljQ0k2TUgwPSJ9",
+            "payload": "{\"k\":\"artwork\",\"id\":99,\"p\":0}",
+            "path": "${ROOT}/99.jpg",
+            "parent_exists": true
+          }
+        ],
+        "items": [
+          {
+            "id": 42,
+            "title": "title",
+            "author": "author",
+            "kind": "illustration",
+            "files": [
+              {
+                "path": "${ROOT}/42.png",
+                "page": 1,
+                "bytes": 15
+              }
+            ],
+            "quality": "",
+            "frames": null,
+            "frame_report": null
+          },
+          {
+            "id": 99,
+            "title": "title",
+            "author": "author",
+            "kind": "illustration",
+            "files": [
+              {
+                "path": "${ROOT}/99.png",
+                "page": 1,
+                "bytes": 15
+              }
+            ],
+            "quality": "",
+            "frames": null,
+            "frame_report": null
+          }
+        ],
+        "failures": [],
+        "warnings": [],
+        "manifest": [
+          {
+            "path": "${ROOT}",
+            "directory": true
+          },
+          {
+            "path": "${ROOT}/42.png",
+            "directory": false,
+            "body_hex": "73796e7468657469632d696d616765"
+          },
+          {
+            "path": "${ROOT}/99.png",
+            "directory": false,
+            "body_hex": "73796e7468657469632d696d616765"
+          }
+        ],
+        "diagnostics": [],
+        "committed": true,
+        "error": "",
+        "error_kind": "",
+        "error_reason": "",
+        "original_error": false,
+        "go_factory_observations": [
+          {
+            "path": "${ROOT}",
+            "template": "{id}",
+            "context_error": "",
+            "requests": [
+              {
+                "ids": [
+                  99,
+                  0,
+                  42,
+                  99,
+                  -1,
+                  42
+                ],
+                "download_path": "${ROOT}",
+                "filename_template": "{id}",
+                "directory_template": "",
+                "pages": [],
+                "quality": "original",
+                "format": "gif"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "empty_quality_error",
+      "ids": [],
+      "artworks": [
+        {
+          "id": 42,
+          "kind": "illustration",
+          "title": "title",
+          "author": "author",
+          "author_id": 7,
+          "published_at": "2024-01-02T03:04:05Z",
+          "tags": [
+            " tag/a ",
+            "",
+            "   ",
+            "second"
+          ],
+          "page_count": 1,
+          "pages": [
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/42_p0.jpg?token=fixture#fragment",
+              "page_index": 0,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/png"
+            }
+          ]
+        }
+      ],
+      "filename_template": "{id}",
+      "directory_template": "",
+      "quality": "invalid",
+      "format": "",
+      "pages": [],
+      "expected": {
+        "calls": [],
+        "items": [],
+        "failures": [],
+        "warnings": [],
+        "manifest": [],
+        "diagnostics": [],
+        "committed": false,
+        "error": "quality must be one of original, regular, small, thumb, mini",
+        "error_kind": "plain",
+        "error_reason": "",
+        "original_error": false,
+        "go_factory_observations": []
+      }
+    },
+    {
+      "name": "empty_format_error",
+      "ids": [],
+      "artworks": [
+        {
+          "id": 42,
+          "kind": "illustration",
+          "title": "title",
+          "author": "author",
+          "author_id": 7,
+          "published_at": "2024-01-02T03:04:05Z",
+          "tags": [
+            " tag/a ",
+            "",
+            "   ",
+            "second"
+          ],
+          "page_count": 1,
+          "pages": [
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/42_p0.jpg?token=fixture#fragment",
+              "page_index": 0,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/png"
+            }
+          ]
+        }
+      ],
+      "filename_template": "{id}",
+      "directory_template": "",
+      "quality": "",
+      "format": "invalid",
+      "pages": [],
+      "expected": {
+        "calls": [],
+        "items": [],
+        "failures": [],
+        "warnings": [],
+        "manifest": [],
+        "diagnostics": [],
+        "committed": false,
+        "error": "ugoira format must be one of gif, apng, zip, raw",
+        "error_kind": "plain",
+        "error_reason": "",
+        "original_error": false,
+        "go_factory_observations": []
+      }
+    },
+    {
+      "name": "empty_directory_error",
+      "ids": [],
+      "artworks": [
+        {
+          "id": 42,
+          "kind": "illustration",
+          "title": "title",
+          "author": "author",
+          "author_id": 7,
+          "published_at": "2024-01-02T03:04:05Z",
+          "tags": [
+            " tag/a ",
+            "",
+            "   ",
+            "second"
+          ],
+          "page_count": 1,
+          "pages": [
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/42_p0.jpg?token=fixture#fragment",
+              "page_index": 0,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/png"
+            }
+          ]
+        }
+      ],
+      "filename_template": "{id}",
+      "directory_template": "../escape",
+      "quality": "",
+      "format": "",
+      "pages": [],
+      "expected": {
+        "calls": [],
+        "items": [],
+        "failures": [],
+        "warnings": [],
+        "manifest": [],
+        "diagnostics": [],
+        "committed": false,
+        "error": "directory template contains an unsafe path segment",
+        "error_kind": "plain",
+        "error_reason": "",
+        "original_error": false,
+        "go_factory_observations": [
+          {
+            "path": "${ROOT}",
+            "template": "{id}",
+            "context_error": "",
+            "requests": [
+              {
+                "ids": [],
+                "download_path": "${ROOT}",
+                "filename_template": "{id}",
+                "directory_template": "../escape",
+                "pages": [],
+                "quality": "original",
+                "format": "gif"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "canceled_empty_ids",
+      "ids": [],
+      "artworks": [
+        {
+          "id": 42,
+          "kind": "illustration",
+          "title": "title",
+          "author": "author",
+          "author_id": 7,
+          "published_at": "2024-01-02T03:04:05Z",
+          "tags": [
+            " tag/a ",
+            "",
+            "   ",
+            "second"
+          ],
+          "page_count": 1,
+          "pages": [
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/42_p0.jpg?token=fixture#fragment",
+              "page_index": 0,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/png"
+            }
+          ]
+        }
+      ],
+      "filename_template": "{id}",
+      "directory_template": "",
+      "quality": "",
+      "format": "",
+      "pages": [],
+      "cancel_before": true,
+      "expected": {
+        "calls": [],
+        "items": [],
+        "failures": [],
+        "warnings": [],
+        "manifest": [],
+        "diagnostics": [],
+        "committed": false,
+        "error": "context canceled",
+        "error_kind": "canceled",
+        "error_reason": "",
+        "original_error": false,
+        "go_factory_observations": [
+          {
+            "path": "${ROOT}",
+            "template": "{id}",
+            "context_error": "context canceled",
+            "requests": [
+              {
+                "ids": [],
+                "download_path": "${ROOT}",
+                "filename_template": "{id}",
+                "directory_template": "",
+                "pages": [],
+                "quality": "original",
+                "format": "gif"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "canceled_nonpositive_ids",
+      "ids": [
+        0,
+        -1
+      ],
+      "artworks": [
+        {
+          "id": 42,
+          "kind": "illustration",
+          "title": "title",
+          "author": "author",
+          "author_id": 7,
+          "published_at": "2024-01-02T03:04:05Z",
+          "tags": [
+            " tag/a ",
+            "",
+            "   ",
+            "second"
+          ],
+          "page_count": 1,
+          "pages": [
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/42_p0.jpg?token=fixture#fragment",
+              "page_index": 0,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/png"
+            }
+          ]
+        }
+      ],
+      "filename_template": "{id}",
+      "directory_template": "",
+      "quality": "",
+      "format": "",
+      "pages": [],
+      "cancel_before": true,
+      "expected": {
+        "calls": [],
+        "items": [],
+        "failures": [],
+        "warnings": [],
+        "manifest": [],
+        "diagnostics": [],
+        "committed": false,
+        "error": "context canceled",
+        "error_kind": "canceled",
+        "error_reason": "",
+        "original_error": false,
+        "go_factory_observations": [
+          {
+            "path": "${ROOT}",
+            "template": "{id}",
+            "context_error": "context canceled",
+            "requests": [
+              {
+                "ids": [
+                  0,
+                  -1
+                ],
+                "download_path": "${ROOT}",
+                "filename_template": "{id}",
+                "directory_template": "",
+                "pages": [],
+                "quality": "original",
+                "format": "gif"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "canceled_positive_ids",
+      "ids": [
+        42
+      ],
+      "artworks": [
+        {
+          "id": 42,
+          "kind": "illustration",
+          "title": "title",
+          "author": "author",
+          "author_id": 7,
+          "published_at": "2024-01-02T03:04:05Z",
+          "tags": [
+            " tag/a ",
+            "",
+            "   ",
+            "second"
+          ],
+          "page_count": 1,
+          "pages": [
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/42_p0.jpg?token=fixture#fragment",
+              "page_index": 0,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/png"
+            }
+          ]
+        }
+      ],
+      "filename_template": "{id}",
+      "directory_template": "",
+      "quality": "",
+      "format": "",
+      "pages": [],
+      "cancel_before": true,
+      "expected": {
+        "calls": [],
+        "items": [],
+        "failures": [],
+        "warnings": [],
+        "manifest": [],
+        "diagnostics": [],
+        "committed": false,
+        "error": "context canceled",
+        "error_kind": "canceled",
+        "error_reason": "",
+        "original_error": false,
+        "go_factory_observations": [
+          {
+            "path": "${ROOT}",
+            "template": "{id}",
+            "context_error": "context canceled",
+            "requests": [
+              {
+                "ids": [
+                  42
+                ],
+                "download_path": "${ROOT}",
+                "filename_template": "{id}",
+                "directory_template": "",
+                "pages": [],
+                "quality": "original",
+                "format": "gif"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "canceled_quality_precedence",
+      "ids": [
+        42
+      ],
+      "artworks": [
+        {
+          "id": 42,
+          "kind": "illustration",
+          "title": "title",
+          "author": "author",
+          "author_id": 7,
+          "published_at": "2024-01-02T03:04:05Z",
+          "tags": [
+            " tag/a ",
+            "",
+            "   ",
+            "second"
+          ],
+          "page_count": 1,
+          "pages": [
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/42_p0.jpg?token=fixture#fragment",
+              "page_index": 0,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/png"
+            }
+          ]
+        }
+      ],
+      "filename_template": "{id}",
+      "directory_template": "../escape",
+      "quality": "invalid",
+      "format": "invalid",
+      "pages": [],
+      "cancel_before": true,
+      "expected": {
+        "calls": [],
+        "items": [],
+        "failures": [],
+        "warnings": [],
+        "manifest": [],
+        "diagnostics": [],
+        "committed": false,
+        "error": "quality must be one of original, regular, small, thumb, mini",
+        "error_kind": "plain",
+        "error_reason": "",
+        "original_error": false,
+        "go_factory_observations": []
+      }
+    },
+    {
+      "name": "canceled_format_precedence",
+      "ids": [
+        42
+      ],
+      "artworks": [
+        {
+          "id": 42,
+          "kind": "illustration",
+          "title": "title",
+          "author": "author",
+          "author_id": 7,
+          "published_at": "2024-01-02T03:04:05Z",
+          "tags": [
+            " tag/a ",
+            "",
+            "   ",
+            "second"
+          ],
+          "page_count": 1,
+          "pages": [
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/42_p0.jpg?token=fixture#fragment",
+              "page_index": 0,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/png"
+            }
+          ]
+        }
+      ],
+      "filename_template": "{id}",
+      "directory_template": "../escape",
+      "quality": "",
+      "format": "invalid",
+      "pages": [],
+      "cancel_before": true,
+      "expected": {
+        "calls": [],
+        "items": [],
+        "failures": [],
+        "warnings": [],
+        "manifest": [],
+        "diagnostics": [],
+        "committed": false,
+        "error": "ugoira format must be one of gif, apng, zip, raw",
+        "error_kind": "plain",
+        "error_reason": "",
+        "original_error": false,
+        "go_factory_observations": []
+      }
+    },
+    {
+      "name": "canceled_directory_precedence",
+      "ids": [
+        42
+      ],
+      "artworks": [
+        {
+          "id": 42,
+          "kind": "illustration",
+          "title": "title",
+          "author": "author",
+          "author_id": 7,
+          "published_at": "2024-01-02T03:04:05Z",
+          "tags": [
+            " tag/a ",
+            "",
+            "   ",
+            "second"
+          ],
+          "page_count": 1,
+          "pages": [
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/42_p0.jpg?token=fixture#fragment",
+              "page_index": 0,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/png"
+            }
+          ]
+        }
+      ],
+      "filename_template": "{id}",
+      "directory_template": "../escape",
+      "quality": "",
+      "format": "",
+      "pages": [],
+      "cancel_before": true,
+      "expected": {
+        "calls": [],
+        "items": [],
+        "failures": [],
+        "warnings": [],
+        "manifest": [],
+        "diagnostics": [],
+        "committed": false,
+        "error": "directory template contains an unsafe path segment",
+        "error_kind": "plain",
+        "error_reason": "",
+        "original_error": false,
+        "go_factory_observations": [
+          {
+            "path": "${ROOT}",
+            "template": "{id}",
+            "context_error": "context canceled",
+            "requests": [
+              {
+                "ids": [
+                  42
+                ],
+                "download_path": "${ROOT}",
+                "filename_template": "{id}",
+                "directory_template": "../escape",
+                "pages": [],
+                "quality": "original",
+                "format": "gif"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "quality_precedes_format_directory",
+      "ids": [
+        42
+      ],
+      "artworks": [
+        {
+          "id": 42,
+          "kind": "illustration",
+          "title": "title",
+          "author": "author",
+          "author_id": 7,
+          "published_at": "2024-01-02T03:04:05Z",
+          "tags": [
+            " tag/a ",
+            "",
+            "   ",
+            "second"
+          ],
+          "page_count": 1,
+          "pages": [
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/42_p0.jpg?token=fixture#fragment",
+              "page_index": 0,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/png"
+            }
+          ]
+        }
+      ],
+      "filename_template": "{id}",
+      "directory_template": "../escape",
+      "quality": "invalid",
+      "format": "invalid",
+      "pages": [],
+      "expected": {
+        "calls": [],
+        "items": [],
+        "failures": [],
+        "warnings": [],
+        "manifest": [],
+        "diagnostics": [],
+        "committed": false,
+        "error": "quality must be one of original, regular, small, thumb, mini",
+        "error_kind": "plain",
+        "error_reason": "",
+        "original_error": false,
+        "go_factory_observations": []
+      }
+    },
+    {
+      "name": "format_precedes_directory",
+      "ids": [
+        42
+      ],
+      "artworks": [
+        {
+          "id": 42,
+          "kind": "illustration",
+          "title": "title",
+          "author": "author",
+          "author_id": 7,
+          "published_at": "2024-01-02T03:04:05Z",
+          "tags": [
+            " tag/a ",
+            "",
+            "   ",
+            "second"
+          ],
+          "page_count": 1,
+          "pages": [
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/42_p0.jpg?token=fixture#fragment",
+              "page_index": 0,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/png"
+            }
+          ]
+        }
+      ],
+      "filename_template": "{id}",
+      "directory_template": "../escape",
+      "quality": "",
+      "format": "invalid",
+      "pages": [],
+      "expected": {
+        "calls": [],
+        "items": [],
+        "failures": [],
+        "warnings": [],
+        "manifest": [],
+        "diagnostics": [],
+        "committed": false,
+        "error": "ugoira format must be one of gif, apng, zip, raw",
+        "error_kind": "plain",
+        "error_reason": "",
+        "original_error": false,
+        "go_factory_observations": []
+      }
+    },
+    {
+      "name": "configured_directory_default",
+      "ids": [
+        42
+      ],
+      "artworks": [
+        {
+          "id": 42,
+          "kind": "illustration",
+          "title": "title",
+          "author": "author",
+          "author_id": 7,
+          "published_at": "2024-01-02T03:04:05Z",
+          "tags": [
+            " tag/a ",
+            "",
+            "   ",
+            "second"
+          ],
+          "page_count": 2,
+          "pages": [
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/42_p0.jpg?token=fixture#fragment",
+              "page_index": 0,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/jpeg"
+            },
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/42_p1.jpg?token=fixture#fragment",
+              "page_index": 1,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/jpeg"
+            }
+          ]
+        }
+      ],
+      "filename_template": "{id}",
+      "directory_template": "",
+      "default_directory_template": "library/{id}/{num}",
+      "quality": "original",
+      "format": "",
+      "pages": [],
+      "expected": {
+        "calls": [
+          {
+            "operation": "artwork",
+            "id": 42
+          },
+          {
+            "operation": "save_ref",
+            "source": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9",
+            "payload": "{\"k\":\"artwork\",\"id\":42,\"p\":0}",
+            "path": "${ROOT}/library/42/0/42_p0.jpg",
+            "parent_exists": true
+          },
+          {
+            "operation": "save_ref",
+            "source": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TVgwPSJ9",
+            "payload": "{\"k\":\"artwork\",\"id\":42,\"p\":1}",
+            "path": "${ROOT}/library/42/0/42_p1.jpg",
+            "parent_exists": true
+          }
+        ],
+        "items": [
+          {
+            "id": 42,
+            "title": "title",
+            "author": "author",
+            "kind": "illustration",
+            "files": [
+              {
+                "path": "${ROOT}/library/42/0/42_p0.jpg",
+                "page": 1,
+                "bytes": 15
+              },
+              {
+                "path": "${ROOT}/library/42/0/42_p1.jpg",
+                "page": 2,
+                "bytes": 15
+              }
+            ],
+            "quality": "",
+            "frames": null,
+            "frame_report": null
+          }
+        ],
+        "failures": [],
+        "warnings": [],
+        "manifest": [
+          {
+            "path": "${ROOT}",
+            "directory": true
+          },
+          {
+            "path": "${ROOT}/library",
+            "directory": true
+          },
+          {
+            "path": "${ROOT}/library/42",
+            "directory": true
+          },
+          {
+            "path": "${ROOT}/library/42/0",
+            "directory": true
+          },
+          {
+            "path": "${ROOT}/library/42/0/42_p0.jpg",
+            "directory": false,
+            "body_hex": "73796e7468657469632d696d616765"
+          },
+          {
+            "path": "${ROOT}/library/42/0/42_p1.jpg",
+            "directory": false,
+            "body_hex": "73796e7468657469632d696d616765"
+          }
+        ],
+        "diagnostics": [],
+        "committed": true,
+        "error": "",
+        "error_kind": "",
+        "error_reason": "",
+        "original_error": false,
+        "go_factory_observations": [
+          {
+            "path": "${ROOT}",
+            "template": "{id}",
+            "context_error": "",
+            "requests": [
+              {
+                "ids": [
+                  42
+                ],
+                "download_path": "${ROOT}",
+                "filename_template": "{id}",
+                "directory_template": "",
+                "pages": [],
+                "quality": "original",
+                "format": "gif"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "request_directory_overrides_default",
+      "ids": [
+        42
+      ],
+      "artworks": [
+        {
+          "id": 42,
+          "kind": "illustration",
+          "title": "title",
+          "author": "author",
+          "author_id": 7,
+          "published_at": "2024-01-02T03:04:05Z",
+          "tags": [
+            " tag/a ",
+            "",
+            "   ",
+            "second"
+          ],
+          "page_count": 2,
+          "pages": [
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/42_p0.jpg?token=fixture#fragment",
+              "page_index": 0,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/jpeg"
+            },
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/42_p1.jpg?token=fixture#fragment",
+              "page_index": 1,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/jpeg"
+            }
+          ]
+        }
+      ],
+      "filename_template": "{id}",
+      "directory_template": "override/{id}",
+      "default_directory_template": "library/{id}",
+      "quality": "original",
+      "format": "",
+      "pages": [],
+      "expected": {
+        "calls": [
+          {
+            "operation": "artwork",
+            "id": 42
+          },
+          {
+            "operation": "save_ref",
+            "source": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9",
+            "payload": "{\"k\":\"artwork\",\"id\":42,\"p\":0}",
+            "path": "${ROOT}/override/42/42_p0.jpg",
+            "parent_exists": true
+          },
+          {
+            "operation": "save_ref",
+            "source": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TVgwPSJ9",
+            "payload": "{\"k\":\"artwork\",\"id\":42,\"p\":1}",
+            "path": "${ROOT}/override/42/42_p1.jpg",
+            "parent_exists": true
+          }
+        ],
+        "items": [
+          {
+            "id": 42,
+            "title": "title",
+            "author": "author",
+            "kind": "illustration",
+            "files": [
+              {
+                "path": "${ROOT}/override/42/42_p0.jpg",
+                "page": 1,
+                "bytes": 15
+              },
+              {
+                "path": "${ROOT}/override/42/42_p1.jpg",
+                "page": 2,
+                "bytes": 15
+              }
+            ],
+            "quality": "",
+            "frames": null,
+            "frame_report": null
+          }
+        ],
+        "failures": [],
+        "warnings": [],
+        "manifest": [
+          {
+            "path": "${ROOT}",
+            "directory": true
+          },
+          {
+            "path": "${ROOT}/override",
+            "directory": true
+          },
+          {
+            "path": "${ROOT}/override/42",
+            "directory": true
+          },
+          {
+            "path": "${ROOT}/override/42/42_p0.jpg",
+            "directory": false,
+            "body_hex": "73796e7468657469632d696d616765"
+          },
+          {
+            "path": "${ROOT}/override/42/42_p1.jpg",
+            "directory": false,
+            "body_hex": "73796e7468657469632d696d616765"
+          }
+        ],
+        "diagnostics": [],
+        "committed": true,
+        "error": "",
+        "error_kind": "",
+        "error_reason": "",
+        "original_error": false,
+        "go_factory_observations": [
+          {
+            "path": "${ROOT}",
+            "template": "{id}",
+            "context_error": "",
+            "requests": [
+              {
+                "ids": [
+                  42
+                ],
+                "download_path": "${ROOT}",
+                "filename_template": "{id}",
+                "directory_template": "override/{id}",
+                "pages": [],
+                "quality": "original",
+                "format": "gif"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "selected_pages_sorted_dedup",
+      "ids": [
+        42
+      ],
+      "artworks": [
+        {
+          "id": 42,
+          "kind": "illustration",
+          "title": "title",
+          "author": "author",
+          "author_id": 7,
+          "published_at": "2024-01-02T03:04:05Z",
+          "tags": [
+            " tag/a ",
+            "",
+            "   ",
+            "second"
+          ],
+          "page_count": 3,
+          "pages": [
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/42_p0.jpg?token=fixture#fragment",
+              "page_index": 0,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/jpeg"
+            },
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/42_p1.jpg?token=fixture#fragment",
+              "page_index": 1,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/jpeg"
+            },
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/42_p2.jpg?token=fixture#fragment",
+              "page_index": 2,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/jpeg"
+            }
+          ]
+        }
+      ],
+      "filename_template": "{id}",
+      "directory_template": "",
+      "quality": "original",
+      "format": "",
+      "pages": [
+        3,
+        1,
+        3
+      ],
+      "expected": {
+        "calls": [
+          {
+            "operation": "artwork",
+            "id": 42
+          },
+          {
+            "operation": "save_ref",
+            "source": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9",
+            "payload": "{\"k\":\"artwork\",\"id\":42,\"p\":0}",
+            "path": "${ROOT}/42 - title/42_p0.jpg",
+            "parent_exists": true
+          },
+          {
+            "operation": "save_ref",
+            "source": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TW4wPSJ9",
+            "payload": "{\"k\":\"artwork\",\"id\":42,\"p\":2}",
+            "path": "${ROOT}/42 - title/42_p2.jpg",
+            "parent_exists": true
+          }
+        ],
+        "items": [
+          {
+            "id": 42,
+            "title": "title",
+            "author": "author",
+            "kind": "illustration",
+            "files": [
+              {
+                "path": "${ROOT}/42 - title/42_p0.jpg",
+                "page": 1,
+                "bytes": 15
+              },
+              {
+                "path": "${ROOT}/42 - title/42_p2.jpg",
+                "page": 3,
+                "bytes": 15
+              }
+            ],
+            "quality": "",
+            "frames": null,
+            "frame_report": null
+          }
+        ],
+        "failures": [],
+        "warnings": [],
+        "manifest": [
+          {
+            "path": "${ROOT}",
+            "directory": true
+          },
+          {
+            "path": "${ROOT}/42 - title",
+            "directory": true
+          },
+          {
+            "path": "${ROOT}/42 - title/42_p0.jpg",
+            "directory": false,
+            "body_hex": "73796e7468657469632d696d616765"
+          },
+          {
+            "path": "${ROOT}/42 - title/42_p2.jpg",
+            "directory": false,
+            "body_hex": "73796e7468657469632d696d616765"
+          }
+        ],
+        "diagnostics": [],
+        "committed": true,
+        "error": "",
+        "error_kind": "",
+        "error_reason": "",
+        "original_error": false,
+        "go_factory_observations": [
+          {
+            "path": "${ROOT}",
+            "template": "{id}",
+            "context_error": "",
+            "requests": [
+              {
+                "ids": [
+                  42
+                ],
+                "download_path": "${ROOT}",
+                "filename_template": "{id}",
+                "directory_template": "",
+                "pages": [
+                  3,
+                  1,
+                  3
+                ],
+                "quality": "original",
+                "format": "gif"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "metadata_typed_raw_failure",
+      "ids": [
+        42
+      ],
+      "artworks": [
+        {
+          "id": 42,
+          "kind": "illustration",
+          "title": "title",
+          "author": "author",
+          "author_id": 7,
+          "published_at": "2024-01-02T03:04:05Z",
+          "tags": [
+            " tag/a ",
+            "",
+            "   ",
+            "second"
+          ],
+          "page_count": 1,
+          "pages": [
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/42_p0.jpg?token=fixture#fragment",
+              "page_index": 0,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/png"
+            }
+          ],
+          "error": "rate"
+        }
+      ],
+      "filename_template": "{id}",
+      "directory_template": "",
+      "quality": "",
+      "format": "",
+      "pages": [],
+      "expected": {
+        "calls": [
+          {
+            "operation": "artwork",
+            "id": 42
+          }
+        ],
+        "items": [],
+        "failures": [
+          {
+            "id": 42,
+            "url": "",
+            "kind": "",
+            "message": "pixiv:Artwork: rate_limited",
+            "cause_kind": "sdk",
+            "cause_reason": "rate_limited",
+            "code": "",
+            "path": "",
+            "missing": null,
+            "cause_message": "pixiv:Artwork: rate_limited",
+            "cause_product": "pixiv",
+            "cause_operation": "Artwork",
+            "retry_safe": true,
+            "retry_has_after": true,
+            "retry_after": "2026-10-11T01:02:03Z",
+            "original_cause": true
+          }
+        ],
+        "warnings": [],
+        "manifest": [],
+        "diagnostics": [],
+        "committed": false,
+        "error": "",
+        "error_kind": "",
+        "error_reason": "",
+        "original_error": false,
+        "go_factory_observations": [
+          {
+            "path": "${ROOT}",
+            "template": "{id}",
+            "context_error": "",
+            "requests": [
+              {
+                "ids": [
+                  42
+                ],
+                "download_path": "${ROOT}",
+                "filename_template": "{id}",
+                "directory_template": "",
+                "pages": [],
+                "quality": "original",
+                "format": "gif"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "resource_typed_raw_failure",
+      "ids": [
+        42
+      ],
+      "artworks": [
+        {
+          "id": 42,
+          "kind": "illustration",
+          "title": "title",
+          "author": "author",
+          "author_id": 7,
+          "published_at": "2024-01-02T03:04:05Z",
+          "tags": [
+            " tag/a ",
+            "",
+            "   ",
+            "second"
+          ],
+          "page_count": 1,
+          "pages": [
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/42_p0.jpg?token=fixture#fragment",
+              "page_index": 0,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/png",
+              "error": "forbidden"
+            }
+          ]
+        }
+      ],
+      "filename_template": "{id}",
+      "directory_template": "",
+      "quality": "",
+      "format": "",
+      "pages": [],
+      "expected": {
+        "calls": [
+          {
+            "operation": "artwork",
+            "id": 42
+          },
+          {
+            "operation": "save_ref",
+            "source": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9",
+            "payload": "{\"k\":\"artwork\",\"id\":42,\"p\":0}",
+            "path": "${ROOT}/42.jpg",
+            "parent_exists": true
+          }
+        ],
+        "items": [],
+        "failures": [
+          {
+            "id": 42,
+            "url": "",
+            "kind": "",
+            "message": "pixiv:SaveResource: resource_forbidden",
+            "cause_kind": "sdk",
+            "cause_reason": "resource_forbidden",
+            "code": "",
+            "path": "",
+            "missing": null,
+            "cause_message": "pixiv:SaveResource: resource_forbidden",
+            "cause_product": "pixiv",
+            "cause_operation": "SaveResource",
+            "retry_safe": false,
+            "retry_has_after": false,
+            "retry_after": "",
+            "original_cause": true
+          }
+        ],
+        "warnings": [],
+        "manifest": [
+          {
+            "path": "${ROOT}",
+            "directory": true
+          }
+        ],
+        "diagnostics": [],
+        "committed": false,
+        "error": "",
+        "error_kind": "",
+        "error_reason": "",
+        "original_error": false,
+        "go_factory_observations": [
+          {
+            "path": "${ROOT}",
+            "template": "{id}",
+            "context_error": "",
+            "requests": [
+              {
+                "ids": [
+                  42
+                ],
+                "download_path": "${ROOT}",
+                "filename_template": "{id}",
+                "directory_template": "",
+                "pages": [],
+                "quality": "original",
+                "format": "gif"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "partial_item_and_independent_success",
+      "ids": [
+        42,
+        99
+      ],
+      "artworks": [
+        {
+          "id": 42,
+          "kind": "illustration",
+          "title": "title",
+          "author": "author",
+          "author_id": 7,
+          "published_at": "2024-01-02T03:04:05Z",
+          "tags": [
+            " tag/a ",
+            "",
+            "   ",
+            "second"
+          ],
+          "page_count": 2,
+          "pages": [
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/42_p0.jpg?token=fixture#fragment",
+              "page_index": 0,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/jpeg"
+            },
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/42_p0.jpg?token=fixture#fragment",
+              "page_index": 0,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/jpeg",
+              "error": "forbidden"
+            }
+          ]
+        },
+        {
+          "id": 99,
+          "kind": "illustration",
+          "title": "title",
+          "author": "author",
+          "author_id": 7,
+          "published_at": "2024-01-02T03:04:05Z",
+          "tags": [
+            " tag/a ",
+            "",
+            "   ",
+            "second"
+          ],
+          "page_count": 1,
+          "pages": [
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/99_p0.jpg?token=fixture#fragment",
+              "page_index": 0,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/jpeg"
+            }
+          ]
+        }
+      ],
+      "filename_template": "{id}",
+      "directory_template": "",
+      "quality": "",
+      "format": "",
+      "pages": [],
+      "expected": {
+        "calls": [
+          {
+            "operation": "artwork",
+            "id": 42
+          },
+          {
+            "operation": "save_ref",
+            "source": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9",
+            "payload": "{\"k\":\"artwork\",\"id\":42,\"p\":0}",
+            "path": "${ROOT}/42 - title/42_p0.jpg",
+            "parent_exists": true
+          },
+          {
+            "operation": "save_ref",
+            "source": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TVgwPSJ9",
+            "payload": "{\"k\":\"artwork\",\"id\":42,\"p\":1}",
+            "path": "${ROOT}/42 - title/42_p1.jpg",
+            "parent_exists": true
+          },
+          {
+            "operation": "artwork",
+            "id": 99
+          },
+          {
+            "operation": "save_ref",
+            "source": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvNU9Td2ljQ0k2TUgwPSJ9",
+            "payload": "{\"k\":\"artwork\",\"id\":99,\"p\":0}",
+            "path": "${ROOT}/99.jpg",
+            "parent_exists": true
+          }
+        ],
+        "items": [
+          {
+            "id": 42,
+            "title": "title",
+            "author": "author",
+            "kind": "illustration",
+            "files": [
+              {
+                "path": "${ROOT}/42 - title/42_p0.jpg",
+                "page": 1,
+                "bytes": 15
+              }
+            ],
+            "quality": "",
+            "frames": null,
+            "frame_report": null
+          },
+          {
+            "id": 99,
+            "title": "title",
+            "author": "author",
+            "kind": "illustration",
+            "files": [
+              {
+                "path": "${ROOT}/99.jpg",
+                "page": 1,
+                "bytes": 15
+              }
+            ],
+            "quality": "",
+            "frames": null,
+            "frame_report": null
+          }
+        ],
+        "failures": [
+          {
+            "id": 42,
+            "url": "",
+            "kind": "",
+            "message": "pixiv:SaveResource: resource_forbidden",
+            "cause_kind": "sdk",
+            "cause_reason": "resource_forbidden",
+            "code": "",
+            "path": "",
+            "missing": null,
+            "cause_message": "pixiv:SaveResource: resource_forbidden",
+            "cause_product": "pixiv",
+            "cause_operation": "SaveResource",
+            "retry_safe": false,
+            "retry_has_after": false,
+            "retry_after": "",
+            "original_cause": true
+          }
+        ],
+        "warnings": [],
+        "manifest": [
+          {
+            "path": "${ROOT}",
+            "directory": true
+          },
+          {
+            "path": "${ROOT}/42 - title",
+            "directory": true
+          },
+          {
+            "path": "${ROOT}/42 - title/42_p0.jpg",
+            "directory": false,
+            "body_hex": "73796e7468657469632d696d616765"
+          },
+          {
+            "path": "${ROOT}/99.jpg",
+            "directory": false,
+            "body_hex": "73796e7468657469632d696d616765"
+          }
+        ],
+        "diagnostics": [],
+        "committed": true,
+        "error": "",
+        "error_kind": "",
+        "error_reason": "",
+        "original_error": false,
+        "go_factory_observations": [
+          {
+            "path": "${ROOT}",
+            "template": "{id}",
+            "context_error": "",
+            "requests": [
+              {
+                "ids": [
+                  42,
+                  99
+                ],
+                "download_path": "${ROOT}",
+                "filename_template": "{id}",
+                "directory_template": "",
+                "pages": [],
+                "quality": "original",
+                "format": "gif"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "worker_context_error_preserves_prefix",
+      "ids": [
+        42
+      ],
+      "artworks": [
+        {
+          "id": 42,
+          "kind": "illustration",
+          "title": "title",
+          "author": "author",
+          "author_id": 7,
+          "published_at": "2024-01-02T03:04:05Z",
+          "tags": [
+            " tag/a ",
+            "",
+            "   ",
+            "second"
+          ],
+          "page_count": 2,
+          "pages": [
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/42_p0.jpg?token=fixture#fragment",
+              "page_index": 0,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/jpeg"
+            },
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/42_p0.jpg?token=fixture#fragment",
+              "page_index": 0,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/jpeg",
+              "error": "context_error_only"
+            }
+          ]
+        }
+      ],
+      "filename_template": "{id}",
+      "directory_template": "",
+      "quality": "",
+      "format": "",
+      "pages": [],
+      "expected": {
+        "calls": [
+          {
+            "operation": "artwork",
+            "id": 42
+          },
+          {
+            "operation": "save_ref",
+            "source": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TUgwPSJ9",
+            "payload": "{\"k\":\"artwork\",\"id\":42,\"p\":0}",
+            "path": "${ROOT}/42 - title/42_p0.jpg",
+            "parent_exists": true
+          },
+          {
+            "operation": "save_ref",
+            "source": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2ljQ0k2TVgwPSJ9",
+            "payload": "{\"k\":\"artwork\",\"id\":42,\"p\":1}",
+            "path": "${ROOT}/42 - title/42_p1.jpg",
+            "parent_exists": true
+          }
+        ],
+        "items": [
+          {
+            "id": 42,
+            "title": "title",
+            "author": "author",
+            "kind": "illustration",
+            "files": [
+              {
+                "path": "${ROOT}/42 - title/42_p0.jpg",
+                "page": 1,
+                "bytes": 15
+              }
+            ],
+            "quality": "",
+            "frames": null,
+            "frame_report": null
+          }
+        ],
+        "failures": [],
+        "warnings": [],
+        "manifest": [
+          {
+            "path": "${ROOT}",
+            "directory": true
+          },
+          {
+            "path": "${ROOT}/42 - title",
+            "directory": true
+          },
+          {
+            "path": "${ROOT}/42 - title/42_p0.jpg",
+            "directory": false,
+            "body_hex": "73796e7468657469632d696d616765"
+          }
+        ],
+        "diagnostics": [],
+        "committed": true,
+        "error": "context canceled",
+        "error_kind": "canceled",
+        "error_reason": "",
+        "original_error": true,
+        "go_factory_observations": [
+          {
+            "path": "${ROOT}",
+            "template": "{id}",
+            "context_error": "",
+            "requests": [
+              {
+                "ids": [
+                  42
+                ],
+                "download_path": "${ROOT}",
+                "filename_template": "{id}",
+                "directory_template": "",
+                "pages": [],
+                "quality": "original",
+                "format": "gif"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "ugoira_gif",
+      "ids": [
+        40
+      ],
+      "artworks": [
+        {
+          "id": 40,
+          "kind": "ugoira",
+          "title": "detail 40",
+          "author": "detail author 40",
+          "author_id": 1040,
+          "published_at": "",
+          "tags": null,
+          "page_count": 1,
+          "pages": []
+        }
+      ],
+      "filename_template": "{id}",
+      "directory_template": "",
+      "quality": "",
+      "format": "gif",
+      "pages": [],
+      "ugoira_fixture_case": "gif",
+      "expected": {
+        "calls": [
+          {
+            "operation": "artwork",
+            "id": 40
+          },
+          {
+            "operation": "ugoira_metadata",
+            "id": 40
+          },
+          {
+            "operation": "save_ref",
+            "source": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkV2R2YVhKaElpd2lhV1FpT2pRd0xDSnhJam9pYjNKcFoybHVZV3dpZlE9PSJ9",
+            "payload": "{\"k\":\"ugoira\",\"id\":40,\"q\":\"original\"}",
+            "path": "${ROOT}/40 - detail 40/ugoira-${TEMP}.zip",
+            "parent_exists": true
+          }
+        ],
+        "items": [
+          {
+            "id": 40,
+            "title": "detail 40",
+            "author": "detail author 40",
+            "kind": "ugoira",
+            "files": [
+              {
+                "path": "${ROOT}/40 - detail 40/40.gif",
+                "page": 1,
+                "bytes": 137
+              }
+            ],
+            "quality": "",
+            "frames": null,
+            "frame_report": null
+          }
+        ],
+        "failures": [],
+        "warnings": [],
+        "manifest": [
+          {
+            "path": "${ROOT}",
+            "directory": true
+          },
+          {
+            "path": "${ROOT}/40 - detail 40",
+            "directory": true
+          },
+          {
+            "path": "${ROOT}/40 - detail 40/40.gif",
+            "directory": false,
+            "body_hex": "47494638396104000200b300000000008774bd000437966fc26a549d875cae21306b4b78be446c9f6e50be9150be6e78be5e72ad2878bedc284600000021ff0b4e45545343415045322e30030100000021f90409010000002c000000000400020000040710b8a4da5921020021f904090d0000002c0000000004000200000407501852100b2302003b"
+          }
+        ],
+        "diagnostics": [],
+        "committed": true,
+        "error": "",
+        "error_kind": "",
+        "error_reason": "",
+        "original_error": false,
+        "go_factory_observations": [
+          {
+            "path": "${ROOT}",
+            "template": "{id}",
+            "context_error": "",
+            "requests": [
+              {
+                "ids": [
+                  40
+                ],
+                "download_path": "${ROOT}",
+                "filename_template": "{id}",
+                "directory_template": "",
+                "pages": [],
+                "quality": "original",
+                "format": "gif"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "ugoira_apng",
+      "ids": [
+        40
+      ],
+      "artworks": [
+        {
+          "id": 40,
+          "kind": "ugoira",
+          "title": "detail 40",
+          "author": "detail author 40",
+          "author_id": 1040,
+          "published_at": "",
+          "tags": null,
+          "page_count": 1,
+          "pages": []
+        }
+      ],
+      "filename_template": "{id}",
+      "directory_template": "",
+      "quality": "",
+      "format": "apng",
+      "pages": [],
+      "ugoira_fixture_case": "gif",
+      "expected": {
+        "calls": [
+          {
+            "operation": "artwork",
+            "id": 40
+          },
+          {
+            "operation": "ugoira_metadata",
+            "id": 40
+          },
+          {
+            "operation": "save_ref",
+            "source": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkV2R2YVhKaElpd2lhV1FpT2pRd0xDSnhJam9pYjNKcFoybHVZV3dpZlE9PSJ9",
+            "payload": "{\"k\":\"ugoira\",\"id\":40,\"q\":\"original\"}",
+            "path": "${ROOT}/40 - detail 40/ugoira-${TEMP}.zip",
+            "parent_exists": true
+          }
+        ],
+        "items": [
+          {
+            "id": 40,
+            "title": "detail 40",
+            "author": "detail author 40",
+            "kind": "ugoira",
+            "files": [
+              {
+                "path": "${ROOT}/40 - detail 40/40.apng",
+                "page": 1,
+                "bytes": 288
+              }
+            ],
+            "quality": "",
+            "frames": null,
+            "frame_report": null
+          }
+        ],
+        "failures": [],
+        "warnings": [],
+        "manifest": [
+          {
+            "path": "${ROOT}",
+            "directory": true
+          },
+          {
+            "path": "${ROOT}/40 - detail 40",
+            "directory": true
+          },
+          {
+            "path": "${ROOT}/40 - detail 40/40.apng",
+            "directory": false,
+            "body_hex": "89504e470d0a1a0a0000000d49484452000000040000000208060000007fa87d63000000086163544c0000000200000000f38d93700000001a6663544c0000000000000004000000020000000000000000000103e80000cd5b7c330000002149444154789c6239c1c0c020a2e1d63049a3a25e19c866d4a8d8f71fc4806100000000ffff5ae90457000000064944415403008443066a5db8565b0000001a6663544c0000000100000004000000020000000000000000000100080000ed7fe9a9000000326664415400000002789c002200ddff04000437ff212c3400492432001d08110004446868001a060e0019010f000ffc0600000000ffff95239a6d0000000a666441540000000303005db805155db358e30000000049454e44ae426082"
+          }
+        ],
+        "diagnostics": [],
+        "committed": true,
+        "error": "",
+        "error_kind": "",
+        "error_reason": "",
+        "original_error": false,
+        "go_factory_observations": [
+          {
+            "path": "${ROOT}",
+            "template": "{id}",
+            "context_error": "",
+            "requests": [
+              {
+                "ids": [
+                  40
+                ],
+                "download_path": "${ROOT}",
+                "filename_template": "{id}",
+                "directory_template": "",
+                "pages": [],
+                "quality": "original",
+                "format": "apng"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "ugoira_zip",
+      "ids": [
+        40
+      ],
+      "artworks": [
+        {
+          "id": 40,
+          "kind": "ugoira",
+          "title": "detail 40",
+          "author": "detail author 40",
+          "author_id": 1040,
+          "published_at": "",
+          "tags": null,
+          "page_count": 1,
+          "pages": []
+        }
+      ],
+      "filename_template": "{id}",
+      "directory_template": "",
+      "quality": "",
+      "format": "zip",
+      "pages": [],
+      "ugoira_fixture_case": "gif",
+      "expected": {
+        "calls": [
+          {
+            "operation": "artwork",
+            "id": 40
+          },
+          {
+            "operation": "ugoira_metadata",
+            "id": 40
+          },
+          {
+            "operation": "save_ref",
+            "source": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkV2R2YVhKaElpd2lhV1FpT2pRd0xDSnhJam9pYjNKcFoybHVZV3dpZlE9PSJ9",
+            "payload": "{\"k\":\"ugoira\",\"id\":40,\"q\":\"original\"}",
+            "path": "${ROOT}/40 - detail 40/ugoira-${TEMP}.zip",
+            "parent_exists": true
+          }
+        ],
+        "items": [
+          {
+            "id": 40,
+            "title": "detail 40",
+            "author": "detail author 40",
+            "kind": "ugoira",
+            "files": [
+              {
+                "path": "${ROOT}/40 - detail 40/40.zip",
+                "page": 1,
+                "bytes": 1002
+              }
+            ],
+            "quality": "original",
+            "frames": [
+              {
+                "file": "first.png",
+                "delay": 1
+              },
+              {
+                "file": "second.jpg",
+                "delay": 125
+              }
+            ],
+            "frame_report": {
+              "declared": 2,
+              "actual": 2,
+              "undeclared": null,
+              "missing": null
+            }
+          }
+        ],
+        "failures": [],
+        "warnings": [],
+        "manifest": [
+          {
+            "path": "${ROOT}",
+            "directory": true
+          },
+          {
+            "path": "${ROOT}/40 - detail 40",
+            "directory": true
+          },
+          {
+            "path": "${ROOT}/40 - detail 40/40.zip",
+            "directory": false,
+            "body_hex": "504b0304140008000000000000000000000000000000000000000900000066697273742e706e6789504e470d0a1a0a0000000d49484452000000040000000208060000007fa87d630000002f49444154789c002200ddff04c8000000142846809228787f23000000012878beff23000000230000002300000003008443066af9fc04ac0000000049454e44ae426082504b0708dcb8485a6800000068000000504b0304140008000000000000000000000000000000000000000a0000007365636f6e642e6a7067ffd8ffdb0084000302020302020303030304030304050805050404050a070706080c0a0c0c0b0a0b0b0d0e12100d0e110e0b0b1016101113141515150c0f1718161418121415140103040405040509050509140d0b0d1414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414ffc00011080002000403012200021101031101ffc401a20000010501010101010100000000000000000102030405060708090a0b100002010303020403050504040000017d01020300041105122131410613516107227114328191a1082342b1c11552d1f02433627282090a161718191a25262728292a3435363738393a434445464748494a535455565758595a636465666768696a737475767778797a838485868788898a92939495969798999aa2a3a4a5a6a7a8a9aab2b3b4b5b6b7b8b9bac2c3c4c5c6c7c8c9cad2d3d4d5d6d7d8d9dae1e2e3e4e5e6e7e8e9eaf1f2f3f4f5f6f7f8f9fa0100030101010101010101010000000000000102030405060708090a0b1100020102040403040705040400010277000102031104052131061241510761711322328108144291a1b1c109233352f0156272d10a162434e125f11718191a262728292a35363738393a434445464748494a535455565758595a636465666768696a737475767778797a82838485868788898a92939495969798999aa2a3a4a5a6a7a8a9aab2b3b4b5b6b7b8b9bac2c3c4c5c6c7c8c9cad2d3d4d5d6d7d8d9dae2e3e4e5e6e7e8e9eaf2f3f4f5f6f7f8f9faffda000c03010002110311003f00a1e10d134eb1d02da0b6b0b5b78231848a28555547a0006056d7f67daffcfb43ff007ec552f0d7fc8221ad5afd6aab719b4b448d72ea93783a4dc9fc2bf23fffd9504b07083b156eae8e0200008e020000504b0102140014000800000000000000dcb8485a680000006800000009000000000000000000000000000000000066697273742e706e67504b01021400140008000000000000003b156eae8e0200008e0200000a000000000000000000000000009f0000007365636f6e642e6a7067504b050600000000020002006f000000650300000000"
+          }
+        ],
+        "diagnostics": [],
+        "committed": true,
+        "error": "",
+        "error_kind": "",
+        "error_reason": "",
+        "original_error": false,
+        "go_factory_observations": [
+          {
+            "path": "${ROOT}",
+            "template": "{id}",
+            "context_error": "",
+            "requests": [
+              {
+                "ids": [
+                  40
+                ],
+                "download_path": "${ROOT}",
+                "filename_template": "{id}",
+                "directory_template": "",
+                "pages": [],
+                "quality": "original",
+                "format": "zip"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "ugoira_raw",
+      "ids": [
+        40
+      ],
+      "artworks": [
+        {
+          "id": 40,
+          "kind": "ugoira",
+          "title": "detail 40",
+          "author": "detail author 40",
+          "author_id": 1040,
+          "published_at": "",
+          "tags": null,
+          "page_count": 1,
+          "pages": []
+        }
+      ],
+      "filename_template": "{id}",
+      "directory_template": "",
+      "quality": "",
+      "format": "raw",
+      "pages": [],
+      "ugoira_fixture_case": "gif",
+      "expected": {
+        "calls": [
+          {
+            "operation": "artwork",
+            "id": 40
+          },
+          {
+            "operation": "ugoira_metadata",
+            "id": 40
+          },
+          {
+            "operation": "save_ref",
+            "source": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lkV2R2YVhKaElpd2lhV1FpT2pRd0xDSnhJam9pYjNKcFoybHVZV3dpZlE9PSJ9",
+            "payload": "{\"k\":\"ugoira\",\"id\":40,\"q\":\"original\"}",
+            "path": "${ROOT}/40 - detail 40/ugoira-${TEMP}.zip",
+            "parent_exists": true
+          }
+        ],
+        "items": [
+          {
+            "id": 40,
+            "title": "detail 40",
+            "author": "detail author 40",
+            "kind": "ugoira",
+            "files": [
+              {
+                "path": "${ROOT}/40 - detail 40/40.zip",
+                "page": 1,
+                "bytes": 1002
+              }
+            ],
+            "quality": "original",
+            "frames": [
+              {
+                "file": "first.png",
+                "delay": 1
+              },
+              {
+                "file": "second.jpg",
+                "delay": 125
+              }
+            ],
+            "frame_report": {
+              "declared": 2,
+              "actual": 2,
+              "undeclared": null,
+              "missing": null
+            }
+          }
+        ],
+        "failures": [],
+        "warnings": [],
+        "manifest": [
+          {
+            "path": "${ROOT}",
+            "directory": true
+          },
+          {
+            "path": "${ROOT}/40 - detail 40",
+            "directory": true
+          },
+          {
+            "path": "${ROOT}/40 - detail 40/40.zip",
+            "directory": false,
+            "body_hex": "504b0304140008000000000000000000000000000000000000000900000066697273742e706e6789504e470d0a1a0a0000000d49484452000000040000000208060000007fa87d630000002f49444154789c002200ddff04c8000000142846809228787f23000000012878beff23000000230000002300000003008443066af9fc04ac0000000049454e44ae426082504b0708dcb8485a6800000068000000504b0304140008000000000000000000000000000000000000000a0000007365636f6e642e6a7067ffd8ffdb0084000302020302020303030304030304050805050404050a070706080c0a0c0c0b0a0b0b0d0e12100d0e110e0b0b1016101113141515150c0f1718161418121415140103040405040509050509140d0b0d1414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414ffc00011080002000403012200021101031101ffc401a20000010501010101010100000000000000000102030405060708090a0b100002010303020403050504040000017d01020300041105122131410613516107227114328191a1082342b1c11552d1f02433627282090a161718191a25262728292a3435363738393a434445464748494a535455565758595a636465666768696a737475767778797a838485868788898a92939495969798999aa2a3a4a5a6a7a8a9aab2b3b4b5b6b7b8b9bac2c3c4c5c6c7c8c9cad2d3d4d5d6d7d8d9dae1e2e3e4e5e6e7e8e9eaf1f2f3f4f5f6f7f8f9fa0100030101010101010101010000000000000102030405060708090a0b1100020102040403040705040400010277000102031104052131061241510761711322328108144291a1b1c109233352f0156272d10a162434e125f11718191a262728292a35363738393a434445464748494a535455565758595a636465666768696a737475767778797a82838485868788898a92939495969798999aa2a3a4a5a6a7a8a9aab2b3b4b5b6b7b8b9bac2c3c4c5c6c7c8c9cad2d3d4d5d6d7d8d9dae2e3e4e5e6e7e8e9eaf2f3f4f5f6f7f8f9faffda000c03010002110311003f00a1e10d134eb1d02da0b6b0b5b78231848a28555547a0006056d7f67daffcfb43ff007ec552f0d7fc8221ad5afd6aab719b4b448d72ea93783a4dc9fc2bf23fffd9504b07083b156eae8e0200008e020000504b0102140014000800000000000000dcb8485a680000006800000009000000000000000000000000000000000066697273742e706e67504b01021400140008000000000000003b156eae8e0200008e0200000a000000000000000000000000009f0000007365636f6e642e6a7067504b050600000000020002006f000000650300000000"
+          }
+        ],
+        "diagnostics": [],
+        "committed": true,
+        "error": "",
+        "error_kind": "",
+        "error_reason": "",
+        "original_error": false,
+        "go_factory_observations": [
+          {
+            "path": "${ROOT}",
+            "template": "{id}",
+            "context_error": "",
+            "requests": [
+              {
+                "ids": [
+                  40
+                ],
+                "download_path": "${ROOT}",
+                "filename_template": "{id}",
+                "directory_template": "",
+                "pages": [],
+                "quality": "original",
+                "format": "raw"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "regular_quality_opaque_identity",
+      "ids": [
+        42
+      ],
+      "artworks": [
+        {
+          "id": 42,
+          "kind": "illustration",
+          "title": "title",
+          "author": "author",
+          "author_id": 7,
+          "published_at": "2024-01-02T03:04:05Z",
+          "tags": [
+            " tag/a ",
+            "",
+            "   ",
+            "second"
+          ],
+          "page_count": 1,
+          "pages": [
+            {
+              "url": "https://i.pximg.net/img-original/img/2024/01/02/03/04/05/42_p0.jpg?token=fixture#fragment",
+              "page_index": 0,
+              "body_hex": "73796e7468657469632d696d616765",
+              "mime": "image/png"
+            }
+          ]
+        }
+      ],
+      "filename_template": "{id}",
+      "directory_template": "",
+      "quality": "regular",
+      "format": "",
+      "pages": [],
+      "expected": {
+        "calls": [
+          {
+            "operation": "artwork",
+            "id": 42
+          },
+          {
+            "operation": "save_ref",
+            "source": "eyJ2IjoxLCJwIjoicGl4aXYiLCJkIjoiZXlKcklqb2lZWEowZDI5eWF5SXNJbWxrSWpvME1pd2lkaUk2SW5KbFozVnNZWElpZlE9PSJ9",
+            "payload": "{\"k\":\"artwork\",\"id\":42,\"v\":\"regular\"}",
+            "path": "${ROOT}/42.jpg",
+            "parent_exists": true
+          }
+        ],
+        "items": [
+          {
+            "id": 42,
+            "title": "title",
+            "author": "author",
+            "kind": "illustration",
+            "files": [
+              {
+                "path": "${ROOT}/42.png",
+                "page": 1,
+                "bytes": 15
+              }
+            ],
+            "quality": "",
+            "frames": null,
+            "frame_report": null
+          }
+        ],
+        "failures": [],
+        "warnings": [],
+        "manifest": [
+          {
+            "path": "${ROOT}",
+            "directory": true
+          },
+          {
+            "path": "${ROOT}/42.png",
+            "directory": false,
+            "body_hex": "73796e7468657469632d696d616765"
+          }
+        ],
+        "diagnostics": [],
+        "committed": true,
+        "error": "",
+        "error_kind": "",
+        "error_reason": "",
+        "original_error": false,
+        "go_factory_observations": [
+          {
+            "path": "${ROOT}",
+            "template": "{id}",
+            "context_error": "",
+            "requests": [
+              {
+                "ids": [
+                  42
+                ],
+                "download_path": "${ROOT}",
+                "filename_template": "{id}",
+                "directory_template": "",
+                "pages": [],
+                "quality": "regular",
+                "format": "gif"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,3687 @@
+{
+  "source": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "source_hashes": {
+    "internal/config/settings/store.go": "c5b418cd50e17dce27d4e0f5f499e4d293e0527e07d335e80da9a5fe2711feec",
+    "internal/mcpserver/pixiv/internal/runtime/runtime.go": "a6ca224d1949e7716277677f81f80c1133eb0b91e196dc64e04d29fad2c7fe79",
+    "internal/mcpserver/pixiv/tools/download/download.go": "60cd7f8fcecfe27c185a9df4469dd8eaa0117e87586c047dfdf911e3400a11e5",
+    "internal/media/downloader/downloader.go": "2ea84cf1ab3eaf8bec1b3dc5b2f5162ba48071b0a7ae5e2a950043dcc4867979",
+    "internal/services/pixiv/account/accounts.go": "129d83a89a09bc8a4dbd926ce19e9551fedf048a4c1fb9f71d551ee3089fad91",
+    "internal/services/pixiv/endpoint/artwork/recommended/recommended.go": "3167adbfc47d50d458484a98a5dbe64694d3a39a845014f64ec6e5fac04c3688",
+    "internal/services/pixiv/facade.go": "99523f209e13554508cb7c991e47876efff2d1c5208382843a9969b4e51ee525",
+    "internal/shared/lifecycle/lease.go": "9715a8f3592aa0269b6f85b1a52751f2e0f2947e34fb133836fb1ef07172b381",
+    "sdk/pixiv/map_artwork.go": "45fe0a1d6b081ce2842ce536492b5a431bcf02940d94a29400b06cd8c441bb22",
+    "sdk/pixiv/ops_artwork.go": "f8aa00684b84463c6ba82b18db87d4c2e403a0dcaa048f3c3282f6555fd7445c"
+  },
+  "configuration": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n",
+  "observation_boundaries": [
+    "public cases use actual Register and JSON-RPC schema/typed binding/handler through saved Go Facade with empty owned DB and preserved configuration",
+    "open/config/gate/manager counters are internal Go boundary observations; zero-effects and persisted configuration/accounts have public Rust equivalents",
+    "go_private_selection uses twenty identical entries and genuine SDK recommendation plus injected manager to observe handler count/pages/quality/mode/runtime defaults; this is Go-only and is not a stub-success RPC golden for Rust",
+    "raw request strings retain decimal/exponent/overflow JSON spellings; expected protocol messages are observed, not manually reconstructed"
+  ],
+  "tool": {
+    "description": "Download random artworks from recommendations.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": [
+            "null",
+            "integer"
+          ],
+          "description": "optional artwork count; defaults to 5; explicit value must be from 1 to 20"
+        },
+        "delivery": {
+          "type": "string",
+          "description": "delivery mode: local_path only"
+        },
+        "pages": {
+          "type": "string",
+          "description": "1-based page selection, e.g. 1,3-5; default all pages"
+        },
+        "quality": {
+          "type": "string",
+          "description": "static image quality: original, regular, small, thumb, mini"
+        },
+        "ugoira_mode": {
+          "type": "string",
+          "description": "ugoira output mode: gif, apng, zip, or raw; default gif"
+        }
+      },
+      "additionalProperties": false
+    },
+    "name": "download_random_from_recommendation",
+    "outputSchema": {
+      "type": "object",
+      "required": [
+        "delivery",
+        "items",
+        "failures",
+        "warnings",
+        "files",
+        "text"
+      ],
+      "properties": {
+        "delivery": {
+          "type": "string"
+        },
+        "failures": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "url",
+              "illust_id",
+              "type",
+              "message"
+            ],
+            "properties": {
+              "illust_id": {
+                "type": "integer"
+              },
+              "message": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "illust_id",
+              "title",
+              "author",
+              "path",
+              "file_uri",
+              "mime_type",
+              "size_bytes"
+            ],
+            "properties": {
+              "author": {
+                "type": "string"
+              },
+              "file_uri": {
+                "type": "string"
+              },
+              "frames": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "filename",
+                    "delay_milliseconds"
+                  ],
+                  "properties": {
+                    "delay_milliseconds": {
+                      "type": "integer"
+                    },
+                    "filename": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "illust_id": {
+                "type": "integer"
+              },
+              "mime_type": {
+                "type": "string"
+              },
+              "page": {
+                "type": "integer"
+              },
+              "path": {
+                "type": "string"
+              },
+              "quality": {
+                "type": "string"
+              },
+              "size_bytes": {
+                "type": "integer"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "url",
+              "illust_id",
+              "title",
+              "author",
+              "type",
+              "files"
+            ],
+            "properties": {
+              "author": {
+                "type": "string"
+              },
+              "files": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "illust_id",
+                    "title",
+                    "author",
+                    "path",
+                    "file_uri",
+                    "mime_type",
+                    "size_bytes"
+                  ],
+                  "properties": {
+                    "author": {
+                      "type": "string"
+                    },
+                    "file_uri": {
+                      "type": "string"
+                    },
+                    "frames": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "filename",
+                          "delay_milliseconds"
+                        ],
+                        "properties": {
+                          "delay_milliseconds": {
+                            "type": "integer"
+                          },
+                          "filename": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": false
+                      }
+                    },
+                    "illust_id": {
+                      "type": "integer"
+                    },
+                    "mime_type": {
+                      "type": "string"
+                    },
+                    "page": {
+                      "type": "integer"
+                    },
+                    "path": {
+                      "type": "string"
+                    },
+                    "quality": {
+                      "type": "string"
+                    },
+                    "size_bytes": {
+                      "type": "integer"
+                    },
+                    "title": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "illust_id": {
+                "type": "integer"
+              },
+              "title": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "text": {
+          "type": "string"
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "illust_id",
+              "type",
+              "message"
+            ],
+            "properties": {
+              "illust_id": {
+                "type": "integer"
+              },
+              "message": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "main_download_tool": {
+    "description": "Download artwork IDs or supported Pixiv artwork/user URLs with intelligent storage rules.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "delivery": {
+          "type": "string",
+          "description": "delivery mode: local_path only"
+        },
+        "pages": {
+          "type": "string",
+          "description": "1-based page selection, e.g. 1,3-5; default all pages"
+        },
+        "quality": {
+          "type": "string",
+          "description": "static image quality: original, regular, small, thumb, mini"
+        },
+        "src": {
+          "type": "string",
+          "description": "PID, Pixiv artwork/user URL, or allowed CDN resource URL"
+        },
+        "srcs": {
+          "type": "array",
+          "description": "multiple PID, Pixiv artwork/user URL, or allowed CDN resource URLs",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ugoira_mode": {
+          "type": "string",
+          "description": "ugoira output mode: gif, apng, zip, or raw; default gif"
+        }
+      },
+      "additionalProperties": false
+    },
+    "name": "download",
+    "outputSchema": {
+      "type": "object",
+      "required": [
+        "delivery",
+        "items",
+        "failures",
+        "warnings",
+        "files",
+        "text"
+      ],
+      "properties": {
+        "delivery": {
+          "type": "string"
+        },
+        "failures": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "url",
+              "illust_id",
+              "type",
+              "message"
+            ],
+            "properties": {
+              "illust_id": {
+                "type": "integer"
+              },
+              "message": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "illust_id",
+              "title",
+              "author",
+              "path",
+              "file_uri",
+              "mime_type",
+              "size_bytes"
+            ],
+            "properties": {
+              "author": {
+                "type": "string"
+              },
+              "file_uri": {
+                "type": "string"
+              },
+              "frames": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "filename",
+                    "delay_milliseconds"
+                  ],
+                  "properties": {
+                    "delay_milliseconds": {
+                      "type": "integer"
+                    },
+                    "filename": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "illust_id": {
+                "type": "integer"
+              },
+              "mime_type": {
+                "type": "string"
+              },
+              "page": {
+                "type": "integer"
+              },
+              "path": {
+                "type": "string"
+              },
+              "quality": {
+                "type": "string"
+              },
+              "size_bytes": {
+                "type": "integer"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "url",
+              "illust_id",
+              "title",
+              "author",
+              "type",
+              "files"
+            ],
+            "properties": {
+              "author": {
+                "type": "string"
+              },
+              "files": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "illust_id",
+                    "title",
+                    "author",
+                    "path",
+                    "file_uri",
+                    "mime_type",
+                    "size_bytes"
+                  ],
+                  "properties": {
+                    "author": {
+                      "type": "string"
+                    },
+                    "file_uri": {
+                      "type": "string"
+                    },
+                    "frames": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "filename",
+                          "delay_milliseconds"
+                        ],
+                        "properties": {
+                          "delay_milliseconds": {
+                            "type": "integer"
+                          },
+                          "filename": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": false
+                      }
+                    },
+                    "illust_id": {
+                      "type": "integer"
+                    },
+                    "mime_type": {
+                      "type": "string"
+                    },
+                    "page": {
+                      "type": "integer"
+                    },
+                    "path": {
+                      "type": "string"
+                    },
+                    "quality": {
+                      "type": "string"
+                    },
+                    "size_bytes": {
+                      "type": "integer"
+                    },
+                    "title": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "illust_id": {
+                "type": "integer"
+              },
+              "title": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "text": {
+          "type": "string"
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "illust_id",
+              "type",
+              "message"
+            ],
+            "properties": {
+              "illust_id": {
+                "type": "integer"
+              },
+              "message": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "cases": [
+    {
+      "name": "arguments-omitted",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\"}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Could not retrieve recommendations: pixiv:auth: unauthorized: no pixiv account is authenticated"
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Could not retrieve recommendations: pixiv:auth: unauthorized: no pixiv account is authenticated",
+            "warnings": []
+          },
+          "isError": true
+        }
+      },
+      "open_calls": 1,
+      "config_reads": 1,
+      "config_writes": 0,
+      "gate_acquired": 1,
+      "gate_released": 1,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "arguments-null",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":null}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Could not retrieve recommendations: pixiv:auth: unauthorized: no pixiv account is authenticated"
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Could not retrieve recommendations: pixiv:auth: unauthorized: no pixiv account is authenticated",
+            "warnings": []
+          },
+          "isError": true
+        }
+      },
+      "open_calls": 1,
+      "config_reads": 1,
+      "config_writes": 0,
+      "gate_acquired": 1,
+      "gate_released": 1,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "arguments-empty-object",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Could not retrieve recommendations: pixiv:auth: unauthorized: no pixiv account is authenticated"
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Could not retrieve recommendations: pixiv:auth: unauthorized: no pixiv account is authenticated",
+            "warnings": []
+          },
+          "isError": true
+        }
+      },
+      "open_calls": 1,
+      "config_reads": 1,
+      "config_writes": 0,
+      "gate_acquired": 1,
+      "gate_released": 1,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "arguments-array",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":[]}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": unmarshaling arguments: json: cannot unmarshal array into Go value of type map[string]interface {}"
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "arguments-string",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":\"42\"}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": unmarshaling arguments: json: cannot unmarshal string into Go value of type map[string]interface {}"
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "arguments-boolean",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":true}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": unmarshaling arguments: json: cannot unmarshal bool into Go value of type map[string]interface {}"
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "arguments-number",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":1}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": unmarshaling arguments: json: cannot unmarshal number into Go value of type map[string]interface {}"
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "count-null",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":null}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Could not retrieve recommendations: pixiv:auth: unauthorized: no pixiv account is authenticated"
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Could not retrieve recommendations: pixiv:auth: unauthorized: no pixiv account is authenticated",
+            "warnings": []
+          },
+          "isError": true
+        }
+      },
+      "open_calls": 1,
+      "config_reads": 1,
+      "config_writes": 0,
+      "gate_acquired": 1,
+      "gate_released": 1,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "count-one",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":1}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Could not retrieve recommendations: pixiv:auth: unauthorized: no pixiv account is authenticated"
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Could not retrieve recommendations: pixiv:auth: unauthorized: no pixiv account is authenticated",
+            "warnings": []
+          },
+          "isError": true
+        }
+      },
+      "open_calls": 1,
+      "config_reads": 1,
+      "config_writes": 0,
+      "gate_acquired": 1,
+      "gate_released": 1,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "count-twenty",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":20}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Could not retrieve recommendations: pixiv:auth: unauthorized: no pixiv account is authenticated"
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Could not retrieve recommendations: pixiv:auth: unauthorized: no pixiv account is authenticated",
+            "warnings": []
+          },
+          "isError": true
+        }
+      },
+      "open_calls": 1,
+      "config_reads": 1,
+      "config_writes": 0,
+      "gate_acquired": 1,
+      "gate_released": 1,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "count-zero",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":0}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Error: count must be an integer from 1 to 20"
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Error: count must be an integer from 1 to 20",
+            "warnings": []
+          },
+          "isError": true
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "count-negative",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":-1}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Error: count must be an integer from 1 to 20"
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Error: count must be an integer from 1 to 20",
+            "warnings": []
+          },
+          "isError": true
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "count-twenty-one",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":21}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Error: count must be an integer from 1 to 20"
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Error: count must be an integer from 1 to 20",
+            "warnings": []
+          },
+          "isError": true
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "count-max-int",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":9223372036854775807}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: json: cannot unmarshal number 9223372036854776000 into Go struct field downloadRandomIn.count of type int"
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "count-overflow-positive",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":9223372036854775808}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: json: cannot unmarshal number 9223372036854776000 into Go struct field downloadRandomIn.count of type int"
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "count-min-int",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":-9223372036854775808}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: json: cannot unmarshal number -9223372036854776000 into Go struct field downloadRandomIn.count of type int"
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "count-overflow-negative",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":-9223372036854775809}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: json: cannot unmarshal number -9223372036854776000 into Go struct field downloadRandomIn.count of type int"
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "count-large-unsigned",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":18446744073709551615}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: json: cannot unmarshal number 18446744073709552000 into Go struct field downloadRandomIn.count of type int"
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "count-huge-float",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":1e100}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: json: cannot unmarshal number 1e+100 into Go struct field downloadRandomIn.count of type int"
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "count-fraction",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":1.5}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: validating /properties/count: type: 1.5 has type \"number\", want one of \"null, integer\""
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "count-decimal-integer",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":1.0}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Could not retrieve recommendations: pixiv:auth: unauthorized: no pixiv account is authenticated"
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Could not retrieve recommendations: pixiv:auth: unauthorized: no pixiv account is authenticated",
+            "warnings": []
+          },
+          "isError": true
+        }
+      },
+      "open_calls": 1,
+      "config_reads": 1,
+      "config_writes": 0,
+      "gate_acquired": 1,
+      "gate_released": 1,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "count-exponent-integer",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":1e0}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Could not retrieve recommendations: pixiv:auth: unauthorized: no pixiv account is authenticated"
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Could not retrieve recommendations: pixiv:auth: unauthorized: no pixiv account is authenticated",
+            "warnings": []
+          },
+          "isError": true
+        }
+      },
+      "open_calls": 1,
+      "config_reads": 1,
+      "config_writes": 0,
+      "gate_acquired": 1,
+      "gate_released": 1,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "count-negative-zero",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":-0}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Error: count must be an integer from 1 to 20"
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Error: count must be an integer from 1 to 20",
+            "warnings": []
+          },
+          "isError": true
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "count-string",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":\"5\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: validating /properties/count: type: 5 has type \"string\", want one of \"null, integer\""
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "count-boolean",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":true}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: validating /properties/count: type: true has type \"boolean\", want one of \"null, integer\""
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "count-object",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":{}}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: validating /properties/count: type: map[] has type \"object\", want one of \"null, integer\""
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "count-array",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":[]}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: validating /properties/count: type: [] has type \"array\", want one of \"null, integer\""
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "delivery-first",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"delivery\":\"image_content\",\"count\":0,\"pages\":\"0\",\"quality\":\"large\",\"ugoira_mode\":\"webm\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Error: delivery supports only \"local_path\"."
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Error: delivery supports only \"local_path\".",
+            "warnings": []
+          },
+          "isError": true
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "count-before-pages",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":0,\"pages\":\"0\",\"quality\":\"large\",\"ugoira_mode\":\"webm\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Error: count must be an integer from 1 to 20"
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Error: count must be an integer from 1 to 20",
+            "warnings": []
+          },
+          "isError": true
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "pages-before-quality",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":1,\"pages\":\"0\",\"quality\":\"large\",\"ugoira_mode\":\"webm\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Error: invalid page number \"0\""
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Error: invalid page number \"0\"",
+            "warnings": []
+          },
+          "isError": true
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "quality-before-ugoira",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":1,\"quality\":\"large\",\"ugoira_mode\":\"webm\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Error: quality must be one of original, regular, small, thumb, mini"
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Error: quality must be one of original, regular, small, thumb, mini",
+            "warnings": []
+          },
+          "isError": true
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "mode-invalid",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":1,\"ugoira_mode\":\"webm\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Error: ugoira format must be one of gif, apng, zip, raw"
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Error: ugoira format must be one of gif, apng, zip, raw",
+            "warnings": []
+          },
+          "isError": true
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "delivery-case-sensitive",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"delivery\":\"LOCAL_PATH\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Error: delivery supports only \"local_path\"."
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Error: delivery supports only \"local_path\".",
+            "warnings": []
+          },
+          "isError": true
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "quality-case-sensitive",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"quality\":\"ORIGINAL\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Error: quality must be one of original, regular, small, thumb, mini"
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Error: quality must be one of original, regular, small, thumb, mini",
+            "warnings": []
+          },
+          "isError": true
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "mode-case-sensitive",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"ugoira_mode\":\"GIF\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Error: ugoira format must be one of gif, apng, zip, raw"
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Error: ugoira format must be one of gif, apng, zip, raw",
+            "warnings": []
+          },
+          "isError": true
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "pages-empty-segment",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"pages\":\"1,,2\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Error: page selection contains an empty entry"
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Error: page selection contains an empty entry",
+            "warnings": []
+          },
+          "isError": true
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "pages-descending",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"pages\":\"3-1\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Error: invalid page range \"3-1\""
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Error: invalid page range \"3-1\"",
+            "warnings": []
+          },
+          "isError": true
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "pages-overflow",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"pages\":\"9223372036854775808\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Error: invalid page number \"9223372036854775808\""
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Error: invalid page number \"9223372036854775808\"",
+            "warnings": []
+          },
+          "isError": true
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "blank-options",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"pages\":\" \\t\\n \",\"quality\":\" \\t\\n \",\"ugoira_mode\":\" \\t\\n \",\"delivery\":\" \\t\\n \"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Could not retrieve recommendations: pixiv:auth: unauthorized: no pixiv account is authenticated"
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Could not retrieve recommendations: pixiv:auth: unauthorized: no pixiv account is authenticated",
+            "warnings": []
+          },
+          "isError": true
+        }
+      },
+      "open_calls": 1,
+      "config_reads": 1,
+      "config_writes": 0,
+      "gate_acquired": 1,
+      "gate_released": 1,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "trimmed-options",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"pages\":\" 3,1-2,2 \",\"quality\":\" regular \",\"ugoira_mode\":\" raw \",\"delivery\":\" local_path \"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Could not retrieve recommendations: pixiv:auth: unauthorized: no pixiv account is authenticated"
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Could not retrieve recommendations: pixiv:auth: unauthorized: no pixiv account is authenticated",
+            "warnings": []
+          },
+          "isError": true
+        }
+      },
+      "open_calls": 1,
+      "config_reads": 1,
+      "config_writes": 0,
+      "gate_acquired": 1,
+      "gate_released": 1,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "unicode-trim-options",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"pages\":\"\\u00a01\\u00a0\",\"quality\":\"\\u00a0original\\u00a0\",\"ugoira_mode\":\"\\u00a0gif\\u00a0\",\"delivery\":\"\\u00a0local_path\\u00a0\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Could not retrieve recommendations: pixiv:auth: unauthorized: no pixiv account is authenticated"
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Could not retrieve recommendations: pixiv:auth: unauthorized: no pixiv account is authenticated",
+            "warnings": []
+          },
+          "isError": true
+        }
+      },
+      "open_calls": 1,
+      "config_reads": 1,
+      "config_writes": 0,
+      "gate_acquired": 1,
+      "gate_released": 1,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "binding-before-delivery",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":9223372036854775808,\"delivery\":\"image_content\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: json: cannot unmarshal number 9223372036854776000 into Go struct field downloadRandomIn.count of type int"
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "schema-before-delivery",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":\"5\",\"delivery\":\"image_content\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: validating /properties/count: type: 5 has type \"string\", want one of \"null, integer\""
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "unknown-src",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"src\":\"owned\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: unexpected additional properties [\"src\"]"
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "unknown-srcs",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"srcs\":\"owned\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: unexpected additional properties [\"srcs\"]"
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "unknown-cursor",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"cursor\":\"owned\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: unexpected additional properties [\"cursor\"]"
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "unknown-filter",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"filter\":\"owned\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: unexpected additional properties [\"filter\"]"
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "unknown-account",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"account\":\"owned\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: unexpected additional properties [\"account\"]"
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "unknown-user_id",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"user_id\":\"owned\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: unexpected additional properties [\"user_id\"]"
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "unknown-page",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"page\":\"owned\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: unexpected additional properties [\"page\"]"
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "unknown-limit",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"limit\":\"owned\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: unexpected additional properties [\"limit\"]"
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "unknown-seed",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"seed\":\"owned\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: unexpected additional properties [\"seed\"]"
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "unknown-content_type",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"content_type\":\"owned\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: unexpected additional properties [\"content_type\"]"
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "unknown-download_path",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"download_path\":\"owned\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: unexpected additional properties [\"download_path\"]"
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "unknown-filename_template",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"filename_template\":\"owned\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: unexpected additional properties [\"filename_template\"]"
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "unknown-directory_template",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"directory_template\":\"owned\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: unexpected additional properties [\"directory_template\"]"
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "unknown-unknown",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"unknown\":\"owned\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: unexpected additional properties [\"unknown\"]"
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "pages-null",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"pages\":null}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: validating /properties/pages: type: \u003cinvalid reflect.Value\u003e has type \"null\", want \"string\""
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "pages-number",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"pages\":1}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: validating /properties/pages: type: 1 has type \"integer\", want \"string\""
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "pages-boolean",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"pages\":true}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: validating /properties/pages: type: true has type \"boolean\", want \"string\""
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "pages-array",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"pages\":[]}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: validating /properties/pages: type: [] has type \"array\", want \"string\""
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "pages-object",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"pages\":{}}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: validating /properties/pages: type: map[] has type \"object\", want \"string\""
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "quality-null",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"quality\":null}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: validating /properties/quality: type: \u003cinvalid reflect.Value\u003e has type \"null\", want \"string\""
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "quality-number",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"quality\":1}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: validating /properties/quality: type: 1 has type \"integer\", want \"string\""
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "quality-boolean",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"quality\":true}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: validating /properties/quality: type: true has type \"boolean\", want \"string\""
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "quality-array",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"quality\":[]}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: validating /properties/quality: type: [] has type \"array\", want \"string\""
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "quality-object",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"quality\":{}}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: validating /properties/quality: type: map[] has type \"object\", want \"string\""
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "ugoira_mode-null",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"ugoira_mode\":null}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: validating /properties/ugoira_mode: type: \u003cinvalid reflect.Value\u003e has type \"null\", want \"string\""
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "ugoira_mode-number",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"ugoira_mode\":1}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: validating /properties/ugoira_mode: type: 1 has type \"integer\", want \"string\""
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "ugoira_mode-boolean",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"ugoira_mode\":true}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: validating /properties/ugoira_mode: type: true has type \"boolean\", want \"string\""
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "ugoira_mode-array",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"ugoira_mode\":[]}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: validating /properties/ugoira_mode: type: [] has type \"array\", want \"string\""
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "ugoira_mode-object",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"ugoira_mode\":{}}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: validating /properties/ugoira_mode: type: map[] has type \"object\", want \"string\""
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "delivery-null",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"delivery\":null}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: validating /properties/delivery: type: \u003cinvalid reflect.Value\u003e has type \"null\", want \"string\""
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "delivery-number",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"delivery\":1}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: validating /properties/delivery: type: 1 has type \"integer\", want \"string\""
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "delivery-boolean",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"delivery\":true}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: validating /properties/delivery: type: true has type \"boolean\", want \"string\""
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "delivery-array",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"delivery\":[]}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: validating /properties/delivery: type: [] has type \"array\", want \"string\""
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    },
+    {
+      "name": "delivery-object",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"delivery\":{}}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "error": {
+          "code": -32602,
+          "message": "invalid params: validating \"arguments\": validating root: validating /properties/delivery: type: map[] has type \"object\", want \"string\""
+        }
+      },
+      "open_calls": 0,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 0,
+      "manager_default_reads": 0,
+      "list_calls": 0,
+      "lease_closes": 0,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n"
+    }
+  ],
+  "go_private_selection": [
+    {
+      "name": "omitted-defaults",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Download completed; delivery: local_path."
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Download completed; delivery: local_path.",
+            "warnings": []
+          }
+        }
+      },
+      "open_calls": 1,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 1,
+      "manager_default_reads": 6,
+      "list_calls": 1,
+      "lease_closes": 1,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n",
+      "selection": {
+        "count": 5,
+        "ids": [
+          42,
+          42,
+          42,
+          42,
+          42
+        ],
+        "pages": null,
+        "quality": "original",
+        "ugoira_format": "gif",
+        "download_path": " configured path ",
+        "filename_template": " configured filename ",
+        "directory_template": " configured directory "
+      }
+    },
+    {
+      "name": "null-count-default",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":null}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Download completed; delivery: local_path."
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Download completed; delivery: local_path.",
+            "warnings": []
+          }
+        }
+      },
+      "open_calls": 1,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 1,
+      "manager_default_reads": 6,
+      "list_calls": 1,
+      "lease_closes": 1,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n",
+      "selection": {
+        "count": 5,
+        "ids": [
+          42,
+          42,
+          42,
+          42,
+          42
+        ],
+        "pages": null,
+        "quality": "original",
+        "ugoira_format": "gif",
+        "download_path": " configured path ",
+        "filename_template": " configured filename ",
+        "directory_template": " configured directory "
+      }
+    },
+    {
+      "name": "explicit-one",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":1}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Download completed; delivery: local_path."
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Download completed; delivery: local_path.",
+            "warnings": []
+          }
+        }
+      },
+      "open_calls": 1,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 1,
+      "manager_default_reads": 6,
+      "list_calls": 1,
+      "lease_closes": 1,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n",
+      "selection": {
+        "count": 1,
+        "ids": [
+          42
+        ],
+        "pages": null,
+        "quality": "original",
+        "ugoira_format": "gif",
+        "download_path": " configured path ",
+        "filename_template": " configured filename ",
+        "directory_template": " configured directory "
+      }
+    },
+    {
+      "name": "explicit-twenty",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":20}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Download completed; delivery: local_path."
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Download completed; delivery: local_path.",
+            "warnings": []
+          }
+        }
+      },
+      "open_calls": 1,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 1,
+      "manager_default_reads": 6,
+      "list_calls": 1,
+      "lease_closes": 1,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n",
+      "selection": {
+        "count": 20,
+        "ids": [
+          42,
+          42,
+          42,
+          42,
+          42,
+          42,
+          42,
+          42,
+          42,
+          42,
+          42,
+          42,
+          42,
+          42,
+          42,
+          42,
+          42,
+          42,
+          42,
+          42
+        ],
+        "pages": null,
+        "quality": "original",
+        "ugoira_format": "gif",
+        "download_path": " configured path ",
+        "filename_template": " configured filename ",
+        "directory_template": " configured directory "
+      }
+    },
+    {
+      "name": "decimal-integer-binding",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":1.0}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Download completed; delivery: local_path."
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Download completed; delivery: local_path.",
+            "warnings": []
+          }
+        }
+      },
+      "open_calls": 1,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 1,
+      "manager_default_reads": 6,
+      "list_calls": 1,
+      "lease_closes": 1,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n",
+      "selection": {
+        "count": 1,
+        "ids": [
+          42
+        ],
+        "pages": null,
+        "quality": "original",
+        "ugoira_format": "gif",
+        "download_path": " configured path ",
+        "filename_template": " configured filename ",
+        "directory_template": " configured directory "
+      }
+    },
+    {
+      "name": "exponent-integer-binding",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"count\":1e0}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Download completed; delivery: local_path."
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Download completed; delivery: local_path.",
+            "warnings": []
+          }
+        }
+      },
+      "open_calls": 1,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 1,
+      "manager_default_reads": 6,
+      "list_calls": 1,
+      "lease_closes": 1,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n",
+      "selection": {
+        "count": 1,
+        "ids": [
+          42
+        ],
+        "pages": null,
+        "quality": "original",
+        "ugoira_format": "gif",
+        "download_path": " configured path ",
+        "filename_template": " configured filename ",
+        "directory_template": " configured directory "
+      }
+    },
+    {
+      "name": "blank-defaults",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"pages\":\" \\t\\n \",\"quality\":\" \\t\\n \",\"ugoira_mode\":\" \\t\\n \",\"delivery\":\" \\t\\n \"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Download completed; delivery: local_path."
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Download completed; delivery: local_path.",
+            "warnings": []
+          }
+        }
+      },
+      "open_calls": 1,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 1,
+      "manager_default_reads": 6,
+      "list_calls": 1,
+      "lease_closes": 1,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n",
+      "selection": {
+        "count": 5,
+        "ids": [
+          42,
+          42,
+          42,
+          42,
+          42
+        ],
+        "pages": null,
+        "quality": "original",
+        "ugoira_format": "gif",
+        "download_path": " configured path ",
+        "filename_template": " configured filename ",
+        "directory_template": " configured directory "
+      }
+    },
+    {
+      "name": "trimmed-page-set",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"pages\":\" 3,1-2,2 \",\"quality\":\" regular \",\"ugoira_mode\":\" raw \",\"delivery\":\" local_path \"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Download completed; delivery: local_path."
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Download completed; delivery: local_path.",
+            "warnings": []
+          }
+        }
+      },
+      "open_calls": 1,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 1,
+      "manager_default_reads": 6,
+      "list_calls": 1,
+      "lease_closes": 1,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n",
+      "selection": {
+        "count": 5,
+        "ids": [
+          42,
+          42,
+          42,
+          42,
+          42
+        ],
+        "pages": [
+          1,
+          2,
+          3
+        ],
+        "quality": "regular",
+        "ugoira_format": "raw",
+        "download_path": " configured path ",
+        "filename_template": " configured filename ",
+        "directory_template": " configured directory "
+      }
+    },
+    {
+      "name": "unicode-trim",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"pages\":\"\\u00a01\\u00a0\",\"quality\":\"\\u00a0original\\u00a0\",\"ugoira_mode\":\"\\u00a0gif\\u00a0\",\"delivery\":\"\\u00a0local_path\\u00a0\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Download completed; delivery: local_path."
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Download completed; delivery: local_path.",
+            "warnings": []
+          }
+        }
+      },
+      "open_calls": 1,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 1,
+      "manager_default_reads": 6,
+      "list_calls": 1,
+      "lease_closes": 1,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n",
+      "selection": {
+        "count": 5,
+        "ids": [
+          42,
+          42,
+          42,
+          42,
+          42
+        ],
+        "pages": [
+          1
+        ],
+        "quality": "original",
+        "ugoira_format": "gif",
+        "download_path": " configured path ",
+        "filename_template": " configured filename ",
+        "directory_template": " configured directory "
+      }
+    },
+    {
+      "name": "quality-original",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"quality\":\"original\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Download completed; delivery: local_path."
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Download completed; delivery: local_path.",
+            "warnings": []
+          }
+        }
+      },
+      "open_calls": 1,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 1,
+      "manager_default_reads": 6,
+      "list_calls": 1,
+      "lease_closes": 1,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n",
+      "selection": {
+        "count": 5,
+        "ids": [
+          42,
+          42,
+          42,
+          42,
+          42
+        ],
+        "pages": null,
+        "quality": "original",
+        "ugoira_format": "gif",
+        "download_path": " configured path ",
+        "filename_template": " configured filename ",
+        "directory_template": " configured directory "
+      }
+    },
+    {
+      "name": "quality-regular",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"quality\":\"regular\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Download completed; delivery: local_path."
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Download completed; delivery: local_path.",
+            "warnings": []
+          }
+        }
+      },
+      "open_calls": 1,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 1,
+      "manager_default_reads": 6,
+      "list_calls": 1,
+      "lease_closes": 1,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n",
+      "selection": {
+        "count": 5,
+        "ids": [
+          42,
+          42,
+          42,
+          42,
+          42
+        ],
+        "pages": null,
+        "quality": "regular",
+        "ugoira_format": "gif",
+        "download_path": " configured path ",
+        "filename_template": " configured filename ",
+        "directory_template": " configured directory "
+      }
+    },
+    {
+      "name": "quality-small",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"quality\":\"small\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Download completed; delivery: local_path."
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Download completed; delivery: local_path.",
+            "warnings": []
+          }
+        }
+      },
+      "open_calls": 1,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 1,
+      "manager_default_reads": 6,
+      "list_calls": 1,
+      "lease_closes": 1,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n",
+      "selection": {
+        "count": 5,
+        "ids": [
+          42,
+          42,
+          42,
+          42,
+          42
+        ],
+        "pages": null,
+        "quality": "small",
+        "ugoira_format": "gif",
+        "download_path": " configured path ",
+        "filename_template": " configured filename ",
+        "directory_template": " configured directory "
+      }
+    },
+    {
+      "name": "quality-thumb",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"quality\":\"thumb\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Download completed; delivery: local_path."
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Download completed; delivery: local_path.",
+            "warnings": []
+          }
+        }
+      },
+      "open_calls": 1,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 1,
+      "manager_default_reads": 6,
+      "list_calls": 1,
+      "lease_closes": 1,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n",
+      "selection": {
+        "count": 5,
+        "ids": [
+          42,
+          42,
+          42,
+          42,
+          42
+        ],
+        "pages": null,
+        "quality": "thumb",
+        "ugoira_format": "gif",
+        "download_path": " configured path ",
+        "filename_template": " configured filename ",
+        "directory_template": " configured directory "
+      }
+    },
+    {
+      "name": "quality-mini",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"quality\":\"mini\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Download completed; delivery: local_path."
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Download completed; delivery: local_path.",
+            "warnings": []
+          }
+        }
+      },
+      "open_calls": 1,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 1,
+      "manager_default_reads": 6,
+      "list_calls": 1,
+      "lease_closes": 1,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n",
+      "selection": {
+        "count": 5,
+        "ids": [
+          42,
+          42,
+          42,
+          42,
+          42
+        ],
+        "pages": null,
+        "quality": "mini",
+        "ugoira_format": "gif",
+        "download_path": " configured path ",
+        "filename_template": " configured filename ",
+        "directory_template": " configured directory "
+      }
+    },
+    {
+      "name": "mode-gif",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"ugoira_mode\":\"gif\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Download completed; delivery: local_path."
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Download completed; delivery: local_path.",
+            "warnings": []
+          }
+        }
+      },
+      "open_calls": 1,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 1,
+      "manager_default_reads": 6,
+      "list_calls": 1,
+      "lease_closes": 1,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n",
+      "selection": {
+        "count": 5,
+        "ids": [
+          42,
+          42,
+          42,
+          42,
+          42
+        ],
+        "pages": null,
+        "quality": "original",
+        "ugoira_format": "gif",
+        "download_path": " configured path ",
+        "filename_template": " configured filename ",
+        "directory_template": " configured directory "
+      }
+    },
+    {
+      "name": "mode-apng",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"ugoira_mode\":\"apng\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Download completed; delivery: local_path."
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Download completed; delivery: local_path.",
+            "warnings": []
+          }
+        }
+      },
+      "open_calls": 1,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 1,
+      "manager_default_reads": 6,
+      "list_calls": 1,
+      "lease_closes": 1,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n",
+      "selection": {
+        "count": 5,
+        "ids": [
+          42,
+          42,
+          42,
+          42,
+          42
+        ],
+        "pages": null,
+        "quality": "original",
+        "ugoira_format": "apng",
+        "download_path": " configured path ",
+        "filename_template": " configured filename ",
+        "directory_template": " configured directory "
+      }
+    },
+    {
+      "name": "mode-zip",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"ugoira_mode\":\"zip\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Download completed; delivery: local_path."
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Download completed; delivery: local_path.",
+            "warnings": []
+          }
+        }
+      },
+      "open_calls": 1,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 1,
+      "manager_default_reads": 6,
+      "list_calls": 1,
+      "lease_closes": 1,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n",
+      "selection": {
+        "count": 5,
+        "ids": [
+          42,
+          42,
+          42,
+          42,
+          42
+        ],
+        "pages": null,
+        "quality": "original",
+        "ugoira_format": "zip",
+        "download_path": " configured path ",
+        "filename_template": " configured filename ",
+        "directory_template": " configured directory "
+      }
+    },
+    {
+      "name": "mode-raw",
+      "request": "{\"jsonrpc\":\"2.0\",\"id\":7,\"method\":\"tools/call\",\"params\":{\"name\":\"download_random_from_recommendation\",\"arguments\":{\"ugoira_mode\":\"raw\"}}}",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Download completed; delivery: local_path."
+            }
+          ],
+          "structuredContent": {
+            "delivery": "local_path",
+            "failures": [],
+            "files": [],
+            "items": [],
+            "text": "Download completed; delivery: local_path.",
+            "warnings": []
+          }
+        }
+      },
+      "open_calls": 1,
+      "config_reads": 0,
+      "config_writes": 0,
+      "gate_acquired": 0,
+      "gate_released": 0,
+      "execute_calls": 0,
+      "manager_calls": 1,
+      "manager_default_reads": 6,
+      "list_calls": 1,
+      "lease_closes": 1,
+      "account_count_after": 0,
+      "config_after": "# preserve fixture comment\n[account_pool]\nenabled=true\nstrategy='round_robin'\n[unrelated]\nkeep='untouched'\n",
+      "selection": {
+        "count": 5,
+        "ids": [
+          42,
+          42,
+          42,
+          42,
+          42
+        ],
+        "pages": null,
+        "quality": "original",
+        "ugoira_format": "raw",
+        "download_path": " configured path ",
+        "filename_template": " configured filename ",
+        "directory_template": " configured directory "
+      }
+    }
+  ]
+}

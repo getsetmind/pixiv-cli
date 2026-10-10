@@ -249,6 +249,29 @@ fn failure(url: String, kind: &str, error: SchedulerError) -> DownloadFailure {
     }
 }
 
+pub async fn download_artworks(
+    context: &Context,
+    client: &(impl DownloadSaveClient + ?Sized),
+    ids: &[i64],
+    request: &DownloadRequest,
+) -> DownloadAttempt {
+    let ids = ids
+        .iter()
+        .copied()
+        .filter(|id| *id > 0)
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect();
+    let mut request = request.clone();
+    if request.quality.is_empty() {
+        request.quality = "original".into();
+    }
+    if request.ugoira_format.is_empty() {
+        request.ugoira_format = "gif".into();
+    }
+    static_artwork::download_batch(context, client, ids, &request, &NativeAnimationEncoder).await
+}
+
 pub async fn download_sources(
     context: &Context,
     client: &(impl DownloadSaveClient + ?Sized),

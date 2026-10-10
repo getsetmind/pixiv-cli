@@ -32,6 +32,92 @@ struct Write {
     repeat: usize,
 }
 
+struct ChildCleanup<'a> {
+    context: &'a Context,
+    release: Option<&'a Path>,
+    active: bool,
+}
+impl ChildCleanup<'_> {
+    fn disarm(mut self) {
+        self.active = false;
+    }
+}
+impl Drop for ChildCleanup<'_> {
+    fn drop(&mut self) {
+        if self.active {
+            if let Some(release) = self.release {
+                let _ = fs::write(release, b"release");
+            }
+            self.context.cancel();
+        }
+    }
+}
+fn complete_pid_record(path: &Path) -> std::io::Result<i32> {
+    let deadline = Instant::now() + Duration::from_secs(3);
+    loop {
+        match fs::read_to_string(path) {
+            Ok(text) => {
+                if let Some(record) = text.strip_suffix('\n') {
+                    return record
+                        .parse::<i32>()
+                        .ok()
+                        .filter(|pid| *pid > 0)
+                        .ok_or_else(|| {
+                            std::io::Error::new(
+                                std::io::ErrorKind::InvalidData,
+                                "invalid complete fixture PID record",
+                            )
+                        });
+                }
+            }
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+            Err(error) => return Err(error),
+        }
+        if Instant::now() >= deadline {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::TimedOut,
+                "fixture PID record did not complete",
+            ));
+        }
+        thread::sleep(Duration::from_millis(1));
+    }
+}
+#[test]
+fn pid_handshake_waits_for_completion_after_empty_and_parseable_partial_records() {
+    for initial in ["", "4"] {
+        let directory = tempfile::tempdir().unwrap();
+        let marker = directory.path().join("pid");
+        fs::write(&marker, initial).unwrap();
+        assert_eq!(
+            initial.parse::<i32>().ok(),
+            if initial.is_empty() { None } else { Some(4) }
+        );
+        thread::scope(|scope| {
+            scope.spawn(|| {
+                thread::sleep(Duration::from_millis(20));
+                fs::write(&marker, "42\n").unwrap();
+            });
+            assert_eq!(complete_pid_record(&marker).unwrap(), 42);
+        });
+    }
+    let directory = tempfile::tempdir().unwrap();
+    let release = directory.path().join("release");
+    let context = Context::new();
+    assert!(
+        std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            let _cleanup = ChildCleanup {
+                context: &context,
+                release: Some(&release),
+                active: true,
+            };
+            panic!("owned observer failure");
+        }))
+        .is_err()
+    );
+    assert!(context.error().is_some());
+    assert_eq!(fs::read(&release).unwrap(), b"release");
+}
+
 fn script(directory: &Path, body: &str) -> std::path::PathBuf {
     let path = directory.join("trusted-merged-child");
     fs::write(&path, format!("#!/bin/sh\n{body}\n")).unwrap();
@@ -138,7 +224,7 @@ fn combined_output_cancel_retains_bytes_killed_exit_and_reaps_child() {
     let marker = directory.path().join("started");
     let executable = script(
         directory.path(),
-        "printf '\\000\\377'; printf '\\200err' >&2; printf '%s' \"$$\" > \"$1\"; while :; do :; done",
+        "printf '\\000\\377'; printf '\\200err' >&2; printf '%s\\n' \"$$\" > \"$1\"; while :; do :; done",
     );
     let context = Context::new();
     thread::scope(|scope| {
@@ -150,6 +236,11 @@ fn combined_output_cancel_retains_bytes_killed_exit_and_reaps_child() {
                 ProcessStdio::Combined,
             )
         });
+        let cleanup = ChildCleanup {
+            context: &context,
+            release: None,
+            active: true,
+        };
         let limit = Instant::now() + Duration::from_secs(3);
         while !marker.exists() {
             if Instant::now() >= limit {
@@ -158,7 +249,7 @@ fn combined_output_cancel_retains_bytes_killed_exit_and_reaps_child() {
             }
             thread::sleep(Duration::from_millis(1));
         }
-        let pid: i32 = fs::read_to_string(&marker).unwrap().parse().unwrap();
+        let pid = complete_pid_record(&marker).unwrap();
         context.cancel();
         let error = handle.join().unwrap().unwrap_err();
         assert_eq!(error.to_string(), "signal: killed");
@@ -172,6 +263,7 @@ fn combined_output_cancel_retains_bytes_killed_exit_and_reaps_child() {
             std::io::Error::last_os_error().raw_os_error(),
             Some(libc::ESRCH)
         );
+        cleanup.disarm();
     });
 }
 
@@ -184,7 +276,7 @@ fn combined_pipe_drains_descendant_bytes_after_direct_child_exit_and_cancellatio
     let parent = directory.path().join("parent");
     let executable = script(
         directory.path(),
-        "printf '%s' \"$$\" > \"$3\"; (printf ready > \"$1\"; while [ ! -f \"$2\" ]; do :; done; printf tail; printf diagnostic >&2) &\nexit 0",
+        "printf '%s\\n' \"$$\" > \"$3\"; (printf ready > \"$1\"; while [ ! -f \"$2\" ]; do :; done; printf tail; printf diagnostic >&2) &\nexit 0",
     );
     let context = Context::new();
     thread::scope(|scope| {
@@ -200,6 +292,11 @@ fn combined_pipe_drains_descendant_bytes_after_direct_child_exit_and_cancellatio
                 ProcessStdio::Combined,
             )
         });
+        let cleanup = ChildCleanup {
+            context: &context,
+            release: Some(&release),
+            active: true,
+        };
         let limit = Instant::now() + Duration::from_secs(3);
         while !ready.exists() {
             if Instant::now() >= limit {
@@ -209,7 +306,7 @@ fn combined_pipe_drains_descendant_bytes_after_direct_child_exit_and_cancellatio
             }
             thread::sleep(Duration::from_millis(1));
         }
-        let pid: i32 = fs::read_to_string(&parent).unwrap().parse().unwrap();
+        let pid = complete_pid_record(&parent).unwrap();
         while unsafe { libc::kill(pid, 0) } == 0 {
             if Instant::now() >= limit {
                 fs::write(&release, b"release").unwrap();
@@ -227,6 +324,7 @@ fn combined_pipe_drains_descendant_bytes_after_direct_child_exit_and_cancellatio
         let output = handle.join().unwrap().unwrap();
         assert_eq!(output.stdout, b"taildiagnostic");
         assert!(output.stderr.is_empty());
+        cleanup.disarm();
     });
 }
 

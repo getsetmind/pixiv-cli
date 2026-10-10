@@ -1,0 +1,109 @@
+{
+  "source_commit": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "source_sha256": {
+    "sdk/error.go": "d8e48078c464f18a26cdcf32828e423dd948f17061269b222f82e08a8cee0041",
+    "sdk/pixiv/errors.go": "9a1830393129ca195ef4d57c0bda17f219f0f750c7293abf5520aa888bfe81a8",
+    "sdk/pixiv/resource.go": "e94cdf3b2d7f67e159bd2481a1c419e887d842c903107767c4004e4f6a529ed8"
+  },
+  "go_version": "go1.27.1",
+  "cases": [
+    {
+      "url": "https://i.pximg.net/%zz",
+      "reason": "resource_forbidden",
+      "operation": "resource",
+      "detail": "invalid resource URL",
+      "message": "pixiv:resource: resource_forbidden: invalid resource URL"
+    },
+    {
+      "url": "https://i.pximg.net/%",
+      "reason": "resource_forbidden",
+      "operation": "resource",
+      "detail": "invalid resource URL",
+      "message": "pixiv:resource: resource_forbidden: invalid resource URL"
+    },
+    {
+      "url": "https://i.pximg.net/%2",
+      "reason": "resource_forbidden",
+      "operation": "resource",
+      "detail": "invalid resource URL",
+      "message": "pixiv:resource: resource_forbidden: invalid resource URL"
+    },
+    {
+      "url": "https://i.pximg.net/%2F",
+      "reason": "",
+      "operation": "",
+      "detail": "",
+      "message": ""
+    },
+    {
+      "url": "https://i.pximg.net/%25zz",
+      "reason": "",
+      "operation": "",
+      "detail": "",
+      "message": ""
+    },
+    {
+      "url": "https://i.pximg.net/a.jpg#%zz",
+      "reason": "resource_forbidden",
+      "operation": "resource",
+      "detail": "invalid resource URL",
+      "message": "pixiv:resource: resource_forbidden: invalid resource URL"
+    },
+    {
+      "url": "https://i.pximg.net/a.jpg#%",
+      "reason": "resource_forbidden",
+      "operation": "resource",
+      "detail": "invalid resource URL",
+      "message": "pixiv:resource: resource_forbidden: invalid resource URL"
+    },
+    {
+      "url": "https://i.pximg.net/a.jpg?sig=%zz",
+      "reason": "",
+      "operation": "",
+      "detail": "",
+      "message": ""
+    },
+    {
+      "url": "https://i.pximg.net/a.jpg?sig=%#%20",
+      "reason": "",
+      "operation": "",
+      "detail": "",
+      "message": ""
+    },
+    {
+      "url": "https://i.pximg.net/a%zz?sig=%20",
+      "reason": "resource_forbidden",
+      "operation": "resource",
+      "detail": "invalid resource URL",
+      "message": "pixiv:resource: resource_forbidden: invalid resource URL"
+    },
+    {
+      "url": "https://i.pximg.net/a.jpg?sig=%zz#%zz",
+      "reason": "resource_forbidden",
+      "operation": "resource",
+      "detail": "invalid resource URL",
+      "message": "pixiv:resource: resource_forbidden: invalid resource URL"
+    },
+    {
+      "url": "https://u%zz@i.pximg.net/a.jpg",
+      "reason": "resource_forbidden",
+      "operation": "resource",
+      "detail": "invalid resource URL",
+      "message": "pixiv:resource: resource_forbidden: invalid resource URL"
+    },
+    {
+      "url": "https://i.pximg.net/a.jpg#%00",
+      "reason": "",
+      "operation": "",
+      "detail": "",
+      "message": ""
+    },
+    {
+      "url": "https://i.pximg.net/a.jpg?sig=%20#%2F",
+      "reason": "",
+      "operation": "",
+      "detail": "",
+      "message": ""
+    }
+  ]
+}

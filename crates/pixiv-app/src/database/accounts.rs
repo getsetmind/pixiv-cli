@@ -81,6 +81,19 @@ impl fmt::Display for AccountError {
             }
             Self::InvalidMetadata => formatter.write_str("database: invalid pixiv metadata input"),
             Self::InvalidRotation => formatter.write_str("database: invalid rotation input"),
+            Self::Storage(rusqlite::Error::SqliteFailure(error, message)) => {
+                let description = rusqlite::ffi::code_to_str(error.extended_code);
+                formatter.write_str(description)?;
+                if let Some(message) = message.as_deref().filter(|message| *message != description)
+                {
+                    write!(formatter, ": {message}")?;
+                }
+                write!(formatter, " ({})", error.extended_code)?;
+                if error.extended_code == rusqlite::ffi::SQLITE_BUSY {
+                    formatter.write_str(" (SQLITE_BUSY)")?;
+                }
+                Ok(())
+            }
             Self::Storage(error) => fmt::Display::fmt(error, formatter),
         }
     }

@@ -1,3 +1,9 @@
+mod random;
+pub use random::{
+    DownloadRandomExecutor, DownloadRandomInput, decode_download_random, download_random_tool,
+    saved_download_random_with_account,
+};
+
 use crate::{CallToolResult, TextContent};
 use pixiv_app::{
     download::{
@@ -321,7 +327,7 @@ fn finish(attempt: DownloadAttempt) -> CallToolResult<DownloadOutput> {
     }
     result(output, failed)
 }
-fn build_report(report: &DownloadReport) -> std::io::Result<DownloadOutput> {
+fn build_report(report: &DownloadReport) -> Result<DownloadOutput, String> {
     let mut output = DownloadOutput {
         delivery: "local_path".into(),
         text: "Download completed; delivery: local_path.".into(),
@@ -352,7 +358,9 @@ fn build_report(report: &DownloadReport) -> std::io::Result<DownloadOutput> {
                 path: file.path.to_string_lossy().into_owned(),
                 file_uri: file_uri(&file.path),
                 mime_type: mime_type(&file.path),
-                size_bytes: std::fs::metadata(&file.path)?.len() as i64,
+                size_bytes: std::fs::metadata(&file.path)
+                    .map_err(|error| report_stat_error(&file.path, error))?
+                    .len() as i64,
                 page: file.page,
                 quality: if item.kind == "ugoira" {
                     item.quality.clone()
@@ -410,6 +418,14 @@ fn build_report(report: &DownloadReport) -> std::io::Result<DownloadOutput> {
             .push_str(&format!("\nFailed {}: {}", failure.url, failure.message));
     }
     Ok(output)
+}
+fn report_stat_error(path: &Path, error: std::io::Error) -> String {
+    let message = if cfg!(unix) && error.kind() == std::io::ErrorKind::NotFound {
+        "no such file or directory".to_owned()
+    } else {
+        error.to_string()
+    };
+    format!("stat {}: {message}", path.display())
 }
 fn mime_type(path: &Path) -> String {
     let mut buffer = [0u8; 512];

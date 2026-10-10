@@ -1578,6 +1578,12 @@ async fn execute(
             config,
             std::sync::Arc::new(std::sync::Mutex::new(database)),
         ));
+        let random_execution = execution.clone();
+        let random_defaults = download_defaults.clone();
+        let random_account = pixiv_mcp::runtime::Account {
+            user_id: 0,
+            https_proxy_override: proxy.map(str::to_owned),
+        };
         let download_execution = execution.clone();
         let download_account = pixiv_mcp::runtime::Account {
             user_id: 0,
@@ -1603,10 +1609,33 @@ async fn execute(
                 .await
             })
         };
-        pixiv_mcp::stdio::serve_saved_with_download_context(
+        let random = move |context, input| -> pixiv_mcp::download::DownloadFuture {
+            let execution = random_execution.clone();
+            let defaults = random_defaults.clone();
+            let account = random_account.clone();
+            Box::pin(async move {
+                pixiv_mcp::download::saved_download_random_with_account(
+                    &execution,
+                    &context,
+                    &defaults,
+                    input,
+                    &account,
+                    std::sync::Arc::new(|client| {
+                        std::sync::Arc::new(pixiv_app::download::NativeDownloadSaveClient::new(
+                            client,
+                        ))
+                    }),
+                )
+                .await
+            })
+        };
+        pixiv_mcp::stdio::serve_saved_with_downloads_context(
             &execution,
             proxy,
-            &download,
+            pixiv_mcp::stdio::DownloadExecutors {
+                download: Some(&download),
+                random_from_recommendation: Some(&random),
+            },
             root_context,
             tokio::io::stdin(),
             &mut tokio::io::stdout(),

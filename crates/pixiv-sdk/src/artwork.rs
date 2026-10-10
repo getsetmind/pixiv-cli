@@ -180,6 +180,9 @@ impl ResourcePolicy {
     pub(crate) fn validate(&self, url: &str) -> Result<()> {
         let forbidden =
             |detail| Error::new(Reason::ResourceForbidden, "resource").with_detail(detail);
+        if !valid_resource_url_escapes(url) {
+            return Err(forbidden("invalid resource URL"));
+        }
         let parsed = url::Url::parse(url).map_err(|_| forbidden("invalid resource URL"))?;
         let userinfo = url.split_once("://").is_some_and(|(_, tail)| {
             tail.split(['/', '?', '#'])
@@ -242,6 +245,27 @@ impl ResourcePolicy {
             requires_credentials: false,
         })
     }
+}
+
+fn valid_resource_url_escapes(raw_url: &str) -> bool {
+    let (main, fragment) = raw_url.split_once('#').unwrap_or((raw_url, ""));
+    let main = main.split_once('?').map_or(main, |(main, _)| main);
+    // net/url.Parse leaves RawQuery and opaque URLs unescaped.
+    let hierarchical =
+        main.split_once(':').map_or(
+            main,
+            |(_, rest)| {
+                if rest.starts_with('/') { rest } else { "" }
+            },
+        );
+    [hierarchical, fragment].into_iter().all(|component| {
+        let bytes = component.as_bytes();
+        bytes.iter().enumerate().all(|(index, byte)| {
+            *byte != b'%'
+                || (bytes.get(index + 1).is_some_and(u8::is_ascii_hexdigit)
+                    && bytes.get(index + 2).is_some_and(u8::is_ascii_hexdigit))
+        })
+    })
 }
 
 pub(crate) fn resource_url(

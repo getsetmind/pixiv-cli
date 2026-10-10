@@ -1,12 +1,13 @@
 # 残る操作と検証範囲
 
-2026-10-09 のコード・固定 Go 公開面・[台帳](ledger.json) を照合した作業用の一覧。台帳の673項目は型・定数・別名も含むため、pending 件数を機能数や移植率に変換しない。下記は次の縦断移植候補であり、全契約の検証済み一覧ではない。
+2026-10-10 のコード・固定 Go 公開面・[台帳](ledger.json) を照合した作業用の一覧。台帳の673項目は型・定数・別名も含むため、pending 件数を機能数や移植率に変換しない。下記は次の縦断移植候補であり、全契約の検証済み一覧ではない。
 
 ## 未移植の操作と残る機能・環境
 
 | 操作群 | 既存 Rust の部品 | 残る範囲 |
 | --- | --- | --- |
-| download・媒体処理 | direct URL/opaque ResourceRef、static artwork PID/URL、ugoira GIF/APNG/ZIP/rawとrecordの対象workflow・保存済みExecution・SDK atomic save、5quality/pages/templates/MIME publication | user/bookmark全visual kind・全page展開、random recommendation、全native publication/IO/parallel schedule、public Record/SDK lifecycle。bounded対象比較だけでdownload全体を完了としない |
+| download・媒体処理 | direct URL/opaque ResourceRef、static artwork PID/URL、ugoira GIF/APNG/ZIP/raw・record・user/bookmark全visual kind/全page展開・MCP randomの対象workflow、保存済みExecution・SDK atomic save、5quality/pages/templates/MIME publication | 全native publication/IO/parallel schedule、public Record/SDK lifecycle。bounded対象比較だけでdownload全体を完了としない |
+| standalone ugoira metadata CLI | SDK metadata/DTOと旧prototype入口 | 保存済みaccount/config/proxy、detail→kind preflight→metadata、original-first archive、人間/JSON出力・pool replay・writer/lease/cancel契約。媒体変換workflowとは別で次の接続scope |
 | auth の残る契約 | CLI login/local/remote・hidden callback/install-handler・通常startup、SDK/app保存、default endpoint/handoff state、Linux XDG/Darwin/Windows backendへのadapterは接続済み | 全flag/help/TTY/raw-wire/取消・実browser/association/native OS検証、公開SDK HTTPClient ownership/idle-close。3つの新CLI入口はin_progressで、比較範囲は下記とcontracts.mdに分ける |
 | relay HTTP/2 transport | HTTP/1 relay listener・synthetic trustによるnative TLS | Go TLS serverのHTTP/2 negotiation/servingはactual Go testで確認したが、Rust relayはHTTP/1のみ。HTTP/2 capabilityは未移植であり、単なる検証不足としない |
 | OS URL-handler association | shared manifest・native browser/process、Linux XDG/Darwin/Windows ensure/disable/temp restore/delegate・ShellExecuteExW、CLI hooks/automatic startup policy | native OS/arch compile/link/runと実desktop integration・ACL・全IO/privilege/race |
@@ -98,3 +99,11 @@ Go-first app52・保存済みCLI41・MCP21と実stdio取消・再利用2schedule
 private Go manager discovery/factory・close countersとRust公開API/Dropは同一視しない。CLI単一media workerはtest-owned caller affinity、native encoder/SDK blocking IOは元のaffinityで比較する。MCPは厳密なOAuth/list prefixと並行media suffix multisetを区別する。全URL grammar/非UTF8/並行schedule/native IO/他platform、public Record・SDKHTTP2/Accept/ownership/idle-close・signal restoration・Windows repeated cleanupは未完了のままである。MCP random recommendationのfirst-page shuffle→truncate→downloadが次のworkflowとなる。download全体のverifiedや、新しいpersisted resume/job/progress契約とは扱わない。
 
 このscopeの最終unchanged fullscriptは終了0・284秒、258 summaries/meaningful613/raw614passed・0failed・既存ignored11、release46.05秒で成功した。先行Clippy helper failureを保持し、equivalent let-chain修正後に全stageをfresh実行する。Go full関連4packages/vet＋既存SDK pacing3tests/vet＋migration validator/vetが成功した。独立reviewとfrozen manifestの対象はこの接続scopeに限定し、全migration完了へ読み替えない。
+
+## MCP random recommendation download の対象比較
+
+Go-first options77（別Go-private18）・genuine direct batch27・saved49とowned stdio取消/再利用を実MCP/CLIへ接続する。元saved48のSHA projectionを保持し、post-publication .jpg→.png stat scheduleを通常SaveClient Dropで再現する。抽選は全first-page DTO/cursor検証→full shuffle→truncate→Manager positive ID dedup/sortで、duplicate不足を埋めない。distinct subsetはcardinality/subset/sorted outputを比較し、random draw自体を固定しない。公開Account one-leaseを使いpool Execute/replayへ変えない。
+
+Go physical peer/idle-close対Rust future/owner Drop、getrandom entropy failure対Go global math/rand、全encoding/SQLite/OS stat/ready-result/並行native schedulesは別の未完了境界である。SDK公開Context/HTTP2/Accept/ownership・HTTP expired-positive RequestPacing、signal restoration、Windows repeated cleanup、全native IO/他platformと他MCP account-aware embeddingを引き続き残す。最終fullgate/review証拠はcontractsへ追記し、download全体をverifiedに変更しない。
+
+このrandom scopeの最終unchanged fullscriptは終了0・235秒、259 Running＋5 Doc-tests、265 summaries、meaningful631/raw632 passed・failed0・既存ignored11、release45.30秒で成功した。元hangは原因未確定として保持しtest-owned complete PID handshakeを追加し、stale catalog failure後に全stageをfresh実行した。次はstandalone `pixiv ugoira` の保存済みmetadata CLI、その後FANBOX・辞典・reverse search・updateと残る互換境界を接続する。

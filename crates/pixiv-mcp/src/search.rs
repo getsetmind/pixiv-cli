@@ -112,10 +112,57 @@ pub(crate) fn decode(arguments: Option<&Value>) -> Result<SearchIllustInput, Str
     serde_json::from_value(arguments).map_err(|error| format!("invalid params: {error}"))
 }
 fn display(value: &Value) -> String {
+    reflect_display(value, true)
+}
+fn reflect_display(value: &Value, root: bool) -> String {
     match value {
-        Value::Null => "<invalid reflect.Value>".into(),
+        Value::Null => if root {
+            "<invalid reflect.Value>"
+        } else {
+            "<nil>"
+        }
+        .into(),
         Value::String(value) => value.clone(),
-        _ => value.to_string(),
+        Value::Object(values) => format!(
+            "map[{}]",
+            values
+                .iter()
+                .map(|(key, value)| format!("{key}:{}", reflect_display(value, false)))
+                .collect::<Vec<_>>()
+                .join(" ")
+        ),
+        Value::Array(values) => format!(
+            "[{}]",
+            values
+                .iter()
+                .map(|value| reflect_display(value, false))
+                .collect::<Vec<_>>()
+                .join(" ")
+        ),
+        Value::Number(value) => {
+            let number = value.as_f64().expect("JSON number fits float64");
+            if number != 0.0 && (number.abs() < 1e-4 || number.abs() >= 1e6) {
+                scientific_number(number)
+            } else {
+                number.to_string()
+            }
+        }
+        Value::Bool(value) => value.to_string(),
+    }
+}
+fn scientific_number(number: f64) -> String {
+    let scientific = format!("{number:e}");
+    let (mantissa, exponent) = scientific
+        .split_once('e')
+        .expect("scientific number has exponent");
+    let exponent = exponent.parse::<i32>().expect("finite exponent");
+    format!("{mantissa}e{exponent:+03}")
+}
+fn binding_number(number: f64) -> String {
+    if number.abs() >= 1e21 {
+        scientific_number(number)
+    } else {
+        number.to_string()
     }
 }
 fn date_shape(value: &str) -> bool {
@@ -265,7 +312,7 @@ pub(crate) fn validate_schema_with_bindings<'a>(
             )?;
         }
     } else if expected == "integer" {
-        let decimal = value.as_f64().expect("integer fits float64").to_string();
+        let decimal = binding_number(value.as_f64().expect("integer fits float64"));
         let (structure, integer_type) = binding(path);
         let field = path
             .strip_prefix("/properties/")

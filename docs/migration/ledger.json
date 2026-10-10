@@ -3397,15 +3397,43 @@
     },
     {
       "id": "mcp:pixiv:download_random_from_recommendation",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "download_random_from_recommendation"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-mcp/src/download/random.rs",
+        "crates/pixiv-mcp/src/download.rs",
+        "crates/pixiv-mcp/src/stdio.rs",
+        "crates/pixiv-app/src/download.rs",
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-sdk/src/artwork.rs",
+        "crates/pixiv-app/src/database/accounts.rs"
+      ],
+      "tests": [
+        "internal/mcpserver/pixiv/tools/download/migration_random_options_test.go",
+        "internal/mcpserver/pixiv/tools/download/migration_random_workflow_test.go",
+        "internal/media/downloader/migration_artwork_batch_test.go",
+        "crates/pixiv-mcp/tests/download_random_options.rs",
+        "crates/pixiv-mcp/tests/download_random_workflow.rs",
+        "crates/pixiv-app/tests/download_artwork_batch.rs",
+        "crates/pixiv-cli/tests/mcp_random_download.rs",
+        "internal/mcpserver/pixiv/tools/download/migration_random_encoding_test.go",
+        "internal/mcpserver/pixiv/tools/download/migration_random_native_cancellation_test.go",
+        "crates/pixiv-mcp/tests/download_random_native_cancellation.rs",
+        "sdk/pixiv/migration_resource_percent_validation_test.go",
+        "internal/storage/database/migration_account_storage_errors_test.go",
+        "crates/pixiv-sdk/tests/resource_percent_validation.rs",
+        "crates/pixiv-app/tests/account_storage_errors.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Go-first nullable integer/schema/preflight77行＋別encoding15行とGo-private selection18行、genuine direct batch27行、saved workflow49行とowned stdio cancellation/reuse＋native CONNECT取消2scheduleを対象比較する。元48行のSHA projectionを保持しpost-publication stat scheduleを削除せず別identity-path行を追加する。one account-aware OpenClient lease、first SDK page全DTO/cursor validation、full shuffle→truncate→positive ID dedup/sort、direct batch/zero source diagnostics、partial/native outputを実経路へ接続する。",
+        "Go math/rand global stateに対するRust getrandom entropy failure/distribution/runtime/GODEBUG、全selection/concurrency/ready-result/IO/OS/native schedulesは未検証。SDK公開Context/HTTP2/Accept/ownership/idle-close、signal restoration、Windows repeated cleanupと他MCP tool account-aware embeddingの既存負債を保持する。全downloadや全migrationのverifiedではない。",
+        "実owned native proxy CONNECT取消/期限2scheduleはpublic handler結果が一致する。Go注入http.Transport peerは1秒以内に閉じないfalse、Rust HttpTransportはtrueである具体的lifetime差分を独立観測として保持し、SDK公開connection/idle-close全体の同一性を主張しない。",
+        "最終unchanged fullscript終了0・235秒、meaningful631/raw632 passed・既存ignored11・release45.30秒、full関連Go6packages/vetが成功。初回中断hangと次のstale catalog failureを保持し、test-owned complete PID handshakeと元Go random metadata追記後に全stageをfresh実行する。Go production/moduleと既存native/vendor/scriptは不変で、既存getrandom/rusqliteのMCP dependency metadataのみ追加する。"
+      ]
     },
     {
       "id": "mcp:pixiv:follow_user",
