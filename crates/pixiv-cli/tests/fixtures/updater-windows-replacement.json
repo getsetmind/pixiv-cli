@@ -1,0 +1,1608 @@
+{
+  "adaptations": [
+    "remove Windows build tag only in owned temporary copy",
+    "replace golang.org/x/sys/windows import with owned mock codec/API package",
+    "add uncalled SyncParentDirectory dependency stub; frozen function bodies unchanged"
+  ],
+  "cases": [
+    {
+      "error_messages": [],
+      "files": [
+        {
+          "bytes": "candidate",
+          "kind": "file",
+          "mode": "0600",
+          "path": "pixiv.exe"
+        },
+        {
+          "bytes": "old",
+          "kind": "file",
+          "mode": "0600",
+          "path": "pixiv.exe.old"
+        }
+      ],
+      "input": {
+        "method": "retained",
+        "name": "retained_success"
+      },
+      "is_1177": false,
+      "is_already_exist": false,
+      "is_invalid_argument": false,
+      "is_not_exist": false,
+      "paths": {
+        "backup": "${ROOT}/pixiv.exe.old",
+        "source": "${ROOT}/candidate",
+        "target": "${ROOT}/pixiv.exe"
+      },
+      "preserve_replacement_source": false,
+      "result": null,
+      "trace": [
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe"
+        },
+        {
+          "op": "find",
+          "proc": "ReplaceFileW"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe.old"
+        },
+        {
+          "backup": "${ROOT}/pixiv.exe.old",
+          "flags": 0,
+          "op": "replace",
+          "proc": "ReplaceFileW",
+          "reserved_a": 0,
+          "reserved_b": 0,
+          "source": "${ROOT}/candidate",
+          "target": "${ROOT}/pixiv.exe"
+        }
+      ]
+    },
+    {
+      "error_messages": [],
+      "files": [
+        {
+          "bytes": "candidate",
+          "kind": "file",
+          "mode": "0600",
+          "path": "pixiv.exe"
+        },
+        {
+          "bytes": "old",
+          "kind": "file",
+          "mode": "0600",
+          "path": "pixiv.exe.old"
+        }
+      ],
+      "input": {
+        "method": "retained",
+        "name": "retained_success_ignores_stale_last_error",
+        "stale_last_error": true
+      },
+      "is_1177": false,
+      "is_already_exist": false,
+      "is_invalid_argument": false,
+      "is_not_exist": false,
+      "paths": {
+        "backup": "${ROOT}/pixiv.exe.old",
+        "source": "${ROOT}/candidate",
+        "target": "${ROOT}/pixiv.exe"
+      },
+      "preserve_replacement_source": false,
+      "result": null,
+      "trace": [
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe"
+        },
+        {
+          "op": "find",
+          "proc": "ReplaceFileW"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe.old"
+        },
+        {
+          "backup": "${ROOT}/pixiv.exe.old",
+          "flags": 0,
+          "op": "replace",
+          "proc": "ReplaceFileW",
+          "reserved_a": 0,
+          "reserved_b": 0,
+          "source": "${ROOT}/candidate",
+          "target": "${ROOT}/pixiv.exe"
+        }
+      ]
+    },
+    {
+      "error_messages": [],
+      "files": [
+        {
+          "bytes": "candidate",
+          "kind": "file",
+          "mode": "0600",
+          "path": "pixiv.exe"
+        }
+      ],
+      "input": {
+        "method": "retained",
+        "missing_target": true,
+        "name": "retained_missing_target_move"
+      },
+      "is_1177": false,
+      "is_already_exist": false,
+      "is_invalid_argument": false,
+      "is_not_exist": false,
+      "paths": {
+        "backup": "${ROOT}/pixiv.exe.old",
+        "source": "${ROOT}/candidate",
+        "target": "${ROOT}/pixiv.exe"
+      },
+      "preserve_replacement_source": false,
+      "result": null,
+      "trace": [
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe"
+        },
+        {
+          "flags": 0,
+          "op": "move",
+          "source": "${ROOT}/candidate",
+          "target": "${ROOT}/pixiv.exe"
+        }
+      ]
+    },
+    {
+      "error_messages": [],
+      "files": [
+        {
+          "bytes": "candidate",
+          "kind": "file",
+          "mode": "0600",
+          "path": "pixiv.exe"
+        }
+      ],
+      "input": {
+        "empty_backup": true,
+        "method": "retained",
+        "name": "retained_empty_backup_uses_disposable"
+      },
+      "is_1177": false,
+      "is_already_exist": false,
+      "is_invalid_argument": false,
+      "is_not_exist": false,
+      "paths": {
+        "backup": "",
+        "source": "${ROOT}/candidate",
+        "target": "${ROOT}/pixiv.exe"
+      },
+      "preserve_replacement_source": false,
+      "result": null,
+      "trace": [
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe"
+        },
+        {
+          "op": "find",
+          "proc": "ReplaceFileW"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate.recovery"
+        },
+        {
+          "backup": "${ROOT}/candidate.recovery",
+          "flags": 0,
+          "op": "replace",
+          "proc": "ReplaceFileW",
+          "reserved_a": 0,
+          "reserved_b": 0,
+          "source": "${ROOT}/candidate",
+          "target": "${ROOT}/pixiv.exe"
+        }
+      ]
+    },
+    {
+      "error_messages": [],
+      "files": [
+        {
+          "bytes": "candidate",
+          "kind": "file",
+          "mode": "0600",
+          "path": "pixiv.exe"
+        }
+      ],
+      "input": {
+        "method": "disposable",
+        "name": "disposable_success"
+      },
+      "is_1177": false,
+      "is_already_exist": false,
+      "is_invalid_argument": false,
+      "is_not_exist": false,
+      "paths": {
+        "backup": "${ROOT}/pixiv.exe.old",
+        "source": "${ROOT}/candidate",
+        "target": "${ROOT}/pixiv.exe"
+      },
+      "preserve_replacement_source": false,
+      "result": null,
+      "trace": [
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe"
+        },
+        {
+          "op": "find",
+          "proc": "ReplaceFileW"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate.recovery"
+        },
+        {
+          "backup": "${ROOT}/candidate.recovery",
+          "flags": 0,
+          "op": "replace",
+          "proc": "ReplaceFileW",
+          "reserved_a": 0,
+          "reserved_b": 0,
+          "source": "${ROOT}/candidate",
+          "target": "${ROOT}/pixiv.exe"
+        }
+      ]
+    },
+    {
+      "error_messages": [],
+      "files": [
+        {
+          "bytes": "candidate",
+          "kind": "file",
+          "mode": "0600",
+          "path": "pixiv.exe"
+        }
+      ],
+      "input": {
+        "method": "private",
+        "name": "private_success"
+      },
+      "is_1177": false,
+      "is_already_exist": false,
+      "is_invalid_argument": false,
+      "is_not_exist": false,
+      "paths": {
+        "backup": "${ROOT}/pixiv.exe.old",
+        "source": "${ROOT}/candidate",
+        "target": "${ROOT}/pixiv.exe"
+      },
+      "preserve_replacement_source": false,
+      "result": {
+        "committed": true,
+        "preserve_source": false
+      },
+      "trace": [
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe"
+        },
+        {
+          "op": "find",
+          "proc": "ReplaceFileW"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate.recovery"
+        },
+        {
+          "backup": "${ROOT}/candidate.recovery",
+          "flags": 0,
+          "op": "replace",
+          "proc": "ReplaceFileW",
+          "reserved_a": 0,
+          "reserved_b": 0,
+          "source": "${ROOT}/candidate",
+          "target": "${ROOT}/pixiv.exe"
+        }
+      ]
+    },
+    {
+      "error_messages": [],
+      "files": [
+        {
+          "bytes": "candidate",
+          "kind": "file",
+          "mode": "0600",
+          "path": "pixiv.exe"
+        }
+      ],
+      "input": {
+        "method": "private",
+        "missing_target": true,
+        "name": "private_missing_target_move"
+      },
+      "is_1177": false,
+      "is_already_exist": false,
+      "is_invalid_argument": false,
+      "is_not_exist": false,
+      "paths": {
+        "backup": "${ROOT}/pixiv.exe.old",
+        "source": "${ROOT}/candidate",
+        "target": "${ROOT}/pixiv.exe"
+      },
+      "preserve_replacement_source": false,
+      "result": {
+        "committed": true,
+        "preserve_source": false
+      },
+      "trace": [
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe"
+        },
+        {
+          "flags": 0,
+          "op": "move",
+          "source": "${ROOT}/candidate",
+          "target": "${ROOT}/pixiv.exe"
+        }
+      ]
+    },
+    {
+      "error_messages": [
+        "find denied"
+      ],
+      "files": [
+        {
+          "bytes": "candidate",
+          "kind": "file",
+          "mode": "0600",
+          "path": "candidate"
+        },
+        {
+          "bytes": "old",
+          "kind": "file",
+          "mode": "0600",
+          "path": "pixiv.exe"
+        }
+      ],
+      "input": {
+        "find_error": true,
+        "method": "retained",
+        "name": "retained_find_failure"
+      },
+      "is_1177": false,
+      "is_already_exist": false,
+      "is_invalid_argument": false,
+      "is_not_exist": false,
+      "paths": {
+        "backup": "${ROOT}/pixiv.exe.old",
+        "source": "${ROOT}/candidate",
+        "target": "${ROOT}/pixiv.exe"
+      },
+      "preserve_replacement_source": false,
+      "result": null,
+      "trace": [
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe"
+        },
+        {
+          "op": "find",
+          "proc": "ReplaceFileW"
+        }
+      ]
+    },
+    {
+      "error_messages": [
+        "errno 1175"
+      ],
+      "files": [
+        {
+          "bytes": "candidate",
+          "kind": "file",
+          "mode": "0600",
+          "path": "candidate"
+        },
+        {
+          "bytes": "old",
+          "kind": "file",
+          "mode": "0600",
+          "path": "pixiv.exe"
+        }
+      ],
+      "input": {
+        "method": "retained",
+        "name": "retained_error1175_unchanged",
+        "replace_code": 1175
+      },
+      "is_1177": false,
+      "is_already_exist": false,
+      "is_invalid_argument": false,
+      "is_not_exist": false,
+      "paths": {
+        "backup": "${ROOT}/pixiv.exe.old",
+        "source": "${ROOT}/candidate",
+        "target": "${ROOT}/pixiv.exe"
+      },
+      "preserve_replacement_source": false,
+      "result": null,
+      "trace": [
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe"
+        },
+        {
+          "op": "find",
+          "proc": "ReplaceFileW"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe.old"
+        },
+        {
+          "backup": "${ROOT}/pixiv.exe.old",
+          "flags": 0,
+          "op": "replace",
+          "proc": "ReplaceFileW",
+          "reserved_a": 0,
+          "reserved_b": 0,
+          "source": "${ROOT}/candidate",
+          "target": "${ROOT}/pixiv.exe"
+        }
+      ]
+    },
+    {
+      "error_messages": [
+        "errno 1176"
+      ],
+      "files": [
+        {
+          "bytes": "candidate",
+          "kind": "file",
+          "mode": "0600",
+          "path": "candidate"
+        },
+        {
+          "bytes": "old",
+          "kind": "file",
+          "mode": "0600",
+          "path": "pixiv.exe"
+        }
+      ],
+      "input": {
+        "method": "retained",
+        "name": "retained_error1176_unchanged",
+        "replace_code": 1176
+      },
+      "is_1177": false,
+      "is_already_exist": false,
+      "is_invalid_argument": false,
+      "is_not_exist": false,
+      "paths": {
+        "backup": "${ROOT}/pixiv.exe.old",
+        "source": "${ROOT}/candidate",
+        "target": "${ROOT}/pixiv.exe"
+      },
+      "preserve_replacement_source": false,
+      "result": null,
+      "trace": [
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe"
+        },
+        {
+          "op": "find",
+          "proc": "ReplaceFileW"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe.old"
+        },
+        {
+          "backup": "${ROOT}/pixiv.exe.old",
+          "flags": 0,
+          "op": "replace",
+          "proc": "ReplaceFileW",
+          "reserved_a": 0,
+          "reserved_b": 0,
+          "source": "${ROOT}/candidate",
+          "target": "${ROOT}/pixiv.exe"
+        }
+      ]
+    },
+    {
+      "error_messages": [
+        "input/output error"
+      ],
+      "files": [
+        {
+          "bytes": "candidate",
+          "kind": "file",
+          "mode": "0600",
+          "path": "candidate"
+        },
+        {
+          "bytes": "old",
+          "kind": "file",
+          "mode": "0600",
+          "path": "pixiv.exe"
+        }
+      ],
+      "input": {
+        "method": "retained",
+        "name": "retained_other_error_unchanged",
+        "replace_code": 5
+      },
+      "is_1177": false,
+      "is_already_exist": false,
+      "is_invalid_argument": false,
+      "is_not_exist": false,
+      "paths": {
+        "backup": "${ROOT}/pixiv.exe.old",
+        "source": "${ROOT}/candidate",
+        "target": "${ROOT}/pixiv.exe"
+      },
+      "preserve_replacement_source": false,
+      "result": null,
+      "trace": [
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe"
+        },
+        {
+          "op": "find",
+          "proc": "ReplaceFileW"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe.old"
+        },
+        {
+          "backup": "${ROOT}/pixiv.exe.old",
+          "flags": 0,
+          "op": "replace",
+          "proc": "ReplaceFileW",
+          "reserved_a": 0,
+          "reserved_b": 0,
+          "source": "${ROOT}/candidate",
+          "target": "${ROOT}/pixiv.exe"
+        }
+      ]
+    },
+    {
+      "error_messages": [
+        "errno 1177"
+      ],
+      "files": [
+        {
+          "bytes": "candidate",
+          "kind": "file",
+          "mode": "0600",
+          "path": "candidate"
+        },
+        {
+          "bytes": "old",
+          "kind": "file",
+          "mode": "0600",
+          "path": "pixiv.exe"
+        }
+      ],
+      "input": {
+        "method": "retained",
+        "name": "retained_error1177_restored",
+        "replace_code": 1177
+      },
+      "is_1177": true,
+      "is_already_exist": false,
+      "is_invalid_argument": false,
+      "is_not_exist": false,
+      "paths": {
+        "backup": "${ROOT}/pixiv.exe.old",
+        "source": "${ROOT}/candidate",
+        "target": "${ROOT}/pixiv.exe"
+      },
+      "preserve_replacement_source": false,
+      "result": null,
+      "trace": [
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe"
+        },
+        {
+          "op": "find",
+          "proc": "ReplaceFileW"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe.old"
+        },
+        {
+          "backup": "${ROOT}/pixiv.exe.old",
+          "flags": 0,
+          "op": "replace",
+          "proc": "ReplaceFileW",
+          "reserved_a": 0,
+          "reserved_b": 0,
+          "source": "${ROOT}/candidate",
+          "target": "${ROOT}/pixiv.exe"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe.old"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe"
+        },
+        {
+          "flags": 0,
+          "op": "move",
+          "source": "${ROOT}/pixiv.exe.old",
+          "target": "${ROOT}/pixiv.exe"
+        }
+      ]
+    },
+    {
+      "error_messages": [
+        "mock wrapped: errno 1177"
+      ],
+      "files": [
+        {
+          "bytes": "candidate",
+          "kind": "file",
+          "mode": "0600",
+          "path": "candidate"
+        },
+        {
+          "bytes": "old",
+          "kind": "file",
+          "mode": "0600",
+          "path": "pixiv.exe"
+        }
+      ],
+      "input": {
+        "method": "retained",
+        "name": "retained_wrapped1177_restored",
+        "replace_code": 1177,
+        "wrapped_code": true
+      },
+      "is_1177": true,
+      "is_already_exist": false,
+      "is_invalid_argument": false,
+      "is_not_exist": false,
+      "paths": {
+        "backup": "${ROOT}/pixiv.exe.old",
+        "source": "${ROOT}/candidate",
+        "target": "${ROOT}/pixiv.exe"
+      },
+      "preserve_replacement_source": false,
+      "result": null,
+      "trace": [
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe"
+        },
+        {
+          "op": "find",
+          "proc": "ReplaceFileW"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe.old"
+        },
+        {
+          "backup": "${ROOT}/pixiv.exe.old",
+          "flags": 0,
+          "op": "replace",
+          "proc": "ReplaceFileW",
+          "reserved_a": 0,
+          "reserved_b": 0,
+          "source": "${ROOT}/candidate",
+          "target": "${ROOT}/pixiv.exe"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe.old"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe"
+        },
+        {
+          "flags": 0,
+          "op": "move",
+          "source": "${ROOT}/pixiv.exe.old",
+          "target": "${ROOT}/pixiv.exe"
+        }
+      ]
+    },
+    {
+      "error_messages": [
+        "errno 1177\nrestore replaced target from backup: move denied"
+      ],
+      "files": [
+        {
+          "bytes": "candidate",
+          "kind": "file",
+          "mode": "0600",
+          "path": "candidate"
+        },
+        {
+          "bytes": "old",
+          "kind": "file",
+          "mode": "0600",
+          "path": "pixiv.exe.old"
+        }
+      ],
+      "input": {
+        "method": "retained",
+        "name": "retained_error1177_restore_failure",
+        "replace_code": 1177,
+        "restore_error": true
+      },
+      "is_1177": true,
+      "is_already_exist": false,
+      "is_invalid_argument": false,
+      "is_not_exist": false,
+      "paths": {
+        "backup": "${ROOT}/pixiv.exe.old",
+        "source": "${ROOT}/candidate",
+        "target": "${ROOT}/pixiv.exe"
+      },
+      "preserve_replacement_source": true,
+      "result": null,
+      "trace": [
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe"
+        },
+        {
+          "op": "find",
+          "proc": "ReplaceFileW"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe.old"
+        },
+        {
+          "backup": "${ROOT}/pixiv.exe.old",
+          "flags": 0,
+          "op": "replace",
+          "proc": "ReplaceFileW",
+          "reserved_a": 0,
+          "reserved_b": 0,
+          "source": "${ROOT}/candidate",
+          "target": "${ROOT}/pixiv.exe"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe.old"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe"
+        },
+        {
+          "flags": 0,
+          "op": "move",
+          "source": "${ROOT}/pixiv.exe.old",
+          "target": "${ROOT}/pixiv.exe"
+        }
+      ]
+    },
+    {
+      "error_messages": [
+        "errno 1177\nrestore replaced target from backup: file already exists"
+      ],
+      "files": [
+        {
+          "bytes": "candidate",
+          "kind": "file",
+          "mode": "0600",
+          "path": "candidate"
+        },
+        {
+          "bytes": "racing-target",
+          "kind": "file",
+          "mode": "0600",
+          "path": "pixiv.exe"
+        },
+        {
+          "bytes": "old",
+          "kind": "file",
+          "mode": "0600",
+          "path": "pixiv.exe.old"
+        }
+      ],
+      "input": {
+        "method": "retained",
+        "name": "retained_error1177_restore_conflict",
+        "recovery_conflict": true,
+        "replace_code": 1177
+      },
+      "is_1177": true,
+      "is_already_exist": true,
+      "is_invalid_argument": false,
+      "is_not_exist": false,
+      "paths": {
+        "backup": "${ROOT}/pixiv.exe.old",
+        "source": "${ROOT}/candidate",
+        "target": "${ROOT}/pixiv.exe"
+      },
+      "preserve_replacement_source": true,
+      "result": null,
+      "trace": [
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe"
+        },
+        {
+          "op": "find",
+          "proc": "ReplaceFileW"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe.old"
+        },
+        {
+          "backup": "${ROOT}/pixiv.exe.old",
+          "flags": 0,
+          "op": "replace",
+          "proc": "ReplaceFileW",
+          "reserved_a": 0,
+          "reserved_b": 0,
+          "source": "${ROOT}/candidate",
+          "target": "${ROOT}/pixiv.exe"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe.old"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe"
+        },
+        {
+          "flags": 0,
+          "op": "move",
+          "source": "${ROOT}/pixiv.exe.old",
+          "target": "${ROOT}/pixiv.exe"
+        }
+      ]
+    },
+    {
+      "error_messages": [
+        "errno 1177"
+      ],
+      "files": [
+        {
+          "bytes": "candidate",
+          "kind": "file",
+          "mode": "0600",
+          "path": "candidate"
+        },
+        {
+          "bytes": "old",
+          "kind": "file",
+          "mode": "0600",
+          "path": "pixiv.exe"
+        }
+      ],
+      "input": {
+        "method": "disposable",
+        "name": "disposable_error1177_restored",
+        "replace_code": 1177
+      },
+      "is_1177": true,
+      "is_already_exist": false,
+      "is_invalid_argument": false,
+      "is_not_exist": false,
+      "paths": {
+        "backup": "${ROOT}/pixiv.exe.old",
+        "source": "${ROOT}/candidate",
+        "target": "${ROOT}/pixiv.exe"
+      },
+      "preserve_replacement_source": false,
+      "result": null,
+      "trace": [
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe"
+        },
+        {
+          "op": "find",
+          "proc": "ReplaceFileW"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate.recovery"
+        },
+        {
+          "backup": "${ROOT}/candidate.recovery",
+          "flags": 0,
+          "op": "replace",
+          "proc": "ReplaceFileW",
+          "reserved_a": 0,
+          "reserved_b": 0,
+          "source": "${ROOT}/candidate",
+          "target": "${ROOT}/pixiv.exe"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate.recovery"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe"
+        },
+        {
+          "flags": 0,
+          "op": "move",
+          "source": "${ROOT}/candidate.recovery",
+          "target": "${ROOT}/pixiv.exe"
+        }
+      ]
+    },
+    {
+      "error_messages": [
+        "errno 1177\nrestore replaced target from backup: move denied"
+      ],
+      "files": [
+        {
+          "bytes": "candidate",
+          "kind": "file",
+          "mode": "0600",
+          "path": "candidate"
+        },
+        {
+          "bytes": "old",
+          "kind": "file",
+          "mode": "0600",
+          "path": "candidate.recovery"
+        }
+      ],
+      "input": {
+        "method": "private",
+        "name": "private_error1177_restore_failure",
+        "replace_code": 1177,
+        "restore_error": true
+      },
+      "is_1177": true,
+      "is_already_exist": false,
+      "is_invalid_argument": false,
+      "is_not_exist": false,
+      "paths": {
+        "backup": "${ROOT}/pixiv.exe.old",
+        "source": "${ROOT}/candidate",
+        "target": "${ROOT}/pixiv.exe"
+      },
+      "preserve_replacement_source": true,
+      "result": {
+        "committed": false,
+        "preserve_source": true
+      },
+      "trace": [
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe"
+        },
+        {
+          "op": "find",
+          "proc": "ReplaceFileW"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate.recovery"
+        },
+        {
+          "backup": "${ROOT}/candidate.recovery",
+          "flags": 0,
+          "op": "replace",
+          "proc": "ReplaceFileW",
+          "reserved_a": 0,
+          "reserved_b": 0,
+          "source": "${ROOT}/candidate",
+          "target": "${ROOT}/pixiv.exe"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate.recovery"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe"
+        },
+        {
+          "flags": 0,
+          "op": "move",
+          "source": "${ROOT}/candidate.recovery",
+          "target": "${ROOT}/pixiv.exe"
+        }
+      ]
+    },
+    {
+      "error_messages": [
+        "remove committed replacement backup: remove ${ROOT}/candidate.recovery: directory not empty"
+      ],
+      "files": [
+        {
+          "kind": "directory",
+          "mode": "0700",
+          "path": "candidate.recovery"
+        },
+        {
+          "bytes": "old",
+          "kind": "file",
+          "mode": "0600",
+          "path": "candidate.recovery/old"
+        },
+        {
+          "bytes": "candidate",
+          "kind": "file",
+          "mode": "0600",
+          "path": "pixiv.exe"
+        }
+      ],
+      "input": {
+        "backup_directory": true,
+        "method": "private",
+        "name": "private_committed_backup_cleanup_fault"
+      },
+      "is_1177": false,
+      "is_already_exist": true,
+      "is_invalid_argument": false,
+      "is_not_exist": false,
+      "paths": {
+        "backup": "${ROOT}/pixiv.exe.old",
+        "source": "${ROOT}/candidate",
+        "target": "${ROOT}/pixiv.exe"
+      },
+      "preserve_replacement_source": false,
+      "result": {
+        "committed": true,
+        "preserve_source": false
+      },
+      "trace": [
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe"
+        },
+        {
+          "op": "find",
+          "proc": "ReplaceFileW"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate.recovery"
+        },
+        {
+          "backup": "${ROOT}/candidate.recovery",
+          "flags": 0,
+          "op": "replace",
+          "proc": "ReplaceFileW",
+          "reserved_a": 0,
+          "reserved_b": 0,
+          "source": "${ROOT}/candidate",
+          "target": "${ROOT}/pixiv.exe"
+        }
+      ]
+    },
+    {
+      "error_messages": [
+        "remove committed replacement backup: remove ${ROOT}/candidate.recovery: directory not empty"
+      ],
+      "files": [
+        {
+          "kind": "directory",
+          "mode": "0700",
+          "path": "candidate.recovery"
+        },
+        {
+          "bytes": "old",
+          "kind": "file",
+          "mode": "0600",
+          "path": "candidate.recovery/old"
+        },
+        {
+          "bytes": "candidate",
+          "kind": "file",
+          "mode": "0600",
+          "path": "pixiv.exe"
+        }
+      ],
+      "input": {
+        "backup_directory": true,
+        "method": "disposable",
+        "name": "disposable_committed_backup_cleanup_fault"
+      },
+      "is_1177": false,
+      "is_already_exist": true,
+      "is_invalid_argument": false,
+      "is_not_exist": false,
+      "paths": {
+        "backup": "${ROOT}/pixiv.exe.old",
+        "source": "${ROOT}/candidate",
+        "target": "${ROOT}/pixiv.exe"
+      },
+      "preserve_replacement_source": false,
+      "result": null,
+      "trace": [
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe"
+        },
+        {
+          "op": "find",
+          "proc": "ReplaceFileW"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate.recovery"
+        },
+        {
+          "backup": "${ROOT}/candidate.recovery",
+          "flags": 0,
+          "op": "replace",
+          "proc": "ReplaceFileW",
+          "reserved_a": 0,
+          "reserved_b": 0,
+          "source": "${ROOT}/candidate",
+          "target": "${ROOT}/pixiv.exe"
+        }
+      ]
+    },
+    {
+      "error_messages": [
+        "move denied"
+      ],
+      "files": [
+        {
+          "bytes": "candidate",
+          "kind": "file",
+          "mode": "0600",
+          "path": "candidate"
+        }
+      ],
+      "input": {
+        "method": "retained",
+        "missing_target": true,
+        "move_error": true,
+        "name": "retained_create_move_failure"
+      },
+      "is_1177": false,
+      "is_already_exist": false,
+      "is_invalid_argument": false,
+      "is_not_exist": false,
+      "paths": {
+        "backup": "${ROOT}/pixiv.exe.old",
+        "source": "${ROOT}/candidate",
+        "target": "${ROOT}/pixiv.exe"
+      },
+      "preserve_replacement_source": false,
+      "result": null,
+      "trace": [
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe"
+        },
+        {
+          "flags": 0,
+          "op": "move",
+          "source": "${ROOT}/candidate",
+          "target": "${ROOT}/pixiv.exe"
+        }
+      ]
+    },
+    {
+      "error_messages": [
+        "lstat ${ROOT}/candidate: no such file or directory"
+      ],
+      "files": [
+        {
+          "bytes": "old",
+          "kind": "file",
+          "mode": "0600",
+          "path": "pixiv.exe"
+        }
+      ],
+      "input": {
+        "method": "retained",
+        "missing_source": true,
+        "name": "retained_missing_source"
+      },
+      "is_1177": false,
+      "is_already_exist": false,
+      "is_invalid_argument": false,
+      "is_not_exist": true,
+      "paths": {
+        "backup": "${ROOT}/pixiv.exe.old",
+        "source": "${ROOT}/candidate",
+        "target": "${ROOT}/pixiv.exe"
+      },
+      "preserve_replacement_source": false,
+      "result": null,
+      "trace": [
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe"
+        },
+        {
+          "op": "find",
+          "proc": "ReplaceFileW"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe.old"
+        },
+        {
+          "backup": "${ROOT}/pixiv.exe.old",
+          "flags": 0,
+          "op": "replace",
+          "proc": "ReplaceFileW",
+          "reserved_a": 0,
+          "reserved_b": 0,
+          "source": "${ROOT}/candidate",
+          "target": "${ROOT}/pixiv.exe"
+        }
+      ]
+    },
+    {
+      "error_messages": [
+        "invalid argument"
+      ],
+      "files": [
+        {
+          "bytes": "candidate",
+          "kind": "file",
+          "mode": "0600",
+          "path": "candidate"
+        },
+        {
+          "bytes": "old",
+          "kind": "file",
+          "mode": "0600",
+          "path": "pixiv.exe"
+        }
+      ],
+      "input": {
+        "method": "retained",
+        "name": "retained_source_nul",
+        "source_nul": true
+      },
+      "is_1177": false,
+      "is_already_exist": false,
+      "is_invalid_argument": true,
+      "is_not_exist": false,
+      "paths": {
+        "backup": "${ROOT}/pixiv.exe.old",
+        "source": "${ROOT}/candidate\u0000x",
+        "target": "${ROOT}/pixiv.exe"
+      },
+      "preserve_replacement_source": false,
+      "result": null,
+      "trace": [
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate\u0000x"
+        }
+      ]
+    },
+    {
+      "error_messages": [
+        "invalid argument"
+      ],
+      "files": [
+        {
+          "bytes": "candidate",
+          "kind": "file",
+          "mode": "0600",
+          "path": "candidate"
+        },
+        {
+          "bytes": "old",
+          "kind": "file",
+          "mode": "0600",
+          "path": "pixiv.exe"
+        }
+      ],
+      "input": {
+        "method": "retained",
+        "name": "retained_target_nul",
+        "target_nul": true
+      },
+      "is_1177": false,
+      "is_already_exist": false,
+      "is_invalid_argument": true,
+      "is_not_exist": false,
+      "paths": {
+        "backup": "${ROOT}/pixiv.exe.old",
+        "source": "${ROOT}/candidate",
+        "target": "${ROOT}/pixiv.exe\u0000x"
+      },
+      "preserve_replacement_source": false,
+      "result": null,
+      "trace": [
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe\u0000x"
+        }
+      ]
+    },
+    {
+      "error_messages": [
+        "invalid argument"
+      ],
+      "files": [
+        {
+          "bytes": "candidate",
+          "kind": "file",
+          "mode": "0600",
+          "path": "candidate"
+        },
+        {
+          "bytes": "old",
+          "kind": "file",
+          "mode": "0600",
+          "path": "pixiv.exe"
+        }
+      ],
+      "input": {
+        "backup_nul": true,
+        "method": "retained",
+        "name": "retained_backup_nul_after_find"
+      },
+      "is_1177": false,
+      "is_already_exist": false,
+      "is_invalid_argument": true,
+      "is_not_exist": false,
+      "paths": {
+        "backup": "${ROOT}/pixiv.exe.old\u0000x",
+        "source": "${ROOT}/candidate",
+        "target": "${ROOT}/pixiv.exe"
+      },
+      "preserve_replacement_source": false,
+      "result": null,
+      "trace": [
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe"
+        },
+        {
+          "op": "find",
+          "proc": "ReplaceFileW"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/pixiv.exe.old\u0000x"
+        }
+      ]
+    },
+    {
+      "error_messages": [],
+      "files": [
+        {
+          "bytes": "candidate",
+          "kind": "file",
+          "mode": "0600",
+          "path": "日本語😀.exe"
+        },
+        {
+          "bytes": "old",
+          "kind": "file",
+          "mode": "0600",
+          "path": "旧😀.old"
+        }
+      ],
+      "input": {
+        "method": "retained",
+        "name": "retained_unicode_utf16",
+        "unicode": true
+      },
+      "is_1177": false,
+      "is_already_exist": false,
+      "is_invalid_argument": false,
+      "is_not_exist": false,
+      "paths": {
+        "backup": "${ROOT}/旧😀.old",
+        "source": "${ROOT}/新😀",
+        "target": "${ROOT}/日本語😀.exe"
+      },
+      "preserve_replacement_source": false,
+      "result": null,
+      "trace": [
+        {
+          "op": "utf16",
+          "value": "${ROOT}/新😀"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/日本語😀.exe"
+        },
+        {
+          "op": "find",
+          "proc": "ReplaceFileW"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/旧😀.old"
+        },
+        {
+          "backup": "${ROOT}/旧😀.old",
+          "flags": 0,
+          "op": "replace",
+          "proc": "ReplaceFileW",
+          "reserved_a": 0,
+          "reserved_b": 0,
+          "source": "${ROOT}/新😀",
+          "target": "${ROOT}/日本語😀.exe"
+        }
+      ]
+    },
+    {
+      "error_messages": [
+        "lstat ${ROOT}/blocked/pixiv.exe: not a directory"
+      ],
+      "files": [
+        {
+          "bytes": "block",
+          "kind": "file",
+          "mode": "0600",
+          "path": "blocked"
+        },
+        {
+          "bytes": "candidate",
+          "kind": "file",
+          "mode": "0600",
+          "path": "candidate"
+        },
+        {
+          "bytes": "old",
+          "kind": "file",
+          "mode": "0600",
+          "path": "pixiv.exe"
+        }
+      ],
+      "input": {
+        "blocked_parent": true,
+        "method": "retained",
+        "name": "retained_lstat_not_directory"
+      },
+      "is_1177": false,
+      "is_already_exist": false,
+      "is_invalid_argument": false,
+      "is_not_exist": false,
+      "paths": {
+        "backup": "${ROOT}/pixiv.exe.old",
+        "source": "${ROOT}/candidate",
+        "target": "${ROOT}/blocked/pixiv.exe"
+      },
+      "preserve_replacement_source": false,
+      "result": null,
+      "trace": [
+        {
+          "op": "utf16",
+          "value": "${ROOT}/candidate"
+        },
+        {
+          "op": "utf16",
+          "value": "${ROOT}/blocked/pixiv.exe"
+        }
+      ]
+    }
+  ],
+  "evidence": "exact frozen Windows replacement/recovery function bodies compiled on Linux with an owned mock windows import; not native Windows compilation, ABI or runtime",
+  "limitations": [
+    "real Windows system error strings, DLL loader, ABI execution, privilege/ACL/race and OS behavior remain unverified",
+    "Lstat/Remove execute owned Linux filesystem and are not individually instrumented; their Linux diagnostics are not native Windows diagnostics",
+    "mock Windows API effects are controlled owned filesystem operations; no live registry, browser or user environment"
+  ],
+  "normalization": [
+    "owned temporary root becomes ${ROOT}",
+    "native pointer fields resolve through owned codec map to their strings; scalar ABI arguments remain exact"
+  ],
+  "reference": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "source_sha256": {
+    "replace.go": "c22fbe94545a3a4ee2166af4aa1345512bc66c349cde3aa104aae0a0c237c3cc",
+    "replace_recovery.go": "53e1d52b2cdad910f32d6c065d1841dca9dd33ad42351af68e670b4f24ed9309",
+    "replace_windows.go": "3b12dfceef7b011d9aa99a9d6a49cfe3e7bd2fa53a33f41cd65ef6f47d06637b",
+    "replacement_error.go": "e6346582f605366188f60861dad1025133117de02847ccfc844704ef3d39270d"
+  }
+}

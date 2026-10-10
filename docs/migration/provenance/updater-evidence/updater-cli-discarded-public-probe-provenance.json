@@ -1,0 +1,26 @@
+{
+  "classification": "discarded fixture setup error; ordinary net/http DNS/network failure, not a tool safety denial",
+  "scope": "Wrong top-level TOML https_proxy was ignored, yielding empty effective proxy. Production automatic checker attempted unauthenticated public GitHub releases API probes via gh-proxy and github-direct. Both observed probes failed while attempting DNS transport. No response was obtained and no account credential was sent. The aggregate order varied. The number of prior executions of the mis-scoped row is not established from retained logs.",
+  "source_recovery": "Source reconstructed from edit history and verified byte-identical by matching its captured SHA-256; it was not executed again.",
+  "affected_case": "automatic/invalid-proxy-warning",
+  "observed_effective_proxy": [
+    ""
+  ],
+  "captured_source_sha256": "25ddcad60f3ed2bcee0ec081a59abc5c85e277e8f2c512c794a1b722a2b8ea6a",
+  "original_evidence": {
+    "/tmp/updater-cli-discarded-public-probe-fixture.json": {
+      "sha256": "51c80a66b61143bf620b2837a5d8dc6e155d6ef2616824916777707f8af9d0ad",
+      "bytes": 668069
+    },
+    "/tmp/updater-cli-discarded-public-probe-source.go": {
+      "sha256": "25ddcad60f3ed2bcee0ec081a59abc5c85e277e8f2c512c794a1b722a2b8ea6a",
+      "bytes": 50251
+    },
+    "/tmp/updater-cli-discarded-public-probe-stderr.log": {
+      "sha256": "a3a535cc196cb93f94bc0b4fd78dd000d8ca9aef11444b7dba80f27d9eccf560",
+      "bytes": 593
+    }
+  },
+  "remediation": "Correct [network].https_proxy TOML scope; every final automatic production-negative constructor fails the test before capture if construction unexpectedly succeeds. Valid production coordinator construction is limited to dev rejection before HTTP. No alternative network route or external probe retry was made after discovery.",
+  "final_capture_expected_constructor_error": "warning: create automatic update checker: parse update proxy URL: proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration\n"
+}
