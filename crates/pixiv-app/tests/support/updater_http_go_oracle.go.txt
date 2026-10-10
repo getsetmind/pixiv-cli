@@ -1,0 +1,72 @@
+package main
+
+import (
+	"encoding/json"
+	"errors"
+	"fmt"
+	"net/http"
+	"os"
+)
+
+type transport struct {
+	mode, location string
+	requests       int
+}
+
+func (t *transport) RoundTrip(r *http.Request) (*http.Response, error) {
+	t.requests++
+	if t.mode == "nil" {
+		return nil, nil
+	}
+	if t.mode == "positive" {
+		return &http.Response{StatusCode: 200, Header: make(http.Header), ContentLength: 1}, nil
+	}
+	if t.requests == 1 {
+		return &http.Response{StatusCode: 302, Header: http.Header{"Location": {t.location}}, ContentLength: 0}, nil
+	}
+	return &http.Response{StatusCode: 200, Header: make(http.Header), ContentLength: 0}, nil
+}
+
+type observation struct {
+	Name     string   `json:"name"`
+	Method   string   `json:"method"`
+	Mode     string   `json:"mode"`
+	Location string   `json:"location"`
+	Requests int      `json:"requests"`
+	Status   int      `json:"status"`
+	Errors   []string `json:"errors"`
+}
+
+func main() {
+	rows := []observation{
+		{Name: "nil", Method: "GET", Mode: "nil"},
+		{Name: "positive_nil_body", Method: "GET", Mode: "positive"},
+		{Name: "head_positive_nil_body", Method: "HEAD", Mode: "positive"},
+		{Name: "invalid_path_escape", Method: "GET", Location: "/%zz"},
+		{Name: "invalid_unicode_escape", Method: "GET", Location: "/%あ"},
+		{Name: "invalid_fragment_escape", Method: "GET", Location: "/next#%zz"},
+		{Name: "raw_query_escape", Method: "GET", Location: "/next?x=%zz"},
+	}
+	for i := range rows {
+		row := &rows[i]
+		rt := &transport{mode: row.Mode, location: row.Location}
+		req, err := http.NewRequest(row.Method, "https://example.invalid/start", nil)
+		if err != nil {
+			panic(err)
+		}
+		response, err := (&http.Client{Transport: rt}).Do(req)
+		row.Requests = rt.requests
+		row.Errors = make([]string, 0)
+		if response != nil {
+			row.Status = response.StatusCode
+			response.Body.Close()
+		}
+		for err != nil {
+			row.Errors = append(row.Errors, err.Error())
+			err = errors.Unwrap(err)
+		}
+	}
+	if err := json.NewEncoder(os.Stdout).Encode(rows); err != nil {
+		panic(fmt.Sprint(err))
+	}
+}

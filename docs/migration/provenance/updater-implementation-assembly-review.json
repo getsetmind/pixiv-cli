@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "reviewed_utc": "2026-10-10T18:13:00Z",
+  "decision": "approved_bounded_assembly_source_and_recorded_eight_test_evidence",
+  "unresolved_blocking_findings": [],
+  "scope": "Independent review of production updater composition and its owned no-shell subprocess tests. Approval is limited to the reviewed source and recorded Linux x86_64 assembly paths; it is not whole-updater, native cross-platform, live installation, all-root-row or final aggregate-gate approval.",
+  "reviewed_sources": [
+    {
+      "path": "crates/pixiv-app/src/update/assembly.rs",
+      "sha256": "d7fa493059c4841eef0c197b2d2558a9a78682d37ff181a159b097ad9f1d332f"
+    },
+    {
+      "path": "crates/pixiv-app/tests/updater_assembly.rs",
+      "sha256": "25fbfa445aac80d90334eaf0119b48e402c169faf8925f1988530bb37a5e4a0f"
+    },
+    {
+      "path": "crates/pixiv-app/tests/support/updater_assembly_process.rs",
+      "sha256": "104c26420e697b3ec09058f1ecc5939be26d399cea9169e06ca6368da8ede4ea"
+    }
+  ],
+  "frozen_go": {
+    "revision": "4b4426487ef18bed276706daec385e0d0a6979f9",
+    "references": [
+      {
+        "path": "internal/cli/commands/update/production.go",
+        "sha256": "21205c5d8ceb339f671914963161a495ca8bf66f2a347d49bb6165e59c0d000b"
+      },
+      {
+        "path": "internal/update/process/process_runner.go",
+        "sha256": "e73c4687ee16ea1f18901915908c83e2ce3d663e26501226bd61754e73c87245"
+      },
+      {
+        "path": "internal/update/reexports.go",
+        "sha256": "1ec99e116a0a3322486290ed02b089ce870108de6163c818ecf210da9ea12c07"
+      }
+    ],
+    "comparison": "Production proxy/public-source/trust/cache assembly and the exact frozen process runner. The test helper hashes the existing pinned compiler and frozen process_runner.go before copying only its package declaration into the owned helper package; no frozen expected row is rewritten."
+  },
+  "related_source_inspections": [
+    {
+      "path": "crates/pixiv-app/src/host_process.rs",
+      "sha256": "337768dd00112939a0ecb17657c786b4678a22b6f0c3163dced648f79946c0fa"
+    },
+    {
+      "path": "crates/pixiv-app/src/update/http.rs",
+      "sha256": "92e324525610470ec18cf2b1303252f575718b89fa76ecbb61073b5a843e68b9"
+    },
+    {
+      "path": "crates/pixiv-app/src/update/coordinator.rs",
+      "sha256": "2e82d8c15dd0e0fe55b2269c5f7abf71a3bb2b8b7ec018a4349752010e2dcc8e"
+    },
+    {
+      "path": "crates/pixiv-app/src/update/installer.rs",
+      "sha256": "af6489f735a9cb16f3247aac3989d1ed3e4b5fc958b30a8605a9c940936e9575"
+    }
+  ],
+  "reviewer_actions": {
+    "ran_cargo": false,
+    "ran_go": false,
+    "ran_repository_tests": false,
+    "executed_helper_candidate_or_downloaded_artifact": false,
+    "network_or_native_probe": false,
+    "edited_source_tests_fixtures_dependencies_scripts_or_ledger": false,
+    "wrote_only": [
+      "docs/migration/provenance/updater-implementation-assembly-review.json"
+    ]
+  },
+  "review_observations": [
+    "Both production constructors validate the proxy first, construct a real file-cache port under the selected cache directory, and share the selected HTTP transport. The ordinary native transport is lazy, and construction does not create the cache directory or open an account repository.",
+    "Exactly an empty proxy enables the public release-source selector for both the release checker and signed installer. Any configured HTTP, HTTPS, SOCKS5 or SOCKS5H proxy disables that selector. These constructors do not replace the source race algorithm or narrow its frozen expectations.",
+    "The explicit coordinator receives the native source detector, real process runner, checker and signed installer. The installer uses the fixed production Ed25519 trust map; ProductionUpdateOptions exposes no trusted-key or source-override flag.",
+    "Development handling remains in the genuine services: native source detection returns Development before executable/symlink reads, the explicit coordinator rejects self-update, and the automatic service returns no notice before release I/O. The recorded owned dev test checks no requests and an entirely empty directory.",
+    "ProcessCommandRunner receives and retains the legitimate caller Context rather than constructing a background replacement. Empty-name and PATH lookup errors precede the pre-canceled-context check; valid explicit paths preserve the semantic ContextError source.",
+    "Command and argument strings go directly to prepare_command and std::process::Command. There is no shell parser or join-and-execute fallback. The owned argv test includes spaces, dollar-parenthesis text, semicolons, an empty argument and an equals argument.",
+    "Separate stdout/stderr pipes drain concurrently in FuturesUnordered while the child is awaited; the same shared writer uses one combined OS pipe. Absent writers are redirected to null. No collected-byte truncation or final-output-only substitute replaces streaming output.",
+    "Writer faults, short writes and oversized write counts are explicit errors. A non-successful process exit takes precedence over copy and cancellation errors, matching the recorded Go oracle. An after-start cancellation kills and waits for the child and retains signal-killed exit semantics rather than inserting a canceled ContextError.",
+    "The run future owns a StopOnDrop guard and an independently owned worker with kill_on_drop. Dropping the outer future signals the worker, which retains the child and drain tasks while kill/wait proceeds. This is source-reviewed ownership, not a separately executed dropped-future witness.",
+    "Synthetic HTTP ports fail on unexpected trust-barrier paths instead of calling a real network fallback. The visible owned helper compiles only repository-pinned Go source and runs local helper modes; no brew, go install, downloaded update executable, browser or credentials are involved."
+  ],
+  "non_blocking_findings": [
+    {
+      "id": "formal-check-account-filename-assertion",
+      "location": "crates/pixiv-app/tests/updater_assembly.rs:251",
+      "finding": "The formal release-check test asserts that accounts.db does not exist, but the CLI account database is named pixiv-cli.db.",
+      "assessment": "That assertion alone does not witness the actual account database filename. The assembly dependency graph opens no account service or database, and the owned dev test checks the entire directory is empty, so bounded assembly approval is retained without extending the formal filename assertion."
+    }
+  ],
+  "focused_evidence": {
+    "initial_red_log": {
+      "path": "/tmp/updater-assembly-initial-red.log",
+      "sha256": "288b5c9ad35e306d1f743c0fcd883e20fef5b7d52b12bd20fa96c2879bc7f64f"
+    },
+    "initial_red": "Exit 101 includes E0432 for the missing production assembly APIs, with dependent type-inference errors. This is genuine missing-boundary RED.",
+    "recorded_log": {
+      "path": "/tmp/updater-release-edges-assembly-focused1.log",
+      "sha256": "943b1f8072368827053c1cc5a4bef9954e675b5da3453d28fbfba4cbf40758eb"
+    },
+    "assembly_test_result": "8 passed; 0 failed; 0 ignored",
+    "whole_recorded_command_exit": 101,
+    "whole_recorded_command_note": "The assembly test target passed; later updater_release_cache cases in this combined command failed. The assembly subtarget result is not represented as a green whole-command or final-gate result.",
+    "current_parent_fullgate_observation": {
+      "path": "/tmp/updater-implementation-fullgate2.log",
+      "assembly_test_result": "8 passed; 0 failed; 0 ignored",
+      "assessment": "Read the assembly subtarget result from the parent-owned running aggregate log; this review does not hash the still-growing log or approve the aggregate gate."
+    }
+  },
+  "evidence_boundaries": [
+    "The eight assembly tests are compiled and executed only on Linux x86_64. Windows, macOS, other native process lookup/pipe behavior and actual package-manager upgrades remain outside this approval.",
+    "Caller-context source wiring is reviewed and runner cancellation is observed. Assembly-specific HTTP deadline/value propagation and dropped-future child reaping are not separate behavioral witnesses in these eight tests.",
+    "The public-source assembly test observes direct and mirrored request selection; detailed source-race cancellation, body closure and fallback ordering belong to the independent source/release contract suites.",
+    "Fixed-trust integration is witnessed by unknown-key rejection before archive or target access. No valid production release installation, target replacement, downloaded binary execution or authenticated production network success is claimed.",
+    "NativeSourceDetector preserves the documented Rust absence of Go debug.ReadBuildInfo main-module metadata. Assembly adds no runtime version/source override and does not establish automatic Go-install provenance for a Rust-native binary.",
+    "The reviewer ran no tests or probes, changed no source/tests/frozen fixtures, and makes no final formatter/linter/workspace-test/release-build approval."
+  ]
+}

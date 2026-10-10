@@ -1,0 +1,22 @@
+package installer
+import("archive/zip";"bytes";"compress/gzip";"crypto/sha256";"encoding/base64";"encoding/json";"fmt";"os";"path/filepath";"strings";"testing")
+type edgeMember struct{Name string;Kind byte;Body []byte;Mode os.FileMode}
+type edgeCase struct{Name,GOOS string;Members []edgeMember}
+func edgePAX(k,v string)[]byte{n:=len(k)+len(v)+3;for{next:=len(fmt.Sprint(n))+len(k)+len(v)+3;if next==n{break};n=next};return []byte(fmt.Sprintf("%d %s=%s\n",n,k,v))}
+func edgeTar(ms []edgeMember)[]byte{var raw bytes.Buffer;for _,m:=range ms{h:=make([]byte,512);copy(h,m.Name);copy(h[100:108],fmt.Sprintf("%07o",0755));copy(h[108:116],"0000000");copy(h[116:124],"0000000");copy(h[124:136],fmt.Sprintf("%011o",len(m.Body)));copy(h[136:148],"00000000000");for i:=148;i<156;i++{h[i]=' '};h[156]=m.Kind;copy(h[257:263],"ustar\x00");copy(h[263:265],"00");var sum int;for _,b:=range h{sum+=int(b)};copy(h[148:156],fmt.Sprintf("%06o\x00 ",sum));raw.Write(h);raw.Write(m.Body);raw.Write(make([]byte,(512-len(m.Body)%512)%512))};raw.Write(make([]byte,1024));var out bytes.Buffer;w:=gzip.NewWriter(&out);w.Write(raw.Bytes());w.Close();return out.Bytes()}
+func edgeZip(ms []edgeMember)[]byte{var out bytes.Buffer;w:=zip.NewWriter(&out);for _,m:=range ms{h:=&zip.FileHeader{Name:m.Name,Method:zip.Store};h.SetMode(m.Mode);f,e:=w.CreateHeader(h);if e!=nil{panic(e)};f.Write(m.Body)};w.Close();return out.Bytes()}
+func TestOwnedArchiveEdges(t *testing.T){payload:=[]byte("owned metadata candidate; never executable\n");safe:=edgeMember{"pixiv",'0',payload,0644};px:=func(body []byte)edgeMember{return edgeMember{"PaxHeader",'x',body,0644}};ln:=func(name string)edgeMember{return edgeMember{"LongName",'L',append([]byte(name),0),0644}};cases:=[]edgeCase{
+{Name:"pax_duplicate_last_unsafe",GOOS:"linux",Members:[]edgeMember{px(append(edgePAX("path","nested/pixiv"),edgePAX("path","../escape")...)),safe}},
+{Name:"pax_duplicate_last_safe",GOOS:"linux",Members:[]edgeMember{px(append(edgePAX("path","../escape"),edgePAX("path","nested/pixiv")...)),safe}},
+{Name:"pax_malformed",GOOS:"linux",Members:[]edgeMember{px([]byte("bad pax record\n")),safe}},
+{Name:"pax_repeated_last_safe",GOOS:"linux",Members:[]edgeMember{px(edgePAX("path","../escape")),px(edgePAX("path","nested/pixiv")),safe}},
+{Name:"pax_repeated_last_unsafe",GOOS:"linux",Members:[]edgeMember{px(edgePAX("path","nested/pixiv")),px(edgePAX("path","../escape")),safe}},
+{Name:"gnu_repeated_last_safe",GOOS:"linux",Members:[]edgeMember{ln("../escape"),ln("nested/pixiv"),safe}},
+{Name:"gnu_repeated_last_unsafe",GOOS:"linux",Members:[]edgeMember{ln("nested/pixiv"),ln("../escape"),safe}},
+{Name:"gnu_metadata_without_member",GOOS:"linux",Members:[]edgeMember{ln("nested/pixiv")}},
+{Name:"legacy_zero_type_slash",GOOS:"linux",Members:[]edgeMember{{"pixiv/",0,nil,0644}}},
+{Name:"regular_type_slash",GOOS:"linux",Members:[]edgeMember{{"pixiv/",'0',payload,0644}}},
+{Name:"tar_clean_dot_suffix",GOOS:"linux",Members:[]edgeMember{{"nested/pixiv/.",'0',payload,0644}}},
+{Name:"zip_symlink_slash",GOOS:"windows",Members:[]edgeMember{{"unrelated/",0,nil,os.ModeSymlink|0777},{"pixiv.exe",0,payload,0644}}},
+{Name:"zip_clean_dot_suffix",GOOS:"windows",Members:[]edgeMember{{"nested/pixiv.exe/.",0,payload,0644}}},
+};rows:=[]map[string]any{};for _,c:=range cases{root:=t.TempDir();bin:=releaseBinaryName(c.GOOS);dest:=filepath.Join(root,bin);archive:=edgeTar(c.Members);ext:=".tar.gz";if c.GOOS=="windows"{archive=edgeZip(c.Members);ext=".zip"};err:=extractReleaseBinary(archive,"owned"+ext,dest,bin);msg:="";if err!=nil{msg=strings.ReplaceAll(err.Error(),root,"$ROOT")};b,readErr:=os.ReadFile(dest);rows=append(rows,map[string]any{"name":c.Name,"goos":c.GOOS,"archive_base64":base64.StdEncoding.EncodeToString(archive),"archive_sha256":fmt.Sprintf("%x",sha256.Sum256(archive)),"error":msg,"candidate_exists":readErr==nil,"candidate":string(b)})};out,_:=json.MarshalIndent(rows,"","  ");if e:=os.WriteFile("/tmp/updater-archive-go-first/results.json",append(out,'\n'),0600);e!=nil{t.Fatal(e)};t.Logf("frozen helper edges=%d",len(rows))}

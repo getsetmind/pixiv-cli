@@ -1,5 +1,9 @@
 use clap::{Args, CommandFactory, FromArgMatches, Parser, Subcommand};
 use pixiv_cli_rs::search::{SearchInput, SearchOptions};
+use pixiv_cli_rs::update::{
+    AutomaticCheckHost, AutomaticCommand, AutomaticRuntime, PostSuccessFuture, PostSuccessPolicy,
+    UpdateCommand, UpdateHost, UpdatePreparation, UpdateRuntime, UpdateStartup,
+};
 use pixiv_cli_rs::{
     CommandError, DetailOutput, detail_artwork_id, finish_command, saved_artwork_detail,
 };
@@ -7,7 +11,7 @@ use pixiv_sdk::{Error, Reason};
 use std::io::{self, IsTerminal, Write};
 
 #[derive(Parser)]
-#[command(name = "pixiv", version, about = "Rust migration of pixiv-cli")]
+#[command(name = "pixiv", version = build_version(), about = "Pixiv CLI and MCP server")]
 struct Arguments {
     #[command(subcommand)]
     command: Command,
@@ -211,6 +215,8 @@ enum Command {
     Download,
     #[command(about = "Read the Pixiv encyclopedia (dic.pixiv.net)")]
     Dic,
+    #[command(about = "Check for or install updates")]
+    Update,
     #[command(about = "Browse and download Pixiv FANBOX content")]
     Fanbox,
     #[command(args_override_self = true)]
@@ -315,6 +321,42 @@ async fn main() {
     };
     let root_context = owner.context();
     let raw_args: Vec<String> = std::env::args().skip(1).collect();
+    if let Some(result) = root_flags(&raw_args) {
+        let exit = finish_command(result, false, false, &mut io::stderr().lock());
+        if exit != 0 {
+            drop(owner);
+            std::process::exit(exit);
+        }
+        return;
+    }
+    if raw_args.first().is_some_and(|arg| arg == "update") {
+        let machine = UpdateCommand::machine_output_requested(&raw_args[1..]);
+        let result = match UpdateCommand::parse(&raw_args[1..]) {
+            Ok(command) => {
+                command
+                    .execute_with_startup(
+                        std::sync::Arc::new(root_context.clone()),
+                        pixiv_app::update::BuildInfo::current(),
+                        &SystemUpdateHost,
+                        UpdateStartup {
+                            context: &root_context,
+                            hooks: &pixiv_cli_rs::startup::SystemStartupHooks::system(),
+                            preparation: &SystemUpdateHost,
+                        },
+                        &mut io::stdout(),
+                        &mut io::stderr(),
+                    )
+                    .await
+            }
+            Err(error) => Err(error),
+        };
+        let exit = finish_command(result, false, machine, &mut io::stderr().lock());
+        if exit != 0 {
+            drop(owner);
+            std::process::exit(exit);
+        }
+        return;
+    }
     if pixiv_cli_rs::fanbox::is_fanbox_route(&raw_args) {
         let (result, ndjson, machine) = execute_fanbox(&root_context, &raw_args).await;
         let exit = finish_command(result, ndjson, machine, &mut io::stderr().lock());
@@ -343,7 +385,7 @@ async fn main() {
         return;
     }
     if std::env::args().nth(1).as_deref() == Some("config") {
-        let result = execute_config(&root_context);
+        let result = execute_config(&root_context).await;
         let exit = finish_command(result, false, false, &mut io::stderr().lock());
         if exit != 0 {
             drop(owner);
@@ -513,6 +555,7 @@ async fn main() {
         | Command::Download
         | Command::Config
         | Command::Dic
+        | Command::Update
         | Command::Fanbox
         | Command::Mcp { .. }
         | Command::Bookmark { .. }
@@ -590,6 +633,7 @@ async fn main() {
         | Command::Download
         | Command::Config
         | Command::Dic
+        | Command::Update
         | Command::Fanbox
         | Command::Mcp { .. }
         | Command::Bookmark { .. }
@@ -611,7 +655,13 @@ async fn main() {
         }
     };
     let exit = finish_command(
-        execute(args, &root_context, &mut ndjson_output).await,
+        execute(
+            args,
+            &root_context,
+            &mut ndjson_output,
+            &automatic_from_matches(&matches),
+        )
+        .await,
         ndjson_output,
         machine_output,
         &mut io::stderr().lock(),
@@ -622,10 +672,13 @@ async fn main() {
     }
 }
 
-async fn execute(
+async fn execute_data(
     mut args: Arguments,
     root_context: &pixiv_app::lifecycle::Context,
     ndjson_output: &mut bool,
+    resources: &mut DataResources,
+    automatic: &AutomaticCommand,
+    automatic_done: &mut bool,
 ) -> Result<(), CommandError> {
     if let Command::Ugoira { options, .. } = &args.command {
         options.validate_arguments()?;
@@ -823,10 +876,7 @@ async fn execute(
                 .map_err(pixiv_app::scheduler::SchedulerError::from)?
                 .output_json;
             let json = options.output_json(configured_json);
-            let execution = pixiv_app::execution::Execution::http(
-                config,
-                std::sync::Arc::new(std::sync::Mutex::new(database)),
-            );
+            let execution = resources.execution(config, database);
             return pixiv_cli_rs::ugoira::saved_ugoira(
                 &execution,
                 root_context,
@@ -863,10 +913,7 @@ async fn execute(
             };
             let database = pixiv_app::database::Database::open(&directory)
                 .map_err(|error| CommandError::State(Box::new(error)))?;
-            let execution = pixiv_app::execution::Execution::http(
-                config,
-                std::sync::Arc::new(std::sync::Mutex::new(database)),
-            );
+            let execution = resources.execution(config, database);
             return pixiv_cli_rs::user_detail::saved_user_profile(
                 &execution,
                 root_context,
@@ -896,10 +943,7 @@ async fn execute(
             let mode = options.output_mode(configured_json, io::stdout().is_terminal())?;
             let database = pixiv_app::database::Database::open(&directory)
                 .map_err(|error| CommandError::State(Box::new(error)))?;
-            let execution = pixiv_app::execution::Execution::http(
-                config,
-                std::sync::Arc::new(std::sync::Mutex::new(database)),
-            );
+            let execution = resources.execution(config, database);
             return pixiv_cli_rs::bookmark_reads::saved_bookmark_detail(
                 &execution,
                 root_context,
@@ -935,10 +979,7 @@ async fn execute(
             *ndjson_output = options.listing.ndjson;
             let database = pixiv_app::database::Database::open(&directory)
                 .map_err(|error| CommandError::State(Box::new(error)))?;
-            let execution = pixiv_app::execution::Execution::http(
-                config,
-                std::sync::Arc::new(std::sync::Mutex::new(database)),
-            );
+            let execution = resources.execution(config, database);
             return pixiv_cli_rs::bookmark_reads::saved_bookmark_tags(
                 &execution,
                 root_context,
@@ -971,10 +1012,7 @@ async fn execute(
             *ndjson_output = false;
             let database = pixiv_app::database::Database::open(&directory)
                 .map_err(|error| CommandError::State(Box::new(error)))?;
-            let execution = pixiv_app::execution::Execution::http(
-                config,
-                std::sync::Arc::new(std::sync::Mutex::new(database)),
-            );
+            let execution = resources.execution(config, database);
             return pixiv_cli_rs::comment_mutations::saved_mutation(
                 &execution,
                 root_context,
@@ -1018,10 +1056,7 @@ async fn execute(
         *ndjson_output = ndjson || (json.is_none() && !configured && !io::stdout().is_terminal());
         let database = pixiv_app::database::Database::open(&directory)
             .map_err(|error| CommandError::State(Box::new(error)))?;
-        let execution = pixiv_app::execution::Execution::http(
-            config,
-            std::sync::Arc::new(std::sync::Mutex::new(database)),
-        );
+        let execution = resources.execution(config, database);
         let context = root_context.clone();
         return match command {
             Some(CommentCommand::Stamps { .. }) => {
@@ -1080,10 +1115,7 @@ async fn execute(
             ) && mode == DetailOutput::Ndjson);
         let database = pixiv_app::database::Database::open(&directory)
             .map_err(|error| CommandError::State(Box::new(error)))?;
-        let execution = pixiv_app::execution::Execution::http(
-            config,
-            std::sync::Arc::new(std::sync::Mutex::new(database)),
-        );
+        let execution = resources.execution(config, database);
         return pixiv_cli_rs::bookmark_lists::saved_bookmark_lists(
             &execution,
             root_context,
@@ -1119,10 +1151,7 @@ async fn execute(
         *ndjson_output = mode == DetailOutput::Ndjson;
         let database = pixiv_app::database::Database::open(&directory)
             .map_err(|error| CommandError::State(Box::new(error)))?;
-        let execution = pixiv_app::execution::Execution::http(
-            config,
-            std::sync::Arc::new(std::sync::Mutex::new(database)),
-        );
+        let execution = resources.execution(config, database);
         return pixiv_cli_rs::mypixiv::saved_mypixiv(
             &execution,
             root_context,
@@ -1159,10 +1188,7 @@ async fn execute(
         *ndjson_output = mode == DetailOutput::Ndjson;
         let database = pixiv_app::database::Database::open(&directory)
             .map_err(|error| CommandError::State(Box::new(error)))?;
-        let execution = pixiv_app::execution::Execution::http(
-            config,
-            std::sync::Arc::new(std::sync::Mutex::new(database)),
-        );
+        let execution = resources.execution(config, database);
         return pixiv_cli_rs::timeline::saved_timeline(
             &execution,
             root_context,
@@ -1198,10 +1224,7 @@ async fn execute(
         *ndjson_output = mode == DetailOutput::Ndjson;
         let database = pixiv_app::database::Database::open(&directory)
             .map_err(|error| CommandError::State(Box::new(error)))?;
-        let execution = pixiv_app::execution::Execution::http(
-            config,
-            std::sync::Arc::new(std::sync::Mutex::new(database)),
-        );
+        let execution = resources.execution(config, database);
         return pixiv_cli_rs::user_works::saved_user_works(
             &execution,
             root_context,
@@ -1240,10 +1263,7 @@ async fn execute(
         *ndjson_output = mode == DetailOutput::Ndjson;
         let database = pixiv_app::database::Database::open(&directory)
             .map_err(|error| CommandError::State(Box::new(error)))?;
-        let execution = pixiv_app::execution::Execution::http(
-            config,
-            std::sync::Arc::new(std::sync::Mutex::new(database)),
-        );
+        let execution = resources.execution(config, database);
         return pixiv_cli_rs::user_relationships::saved_user_relationships(
             &execution,
             root_context,
@@ -1280,10 +1300,7 @@ async fn execute(
                 }
                 let database = pixiv_app::database::Database::open(&directory)
                     .map_err(|error| CommandError::State(Box::new(error)))?;
-                let opened = std::sync::Arc::new(pixiv_app::execution::Execution::http(
-                    config.clone(),
-                    std::sync::Arc::new(std::sync::Mutex::new(database)),
-                ));
+                let opened = resources.execution(config.clone(), database);
                 execution = Some(opened.clone());
                 Ok(opened)
             },
@@ -1340,6 +1357,8 @@ async fn execute(
                 Some(&mut io::stderr().lock()),
             )
             .await;
+            let result = automatic_result(result, automatic, root_context).await;
+            *automatic_done = true;
             let cleanup = searcher.close().await.map_err(CommandError::ReverseSearch);
             return pixiv_cli_rs::finish_with_cleanup(result, cleanup);
         }
@@ -1458,10 +1477,7 @@ async fn execute(
         }
         let database = pixiv_app::database::Database::open(&directory)
             .map_err(|error| CommandError::State(Box::new(error)))?;
-        let execution = pixiv_app::execution::Execution::http(
-            config,
-            std::sync::Arc::new(std::sync::Mutex::new(database)),
-        );
+        let execution = resources.execution(config, database);
         if input.trending_tags {
             return pixiv_cli_rs::trending::saved_trending_tags(
                 &execution,
@@ -1535,10 +1551,7 @@ async fn execute(
         *ndjson_output = mode == DetailOutput::Ndjson;
         let database = pixiv_app::database::Database::open(&directory)
             .map_err(|error| CommandError::State(Box::new(error)))?;
-        let execution = pixiv_app::execution::Execution::http(
-            config,
-            std::sync::Arc::new(std::sync::Mutex::new(database)),
-        );
+        let execution = resources.execution(config, database);
         return pixiv_cli_rs::recommended::saved_recommended(
             &execution,
             root_context,
@@ -1566,10 +1579,7 @@ async fn execute(
         *ndjson_output = mode == DetailOutput::Ndjson;
         let database = pixiv_app::database::Database::open(&directory)
             .map_err(|error| CommandError::State(Box::new(error)))?;
-        let execution = pixiv_app::execution::Execution::http(
-            config,
-            std::sync::Arc::new(std::sync::Mutex::new(database)),
-        );
+        let execution = resources.execution(config, database);
         return pixiv_cli_rs::ranking::saved_ranking(
             &execution,
             root_context,
@@ -1597,10 +1607,7 @@ async fn execute(
         *ndjson_output = mode == DetailOutput::Ndjson;
         let database = pixiv_app::database::Database::open(&directory)
             .map_err(|error| CommandError::State(Box::new(error)))?;
-        let execution = pixiv_app::execution::Execution::http(
-            config,
-            std::sync::Arc::new(std::sync::Mutex::new(database)),
-        );
+        let execution = resources.execution(config, database);
         return pixiv_cli_rs::novel_series::saved_novel_series(
             &execution,
             root_context,
@@ -1631,10 +1638,7 @@ async fn execute(
         };
         let database = pixiv_app::database::Database::open(&directory)
             .map_err(|error| CommandError::State(Box::new(error)))?;
-        let execution = pixiv_app::execution::Execution::http(
-            config,
-            std::sync::Arc::new(std::sync::Mutex::new(database)),
-        );
+        let execution = resources.execution(config, database);
         let mode = if *ndjson {
             DetailOutput::Ndjson
         } else if json_output {
@@ -1788,6 +1792,7 @@ async fn execute(
         Command::Auth
         | Command::Config
         | Command::Dic
+        | Command::Update
         | Command::Fanbox
         | Command::Download
         | Command::Comment { .. }
@@ -1844,29 +1849,6 @@ fn fanbox_service_owned(
     Ok(Some(std::sync::Arc::new(
         pixiv_app::fanbox_facade::Facade::new(Some(std::sync::Arc::new(accounts))),
     )))
-}
-
-struct SystemFanboxAuthUpdateHooks;
-impl pixiv_cli_rs::fanbox_auth::AutomaticUpdateHooks for SystemFanboxAuthUpdateHooks {
-    fn runtime(&self) -> Result<pixiv_cli_rs::fanbox_auth::UpdateRuntime, CommandError> {
-        let directory = pixiv_app::callback_handler::app_data_directory()
-            .map_err(|error| CommandError::MessageText(error.to_string()))?;
-        let store = pixiv_app::config::Store::new(directory.join("config.toml"));
-        let runtime = store
-            .current()
-            .and_then(|snapshot| snapshot.runtime())
-            .map_err(pixiv_app::scheduler::SchedulerError::from)?;
-        Ok(pixiv_cli_rs::fanbox_auth::UpdateRuntime {
-            enabled: runtime.update_check_enabled,
-            https_proxy: runtime.https_proxy,
-        })
-    }
-
-    fn check(&self, _: &pixiv_app::lifecycle::Context, _: &str) -> Result<(), CommandError> {
-        Err(CommandError::Message(
-            "automatic update checker is not implemented",
-        ))
-    }
 }
 
 fn close_fanbox_database(
@@ -1957,13 +1939,22 @@ async fn execute_fanbox(
                     },
                 )?;
                 let (directory, config) = runtime.expect("FANBOX read startup was resolved");
-                command
+                let mut owned_database = None;
+                let result = command
                     .execute(
                         root_context,
-                        move || fanbox_service(directory, config),
+                        || fanbox_service_owned(directory, config, &mut owned_database),
                         &mut io::stdout().lock(),
                     )
-                    .await
+                    .await;
+                let result = automatic_result(
+                    result,
+                    &automatic_from_path(&route.path, args, false),
+                    root_context,
+                )
+                .await;
+                let cleanup = owned_database.map(close_fanbox_database).unwrap_or(Ok(()));
+                pixiv_cli_rs::finish_with_cleanup(result, cleanup)
             }
             ["fanbox"] => Err(CommandError::Message("usage: pixiv fanbox <command>")),
             ["fanbox", "auth", ..] => {
@@ -2013,15 +2004,12 @@ async fn execute_fanbox(
                         },
                     )
                     .await;
-                if result.is_ok() {
-                    let release = option_env!("PIXIV_BUILD_VERSION").unwrap_or("dev") != "dev";
-                    command.post_success(
-                        root_context,
-                        release,
-                        &SystemFanboxAuthUpdateHooks,
-                        &mut io::stderr(),
-                    );
-                }
+                result = automatic_result(
+                    result,
+                    &automatic_from_path(&route.path, args, false),
+                    root_context,
+                )
+                .await;
                 if let Some(database) = owned_database {
                     result =
                         pixiv_cli_rs::finish_with_cleanup(result, close_fanbox_database(database));
@@ -2057,15 +2045,12 @@ async fn execute_fanbox(
                         &mut io::stdout().lock(),
                     )
                     .await;
-                if result.is_ok() {
-                    let release = option_env!("PIXIV_BUILD_VERSION").unwrap_or("dev") != "dev";
-                    command.post_success(
-                        root_context,
-                        release,
-                        &SystemFanboxAuthUpdateHooks,
-                        &mut io::stderr(),
-                    );
-                }
+                result = automatic_result(
+                    result,
+                    &automatic_from_path(&route.path, args, false),
+                    root_context,
+                )
+                .await;
                 if let Some(database) = owned_database {
                     result =
                         pixiv_cli_rs::finish_with_cleanup(result, close_fanbox_database(database));
@@ -2111,7 +2096,7 @@ async fn execute_dictionary(
         let transport = service::HttpTransport::new().map_err(CommandError::State)?;
         let client = service::Client::new(Some(transport));
         let config = config.expect("dictionary leaf startup was resolved");
-        command
+        let result = command
             .execute(&client, root_context, io::stdout(), move |override_json| {
                 if let Some(value) = override_json {
                     return Ok(value);
@@ -2123,13 +2108,23 @@ async fn execute_dictionary(
                     .map_err(pixiv_app::scheduler::SchedulerError::from)
                     .map_err(Into::into)
             })
-            .await
+            .await;
+        automatic_result(
+            result,
+            &automatic_from_path(
+                &["dic".into(), args.first().cloned().unwrap_or_default()],
+                &args,
+                false,
+            ),
+            root_context,
+        )
+        .await
     }
     .await;
     (result, ndjson, machine)
 }
 
-fn execute_config(root_context: &pixiv_app::lifecycle::Context) -> Result<(), CommandError> {
+async fn execute_config(root_context: &pixiv_app::lifecycle::Context) -> Result<(), CommandError> {
     let args: Vec<String> = std::env::args().skip(2).collect();
     let mut input = io::stdin().lock();
     let command = pixiv_cli_rs::config_commands::ConfigCommand::parse(
@@ -2147,12 +2142,25 @@ fn execute_config(root_context: &pixiv_app::lifecycle::Context) -> Result<(), Co
     } else {
         std::path::PathBuf::new()
     };
-    command.execute(
+    let result = command.execute(
         &pixiv_app::config::Store::new(path),
         &mut input,
         &mut io::stdout().lock(),
         &mut io::stderr().lock(),
+    );
+    let leaf = match command {
+        pixiv_cli_rs::config_commands::ConfigCommand::Help(_) => "",
+        pixiv_cli_rs::config_commands::ConfigCommand::Path => "path",
+        pixiv_cli_rs::config_commands::ConfigCommand::Get(_) => "get",
+        pixiv_cli_rs::config_commands::ConfigCommand::Set(_, _) => "set",
+        pixiv_cli_rs::config_commands::ConfigCommand::Unset(_) => "unset",
+    };
+    automatic_result(
+        result,
+        &automatic_from_path(&["config".into(), leaf.into()], &args, leaf.is_empty()),
+        root_context,
     )
+    .await
 }
 
 #[derive(Debug)]
@@ -2221,13 +2229,22 @@ async fn execute_download(
                     }
                 })?;
         }
+        let automatic = automatic_from_path(&["download".into()], &args, false);
+        let post_success = |policy: PostSuccessPolicy| -> PostSuccessFuture<'_> {
+            let mut automatic = automatic.clone();
+            automatic.skip_automatic_update = policy.skip_automatic_update;
+            Box::pin(async move { let _ = automatic_result(Ok(()), &automatic, root_context).await; })
+        };
         command
-            .execute_http(
+            .execute_http_with_post_success(
                 &store,
                 &context,
                 &mut input,
-                std::sync::Arc::new(std::sync::Mutex::new(io::stdout())),
-                std::sync::Arc::new(std::sync::Mutex::new(io::stderr())),
+                pixiv_cli_rs::download::DownloadSinks {
+                    output: std::sync::Arc::new(std::sync::Mutex::new(io::stdout())),
+                    error: std::sync::Arc::new(std::sync::Mutex::new(io::stderr())),
+                },
+                Some(&post_success),
             )
             .await
     }
@@ -2272,6 +2289,42 @@ async fn execute_auth(
                 .map_err(pixiv_app::scheduler::SchedulerError::from)?;
         }
         drop(input);
+        use pixiv_cli_rs::auth_accounts::AuthCommand;
+        let auth_path: Vec<String> = match &command {
+            AuthCommand::Login(_) => vec!["auth".into(), "login".into()],
+            AuthCommand::Validation(pixiv_cli_rs::auth_validation::ValidationCommand::Run {
+                refresh,
+                ..
+            }) => vec![
+                "auth".into(),
+                if *refresh { "refresh" } else { "check" }.into(),
+            ],
+            AuthCommand::Transfer(pixiv_cli_rs::auth_transfer::TransferCommand::Export {
+                ..
+            }) => vec!["auth".into(), "export".into()],
+            AuthCommand::Transfer(pixiv_cli_rs::auth_transfer::TransferCommand::Import {
+                ..
+            }) => vec!["auth".into(), "import".into()],
+            AuthCommand::List { .. } => vec!["auth".into(), "list".into()],
+            AuthCommand::Status { .. } => vec!["auth".into(), "pool".into(), "status".into()],
+            AuthCommand::Change { enabled, .. } => vec![
+                "auth".into(),
+                "pool".into(),
+                if *enabled { "enable" } else { "disable" }.into(),
+            ],
+            AuthCommand::Select { remove, .. } => {
+                vec!["auth".into(), if *remove { "remove" } else { "use" }.into()]
+            }
+            _ => vec!["auth".into()],
+        };
+        let automatic = automatic_from_path(&auth_path, &args, !command.requires_config());
+        let post_success = |policy: PostSuccessPolicy| -> PostSuccessFuture<'_> {
+            let mut automatic = automatic.clone();
+            automatic.skip_automatic_update = policy.skip_automatic_update;
+            Box::pin(async move {
+                let _ = automatic_result(Ok(()), &automatic, root_context).await;
+            })
+        };
         if let pixiv_cli_rs::auth_accounts::AuthCommand::Hidden(hidden) = &command {
             return hidden
                 .execute_system(&context, &mut io::stdout(), &mut io::stderr())
@@ -2279,10 +2332,11 @@ async fn execute_auth(
         }
         if let pixiv_cli_rs::auth_accounts::AuthCommand::Login(login) = &command {
             return login
-                .execute_http(
+                .execute_http_with_post_success(
                     &pixiv_app::config::Store::new(path),
                     &context,
                     &mut io::stdout(),
+                    Some(&post_success),
                 )
                 .await;
         }
@@ -2293,30 +2347,314 @@ async fn execute_auth(
         );
         if let pixiv_cli_rs::auth_accounts::AuthCommand::Validation(validation) = &command {
             return validation
-                .execute_http(
+                .execute_http_with_post_success(
                     &pixiv_app::config::Store::new(path),
                     root_context,
                     &mut io::stdout().lock(),
+                    Some(&post_success),
                 )
                 .await;
         }
         if let pixiv_cli_rs::auth_accounts::AuthCommand::Transfer(transfer) = &command {
             return transfer
-                .execute_http(
+                .execute_http_with_post_success(
                     &pixiv_app::config::Store::new(path),
                     root_context,
                     &mut io::stdout().lock(),
                     &mut prompts,
+                    Some(&post_success),
                 )
                 .await;
         }
-        command.execute_with_prompts(
-            &pixiv_app::config::Store::new(path),
-            root_context,
-            &mut io::stdout().lock(),
-            &mut prompts,
-        )
+        command
+            .execute_with_prompts_and_post_success(
+                &pixiv_app::config::Store::new(path),
+                root_context,
+                &mut io::stdout().lock(),
+                &mut prompts,
+                Some(&post_success),
+            )
+            .await
     }
     .await;
     (result, machine)
+}
+
+fn build_version() -> &'static str {
+    option_env!("PIXIV_BUILD_VERSION").unwrap_or("dev")
+}
+
+struct SystemUpdateHost;
+impl SystemUpdateHost {
+    fn store(&self) -> Result<pixiv_app::config::Store, CommandError> {
+        let directory = pixiv_app::callback_handler::app_data_directory()
+            .map_err(|error| CommandError::State(Box::new(error)))?;
+        Ok(pixiv_app::config::Store::new(directory.join("config.toml")))
+    }
+    fn runtime(&self) -> Result<pixiv_app::config::RuntimeConfig, CommandError> {
+        self.store()?
+            .current()
+            .and_then(|snapshot| snapshot.runtime())
+            .map_err(|error| CommandError::State(Box::new(error)))
+    }
+}
+impl UpdateHost for SystemUpdateHost {
+    fn load_update_runtime_config(&self) -> Result<UpdateRuntime, CommandError> {
+        self.runtime().map(|runtime| UpdateRuntime {
+            https_proxy: runtime.https_proxy,
+        })
+    }
+    fn new_update_coordinator(
+        &self,
+        proxy: &str,
+    ) -> Result<pixiv_app::update::coordinator::Coordinator, CommandError> {
+        use pixiv_app::update::assembly::{new_coordinator, shared_writer};
+        new_coordinator(
+            proxy,
+            shared_writer(io::stdout()),
+            shared_writer(io::stderr()),
+        )
+        .map_err(CommandError::State)
+    }
+}
+impl UpdatePreparation for SystemUpdateHost {
+    fn ensure_update_config(&self) -> Result<(), CommandError> {
+        self.store()?
+            .ensure_defaults()
+            .map_err(|error| CommandError::State(Box::new(error)))
+    }
+    fn start_update_diagnostics(&self) -> Result<(), CommandError> {
+        self.runtime().map(|_| ())
+    }
+}
+impl AutomaticCheckHost for SystemUpdateHost {
+    fn load_automatic_update_runtime_config(&self) -> Result<AutomaticRuntime, CommandError> {
+        self.runtime().map(|runtime| AutomaticRuntime {
+            enabled: runtime.update_check_enabled,
+            https_proxy: runtime.https_proxy,
+        })
+    }
+    fn new_automatic_update_checker(
+        &self,
+        proxy: &str,
+    ) -> Result<pixiv_app::update::coordinator::AutomaticChecker, CommandError> {
+        pixiv_app::update::assembly::new_automatic_checker(proxy).map_err(CommandError::State)
+    }
+}
+
+fn automatic_from_path(
+    path: &[String],
+    args: &[String],
+    has_subcommands: bool,
+) -> AutomaticCommand {
+    let mut command =
+        AutomaticCommand::leaf(std::iter::once("pixiv").chain(path.iter().map(String::as_str)));
+    command.has_subcommands = has_subcommands;
+    let mut index = 0;
+    while index < args.len() {
+        let arg = &args[index];
+        index += 1;
+        if arg == "--" {
+            break;
+        }
+        if arg == "--proxy" {
+            command.proxy = args.get(index).cloned();
+            index += 1;
+        } else if let Some(value) = arg.strip_prefix("--proxy=") {
+            command.proxy = Some(value.into());
+        } else if arg == "--no-proxy" || arg.starts_with("--no-proxy=") {
+            command.no_proxy_changed = true;
+        } else if arg == "--help"
+            || arg.starts_with("--help=")
+            || arg == "-h"
+            || arg.starts_with("-h=")
+        {
+            command.help_changed = true;
+        }
+    }
+    command
+}
+
+fn automatic_from_matches(matches: &clap::ArgMatches) -> AutomaticCommand {
+    let mut command = AutomaticCommand::leaf(["pixiv"]);
+    let mut current = matches;
+    while let Some((name, nested)) = current.subcommand() {
+        command.names.push(name.into());
+        current = nested;
+    }
+    if let Ok(Some(value)) = current.try_get_one::<String>("proxy")
+        && current.value_source("proxy") == Some(clap::parser::ValueSource::CommandLine)
+    {
+        command.proxy = Some(value.clone());
+    }
+    if let Ok(Some(_)) = current.try_get_one::<bool>("no_proxy") {
+        command.no_proxy_changed =
+            current.value_source("no_proxy") == Some(clap::parser::ValueSource::CommandLine);
+    }
+    command
+}
+
+async fn automatic_result(
+    result: Result<(), CommandError>,
+    command: &AutomaticCommand,
+    context: &pixiv_app::lifecycle::Context,
+) -> Result<(), CommandError> {
+    pixiv_cli_rs::update::finish_with_automatic_check(
+        result,
+        command,
+        std::sync::Arc::new(context.clone()),
+        pixiv_app::update::BuildInfo::current(),
+        &SystemUpdateHost,
+        &mut io::stderr(),
+    )
+    .await
+}
+
+#[derive(Default)]
+struct DataResources {
+    executions:
+        Vec<std::sync::Arc<pixiv_app::execution::Execution<pixiv_sdk::transport::HttpTransport>>>,
+    databases: Vec<std::sync::Arc<std::sync::Mutex<pixiv_app::database::Database>>>,
+}
+impl DataResources {
+    fn execution(
+        &mut self,
+        config: pixiv_app::config::Store,
+        database: pixiv_app::database::Database,
+    ) -> std::sync::Arc<pixiv_app::execution::Execution<pixiv_sdk::transport::HttpTransport>> {
+        let database = std::sync::Arc::new(std::sync::Mutex::new(database));
+        self.databases.push(database.clone());
+        let execution =
+            std::sync::Arc::new(pixiv_app::execution::Execution::http(config, database));
+        self.executions.push(execution.clone());
+        execution
+    }
+    fn close(mut self) -> Result<(), CommandError> {
+        self.executions.clear();
+        let mut result = Ok(());
+        for database in self.databases.into_iter().rev() {
+            let close = std::sync::Arc::try_unwrap(database)
+                .map_err(|_| {
+                    CommandError::Message("command service retained the database after execution")
+                })
+                .and_then(|database| {
+                    database
+                        .into_inner()
+                        .unwrap_or_else(std::sync::PoisonError::into_inner)
+                        .close()
+                        .map_err(|error| CommandError::State(Box::new(error)))
+                });
+            result = pixiv_cli_rs::finish_with_cleanup(result, close);
+        }
+        result
+    }
+}
+
+async fn execute(
+    args: Arguments,
+    root_context: &pixiv_app::lifecycle::Context,
+    ndjson_output: &mut bool,
+    automatic: &AutomaticCommand,
+) -> Result<(), CommandError> {
+    let mut resources = DataResources::default();
+    let mut automatic_done = false;
+    let result = execute_data(
+        args,
+        root_context,
+        ndjson_output,
+        &mut resources,
+        automatic,
+        &mut automatic_done,
+    )
+    .await;
+    let result = if automatic_done {
+        result
+    } else {
+        automatic_result(result, automatic, root_context).await
+    };
+    pixiv_cli_rs::finish_with_cleanup(result, resources.close())
+}
+
+fn root_flags(args: &[String]) -> Option<Result<(), CommandError>> {
+    if !args.is_empty() && args.iter().any(|arg| !arg.starts_with('-')) {
+        return None;
+    }
+    let mut version = false;
+    let mut help = args.is_empty();
+    for arg in args {
+        let (name, value) = arg.split_once('=').unwrap_or((arg.as_str(), "true"));
+        let target = match name {
+            "--help" | "-h" => &mut help,
+            "--version" | "-v" if !build_version().is_empty() => &mut version,
+            _ => return Some(Err(CommandError::Usage(format!("unknown option '{name}'")))),
+        };
+        *target = match value {
+            "true" | "True" | "TRUE" | "t" | "T" | "1" => true,
+            "false" | "False" | "FALSE" | "f" | "F" | "0" => false,
+            _ => {
+                return Some(Err(CommandError::MessageText(format!(
+                    "invalid argument {} for {} flag: strconv.ParseBool: parsing {}: invalid syntax",
+                    flag_quote(value),
+                    flag_quote(name),
+                    flag_quote(value)
+                ))));
+            }
+        };
+    }
+    if version && !help {
+        return Some(
+            io::stdout()
+                .write(format!("pixiv {}\n", build_version()).as_bytes())
+                .map(|_| ())
+                .map_err(Into::into),
+        );
+    }
+    Some(
+        io::stdout()
+            .write_all(ROOT_HELP.as_bytes())
+            .map_err(Into::into),
+    )
+}
+
+const ROOT_HELP: &str = "Pixiv CLI and MCP server\n\nUsage:\n  pixiv [flags]\n  pixiv [command]\n\nAvailable Commands:\n  auth        Manage local Pixiv authentication\n  bookmark    Manage artwork and novel bookmarks\n  comment     List artwork or novel comments\n  config      Manage global Pixiv CLI settings\n  detail      Show one artwork, novel, or user\n  dic         Read the Pixiv encyclopedia (dic.pixiv.net)\n  download    Download illustrations\n  fanbox      Browse and download Pixiv FANBOX content\n  follow      Manage followed users\n  mcp         Run the MCP stdio server\n  mypixiv     Browse authenticated MyPixiv data\n  novel       Query Pixiv novels\n  ranking     Show artwork or novel ranking\n  recommended Show personalized recommendations\n  search      Search artworks, novels, or users\n  series      List the artworks or novels in a series\n  timeline    Browse authenticated Pixiv timelines\n  ugoira      Show ugoira animation metadata\n  update      Check for or install updates\n  user        Query a Pixiv user\n\nFlags:\n  -h, --help      help for pixiv\n  -v, --version   version for pixiv\n\nUse \"pixiv [command] --help\" for more information about a command.\n";
+
+fn flag_quote(value: &str) -> String {
+    use unicode_general_category::{GeneralCategory as C, get_general_category};
+    let mut out = String::from("\"");
+    for ch in value.chars() {
+        match ch {
+            '\"' => out.push_str("\\\""),
+            '\\' => out.push_str("\\\\"),
+            '\n' => out.push_str("\\n"),
+            '\r' => out.push_str("\\r"),
+            '\t' => out.push_str("\\t"),
+            '\u{7}' => out.push_str("\\a"),
+            '\u{8}' => out.push_str("\\b"),
+            '\u{c}' => out.push_str("\\f"),
+            '\u{b}' => out.push_str("\\v"),
+            ch if ch < ' ' || ch == '\u{7f}' => out.push_str(&format!("\\x{:02x}", ch as u32)),
+            ch if matches!(
+                get_general_category(ch),
+                C::Control
+                    | C::Format
+                    | C::Surrogate
+                    | C::PrivateUse
+                    | C::Unassigned
+                    | C::SpaceSeparator
+                    | C::LineSeparator
+                    | C::ParagraphSeparator
+            ) && ch != ' ' =>
+            {
+                let code = ch as u32;
+                out.push_str(&if code <= 0xffff {
+                    format!("\\u{code:04x}")
+                } else {
+                    format!("\\U{code:08x}")
+                });
+            }
+            ch => out.push(ch),
+        }
+    }
+    out.push('\"');
+    out
 }

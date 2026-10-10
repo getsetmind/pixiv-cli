@@ -52,3 +52,5 @@ pub mod windows_handler;
 pub mod windows_shell;
 
 pub mod reverse_search;
+
+pub mod update;

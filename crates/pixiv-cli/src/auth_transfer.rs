@@ -235,6 +235,39 @@ impl TransferCommand {
         store: &Store,
         out: &mut W,
     ) -> Result<(), CommandError> {
+        self.execute_offline_retaining_repository(store, out, &mut None)
+    }
+
+    pub async fn execute_offline_with_post_success<W: Write>(
+        &self,
+        store: &Store,
+        out: &mut W,
+        callback: crate::update::PostSuccess<'_>,
+    ) -> Result<(), CommandError> {
+        let mut retained = None;
+        let result = self.execute_offline_retaining_repository(store, out, &mut retained);
+        crate::update::notify_post_success(result, callback, self.post_success_policy()).await
+    }
+
+    fn post_success_policy(&self) -> crate::update::PostSuccessPolicy {
+        crate::update::PostSuccessPolicy {
+            skip_automatic_update: matches!(
+                self,
+                Self::Export { .. }
+                    | Self::Import {
+                        input: ImportInput::Bundle(_),
+                        ..
+                    }
+            ),
+        }
+    }
+
+    fn execute_offline_retaining_repository<W: Write>(
+        &self,
+        store: &Store,
+        out: &mut W,
+        retained: &mut Option<Arc<dyn pixiv_app::account_service::AccountRepository>>,
+    ) -> Result<(), CommandError> {
         match self {
             Self::Help(text) => {
                 let _ = out.write_all(text.as_bytes());
@@ -246,6 +279,7 @@ impl TransferCommand {
                 ..
             } => {
                 let service = self.service(store)?;
+                *retained = Some(service.repository.clone());
                 let bundle =
                     auth_bundle::decode(body).map_err(|e| CommandError::State(Box::new(e)))?;
                 let inputs = bundle
@@ -313,6 +347,7 @@ impl TransferCommand {
                 }
                 let id = value.as_deref().map(export_uid).transpose()?;
                 let service = self.service(store)?;
+                *retained = Some(service.repository.clone());
                 let transfer = service.transfer(store);
                 let background = Context::new();
                 let accounts = transfer.accounts_with_tokens(&background)?;
@@ -384,6 +419,18 @@ impl TransferCommand {
         out: &mut W,
         prompts: &mut dyn AccountPrompts,
     ) -> Result<(), CommandError> {
+        self.execute_http_with_post_success(store, context, out, prompts, None)
+            .await
+    }
+
+    pub async fn execute_http_with_post_success<W: Write>(
+        &self,
+        store: &Store,
+        context: &Context,
+        out: &mut W,
+        prompts: &mut dyn AccountPrompts,
+        callback: crate::update::PostSuccess<'_>,
+    ) -> Result<(), CommandError> {
         if !matches!(
             self,
             Self::Import {
@@ -391,9 +438,12 @@ impl TransferCommand {
                 ..
             }
         ) {
-            return self.execute_offline(store, out);
+            return self
+                .execute_offline_with_post_success(store, out, callback)
+                .await;
         }
         let prepared = self.prepare_token(store, context, prompts)?;
+        let retained = prepared.service.repository.clone();
         let runtime = store
             .current()
             .and_then(|s| s.runtime())
@@ -402,8 +452,13 @@ impl TransferCommand {
             pixiv_app::connection::CommandConnection::resolve(&runtime, prepared.proxy.as_deref())
                 .map_err(|e| CommandError::State(Box::new(e)))?;
         let transport = pixiv_sdk::transport::HttpTransport::new(Some(connection.proxy()))?;
-        self.import_token(store, context, out, prepared, transport)
-            .await
+        let result = self
+            .import_token(store, context, out, prepared, transport)
+            .await;
+        let result =
+            crate::update::notify_post_success(result, callback, self.post_success_policy()).await;
+        drop(retained);
+        result
     }
     pub async fn execute_with_transport<T: Transport, W: Write>(
         &self,
@@ -413,6 +468,19 @@ impl TransferCommand {
         prompts: &mut dyn AccountPrompts,
         transport: T,
     ) -> Result<(), CommandError> {
+        self.execute_with_transport_and_post_success(store, context, out, prompts, transport, None)
+            .await
+    }
+
+    pub async fn execute_with_transport_and_post_success<T: Transport, W: Write>(
+        &self,
+        store: &Store,
+        context: &Context,
+        out: &mut W,
+        prompts: &mut dyn AccountPrompts,
+        transport: T,
+        callback: crate::update::PostSuccess<'_>,
+    ) -> Result<(), CommandError> {
         if !matches!(
             self,
             Self::Import {
@@ -420,17 +488,25 @@ impl TransferCommand {
                 ..
             }
         ) {
-            return self.execute_offline(store, out);
+            return self
+                .execute_offline_with_post_success(store, out, callback)
+                .await;
         }
         let prepared = self.prepare_token(store, context, prompts)?;
+        let retained = prepared.service.repository.clone();
         let runtime = store
             .current()
             .and_then(|s| s.runtime())
             .map_err(pixiv_app::scheduler::SchedulerError::from)?;
         pixiv_app::connection::CommandConnection::resolve(&runtime, prepared.proxy.as_deref())
             .map_err(|e| CommandError::State(Box::new(e)))?;
-        self.import_token(store, context, out, prepared, transport)
-            .await
+        let result = self
+            .import_token(store, context, out, prepared, transport)
+            .await;
+        let result =
+            crate::update::notify_post_success(result, callback, self.post_success_policy()).await;
+        drop(retained);
+        result
     }
     fn prepare_token(
         &self,

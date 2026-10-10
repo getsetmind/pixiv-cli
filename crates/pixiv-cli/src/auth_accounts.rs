@@ -312,6 +312,41 @@ impl AuthCommand {
         out: &mut W,
         prompts: &mut dyn AccountPrompts,
     ) -> Result<(), CommandError> {
+        self.execute_retaining_repository(store, context, out, prompts, &mut None)
+    }
+
+    pub async fn execute_with_prompts_and_post_success<W: Write>(
+        &self,
+        store: &Store,
+        context: &Context,
+        out: &mut W,
+        prompts: &mut dyn AccountPrompts,
+        callback: crate::update::PostSuccess<'_>,
+    ) -> Result<(), CommandError> {
+        if let Self::Transfer(command) = self {
+            return command
+                .execute_offline_with_post_success(store, out, callback)
+                .await;
+        }
+        let mut repository = None;
+        let result =
+            self.execute_retaining_repository(store, context, out, prompts, &mut repository);
+        crate::update::notify_post_success(
+            result,
+            callback,
+            crate::update::PostSuccessPolicy::default(),
+        )
+        .await
+    }
+
+    fn execute_retaining_repository<W: Write>(
+        &self,
+        store: &Store,
+        context: &Context,
+        out: &mut W,
+        prompts: &mut dyn AccountPrompts,
+        retained: &mut Option<Arc<dyn pixiv_app::account_service::AccountRepository>>,
+    ) -> Result<(), CommandError> {
         match self {
             Self::Login(crate::auth_login::LoginCommand::Help(text))
             | Self::Hidden(crate::auth_hidden::HiddenAuthCommand::Help(text)) => {
@@ -365,6 +400,7 @@ impl AuthCommand {
                 defaults.read_pixiv_default_user_id().map_err(Into::into)
             })),
         };
+        *retained = Some(service.repository.clone());
         if let Self::Select {
             remove,
             json,

@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "frozen_reference": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "scope": "Eight actual frozen NewGitHubReleaseClient/Check observations through synthetic HTTP transport and memory cache; exact absolute-zero instant, plus/minus1ns and UTC/offset/localyear aliases",
+  "cases": 8,
+  "toolchain": "go version go1.27.1 linux/amd64",
+  "compiler_sha256": "30969f97169d7f43fe6a085873d75613adc21e30818a8c61d95bd27275df4624",
+  "files": {
+    "crates/pixiv-app/tests/support/updater_release_zero_oracle.go.txt": "17f3a63f52927bca8912272cc9bcc754d9a3891939b8e28b0017374a3fa63557",
+    "crates/pixiv-app/tests/support/updater_release_zero_oracle.json": "bbd54ca3b866a002485a93c9c1bb955cd74f7b21249cb76b93788e55e314755b"
+  },
+  "frozen_release_client": {
+    "path": "internal/update/release/release_client.go",
+    "sha256": "9de30775c343d211ea62a61f29cb9c02f33c59f71c42613620e61001f8eac8d0",
+    "matches_frozen": true
+  },
+  "capture_command": "Owned temporary Go module github.com/FlanChanXwO/pixiv-cli/probe replaces root module with the authorized repository; GOWORK=off GOTOOLCHAIN=local CGO_ENABLED=0 GOPROXY=off official Go1.27.1 go run updater_release_zero_oracle.go",
+  "capture_repeat_identical": true,
+  "go_vet_passed": true,
+  "gofmt_applied": true,
+  "preserved_prior_oracles": {
+    "crates/pixiv-cli/tests/fixtures/updater-release-cache.json": "2cbdbb584666c0b89d001e4eec6221eb6ff0d8ac9ae07937b31ee53fb54cc9df",
+    "crates/pixiv-app/tests/support/updater_release_edge_oracle.json": "26b0aad34625baf38a84ac2d38a4983aeff88ef7659a9b7923962bb41f21c0da"
+  },
+  "observation_mapping": "Full release/throttled/error/error_chain/now_calls/cache_write_attempts are compared. Request count compares actual Rust request-observation length with the Go count. go_is_zero is retained Go metadata, with three exact-zero aliases; no direct Rust type equivalence is inferred.",
+  "limitations": [
+    "No actual network, account or credentials; the public Check uses only synthetic transport/cache",
+    "No old fixture expectation or frozen Go production changes",
+    "Does not prove unrestricted Go/Rust timestamp parser or native clock range equivalence"
+  ]
+}

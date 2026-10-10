@@ -1,0 +1,88 @@
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"errors"
+	"github.com/FlanChanXwO/pixiv-cli/internal/update/release"
+	"io"
+	"net/http"
+	"os"
+	"strings"
+	"time"
+)
+
+type observation struct {
+	CheckedAt   string           `json:"checked_at"`
+	IsZero      bool             `json:"go_is_zero"`
+	CacheBefore string           `json:"cache_before"`
+	Release     *selectedRelease `json:"release"`
+	Throttled   bool             `json:"throttled"`
+	Error       string           `json:"error"`
+	Chain       []string         `json:"error_chain"`
+	Requests    int              `json:"requests"`
+	NowCalls    int              `json:"now_calls"`
+	Writes      []string         `json:"cache_write_attempts"`
+}
+type selectedRelease struct {
+	TagName    string                 `json:"tag_name"`
+	Version    string                 `json:"version"`
+	Prerelease bool                   `json:"prerelease"`
+	Assets     []release.ReleaseAsset `json:"assets"`
+}
+type cache struct{ observed *observation }
+
+func (c *cache) Read(context.Context) ([]byte, bool, error) {
+	return []byte(c.observed.CacheBefore), true, nil
+}
+func (c *cache) Write(_ context.Context, data []byte) error {
+	c.observed.Writes = append(c.observed.Writes, string(data))
+	return nil
+}
+
+type transport struct{ observed *observation }
+
+func (t transport) RoundTrip(request *http.Request) (*http.Response, error) {
+	t.observed.Requests++
+	return &http.Response{StatusCode: 200, Status: "200 OK", Body: io.NopCloser(strings.NewReader(`[{"tag_name":"v2.0.0"}]`)), Header: http.Header{}, Request: request}, nil
+}
+func main() {
+	var rows []observation
+	now, err := time.Parse(time.RFC3339Nano, "2026-10-10T12:00:00Z")
+	if err != nil {
+		panic(err)
+	}
+	for _, checked := range []string{"0001-01-01T00:00:00Z", "0001-01-01T00:00:00.000000001Z", "0001-01-01T01:00:00+01:00", "0001-01-01T01:00:00.000000001+01:00", "0000-12-31T23:00:00-01:00", "0000-12-31T23:00:00.000000001-01:00", "0000-12-31T23:59:59.999999999Z", "0001-01-01T00:59:59.999999999+01:00"} {
+		date, err := time.Parse(time.RFC3339Nano, checked)
+		if err != nil {
+			panic(err)
+		}
+		row := observation{CheckedAt: checked, IsZero: date.IsZero(), Chain: []string{}, Writes: []string{}}
+		before, err := json.Marshal(map[string]any{"schema_version": 2, "checked_at": checked, "releases": []map[string]any{{"tag_name": "v1.0.0"}}, "pages": []any{}})
+		if err != nil {
+			panic(err)
+		}
+		row.CacheBefore = string(before)
+		client, err := release.NewGitHubReleaseClient(release.ReleaseClientOptions{Cache: &cache{observed: &row}, HTTPClient: &http.Client{Transport: transport{observed: &row}}, Now: func() time.Time { row.NowCalls++; return now }})
+		if err == nil {
+			result, checkErr := client.Check(context.Background(), release.ReleaseCheckOptions{Automatic: true})
+			err = checkErr
+			row.Throttled = result.Throttled
+			if result.Release != nil {
+				row.Release = &selectedRelease{TagName: result.Release.TagName, Version: result.Release.Version, Prerelease: result.Release.Prerelease, Assets: result.Release.Assets}
+			}
+		}
+		if err != nil {
+			row.Error = err.Error()
+			for cause := err; cause != nil; cause = errors.Unwrap(cause) {
+				row.Chain = append(row.Chain, cause.Error())
+			}
+		}
+		rows = append(rows, row)
+	}
+	encoder := json.NewEncoder(os.Stdout)
+	encoder.SetIndent("", "  ")
+	if err := encoder.Encode(rows); err != nil {
+		panic(err)
+	}
+}

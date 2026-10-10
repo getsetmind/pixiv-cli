@@ -1,0 +1,243 @@
+package installer
+
+import (
+	"archive/zip"
+	"bytes"
+	"compress/gzip"
+	"crypto/sha256"
+	"encoding/base64"
+	"encoding/json"
+	"fmt"
+	"io"
+	"os"
+	"path/filepath"
+	"strings"
+	"testing"
+)
+
+type sparseMember struct {
+	Name string
+	Kind byte
+	Body []byte
+	Mode os.FileMode
+}
+type sparseCase struct {
+	Name, GOOS string
+	Members    []sparseMember
+}
+
+func sparsePAX(k, v string) []byte {
+	n := len(k) + len(v) + 3
+	for {
+		next := len(fmt.Sprint(n)) + len(k) + len(v) + 3
+		if next == n {
+			break
+		}
+		n = next
+	}
+	return []byte(fmt.Sprintf("%d %s=%s\n", n, k, v))
+}
+func sparseTar(ms []sparseMember) []byte {
+	var raw bytes.Buffer
+	for _, m := range ms {
+		h := make([]byte, 512)
+		copy(h, m.Name)
+		copy(h[100:108], fmt.Sprintf("%07o", 0755))
+		copy(h[108:116], "0000000")
+		copy(h[116:124], "0000000")
+		copy(h[124:136], fmt.Sprintf("%011o", len(m.Body)))
+		copy(h[136:148], "00000000000")
+		for i := 148; i < 156; i++ {
+			h[i] = ' '
+		}
+		h[156] = m.Kind
+		copy(h[257:263], "ustar\x00")
+		copy(h[263:265], "00")
+		var sum int
+		for _, b := range h {
+			sum += int(b)
+		}
+		copy(h[148:156], fmt.Sprintf("%06o\x00 ", sum))
+		raw.Write(h)
+		raw.Write(m.Body)
+		raw.Write(make([]byte, (512-len(m.Body)%512)%512))
+	}
+	raw.Write(make([]byte, 1024))
+	var out bytes.Buffer
+	w := gzip.NewWriter(&out)
+	w.Write(raw.Bytes())
+	w.Close()
+	return out.Bytes()
+}
+func sparseZip(ms []sparseMember) []byte {
+	var out bytes.Buffer
+	w := zip.NewWriter(&out)
+	for _, m := range ms {
+		h := &zip.FileHeader{Name: m.Name, Method: zip.Store}
+		h.SetMode(m.Mode)
+		f, e := w.CreateHeader(h)
+		if e != nil {
+			panic(e)
+		}
+		f.Write(m.Body)
+	}
+	w.Close()
+	return out.Bytes()
+}
+func TestOwnedSparseArchives(t *testing.T) {
+	payload := []byte("A\x00\x00BCD\x00\x00")
+	records := func(pairs ...string) []byte {
+		var out []byte
+		for i := 0; i < len(pairs); i += 2 {
+			out = append(out, sparsePAX(pairs[i], pairs[i+1])...)
+		}
+		return out
+	}
+	px := func(body []byte) sparseMember { return sparseMember{"PaxHeader", 'x', body, 0644} }
+	dense := sparseMember{"pixiv", '0', []byte("ABCD"), 0644}
+	base := records("GNU.sparse.size", "8", "GNU.sparse.numblocks", "2", "GNU.sparse.map", "0,1,3,3")
+	zero := records("GNU.sparse.size", "8", "GNU.sparse.numblocks", "2", "GNU.sparse.offset", "0", "GNU.sparse.numbytes", "1", "GNU.sparse.offset", "3", "GNU.sparse.numbytes", "3")
+	one := records("GNU.sparse.major", "1", "GNU.sparse.minor", "0", "GNU.sparse.realsize", "8", "GNU.sparse.name", "nested/pixiv")
+	mapBlock := make([]byte, 512)
+	copy(mapBlock, "2\n0\n1\n3\n3\n")
+	cases := []sparseCase{
+		{Name: "pax_sparse_00_candidate", GOOS: "linux", Members: []sparseMember{px(zero), dense}},
+		{Name: "pax_sparse_01_candidate", GOOS: "linux", Members: []sparseMember{px(base), dense}},
+		{Name: "pax_sparse_10_candidate", GOOS: "linux", Members: []sparseMember{px(one), {"hidden", '0', append(mapBlock, []byte("ABCD")...), 0644}}},
+		{Name: "pax_sparse_name_unsafe", GOOS: "linux", Members: []sparseMember{px(append(base, sparsePAX("GNU.sparse.name", "../escape")...)), dense}},
+		{Name: "pax_sparse_missing_dense", GOOS: "linux", Members: []sparseMember{px(base), {"pixiv", '0', []byte("AB"), 0644}}},
+		{Name: "pax_sparse_unreferenced_dense", GOOS: "linux", Members: []sparseMember{px(base), {"pixiv", '0', []byte("ABCDE"), 0644}}},
+		{Name: "pax_sparse_10_map_eof", GOOS: "linux", Members: []sparseMember{px(one), {"pixiv", '0', []byte("2\n0\n1\n3\n3\n"), 0644}}},
+	}
+	rows := []map[string]any{}
+	for _, c := range cases {
+		root := t.TempDir()
+		dest := filepath.Join(root, "pixiv")
+		archive := sparseTar(c.Members)
+		err := extractReleaseBinary(archive, "owned.tar.gz", dest, "pixiv")
+		msg := ""
+		if err != nil {
+			msg = strings.ReplaceAll(err.Error(), root, "$ROOT")
+		}
+		b, readErr := os.ReadFile(dest)
+		rows = append(rows, map[string]any{"name": c.Name, "goos": c.GOOS, "archive_base64": base64.StdEncoding.EncodeToString(archive), "archive_sha256": fmt.Sprintf("%x", sha256.Sum256(archive)), "error": msg, "candidate_exists": readErr == nil, "candidate_base64": base64.StdEncoding.EncodeToString(b), "accepted_payload_base64": base64.StdEncoding.EncodeToString(payload)})
+	}
+	out, _ := json.MarshalIndent(rows, "", "  ")
+	if e := os.WriteFile("/tmp/updater-archive-go-first/sparse-results.json", append(out, '\n'), 0600); e != nil {
+		t.Fatal(e)
+	}
+	t.Logf("frozen helper sparse edges=%d", len(rows))
+}
+
+func TestOwnedOldGNUArchives(t *testing.T) {
+	payload := []byte("A\x00\x00BCD\x00\x00")
+	rows := []map[string]any{}
+	for _, name := range []string{"old_gnu_sparse_unaligned_unrelated", "old_gnu_sparse_candidate_nonregular"} {
+		memberName := "unrelated"
+		members := []sparseMember{{memberName, 'S', []byte("ABCD"), 0644}, {"pixiv", '0', payload, 0644}}
+		if name == "old_gnu_sparse_candidate_nonregular" {
+			memberName = "pixiv"
+			members = members[:1]
+			members[0].Name = memberName
+		}
+		initial := sparseTar(members)
+		gz, _ := gzip.NewReader(bytes.NewReader(initial))
+		raw, _ := io.ReadAll(gz)
+		gz.Close()
+		h := raw[:512]
+		copy(h[257:263], "ustar ")
+		copy(h[263:265], " \x00")
+		copy(h[386:398], "00000000000\x00")
+		copy(h[398:410], "00000000001\x00")
+		copy(h[410:422], "00000000003\x00")
+		copy(h[422:434], "00000000003\x00")
+		copy(h[483:495], "00000000010\x00")
+		for i := 148; i < 156; i++ {
+			h[i] = ' '
+		}
+		sum := 0
+		for _, b := range h {
+			sum += int(b)
+		}
+		copy(h[148:156], fmt.Sprintf("%06o\x00 ", sum))
+		var out bytes.Buffer
+		w := gzip.NewWriter(&out)
+		w.Write(raw)
+		w.Close()
+		archive := out.Bytes()
+		root := t.TempDir()
+		dest := filepath.Join(root, "pixiv")
+		err := extractReleaseBinary(archive, "owned.tar.gz", dest, "pixiv")
+		msg := ""
+		if err != nil {
+			msg = strings.ReplaceAll(err.Error(), root, "$ROOT")
+		}
+		b, readErr := os.ReadFile(dest)
+		rows = append(rows, map[string]any{"name": name, "goos": "linux", "archive_base64": base64.StdEncoding.EncodeToString(archive), "archive_sha256": fmt.Sprintf("%x", sha256.Sum256(archive)), "error": msg, "candidate_exists": readErr == nil, "candidate_base64": base64.StdEncoding.EncodeToString(b), "accepted_payload_base64": base64.StdEncoding.EncodeToString(payload)})
+	}
+	out, _ := json.MarshalIndent(rows, "", "  ")
+	if e := os.WriteFile("/tmp/updater-archive-go-first/old-gnu-results.json", append(out, '\n'), 0600); e != nil {
+		t.Fatal(e)
+	}
+	t.Logf("frozen helper old GNU edges=%d", len(rows))
+}
+
+func TestOwnedHeaderArchives(t *testing.T) {
+	payload := []byte("A\x00\x00BCD\x00\x00")
+	type headerCase struct {
+		Name    string
+		Members []sparseMember
+		Modify  func([]byte)
+	}
+	candidate := sparseMember{"pixiv", '0', payload, 0644}
+	cases := []headerCase{
+		{"numeric_embedded_nul", []sparseMember{candidate}, func(h []byte) { copy(h[100:108], "000755\x00Z") }},
+		{"header_only_negative_size", []sparseMember{{"unrelated", '5', nil, 0644}, candidate}, func(h []byte) {
+			for i := 124; i < 136; i++ {
+				h[i] = 255
+			}
+		}},
+		{"gnu_historical_unsafe_prefix", []sparseMember{candidate}, func(h []byte) {
+			copy(h[257:263], "ustar ")
+			copy(h[263:265], " \x00")
+			copy(h[345:500], "../escape\x00")
+		}},
+		{"ustar_invalid_devmajor", []sparseMember{candidate}, func(h []byte) { copy(h[329:337], "invalid\x00") }},
+	}
+	rows := []map[string]any{}
+	for _, c := range cases {
+		initial := sparseTar(c.Members)
+		gz, _ := gzip.NewReader(bytes.NewReader(initial))
+		raw, _ := io.ReadAll(gz)
+		gz.Close()
+		h := raw[:512]
+		c.Modify(h)
+		for i := 148; i < 156; i++ {
+			h[i] = ' '
+		}
+		sum := 0
+		for _, b := range h {
+			sum += int(b)
+		}
+		copy(h[148:156], fmt.Sprintf("%06o\x00 ", sum))
+		var out bytes.Buffer
+		w := gzip.NewWriter(&out)
+		w.Write(raw)
+		w.Close()
+		archive := out.Bytes()
+		root := t.TempDir()
+		dest := filepath.Join(root, "pixiv")
+		err := extractReleaseBinary(archive, "owned.tar.gz", dest, "pixiv")
+		msg := ""
+		if err != nil {
+			msg = strings.ReplaceAll(err.Error(), root, "$ROOT")
+		}
+		b, readErr := os.ReadFile(dest)
+		rows = append(rows, map[string]any{"name": c.Name, "goos": "linux", "archive_base64": base64.StdEncoding.EncodeToString(archive), "archive_sha256": fmt.Sprintf("%x", sha256.Sum256(archive)), "error": msg, "candidate_exists": readErr == nil, "candidate_base64": base64.StdEncoding.EncodeToString(b), "accepted_payload_base64": base64.StdEncoding.EncodeToString(payload)})
+	}
+	out, _ := json.MarshalIndent(rows, "", "  ")
+	if e := os.WriteFile("/tmp/updater-archive-go-first/header-results.json", append(out, '\n'), 0600); e != nil {
+		t.Fatal(e)
+	}
+	t.Logf("frozen helper header edges=%d", len(rows))
+}

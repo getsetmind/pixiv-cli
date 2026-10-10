@@ -234,7 +234,73 @@ impl LoginCommand {
         _context: &Context,
         out: &mut W,
         hooks: Arc<dyn LoginBridgeHooks>,
+        factory: F,
+    ) -> Result<(), CommandError> {
+        self.execute_with_factory_and_post_success(store, _context, out, hooks, factory, None)
+            .await
+    }
+
+    pub async fn execute_with_factory_and_post_success<
+        T: Transport,
+        W: Write,
+        F: FnMut(Option<&str>) -> Result<T, CommandError>,
+    >(
+        &self,
+        store: &Store,
+        context: &Context,
+        out: &mut W,
+        hooks: Arc<dyn LoginBridgeHooks>,
+        factory: F,
+        callback: crate::update::PostSuccess<'_>,
+    ) -> Result<(), CommandError> {
+        let mut retained = None;
+        let result = self
+            .execute_retaining_repository(store, context, out, hooks, factory, &mut retained)
+            .await;
+        crate::update::notify_post_success(
+            result,
+            callback,
+            crate::update::PostSuccessPolicy::default(),
+        )
+        .await
+    }
+
+    pub async fn execute_http_with_post_success<W: Write>(
+        &self,
+        store: &Store,
+        context: &Context,
+        out: &mut W,
+        callback: crate::update::PostSuccess<'_>,
+    ) -> Result<(), CommandError> {
+        self.execute_with_factory_and_post_success(
+            store,
+            context,
+            out,
+            Arc::new(SystemLoginHooks::new()),
+            |proxy| {
+                match proxy {
+                    Some(proxy) => HttpTransport::new(Some(proxy)),
+                    None => HttpTransport::new_with_environment_proxy(),
+                }
+                .map_err(Into::into)
+            },
+            callback,
+        )
+        .await
+    }
+
+    async fn execute_retaining_repository<
+        T: Transport,
+        W: Write,
+        F: FnMut(Option<&str>) -> Result<T, CommandError>,
+    >(
+        &self,
+        store: &Store,
+        _context: &Context,
+        out: &mut W,
+        hooks: Arc<dyn LoginBridgeHooks>,
         mut factory: F,
+        retained: &mut Option<Arc<dyn pixiv_app::account_service::AccountRepository>>,
     ) -> Result<(), CommandError> {
         let Self::Run(options) = self else {
             let Self::Help(help) = self else {
@@ -271,6 +337,7 @@ impl LoginCommand {
                 defaults.read_pixiv_default_user_id().map_err(Into::into)
             })),
         };
+        *retained = Some(accounts.repository.clone());
         let service = LoginService {
             pixiv: Some(&accounts),
             defaults: Some(store),

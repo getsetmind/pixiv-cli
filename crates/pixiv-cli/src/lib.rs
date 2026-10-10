@@ -491,3 +491,5 @@ pub use user_detail::{saved_user_detail, user_detail};
 pub fn detail_user_id(source: &str) -> pixiv_sdk::Result<i64> {
     detail_entity_id(source, "user", pixiv_sdk::reference::REFERENCE_KIND_USER)
 }
+
+pub mod update;

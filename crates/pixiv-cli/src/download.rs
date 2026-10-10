@@ -24,6 +24,12 @@ pub struct DownloadSinks<W, E> {
     pub error: Arc<Mutex<E>>,
 }
 
+#[derive(Clone, Copy)]
+pub struct DownloadLifecycle<'a> {
+    pub context: &'a Context,
+    pub post_success: crate::update::PostSuccess<'a>,
+}
+
 #[derive(Clone, Default)]
 pub struct DownloadRuntime {
     pub download_path: String,
@@ -396,36 +402,80 @@ impl DownloadCommand {
         out: Arc<Mutex<W>>,
         err: Arc<Mutex<E>>,
     ) -> Result<(), CommandError> {
-        self.execute_with_factory(
+        self.execute_http_with_post_success(
+            store,
             context,
-            || {
-                let runtime = store
-                    .current()
-                    .and_then(|snapshot| snapshot.runtime())
-                    .map_err(SchedulerError::from)?;
-                Ok(DownloadRuntime {
-                    download_path: runtime.download_path,
-                    filename_template: runtime.filename_template,
-                    directory_template: runtime.directory_template,
-                    output_json: runtime.output_json,
-                })
-            },
             input,
             DownloadSinks {
                 output: out,
                 error: err,
             },
-            || {
-                let database = Database::open(store.path().parent().unwrap())
-                    .map_err(|error| CommandError::State(Box::new(error)))?;
-                Ok(Execution::http(
-                    store.clone(),
-                    Arc::new(Mutex::new(database)),
-                ))
-            },
-            |client| Arc::new(NativeDownloadSaveClient::new(client)),
+            None,
         )
         .await
+    }
+    pub async fn execute_http_with_post_success<
+        'a,
+        R: Read + ?Sized,
+        W: Write + Send + 'static,
+        E: Write + Send + 'static,
+    >(
+        &self,
+        store: &Store,
+        context: &'a Context,
+        input: &mut R,
+        sinks: DownloadSinks<W, E>,
+        post_success: crate::update::PostSuccess<'a>,
+    ) -> Result<(), CommandError> {
+        let mut retained_database = None;
+        let result = self
+            .execute_with_factory_and_post_success(
+                DownloadLifecycle {
+                    context,
+                    post_success,
+                },
+                || {
+                    let runtime = store
+                        .current()
+                        .and_then(|snapshot| snapshot.runtime())
+                        .map_err(SchedulerError::from)?;
+                    Ok(DownloadRuntime {
+                        download_path: runtime.download_path,
+                        filename_template: runtime.filename_template,
+                        directory_template: runtime.directory_template,
+                        output_json: runtime.output_json,
+                    })
+                },
+                input,
+                sinks,
+                || {
+                    let database = Database::open(store.path().parent().unwrap())
+                        .map_err(|error| CommandError::State(Box::new(error)))?;
+                    let database = Arc::new(Mutex::new(database));
+                    retained_database = Some(database.clone());
+                    Ok(Execution::http(store.clone(), database))
+                },
+                |client| Arc::new(NativeDownloadSaveClient::new(client)),
+            )
+            .await;
+        let cleanup = retained_database
+            .map(|database| {
+                Arc::try_unwrap(database)
+                    .map_err(|_| {
+                        CommandError::Message(
+                            "download service retained the database after execution",
+                        )
+                    })
+                    .and_then(|database| {
+                        database
+                            .into_inner()
+                            .unwrap_or_else(std::sync::PoisonError::into_inner)
+                            .close()
+                            .map_err(|error| CommandError::State(Box::new(error)))
+                    })
+            })
+            .unwrap_or(Ok(()));
+        crate::finish_with_cleanup(result, cleanup)
     }
     pub async fn execute_with_factory<
         T: Transport + 'static,
@@ -449,6 +499,42 @@ impl DownloadCommand {
         X: FnOnce() -> Result<Execution<T>, CommandError>,
         F: Fn(Arc<Client<T>>) -> Arc<dyn DownloadSaveClient> + Send + Sync + 'static,
     {
+        self.execute_with_factory_and_post_success(
+            DownloadLifecycle {
+                context,
+                post_success: None,
+            },
+            load,
+            input,
+            sinks,
+            open,
+            factory,
+        )
+        .await
+    }
+    pub async fn execute_with_factory_and_post_success<
+        T: Transport + 'static,
+        R: Read + ?Sized,
+        W: Write + Send + 'static,
+        E: Write + Send + 'static,
+        L,
+        X,
+        F,
+    >(
+        &self,
+        lifecycle: DownloadLifecycle<'_>,
+        load: L,
+        input: &mut R,
+        sinks: DownloadSinks<W, E>,
+        open: X,
+        factory: F,
+    ) -> Result<(), CommandError>
+    where
+        L: FnOnce() -> Result<DownloadRuntime, CommandError>,
+        X: FnOnce() -> Result<Execution<T>, CommandError>,
+        F: Fn(Arc<Client<T>>) -> Arc<dyn DownloadSaveClient> + Send + Sync + 'static,
+    {
+        let context = lifecycle.context;
         let DownloadSinks {
             output: out,
             error: err,
@@ -466,7 +552,7 @@ impl DownloadCommand {
         if options.sources.is_empty() {
             return records(
                 self,
-                context,
+                lifecycle,
                 input,
                 prepared,
                 DownloadSinks {
@@ -479,16 +565,23 @@ impl DownloadCommand {
             .await;
         }
         let execution = open()?;
-        self.execute_prepared(
-            &execution,
-            context,
-            prepared,
-            DownloadSinks {
-                output: out,
-                error: err,
-            },
-            factory,
-            Presentation::Report,
+        let result = self
+            .execute_prepared(
+                &execution,
+                context,
+                prepared,
+                DownloadSinks {
+                    output: out,
+                    error: err,
+                },
+                factory,
+                Presentation::Report,
+            )
+            .await;
+        crate::update::notify_post_success(
+            result,
+            lifecycle.post_success,
+            crate::update::PostSuccessPolicy::default(),
         )
         .await
     }
@@ -802,13 +895,14 @@ async fn records<
     F: Fn(Arc<Client<T>>) -> Arc<dyn DownloadSaveClient> + Send + Sync + 'static,
 >(
     command: &DownloadCommand,
-    context: &Context,
+    lifecycle: DownloadLifecycle<'_>,
     input: &mut R,
     prepared: Prepared,
     sinks: DownloadSinks<W, E>,
     open: X,
     factory: F,
 ) -> Result<(), CommandError> {
+    let context = lifecycle.context;
     let DownloadCommand::Run(options) = command else {
         unreachable!()
     };
@@ -915,11 +1009,19 @@ async fn records<
             break;
         }
     }
-    if failed {
+    let result = if failed {
         Err(CommandError::Pipeline)
     } else {
         Ok(())
-    }
+    };
+    let result = crate::update::notify_post_success(
+        result,
+        lifecycle.post_success,
+        crate::update::PostSuccessPolicy::default(),
+    )
+    .await;
+    drop(execution);
+    result
 }
 fn write_record_diagnostic<E: Write + ?Sized>(
     err: &Arc<Mutex<E>>,

@@ -1,0 +1,28 @@
+{
+  "decision": "approved_bounded_source_review_pending_final_gate",
+  "base_sha": "9c30c587def68f6291cb666d2d38ded618f7648f",
+  "reviewed_at_utc": "2026-10-10T18:17:53Z",
+  "scope": "Independent root read-only review of update command, automatic-check composition and retained auth/download/database ownership; not installer, generic diagnostics, native platform or whole migration approval.",
+  "files": {
+    "crates/pixiv-cli/src/main.rs": "9601428ef0e44fa1c450769401239637bed29b3b9e99129eb4d32ee5e3df3b37",
+    "crates/pixiv-cli/src/update.rs": "39378443896c9e7179d37214cc97980ae636a0ae3248379628e733e8bdd35244",
+    "crates/pixiv-cli/src/auth_accounts.rs": "9e118b8ae655af643ae68241e5879730b9a16f20e5d345fb6f75d980bac6618a",
+    "crates/pixiv-cli/src/auth_login.rs": "7bbf4c69f78c5ab7f1e8db763b707fa96bd5c39b54837c91d061fd44b2b880a8",
+    "crates/pixiv-cli/src/auth_validation.rs": "f0251830ddd8ce45f48febd29784611d238be7437b1391a36c9df64ba45acad4",
+    "crates/pixiv-cli/src/auth_transfer.rs": "b878d44a6a2e5cec2543ddc350b837e6dfdbd1bcacf0dd3f931c33b6f96257e5",
+    "crates/pixiv-cli/src/download.rs": "cd0579093e7e9e616a0a83cc4d8069ca996f5abc2de3948c115c495250c262c1"
+  },
+  "findings": [
+    "No blocking issue found in bounded success-only callback ordering.",
+    "Compared Go root PersistentPostRun and automatic_check.go: development/help/group/MCP/update/export and bundle-import exclusions, proxy presence and warning-only error behavior retained.",
+    "Per-call SDK client close remains before automatic hook; registered database is retained through hook. Reverse search close follows hook.",
+    "Existing entrypoints remain wrappers with optional callback; callback runs only on successful command.",
+    "Reviewed corrected implementation, not the rejected temporary transport-retention premise."
+  ],
+  "limits": [
+    "SystemUpdateHost start_update_diagnostics only loads runtime; started/completed/failed event emission and error joining remain unverified compatibility debt.",
+    "Auth retained repository Arc drop cannot surface database Close errors; do not claim full cleanup-error parity.",
+    "No actual external update, user credential operation or native Windows/Darwin execution performed.",
+    "Final full gate required for exact frozen source. This artifact records source inspection and existing focused evidence, not a new runtime test."
+  ]
+}

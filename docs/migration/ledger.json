@@ -2974,12 +2974,22 @@
     },
     {
       "id": "cli:pixiv update",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv update"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/update.rs",
+        "crates/pixiv-app/src/update/mod.rs",
+        "crates/pixiv-app/src/update/assembly.rs",
+        "crates/pixiv-app/src/update/coordinator.rs",
+        "crates/pixiv-app/src/update/release.rs",
+        "crates/pixiv-app/src/update/source.rs",
+        "crates/pixiv-app/src/update/http.rs",
+        "crates/pixiv-app/src/update/installer.rs"
+      ],
       "tests": [
         "internal/cli/migration_update_connected_test.go#TestMigrationUpdaterCLIConnectedFrozen",
         "internal/update/migration_coordinator_connected_test.go#TestMigrationUpdaterCoordinatorConnectedContracts",
@@ -2987,11 +2997,23 @@
         "internal/update/source/migration_connected_test.go#TestMigrationUpdaterSourceSelection",
         "internal/update/installer/migration_connected_test.go#TestMigrationUpdaterSignedInstallFrozenContracts",
         "internal/update/installer/migration_connected_windows_source_test.go#TestMigrationUpdaterWindowsReplacementSourceDriven",
-        "internal/update/installer/migration_owned_preflight_test.go#TestMigrationUpdaterOwnedPreflightFrozenContracts"
+        "internal/update/installer/migration_owned_preflight_test.go#TestMigrationUpdaterOwnedPreflightFrozenContracts",
+        "crates/pixiv-app/tests/updater_assembly.rs",
+        "crates/pixiv-app/tests/updater_coordinator.rs",
+        "crates/pixiv-app/tests/updater_release_cache.rs",
+        "crates/pixiv-app/tests/updater_source_selection.rs",
+        "crates/pixiv-app/tests/updater_http_client.rs",
+        "crates/pixiv-app/tests/updater_signed_install.rs",
+        "crates/pixiv-app/tests/updater_file_cache.rs",
+        "crates/pixiv-app/tests/updater_owned_preflight.rs",
+        "crates/pixiv-cli/tests/updater_cli.rs",
+        "crates/pixiv-cli/tests/updater_main.rs",
+        "crates/pixiv-cli/tests/updater_auth_lifecycle.rs",
+        "crates/pixiv-cli/tests/updater_download_lifecycle.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first updater contracts only; Rust public update/global automatic checker/signed installer remain unimplemented and this row stays pending. Actual root170 is158 behavioral/12 Go-only; coordinator305 is296/nine; release/cache160 is153 public/six private/one Go nil; source200 is167/33; signed Install199/detector34/cache13, Windows source-driven26 and owned Linux preflight41 retain their separate boundaries. Preserve exact default dev/current root-version output and preflight pixiv TAG newline, all source/channel routing and unlimited canonical v-SemVer/cache/source/trust/archive/replacement/automatic lifecycle contracts. See docs/migration/updater-contracts.md.",
+        "Connected Rust update/config/proxy/source/cache/coordinator/signed-install and ordinary-success automatic checker are implemented at bounded synthetic/owned boundaries; status is in_progress with no verified platform. Original Go1148 observations stay unchanged, with new Go-first URL/time13, HTTP7 and archive30 cases. CLI library109 rows and bounded actual binary18 parser/help observations do not prove all root158: production debug diagnostic events/writer-fault joining and wider parser/root metadata remain unfinished. Root owner order preserves per-call lease/client-before-hook versus registered DB/reverse closer-after-hook. Auth retained database Arc cannot report wider Go Close errors. See docs/migration/updater-implementation.md and its separate terminal validation/review artifacts.",
         "Native Go-install source provenance (debug.ReadBuildInfo mapping), arbitrary parser/raw-byte/URL/checksum/archive/version grammar, physical transport/proxy/redirect/source timing, syscall/cache/replacement/future-drop/concurrent schedules and all native OS/arch remain unverified. Linux source-driven Windows replacement26 is not native Windows ABI/runtime or ACL evidence. Signed Install199 uses a public checker mock; separate native Linux preflight41 (16 concrete checker/25 default installer) executes only a visible owned Go helper and preserves started-process signal-killed classification separately from caller Context. Actual root sealed capture/replays use ordinary owners and synthetic external ports; private policy/nil factories, dynamic Go error layout/context object identity and native install provenance are not Rust runtime evidence. Started native child cancellation retains signal-killed error membership separately from caller context. Earlier wrong-scope TOML public-probe attempts failed DNS/network without response/accounts and remain discarded history; final fail-closed capture is synthetic.",
         "Existing SDK Context/client ownership/idle-close, Accept: */*, relay HTTP/2, pacing, signal restoration, destructive repeated Windows association cleanup and native/platform/distribution/license debts remain. Full six-platform release packaging/licensing/install scripts/signing/publication/handler/PATH are distinct required work; frozen install.sh/install.cmd do not verify checksums.json Ed25519. No denied supplemental native probe retry, feature removal, empty success or Go fallback."
       ]

@@ -1,0 +1,150 @@
+{
+  "schema_version": 1,
+  "reviewed_utc": "2026-10-10T18:13:06Z",
+  "decision": "approved_bounded_source_selection_and_expectation_preservation",
+  "unresolved_blocking_findings": [],
+  "scope": "Independent read-only review of source.rs and updater_source_selection.rs, with their associated support helper and README, original fixture, frozen Go source, and existing test output. Approval is bounded to the recorded 167 behavioral observations, explicit separation of 33 Go-only rows, and the two owned context-ignoring-loser scenarios. It is not whole updater, full Go grammar, native HTTP or final aggregate-gate approval.",
+  "reviewed_sources": [
+    {
+      "path": "crates/pixiv-app/src/update/source.rs",
+      "sha256": "a1acd1999d7c64acf2e8625a4191501dd3a971898eee9024be486bd449ea49d5"
+    },
+    {
+      "path": "crates/pixiv-app/tests/updater_source_selection.rs",
+      "sha256": "a4631def383679288df29b508ae5f76b1f82687ecad317aa7f2b61eaf0a21b83"
+    },
+    {
+      "path": "crates/pixiv-app/tests/support/updater_source_selection/mod.rs",
+      "sha256": "94a6c95e82fc71695812dae9629642785b70f90691b0ef0802bf1909088577f7"
+    },
+    {
+      "path": "crates/pixiv-app/tests/support/updater_source_selection/README.md",
+      "sha256": "cb649212e6d0e0e9643c22ab97e9fa26df199cb23b07c41a652cd098ca337aba"
+    }
+  ],
+  "frozen_reference": {
+    "revision": "4b4426487ef18bed276706daec385e0d0a6979f9",
+    "fixture": {
+      "path": "crates/pixiv-cli/tests/fixtures/updater-source-selection.json",
+      "sha256": "94de0f4040b3e2d8fd9c148200c69dcc4f03a15d205418d095980d5d3fdea574",
+      "row_count": 200,
+      "behavior_rows": 167,
+      "retained_go_only_rows": 33
+    },
+    "go_sources": [
+      {
+        "path": "internal/update/source/release_source_selector.go",
+        "sha256": "cbfb9bedcd32b391a52ce6a038710e45320dfbd2edf70c746ad72d22b8ad21f0"
+      },
+      {
+        "path": "internal/update/source/release_sources.go",
+        "sha256": "5450d686f836da97e264872e80ba4178bcec7a4217fd8a9eaa85abfccf144bc8"
+      },
+      {
+        "path": "internal/update/source/release_sources.txt",
+        "sha256": "e694ddf4ca91dcf649fc599d5d54bf0f67f67340d8fca10ec2314b345f2b4588"
+      }
+    ],
+    "fixture_hash_matches_recorded_updater_source_go_provenance": true
+  },
+  "reviewer_actions": {
+    "implemented_reviewed_source": false,
+    "ran_cargo": false,
+    "ran_go": false,
+    "ran_repository_tests": false,
+    "executed_candidate_or_downloaded_artifact": false,
+    "network_or_native_probe": false,
+    "edited_source_tests_fixtures_dependencies_scripts_or_ledger": false,
+    "wrote_only": [
+      "docs/migration/provenance/updater-implementation-source-review.json"
+    ]
+  },
+  "expectation_preservation": {
+    "original_fixture_unchanged": true,
+    "behavior_operation_counts": {
+      "parse": 35,
+      "default_sources": 1,
+      "transform": 58,
+      "embedded_transform": 5,
+      "ordered_single": 40,
+      "ordered_redirect": 5,
+      "ordered_race": 6,
+      "ordered_all_failure": 2,
+      "ordered_parent_cancel": 1,
+      "ordered_boundary": 8,
+      "check_context": 3,
+      "first_source_behavior": 1,
+      "ordered_constructor_copy": 2
+    },
+    "go_only_operation_counts": {
+      "template_parse": 8,
+      "template_apply": 6,
+      "probe_private": 6,
+      "ordered_boundary": 3,
+      "check_context": 1,
+      "first_source": 1,
+      "constructors": 1,
+      "candidates": 3,
+      "place_first": 4
+    },
+    "nil_response_mapping": {
+      "row": "api-nil-response",
+      "original_token": "(source.updaterSourceTransport)",
+      "rust_token": "(HttpTransport)",
+      "assert_exactly_one_original_token": true,
+      "compare_complete_remaining_message": true,
+      "compare_canceled_and_deadline_cause_flags": true,
+      "scope": "The associated assertion replaces only the concrete transport type fragment in a cloned expectation; every outer source/operation/Get URL wrapper and nil *Response with a nil error wording is compared exactly. The original fixture remains unchanged."
+    },
+    "context_helper_label_mapping": {
+      "rows": 3,
+      "original_label": "owned action",
+      "public_boundary_label": "select release source",
+      "scope": "The private Go CheckContext observations are exercised through real public Ordered. Only the arbitrary private helper action label is mapped to the public operation label; empty/success, cancellation/deadline message remainder and actual ContextError causes are compared. Go Ordered itself uses select release source. No private production seam was exported."
+    },
+    "not_claimed_as_rust_observations": "Go concrete error types, nil pointer/slice/context identities, private helper seams, Request.GetBody function identity, and Go errors.Join Unwrap() []error shape remain language-specific observations or explicit debt. The row-mapping test retains and separately counts all 33 go_only rows."
+  },
+  "bounded_findings": [
+    {
+      "id": "winner-and-fallback-order",
+      "finding": "Eligible candidates are cloned in original order; API selection excludes asset-only candidates, unknown kinds use the asset path like frozen Go. The first valid completed result is placed first, followed by other eligible candidates in original order, excluding matching winner IDs. Recorded race tests release a designated winner only after every eligible request has entered."
+    },
+    {
+      "id": "completion-order-errors",
+      "finding": "All-failure errors are accumulated in completed-result order and joined unsorted. The two frozen completion orders are controlled by gates and completed Close notifications; the complete resulting error text is compared without source-order normalization."
+    },
+    {
+      "id": "caller-and-child-context",
+      "finding": "Initial cancellation is checked before probing. ProbeContext delegates deadline, values, extensions and scope to the caller while owning a separate child cancellation token. Winning selection and parent cancellation signal the child token; tests assert canceled child contexts without canceling the caller on success. CancelProbes also signals cancellation when Ordered is dropped."
+    },
+    {
+      "id": "bounded-loser-ownership",
+      "finding": "After signaling child cancellation, Ordered polls only immediately-ready losing results and then drops all pending owned futures; it does not await an unbounded loser or create detached tasks. Two extra owned tests hold either a send or body read/Close while a valid winner completes, and observe returned order, future destruction, child cancellation and an unchanged caller. Their one-second timeout is a test liveness guard, not a production timeout."
+    },
+    {
+      "id": "completed-body-and-wire-boundaries",
+      "finding": "The recorded single/redirect rows compare full request values and body read/close traces. Status handling, asset draining, API array/wire-field type validation and a second JSON value/trailing-data check stay within the captured body scenarios. Ordinary client wrapping is used for the nil-response row; the associated helper compares the entire mapped diagnostic."
+    },
+    {
+      "id": "trust-and-fallback-scope",
+      "finding": "This component selects and orders URL-transforming transport sources only. Its output does not approve a release, skip caller verification, install an executable or alter asset names. Official asset allowlisting, signatures, checksums and actual ordered download fallback belong to other components and were not approved by this review."
+    }
+  ],
+  "explicit_unverified_obligations": [
+    "Go independent probe goroutines can complete and close a body after Ordered returns. Dropping pending Rust futures is not proof of that delayed cleanup timing; ready-drain cancellation is a bounded ownership policy, not a claim of Go goroutine equivalence.",
+    "An opened losing body may reach a pending asynchronous Close. The extra owned test observes a Close invocation where the canceled read is immediately ready, not successful Close completion or arbitrary delayed async cleanup.",
+    "Arbitrary JSON grammar and duplicate-field/error-precedence behavior, complete Go net/url grammar, nonstandard status reason strings and all byte encodings are not established by the captured rows.",
+    "Physical network cancellation, default-client TLS/proxy/redirect interactions outside the existing synthetic scenarios, native platforms and dropping Ordered while asynchronous Body.Close is pending remain unverified.",
+    "No supplemental multiplexed/unfinished-HEAD/upload or previously denied probe was run or retried. No public source probe, account, profile or external service was used."
+  ],
+  "observed_test_evidence": {
+    "origin": "Existing root-run fullgate2 log; this reviewer did not run the tests.",
+    "log_path": "/tmp/updater-implementation-fullgate2.log",
+    "section_sha256": "80d09536df6cf702dda1ee05a80016fb53b43a06320e4184e24a29c041d021ca",
+    "section": "     Running tests/updater_source_selection.rs (target/debug/deps/updater_source_selection-1fefc6a1d7124b4d)\n\nrunning 7 tests\ntest a_context_ignoring_loser_cannot_hold_a_successful_source_selection_open ... ok\ntest frozen_ordered_boundaries_and_constructor_ownership ... ok\ntest every_frozen_row_has_an_explicit_contract_mapping ... ok\ntest frozen_redirect_rows_follow_go_default_http_client_policy ... ok\ntest frozen_concurrent_source_outcomes_keep_winner_order_and_cancel_losers ... ok\ntest frozen_single_probe_rows_preserve_body_and_request_boundaries ... ok\ntest frozen_parser_and_transform_rows ... ok\n\ntest result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s",
+    "source_test_count": 7,
+    "passed": 7,
+    "failed": 0,
+    "full_gate_terminal_status": "Not asserted by this artifact; the aggregate gate was still owned by the root task at review time."
+  }
+}

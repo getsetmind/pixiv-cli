@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "reviewed_utc": "2026-10-10T18:09:00Z",
+  "decision": "approved_bounded_installer_source_and_focused_evidence",
+  "unresolved_blocking_findings": [],
+  "scope": "Independent installer-only source and existing-evidence review against frozen Go, bounded to the recorded public signed-install, source-detection, source-driven Windows and additive archive cases. This is not full archive grammar, native platform, whole updater or final gate approval.",
+  "reviewed_source": {
+    "path": "crates/pixiv-app/src/update/installer.rs",
+    "sha256": "af6489f735a9cb16f3247aac3989d1ed3e4b5fc958b30a8605a9c940936e9575"
+  },
+  "frozen_go": {
+    "revision": "4b4426487ef18bed276706daec385e0d0a6979f9",
+    "release_installer": {
+      "path": "internal/update/installer/release_installer.go",
+      "sha256": "22d49ff1816ebf363ee4d01be3aa826a7a7dc955c985b692da64e3e5b935af87"
+    },
+    "comparison": "Frozen installer source and official Go archive/tar and archive/zip source; additive synthetic probes retain their own exact source/compiler/probe provenance."
+  },
+  "reviewer_actions": {
+    "read_frozen_go_current_installer_tests_references_and_logs": true,
+    "ran_cargo": false,
+    "ran_go": false,
+    "ran_repository_tests": false,
+    "executed_candidate_or_downloaded_artifact": false,
+    "network_or_native_probe": false,
+    "edited_source_tests_fixtures_dependencies_scripts_or_ledger": false,
+    "wrote_only": [
+      "docs/migration/provenance/updater-implementation-installer-review.json"
+    ]
+  },
+  "resolved_findings": [
+    {
+      "id": "zip-central-directory-count",
+      "finding": "Declared EOCD count could hide later central directory entries, allowing candidate creation for a two-entry archive whose counts were patched to one.",
+      "resolution": "zip_members scans every consecutive central header, preserves the Go terminal EOF/UnexpectedEOF/ErrFormat distinctions, validates required ZIP64 extra widths, and compares actual member count modulo 65536 before returning members.",
+      "evidence": "One Go-first observation rejects with open zip release archive: unexpected EOF and zero candidate creation; its public Rust RED preceded the correction and now passes."
+    },
+    {
+      "id": "zip-creator-and-unix-kind",
+      "finding": "DOS directory attribution used creator 10 instead of Go NTFS creator 11, and unsupported UNIX file types were incorrectly treated as nonregular.",
+      "resolution": "DOS directory attribution now uses creators 0, 11 and 14; unsupported UNIX kinds retain Go regular-file/default permissions behavior.",
+      "evidence": "Three Go-first creator/type observations replay through public signed Install."
+    },
+    {
+      "id": "historical-tar-header-fields",
+      "finding": "The normalizer omitted the historical GNU prefix fallback and differed on embedded-NUL octal fields, negative header-only sizes and invalid USTAR device fields.",
+      "resolution": "The recorded historical GNU unsafe prefix is rejected as ../escape/pixiv; embedded-NUL octal and negative header-only sizes follow Go; invalid USTAR devmajor is rejected.",
+      "evidence": "Four Go-first header observations, with public RED before production correction."
+    }
+  ],
+  "review_observations": [
+    "Trusted signature and checksum verification precede archive extraction, candidate checking and target replacement for the reviewed public paths.",
+    "Archive member names are not used as extraction destinations; candidate writes use the fixed owned candidate path, after member validation.",
+    "Reviewed duplicate PAX/repeated GNU precedence, sparse 0.x/1.0 expansion and partial-error bytes, and old-GNU extension alignment follow their recorded Go cases.",
+    "The public filesystem witness records create_file and close-time candidate bytes, including error cases; failures retain the old target and successful rows alone reach the mock binary checker.",
+    "No original frozen expectation was changed to mask the reviewed differences."
+  ],
+  "focused_evidence": {
+    "test": {
+      "path": "crates/pixiv-app/tests/updater_signed_install.rs",
+      "sha256": "154b86a270047d934d7b9534222e6c36a39e1154b9676036c6bcea4a8d605aa9"
+    },
+    "support": {
+      "path": "crates/pixiv-app/tests/support/updater_installer_contract.rs",
+      "sha256": "afbb1118713baf2770faad2c1365431f7c062ce7ce26092f40d0db8af2082f09"
+    },
+    "root_run_log": {
+      "path": "/tmp/updater-signed-final-focused.log",
+      "sha256": "61f49ac01ff8ddb3cb6a56ea204290928808ac61f2f53ee2c44cb9f9aa57a417"
+    },
+    "result": "10 passed; 0 failed; 0 ignored",
+    "baseline_observations": {
+      "signed_install": 199,
+      "source_detection": 34,
+      "windows_source_driven": 26
+    },
+    "additional_archive_observations": 30,
+    "additional_references": [
+      {
+        "path": "crates/pixiv-app/tests/support/updater_archive_edges_go_reference.json",
+        "sha256": "563e5c87a7bf18b3268258c8ddc05c99929688d17a2b5ce3e6ba4851cab52222",
+        "observations": 13
+      },
+      {
+        "path": "crates/pixiv-app/tests/support/updater_sparse_go_reference.json",
+        "sha256": "a579948fd775dde7e568d7a404ee9cedb4bfe444b5a2da30f79316a0dfa6ca75",
+        "observations": 7
+      },
+      {
+        "path": "crates/pixiv-app/tests/support/updater_old_gnu_go_reference.json",
+        "sha256": "dc249ccdadbb3c755a36b0b0ef9494da25862d4fe5b63e9396d668b636736260",
+        "observations": 2
+      },
+      {
+        "path": "crates/pixiv-app/tests/support/updater_header_go_reference.json",
+        "sha256": "e25fbf216d9c309bff4782923e9ad8b47ce30ab7fec39056bd775ba5c693b8d1",
+        "observations": 4
+      },
+      {
+        "path": "crates/pixiv-app/tests/support/updater_zip_creator_go_reference.json",
+        "sha256": "da9f7064da98170d375bffaca9379bbe7406aa4da7491a94792abdc8d064816c",
+        "observations": 3
+      },
+      {
+        "path": "crates/pixiv-app/tests/support/updater_zip_count_go_reference.json",
+        "sha256": "999b3a7c386302be166c579220fc592b7938ba7103247397f97cfc2baa861fb3",
+        "observations": 1
+      }
+    ],
+    "runtime_boundary": "Synthetic signed dependencies and mock binary checker with owned Linux filesystem effects; candidates are never executed. Windows replacement observations are source-driven API mocks on owned Unix files."
+  },
+  "limitations": [
+    "Native Windows ABI, MoveFileEx/ReplaceFile behavior, native process execution and Windows filesystem behavior remain unverified; source-driven Windows tests are not native execution.",
+    "Native Darwin and other OS/architecture installer runtime behavior remain unverified by this review.",
+    "Arbitrary historical TAR numeric/header/path grammar, malformed extension combinations, sparse maps and archive truncation schedules beyond the recorded cases remain unverified.",
+    "Broader ZIP64, wrapped member counts, multiple EOCD records, central/local header interactions and arbitrary ZIP creator/attribute combinations beyond the recorded cases remain unverified.",
+    "Arbitrary filesystem races, ACLs and uncaptured I/O failures remain outside this bounded evidence.",
+    "Denied supplemental multiplex/upload/unfinished-HEAD probes remain unattempted; this artifact makes no native HTTP transport parity claim."
+  ],
+  "approval_conditions": [
+    "Approval binds the exact installer source hash above and the listed existing focused evidence.",
+    "Any installer or evidence change requires renewed review of the affected scope.",
+    "The required root-owned full gate and final whole-candidate hash approval are separate and are not certified here.",
+    "No whole feature/platform status promotion, commit, push, release publication or additional native probe is authorized by this review."
+  ]
+}

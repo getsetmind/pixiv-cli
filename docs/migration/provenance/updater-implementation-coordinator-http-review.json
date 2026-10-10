@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "reviewed_utc": "2026-10-10T18:12:12Z",
+  "decision": "approved_bounded_coordinator_and_http_source_and_existing_evidence",
+  "unresolved_blocking_findings": [],
+  "scope": "Independent read-only review of coordinator.rs/http.rs and their assigned integration tests against frozen Go coordinator/automatic policy and the official Go1.27.1 standard client source. Approval covers the unchanged coordinator305 classification and HTTP7 synthetic observations plus four focused redirect tests, not full updater, native transport or final gate approval.",
+  "reviewed_sources_and_tests": {
+    "crates/pixiv-app/src/update/coordinator.rs": {
+      "sha256": "2e82d8c15dd0e0fe55b2269c5f7abf71a3bb2b8b7ec018a4349752010e2dcc8e",
+      "matches_held_gate_input": true
+    },
+    "crates/pixiv-app/src/update/http.rs": {
+      "sha256": "92e324525610470ec18cf2b1303252f575718b89fa76ecbb61073b5a843e68b9",
+      "matches_held_gate_input": true
+    },
+    "crates/pixiv-app/tests/updater_coordinator.rs": {
+      "sha256": "f2c313cb2540c3e8ffbdf3dcd03fc12f98c7ac8054de5acb011609c92642598a",
+      "matches_held_gate_input": true
+    },
+    "crates/pixiv-app/tests/updater_http_client.rs": {
+      "sha256": "6bcfb5f5fe94303f8484ce91b774159ac764db5263ffb1a58b28e0b1d96832e7",
+      "matches_held_gate_input": true
+    }
+  },
+  "frozen_go": {
+    "revision": "4b4426487ef18bed276706daec385e0d0a6979f9",
+    "files": {
+      "internal/update/coordinator.go": {
+        "sha256": "7ddc8b681e9c27fe088236d6d5fe6973b2cdce6bfb8b86a0213194647f320968",
+        "matches_frozen": true
+      },
+      "internal/update/automatic_check.go": {
+        "sha256": "6e3ed70bd9c82213a42a4272912d212f907bad23e2eda718864a6b42e63c2f1c",
+        "matches_frozen": true
+      }
+    }
+  },
+  "oracle_preservation": {
+    "coordinator_fixture": {
+      "path": "crates/pixiv-cli/tests/fixtures/updater-coordinator.json",
+      "sha256": "659ad6b84a579498b28c625daf263210bca102b1d94ea693ff00505c8452ab52",
+      "published_base": "9c30c587def68f6291cb666d2d38ded618f7648f",
+      "byte_identical_to_published_base": true,
+      "behavioral_rows": 296,
+      "separate_go_representation_rows": 9,
+      "error_rows_with_retained_metadata": 98
+    },
+    "http_oracle_files": {
+      "crates/pixiv-app/tests/support/updater_http_go_oracle.go.txt": "0f6849862952248295518312ef356a6d0d0f0c044591d3ad9c36df582d2298d8",
+      "crates/pixiv-app/tests/support/updater_http_go_oracle.json": "0cd5a888d6973da725487c47d61bab0c6b5999a7c0ee6ea95f40a3bacc97149b",
+      "crates/pixiv-app/tests/support/updater_http_go_oracle.provenance.json": "df868c352365b1aadca3eaf29cc7ae86862eba41eee016979fdb904bb5b56fae"
+    },
+    "http_synthetic_rows": 7,
+    "http_provenance_hashes_verified": true
+  },
+  "reviewer_actions": {
+    "ran_cargo": false,
+    "ran_go": false,
+    "ran_repository_tests": false,
+    "network_or_native_probe": false,
+    "edited_source_tests_fixtures_dependencies_scripts_or_ledger": false,
+    "wrote_only": [
+      "docs/migration/provenance/updater-implementation-coordinator-http-review.json"
+    ]
+  },
+  "observations": [
+    "Explicit Execute detects installation source before parsing current version or checking releases, rejects development before queries, forwards the exact supplied CallerContext to checker/commands/installer, and returns before mutations for check mode.",
+    "Same-channel Homebrew upgrade remains unconditional; channel switching retains uninstall/install/rollback operation order and result retention. Go-install and release failures reset the result as frozen Go requires. Only target-install error is a wrapped semantic cause; rollback success/failure is retained verbatim in the returned diagnostic, matching Go %w versus %v.",
+    "Automatic checks retain development-before-dependencies behavior, stable/automatic options, throttled and absent-release early returns, and defer detection until a newer candidate exists. This owner has no command runner or installer port.",
+    "The coordinator test excludes only unwrap_chain from Rust object-layout comparison after asserting that exact field is declared Go-representation-only in the immutable fixture. Complete returned diagnostic and all eight semantic cause-identity flags remain exact; 296 behavioral rows execute, nine representations are separately enumerated, and all98 original error rows retain their Go metadata.",
+    "The HTTP wrapper forwards the same Context through redirect requests and preserves absent-response and nil-body fill/error handling, ignored redirect Close errors, at-most2048-byte redirect drainage and the ten-hop policy at the reviewed dependency boundary.",
+    "HTTP supplemental replay changes only the concrete Go RoundTripper type name (*main.transport) to the legitimate Rust HttpTransport representation. Complete remaining diagnostic chains, statuses and request counts are compared; no oracle values were removed.",
+    "Header-sensitive cross-origin stripping, explicit Referer preservation on downgrade, absent Location returning the original response, and default laziness were inspected against the official standard-client source. The current updater requests are bodyless GET requests; no arbitrary replayable-body API equivalence is inferred."
+  ],
+  "existing_focused_evidence": [
+    {
+      "path": "/tmp/updater-core-focused1.log",
+      "sha256": "d2be40f818163feae3b29db8914aa3551816f8520afe3afa6dc57ea5f651c5fe",
+      "bounded_result": "coordinator3/3 tests passed; the combined command later failed in a different release test, so this is not an overall green gate"
+    },
+    {
+      "path": "/tmp/updater-http-release-focused2.log",
+      "sha256": "ac3e395a77a0590324926489d6869d102728547abc40981834592d12781a6a2c",
+      "bounded_result": "HTTP5/5 tests passed, including all seven standard Go synthetic oracle rows"
+    }
+  ],
+  "remaining_debts": [
+    "Arbitrary native Go versus Rust URL/IDNA/raw-percent/HTTP/TLS/proxy grammar and normalized URL spelling are not broadly equivalent from these synthetic tests.",
+    "No native socket, DNS, TLS, physical source race, connection reuse or idle-close effect was exercised by this review; fallible RawBody future-drop/concurrent/read/close schedules remain separate debts.",
+    "Custom logical-host redirects, arbitrary request bodies/GetBody replay, cookie-jar behavior and unrestricted redirect combinations are outside the bodyless updater request mapping and the seven supplemental observations.",
+    "The coordinator review proves policy through genuine ports, not native Go-install provenance discovery, actual Homebrew/go commands, real release installation or platform verification.",
+    "Held full script/final build status is owned by the parent and is not approved or inferred by this review."
+  ]
+}

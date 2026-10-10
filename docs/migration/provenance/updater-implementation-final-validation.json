@@ -1,0 +1,87 @@
+{
+  "base_sha": "9c30c587def68f6291cb666d2d38ded618f7648f",
+  "frozen_go": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "validated_utc": "2026-10-10T18:26:31.719983+00:00",
+  "status": "bounded connected updater implementation candidate validated; whole migration and explicit remaining gaps unfinished",
+  "full_gate": {
+    "command": "unchanged scripts/check-rust.ps1",
+    "exit": 0,
+    "started_utc": "2026-10-10T18:17:17Z",
+    "ended_utc": "2026-10-10T18:24:58Z",
+    "elapsed_seconds": 461,
+    "fmt": "passed",
+    "strict_workspace_all_targets_clippy": "passed",
+    "raw_pass": 991,
+    "workspace_pass": 984,
+    "subprocess_child_pass": 7,
+    "fanbox_native_child_pass": 6,
+    "login_handoff_child_pass": 1,
+    "failed": 0,
+    "ignored": 11,
+    "release_build": "passed, 58.30 seconds",
+    "log_path": "docs/migration/provenance/updater-implementation-evidence/updater-implementation-fullgate3.log.gz",
+    "uncompressed_log_sha256": "53b88ffcb9374d8b9b3a852c94376df4696b4dcbca4e8b98e6eb49e83f930833",
+    "gate_snapshot_path": "docs/migration/provenance/updater-implementation-evidence/updater-implementation-fullgate3-inputs.json",
+    "gate_snapshot_sha256": "5afffa85cdb967afe1485550f5231b10db6cfd4a08d0723e5f12bb9e3ac839e6",
+    "gate_input_paths": 8489,
+    "input_drift": [],
+    "script_changed": false,
+    "profiles": "CARGO_PROFILE_DEV_DEBUG=0 CARGO_PROFILE_TEST_DEBUG=0 CARGO_INCREMENTAL=0; locked/offline, no assertion skips",
+    "pwsh_telemetry_optout": true,
+    "compiletime_version_override": "unset; actual default dev"
+  },
+  "go_validation": "updater-implementation-go-validation.json",
+  "preservation": "updater-implementation-preservation.json",
+  "reviews": {
+    "docs/migration/provenance/updater-implementation-assembly-review.json": {
+      "sha256": "fc4efaeb3bc477f91441ae398d6e02b8792999fcf1b0eef762235d319108bc4e",
+      "decision": "approved_bounded_assembly_source_and_recorded_eight_test_evidence"
+    },
+    "docs/migration/provenance/updater-implementation-coordinator-http-review.json": {
+      "sha256": "9e22d4f885d19ad6e9e1315c192d9d601772666052cf7219142cf906da545f18",
+      "decision": "approved_bounded_coordinator_and_http_source_and_existing_evidence"
+    },
+    "docs/migration/provenance/updater-implementation-installer-review.json": {
+      "sha256": "0285062eca54c5dc36806aaa4a44cc0e68f0e0aec9b20ef644ba62dc04545cd2",
+      "decision": "approved_bounded_installer_source_and_focused_evidence"
+    },
+    "docs/migration/provenance/updater-implementation-release-review.json": {
+      "sha256": "dd827cedc7de636bcfc755548754788137f7350d8862cd90f8d988d79b0ea3ed",
+      "decision": "approved_bounded_release_source_and_focused_evidence_after_zero_instant_correction"
+    },
+    "docs/migration/provenance/updater-implementation-root-ownership-review.json": {
+      "sha256": "f354af21267bc69891afc91227b7bf1af5161ba00112f4c484980bc138f009a9",
+      "decision": "approved_bounded_source_review_pending_final_gate"
+    },
+    "docs/migration/provenance/updater-implementation-source-review.json": {
+      "sha256": "615af7bb17e680f76ace511ca3f731c5460d6eff0db227d0c24c1d60479bc550",
+      "decision": "approved_bounded_source_selection_and_expectation_preservation"
+    }
+  },
+  "history": {
+    "initial_gate": "actual ENOSPC test-compilation failure after fmt/Clippy, no failing assertion reached; preserved; only authorized target/debug removed",
+    "intermediate_gate": "fullgate2 all stages passed but superseded by reviewer-discovered zero-instant defect; source inputs unchanged",
+    "zero_instant": "8 actual Go-first rows, genuine focused RED101, exact minimal absolute-second+nanos guard, all7 release tests GREEN; old160+13 oracles unchanged",
+    "historical_text_gofmt": "sole original13-row compact captured .go.txt remains unformatted exact historical source; compiled capture/vet pass, no formatter-success claim for these bytes"
+  },
+  "ledger": {
+    "identities": 673,
+    "in_progress": 613,
+    "pending": 60,
+    "verified": 0,
+    "only_changed_entry": "cli:pixiv update",
+    "verified_platform_additions": []
+  },
+  "scope": "app source/release/cache/coordinator/trust/archive/owned-process assembly; CLI83 explicit +26 automatic library rows, actual binary18 frozen parser/help rows, root post-success ownership; not all158 root rows",
+  "explicit_gaps": [
+    "actual-root debug started/completed/failed diagnostics and writer-error joining",
+    "auth database Close error propagation and broader SDK/native idle-close ownership",
+    "automatic native Go build metadata/install source and formal Rust distribution metadata",
+    "native Windows/Darwin/other architectures, Windows ABI/ACL/registry/browser/handler/PATH effects",
+    "full historical TAR/ZIP64/wrapped-count and URL/JSON/raw-byte/physical IO grammar",
+    "Go losing-source goroutine/body-close timing versus Rust pending-future drop",
+    "preexisting SDK Context/Accept/HTTP2/pacing/EOF/raw-byte and repeated destructive Windows association cleanup",
+    "distribution installers checksums-only distinct trust, packaging/licenses, formal builds"
+  ],
+  "denied_scope_preserved": "Previously denied supplemental multiplex/unfinished-HEAD/upload probe was not retried; only owned synthetic effects and known official-Go-built helper execution used"
+}

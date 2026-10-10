@@ -1,0 +1,279 @@
+{
+  "schema_version": 1,
+  "reviewed_utc": "2026-10-10T18:18:48.163603+00:00",
+  "decision": "approved_bounded_release_source_and_focused_evidence_after_zero_instant_correction",
+  "scope": "Independent read-only review of Rust release.rs and updater_release_cache.rs against the frozen public Go release/cache contracts and existing additive URL/timestamp evidence. Existing captured-row approval is bounded; general source compatibility, final gate, native transport and whole migration approval are separate.",
+  "reviewed_source": {
+    "path": "crates/pixiv-app/src/update/release.rs",
+    "sha256": "550693a98abb29fa834594c12c4f90f4096119a81e290d46bf32b4bfb7508e0c"
+  },
+  "reviewed_test": {
+    "path": "crates/pixiv-app/tests/updater_release_cache.rs",
+    "sha256": "754eceb3c8f8c5de605ac46b9935ba90dd9f54ba73fed469b2ec4b26221985de"
+  },
+  "frozen_go": {
+    "revision": "4b4426487ef18bed276706daec385e0d0a6979f9",
+    "published_base": "9c30c587def68f6291cb666d2d38ded618f7648f",
+    "release_client": {
+      "path": "internal/update/release/release_client.go",
+      "sha256": "9de30775c343d211ea62a61f29cb9c02f33c59f71c42613620e61001f8eac8d0"
+    },
+    "version_policy": {
+      "path": "internal/update/release/version_policy.go",
+      "sha256": "988c885c7c078f0e2c3d748869a55586db0fcd3ce3fcce8db377a860fdbc219a"
+    },
+    "zero_instant_source": {
+      "toolchain": "Go1.27.1 linux/amd64",
+      "file": "src/time/time.go",
+      "sha256": "7d992810b162f65e02cea4d60fd0d90af59b3cafa2c8926ca08083d5c73451dc",
+      "function": "Time.IsZero",
+      "observation": "Frozen implementation requires both zero seconds and zero nanoseconds; the represented UTC instant is independent of location spelling."
+    }
+  },
+  "reviewer_actions": {
+    "read_source_tests_original_oracle_supplemental_source_provenance_and_existing_logs": true,
+    "implemented_reviewed_release_code": false,
+    "ran_cargo": false,
+    "ran_go": false,
+    "ran_repository_tests": false,
+    "ran_new_probe": false,
+    "network_or_native_probe": false,
+    "edited_source_tests_fixtures_dependencies_scripts_or_ledger": false,
+    "wrote_only": [
+      "docs/migration/provenance/updater-implementation-release-review.json"
+    ]
+  },
+  "captured_evidence_review": {
+    "decision": "approved_existing_captured_release_observations_without_reduced_expectations",
+    "baseline_fixture": {
+      "path": "crates/pixiv-cli/tests/fixtures/updater-release-cache.json",
+      "sha256": "2cbdbb584666c0b89d001e4eec6221eb6ff0d8ac9ae07937b31ee53fb54cc9df"
+    },
+    "matches_published_base_bytes": true,
+    "inventory": {
+      "original_total": 160,
+      "public_constructor_check_transport_cache": 153,
+      "configured_selector_connected_check": 6,
+      "go_only_nil_receiver": 1,
+      "additive_url_diagnostics": 6,
+      "additive_timestamp_encoding": 7,
+      "additive_zero_instant_cache_checks": 8
+    },
+    "assertion_review": [
+      "All 159 representable original cases invoke the actual production constructor and Check with normal HttpTransport and ReleaseCache dependencies; they do not substitute a release/checker result.",
+      "Every one of the 15 original observation fields is compared: release, throttled, full error, complete single-cause error chain, canceled, deadline_error, trace, requests, bodies, cache_write_attempts, cache_after, cache_exists_after, cache_port_deadlines, probe_losers_canceled and now_calls.",
+      "All original cases have exactly the same 15 keys as the fixed Rust Observation struct. No currently captured expectation is removed, sorted, substring-matched, rewritten or excluded by the comparison.",
+      "One Go nil receiver is separately retained; Rust owned non-null receivers do not imply reproduction of a Go nil pointer.",
+      "The selected-release empty-asset projection to JSON null maps Go append-to-nil slice ownership. Exact cache bytes retain their original null versus empty-array spelling and are compared independently.",
+      "All 13 additive observations compare their complete captured error, error chain and attempted cache writes. Their expected data comes from the actual frozen Go constructor/Check source and a visible synthetic transport/cache probe."
+    ],
+    "supplemental_oracle": {
+      "path": "crates/pixiv-app/tests/support/updater_release_edge_oracle.json",
+      "sha256": "26b0aad34625baf38a84ac2d38a4983aeff88ef7659a9b7923962bb41f21c0da"
+    },
+    "supplemental_producer": {
+      "path": "crates/pixiv-app/tests/support/updater_release_edge_oracle.go",
+      "sha256": "0a7eaeaf56491906d17411092c9ab15c4b74678410c36df9b4650995e8899f4e"
+    },
+    "supplemental_provenance": {
+      "path": "crates/pixiv-app/tests/support/updater_release_edge_oracle.provenance.json",
+      "sha256": "df5bb8693c25d8a538c0fada6105fd930eca9130efbe71108d07da946b10600a"
+    },
+    "existing_root_focused_log": {
+      "path": "docs/migration/provenance/updater-implementation-evidence/updater-http-release-focused2.log.gz",
+      "sha256": "18c84542d6e26513d8916afe2ab4be4bb25636d4a746401cec46b3a0fc06da31",
+      "decoded_sha256": "ac3e395a77a0590324926489d6869d102728547abc40981834592d12781a6a2c",
+      "result": "release/cache 6 passed; 0 failed; 0 ignored",
+      "reviewer_reran": false
+    },
+    "root_fullgate_input_snapshots": {
+      "historical_fullscript2": {
+        "path": "/tmp/updater-implementation-fullgate-inputs.json",
+        "sha256": "fcae5ee6f8192e676aed94b28791855be36026e4180e93a8c29c24dc7b3cb413",
+        "input_paths": 8486,
+        "reviewed_source_and_test_hashes_match": false,
+        "reviewed_entries": {
+          "crates/pixiv-app/src/update/release.rs": "52375de01b9b2da4a65d12630027243524b191031ac1c54fd28792c199bc4ef4",
+          "crates/pixiv-app/tests/updater_release_cache.rs": "444b19bd6724e6c0beba6f386a5d1eb3ef5fd2a9f709f8b1dadf7308daa2120a"
+        }
+      },
+      "corrected_fullscript3": {
+        "path": "/tmp/updater-implementation-fullgate3-inputs.json",
+        "sha256": "5afffa85cdb967afe1485550f5231b10db6cfd4a08d0723e5f12bb9e3ac839e6",
+        "input_paths": 8489,
+        "reviewed_source_and_test_hashes_match": true,
+        "reviewed_entries": {
+          "crates/pixiv-app/src/update/release.rs": "550693a98abb29fa834594c12c4f90f4096119a81e290d46bf32b4bfb7508e0c",
+          "crates/pixiv-app/tests/updater_release_cache.rs": "754eceb3c8f8c5de605ac46b9935ba90dd9f54ba73fed469b2ec4b26221985de"
+        }
+      }
+    },
+    "root_fullgate_input_snapshot_explanation": "The original fullscript2 snapshot is deliberately immutable historical evidence and predates the zero-instant source/test delta. Its mismatch is historical, not an unsealed-current-source finding. The corrected fullscript3 snapshot was sealed after the delta and exactly matches the final reviewed source and test hashes; fullscript3 terminal results remain a separate root-owned gate."
+  },
+  "review_observations": [
+    "SemVer numeric components and numeric prerelease comparisons use decimal string length and bytes, avoiding fixed integer limits; build metadata is retained in text and ignored in precedence, and the first equal release wins.",
+    "Drafts and GitHub-labelled prereleases are skipped at the frozen boundaries; included malformed published tags fail instead of silently selecting an older release.",
+    "Cache/source/query selection and write use the same caller context or one total bounded automatic child deadline; explicit checks retain parent deadlines. No context check is added after successful cache Write.",
+    "Schema2 cached page identity and visited-page identity use canonical endpoint paths while request/cache URL query spelling remains distinct. Exact cached 304 identity, duplicate cached pages and cached next URL validation are preserved for reviewed rows.",
+    "A configured source selector is a normal production dependency. Only its first selected API source is used for every fetched page; there is no per-page source fallback.",
+    "Query decoding accepts the first JSON value and ignores same-read errors with positive byte counts according to the captured Go decoder boundary. Sequential Node fields preserve captured known-field duplicates, case folding and null retention; body Close errors are ignored after the reviewed request/decode/status paths."
+  ],
+  "unresolved_blocking_findings": [],
+  "limitations": [
+    "Existing PageUrl parsing, raw-byte unescaping, JSON syntax diagnostics and cache time parsing are bounded mappings, not complete Go net/url, encoding/json or time grammar implementations.",
+    "Invalid caller RawRead byte counts, arbitrary I/O errors, future-drop schedules and concurrent reads/closes are not generalized from the synthetic valid-reader observations.",
+    "Synthetic HTTP adapters do not prove native DNS/TLS/proxy/default-client URL grammar, physical cancellation, public-source timing or service availability.",
+    "The three-second blocked-cache-read witness and deadline identities do not establish every physical transport/cache scheduler boundary.",
+    "File-cache atomic replacement, ACLs, syscall failures and native Windows/Darwin or six-platform runtime are outside these two reviewed files and remain separate obligations.",
+    "Pending Rust source-probe futures may be dropped while Go goroutines can continue; arbitrary delayed loser/body-close lifecycle is explicitly not broad equivalence.",
+    "No denied supplemental multiplex, unfinished-HEAD or upload probe was retried."
+  ],
+  "approval_conditions": [
+    "Bounded source/focused approval binds the final source/test/oracle hashes above and the retained initial finding plus its resolved revision.",
+    "The exact-zero-instant blocker is resolved for all eight reviewed Go-first public Check observations, with unchanged prior160+13 expectations.",
+    "Required root-owned fullscript3, final whole-candidate input preservation and whole-updater review remain separate and are not certified here.",
+    "Any source or oracle change requires renewed review of affected scope.",
+    "No verified-platform promotion, full migration claim, commit, push, release publication or new native/external probe is authorized by this review."
+  ],
+  "review_history": [
+    {
+      "reviewed_utc": "2026-10-10T18:13:09.841473+00:00",
+      "artifact_sha256_before_resolution": "793ee4534e32acbde6bc6ea0b496b226576a474f2b1dca82f0427796c355bdee",
+      "decision": "changes_requested_for_checked_at_zero_instant_predicate",
+      "reviewed_source": {
+        "path": "crates/pixiv-app/src/update/release.rs",
+        "sha256": "52375de01b9b2da4a65d12630027243524b191031ac1c54fd28792c199bc4ef4"
+      },
+      "reviewed_test": {
+        "path": "crates/pixiv-app/tests/updater_release_cache.rs",
+        "sha256": "444b19bd6724e6c0beba6f386a5d1eb3ef5fd2a9f709f8b1dadf7308daa2120a"
+      },
+      "unresolved_blocking_findings": [
+        {
+          "id": "cache-checked-at-zero-instant-nanoseconds-and-location",
+          "severity": "compatibility_correctness",
+          "location": "crates/pixiv-app/src/update/release.rs:275-280",
+          "finding": "read_cache classifies missing checked_at using date.year()==1 and second-resolution Unix timestamp only. Frozen Go checks Time.IsZero, which requires the exact UTC zero instant including nanoseconds and is independent of local year.",
+          "examples": [
+            {
+              "checked_at": "0001-01-01T00:00:00.000000001Z",
+              "frozen_go_semantics": "nonzero checked_at, so missing_checked_at rejection does not occur",
+              "current_rust_semantics": "rejected as missing_checked_at because nanoseconds are omitted"
+            },
+            {
+              "checked_at": "0000-12-31T23:00:00-01:00",
+              "frozen_go_semantics": "the zero UTC instant, so missing_checked_at rejection occurs",
+              "current_rust_semantics": "accepted as nonmissing because the local year is zero"
+            }
+          ],
+          "evidence_kind": "Static source comparison; no new probe or tests were run by this reviewer. These cases are outside the existing 160+13 captured rows.",
+          "minimal_correction": "Compare Unix seconds to -62135596800 and timestamp_subsec_nanos() to zero, without a local-year condition; capture actual Go-first observations before changing Rust.",
+          "root_notified": true,
+          "disposition": "Awaiting root correction or explicit retention as a bounded known compatibility debt. This artifact does not certify corrected behavior."
+        }
+      ],
+      "captured_rows_approved": 173,
+      "source_and_test_hashes_matched_initial_gate_manifest": true
+    }
+  ],
+  "resolved_findings": [
+    {
+      "id": "cache-checked-at-zero-instant-nanoseconds-and-location",
+      "original_finding": {
+        "id": "cache-checked-at-zero-instant-nanoseconds-and-location",
+        "severity": "compatibility_correctness",
+        "location": "crates/pixiv-app/src/update/release.rs:275-280",
+        "finding": "read_cache classifies missing checked_at using date.year()==1 and second-resolution Unix timestamp only. Frozen Go checks Time.IsZero, which requires the exact UTC zero instant including nanoseconds and is independent of local year.",
+        "examples": [
+          {
+            "checked_at": "0001-01-01T00:00:00.000000001Z",
+            "frozen_go_semantics": "nonzero checked_at, so missing_checked_at rejection does not occur",
+            "current_rust_semantics": "rejected as missing_checked_at because nanoseconds are omitted"
+          },
+          {
+            "checked_at": "0000-12-31T23:00:00-01:00",
+            "frozen_go_semantics": "the zero UTC instant, so missing_checked_at rejection occurs",
+            "current_rust_semantics": "accepted as nonmissing because the local year is zero"
+          }
+        ],
+        "evidence_kind": "Static source comparison; no new probe or tests were run by this reviewer. These cases are outside the existing 160+13 captured rows.",
+        "minimal_correction": "Compare Unix seconds to -62135596800 and timestamp_subsec_nanos() to zero, without a local-year condition; capture actual Go-first observations before changing Rust.",
+        "root_notified": true,
+        "disposition": "Awaiting root correction or explicit retention as a bounded known compatibility debt. This artifact does not certify corrected behavior."
+      },
+      "resolution": "read_cache now compares the exact zero UTC instant using Unix seconds -62135596800 and timestamp_subsec_nanos()==0, with no local-year condition.",
+      "evidence_kind": "Actual frozen Go-first public constructor/Check observations, genuine pre-correction Rust RED and post-correction complete focused GREEN; reviewer read evidence without re-running tools.",
+      "minimal_delta_verified": {
+        "only_source_delta": "Replace local-year/second-only zero guard with second-and-nanosecond absolute-zero guard.",
+        "prior_source_sha256_reconstructed_by_reversing_only_guard_delta": "52375de01b9b2da4a65d12630027243524b191031ac1c54fd28792c199bc4ef4",
+        "prior_test_sha256_reconstructed_by_removing_only_appended_zero_test": "444b19bd6724e6c0beba6f386a5d1eb3ef5fd2a9f709f8b1dadf7308daa2120a"
+      },
+      "go_first_observations": {
+        "rows": 8,
+        "exact_zero_aliases": 3,
+        "nonzero_adjacent_values": 5,
+        "scope": "UTC and offset forms of absolute zero, local-year-zero alias, +1ns and -1ns; actual public Check responses/counters/write bytes are retained.",
+        "producer": {
+          "path": "crates/pixiv-app/tests/support/updater_release_zero_oracle.go.txt",
+          "sha256": "17f3a63f52927bca8912272cc9bcc754d9a3891939b8e28b0017374a3fa63557"
+        },
+        "oracle": {
+          "path": "crates/pixiv-app/tests/support/updater_release_zero_oracle.json",
+          "sha256": "bbd54ca3b866a002485a93c9c1bb955cd74f7b21249cb76b93788e55e314755b"
+        },
+        "provenance": {
+          "path": "crates/pixiv-app/tests/support/updater_release_zero_oracle.provenance.json",
+          "sha256": "b7d5fadbe639a110e01101e78d6a68c85467724c92a507905dadf57850613538"
+        },
+        "provenance_file_hashes_match_exact_reviewed_inputs": true,
+        "unchanged_frozen_release_client_hash_matches_provenance": true,
+        "assertions": "Complete release/throttled/error/error_chain/now_calls/cache_write_attempts compare against captured Go outputs; observed Rust request-vector length compares against actual Go request count. go_is_zero remains separate Go metadata, not a Rust type-equality claim."
+      },
+      "root_red": {
+        "path": "/tmp/updater-release-zero-red.log",
+        "sha256": "090ba3bf2583d7ff13dda81b6cb185cad90f74b7185d455496ff76e7333962c8",
+        "exit_code": 101,
+        "result": "One new zero-instant test failed with actual source differences; six previous tests filtered out. The log demonstrates wrong rejection of +1ns and wrong acceptance of the local-year-zero zero alias."
+      },
+      "root_green": {
+        "path": "/tmp/updater-release-zero-green.log",
+        "sha256": "e03a06ebf902803d4dd94cd47c44fe0af60cc1ba07e51e106c6f8d613b22c15c",
+        "exit_code": 0,
+        "result": "Seven release/cache integration tests passed, including unchanged original160 and prior13 rows plus the additive8 zero-instant observations."
+      },
+      "original_expectations_unchanged": {
+        "original_release_cache_oracle": {
+          "path": "crates/pixiv-cli/tests/fixtures/updater-release-cache.json",
+          "sha256": "2cbdbb584666c0b89d001e4eec6221eb6ff0d8ac9ae07937b31ee53fb54cc9df"
+        },
+        "prior_release_edge_oracle": {
+          "path": "crates/pixiv-app/tests/support/updater_release_edge_oracle.json",
+          "sha256": "26b0aad34625baf38a84ac2d38a4983aeff88ef7659a9b7923962bb41f21c0da"
+        }
+      },
+      "status": "resolved_for_the_reviewed_source_and_focused_evidence",
+      "whole_gate": "Required root-owned full script after this delta remains separate; this review does not claim it passed."
+    }
+  ],
+  "latest_focused_evidence": {
+    "result": "Seven passed; zero failed; zero ignored; root-owned run only",
+    "reviewer_reran": false,
+    "source_sha256": "550693a98abb29fa834594c12c4f90f4096119a81e290d46bf32b4bfb7508e0c",
+    "test_sha256": "754eceb3c8f8c5de605ac46b9935ba90dd9f54ba73fed469b2ec4b26221985de",
+    "original_observations": 160,
+    "prior_additive_observations": 13,
+    "new_zero_instant_observations": 8,
+    "final_whole_gate_status": "Separate root-owned fullscript3 is required after the correction and is not certified by this artifact.",
+    "corrected_fullscript3_input_snapshot": {
+      "path": "/tmp/updater-implementation-fullgate3-inputs.json",
+      "sha256": "5afffa85cdb967afe1485550f5231b10db6cfd4a08d0723e5f12bb9e3ac839e6",
+      "input_paths": 8489,
+      "reviewed_source_and_test_hashes_match": true,
+      "reviewed_entries": {
+        "crates/pixiv-app/src/update/release.rs": "550693a98abb29fa834594c12c4f90f4096119a81e290d46bf32b4bfb7508e0c",
+        "crates/pixiv-app/tests/updater_release_cache.rs": "754eceb3c8f8c5de605ac46b9935ba90dd9f54ba73fed469b2ec4b26221985de"
+      }
+    }
+  },
+  "provenance_clarified_utc": "2026-10-10T18:20:03.286247+00:00"
+}
