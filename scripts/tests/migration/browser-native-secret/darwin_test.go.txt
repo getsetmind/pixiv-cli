@@ -1,0 +1,181 @@
+package chromium
+
+import (
+	"context"
+	"encoding/hex"
+	"encoding/json"
+	"os"
+	"path/filepath"
+	"reflect"
+	"strings"
+	"testing"
+	"time"
+
+	"github.com/FlanChanXwO/pixiv-cli/internal/browsercookies"
+	"github.com/FlanChanXwO/pixiv-cli/internal/browsercookies/secret"
+)
+
+type darwinInput struct {
+	Name      string `json:"name"`
+	Service   string `json:"service"`
+	Account   string `json:"account"`
+	Browser   string `json:"browser,omitempty"`
+	Mode      string `json:"mode"`
+	OutputHex string `json:"output_hex"`
+	Cancel    string `json:"cancel"`
+}
+
+type darwinExpected struct {
+	ValueHex       string   `json:"value_hex"`
+	Error          string   `json:"error"`
+	CommandArgs    []string `json:"command_args"`
+	CommandStarted bool     `json:"command_started"`
+}
+
+type darwinCase struct {
+	darwinInput
+	Expected darwinExpected `json:"expected"`
+}
+
+func darwinExecute(t *testing.T, input darwinInput, run func(context.Context) ([]byte, error)) darwinExpected {
+	t.Helper()
+	directory := t.TempDir()
+	if input.Mode != "missing-command" {
+		if err := os.Symlink(os.Getenv("PIXIV_OWNED_SECURITY"), filepath.Join(directory, "security")); err != nil {
+			t.Fatal(err)
+		}
+	}
+	record := filepath.Join(directory, "argv.json")
+	t.Setenv("PATH", directory)
+	t.Setenv("PIXIV_SECURITY_RECORD", record)
+	t.Setenv("PIXIV_SECURITY_MODE", input.Mode)
+	t.Setenv("PIXIV_SECURITY_OUTPUT_HEX", input.OutputHex)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	if input.Cancel == "before" {
+		cancel()
+	}
+	type answer struct {
+		value []byte
+		err   error
+	}
+	var result answer
+	if input.Cancel == "during" {
+		finished := make(chan answer, 1)
+		go func() {
+			value, err := run(ctx)
+			finished <- answer{value, err}
+		}()
+		deadline := time.After(5 * time.Second)
+		for {
+			if _, err := os.Stat(record); err == nil {
+				break
+			}
+			select {
+			case <-deadline:
+				t.Fatal("owned synthetic security helper did not start")
+			case <-time.After(time.Millisecond):
+			}
+		}
+		cancel()
+		select {
+		case result = <-finished:
+		case <-time.After(5 * time.Second):
+			t.Fatal("original command cancellation did not finish")
+		}
+	} else {
+		result.value, result.err = run(ctx)
+	}
+	observed := darwinExpected{ValueHex: hex.EncodeToString(result.value), Error: secretError(result.err), CommandArgs: []string{}}
+	if body, err := os.ReadFile(record); err == nil {
+		if err := json.Unmarshal(body, &observed.CommandArgs); err != nil {
+			t.Fatal(err)
+		}
+		observed.CommandStarted = true
+	} else if !os.IsNotExist(err) {
+		t.Fatal(err)
+	}
+	if strings.Contains(observed.Error, "synthetic-") || strings.Contains(observed.Error, directory) {
+		t.Fatal("native error exposed synthetic secret or owned private path")
+	}
+	if observed.CommandStarted {
+		args := []string{"find-generic-password", "-w", "-s", input.Service, "-a", input.Account}
+		if !reflect.DeepEqual(args, observed.CommandArgs) {
+			t.Fatal("original security command arguments changed")
+		}
+	}
+	return observed
+}
+
+func TestFrozenDarwinNativeSecretAndMapping(t *testing.T) {
+	inputs := []struct {
+		darwinInput
+		want error
+	}{
+		{darwinInput{Name: "trim-only-trailing-crlf", Service: "owned service", Account: "owned account", Mode: "success", OutputHex: "202073796e746865746963207061737320200d0a0a", Cancel: "none"}, nil},
+		{darwinInput{Name: "arbitrary-native-password-bytes", Service: "owned service", Account: "owned account", Mode: "success", OutputHex: "00ff0d410a0d0a", Cancel: "none"}, nil},
+		{darwinInput{Name: "spaces-are-nonempty-password", Service: "owned service", Account: "owned account", Mode: "success", OutputHex: "20200a", Cancel: "none"}, nil},
+		{darwinInput{Name: "empty-output", Service: "owned service", Account: "owned account", Mode: "empty", Cancel: "none"}, secret.ErrEmptyPassword},
+		{darwinInput{Name: "crlf-only-output", Service: "owned service", Account: "owned account", Mode: "success", OutputHex: "0d0a0d0a", Cancel: "none"}, secret.ErrEmptyPassword},
+		{darwinInput{Name: "blank-service", Service: " \t\n", Account: "owned account", Mode: "success", OutputHex: "41", Cancel: "none"}, secret.ErrInvalidItem},
+		{darwinInput{Name: "blank-account", Service: "owned service", Account: " \r\n", Mode: "success", OutputHex: "41", Cancel: "none"}, secret.ErrInvalidItem},
+		{darwinInput{Name: "invalid-item-before-cancellation", Service: "", Account: "owned account", Mode: "success", OutputHex: "41", Cancel: "before"}, secret.ErrInvalidItem},
+		{darwinInput{Name: "missing-command", Service: "owned service", Account: "owned account", Mode: "missing-command", Cancel: "none"}, secret.ErrKeychainCommand},
+		{darwinInput{Name: "exact-item-not-found-stderr", Service: "owned service", Account: "owned account", Mode: "item-not-found", Cancel: "none"}, secret.ErrItemNotFound},
+		{darwinInput{Name: "item-not-found-case-sensitive", Service: "owned service", Account: "owned account", Mode: "case-mismatch", Cancel: "none"}, secret.ErrKeychainCommand},
+		{darwinInput{Name: "command-failure-redacted", Service: "owned service", Account: "owned account", Mode: "failure", Cancel: "none"}, secret.ErrKeychainCommand},
+		{darwinInput{Name: "cancel-before-command", Service: "owned service", Account: "owned account", Mode: "success", OutputHex: "41", Cancel: "before"}, context.Canceled},
+		{darwinInput{Name: "cancel-running-owned-command", Service: "owned service", Account: "owned account", Mode: "wait", Cancel: "during"}, context.Canceled},
+	}
+	var direct []darwinCase
+	for _, input := range inputs {
+		t.Run(input.Name, func(t *testing.T) {
+			observed := darwinExecute(t, input.darwinInput, func(ctx context.Context) ([]byte, error) {
+				return (secret.Keychain{}).GetPassword(ctx, input.Service, input.Account)
+			})
+			if observed.Error != secretError(input.want) {
+				t.Fatalf("original Keychain error = %q, want %q", observed.Error, secretError(input.want))
+			}
+			direct = append(direct, darwinCase{input.darwinInput, observed})
+		})
+	}
+	mappingInputs := []struct {
+		darwinInput
+		want error
+	}{
+		{darwinInput{Name: "chrome-safe-storage", Browser: "chrome", Mode: "success", OutputHex: "6162630a", Cancel: "none"}, nil},
+		{darwinInput{Name: "edge-safe-storage", Browser: "edge", Mode: "success", OutputHex: "6162630d0a", Cancel: "none"}, nil},
+		{darwinInput{Name: "unknown-kind-defaults-to-chrome", Browser: "unknown-kind", Mode: "success", OutputHex: "616263", Cancel: "none"}, nil},
+		{darwinInput{Name: "map-item-not-found", Browser: "chrome", Mode: "item-not-found", Cancel: "none"}, browsercookies.ErrKeychainItemNotFound},
+		{darwinInput{Name: "map-empty-password", Browser: "edge", Mode: "empty", Cancel: "none"}, browsercookies.ErrKeychainAccess},
+		{darwinInput{Name: "map-command-failure", Browser: "edge", Mode: "failure", Cancel: "none"}, browsercookies.ErrKeychainAccess},
+		{darwinInput{Name: "map-cancel-before-to-access", Browser: "chrome", Mode: "success", OutputHex: "41", Cancel: "before"}, browsercookies.ErrKeychainAccess},
+		{darwinInput{Name: "map-cancel-running-to-access", Browser: "edge", Mode: "wait", Cancel: "during"}, browsercookies.ErrKeychainAccess},
+	}
+	var mapping []darwinCase
+	for _, input := range mappingInputs {
+		t.Run(input.Name, func(t *testing.T) {
+			k := kindChrome
+			if input.Browser == "edge" {
+				k = kindEdge
+			} else if input.Browser == "unknown-kind" {
+				k = kind(77)
+			}
+			input.Service, input.Account = k.keychainService(), k.keychainAccount()
+			if input.Browser == "edge" {
+				if input.Service != "Microsoft Edge Safe Storage" || input.Account != "Microsoft Edge" {
+					t.Fatal("frozen Edge service/account mapping changed")
+				}
+			} else if input.Service != "Chrome Safe Storage" || input.Account != "Chrome" {
+				t.Fatal("frozen Chrome service/account mapping changed")
+			}
+			p := provider{kind: k}
+			observed := darwinExecute(t, input.darwinInput, p.keychainPassword)
+			if observed.Error != secretError(input.want) {
+				t.Fatalf("original mapping error = %q, want %q", observed.Error, secretError(input.want))
+			}
+			mapping = append(mapping, darwinCase{input.darwinInput, observed})
+		})
+	}
+	secretResult(t, map[string]any{"secret": direct, "mapping": mapping})
+}

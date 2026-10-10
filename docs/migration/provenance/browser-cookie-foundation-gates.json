@@ -1,0 +1,130 @@
+{
+  "base_sha": "0da302cdebcbcbbeeee558d9b93b9533e4d69662",
+  "frozen_go": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "verified_utc": "2026-10-10T12:58:41.731126+00:00",
+  "scope": "Durable Go extraction contracts plus additive byte API/auth-forwarding foundation ONLY; native system extraction still unimplemented and six fixtures not cross-language compared",
+  "full_script": {
+    "command": "pwsh -NoProfile -File scripts/check-rust.ps1",
+    "script": {
+      "path": "scripts/check-rust.ps1",
+      "bytes": 1774,
+      "sha256": "a5cc6a8c5265061d8e25fa67f364b5f9253ba93fcbcd904e5ca768c3e77fb7f6"
+    },
+    "log": {
+      "path": "/tmp/pixiv-browser-foundation-full-gates.log",
+      "bytes": 1492458,
+      "sha256": "2632761d90ff6cb08b747b17e2650be52970292e55457c7dcf3cbc46991566f3"
+    },
+    "exit": 0,
+    "seconds": 338,
+    "raw_visible_passes": 798,
+    "failed": 0,
+    "existing_ignored": 11,
+    "visible_summaries": 303,
+    "running_targets": 291,
+    "doc_targets": 5,
+    "existing_visible_child_summaries": 7,
+    "release_seconds": 46.12,
+    "notes": "Raw798 includes seven existing child summaries; no fixture rows or successful captured child executions added as invented top-level passes",
+    "visible_filtered": 12
+  },
+  "input_freeze": {
+    "artifact": {
+      "path": "/tmp/pixiv-browser-foundation-full-inputs.json",
+      "bytes": 1230338,
+      "sha256": "1a86520f9d3ebc8c48cac50d7afc043748806139d7ca4210779db6d4ce216c0f"
+    },
+    "files": 8831,
+    "changed": [],
+    "scope": "All tracked/nonignored candidate inputs including baseline docs/contracts/fixtures, explicit Cargo.lock; only current result/status/provenance docs excluded"
+  },
+  "related_go": {
+    "commands": [
+      "go test ./internal/browsercookies/... -count=1 -json",
+      "go test ./internal/cli -run ^TestMigrationFanboxBrowserImport$ -count=1 -json",
+      "go test ./scripts/tests/migration -count=1 -json"
+    ],
+    "required_environment": "MIGRATION_BROWSER_SQLITE_SOURCE=/workspace/scratch/cd334a12dde3/sqlite-toolchain/sqlite3; official sqlite directory prepended PATH",
+    "log": {
+      "path": "/tmp/pixiv-browser-foundation-related-go.log",
+      "bytes": 344614,
+      "sha256": "da69ce061c9dddef1fff85a641462c76513cc488491b22189e1b6a12d240bccc"
+    },
+    "exit": 0,
+    "named_passes": 295,
+    "top_level": 63,
+    "nested": 232,
+    "failed": 0,
+    "skipped": 0,
+    "vet": {
+      "command": "go vet ./internal/browsercookies/... ./internal/cli ./scripts/tests/migration",
+      "log": {
+        "path": "/tmp/pixiv-browser-foundation-vet.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit": 0
+    },
+    "first_environment_attempt": {
+      "log": {
+        "path": "/tmp/pixiv-browser-foundation-related-go-attempt1-env.log",
+        "bytes": 220519,
+        "sha256": "a1167f578bc81484492073d713788dc95be8e830c9ce912c8742b128109c2981"
+      },
+      "exit": 1,
+      "scope": "missing required absolute SQLite binary env; not semantic RED"
+    }
+  },
+  "rust_focused": {
+    "api_red": {
+      "log": {
+        "path": "/tmp/pixiv-browser-byte-api-red.log",
+        "bytes": 460079,
+        "sha256": "f03b644f601ec42991e52113de7ab306f37e6ffe3d32d62250274cb2ae5c9feb"
+      },
+      "exit": 101,
+      "scope": "Missing normal byte APIs; compile RED, not runtime comparison"
+    },
+    "first_green": {
+      "log": {
+        "path": "/tmp/pixiv-browser-byte-first-green.log",
+        "bytes": 456956,
+        "sha256": "e131a01eeb01e2d545b34e2db26eaeabf79aa56367dc7229b1ac6118ba3d20b4"
+      },
+      "exit": 0,
+      "new_byte_tests": 3,
+      "existing_auth_tests": 5
+    }
+  },
+  "preserved": {
+    "go_production_module_paths": 434,
+    "published_fixture_paths": 97,
+    "published_json_fixtures": 95,
+    "published_pem_fixtures": 2,
+    "ledger_ids_statuses_platforms": 673
+  },
+  "native_boundary": {
+    "witness_directory": "/tmp/pixiv-browser-foundation-native-witness",
+    "scope": "Six existing approved anonymous native scenarios only; no supplemental denied probe or real credentials"
+  },
+  "independent_review": "Outcome tracked separately in browser-cookie-foundation-review.json; gate evidence does not certify approval",
+  "limitations_reference": "docs/migration/browser-cookie-contracts.md",
+  "gofmt": {
+    "log": {
+      "path": "/tmp/pixiv-browser-foundation-gofmt.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "exit": 0,
+    "output_empty": true
+  },
+  "final_validator": {
+    "command": "go test ./scripts/tests/migration -count=1",
+    "log": {
+      "path": "/tmp/pixiv-browser-foundation-final-validator.log",
+      "bytes": 69,
+      "sha256": "bc5acbbe1f551b6f2bae167006600875cee7d41367383b12ce5e58b17590cc3f"
+    },
+    "exit": 0
+  }
+}

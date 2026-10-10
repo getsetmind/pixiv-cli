@@ -1,0 +1,38 @@
+package main
+
+import (
+	"encoding/hex"
+	"encoding/json"
+	"os"
+	"time"
+)
+
+func main() {
+	args, err := json.Marshal(os.Args[1:])
+	if err != nil || os.WriteFile(os.Getenv("PIXIV_SECURITY_RECORD"), args, 0o600) != nil {
+		os.Exit(90)
+	}
+	switch os.Getenv("PIXIV_SECURITY_MODE") {
+	case "success", "empty":
+		body, err := hex.DecodeString(os.Getenv("PIXIV_SECURITY_OUTPUT_HEX"))
+		if err != nil {
+			os.Exit(91)
+		}
+		_, _ = os.Stdout.Write(body)
+	case "item-not-found":
+		_, _ = os.Stderr.WriteString("synthetic-private-diagnostic: item could not be found\n")
+		os.Exit(44)
+	case "case-mismatch":
+		_, _ = os.Stderr.WriteString("synthetic-private-diagnostic: item Could not be found\n")
+		os.Exit(44)
+	case "failure":
+		_, _ = os.Stderr.WriteString("synthetic-private-diagnostic synthetic-password\n")
+		os.Exit(2)
+	case "wait":
+		for {
+			time.Sleep(time.Millisecond * 10)
+		}
+	default:
+		os.Exit(92)
+	}
+}

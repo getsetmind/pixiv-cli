@@ -1,0 +1,176 @@
+{
+  "reference": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "published_base": "0da302cdebcbcbbeeee558d9b93b9533e4d69662",
+  "cases": 159,
+  "operations": {
+    "derive_chrome_key": 3,
+    "chromium_key_candidates": 3,
+    "derive_pbkdf2_sha1": 7,
+    "decrypt_gcm": 17,
+    "decrypt_cbc": 18,
+    "decrypt_chromium_value": 9,
+    "unpad_cbc": 7,
+    "decrypt_legacy_value": 7,
+    "legacy_blob_supported": 5,
+    "strip_legacy_prefix": 5,
+    "strip_host_digest": 5,
+    "local_state_encrypted_key": 20,
+    "decrypt_encrypted": 10,
+    "rows_to_snapshot": 12,
+    "linux_secret_password": 11,
+    "linux_encryption_keys": 13,
+    "map_linux_secret_error": 7
+  },
+  "preservation": {
+    "go_production_modules": {
+      "count": 434,
+      "changed": []
+    },
+    "published_fixtures": {
+      "count": 97,
+      "changed": []
+    }
+  },
+  "sources": {
+    "go.mod": "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c",
+    "go.sum": "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e",
+    "internal/browsercookies/browsercookies.go": "1b1e373c3a240f54d8b0d255ad5ae5b753b2eae0c8e506df1615e3b9190a3e6b",
+    "internal/browsercookies/chromium/chromecrypto.go": "24c0323d3d5bef2e2f0ab6d120391ea622494995374b71515069daab25ea0cf7",
+    "internal/browsercookies/chromium/chromium.go": "bca8e41df3d25be82fa0fa0a1f85e42c5fa354d4602ccb943bb69845c57bb877",
+    "internal/browsercookies/chromium/darwin.go": "7a4f1b58488b12d362734e4a6c23a3f79daa6644fa138cae14920a155cc71bd3",
+    "internal/browsercookies/chromium/decrypt.go": "dde205f1b323b991ee0eef6ef73ce72e427981edcc46da3d64dc59224cf52da4",
+    "internal/browsercookies/chromium/legacy_blob_other.go": "5b7a4339a3ff0a001e63e1b6b4383c788ba84ab30527794c2c6db462cd143275",
+    "internal/browsercookies/chromium/legacy_blob_windows.go": "95bb94121cad6da1451e6bb0b39e86de984debc9f8725f0dce7cbe39e32c8257",
+    "internal/browsercookies/chromium/legacy_keys_unix.go": "d37eaa8ee973929ef43f45fbd041e2fd37a4829ee26027c5e6b798100a5a69f7",
+    "internal/browsercookies/chromium/linux.go": "890b6bcc30417743625b5248a6902d868a5db2edefcde02a7437a57d24070247",
+    "internal/browsercookies/chromium/windows.go": "d3d470187901a5f3f60017ab11ef9badf823d687b494873fc170992f59b442f9",
+    "internal/browsercookies/secret/darwin.go": "cbe58d241f11be2e7a0312ee6ddc2857338050ee3cdbc278607f78ba261a3e47",
+    "internal/browsercookies/secret/linux.go": "cd3005379d2328b3a0edbfe513d3fc804f75f16d0446d303527f295b8b05a627",
+    "internal/browsercookies/secret/secret.go": "a273cc81348c6e66e9bbc92d6152a8a657f59474e7624322b68fa0263c723798",
+    "internal/browsercookies/secret/windows.go": "00cdc3350afabdc27921d7aca15c55dba0330a02bd82b6dc2c204721231ca654"
+  },
+  "owned_sha256": {
+    "internal/browsercookies/chromium/migration_cookie_crypto_test.go": "1bf0ff6b1963bac2a5c47fdd911ab5ab095cd89bd1482c045ba65f2deee312ba",
+    "crates/pixiv-cli/tests/fixtures/browser-chromium-crypto.json": "aca537839752502488fcb6075605d911c89d7a326ff435dd090c1f6401597abf"
+  },
+  "boundaries": {
+    "cancellation": "Actual pre-cancellation, expired deadline, cancellation while synthetic Linux secret command runs, plaintext/invalid-hex precedence, and cancellation inside existing encryptionKeyOverride; no native OS cancellation claim",
+    "candidate_dedup": "Actual chromiumKeyCandidates order and unique output for fixed passwords; no cryptographic collision fabricated to force its unreachable duplicate branch",
+    "crypto": "Unchanged Go private functions with standard-library AES/CBC/GCM and synthetic byte inputs; no real browser, account, keyring or credentials",
+    "darwin": "Source SHA only, not executed: fixed security arguments, trailing CR/LF trim; exact could not be found stderr maps item-not-found; provider maps all other password errors including canceled context to keychain-access",
+    "linux_secret": "Unchanged SecretService.GetPassword and provider.encryptionKeys; real LookPath/CommandContext/Output against an owned synthetic secret-tool process",
+    "permissions": "Actual Local State mode-000 owned-file error; when root, an owned copy of the Go test binary runs as UID/GID 65534 in a child process; no persistent account or security setting changes",
+    "windows": "Source SHA only, not executed: Local State first, optional DPAPI prefix, any non-v10/v11 nonempty legacy blob invokes DPAPI; DATA_BLOB u32 bounds, flags/null ABI, successful output copied then LocalFree, context before/after call; zero-size/null output exits before free defer"
+  },
+  "checks": {
+    "capture": {
+      "exit_code": 0,
+      "log": "/tmp/browser-crypto-capture.log",
+      "log_sha256": "0ec0d9707ea4eb1b5b55e89c2119dbf611d50e09326f1d65868f15ba31357dc2"
+    },
+    "replay1": {
+      "exit_code": 0,
+      "log": "/tmp/browser-crypto-replay1.log",
+      "log_sha256": "37440817aa5b5342b86d66e26f66dc1affe8211f6e13a91a320aa8a33fc12990"
+    },
+    "replay2": {
+      "exit_code": 0,
+      "log": "/tmp/browser-crypto-replay2.log",
+      "log_sha256": "030f12cf204fcbd3638ec54b21eef0a8bf0f64510608722e3a1a9455c8f15a45"
+    },
+    "replay3": {
+      "exit_code": 0,
+      "log": "/tmp/browser-crypto-replay3.log",
+      "log_sha256": "04588ab8bc468bc9a6839a26e724f2a17183e9ab13eb590997b8344e578dceae"
+    },
+    "race": {
+      "exit_code": 0,
+      "log": "/tmp/browser-crypto-race.log",
+      "log_sha256": "61013dacb2f43655240a72726b4a11a1f5811b32d37269ed5788c435acb912f2"
+    },
+    "vet": {
+      "exit_code": 0,
+      "log": "/tmp/browser-crypto-vet.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "gofmt": {
+      "exit_code": 0,
+      "log": "/tmp/browser-crypto-gofmt.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "related": {
+      "exit_code": 0,
+      "log": "/tmp/browser-crypto-related.log",
+      "log_sha256": "e0cd0b95b8b97aeef75b6e124c36c3223bc8745eaaff9302a5ff1efeadea910d"
+    }
+  },
+  "related_test_skips": [
+    "TestReadPlaintextCookie",
+    "TestReadPlaintextHostVariant",
+    "TestReadModernEncryptedCookieHostDigest",
+    "TestReadEncryptedClassification",
+    "TestReadLockedDatabaseClassified"
+  ],
+  "related_test_skip_reason": "Official sqlite3 command is absent; these five existing SQL tests skipped. The new159-case crypto/key-state/secret fixture ran without skips.",
+  "_documentation_checkpoint": {
+    "recorded_at_utc": "2026-10-10T12:55:01.186548+00:00",
+    "source_manifest": {
+      "path": "/tmp/browser-crypto-manifest.json",
+      "sha256": "023351e395c3a3643cd6e11457d66f177cc29d957a31b8081cb65132a7ad66d1",
+      "bytes": 6370
+    },
+    "preservation": "All original manifest keys and values are retained; this object is additive checkpoint documentation",
+    "published_base": "0da302cdebcbcbbeeee558d9b93b9533e4d69662",
+    "frozen_go_reference": "4b4426487ef18bed276706daec385e0d0a6979f9",
+    "checkpoint_scope": "Go-first contracts and additive Rust byte API/auth forwarding foundation; not a Rust native browser-extraction completion checkpoint",
+    "rust_native_factory": "UNIMPLEMENTED for Chrome, Edge, Firefox and Safari",
+    "rust_comparison_of_six_browser_fixtures": "Not performed at this foundation checkpoint",
+    "aggregate_rust_script": "Passed unchanged scripts/check-rust.ps1 in338 seconds: raw798 passes/0failed/11existing ignored; optimized release46.12s. See browser-cookie-foundation-gates.json",
+    "independent_review": "Outcome tracked separately in browser-cookie-foundation-review.json; publication requires approval",
+    "safety": "Owned synthetic profiles/keys/process/native allocation boundaries only; real credential extraction/transmission forbidden; no denied supplemental probe retried",
+    "subsequent_official_sqlite_related": {
+      "path": "/tmp/pixiv-browser-chromium-official-sqlite-related.log",
+      "sha256": "863269cd00d93573a7134918e90dc322cd432f38183c1ca8d88c6dbc8e22f1c9",
+      "bytes": 18159,
+      "exit_code": 0,
+      "exit_code_source": "Parent checkpoint report; observed JSON package pass agrees",
+      "named_test_pass_count": 19,
+      "skip_count": 0,
+      "fail_count": 0,
+      "named_test_passes": [
+        "TestDeriveChromeKeyVectors",
+        "TestDecryptCookieValueRoundtrip",
+        "TestDecryptChromiumGCM",
+        "TestDecryptChromiumCBCRoundtrip",
+        "TestUnpadCBCRejectsInvalidPadding",
+        "TestDecryptCookieValueMalformed",
+        "TestStripChromiumPrefixUnknownFormat",
+        "TestDiscoverProfiles",
+        "TestDiscoverProfilesNotInstalled",
+        "TestReadPlaintextCookie",
+        "TestReadPlaintextHostVariant",
+        "TestReadModernEncryptedCookieHostDigest",
+        "TestReadEncryptedClassification",
+        "TestReadLockedDatabaseClassified",
+        "TestReadInvalidQueryOrProfile",
+        "TestReadDatabaseNotFound",
+        "TestBrowserDataRootMatchesSupportedPlatformLayout",
+        "TestMigrationChromiumCryptoCommandHelper",
+        "TestMigrationChromiumCookieCrypto"
+      ],
+      "sqlite_binary_sha256": "a948747fbdbbf3827101254067b7ea480bad8b13732decbf750da75026c3e38d",
+      "interpretation": "Separate subsequent official-shell rerun; closes the earlier five existing Chromium SQL skips without changing historical logs or their manifest values"
+    },
+    "historical_five_sql_skips": "Original related_test_skips, related_test_skip_reason and checks.related remain historical and unchanged; subsequent result is separate",
+    "coverage_accounting": "159 unchanged Go cases include private helper-only shapes; not 159 Rust production-interface comparisons or native extraction progress",
+    "cbc_key_length_contract": "Modern CBC uses key[:min(len(key),32)]; raw keys over32 bytes truncate to32; GCM independently accepts only16/24/32",
+    "aggregate_input_snapshot": {
+      "path": "/tmp/pixiv-browser-foundation-full-inputs.json",
+      "sha256": "1a86520f9d3ebc8c48cac50d7afc043748806139d7ca4210779db6d4ce216c0f",
+      "bytes": 1230338,
+      "file_count": 8831
+    },
+    "final_status_updated_utc": "2026-10-10T12:58:41.731126+00:00",
+    "aggregate_input_integrity": "All8,831 protected inputs unchanged after terminal full script"
+  }
+}

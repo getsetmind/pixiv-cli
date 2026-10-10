@@ -1,0 +1,209 @@
+package chromium
+
+import (
+	"bytes"
+	"context"
+	"crypto/aes"
+	"crypto/cipher"
+	"encoding/base64"
+	"encoding/hex"
+	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
+	"testing"
+
+	"github.com/FlanChanXwO/pixiv-cli/internal/browsercookies"
+	"github.com/FlanChanXwO/pixiv-cli/internal/browsercookies/nativemock"
+	"github.com/FlanChanXwO/pixiv-cli/internal/browsercookies/secret"
+)
+
+type windowsInput struct {
+	Name       string  `json:"name"`
+	Operation  string  `json:"operation"`
+	InputHex   string  `json:"input_hex"`
+	OutputHex  string  `json:"output_hex"`
+	Mode       string  `json:"mode"`
+	Cancel     string  `json:"cancel"`
+	LocalState *string `json:"local_state"`
+}
+
+type windowsExpected struct {
+	ValueHex      string   `json:"value_hex"`
+	KeysHex       []string `json:"keys_hex"`
+	Error         string   `json:"error"`
+	CopiedOutput  bool     `json:"copied_output"`
+	ContextChecks int      `json:"context_checks"`
+	nativemock.Observation
+}
+
+type windowsCase struct {
+	windowsInput
+	Expected windowsExpected `json:"expected"`
+}
+
+func windowsObserve(t *testing.T, input windowsInput, run func(*checkedContext) ([]byte, [][]byte, error), inputPointer []byte) windowsExpected {
+	t.Helper()
+	output := secretHex(t, input.OutputHex)
+	nativemock.Reset(input.Mode, output, inputPointer)
+	base, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	if input.Cancel == "before" {
+		cancel()
+	}
+	ctx := &checkedContext{Context: base, cancel: input.Cancel, trigger: cancel}
+	if input.Operation == "decrypt" {
+		ctx.cancelCheck = 3
+	}
+	value, keys, err := run(ctx)
+	observation := nativemock.Observe()
+	result := windowsExpected{ValueHex: hex.EncodeToString(value), Error: secretError(err), ContextChecks: ctx.checks, Observation: observation}
+	for _, key := range keys {
+		result.KeysHex = append(result.KeysHex, hex.EncodeToString(key))
+	}
+	if err == nil && observation.AllocationOverwritten {
+		if input.Operation == "keys" {
+			result.CopiedOutput = len(keys) == 1 && bytes.Equal(keys[0], output)
+		} else if input.Operation == "unprotect" || !hasChromiumPrefix(secretHex(t, input.InputHex)) {
+			result.CopiedOutput = bytes.Equal(value, output)
+		}
+	}
+	if observation.NativeCalls > 0 && (!observation.OptionalArgumentsNull || !observation.FlagsZero || !observation.InputPointerNonNull) {
+		t.Fatal("original DPAPI argument boundary changed")
+	}
+	if observation.FreeCalls > 0 && (!observation.FreeHandleMatches || !observation.AllocationOverwritten) {
+		t.Fatal("original DPAPI allocation ownership was not observed")
+	}
+	if observation.InputPointerChecked && !observation.InputPointsToCaller {
+		t.Fatal("original DPAPI did not borrow the actual caller input")
+	}
+	if strings.Contains(result.Error, "synthetic-") {
+		t.Fatal("original native error exposed synthetic diagnostics")
+	}
+	return result
+}
+
+func windowsState(key []byte, raw bool) *string {
+	encoded := base64.StdEncoding.EncodeToString(key)
+	if raw {
+		encoded = base64.RawStdEncoding.EncodeToString(key)
+	}
+	value := fmt.Sprintf(`{"os_crypt":{"encrypted_key":" %s "}}`, encoded)
+	return &value
+}
+
+func windowsString(value string) *string { return &value }
+
+func windowsGCM(t *testing.T, key, plaintext []byte) []byte {
+	t.Helper()
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		t.Fatal(err)
+	}
+	gcm, err := cipher.NewGCM(block)
+	if err != nil {
+		t.Fatal(err)
+	}
+	nonce := bytes.Repeat([]byte{0x41}, gcm.NonceSize())
+	value := append([]byte("v10"), nonce...)
+	return gcm.Seal(value, nonce, plaintext, nil)
+}
+
+func TestFrozenWindowsDPAPIAndChromiumRouting(t *testing.T) {
+	directInputs := []struct {
+		windowsInput
+		want error
+	}{
+		{windowsInput{Name: "copied-owned-output-before-free", Operation: "unprotect", InputHex: "00ff011020", OutputHex: "00ff73796e7468657469630d0a", Mode: "success", Cancel: "none"}, nil},
+		{windowsInput{Name: "native-failure-redacted", Operation: "unprotect", InputHex: "01", OutputHex: "41", Mode: "failure", Cancel: "none"}, secret.ErrDPAPI},
+		{windowsInput{Name: "native-failure-with-allocation-source-edge", Operation: "unprotect", InputHex: "01", OutputHex: "41", Mode: "failure-with-allocation", Cancel: "none"}, secret.ErrDPAPI},
+		{windowsInput{Name: "null-output-with-nonzero-size", Operation: "unprotect", InputHex: "01", OutputHex: "4142", Mode: "null-output", Cancel: "none"}, secret.ErrDPAPI},
+		{windowsInput{Name: "zero-size-allocation-not-freed-source-edge", Operation: "unprotect", InputHex: "01", OutputHex: "4142", Mode: "zero-size-allocation", Cancel: "none"}, secret.ErrDPAPI},
+		{windowsInput{Name: "empty-success-output-not-freed-source-edge", Operation: "unprotect", InputHex: "01", Mode: "success", Cancel: "none"}, secret.ErrDPAPI},
+		{windowsInput{Name: "empty-input", Operation: "unprotect", Mode: "success", Cancel: "none"}, secret.ErrInvalidBlob},
+		{windowsInput{Name: "pre-cancel-before-empty-input", Operation: "unprotect", Mode: "success", Cancel: "before"}, context.Canceled},
+		{windowsInput{Name: "pre-cancel-before-native-call", Operation: "unprotect", InputHex: "01", OutputHex: "41", Mode: "success", Cancel: "before"}, context.Canceled},
+		{windowsInput{Name: "cancel-after-successful-copy-frees-allocation", Operation: "unprotect", InputHex: "01", OutputHex: "41ff00", Mode: "success", Cancel: "after-copy"}, context.Canceled},
+		{windowsInput{Name: "native-failure-does-not-check-post-cancel", Operation: "unprotect", InputHex: "01", OutputHex: "41", Mode: "failure", Cancel: "after-copy"}, secret.ErrDPAPI},
+	}
+	var direct []windowsCase
+	for _, input := range directInputs {
+		t.Run(input.Name, func(t *testing.T) {
+			blob := secretHex(t, input.InputHex)
+			observed := windowsObserve(t, input.windowsInput, func(ctx *checkedContext) ([]byte, [][]byte, error) {
+				value, err := (secret.DPAPI{}).Unprotect(ctx, blob)
+				return value, nil, err
+			}, blob)
+			if observed.Error != secretError(input.want) {
+				t.Fatalf("original DPAPI error = %q, want %q", observed.Error, secretError(input.want))
+			}
+			if input.want == nil && !observed.CopiedOutput {
+				t.Fatal("returned bytes did not survive original deferred LocalFree overwriting the owned allocation")
+			}
+			if input.Cancel == "after-copy" && input.Mode == "success" && (observed.FreeCalls != 1 || observed.ContextChecks != 2) {
+				t.Fatal("original post-copy cancellation/free ordering changed")
+			}
+			if strings.Contains(input.Name, "not-freed-source-edge") && observed.FreeCalls != 0 {
+				t.Fatal("frozen zero-size early-return allocation edge changed")
+			}
+			direct = append(direct, windowsCase{input.windowsInput, observed})
+		})
+	}
+	key := []byte("0123456789abcdef")
+	keyHex := hex.EncodeToString(key)
+	validEncrypted := hex.EncodeToString(windowsGCM(t, key, []byte{0, 0xff, 'a', 'b'}))
+	routingInputs := []struct {
+		windowsInput
+		want error
+	}{
+		{windowsInput{Name: "keys-no-local-state", Operation: "keys", OutputHex: keyHex, Mode: "success", Cancel: "none"}, browsercookies.ErrEncryptedValueUnsupported},
+		{windowsInput{Name: "keys-missing-key-member", Operation: "keys", LocalState: windowsString(`{"os_crypt":{}}`), OutputHex: keyHex, Mode: "success", Cancel: "none"}, browsercookies.ErrEncryptedValueUnsupported},
+		{windowsInput{Name: "keys-blank-key-member", Operation: "keys", LocalState: windowsString(`{"os_crypt":{"encrypted_key":" \t "}}`), OutputHex: keyHex, Mode: "success", Cancel: "none"}, browsercookies.ErrEncryptedValueUnsupported},
+		{windowsInput{Name: "keys-malformed-json", Operation: "keys", LocalState: windowsString(`{"os_crypt":`), OutputHex: keyHex, Mode: "success", Cancel: "none"}, browsercookies.ErrEncryptedFormatUnknown},
+		{windowsInput{Name: "keys-invalid-base64", Operation: "keys", LocalState: windowsString(`{"os_crypt":{"encrypted_key":"!not-base64!"}}`), OutputHex: keyHex, Mode: "success", Cancel: "none"}, browsercookies.ErrEncryptedFormatUnknown},
+		{windowsInput{Name: "keys-strip-literal-dpapi-prefix", Operation: "keys", LocalState: windowsState([]byte("DPAPIowned-native-blob"), false), OutputHex: keyHex, Mode: "success", Cancel: "none"}, nil},
+		{windowsInput{Name: "keys-accept-no-prefix", Operation: "keys", LocalState: windowsState([]byte{0, 0xff, 1}, false), OutputHex: keyHex, Mode: "success", Cancel: "none"}, nil},
+		{windowsInput{Name: "keys-accept-raw-unpadded-base64", Operation: "keys", LocalState: windowsState([]byte("DPAPIx"), true), OutputHex: keyHex, Mode: "success", Cancel: "none"}, nil},
+		{windowsInput{Name: "keys-prefix-is-case-sensitive", Operation: "keys", LocalState: windowsState([]byte("dpapiowned-native-blob"), false), OutputHex: keyHex, Mode: "success", Cancel: "none"}, nil},
+		{windowsInput{Name: "keys-prefix-alone-maps-invalid-blob", Operation: "keys", LocalState: windowsState([]byte("DPAPI"), false), OutputHex: keyHex, Mode: "success", Cancel: "none"}, browsercookies.ErrDPAPI},
+		{windowsInput{Name: "keys-native-failure-maps-dpapi", Operation: "keys", LocalState: windowsState([]byte("DPAPIx"), false), OutputHex: keyHex, Mode: "failure", Cancel: "none"}, browsercookies.ErrDPAPI},
+		{windowsInput{Name: "keys-pre-cancel-passes-context", Operation: "keys", LocalState: windowsState([]byte("DPAPIx"), false), OutputHex: keyHex, Mode: "success", Cancel: "before"}, context.Canceled},
+		{windowsInput{Name: "keys-cancel-after-copy-passes-context-and-frees", Operation: "keys", LocalState: windowsState([]byte("DPAPIx"), false), OutputHex: keyHex, Mode: "success", Cancel: "after-copy"}, context.Canceled},
+		{windowsInput{Name: "legacy-arbitrary-byte-blob-routes-native", Operation: "decrypt", InputHex: "00ff", OutputHex: "6162ff00", Mode: "success", Cancel: "none"}, nil},
+		{windowsInput{Name: "legacy-one-byte-blob-routes-native", Operation: "decrypt", InputHex: "01", OutputHex: "61", Mode: "success", Cancel: "none"}, nil},
+		{windowsInput{Name: "v20-blob-routes-native-before-format-check", Operation: "decrypt", InputHex: "763230414243", OutputHex: "61", Mode: "failure", Cancel: "none"}, browsercookies.ErrDPAPI},
+		{windowsInput{Name: "empty-legacy-blob-format-unknown", Operation: "decrypt", Mode: "success", Cancel: "none"}, browsercookies.ErrEncryptedFormatUnknown},
+		{windowsInput{Name: "legacy-pre-cancel-before-native-call", Operation: "decrypt", InputHex: "01", OutputHex: "61", Mode: "success", Cancel: "before"}, context.Canceled},
+		{windowsInput{Name: "legacy-cancel-after-copy-frees", Operation: "decrypt", InputHex: "01", OutputHex: "61", Mode: "success", Cancel: "after-copy"}, context.Canceled},
+		{windowsInput{Name: "v10-real-gcm-after-native-key-unwrap", Operation: "decrypt", InputHex: validEncrypted, LocalState: windowsState([]byte("DPAPIowned-native-key"), false), OutputHex: keyHex, Mode: "success", Cancel: "none"}, nil},
+		{windowsInput{Name: "v10-malformed-after-native-key-unwrap", Operation: "decrypt", InputHex: "763130", LocalState: windowsState([]byte("DPAPIx"), false), OutputHex: keyHex, Mode: "success", Cancel: "none"}, browsercookies.ErrEncryptedMalformed},
+	}
+	var routing []windowsCase
+	for _, input := range routingInputs {
+		t.Run(input.Name, func(t *testing.T) {
+			root := t.TempDir()
+			if input.LocalState != nil {
+				if err := os.WriteFile(filepath.Join(root, "Local State"), []byte(*input.LocalState), 0o600); err != nil {
+					t.Fatal(err)
+				}
+			}
+			p := provider{kind: kindChrome, root: root}
+			observed := windowsObserve(t, input.windowsInput, func(ctx *checkedContext) ([]byte, [][]byte, error) {
+				if input.Operation == "keys" {
+					keys, err := p.encryptionKeys(ctx)
+					return nil, keys, err
+				}
+				value, err := p.decryptEncrypted(ctx, secretHex(t, input.InputHex))
+				return value, nil, err
+			}, nil)
+			if observed.Error != secretError(input.want) {
+				t.Fatalf("original routing error = %q, want %q", observed.Error, secretError(input.want))
+			}
+			if input.Name == "v10-real-gcm-after-native-key-unwrap" && observed.ValueHex != "00ff6162" {
+				t.Fatal("original Chromium real GCM route did not preserve byte output")
+			}
+			routing = append(routing, windowsCase{input.windowsInput, observed})
+		})
+	}
+	secretResult(t, map[string]any{"dpapi": direct, "routing": routing})
+}

@@ -1,6 +1,6 @@
 use crate::{
     CommandError,
-    fanbox_auth::{BrowserFuture, BrowserProvider},
+    fanbox_auth::{BrowserBytesFuture, BrowserFuture, BrowserProvider},
 };
 use pixiv_app::lifecycle::Context;
 use std::{future::Future, path::PathBuf, pin::Pin, sync::Arc};
@@ -14,6 +14,8 @@ pub type BrowserProfilesFuture<'a> =
     Pin<Box<dyn Future<Output = Result<Vec<CookieProfile>, CommandError>> + Send + 'a>>;
 pub type BrowserCookiesFuture<'a> =
     Pin<Box<dyn Future<Output = Result<Vec<String>, CommandError>> + Send + 'a>>;
+pub type BrowserCookieBytesFuture<'a> =
+    Pin<Box<dyn Future<Output = Result<Vec<Vec<u8>>, CommandError>> + Send + 'a>>;
 
 pub trait CookieProvider: Send + Sync {
     fn discover_profiles<'a>(&'a self, context: &'a Context) -> BrowserProfilesFuture<'a>;
@@ -24,6 +26,19 @@ pub trait CookieProvider: Send + Sync {
         name: &'a str,
         profile: &'a str,
     ) -> BrowserCookiesFuture<'a>;
+    fn read_bytes<'a>(
+        &'a self,
+        context: &'a Context,
+        host: &'a str,
+        name: &'a str,
+        profile: &'a str,
+    ) -> BrowserCookieBytesFuture<'a> {
+        Box::pin(async move {
+            self.read(context, host, name, profile)
+                .await
+                .map(|values| values.into_iter().map(String::into_bytes).collect())
+        })
+    }
     fn close(&self) -> Result<(), CommandError>;
 }
 
@@ -48,6 +63,24 @@ impl SystemBrowserProvider {
     }
 }
 impl BrowserProvider for SystemBrowserProvider {
+    fn read_session_bytes<'a>(
+        &'a self,
+        context: &'a Context,
+        browser: &'a str,
+        profile: &'a str,
+    ) -> BrowserBytesFuture<'a> {
+        Box::pin(async move {
+            let browser = browser
+                .trim()
+                .chars()
+                .map(|character| character.to_lowercase().next().unwrap())
+                .collect::<String>();
+            let provider = (self.factory)(&browser)?;
+            let close = ProviderClose::new(provider.clone());
+            let result = read_session_bytes(provider.as_ref(), context, profile).await;
+            close.finish(result)
+        })
+    }
     fn read_session<'a>(
         &'a self,
         context: &'a Context,
@@ -66,6 +99,27 @@ impl BrowserProvider for SystemBrowserProvider {
             let result = read_session(provider.as_ref(), context, profile).await;
             close.finish(result)
         })
+    }
+}
+
+async fn read_session_bytes(
+    provider: &dyn CookieProvider,
+    context: &Context,
+    profile_id: &str,
+) -> Result<Vec<u8>, CommandError> {
+    let profiles = provider.discover_profiles(context).await?;
+    let profile = select_profile(&profiles, profile_id)?;
+    let mut cookies = provider
+        .read_bytes(context, ".fanbox.cc", "FANBOXSESSID", &profile.id)
+        .await?;
+    match cookies.len() {
+        0 => Err(CommandError::Message(
+            "browser profile does not contain a FANBOXSESSID cookie",
+        )),
+        1 => Ok(cookies.pop().unwrap()),
+        _ => Err(CommandError::Message(
+            "browser profile contains multiple FANBOXSESSID cookies",
+        )),
     }
 }
 
@@ -125,7 +179,7 @@ impl ProviderClose {
         }
     }
 
-    fn finish(mut self, result: Result<String, CommandError>) -> Result<String, CommandError> {
+    fn finish<T>(mut self, result: Result<T, CommandError>) -> Result<T, CommandError> {
         let close = self.provider.take().unwrap().close();
         match (result, close) {
             (result, Ok(())) => result,

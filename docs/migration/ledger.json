@@ -1928,12 +1928,16 @@
         "crates/pixiv-cli/tests/fanbox_browser.rs",
         "sdk/fanbox/migration_opaque_credentials_test.go",
         "crates/pixiv-sdk/tests/fixtures/fanbox-opaque-credentials.json",
-        "crates/pixiv-sdk/tests/fanbox_opaque_credentials.rs"
+        "crates/pixiv-sdk/tests/fanbox_opaque_credentials.rs",
+        "crates/pixiv-cli/tests/fanbox_browser_bytes.rs",
+        "internal/cli/migration_fanbox_browser_test.go",
+        "crates/pixiv-cli/tests/fixtures/fanbox-browser-import.json"
       ],
       "verified_platforms": [],
       "differences": [
         "Go nil verification context has no non-null Rust API input; nil-success session factory panics in Go and returns an explicit missing-client error in Rust. Custom SessionOpener(&str) cannot reproduce arbitrary Go byte-string factories; Unrestricted service/trim/saved byte schedules remain unverified beyond the bounded comparisons.",
-        "Native browser extraction, successful authenticated native binary import, arbitrary credential/parser/transport/cancel/TTY/native-platform schedules and complete SDK lifecycle remain unverified or unimplemented. Unrestricted parser/TTY/IO/SQLite concurrency and non-Linux/platform verification remain open; no verified platform is added."
+        "Native browser extraction, successful authenticated native binary import, arbitrary credential/parser/transport/cancel/TTY/native-platform schedules and complete SDK lifecycle remain unverified or unimplemented. Unrestricted parser/TTY/IO/SQLite concurrency and non-Linux/platform verification remain open; no verified platform is added.",
+        "Browser extraction contracts are sealed separately; additive byte provider/auth forwarding passes three regression tests and the unchanged full workspace gate. System native browser factory remains unimplemented; six new browser fixtures are Go evidence only at this foundation checkpoint."
       ]
     },
     {

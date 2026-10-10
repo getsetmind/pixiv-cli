@@ -1,0 +1,1259 @@
+{
+  "cases": [
+    {
+      "name": "readonly-argv-parameter-map",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 0,
+        "missing_command": false,
+        "params": {
+          "@h1": ".fanbox.cc",
+          "@h2": "fanbox.cc",
+          "@n": "FANBOXSESSID"
+        },
+        "pre_cancel": false,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "",
+        "stdout_hex": "2e66616e626f782e63632c73796e7468657469632d73657373696f6e2c0a"
+      },
+      "output": {
+        "command": {
+          "db_path": "$root/owned-secret-path.db",
+          "params": {
+            "@h1": ".fanbox.cc",
+            "@h2": "fanbox.cc",
+            "@n": "FANBOXSESSID"
+          },
+          "prefix": [
+            "-readonly",
+            "-noheader",
+            "-csv",
+            "-newline",
+            "\n"
+          ],
+          "sql": "SELECT synthetic_secret FROM owned_table;"
+        },
+        "error": "",
+        "rows_hex": [
+          [
+            "2e66616e626f782e6363",
+            "73796e7468657469632d73657373696f6e",
+            ""
+          ]
+        ]
+      }
+    },
+    {
+      "name": "empty-output",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 0,
+        "missing_command": false,
+        "params": null,
+        "pre_cancel": false,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "",
+        "stdout_hex": ""
+      },
+      "output": {
+        "command": {
+          "db_path": "$root/owned-secret-path.db",
+          "params": {},
+          "prefix": [
+            "-readonly",
+            "-noheader",
+            "-csv",
+            "-newline",
+            "\n"
+          ],
+          "sql": "SELECT synthetic_secret FROM owned_table;"
+        },
+        "error": "",
+        "rows_hex": null
+      }
+    },
+    {
+      "name": "blank-lines-skipped",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 0,
+        "missing_command": false,
+        "params": null,
+        "pre_cancel": false,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "",
+        "stdout_hex": "0a0d0a616c7068610a0a"
+      },
+      "output": {
+        "command": {
+          "db_path": "$root/owned-secret-path.db",
+          "params": {},
+          "prefix": [
+            "-readonly",
+            "-noheader",
+            "-csv",
+            "-newline",
+            "\n"
+          ],
+          "sql": "SELECT synthetic_secret FROM owned_table;"
+        },
+        "error": "",
+        "rows_hex": [
+          [
+            "616c706861"
+          ]
+        ]
+      }
+    },
+    {
+      "name": "quoted-comma-escaped-quote-and-newline",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 0,
+        "missing_command": false,
+        "params": null,
+        "pre_cancel": false,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "",
+        "stdout_hex": "22612c62222c22712222756f7465222c226c696e65310a6c696e6532220a"
+      },
+      "output": {
+        "command": {
+          "db_path": "$root/owned-secret-path.db",
+          "params": {},
+          "prefix": [
+            "-readonly",
+            "-noheader",
+            "-csv",
+            "-newline",
+            "\n"
+          ],
+          "sql": "SELECT synthetic_secret FROM owned_table;"
+        },
+        "error": "",
+        "rows_hex": [
+          [
+            "612c62",
+            "7122756f7465",
+            "6c696e65310a6c696e6532"
+          ]
+        ]
+      }
+    },
+    {
+      "name": "crlf-normalizes-quoted-newlines",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 0,
+        "missing_command": false,
+        "params": null,
+        "pre_cancel": false,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "",
+        "stdout_hex": "226c696e65310d0a6c696e6532222c7461696c0d0a"
+      },
+      "output": {
+        "command": {
+          "db_path": "$root/owned-secret-path.db",
+          "params": {},
+          "prefix": [
+            "-readonly",
+            "-noheader",
+            "-csv",
+            "-newline",
+            "\n"
+          ],
+          "sql": "SELECT synthetic_secret FROM owned_table;"
+        },
+        "error": "",
+        "rows_hex": [
+          [
+            "6c696e65310a6c696e6532",
+            "7461696c"
+          ]
+        ]
+      }
+    },
+    {
+      "name": "trailing-empty-columns",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 0,
+        "missing_command": false,
+        "params": null,
+        "pre_cancel": false,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "",
+        "stdout_hex": "616c7068612c2c2c0a"
+      },
+      "output": {
+        "command": {
+          "db_path": "$root/owned-secret-path.db",
+          "params": {},
+          "prefix": [
+            "-readonly",
+            "-noheader",
+            "-csv",
+            "-newline",
+            "\n"
+          ],
+          "sql": "SELECT synthetic_secret FROM owned_table;"
+        },
+        "error": "",
+        "rows_hex": [
+          [
+            "616c706861",
+            "",
+            "",
+            ""
+          ]
+        ]
+      }
+    },
+    {
+      "name": "varying-column-counts",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 0,
+        "missing_command": false,
+        "params": null,
+        "pre_cancel": false,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "",
+        "stdout_hex": "6f6e650a6f6e652c74776f0a6f6e652c74776f2c74687265650a"
+      },
+      "output": {
+        "command": {
+          "db_path": "$root/owned-secret-path.db",
+          "params": {},
+          "prefix": [
+            "-readonly",
+            "-noheader",
+            "-csv",
+            "-newline",
+            "\n"
+          ],
+          "sql": "SELECT synthetic_secret FROM owned_table;"
+        },
+        "error": "",
+        "rows_hex": [
+          [
+            "6f6e65"
+          ],
+          [
+            "6f6e65",
+            "74776f"
+          ],
+          [
+            "6f6e65",
+            "74776f",
+            "7468726565"
+          ]
+        ]
+      }
+    },
+    {
+      "name": "empty-quoted-value",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 0,
+        "missing_command": false,
+        "params": null,
+        "pre_cancel": false,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "",
+        "stdout_hex": "22220a"
+      },
+      "output": {
+        "command": {
+          "db_path": "$root/owned-secret-path.db",
+          "params": {},
+          "prefix": [
+            "-readonly",
+            "-noheader",
+            "-csv",
+            "-newline",
+            "\n"
+          ],
+          "sql": "SELECT synthetic_secret FROM owned_table;"
+        },
+        "error": "",
+        "rows_hex": [
+          [
+            ""
+          ]
+        ]
+      }
+    },
+    {
+      "name": "invalid-utf8-and-nul-preserved",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 0,
+        "missing_command": false,
+        "params": null,
+        "pre_cancel": false,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "",
+        "stdout_hex": "ff80002c780a"
+      },
+      "output": {
+        "command": {
+          "db_path": "$root/owned-secret-path.db",
+          "params": {},
+          "prefix": [
+            "-readonly",
+            "-noheader",
+            "-csv",
+            "-newline",
+            "\n"
+          ],
+          "sql": "SELECT synthetic_secret FROM owned_table;"
+        },
+        "error": "",
+        "rows_hex": [
+          [
+            "ff8000",
+            "78"
+          ]
+        ]
+      }
+    },
+    {
+      "name": "spaces-preserved",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 0,
+        "missing_command": false,
+        "params": null,
+        "pre_cancel": false,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "",
+        "stdout_hex": "207370616365202c222070616464656420220a"
+      },
+      "output": {
+        "command": {
+          "db_path": "$root/owned-secret-path.db",
+          "params": {},
+          "prefix": [
+            "-readonly",
+            "-noheader",
+            "-csv",
+            "-newline",
+            "\n"
+          ],
+          "sql": "SELECT synthetic_secret FROM owned_table;"
+        },
+        "error": "",
+        "rows_hex": [
+          [
+            "20737061636520",
+            "2070616464656420"
+          ]
+        ]
+      }
+    },
+    {
+      "name": "crcrlf-retains-first-cr",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 0,
+        "missing_command": false,
+        "params": null,
+        "pre_cancel": false,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "",
+        "stdout_hex": "616c7068612c7461696c0d0d0a"
+      },
+      "output": {
+        "command": {
+          "db_path": "$root/owned-secret-path.db",
+          "params": {},
+          "prefix": [
+            "-readonly",
+            "-noheader",
+            "-csv",
+            "-newline",
+            "\n"
+          ],
+          "sql": "SELECT synthetic_secret FROM owned_table;"
+        },
+        "error": "",
+        "rows_hex": [
+          [
+            "616c706861",
+            "7461696c0d"
+          ]
+        ]
+      }
+    },
+    {
+      "name": "unterminated-quote",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 0,
+        "missing_command": false,
+        "params": null,
+        "pre_cancel": false,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "",
+        "stdout_hex": "226e657665722d636c6f7365640a"
+      },
+      "output": {
+        "command": {
+          "db_path": "$root/owned-secret-path.db",
+          "params": {},
+          "prefix": [
+            "-readonly",
+            "-noheader",
+            "-csv",
+            "-newline",
+            "\n"
+          ],
+          "sql": "SELECT synthetic_secret FROM owned_table;"
+        },
+        "error": "browsercookies: cookie database query failed",
+        "rows_hex": null
+      }
+    },
+    {
+      "name": "bare-quote",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 0,
+        "missing_command": false,
+        "params": null,
+        "pre_cancel": false,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "",
+        "stdout_hex": "756e2271756f7465640a"
+      },
+      "output": {
+        "command": {
+          "db_path": "$root/owned-secret-path.db",
+          "params": {},
+          "prefix": [
+            "-readonly",
+            "-noheader",
+            "-csv",
+            "-newline",
+            "\n"
+          ],
+          "sql": "SELECT synthetic_secret FROM owned_table;"
+        },
+        "error": "browsercookies: cookie database query failed",
+        "rows_hex": null
+      }
+    },
+    {
+      "name": "post-quote-junk",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 0,
+        "missing_command": false,
+        "params": null,
+        "pre_cancel": false,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "",
+        "stdout_hex": "226f6b226a756e6b0a"
+      },
+      "output": {
+        "command": {
+          "db_path": "$root/owned-secret-path.db",
+          "params": {},
+          "prefix": [
+            "-readonly",
+            "-noheader",
+            "-csv",
+            "-newline",
+            "\n"
+          ],
+          "sql": "SELECT synthetic_secret FROM owned_table;"
+        },
+        "error": "browsercookies: cookie database query failed",
+        "rows_hex": null
+      }
+    },
+    {
+      "name": "missing-command",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 0,
+        "missing_command": true,
+        "params": null,
+        "pre_cancel": false,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "",
+        "stdout_hex": ""
+      },
+      "output": {
+        "command": null,
+        "error": "browsercookies: the sqlite3 command-line tool is required but was not found",
+        "rows_hex": null
+      }
+    },
+    {
+      "name": "permission-stderr-case-insensitive",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 1,
+        "missing_command": false,
+        "params": null,
+        "pre_cancel": false,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "5045524d495353494f4e2044454e4945443a2073796e7468657469632d73656e7369746976652d76616c7565",
+        "stdout_hex": ""
+      },
+      "output": {
+        "command": {
+          "db_path": "$root/owned-secret-path.db",
+          "params": {},
+          "prefix": [
+            "-readonly",
+            "-noheader",
+            "-csv",
+            "-newline",
+            "\n"
+          ],
+          "sql": "SELECT synthetic_secret FROM owned_table;"
+        },
+        "error": "browsercookies: browser storage permission denied",
+        "rows_hex": null
+      }
+    },
+    {
+      "name": "not-authorized-before-locked",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 5,
+        "missing_command": false,
+        "params": null,
+        "pre_cancel": false,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "4e6f7420417574686f72697a656420616e64206c6f636b65642073796e7468657469632d73656e7369746976652d76616c7565",
+        "stdout_hex": ""
+      },
+      "output": {
+        "command": {
+          "db_path": "$root/owned-secret-path.db",
+          "params": {},
+          "prefix": [
+            "-readonly",
+            "-noheader",
+            "-csv",
+            "-newline",
+            "\n"
+          ],
+          "sql": "SELECT synthetic_secret FROM owned_table;"
+        },
+        "error": "browsercookies: browser storage permission denied",
+        "rows_hex": null
+      }
+    },
+    {
+      "name": "locked-exit-five-without-stderr",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 5,
+        "missing_command": false,
+        "params": null,
+        "pre_cancel": false,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "",
+        "stdout_hex": ""
+      },
+      "output": {
+        "command": {
+          "db_path": "$root/owned-secret-path.db",
+          "params": {},
+          "prefix": [
+            "-readonly",
+            "-noheader",
+            "-csv",
+            "-newline",
+            "\n"
+          ],
+          "sql": "SELECT synthetic_secret FROM owned_table;"
+        },
+        "error": "browsercookies: browser cookie database is locked (browser may be running)",
+        "rows_hex": null
+      }
+    },
+    {
+      "name": "locked-substring-case-insensitive",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 1,
+        "missing_command": false,
+        "params": null,
+        "pre_cancel": false,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "6461746162617365206973204c4f434b45442073796e7468657469632d73656e7369746976652d76616c7565",
+        "stdout_hex": ""
+      },
+      "output": {
+        "command": {
+          "db_path": "$root/owned-secret-path.db",
+          "params": {},
+          "prefix": [
+            "-readonly",
+            "-noheader",
+            "-csv",
+            "-newline",
+            "\n"
+          ],
+          "sql": "SELECT synthetic_secret FROM owned_table;"
+        },
+        "error": "browsercookies: browser cookie database is locked (browser may be running)",
+        "rows_hex": null
+      }
+    },
+    {
+      "name": "general-exit-redacts-all-output",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 3,
+        "missing_command": false,
+        "params": null,
+        "pre_cancel": false,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "70726976617465206f776e6564207061746820616e642073796e7468657469632d73656e7369746976652d76616c7565",
+        "stdout_hex": "73796e7468657469632d73656e7369746976652d76616c75650a"
+      },
+      "output": {
+        "command": {
+          "db_path": "$root/owned-secret-path.db",
+          "params": {},
+          "prefix": [
+            "-readonly",
+            "-noheader",
+            "-csv",
+            "-newline",
+            "\n"
+          ],
+          "sql": "SELECT synthetic_secret FROM owned_table;"
+        },
+        "error": "browsercookies: cookie database query failed",
+        "rows_hex": null
+      }
+    },
+    {
+      "name": "successful-stderr-does-not-classify",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 0,
+        "missing_command": false,
+        "params": null,
+        "pre_cancel": false,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "7065726d697373696f6e2064656e696564206c6f636b6564",
+        "stdout_hex": "76616c75650a"
+      },
+      "output": {
+        "command": {
+          "db_path": "$root/owned-secret-path.db",
+          "params": {},
+          "prefix": [
+            "-readonly",
+            "-noheader",
+            "-csv",
+            "-newline",
+            "\n"
+          ],
+          "sql": "SELECT synthetic_secret FROM owned_table;"
+        },
+        "error": "",
+        "rows_hex": [
+          [
+            "76616c7565"
+          ]
+        ]
+      }
+    },
+    {
+      "name": "pre-cancel-before-process",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 0,
+        "missing_command": false,
+        "params": null,
+        "pre_cancel": true,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "",
+        "stdout_hex": ""
+      },
+      "output": {
+        "command": null,
+        "error": "context canceled",
+        "rows_hex": null
+      }
+    },
+    {
+      "name": "active-command-cancel",
+      "operation": "query",
+      "input": {
+        "active_cancel": true,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 0,
+        "missing_command": false,
+        "params": null,
+        "pre_cancel": false,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "",
+        "stdout_hex": ""
+      },
+      "output": {
+        "command": {
+          "db_path": "$root/owned-secret-path.db",
+          "params": {},
+          "prefix": [
+            "-readonly",
+            "-noheader",
+            "-csv",
+            "-newline",
+            "\n"
+          ],
+          "sql": "SELECT synthetic_secret FROM owned_table;"
+        },
+        "error": "context canceled",
+        "rows_hex": null
+      }
+    },
+    {
+      "name": "blank-db-before-cancel",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": " \t\n",
+        "exit": 0,
+        "missing_command": false,
+        "params": null,
+        "pre_cancel": true,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "",
+        "stdout_hex": ""
+      },
+      "output": {
+        "command": null,
+        "error": "browsercookies: cookie database query failed",
+        "rows_hex": null
+      }
+    },
+    {
+      "name": "blank-sql",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 0,
+        "missing_command": false,
+        "params": null,
+        "pre_cancel": false,
+        "sql": " \t\n",
+        "stderr_hex": "",
+        "stdout_hex": ""
+      },
+      "output": {
+        "command": null,
+        "error": "browsercookies: cookie database query failed",
+        "rows_hex": null
+      }
+    },
+    {
+      "name": "invalid-param-before-cancel",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 0,
+        "missing_command": false,
+        "params": {
+          "@n": "invalid space"
+        },
+        "pre_cancel": true,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "",
+        "stdout_hex": ""
+      },
+      "output": {
+        "command": null,
+        "error": "browsercookies: cookie database query failed",
+        "rows_hex": null
+      }
+    },
+    {
+      "name": "empty-param-name",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 0,
+        "missing_command": false,
+        "params": {
+          "": "value"
+        },
+        "pre_cancel": false,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "",
+        "stdout_hex": ""
+      },
+      "output": {
+        "command": null,
+        "error": "browsercookies: cookie database query failed",
+        "rows_hex": null
+      }
+    },
+    {
+      "name": "empty-param-value",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 0,
+        "missing_command": false,
+        "params": {
+          "@n": ""
+        },
+        "pre_cancel": false,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "",
+        "stdout_hex": ""
+      },
+      "output": {
+        "command": null,
+        "error": "browsercookies: cookie database query failed",
+        "rows_hex": null
+      }
+    },
+    {
+      "name": "param-256-byte-boundary",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 0,
+        "missing_command": false,
+        "params": {
+          "@n": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        },
+        "pre_cancel": false,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "",
+        "stdout_hex": ""
+      },
+      "output": {
+        "command": {
+          "db_path": "$root/owned-secret-path.db",
+          "params": {
+            "@n": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+          },
+          "prefix": [
+            "-readonly",
+            "-noheader",
+            "-csv",
+            "-newline",
+            "\n"
+          ],
+          "sql": "SELECT synthetic_secret FROM owned_table;"
+        },
+        "error": "",
+        "rows_hex": null
+      }
+    },
+    {
+      "name": "param-257-byte-rejected",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 0,
+        "missing_command": false,
+        "params": {
+          "@n": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        },
+        "pre_cancel": false,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "",
+        "stdout_hex": ""
+      },
+      "output": {
+        "command": null,
+        "error": "browsercookies: cookie database query failed",
+        "rows_hex": null
+      }
+    },
+    {
+      "name": "param-shell-and-sql-characters-rejected",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 0,
+        "missing_command": false,
+        "params": {
+          "@n": "value;SELECT"
+        },
+        "pre_cancel": false,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "",
+        "stdout_hex": ""
+      },
+      "output": {
+        "command": null,
+        "error": "browsercookies: cookie database query failed",
+        "rows_hex": null
+      }
+    },
+    {
+      "name": "param-unicode-rejected",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 0,
+        "missing_command": false,
+        "params": {
+          "@n": "合成"
+        },
+        "pre_cancel": false,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "",
+        "stdout_hex": ""
+      },
+      "output": {
+        "command": null,
+        "error": "browsercookies: cookie database query failed",
+        "rows_hex": null
+      }
+    },
+    {
+      "name": "param-extended-ascii-tokens-accepted",
+      "operation": "query",
+      "input": {
+        "active_cancel": false,
+        "db_path": "$root/owned-secret-path.db",
+        "exit": 0,
+        "missing_command": false,
+        "params": {
+          "$n": "@:$._-012ABCxyz"
+        },
+        "pre_cancel": false,
+        "sql": "SELECT synthetic_secret FROM owned_table;",
+        "stderr_hex": "",
+        "stdout_hex": ""
+      },
+      "output": {
+        "command": {
+          "db_path": "$root/owned-secret-path.db",
+          "params": {
+            "$n": "@:$._-012ABCxyz"
+          },
+          "prefix": [
+            "-readonly",
+            "-noheader",
+            "-csv",
+            "-newline",
+            "\n"
+          ],
+          "sql": "SELECT synthetic_secret FROM owned_table;"
+        },
+        "error": "",
+        "rows_hex": null
+      }
+    },
+    {
+      "name": "real-shell-exact-host-name-and-path-unfiltered",
+      "operation": "query_sqlite",
+      "input": {
+        "boundary": "official_sqlite_shell",
+        "database_state": "",
+        "db_path": "$root/owned.db",
+        "exclusive_lock": false,
+        "params": {
+          "@h1": ".fanbox.cc",
+          "@h2": "fanbox.cc",
+          "@n": "FANBOXSESSID"
+        },
+        "schema": "CREATE TABLE moz_cookies (host TEXT, name TEXT, value TEXT, path TEXT);",
+        "sql": "SELECT value FROM moz_cookies WHERE (host = @h1 OR host = @h2) AND name = @n;",
+        "statements": [
+          "INSERT INTO moz_cookies VALUES ('.fanbox.cc','FANBOXSESSID','dotted','/');",
+          "INSERT INTO moz_cookies VALUES ('fanbox.cc','FANBOXSESSID','nodot','/other');",
+          "INSERT INTO moz_cookies VALUES ('..fanbox.cc','FANBOXSESSID','double-dot','/');",
+          "INSERT INTO moz_cookies VALUES ('.other.cc','FANBOXSESSID','other-host','/');",
+          "INSERT INTO moz_cookies VALUES ('.fanbox.cc','fanboxsessid','wrong-name','/');"
+        ]
+      },
+      "output": {
+        "error": "",
+        "rows_hex": [
+          [
+            "646f74746564"
+          ],
+          [
+            "6e6f646f74"
+          ]
+        ]
+      }
+    },
+    {
+      "name": "real-shell-csv-quote-newline-unicode",
+      "operation": "query_sqlite",
+      "input": {
+        "boundary": "official_sqlite_shell",
+        "database_state": "",
+        "db_path": "$root/owned.db",
+        "exclusive_lock": false,
+        "params": {
+          "@h1": ".fanbox.cc",
+          "@h2": "fanbox.cc",
+          "@n": "FANBOXSESSID"
+        },
+        "schema": "CREATE TABLE moz_cookies (host TEXT, name TEXT, value TEXT, path TEXT);",
+        "sql": "SELECT value FROM moz_cookies WHERE (host = @h1 OR host = @h2) AND name = @n;",
+        "statements": [
+          "INSERT INTO moz_cookies VALUES ('.fanbox.cc','FANBOXSESSID',CAST(X'636F6D6D612C2271756F7465220AE59088E68890' AS TEXT),'/');"
+        ]
+      },
+      "output": {
+        "error": "",
+        "rows_hex": [
+          [
+            "636f6d6d612c2271756f7465220ae59088e68890"
+          ]
+        ]
+      }
+    },
+    {
+      "name": "real-shell-invalid-utf8-text",
+      "operation": "query_sqlite",
+      "input": {
+        "boundary": "official_sqlite_shell",
+        "database_state": "",
+        "db_path": "$root/owned.db",
+        "exclusive_lock": false,
+        "params": {
+          "@h1": ".fanbox.cc",
+          "@h2": "fanbox.cc",
+          "@n": "FANBOXSESSID"
+        },
+        "schema": "CREATE TABLE moz_cookies (host TEXT, name TEXT, value TEXT, path TEXT);",
+        "sql": "SELECT value FROM moz_cookies WHERE (host = @h1 OR host = @h2) AND name = @n;",
+        "statements": [
+          "INSERT INTO moz_cookies VALUES ('.fanbox.cc','FANBOXSESSID',CAST(X'FF80' AS TEXT),'/');"
+        ]
+      },
+      "output": {
+        "error": "",
+        "rows_hex": [
+          [
+            "ff80"
+          ]
+        ]
+      }
+    },
+    {
+      "name": "real-shell-text-nul-boundary",
+      "operation": "query_sqlite",
+      "input": {
+        "boundary": "official_sqlite_shell",
+        "database_state": "",
+        "db_path": "$root/owned.db",
+        "exclusive_lock": false,
+        "params": {
+          "@h1": ".fanbox.cc",
+          "@h2": "fanbox.cc",
+          "@n": "FANBOXSESSID"
+        },
+        "schema": "CREATE TABLE moz_cookies (host TEXT, name TEXT, value TEXT, path TEXT);",
+        "sql": "SELECT value FROM moz_cookies WHERE (host = @h1 OR host = @h2) AND name = @n;",
+        "statements": [
+          "INSERT INTO moz_cookies VALUES ('.fanbox.cc','FANBOXSESSID',CAST(X'707265006166746572' AS TEXT),'/');"
+        ]
+      },
+      "output": {
+        "error": "",
+        "rows_hex": [
+          [
+            "707265"
+          ]
+        ]
+      }
+    },
+    {
+      "name": "real-shell-empty-value",
+      "operation": "query_sqlite",
+      "input": {
+        "boundary": "official_sqlite_shell",
+        "database_state": "",
+        "db_path": "$root/owned.db",
+        "exclusive_lock": false,
+        "params": {
+          "@h1": ".fanbox.cc",
+          "@h2": "fanbox.cc",
+          "@n": "FANBOXSESSID"
+        },
+        "schema": "CREATE TABLE moz_cookies (host TEXT, name TEXT, value TEXT, path TEXT);",
+        "sql": "SELECT value FROM moz_cookies WHERE (host = @h1 OR host = @h2) AND name = @n;",
+        "statements": [
+          "INSERT INTO moz_cookies VALUES ('.fanbox.cc','FANBOXSESSID','','/');"
+        ]
+      },
+      "output": {
+        "error": "",
+        "rows_hex": [
+          [
+            ""
+          ]
+        ]
+      }
+    },
+    {
+      "name": "real-shell-no-matching-rows",
+      "operation": "query_sqlite",
+      "input": {
+        "boundary": "official_sqlite_shell",
+        "database_state": "",
+        "db_path": "$root/owned.db",
+        "exclusive_lock": false,
+        "params": {
+          "@h1": ".fanbox.cc",
+          "@h2": "fanbox.cc",
+          "@n": "FANBOXSESSID"
+        },
+        "schema": "CREATE TABLE moz_cookies (host TEXT, name TEXT, value TEXT, path TEXT);",
+        "sql": "SELECT value FROM moz_cookies WHERE (host = @h1 OR host = @h2) AND name = @n;",
+        "statements": null
+      },
+      "output": {
+        "error": "",
+        "rows_hex": null
+      }
+    },
+    {
+      "name": "real-shell-invalid-database",
+      "operation": "query_sqlite",
+      "input": {
+        "boundary": "official_sqlite_shell",
+        "database_state": "invalid",
+        "db_path": "$root/owned.db",
+        "exclusive_lock": false,
+        "params": {
+          "@h1": ".fanbox.cc",
+          "@h2": "fanbox.cc",
+          "@n": "FANBOXSESSID"
+        },
+        "schema": "CREATE TABLE moz_cookies (host TEXT, name TEXT, value TEXT, path TEXT);",
+        "sql": "SELECT value FROM moz_cookies WHERE (host = @h1 OR host = @h2) AND name = @n;",
+        "statements": null
+      },
+      "output": {
+        "error": "browsercookies: cookie database query failed",
+        "rows_hex": null
+      }
+    },
+    {
+      "name": "real-shell-missing-database",
+      "operation": "query_sqlite",
+      "input": {
+        "boundary": "official_sqlite_shell",
+        "database_state": "missing",
+        "db_path": "$root/owned.db",
+        "exclusive_lock": false,
+        "params": {
+          "@h1": ".fanbox.cc",
+          "@h2": "fanbox.cc",
+          "@n": "FANBOXSESSID"
+        },
+        "schema": "CREATE TABLE moz_cookies (host TEXT, name TEXT, value TEXT, path TEXT);",
+        "sql": "SELECT value FROM moz_cookies WHERE (host = @h1 OR host = @h2) AND name = @n;",
+        "statements": null
+      },
+      "output": {
+        "error": "browsercookies: cookie database query failed",
+        "rows_hex": null
+      }
+    },
+    {
+      "name": "real-shell-exclusive-lock",
+      "operation": "query_sqlite",
+      "input": {
+        "boundary": "official_sqlite_shell",
+        "database_state": "",
+        "db_path": "$root/owned.db",
+        "exclusive_lock": true,
+        "params": {
+          "@h1": ".fanbox.cc",
+          "@h2": "fanbox.cc",
+          "@n": "FANBOXSESSID"
+        },
+        "schema": "CREATE TABLE moz_cookies (host TEXT, name TEXT, value TEXT, path TEXT);",
+        "sql": "SELECT value FROM moz_cookies WHERE (host = @h1 OR host = @h2) AND name = @n;",
+        "statements": null
+      },
+      "output": {
+        "error": "browsercookies: browser cookie database is locked (browser may be running)",
+        "rows_hex": null
+      }
+    }
+  ],
+  "environment": "linux/amd64",
+  "go_version": "go1.27.1",
+  "reference": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "scope": "unchanged Go sqliteio.Query; labelled owned process helper for CSV, argv, classifications, cancellation and redaction, plus official SQLite shell queries against genuine owned databases",
+  "sources": {
+    "go.mod": "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c",
+    "go.sum": "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e",
+    "internal/browsercookies/browsercookies.go": "1b1e373c3a240f54d8b0d255ad5ae5b753b2eae0c8e506df1615e3b9190a3e6b",
+    "internal/browsercookies/sqliteio/sqliteio.go": "d922ed106d3a70cd4c0fa79297edb57cbe9adff051816aa3cc8218aaf4b2c902"
+  },
+  "sqlite_shell": {
+    "boundary": "official SQLite shell, genuine owned databases",
+    "sha256": "a948747fbdbbf3827101254067b7ea480bad8b13732decbf750da75026c3e38d",
+    "version": "3.54.0 2026-10-09 15:46:58 be8d059e9a49089ab2dce5ed26dd87aaf598fdc5fbe0b107c0dd758464bcd5e3 (64-bit)"
+  }
+}

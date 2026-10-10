@@ -1,0 +1,103 @@
+package nativemock
+
+import (
+	"encoding/hex"
+	"errors"
+	"unsafe"
+)
+
+type Handle uintptr
+
+type DataBlob struct {
+	Size uint32
+	Data *byte
+}
+
+type CryptProtectPromptStruct struct{}
+
+type Observation struct {
+	NativeCalls           int    `json:"native_calls"`
+	FreeCalls             int    `json:"free_calls"`
+	Allocated             bool   `json:"allocated"`
+	AllocationOverwritten bool   `json:"allocation_overwritten"`
+	NativeInputHex        string `json:"native_input_hex"`
+	NativeInputSize       uint32 `json:"native_input_size"`
+	OptionalArgumentsNull bool   `json:"optional_arguments_null"`
+	FlagsZero             bool   `json:"flags_zero"`
+	InputPointerNonNull   bool   `json:"input_pointer_nonnull"`
+	InputPointsToCaller   bool   `json:"input_points_to_caller"`
+	InputPointerChecked   bool   `json:"input_pointer_checked"`
+	FreeHandleMatches     bool   `json:"free_handle_matches"`
+	PointerWidth          int    `json:"pointer_width"`
+	DataBlobSize          int    `json:"data_blob_size"`
+	DataBlobDataOffset    int    `json:"data_blob_data_offset"`
+}
+
+var (
+	mode        string
+	output      []byte
+	allocation  []byte
+	caller      []byte
+	observation Observation
+)
+
+func Reset(nextMode string, nextOutput, input []byte) {
+	mode = nextMode
+	output = append([]byte(nil), nextOutput...)
+	caller = input
+	allocation = nil
+	observation = Observation{
+		PointerWidth:       int(unsafe.Sizeof(uintptr(0)) * 8),
+		DataBlobSize:       int(unsafe.Sizeof(DataBlob{})),
+		DataBlobDataOffset: int(unsafe.Offsetof(DataBlob{}.Data)),
+	}
+}
+
+func Observe() Observation { return observation }
+
+func CryptUnprotectData(in *DataBlob, description **uint16, entropy *DataBlob, reserved uintptr, prompt *CryptProtectPromptStruct, flags uint32, out *DataBlob) error {
+	observation.NativeCalls++
+	observation.NativeInputSize = in.Size
+	observation.InputPointerNonNull = in.Data != nil
+	observation.NativeInputHex = hex.EncodeToString(unsafe.Slice(in.Data, int(in.Size)))
+	observation.OptionalArgumentsNull = description == nil && entropy == nil && reserved == 0 && prompt == nil
+	observation.FlagsZero = flags == 0
+	if len(caller) > 0 {
+		observation.InputPointerChecked = true
+		observation.InputPointsToCaller = in.Data == &caller[0]
+	}
+	if mode == "failure" {
+		return errors.New("synthetic-native-private-diagnostic")
+	}
+	if mode == "null-output" {
+		out.Size = uint32(len(output))
+		return nil
+	}
+	allocation = append([]byte(nil), output...)
+	if len(allocation) == 0 {
+		allocation = []byte{0x5a}
+	}
+	observation.Allocated = true
+	out.Data = &allocation[0]
+	out.Size = uint32(len(output))
+	if mode == "zero-size-allocation" {
+		out.Size = 0
+	}
+	if mode == "failure-with-allocation" {
+		return errors.New("synthetic-native-private-diagnostic")
+	}
+	return nil
+}
+
+func LocalFree(handle Handle) (Handle, error) {
+	observation.FreeCalls++
+	observation.FreeHandleMatches = len(allocation) > 0 && handle == Handle(unsafe.Pointer(&allocation[0]))
+	if !observation.FreeHandleMatches {
+		return handle, errors.New("synthetic mismatched allocation handle")
+	}
+	for index := range allocation {
+		allocation[index] = 0xa5
+	}
+	observation.AllocationOverwritten = true
+	return 0, nil
+}

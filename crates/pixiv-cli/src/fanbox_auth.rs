@@ -16,6 +16,8 @@ use std::{
 };
 pub type BrowserFuture<'a> =
     Pin<Box<dyn Future<Output = Result<String, CommandError>> + Send + 'a>>;
+pub type BrowserBytesFuture<'a> =
+    Pin<Box<dyn Future<Output = Result<Vec<u8>, CommandError>> + Send + 'a>>;
 pub trait BrowserProvider: Send + Sync {
     fn read_session<'a>(
         &'a self,
@@ -23,6 +25,18 @@ pub trait BrowserProvider: Send + Sync {
         browser: &'a str,
         profile: &'a str,
     ) -> BrowserFuture<'a>;
+    fn read_session_bytes<'a>(
+        &'a self,
+        context: &'a Context,
+        browser: &'a str,
+        profile: &'a str,
+    ) -> BrowserBytesFuture<'a> {
+        Box::pin(async move {
+            self.read_session(context, browser, profile)
+                .await
+                .map(String::into_bytes)
+        })
+    }
 }
 pub struct Data<'a, R, W, F> {
     pub service_factory: F,
@@ -238,9 +252,8 @@ impl AuthCommand {
             "import" => {
                 let value = if !self.browser.is_empty() {
                     data.browser
-                        .read_session(context, &self.browser, &self.profile)
+                        .read_session_bytes(context, &self.browser, &self.profile)
                         .await?
-                        .into_bytes()
                 } else if data.prompts.can_prompt() {
                     data.prompts.secret("FANBOXSESSID")?.into_bytes()
                 } else {

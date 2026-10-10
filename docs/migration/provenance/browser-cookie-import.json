@@ -1,0 +1,186 @@
+{
+  "timestamp_utc": "2026-10-10T12:46:25.427761+00:00",
+  "frozen_go_reference": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "published_base": "0da302cdebcbcbbeeee558d9b93b9533e4d69662",
+  "go_version": "go1.27.1",
+  "environment": "linux/amd64",
+  "producer_and_fixture_sha256": {
+    "internal/cli/migration_fanbox_browser_test.go": "e7a71f87dd6e353b8f38c1bc3d51c384937497060c9e5f63b88291b0b021fd64",
+    "crates/pixiv-cli/tests/fixtures/fanbox-browser-import.json": "846fda57f94a9ba52d42e1e9e6fc28cd49f9ac437fe9527a37238f3cb630c793"
+  },
+  "protected_go_production_module_count": 434,
+  "preserved_published_json_fixture_count": 95,
+  "preserved_published_pem_fixture_count": 2,
+  "preserved_published_fixture_file_count": 97,
+  "protected_original_sha256_manifest": "/tmp/browser-import-baseline.json",
+  "protected_original_sha256_manifest_sha256": "70c06a51b185e3fc513136aa83dadcda976f264f9deff5ba9046ac0cfe0170eb",
+  "fixture_case_count": 82,
+  "connected_runcontext_observation_count": 84,
+  "recorded_command_count": 84,
+  "connected_source_sha256_count": 190,
+  "dependency_metadata_count": 48,
+  "dependency_source_sha256_count": 133,
+  "stdlib_source_sha256_count": 182,
+  "support_source_sha256": {
+    "internal/cli/migration_fanbox_auth_test.go": "10f64780a8a1bb49d0ea9ba7098c86f2c96d743775d8d9505ab7a1281ef56a08",
+    "internal/cli/migration_fanbox_help_routing_test.go": "0317b2b85bfc20f1e94a6069a734406ab42152592424332725375c04ebb13142"
+  },
+  "reused_fixture_sha256": {
+    "crates/pixiv-app/tests/fixtures/fanbox-saved-accounts.json": "77dc6f24a44d27220e69987698b1e562382fbece23d895abcd31b13b906de221",
+    "crates/pixiv-cli/tests/fixtures/fanbox-auth.json": "1d3bab3ca00810abace1ebb34125f61df2d692db548baa53e31ecd0b814c2351",
+    "crates/pixiv-cli/tests/fixtures/fanbox-help-routing.json": "5301528abea777cb93ba1c5153714a90dbb79393d253d0c7aeb6793bfcf06b74",
+    "crates/pixiv-sdk/tests/fixtures/fanbox-opaque-credentials.json": "120ac3eb7d0fd51118e5fe08ee63fad7622ed9c56b441926096b74c03565dac5"
+  },
+  "sqlite_tool": {
+    "sha256": "a948747fbdbbf3827101254067b7ea480bad8b13732decbf750da75026c3e38d",
+    "version": "3.54.0 2026-10-09 15:46:58 be8d059e9a49089ab2dce5ed26dd87aaf598fdc5fbe0b107c0dd758464bcd5e3 (64-bit)"
+  },
+  "official_sqlite_source_provenance": "/tmp/pixiv-browser-sqlite-source-provenance.json",
+  "capture": {
+    "command": "go test ./internal/cli -run ^TestMigrationFanboxBrowserImport$ -count=1 -migration-capture-fanbox-browser-import -timeout=8m",
+    "log": "/tmp/browser-import-capture.log",
+    "test_seconds": 2.31,
+    "exit": 0
+  },
+  "replay3": {
+    "command": "go test ./internal/cli -run ^TestMigrationFanboxBrowserImport$ -count=3 -timeout=8m",
+    "log": "/tmp/browser-import-replay3.log",
+    "test_seconds": 6.899,
+    "exit": 0
+  },
+  "race": {
+    "command": "go test -race ./internal/cli -run ^TestMigrationFanboxBrowserImport$ -count=1 -timeout=10m",
+    "log": "/tmp/browser-import-race.log",
+    "test_seconds": 7.756,
+    "wall_seconds": 15,
+    "exit": 0
+  },
+  "vet": {
+    "command": "go vet ./internal/cli",
+    "log": "/tmp/browser-import-vet.log",
+    "exit": 0
+  },
+  "gofmt": {
+    "command": "gofmt -l internal/cli/migration_fanbox_browser_test.go",
+    "log": "/tmp/browser-import-gofmt.log",
+    "output_bytes": 0,
+    "exit": 0
+  },
+  "isolation_scope": [
+    "Each actual root/RunContext child owns HOME, USERPROFILE, all XDG/APPDATA/LOCALAPPDATA/TMPDIR and PATH; no real browser profile, cookie, account, credentials or keyring is read.",
+    "Process-wide seccomp TSYNC denies socket, socketpair, connect and x32 syscalls; inherited by permitted child exec. Exec is deliberately not denied and no executable-allowlist sandbox claim is made.",
+    "Owned PATH exposes only owned tests-only sqlite3/secret-tool wrapper symlinks to the disposable Go test executable. sqlite3 records fixed argv and map-semantic parameters then execs an owned byte-identical official SQLite3.54.0 binary; secret-tool records actual production lookup argv and emits synthetic fixture bytes only.",
+    "No browsercookies.Register override, fixture read hook, encryption-key override or password-provider override is used. The observing reader forwards the genuine SystemBrowserProvider and records its raw session bytes without rewriting them."
+  ],
+  "limitations": [
+    "Linux/amd64 actual production native profile discovery, constrained official sqlite3 CSV query, Linux secret command/key acquisition, linked Go crypto, Safari source parser, SystemBrowserProvider, AccountService, SDK CurrentUser validation and real saved SQLite/config/output are connected. The ordinary SDK HTTP dependency receives only injected synthetic responses; network is denied.",
+    "Secret Service availability/access cases use an owned synthetic secret-tool executable, not live DBus/libsecret or native desktop secret storage. Darwin Keychain, Windows DPAPI, native Safari/macOS execution and OS ACL/permissions remain outside this fixture.",
+    "SQLite parameter map iteration is nondeterministic; actual wrapper validates and logs parameter-map semantics separately from stable non-parameter argv. Database paths and discovery paths replace only the exact owned home prefix with $HOME.",
+    "Safari files follow the frozen source's interleaved BE page/record grammar, not a claim of full contemporary Safari binarycookies support. Chromium newer/app-bound versions remain frozen-source unsupported.",
+    "Published fanbox-auth, saved-account and raw-byte SDK fixtures are reused unchanged for broader auth identity/persistence/output behavior. Real wall-clock generated database timestamps use the published interval assertions and symbolic interval projection only.",
+    "All434 frozen production/module paths are unchanged; published fixture preservation is additionally checked in browser-import evidence. No Rust production/Cargo change or native platform parity is claimed by this Go capture."
+  ],
+  "key_observations": [
+    "All four genuine SystemBrowserProvider implementations run through actual root/RunContext and synthetic SDK identity HTTP dependency to real saved account database/config/output.",
+    "Actual official sqlite3 plaintext x00y yields CSV x and successfully stores session hex78. Chromium decrypted NUL/invalidUTF8 remains opaque raw bytes until SDK malformed-cookie rejection; Firefox/Safari matched invalidUTF8 rejects provider-side.",
+    "Linux native key acquisition invokes production secret-tool fixed lookup argv through owned synthetic helper; password-derived SHA1000/GCM, saltysalt1003/CBC, peanuts1/CBC and wrapped Local State execute unchanged production crypto.",
+    "Each encrypted row separately invokes password acquisition. Plaintext and objectively unsupported short/newer format avoid secret acquisition; missing/failed/empty secret precedes malformed Local State.",
+    "Raw78ff0079 reaches account factory then proxy/options before SDK cookie validation; browser errors precede factory/proxy. Pre-canceled discovery launches no command.",
+    "Reimport preserves explicit default1 until --default switches42, preserves config comment, creation time and sort order, increments credential revision, then lists actual saved state.",
+    "Parameter map iteration order alone is represented semantically; non-parameter sqlite argv, SQL, cookie byte extraction, requests, output writes, state, config, trace, stderr and exit remain exact."
+  ],
+  "_documentation_checkpoint": {
+    "recorded_at_utc": "2026-10-10T12:55:01.193733+00:00",
+    "source_manifest": {
+      "path": "/tmp/browser-import-evidence.json",
+      "sha256": "a02773b6d8099a95f92a2e338e028381e05ae0ea8bf40eab9d13ddf8d70d4396",
+      "bytes": 7449
+    },
+    "preservation": "All original manifest keys and values are retained; this object is additive checkpoint documentation",
+    "published_base": "0da302cdebcbcbbeeee558d9b93b9533e4d69662",
+    "frozen_go_reference": "4b4426487ef18bed276706daec385e0d0a6979f9",
+    "checkpoint_scope": "Go-first contracts and additive Rust byte API/auth forwarding foundation; not a Rust native browser-extraction completion checkpoint",
+    "rust_native_factory": "UNIMPLEMENTED for Chrome, Edge, Firefox and Safari",
+    "rust_comparison_of_six_browser_fixtures": "Not performed at this foundation checkpoint",
+    "aggregate_rust_script": "Passed unchanged scripts/check-rust.ps1 in338 seconds: raw798 passes/0failed/11existing ignored; optimized release46.12s. See browser-cookie-foundation-gates.json",
+    "independent_review": "Outcome tracked separately in browser-cookie-foundation-review.json; publication requires approval",
+    "safety": "Owned synthetic profiles/keys/process/native allocation boundaries only; real credential extraction/transmission forbidden; no denied supplemental probe retried",
+    "counts": {
+      "fixture_cases": 82,
+      "connected_root_runcontext_observations": 84,
+      "recorded_commands": 84
+    },
+    "preserved_published_baseline": {
+      "go_production_module_paths": 434,
+      "fixture_paths": 97,
+      "json_fixture_paths": 95,
+      "pem_fixture_paths": 2
+    },
+    "rust_byte_foundation": {
+      "red": {
+        "path": "/tmp/pixiv-browser-byte-api-red.log",
+        "sha256": "f03b644f601ec42991e52113de7ab306f37e6ffe3d32d62250274cb2ae5c9feb",
+        "bytes": 460079,
+        "exit_code": 101,
+        "exit_code_source": "Parent checkpoint report",
+        "phase": "genuine missing byte API compile RED",
+        "failure": "Missing BrowserBytesFuture, BrowserCookieBytesFuture, read_bytes and read_session_bytes; compiler reported eight errors"
+      },
+      "green": {
+        "path": "/tmp/pixiv-browser-byte-first-green.log",
+        "sha256": "e131a01eeb01e2d545b34e2db26eaeabf79aa56367dc7229b1ac6118ba3d20b4",
+        "bytes": 456956,
+        "exit_code": 0,
+        "exit_code_source": "Parent checkpoint report; observed test results agree",
+        "new_byte_test_count": 3,
+        "existing_auth_test_count": 5,
+        "new_byte_tests": [
+          "chromium_opaque_bytes_survive_the_single_cookie_adapter",
+          "byte_adapter_preserves_cardinality_errors_and_once_owned_close",
+          "existing_string_browser_implementations_keep_their_byte_default"
+        ]
+      },
+      "implemented": [
+        "Additive BrowserBytesFuture and BrowserProvider::read_session_bytes with legacy String default",
+        "Additive BrowserCookieBytesFuture and CookieProvider::read_bytes with legacy String default",
+        "SystemBrowserProvider byte override uses discovery/selection/read_bytes/exactly-one/close",
+        "ProviderClose::finish<T> retains close/join/drop ownership",
+        "AuthCommand browser import forwards bytes to existing import_session_bytes_with_proxy"
+      ],
+      "legacy_string_adapter": "Existing read_session/read path remains separate; no new native strict-UTF8 adapter or String-to-byte delegation is claimed",
+      "source_and_test_sha256": {
+        "crates/pixiv-cli/src/fanbox_auth.rs": "b79a9b7472e48ab4fc4f7d3a57b7273f79e027327656a2d77f6c23f8fc617885",
+        "crates/pixiv-cli/src/fanbox_browser.rs": "0f36a43bb7d041bde8bd36c3b2fd53809833a473207406150a85bef72a231c52",
+        "crates/pixiv-cli/tests/fanbox_browser_bytes.rs": "b68a8047ea9ab474ec898d62c359a27eb9b7674fa1df5df4ea675e26a66caa8c"
+      },
+      "not_established": [
+        "System native extraction",
+        "Rust execution/comparison of six new Go browser fixtures",
+        "Rust production crypto/SQLite/process/native secret backend",
+        "Native Darwin/Windows compile/run"
+      ]
+    },
+    "official_sqlite_source_repository_copy": "docs/migration/provenance/browser-cookie-sqlite-source.json",
+    "aggregate_input_snapshot": {
+      "path": "/tmp/pixiv-browser-foundation-full-inputs.json",
+      "sha256": "1a86520f9d3ebc8c48cac50d7afc043748806139d7ca4210779db6d4ce216c0f",
+      "bytes": 1230338,
+      "file_count": 8831
+    },
+    "root_related_go_attempt1_environment_failure": {
+      "path": "/tmp/pixiv-browser-foundation-related-go-attempt1-env.log",
+      "sha256": "a1167f578bc81484492073d713788dc95be8e830c9ce912c8742b128109c2981",
+      "bytes": 220519,
+      "exit": 1,
+      "exit_file": {
+        "path": "/tmp/pixiv-browser-foundation-related-go-attempt1-env.log.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+        "bytes": 2
+      },
+      "cause": "MIGRATION_BROWSER_SQLITE_SOURCE was unset for import producer; not a semantic contract RED",
+      "retry_status": "Corrected same grouped commands passed with required verified absolute binary env; final log295named passes/0fails/0skips; see foundation-gates"
+    },
+    "final_status_updated_utc": "2026-10-10T12:58:41.731126+00:00",
+    "aggregate_input_integrity": "All8,831 protected inputs unchanged after terminal full script"
+  }
+}
