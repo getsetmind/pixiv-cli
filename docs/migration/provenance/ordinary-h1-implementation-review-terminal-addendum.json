@@ -1,0 +1,177 @@
+{
+  "schema_version": 1,
+  "review_kind": "Independent terminal retained-evidence addendum to bounded ordinary HTTP/1 source approval",
+  "reviewed_base": "b093eae0df1d12dd6a0d5e12127bfcd3e2c167d7",
+  "frozen_go": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "reviewed_at_utc": "2026-10-10T20:18:16.575131+00:00",
+  "decision": "bounded_approval_confirmed_after_terminal_gate",
+  "blocking_findings": [],
+  "original_review": {
+    "path": "docs/migration/provenance/ordinary-h1-implementation-review.json",
+    "sha256": "d0f25b5f413e7beafe35739f39e8e09f5057f453ee33c1bf38a4acf617209a9a",
+    "preserved_unchanged": true,
+    "history": "The original source review correctly recorded the full Rust gate as pending at its 20:04 UTC review. This separate addendum records the subsequent terminal result without rewriting that history."
+  },
+  "terminal_provenance": {
+    "path": "docs/migration/provenance/ordinary-h1-verification.json",
+    "sha256": "652042549988338e35ca18ad3bba628d03b6792623bd79a298db8f169b3b86c8",
+    "scope_agreement": "Agrees with the bounded source approval. The terminal gate does not expand the original approval to buffered-unconsumed bodies, explicit Body.Close, caller Context/Login, default/OAuth assembly, HTTP/2/relay, native Windows/Darwin or full migration/distribution parity."
+  },
+  "reviewer_execution": {
+    "ran_cargo": false,
+    "reran_tests": false,
+    "performed_network_or_native_probes": false,
+    "modified_production": false,
+    "verification": "Read-only retained terminal logs, compressed artifact hashes, source/input/fixture seals, exact frozen Git bytes, ledger and raw-TCP native witnesses. The only repository write in this addendum task is this JSON."
+  },
+  "unchanged_full_rust_gate": {
+    "script": "scripts/check-rust.ps1",
+    "script_sha256": "a5cc6a8c5265061d8e25fa67f364b5f9253ba93fcbcd904e5ca768c3e77fb7f6",
+    "script_byte_for_byte_unchanged_from_reviewed_base": true,
+    "started_utc": "2026-10-10T20:03:23Z",
+    "ended_utc": "2026-10-10T20:11:01Z",
+    "exit": 0,
+    "confirmed_stages": [
+      "Workspace source/test-attribute boundary check and format check via unchanged fail-fast script",
+      "Strict workspace/all-target Clippy with -D warnings",
+      "Locked workspace tests and doc-tests",
+      "Locked optimized workspace release build, completed in 59.43 seconds"
+    ],
+    "raw_test_summaries": 340,
+    "raw_visible_passes": 1037,
+    "raw_failures": 0,
+    "raw_ignored": 11,
+    "nested_child_summaries": 7,
+    "nested_child_passes": 7,
+    "child_only_filtered_out": 12,
+    "workspace_top_level_passes": 1030,
+    "workspace_top_level_filtered_out": 0,
+    "nested_count_evidence": "One existing login handoff lock subprocess reports one pass/six filtered; six existing FANBOX subprocesses each report one pass/one filtered. Their source uses --exact child dispatch, and the unfiltered parent suites complete successfully. These child summaries are counted separately from the 1,030 top-level passes.",
+    "ordinary_tests_in_full_gate": {
+      "client_ownership": {
+        "passed": 5,
+        "failed": 0,
+        "ignored": 0,
+        "filtered_out": 0
+      },
+      "client_idle_native": {
+        "passed": 7,
+        "failed": 0,
+        "ignored": 0,
+        "filtered_out": 0
+      },
+      "ordinary_h1_pool": {
+        "passed": 13,
+        "failed": 0,
+        "ignored": 0,
+        "filtered_out": 0
+      }
+    },
+    "warnings": "The retained log contains generated/vendored dependency warnings, including the original optional-H2 timer parameter warning in imported hyper-util. Gate success is not a claim that all dependency output is warning-free.",
+    "retained_log": "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-fullgate.log.gz",
+    "retained_gzip_sha256": "e17549017e77fbcd143274d65e2121f0abfdf7c48d41eb9fffb019173a8d9045",
+    "uncompressed_log_sha256": "e4bcadaa0c06d29307f46c8b9cc6f2ff24502370c987399567de98806d6e5fa5",
+    "timestamp_exit_text": "The three retained started/ended/exit files match the original terminal text and provenance hashes."
+  },
+  "evidence_integrity": {
+    "retained_artifacts_checked": 28,
+    "all_recorded_artifact_hashes_matched": true,
+    "deterministic_gzip": "All fourteen retained gzip archives have mtime=0; decompressed bytes match their recorded raw SHA256 and original /tmp logs.",
+    "fullgate_native_witnesses": {
+      "retained": 9,
+      "path": "docs/migration/provenance/ordinary-h1-verification/fullgate-native-witness/",
+      "check": "All nine portable observations exactly match the sealed raw-first SDK native witnesses. Client-originated raw TCP EOF/reset events beneath TLS are retained; local cleanup is excluded. They are the five mapped retirement/resource schedules plus four ownership lifecycle schedules, not all nine Go retirement rows."
+    },
+    "original_reviewed_source_hashes": "Every source hash in the unchanged original approval still matches the current file.",
+    "sealed_gate_inputs": {
+      "files": 9308,
+      "mismatches": 0,
+      "seal": "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-fullgate-inputs.json",
+      "check": "Every current sealed file hash matched. New terminal proof/addendum artifacts are outside the pre-gate input seal."
+    },
+    "preserved_fixture_reference_data": {
+      "files": 312,
+      "mismatches": 0,
+      "seal": "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-preserved-fixtures.json",
+      "check": "Every inventory hash independently matches both current bytes and git show at reviewed_base."
+    },
+    "frozen_go_production_modules": {
+      "files": 434,
+      "mismatches": 0,
+      "check": "Every frozen non-test Go production file plus go.mod/go.sum independently compared byte-for-byte with git show at frozen_go."
+    }
+  },
+  "related_go_terminal_evidence": {
+    "exit": 0,
+    "top_level_passes": 184,
+    "nested_passes": 446,
+    "observed_failures": 0,
+    "named_child_dispatch_skips": [
+      "TestMigrationClientOwnershipEntropyChild",
+      "TestMigrationLoginEnvironmentProxyChild",
+      "TestMigrationLoginOwnershipChild"
+    ],
+    "check": "Retained terminal log pass/skip lines agree with the provenance counts. Format/vet retained logs and exact hashes were inspected; no reviewer rerun."
+  },
+  "ledger_no_parity_promotion": {
+    "entries": 673,
+    "status_counts": {
+      "in_progress": 614,
+      "pending": 59,
+      "verified": 0
+    },
+    "status_changes": [
+      [
+        "sdk/pixiv:Client.CloseIdleConnections",
+        "pending",
+        "in_progress"
+      ]
+    ],
+    "verified_platforms_unchanged": true,
+    "check": "Entry identities, counts, only status transition and every explicit platform/verification field were compared with reviewed_base. Test counts and gate success do not establish whole-migration verification."
+  },
+  "execution_environment": {
+    "source": "Parent-recorded scoped execution_environment in terminal_provenance; read and retained, not established by a new reviewer command",
+    "platform": "Linux cloud workspace; no new native OS/architecture claim"
+  },
+  "unchanged_limitations": [
+    "The unchanged Hyper sender-readiness path can become ready after the final response frame is buffered but before the resource caller consumes it. Withheld-body schedules establish busy transport behavior, not every buffered-but-unconsumed Go bodyEOFSignal timing or future body-lease semantics.",
+    "Go explicit fallible Body.Close and its close_success result have no corresponding current ResourceBody API. The early-close Go row remains unmapped; Rust future/body drop is not claimed equivalent.",
+    "Current ordinary SDK request/resource APIs lack caller Context. The three H1 cancellation rows, the retained Login ownership slice and non-nil caller-Context runtime slice are not mapped by this activation; future abort is not a Context-cancellation equivalence claim.",
+    "Complete default constructor, OAuth successful/failed Open and owner-drop assembly, all input/provider combinations and failure/error-order paths are not established by custom-client SDK schedules. Actual-pool retention is implemented in the dependency core; public failed Open parity is not inferred.",
+    "No private Go PutIdleConn callback/acceptance/error-string or raw pointer identity is compared. Public SDK EOF completion alone does not prove asynchronous pool insertion; actual reuse is measured by subsequent connection IDs.",
+    "No HTTP/2/relay activation, admission/TTL/driver retirement, multiplex, uploads, unfinished HEAD, or previously denied supplemental probe is executed or approved by this review.",
+    "No native Windows/Darwin, other OS/architecture, distribution/license-union packaging, or final migration verification is inferred. Imported ordinary license texts are intact, but complete workspace release packaging remains a separate obligation.",
+    "Arbitrary future Drop/panic/IO/executor/concurrency schedules, private early dead-driver retention release, default native diagnostics/Accept and the unchanged full Rust gate remain bounded/open as documented."
+  ],
+  "terminal_artifact_sha256": {
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-cargo-activation.log.gz": "e8fffb6040a7a63431f94cb512b3fad994e7a7d303c3e83b4849cbeb5f1e16c3",
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-fmt-first.log.gz": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-focused-clippy.log.gz": "aa09e3b35edc2ea1a0607523b434fbb8c5f8e2af7b1f57830d8a2a32fdbca0cc",
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-fullgate.log.gz": "e17549017e77fbcd143274d65e2121f0abfdf7c48d41eb9fffb019173a8d9045",
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-go-final.log.gz": "5fd1a0b5f92aea206bb30c720644ee34a509d01febe9390916d2444accc3530b",
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-native-api-red.log.gz": "590b788511572da4d6dc2aa774a4032987e20dfe56393006d7939c30b284a7eb",
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-native-first.log.gz": "0501bc9d1dcec43bc9ea1e82dbf14e72c18f9420e854a7b233707b38ac25ab71",
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-native-repeat.log.gz": "09f6d679e997a4e061d95ed4b6faf8248a4147d93acce755295c2ac139a397d8",
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-native-sdk-first.log.gz": "b7979853c61650e99b988c0b2d1c77537eca5004fa03173a618249c11606a2c4",
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-native-sdk-raw-first.log.gz": "a8df3ab7b4b6f4218c14d7977007d3ff7ad8112b0506e16823bc8a30e0e1bd5f",
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-sdk-app-focused.log.gz": "edb1a931936f26e38368ec12eced8e34b0c0a4c54b57910749e44d89cdc8f22c",
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-sdk-owned-connected-first.log.gz": "b41b3a3829ffef2acdb40caa2d98d27fbf19a9d59a379954434373de30094437",
+    "docs/migration/provenance/ordinary-h1-verification/sdk-owned-api-red.log.gz": "b3c586032c08ed50ec9a13bdabf6895f0c57b3af55b6de457d7d1f0b49d8a2a7",
+    "docs/migration/provenance/ordinary-h1-verification/sdk-owned-port-green.log.gz": "a463e4f59edba8da4da29cec6d6511b64a0aae323d9f1aa68c60b660a7f59b33",
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-fullgate-inputs.json": "4159f4c42b01cc46a397c0b99961855ce2d03052a09ea2b0cfa82b443783443d",
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-preserved-fixtures.json": "f8dc11a0c081e18d30d440e7330facf0eecc033de86914cd8e620bbf7f748962",
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-fullgate.started": "c397f1e820dd31e7de06c423e77c52e597e287415617d469abd464f6043a4657",
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-fullgate.ended": "bef64780c45fd88aab9499dcec2cc63597705bfc4edc2ed918b21a98a38d01a2",
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-fullgate.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "docs/migration/provenance/ordinary-h1-verification/fullgate-native-witness/active-body-retired-after-close.json": "8918e3145d9656eacf3edb886e52a5487d8580506c3358195d0796ec1fc5ff95",
+    "docs/migration/provenance/ordinary-h1-verification/fullgate-native-witness/active-headers-retired-after-close.json": "fc3254c02c4243b4ff9401fdf35d42c67b578a9a06a836d516a26d15e1947549",
+    "docs/migration/provenance/ordinary-h1-verification/fullgate-native-witness/default-paced.json": "0cf36f062e117540a0be85c01ee1cc01b985d8803dcb8e4f8cbe1136369a727d",
+    "docs/migration/provenance/ordinary-h1-verification/fullgate-native-witness/default.json": "570016a2b6456b12137f833149b2c6a777f3952b2617b92bd6ab8c2cb26c94f9",
+    "docs/migration/provenance/ordinary-h1-verification/fullgate-native-witness/injected-shared-paced.json": "3317d42cc38d87d36739eadbd25f0e1e7c742c4001621549c179f114edd28263",
+    "docs/migration/provenance/ordinary-h1-verification/fullgate-native-witness/injected-shared.json": "1d2478c82d0d4c7d705ccf718c11e3349737170e2fe2a86db7f68019a10ea6b2",
+    "docs/migration/provenance/ordinary-h1-verification/fullgate-native-witness/mixed-idle-and-active-repeated-close.json": "f2a8bb7c126e755a20e619a047d7c622acf11dcfbf22b61742b7fa27447e6574",
+    "docs/migration/provenance/ordinary-h1-verification/fullgate-native-witness/next-acquisition-resets-newly-idle-retirement.json": "cd9e2361b4883606ac6c6732218336e587d6604b6a3980952f28c4f13b5c3bf2",
+    "docs/migration/provenance/ordinary-h1-verification/fullgate-native-witness/resource-eof-after-close-retires-active-connection.json": "666964f3cf341473bdce3c5963d5868e9969f71ea279fef9a3b0366429e52884"
+  }
+}

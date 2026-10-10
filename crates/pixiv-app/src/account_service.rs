@@ -270,7 +270,7 @@ impl AccountService {
         let credentials = self
             .rotate_account(context, user_id, &account, &transport)
             .await?;
-        Ok(Client::from_credentials(&credentials, transport))
+        Client::try_from_credentials(&credentials, transport).map_err(Into::into)
     }
 
     pub(crate) async fn rotate_account<T: Transport>(

@@ -1,0 +1,536 @@
+--- a/hyper-util-0.1.21/src/client/legacy/client.rs
++++ b/hyper-util-0.1.21/src/client/legacy/client.rs
+@@ -186,6 +186,14 @@
+         let mut req = Request::new(body);
+         *req.uri_mut() = uri;
+         self.request(req)
++    }
++
++    /// Close idle HTTP/1 connections without interrupting active requests.
++    ///
++    /// Active connections retire when next idle unless a new checkout is created.
++    /// Pending pool waiters remain eligible to receive a returning connection.
++    pub fn close_idle_connections(&self) {
++        self.pool.close_idle_connections();
+     }
+ 
+     /// Send a constructed `Request` using this `Client`.
+@@ -541,8 +549,10 @@
+                         let is_h2 = is_ver_h2 || connected.alpn == Alpn::H2;
+ 
+                         Either::Left(Box::pin(async move {
++                            let connection_id;
+                             let tx = if is_h2 {
+                                 #[cfg(feature = "http2")] {
++                                    connection_id = None;
+                                     let (mut tx, conn) =
+                                         h2_builder.handshake(io).await.map_err(Error::tx)?;
+ 
+@@ -578,6 +588,8 @@
+                                     // err_tx sends errors from the connection task, and err_rx receives them
+                                     // to correlate connection failures with request readiness errors.
+                                     let (err_tx, err_rx) = tokio::sync::oneshot::channel();
++                                    let observer = pool.observe_driver(&connecting);
++                                    connection_id = Some(observer.connection_id());
+                                     // Spawn the connection task in the background using the executor.
+                                     // The task manages the HTTP/1.1 connection, including upgrades (e.g., WebSocket).
+                                     // Errors are sent via err_tx to ensure they can be checked if the sender (tx) fails.
+@@ -592,7 +604,7 @@
+                                                 // (e.g., if the receiver is dropped, which is handled later).
+                                                 let _ =err_tx.send(e);
+                                             })
+-                                            .map(|_| ()),
++                                            .map(move |_| drop(observer)),
+                                     );
+                                     // Log that the client is waiting for the connection to be ready.
+                                     // Readiness indicates the sender (tx) can accept a request without blocking.
+@@ -657,6 +669,7 @@
+                                 PoolClient {
+                                     conn_info: connected,
+                                     tx,
++                                    connection_id,
+                                 },
+                             ))
+                         }))
+@@ -766,6 +779,7 @@
+ struct PoolClient<B> {
+     conn_info: Connected,
+     tx: PoolTx<B>,
++    connection_id: Option<pool::ConnectionId>,
+ }
+ 
+ enum PoolTx<B> {
+@@ -852,7 +866,11 @@
+     B: Send + 'static,
+ {
+     fn is_open(&self) -> bool {
+-        !self.is_poisoned() && self.is_ready()
++        self.connection_id
++            .as_ref()
++            .is_none_or(pool::ConnectionId::is_alive)
++            && !self.is_poisoned()
++            && self.is_ready()
+     }
+ 
+     fn reserve(self) -> pool::Reservation<Self> {
+@@ -861,16 +879,19 @@
+             PoolTx::Http1(tx) => pool::Reservation::Unique(PoolClient {
+                 conn_info: self.conn_info,
+                 tx: PoolTx::Http1(tx),
++                connection_id: self.connection_id,
+             }),
+             #[cfg(feature = "http2")]
+             PoolTx::Http2(tx) => {
+                 let b = PoolClient {
+                     conn_info: self.conn_info.clone(),
+                     tx: PoolTx::Http2(tx.clone()),
++                    connection_id: None,
+                 };
+                 let a = PoolClient {
+                     conn_info: self.conn_info,
+                     tx: PoolTx::Http2(tx),
++                    connection_id: None,
+                 };
+                 pool::Reservation::Shared(a, b)
+             }
+@@ -879,6 +900,10 @@
+ 
+     fn can_share(&self) -> bool {
+         self.is_http2()
++    }
++
++    fn connection_id(&self) -> Option<u64> {
++        self.connection_id.as_ref().map(pool::ConnectionId::id)
+     }
+ }
+ 
+@@ -1020,6 +1045,8 @@
+     h2_builder: hyper::client::conn::http2::Builder<Exec>,
+     pool_config: pool::Config,
+     pool_timer: Option<timer::Timer>,
++    pool_idle_retention: bool,
++    pool_max_idle_connections: usize,
+ }
+ 
+ impl Builder {
+@@ -1045,8 +1072,27 @@
+                 max_idle_per_host: usize::MAX,
+             },
+             pool_timer: None,
+-        }
+-    }
++            pool_idle_retention: false,
++            pool_max_idle_connections: usize::MAX,
++        }
++    }
++    /// Keep the HTTP/1 pool alive through active leases and idle-entry expiry tasks.
++    ///
++    /// Idle deadlines require a pool timer. With no idle timeout, entries remain
++    /// until checkout, explicit idle close, or connection-driver completion.
++    pub fn pool_idle_retention(&mut self, retain: bool) -> &mut Self {
++        self.pool_idle_retention = retain;
++        self
++    }
++
++    /// Set the maximum number of idle HTTP/1 connections across all hosts.
++    ///
++    /// The oldest idle connection is retired when the bound is exceeded.
++    pub fn pool_max_idle_connections(&mut self, max: usize) -> &mut Self {
++        self.pool_max_idle_connections = max;
++        self
++    }
++
+     /// Set an optional timeout for idle sockets being kept-alive.
+     /// A `Timer` is required for this to take effect. See `Builder::pool_timer`
+     ///
+@@ -1632,6 +1678,8 @@
+     {
+         let exec = self.exec.clone();
+         let timer = self.pool_timer.clone();
++        let pool = pool::Pool::new(self.pool_config, exec.clone(), timer);
++        pool.configure_idle_retention(self.pool_idle_retention, self.pool_max_idle_connections);
+         Client {
+             config: self.client_config,
+             exec: exec.clone(),
+@@ -1640,7 +1688,7 @@
+             #[cfg(feature = "http2")]
+             h2_builder: self.h2_builder.clone(),
+             connector,
+-            pool: pool::Pool::new(self.pool_config, exec, timer),
++            pool,
+         }
+     }
+ }
+@@ -1650,6 +1698,8 @@
+         f.debug_struct("Builder")
+             .field("client_config", &self.client_config)
+             .field("pool_config", &self.pool_config)
++            .field("pool_idle_retention", &self.pool_idle_retention)
++            .field("pool_max_idle_connections", &self.pool_max_idle_connections)
+             .finish()
+     }
+ }
+--- a/hyper-util-0.1.21/src/client/legacy/pool.rs
++++ b/hyper-util-0.1.21/src/client/legacy/pool.rs
+@@ -7,6 +7,7 @@
+ use std::hash::Hash;
+ use std::ops::{Deref, DerefMut};
+ use std::pin::Pin;
++use std::sync::atomic::{AtomicBool, Ordering};
+ use std::sync::{Arc, Mutex, Weak};
+ use std::task::{self, Poll, ready};
+ 
+@@ -38,6 +39,9 @@
+     /// Allows for HTTP/2 to return a shared reservation.
+     fn reserve(self) -> Reservation<Self>;
+     fn can_share(&self) -> bool;
++    fn connection_id(&self) -> Option<u64> {
++        None
++    }
+ }
+ 
+ pub trait Key: Eq + Hash + Clone + Debug + Unpin + Send + 'static {}
+@@ -82,6 +86,10 @@
+     // state, waiting to receive a new Request to send on the socket.
+     idle: HashMap<K, Vec<Idle<T>>>,
+     max_idle_per_host: usize,
++    max_idle_connections: usize,
++    idle_retention: bool,
++    close_future_idle: bool,
++    next_id: u64,
+     // These are outstanding Checkouts that are waiting for a socket to be
+     // able to send a Request one. This is used when "racing" for a new
+     // connection.
+@@ -130,6 +138,10 @@
+                 idle: HashMap::new(),
+                 idle_interval_ref: None,
+                 max_idle_per_host: config.max_idle_per_host,
++                max_idle_connections: usize::MAX,
++                idle_retention: false,
++                close_future_idle: false,
++                next_id: 0,
+                 waiters: HashMap::new(),
+                 exec,
+                 timer,
+@@ -142,6 +154,14 @@
+         Pool { inner }
+     }
+ 
++    pub(crate) fn configure_idle_retention(&self, retain: bool, max_idle: usize) {
++        if let Some(inner) = &self.inner {
++            let mut inner = inner.lock().unwrap();
++            inner.idle_retention = retain;
++            inner.max_idle_connections = max_idle;
++        }
++    }
++
+     pub(crate) fn is_enabled(&self) -> bool {
+         self.inner.is_some()
+     }
+@@ -162,11 +182,51 @@
+     /// Returns a `Checkout` which is a future that resolves if an idle
+     /// connection becomes available.
+     pub fn checkout(&self, key: K) -> Checkout<T, K> {
++        if let Some(inner) = &self.inner {
++            inner.lock().unwrap().close_future_idle = false;
++        }
+         Checkout {
+             key,
+             pool: self.clone(),
+             waiter: None,
+         }
++    }
++
++    pub(crate) fn close_idle_connections(&self) {
++        if let Some(pool) = &self.inner {
++            let mut inner = pool.lock().unwrap();
++            inner.close_future_idle = true;
++            inner.idle.retain(|_, entries| {
++                entries.retain(|entry| entry.value.can_share());
++                !entries.is_empty()
++            });
++        }
++    }
++
++    pub(crate) fn observe_driver(&self, connecting: &Connecting<T, K>) -> DriverObserver<T, K> {
++        let id = if let Some(pool) = &self.inner {
++            pool.lock().unwrap().allocate_id()
++        } else {
++            0
++        };
++        DriverObserver {
++            pool: self
++                .inner
++                .as_ref()
++                .map_or_else(WeakOpt::none, WeakOpt::downgrade),
++            key: connecting.key.clone(),
++            connection: ConnectionId {
++                id,
++                alive: Arc::new(AtomicBool::new(true)),
++            },
++        }
++    }
++
++    fn active_guard(&self, unique: bool) -> Option<Arc<Mutex<PoolInner<T, K>>>> {
++        self.inner
++            .as_ref()
++            .filter(|pool| unique && pool.lock().unwrap().idle_retention)
++            .cloned()
+     }
+ 
+     /// Ensure that there is only ever 1 connecting task for HTTP/2
+@@ -255,7 +315,9 @@
+ 
+             (value, WeakOpt::none())
+         };
++        let strong_pool = self.active_guard(!value.can_share());
+         Pooled {
++            strong_pool,
+             key: connecting.key.clone(),
+             is_reused: false,
+             pool: pool_ref,
+@@ -280,7 +342,9 @@
+             }
+         }
+ 
++        let strong_pool = self.active_guard(!value.can_share());
+         Pooled {
++            strong_pool,
+             is_reused: true,
+             key: key.clone(),
+             pool: pool_ref,
+@@ -321,6 +385,8 @@
+                     self.list.push(Idle {
+                         idle_at: now,
+                         value: to_reinsert,
++                        entry_id: entry.entry_id,
++                        cancel_expiry: entry.cancel_expiry,
+                     });
+                     to_checkout
+                 }
+@@ -330,6 +396,8 @@
+             return Some(Idle {
+                 idle_at: entry.idle_at,
+                 value,
++                entry_id: entry.entry_id,
++                cancel_expiry: None,
+             });
+         }
+ 
+@@ -345,6 +413,9 @@
+     }
+ 
+     fn put(&mut self, key: K, value: T, __pool_ref: &Arc<Mutex<PoolInner<T, K>>>) {
++        if !value.is_open() {
++            return;
++        }
+         if value.can_share() && self.idle.contains_key(&key) {
+             trace!("put; existing idle HTTP/2 connection for {:?}", key);
+             return;
+@@ -388,25 +459,93 @@
+ 
+         match value {
+             Some(value) => {
+-                // borrow-check scope...
+-                {
+-                    let now = self.now();
+-                    let idle_list = self.idle.entry(key.clone()).or_default();
+-                    if self.max_idle_per_host <= idle_list.len() {
+-                        trace!("max idle per host for {:?}, dropping connection", key);
+-                        return;
+-                    }
+-
+-                    debug!("pooling idle connection for {:?}", key);
+-                    idle_list.push(Idle {
+-                        value,
+-                        idle_at: now,
+-                    });
+-                }
+-
+-                self.spawn_idle_interval(__pool_ref);
++                if !value.can_share() && self.close_future_idle {
++                    return;
++                }
++                let now = self.now();
++                if self.max_idle_per_host <= self.idle.get(&key).map_or(0, Vec::len) {
++                    trace!("max idle per host for {:?}, dropping connection", key);
++                    return;
++                }
++                let entry_id = self.allocate_id();
++                let retain = self.idle_retention && !value.can_share();
++                let cancel_expiry = if retain {
++                    let (tx, rx) = oneshot::channel();
++                    let task = IdleEntryTask {
++                        pool: Arc::clone(__pool_ref),
++                        key: key.clone(),
++                        entry_id,
++                        cancellation: rx,
++                        deadline: self.timeout.and_then(|timeout| {
++                            self.timer.clone().and_then(|timer| {
++                                now.checked_add(timeout).map(|deadline| (timer, deadline))
++                            })
++                        }),
++                    };
++                    self.exec.execute(task.run());
++                    Some(tx)
++                } else {
++                    None
++                };
++                debug!("pooling idle connection for {:?}", key);
++                self.idle.entry(key).or_default().push(Idle {
++                    value,
++                    idle_at: now,
++                    entry_id,
++                    cancel_expiry,
++                });
++                self.enforce_global_idle_limit();
++                if !retain {
++                    self.spawn_idle_interval(__pool_ref);
++                }
+             }
+             None => trace!("put; found waiter for {:?}", key),
++        }
++    }
++
++    fn allocate_id(&mut self) -> u64 {
++        self.next_id = self
++            .next_id
++            .checked_add(1)
++            .expect("pool entry identifier exhausted");
++        self.next_id
++    }
++
++    fn enforce_global_idle_limit(&mut self) {
++        loop {
++            let count = self
++                .idle
++                .values()
++                .flatten()
++                .filter(|entry| !entry.value.can_share())
++                .count();
++            if count <= self.max_idle_connections {
++                return;
++            }
++            let oldest = self
++                .idle
++                .iter()
++                .flat_map(|(key, entries)| {
++                    entries
++                        .iter()
++                        .filter(|entry| !entry.value.can_share())
++                        .map(move |entry| (key.clone(), entry.entry_id, entry.idle_at))
++                })
++                .min_by_key(|(_, id, idle_at)| (*idle_at, *id));
++            if let Some((key, entry_id, _)) = oldest {
++                self.remove_idle_entry(&key, entry_id);
++            } else {
++                return;
++            }
++        }
++    }
++
++    fn remove_idle_entry(&mut self, key: &K, entry_id: u64) {
++        if let Some(entries) = self.idle.get_mut(key) {
++            entries.retain(|entry| entry.entry_id != entry_id);
++            if entries.is_empty() {
++                self.idle.remove(key);
++            }
+         }
+     }
+ 
+@@ -523,6 +662,7 @@
+     is_reused: bool,
+     key: K,
+     pool: WeakOpt<Mutex<PoolInner<T, K>>>,
++    strong_pool: Option<Arc<Mutex<PoolInner<T, K>>>>,
+ }
+ 
+ impl<T: Poolable, K: Key> Pooled<T, K> {
+@@ -565,7 +705,7 @@
+                 return;
+             }
+ 
+-            if let Some(pool) = self.pool.upgrade() {
++            if let Some(pool) = self.strong_pool.take().or_else(|| self.pool.upgrade()) {
+                 if let Ok(mut inner) = pool.lock() {
+                     inner.put(self.key.clone(), value, &pool);
+                 }
+@@ -587,6 +727,78 @@
+ struct Idle<T> {
+     idle_at: Instant,
+     value: T,
++    entry_id: u64,
++    cancel_expiry: Option<oneshot::Sender<Infallible>>,
++}
++
++#[derive(Clone)]
++pub(crate) struct ConnectionId {
++    id: u64,
++    alive: Arc<AtomicBool>,
++}
++
++impl ConnectionId {
++    pub(crate) fn id(&self) -> u64 {
++        self.id
++    }
++
++    pub(crate) fn is_alive(&self) -> bool {
++        self.alive.load(Ordering::Acquire)
++    }
++}
++
++pub(crate) struct DriverObserver<T: Poolable, K: Key> {
++    pool: WeakOpt<Mutex<PoolInner<T, K>>>,
++    key: K,
++    connection: ConnectionId,
++}
++
++impl<T: Poolable, K: Key> DriverObserver<T, K> {
++    pub(crate) fn connection_id(&self) -> ConnectionId {
++        self.connection.clone()
++    }
++}
++
++impl<T: Poolable, K: Key> Drop for DriverObserver<T, K> {
++    fn drop(&mut self) {
++        self.connection.alive.store(false, Ordering::Release);
++        if let Some(pool) = self.pool.upgrade() {
++            if let Ok(mut inner) = pool.lock() {
++                if let Some(entries) = inner.idle.get_mut(&self.key) {
++                    entries.retain(|entry| entry.value.connection_id() != Some(self.connection.id));
++                    if entries.is_empty() {
++                        inner.idle.remove(&self.key);
++                    }
++                }
++            }
++        }
++    }
++}
++
++struct IdleEntryTask<T: Poolable, K: Key> {
++    pool: Arc<Mutex<PoolInner<T, K>>>,
++    key: K,
++    entry_id: u64,
++    cancellation: oneshot::Receiver<Infallible>,
++    deadline: Option<(Timer, Instant)>,
++}
++
++impl<T: Poolable, K: Key> IdleEntryTask<T, K> {
++    async fn run(self) {
++        if let Some((timer, deadline)) = self.deadline {
++            let sleep = timer.sleep_until(deadline);
++            match futures_util::future::select(self.cancellation, sleep).await {
++                futures_util::future::Either::Left(_) => return,
++                futures_util::future::Either::Right(_) => {
++                    if let Ok(mut inner) = self.pool.lock() {
++                        inner.remove_idle_entry(&self.key, self.entry_id);
++                    }
++                }
++            }
++        } else {
++            let _ = self.cancellation.await;
++        }
++    }
+ }
+ 
+ // FIXME: allow() required due to `impl Trait` leaking types to this lint

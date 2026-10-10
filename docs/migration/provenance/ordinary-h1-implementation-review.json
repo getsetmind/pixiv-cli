@@ -1,0 +1,182 @@
+{
+  "schema_version": 1,
+  "review_kind": "Independent bounded ordinary HTTP/1 implementation, provenance, SDK mapping and retained-evidence source review",
+  "reviewed_base": "b093eae0df1d12dd6a0d5e12127bfcd3e2c167d7",
+  "frozen_go": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "reviewed_at_utc": "2026-10-10T20:04:31.355705+00:00",
+  "decision": "bounded_approval",
+  "blocking_findings": [],
+  "approval_scope": "The sealed ordinary reqwest/hyper-util HTTP/1 actual-pool changes, ownership-aware SDK/App source wiring, exact imports and patches, and the specified retained Linux SDK/core schedules. This is not full Go transport parity, platform verification, or acceptance of the pending full Rust gate.",
+  "checked_instructions": [
+    "AGENTS.md",
+    "docs/migration/strategy.md",
+    "docs/migration/sdk-http-ownership.md"
+  ],
+  "reviewer_execution": {
+    "ran_cargo": false,
+    "reran_tests": false,
+    "performed_network_or_native_probes": false,
+    "modified_production": false,
+    "verification": "Read-only source, cached official archive, fixture, inventory/hash, strict in-memory patch reconstruction and retained-log/witness inspection. The only repository write is this review artifact.",
+    "denied_supplemental_probes_retried": false,
+    "full_unchanged_rust_script": "Pending parent execution at review; focused GREEN and repeated native tests are not that gate."
+  },
+  "official_imports": {
+    "files": 109,
+    "packages": [
+      {
+        "name": "hyper-util",
+        "version": "0.1.21",
+        "files": 62,
+        "archive_bytes": 126820,
+        "archive_sha256": "ddc03d96684f9226b8a787cdb71488417b53ab5ea8fdb1dac946cb9431cc8bff",
+        "upstream_vcs": "23a868965964c1d6bb1b94f30ba4c420a4bebe7c",
+        "license": "MIT",
+        "changed_files": [
+          "src/client/legacy/client.rs",
+          "src/client/legacy/pool.rs"
+        ]
+      },
+      {
+        "name": "reqwest",
+        "version": "0.13.5",
+        "files": 47,
+        "archive_bytes": 160871,
+        "archive_sha256": "16a1cfa75cc186dd73d5818e510e042e40927bccc9c236b061cea97e1eb08029",
+        "upstream_vcs": "de55373434f07f42926599dbb5a88550d8e55112",
+        "license": "MIT OR Apache-2.0",
+        "changed_files": [
+          "src/async_impl/client.rs"
+        ]
+      }
+    ],
+    "independent_checks": [
+      "Both cached official .crate archives match exact archive checksums and byte lengths. Every archive regular-file payload, mode and VCS metadata matches the original inventories and sealed source receipt.",
+      "All 109 original files and all 109 patched files match their full inventory hashes. Actual changed-file sets are exactly the three files listed above.",
+      "MIT and Apache license payloads remain byte-for-byte unchanged. No existing registry source, Go production/module file or FANBOX production dependency is part of these changes.",
+      "Both ordered patch files match their recorded hashes. Independent in-memory reconstruction matched every old line at each declared hunk location, with no offset or fuzz, and produced every exact patched-file hash without writing a temporary source tree.",
+      "The ordinary dependency family is separate from FANBOX. Workspace ordinary reqwest features omit HTTP/2; no h2 activation or retirement guarantee is inferred from preserved optional source branches."
+    ],
+    "reconstruction_script_review": "The checked-in script verifies originals against the receipt, optional cached archives, ordered --fuzz=0 patch application, patched inventories and unchanged license hashes. The independent reviewer additionally checked archive modes/VCS and exact declared hunk locations."
+  },
+  "implementation_findings": [
+    {
+      "boundary": "Atomic current-idle removal and future-idle flag",
+      "source": "third_party/rust/ordinary/hyper-util-0.1.21/src/client/legacy/pool.rs:184-204,415-503",
+      "finding": "The original pool mutex serializes close_future_idle=true with removal of current unique H1 idle entries. Waiter queues remain intact. PoolInner::put offers a usable returned value to waiters before applying future-idle rejection to the unused remainder. A newly created checkout resets the flag once; polling an existing checkout does not reset it. Close is repeatable and nonterminal."
+    },
+    {
+      "boundary": "Active response/body and actual-pool ownership",
+      "source": "third_party/rust/ordinary/hyper-util-0.1.21/src/client/legacy/pool.rs:225-230,282-353,699-718; src/client/legacy/client.rs:356-371",
+      "finding": "Opted-in unique Pooled leases retain Arc<Mutex<PoolInner>>, the genuine underlying pool. The unchanged sender-readiness/on_idle future retains that lease while the Hyper transport is busy. Its return creates the idle entry or hands off to a waiter. No outer-client timer, response-header count, rebuilt client, or disconnected close marker substitutes for native ownership."
+    },
+    {
+      "boundary": "Per-entry TTL retention and cancellation races",
+      "source": "third_party/rust/ordinary/hyper-util-0.1.21/src/client/legacy/pool.rs:363-405,465-549,778-801",
+      "finding": "Each accepted retained H1 idle insertion takes an actual idle timestamp, unique checked-increment entry ID, cancellation channel and strong pool task guard. Its absolute deadline is that idle timestamp plus the configured timeout. Checkout drops the old cancellation sender, including through IdlePopper partial moves; reinserted values receive fresh IDs and deadlines. Explicit close, global eviction and dead-driver removal drop affected senders. A timeout racing with checkout/reinsertion can remove only its old ID. No-timeout entries wait for cancellation; a configured timeout requires a pool timer. Normal reqwest supplies TokioTimer. These are source findings plus the specified retained tests, not every possible executor/panic schedule."
+    },
+    {
+      "boundary": "Weak driver liveness and completion races",
+      "source": "third_party/rust/ordinary/hyper-util-0.1.21/src/client/legacy/client.rs:579-607,868-907; src/client/legacy/pool.rs:415-418,699-718,734-775,838-850",
+      "finding": "The H1 driver retains only a weak pool observer and a connection ID/liveness flag. Observer drop marks liveness false with Release before upgrading/locking the pool, then removes matching idle connection IDs. PoolClient::is_open observes liveness with Acquire; both Pooled::drop and PoolInner::put check it. Thus a driver completed before insertion cannot leave a retained live-looking idle sender. Driver completion racing after a check removes the inserted idle entry; a racing waiter value is checked at receipt and existing retry/error handling remains. Observer cancellation also marks the unavailable driver dead. Early guard release is reviewed in source; no private pool-introspection runtime test is claimed."
+    },
+    {
+      "boundary": "Per-host and global idle bounds",
+      "source": "third_party/rust/ordinary/hyper-util-0.1.21/src/client/legacy/pool.rs:465-497,514-549",
+      "finding": "The per-host bound rejects excess unused returning values. The global bound counts H1 unique idle entries and evicts the oldest actual idle timestamp, with entry ID as deterministic tie-breaker, across hosts. Eviction cancels only its corresponding expiry task. SDK ordinary construction opts into 2 per host and 100 globally; library defaults remain unlimited unless configured."
+    },
+    {
+      "boundary": "Official request/TLS/retry/redirect/decompression/error pipeline",
+      "source": "third_party/rust/ordinary/reqwest-0.13.5/src/async_impl/client.rs:982-1117; third_party/rust/ordinary/hyper-util-0.1.21/src/client/legacy/client.rs:249-479,579-660",
+      "finding": "Reqwest retains an actual HyperClient clone before its existing retry/cookie/redirect/decompression service layering, and close delegates into that pool. TLS, connector, request, response, body, retry, redirect, decompression and error-module files remain original bytes. The original H1 with_upgrades driver and readiness/error oneshot handling remain; only completion observation is added. Retirement of a pool sender and physical peer shutdown are separate. Optional H2 sharing remains outside this approval."
+    }
+  ],
+  "sdk_app_mapping": {
+    "source_findings": [
+      "HttpTransport::build configures genuine retained pool ownership, per-host 2/global 100, and inherits normal reqwest 90-second idle timeout. HttpTransport::from_client preserves a normal caller-configured native client boundary.",
+      "Client::close_idle_connections forwards only when owns_transport=true. Injected try_with_transport/with_transport and verified try_from_credentials remain caller-owned; positive SDK pacing does not override ownership. Explicit with_owned_transport is a Rust ownership-transfer extension.",
+      "new_owned validates trimmed blank access before native transport configuration and maps fallible anonymous cursor construction. Legacy Rust new/with_transport remain permissive and are not relabeled as the Go New mapping.",
+      "AccountService selects verified credential construction without anonymous cursor entropy. Execution teardown invokes the ownership-aware SDK hook, preserving its ordinary injected caller-owned no-op route."
+    ],
+    "native_route": "Client artwork/artwork_pages/open_resource -> HttpTransport::from_client -> normal reqwest/Rustls -> fixed owned loopback CONNECT allowlist -> stdlib TLS HTTP/1 peer; generated root trust is installed only in that client.",
+    "retirement_fixture_rows_mapped": [
+      "active-headers-retired-after-close",
+      "active-body-retired-after-close",
+      "next-acquisition-resets-newly-idle-retirement",
+      "mixed-idle-and-active-repeated-close",
+      "resource-eof-after-close-retires-active-connection"
+    ],
+    "ownership_native_schedules_mapped": [
+      "default",
+      "default-paced",
+      "injected-shared",
+      "injected-shared-paced"
+    ],
+    "ownership_route_limit": "Default-labelled fixture schedules use explicit ownership transfer of a normally built custom native client with owned proxy/root settings. They do not establish default-constructor execution or complete OAuth Open assembly."
+  },
+  "retained_evidence": {
+    "classification": "Read and independently checked existing parent-run evidence; reviewer performed no runtime execution.",
+    "artifact_seal": "crates/pixiv-sdk/tests/support/ordinary-sdk-h1-evidence/artifacts.sha256",
+    "artifact_seal_files_checked": 214,
+    "all_hashes_matched": true,
+    "source_seals": "mapping.json and provenance.json source hashes all match reviewed files.",
+    "sdk_raw_first": "Retained raw-first log: 7 passed, 0 failed/ignored/filtered. Five retirement/resource schedules and four ownership lifecycle schedules plus one scope assertion are represented by 7 Rust tests.",
+    "sdk_repeats": {
+      "runs": 20,
+      "test_threads": 4,
+      "tests_per_run": 7,
+      "native_schedule_witnesses": 180,
+      "check": "All 20 terminal passing summaries have zero failed/ignored/filtered tests. Every repeated portable native observation exactly matches its raw-first witness; raw peer EOF/reset events are preserved."
+    },
+    "bare_reqwest_repeats": {
+      "runs": 10,
+      "tests_per_run": 13,
+      "check": "All 10 terminal passing summaries have zero failed/ignored/filtered tests. These native core tests cover their own pool scenarios and are not counted as Go SDK fixture rows."
+    },
+    "physical_shutdown_observer": "The current helper wraps the raw TCP reader below TLS. It records remote EOF/ECONNRESET only, once per connection, excludes test-owned cleanup, and drains bounded remaining raw bytes before normal local close when necessary. TLS close_notify alone, SDK completion and handler completion do not count as physical shutdown.",
+    "superseded_evidence": "Earlier passing TLS-layer-only observer source, mapping and witnesses remain explicitly superseded weaker evidence; no raw TCP shutdown claim is drawn from that run.",
+    "platform": "Linux x86_64 only; Go helper is standard-library-only official Go 1.27.1. No native Windows or Darwin execution is established.",
+    "final_full_rust_gate": "Pending parent; this source approval does not turn focused/repeated GREEN into full-script success."
+  },
+  "limitations": [
+    "The unchanged Hyper sender-readiness path can become ready after the final response frame is buffered but before the resource caller consumes it. Withheld-body schedules establish busy transport behavior, not every buffered-but-unconsumed Go bodyEOFSignal timing or future body-lease semantics.",
+    "Go explicit fallible Body.Close and its close_success result have no corresponding current ResourceBody API. The early-close Go row remains unmapped; Rust future/body drop is not claimed equivalent.",
+    "Current ordinary SDK request/resource APIs lack caller Context. The three H1 cancellation rows, the retained Login ownership slice and non-nil caller-Context runtime slice are not mapped by this activation; future abort is not a Context-cancellation equivalence claim.",
+    "Complete default constructor, OAuth successful/failed Open and owner-drop assembly, all input/provider combinations and failure/error-order paths are not established by custom-client SDK schedules. Actual-pool retention is implemented in the dependency core; public failed Open parity is not inferred.",
+    "No private Go PutIdleConn callback/acceptance/error-string or raw pointer identity is compared. Public SDK EOF completion alone does not prove asynchronous pool insertion; actual reuse is measured by subsequent connection IDs.",
+    "No HTTP/2/relay activation, admission/TTL/driver retirement, multiplex, uploads, unfinished HEAD, or previously denied supplemental probe is executed or approved by this review.",
+    "No native Windows/Darwin, other OS/architecture, distribution/license-union packaging, or final migration verification is inferred. Imported ordinary license texts are intact, but complete workspace release packaging remains a separate obligation.",
+    "Arbitrary future Drop/panic/IO/executor/concurrency schedules, private early dead-driver retention release, default native diagnostics/Accept and the unchanged full Rust gate remain bounded/open as documented."
+  ],
+  "source_sha256": {
+    "AGENTS.md": "aa8c215e39049dc7c7b5443a8802a64f94ebd5f972e23395904edf6b182e638a",
+    "docs/migration/strategy.md": "af347545418f796fa53fb0624f7cf25cbac175bd227e756cd251194c84d5d67b",
+    "docs/migration/sdk-http-ownership.md": "e921059e9f5c1e2f90e50bbddba572f0242d79cebdd0c33a480e4fec769dbcc2",
+    "Cargo.toml": "9adfc9205d389083ff556a0e251c806e2a160f1ed6050587b9bc95fc62931659",
+    "Cargo.lock": "a78e0e9f1de822ee418070f987c94779f306c18309133119fd23b839d01185fb",
+    "docs/migration/provenance/ordinary-transport-official-sources.json": "ab4332f7beef9d30e2188f484e5d253a627caca88db8234e44b8b6f82c8d78d0",
+    "docs/migration/provenance/ordinary-h1-patch.json": "5857fae4ac95efb27ebd7384657d2848218e2c8be0b9e4fb3475fab41d061c7f",
+    "docs/migration/provenance/ordinary-h1-patch.md": "90a978bc23946501734fee6926a6aff081a93d174847fbdf34ec164e4c43c5bb",
+    "docs/migration/provenance/ordinary-h1-reconstruct.py": "e99284b7a8766236cf34fbaf22a54c2481cadf62e354fbf656949c675c1c5551",
+    "docs/migration/provenance/ordinary-h1-patches/0001-hyper-util-native-h1-pool.patch": "c55d4e895ef277420ccb898a847685145fc307730d7fe2bdf37878fd450615df",
+    "docs/migration/provenance/ordinary-h1-patches/0002-reqwest-native-h1-pool.patch": "ee37bc21563e0ec37da81dba6c78d1a272d04d6d2614b4ad6f42cbf4a0793f58",
+    "third_party/rust/ordinary/hyper-util-0.1.21/src/client/legacy/client.rs": "46b152d89592bab39dd914635c6e9771926b970b45e0d60e91ea6af16633688b",
+    "third_party/rust/ordinary/hyper-util-0.1.21/src/client/legacy/pool.rs": "5404b82df0714b563748bd94b6bded934597d0871b18d413a843e4c9f31e2630",
+    "third_party/rust/ordinary/reqwest-0.13.5/src/async_impl/client.rs": "a2f277669c9091ee9d486dc14eae9f4b6419fe9511799bd51bdc3401f89b304d",
+    "crates/pixiv-sdk/src/pixiv.rs": "002465071603be17e25e9a49f5ba282986d1edc29b465221be8e81a7282ebdaa",
+    "crates/pixiv-sdk/src/transport.rs": "676e66ecc2e4dacb0a6edb83c4416929f4f03bdad6170d194e61be802053f431",
+    "crates/pixiv-app/src/execution.rs": "63b0bf920e9c72393c14908c3e8ccd3fc74158c0896a2c166807871e3e0bdb6f",
+    "crates/pixiv-app/src/account_service.rs": "a6c911d5d5eb4fef250caff469d9534856a5c95c99beacab4cccca418c8bf818",
+    "crates/pixiv-sdk/tests/client_ownership.rs": "d13bd933f5914e7b6831dd8ce0845ab0f4b1a7987bd9ed56385d87e1d03bc321",
+    "crates/pixiv-sdk/tests/client_idle_native.rs": "e7e1c38997b656e9fb926a629933778e0afa176f385ad70f9a0c78e2c4ea9164",
+    "crates/pixiv-sdk/tests/ordinary_h1_pool.rs": "499ec181f830476f7f278d382201815399465795144a6ef09bcb72ce4c9516b7",
+    "crates/pixiv-sdk/tests/helpers/ordinary_h1_peer.go": "6050188b1d87b746387991a15d627b4e91864d9cb8a502b6ff77661c0dd514ec",
+    "crates/pixiv-sdk/tests/fixtures/client-ownership.json": "c9df7037ca933a443bfe43de5d4824ebfb8cc55ff0e2105f2b1e458782fdb56f",
+    "crates/pixiv-sdk/tests/fixtures/client-idle-native-h1.json": "21d7116fd252d80e961fed64533b733d66385595d0aa47ec553ca27a70c2b3ab",
+    "crates/pixiv-sdk/tests/support/ordinary-sdk-h1-evidence/artifacts.sha256": "351079384fada68924087514f81191002b3869ec82b90c0398bec06b630ef3db",
+    "crates/pixiv-sdk/tests/support/ordinary-sdk-h1-evidence/mapping.json": "868c0e834a13e60d1bb65de3fc574bd228b95415b091f235d25e228eeb877a19",
+    "crates/pixiv-sdk/tests/support/ordinary-sdk-h1-evidence/provenance.json": "6864ff188703fc2284ea6ce33979ec0c6c9ac45b94b02b9557a4d54f8a9ad251",
+    "crates/pixiv-sdk/tests/support/ordinary-sdk-h1-evidence/replays/native-raw-first.log": "f2ffddba5009d9f0161d5adad7392496bff10b5fb77844921c184be701e45492",
+    "crates/pixiv-sdk/tests/support/ordinary-sdk-h1-evidence/replays/native-raw-repeat-20-and-core-10.log": "98cf8e87c6eb7976fcb1bd6798e6857dd4f275dbe9221f2253c1727362498876"
+  }
+}

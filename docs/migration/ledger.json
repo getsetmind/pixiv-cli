@@ -10601,20 +10601,31 @@
     },
     {
       "id": "sdk/pixiv:Client.CloseIdleConnections",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/sdk.json",
         "key": "sdk/pixiv:Client.CloseIdleConnections"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-sdk/src/transport.rs",
+        "third_party/rust/ordinary/reqwest-0.13.5/src/async_impl/client.rs",
+        "third_party/rust/ordinary/hyper-util-0.1.21/src/client/legacy/pool.rs",
+        "third_party/rust/ordinary/hyper-util-0.1.21/src/client/legacy/client.rs"
+      ],
       "tests": [
         "sdk/pixiv/migration_client_ownership_test.go",
         "crates/pixiv-sdk/tests/fixtures/client-ownership.json",
         "sdk/pixiv/migration_idle_native_test.go",
-        "crates/pixiv-sdk/tests/fixtures/client-idle-native-h1.json"
+        "crates/pixiv-sdk/tests/fixtures/client-idle-native-h1.json",
+        "crates/pixiv-sdk/tests/client_ownership.rs",
+        "crates/pixiv-sdk/tests/ordinary_h1_pool.rs",
+        "crates/pixiv-sdk/tests/client_idle_native.rs"
       ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Ordinary HTTP1 ownership candidate: normal native pool controls and caller-owned no-op are connected; five/nine Go retirement rows plus four separate ownership lifecycle schedules mapped through explicit custom-native-client ownership transfer. Default/OAuth full construction, retained Login, caller Context, explicit Body.Close and buffered-unconsumed body timing, HTTP2/relay and native OS/distribution remain unfinished. See sdk-http-ownership.md."
+      ]
     },
     {
       "id": "sdk/pixiv:Client.CurrentUser",
@@ -12953,7 +12964,11 @@
       "rust_sources": [
         "crates/pixiv-sdk/src/pacing.rs",
         "crates/pixiv-sdk/src/transport.rs",
-        "crates/pixiv-sdk/src/resource_transport.rs"
+        "crates/pixiv-sdk/src/resource_transport.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "third_party/rust/ordinary/reqwest-0.13.5/src/async_impl/client.rs",
+        "third_party/rust/ordinary/hyper-util-0.1.21/src/client/legacy/pool.rs",
+        "third_party/rust/ordinary/hyper-util-0.1.21/src/client/legacy/client.rs"
       ],
       "tests": [
         "sdk/pixiv/migration_pacing_test.go#TestMigrationPacingSharesOAuthContentResourceRedirectAndMutationStarts",
@@ -12965,14 +12980,18 @@
         "sdk/pixiv/migration_redirect_test.go#TestMigrationSDKHTTPRedirectPreservesMethodsHeadersAndOriginalBody",
         "crates/pixiv-sdk/tests/http_redirect.rs#sdk_http_redirect_matches_go_methods_headers_body_and_limit",
         "sdk/pixiv/migration_client_ownership_test.go",
-        "crates/pixiv-sdk/tests/fixtures/client-ownership.json"
+        "crates/pixiv-sdk/tests/fixtures/client-ownership.json",
+        "crates/pixiv-sdk/tests/client_ownership.rs",
+        "crates/pixiv-sdk/tests/ordinary_h1_pool.rs",
+        "crates/pixiv-sdk/tests/client_idle_native.rs"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
         "全 SDK Options、client 再構築、pool replay の所有期間、Context 取消/deadline/全競合、pool と HTTP idle cleanup、CLI/MCP bootstrap との接続全条件、TLS/SOCKS wire、他 OS/arch は未完了または未検証。",
-        "redirect の HTTPS downgrade、user-info/IDN/IPv6/全 URL 構文、独自 Host/CookieJar/CheckRedirect、body drain/connection reuse、型付き通信エラーと診断、SDK/CLI/MCP の固定 HTTPS endpoint を通す正常系は未完了または未検証。"
+        "redirect の HTTPS downgrade、user-info/IDN/IPv6/全 URL 構文、独自 Host/CookieJar/CheckRedirect、body drain/connection reuse、型付き通信エラーと診断、SDK/CLI/MCP の固定 HTTPS endpoint を通す正常系は未完了または未検証。",
+        "Ordinary HTTP1 ownership candidate: normal native pool controls and caller-owned no-op are connected; five/nine Go retirement rows plus four separate ownership lifecycle schedules mapped through explicit custom-native-client ownership transfer. Default/OAuth full construction, retained Login, caller Context, explicit Body.Close and buffered-unconsumed body timing, HTTP2/relay and native OS/distribution remain unfinished. See sdk-http-ownership.md."
       ]
     },
     {
@@ -12985,7 +13004,11 @@
       "rust_sources": [
         "crates/pixiv-sdk/src/pacing.rs",
         "crates/pixiv-sdk/src/transport.rs",
-        "crates/pixiv-sdk/src/resource_transport.rs"
+        "crates/pixiv-sdk/src/resource_transport.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "third_party/rust/ordinary/reqwest-0.13.5/src/async_impl/client.rs",
+        "third_party/rust/ordinary/hyper-util-0.1.21/src/client/legacy/pool.rs",
+        "third_party/rust/ordinary/hyper-util-0.1.21/src/client/legacy/client.rs"
       ],
       "tests": [
         "sdk/pixiv/migration_pacing_test.go#TestMigrationPacingSharesOAuthContentResourceRedirectAndMutationStarts",
@@ -12997,14 +13020,18 @@
         "sdk/pixiv/migration_redirect_test.go#TestMigrationSDKHTTPRedirectPreservesMethodsHeadersAndOriginalBody",
         "crates/pixiv-sdk/tests/http_redirect.rs#sdk_http_redirect_matches_go_methods_headers_body_and_limit",
         "sdk/pixiv/migration_client_ownership_test.go",
-        "crates/pixiv-sdk/tests/fixtures/client-ownership.json"
+        "crates/pixiv-sdk/tests/fixtures/client-ownership.json",
+        "crates/pixiv-sdk/tests/client_ownership.rs",
+        "crates/pixiv-sdk/tests/ordinary_h1_pool.rs",
+        "crates/pixiv-sdk/tests/client_idle_native.rs"
       ],
       "verified_platforms": [
         "windows-amd64"
       ],
       "differences": [
         "全 SDK Options、client 再構築、pool replay の所有期間、Context 取消/deadline/全競合、pool と HTTP idle cleanup、CLI/MCP bootstrap との接続全条件、TLS/SOCKS wire、他 OS/arch は未完了または未検証。",
-        "redirect の HTTPS downgrade、user-info/IDN/IPv6/全 URL 構文、独自 Host/CookieJar/CheckRedirect、body drain/connection reuse、型付き通信エラーと診断、SDK/CLI/MCP の固定 HTTPS endpoint を通す正常系は未完了または未検証。"
+        "redirect の HTTPS downgrade、user-info/IDN/IPv6/全 URL 構文、独自 Host/CookieJar/CheckRedirect、body drain/connection reuse、型付き通信エラーと診断、SDK/CLI/MCP の固定 HTTPS endpoint を通す正常系は未完了または未検証。",
+        "Ordinary HTTP1 ownership candidate: normal native pool controls and caller-owned no-op are connected; five/nine Go retirement rows plus four separate ownership lifecycle schedules mapped through explicit custom-native-client ownership transfer. Default/OAuth full construction, retained Login, caller Context, explicit Body.Close and buffered-unconsumed body timing, HTTP2/relay and native OS/distribution remain unfinished. See sdk-http-ownership.md."
       ]
     },
     {
@@ -14065,7 +14092,10 @@
         "crates/pixiv-app/src/sessions.rs",
         "crates/pixiv-sdk/src/pacing.rs",
         "crates/pixiv-sdk/src/resource_transport.rs",
-        "crates/pixiv-app/src/execution.rs"
+        "crates/pixiv-app/src/execution.rs",
+        "third_party/rust/ordinary/reqwest-0.13.5/src/async_impl/client.rs",
+        "third_party/rust/ordinary/hyper-util-0.1.21/src/client/legacy/pool.rs",
+        "third_party/rust/ordinary/hyper-util-0.1.21/src/client/legacy/client.rs"
       ],
       "tests": [
         "sdk/pixiv/migration_http_status_test.go#TestMigrationHTTPStatusMatchesFrozenClassification",
@@ -14088,7 +14118,10 @@
         "sdk/pixiv/migration_transport_failure_test.go#TestMigrationSDKTransportFailureClassificationAndBodyConsumption",
         "crates/pixiv-sdk/tests/transport_failure.rs#sdk_transport_failures_match_go_classification_and_consume_error_bodies",
         "sdk/pixiv/migration_client_ownership_test.go",
-        "crates/pixiv-sdk/tests/fixtures/client-ownership.json"
+        "crates/pixiv-sdk/tests/fixtures/client-ownership.json",
+        "crates/pixiv-sdk/tests/client_ownership.rs",
+        "crates/pixiv-sdk/tests/ordinary_h1_pool.rs",
+        "crates/pixiv-sdk/tests/client_idle_native.rs"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -14097,7 +14130,8 @@
         "全 SDK Options、client 再構築、pool replay の所有期間、Context 取消/deadline/全競合、pool と HTTP idle cleanup、CLI/MCP bootstrap との接続全条件、TLS/SOCKS wire、他 OS/arch は未完了または未検証。",
         "redirect の HTTPS downgrade、user-info/IDN/IPv6/全 URL 構文、独自 Host/CookieJar/CheckRedirect、body drain/connection reuse、型付き通信エラーと診断、SDK/CLI/MCP の固定 HTTPS endpoint を通す正常系は未完了または未検証。",
         "OAuth/refresh の全 JSON wire・Unicode・入力/正常応答/認証/DTO、code 交換、全認証操作、resource/retry/保存の全条件、SQL 中断と全取消競合は未移植または未検証。transport constructor が Go の facade 呼び出し前に対して Rust では Gate 取得後となる順序差も未解消。",
-        "通信失敗の DNS/proxyconnect 分類、timeout 実測、Context deadline/取消の全条件、TLS certificate/alert の全種類、正常 HTTPS endpoint の実 CLI/MCP wire、network 診断イベント、他 OS/arch は未検証または未移植。比較済み21ケースの範囲は contracts.md を参照。"
+        "通信失敗の DNS/proxyconnect 分類、timeout 実測、Context deadline/取消の全条件、TLS certificate/alert の全種類、正常 HTTPS endpoint の実 CLI/MCP wire、network 診断イベント、他 OS/arch は未検証または未移植。比較済み21ケースの範囲は contracts.md を参照。",
+        "Ordinary HTTP1 ownership candidate: normal native pool controls and caller-owned no-op are connected; five/nine Go retirement rows plus four separate ownership lifecycle schedules mapped through explicit custom-native-client ownership transfer. Default/OAuth full construction, retained Login, caller Context, explicit Body.Close and buffered-unconsumed body timing, HTTP2/relay and native OS/distribution remain unfinished. See sdk-http-ownership.md."
       ]
     },
     {
@@ -14110,7 +14144,11 @@
       "rust_sources": [
         "crates/pixiv-sdk/src/pacing.rs",
         "crates/pixiv-sdk/src/transport.rs",
-        "crates/pixiv-sdk/src/resource_transport.rs"
+        "crates/pixiv-sdk/src/resource_transport.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "third_party/rust/ordinary/reqwest-0.13.5/src/async_impl/client.rs",
+        "third_party/rust/ordinary/hyper-util-0.1.21/src/client/legacy/pool.rs",
+        "third_party/rust/ordinary/hyper-util-0.1.21/src/client/legacy/client.rs"
       ],
       "tests": [
         "sdk/pixiv/migration_pacing_test.go#TestMigrationPacingSharesOAuthContentResourceRedirectAndMutationStarts",
@@ -14126,7 +14164,10 @@
         "sdk/pixiv/migration_client_ownership_test.go",
         "crates/pixiv-sdk/tests/fixtures/client-ownership.json",
         "sdk/pixiv/migration_request_context_test.go",
-        "crates/pixiv-sdk/tests/fixtures/request-context.json"
+        "crates/pixiv-sdk/tests/fixtures/request-context.json",
+        "crates/pixiv-sdk/tests/client_ownership.rs",
+        "crates/pixiv-sdk/tests/ordinary_h1_pool.rs",
+        "crates/pixiv-sdk/tests/client_idle_native.rs"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -14134,7 +14175,8 @@
       "differences": [
         "全 SDK Options、client 再構築、pool replay の所有期間、Context 取消/deadline/全競合、pool と HTTP idle cleanup、CLI/MCP bootstrap との接続全条件、TLS/SOCKS wire、他 OS/arch は未完了または未検証。",
         "redirect の HTTPS downgrade、user-info/IDN/IPv6/全 URL 構文、独自 Host/CookieJar/CheckRedirect、body drain/connection reuse、型付き通信エラーと診断、SDK/CLI/MCP の固定 HTTPS endpoint を通す正常系は未完了または未検証。",
-        "通信失敗の DNS/proxyconnect 分類、timeout 実測、Context deadline/取消の全条件、TLS certificate/alert の全種類、正常 HTTPS endpoint の実 CLI/MCP wire、network 診断イベント、他 OS/arch は未検証または未移植。比較済み21ケースの範囲は contracts.md を参照。"
+        "通信失敗の DNS/proxyconnect 分類、timeout 実測、Context deadline/取消の全条件、TLS certificate/alert の全種類、正常 HTTPS endpoint の実 CLI/MCP wire、network 診断イベント、他 OS/arch は未検証または未移植。比較済み21ケースの範囲は contracts.md を参照。",
+        "Ordinary HTTP1 ownership candidate: normal native pool controls and caller-owned no-op are connected; five/nine Go retirement rows plus four separate ownership lifecycle schedules mapped through explicit custom-native-client ownership transfer. Default/OAuth full construction, retained Login, caller Context, explicit Body.Close and buffered-unconsumed body timing, HTTP2/relay and native OS/distribution remain unfinished. See sdk-http-ownership.md."
       ]
     },
     {

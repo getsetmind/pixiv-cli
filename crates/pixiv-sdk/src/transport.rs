@@ -66,6 +66,7 @@ impl fmt::Debug for Response {
 
 pub trait Transport: Send + Sync {
     fn send(&self, request: Request) -> impl std::future::Future<Output = Result<Response>> + Send;
+    fn close_idle_connections(&self) {}
     fn send_json(
         &self,
         request: Request,
@@ -139,9 +140,20 @@ impl HttpTransport {
             environment_proxy,
             pacing: crate::pacing::RequestPacing::new(Duration::ZERO),
             client: builder
+                .pool_idle_retention(true)
+                .pool_max_idle_per_host(2)
+                .pool_max_idle_connections(100)
                 .build()
                 .map_err(|_| Error::new(Reason::LocalStateError, "transport"))?,
         })
+    }
+
+    pub fn from_client(client: reqwest::Client) -> Self {
+        Self {
+            client,
+            environment_proxy: false,
+            pacing: crate::pacing::RequestPacing::new(Duration::ZERO),
+        }
     }
 
     pub fn with_pacing(mut self, interval: Duration) -> Self {
@@ -151,6 +163,9 @@ impl HttpTransport {
 }
 
 impl Transport for HttpTransport {
+    fn close_idle_connections(&self) {
+        self.client.close_idle_connections();
+    }
     async fn send(&self, request: Request) -> Result<Response> {
         self.send_request(request, true).await
     }

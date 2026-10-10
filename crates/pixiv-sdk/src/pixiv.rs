@@ -33,6 +33,7 @@ use tokio::{sync::Mutex, time::Instant};
 
 pub struct Client<T = HttpTransport> {
     transport: T,
+    owns_transport: bool,
     access_token: String,
     accept_language: String,
     expires_at: Option<DateTime<Utc>>,
@@ -53,10 +54,14 @@ impl<T> fmt::Debug for Client<T> {
 
 impl Client<HttpTransport> {
     pub fn new(access_token: &str, proxy: Option<&str>) -> Result<Self> {
-        Ok(Self::with_transport(
-            access_token,
-            HttpTransport::new(proxy)?,
-        ))
+        let mut client = Self::with_transport(access_token, HttpTransport::new(proxy)?);
+        client.owns_transport = true;
+        Ok(client)
+    }
+
+    pub fn new_owned(access_token: &str, proxy: Option<&str>) -> Result<Self> {
+        validate_access_token(access_token)?;
+        Self::with_owned_transport(access_token, HttpTransport::new(proxy)?)
     }
 }
 
@@ -66,8 +71,58 @@ impl<T: Transport> Client<T> {
         let cursor_instance = getrandom::fill(&mut random)
             .ok()
             .map(|()| random.iter().map(|byte| format!("{byte:02x}")).collect());
+        let mut client = Self::with_transport_without_cursor(access_token, transport);
+        client.cursor_instance = cursor_instance;
+        client
+    }
+
+    pub fn from_credentials(credentials: &crate::oauth::Credentials, transport: T) -> Self {
+        let mut client = Self::with_transport(credentials.access_token(), transport);
+        client.user_id = credentials.user_id;
+        client.username = credentials.username.clone();
+        client
+    }
+
+    pub fn try_with_transport(access_token: &str, transport: T) -> Result<Self> {
+        validate_access_token(access_token)?;
+        let mut random = [0_u8; 16];
+        getrandom::fill(&mut random).map_err(|_| {
+            Error::new(Reason::LocalStateError, "New")
+                .with_detail("cannot initialize cursor instance")
+        })?;
+        let mut client = Self::with_transport_without_cursor(access_token, transport);
+        client.cursor_instance = Some(random.iter().map(|byte| format!("{byte:02x}")).collect());
+        Ok(client)
+    }
+
+    pub fn with_owned_transport(access_token: &str, transport: T) -> Result<Self> {
+        let mut client = Self::try_with_transport(access_token, transport)?;
+        client.owns_transport = true;
+        Ok(client)
+    }
+
+    pub fn try_from_credentials(
+        credentials: &crate::oauth::Credentials,
+        transport: T,
+    ) -> Result<Self> {
+        if credentials.access_token().is_empty() {
+            return Err(Error::new(Reason::UpstreamError, "Open")
+                .with_detail("oauth response did not include an access token"));
+        }
+        if credentials.user_id <= 0 {
+            return Err(Error::new(Reason::MalformedUpstreamResponse, "Open")
+                .with_detail("oauth response did not include account identity"));
+        }
+        let mut client = Self::with_transport_without_cursor(credentials.access_token(), transport);
+        client.user_id = credentials.user_id;
+        client.username = credentials.username.clone();
+        Ok(client)
+    }
+
+    fn with_transport_without_cursor(access_token: &str, transport: T) -> Self {
         Self {
             transport,
+            owns_transport: false,
             access_token: access_token.trim().to_owned(),
             accept_language: String::new(),
             expires_at: None,
@@ -76,16 +131,15 @@ impl<T: Transport> Client<T> {
             resource_policy: ResourcePolicy::default(),
             user_id: 0,
             username: String::new(),
-            cursor_instance,
+            cursor_instance: None,
             resource_urls: std::sync::Mutex::new(BTreeMap::new()),
         }
     }
 
-    pub fn from_credentials(credentials: &crate::oauth::Credentials, transport: T) -> Self {
-        let mut client = Self::with_transport(credentials.access_token(), transport);
-        client.user_id = credentials.user_id;
-        client.username = credentials.username.clone();
-        client
+    pub fn close_idle_connections(&self) {
+        if self.owns_transport {
+            self.transport.close_idle_connections();
+        }
     }
 
     pub fn user_id(&self) -> i64 {
@@ -504,6 +558,15 @@ pub(crate) fn headers(token: Option<&str>) -> Vec<(String, String)> {
         headers.push(("Authorization".into(), format!("Bearer {token}")));
     }
     headers
+}
+
+fn validate_access_token(access_token: &str) -> Result<()> {
+    if access_token.trim().is_empty() {
+        return Err(
+            Error::new(Reason::InvalidArgument, "New").with_detail("access token is required")
+        );
+    }
+    Ok(())
 }
 
 fn malformed(operation: &'static str) -> Error {

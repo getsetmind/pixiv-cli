@@ -143,7 +143,10 @@ impl<T: Transport + 'static> Execution<T> {
                 })
             })),
             gate: Some(Gate::new()),
-            close_client: Arc::new(|_| Ok(())),
+            close_client: Arc::new(|client| {
+                client.close_idle_connections();
+                Ok(())
+            }),
         });
         let pool_config = config.clone();
         let facade = Facade {

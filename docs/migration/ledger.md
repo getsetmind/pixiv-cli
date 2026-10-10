@@ -70,3 +70,7 @@ Only `cli:pixiv update` advances from pending to in_progress, with normal app/CL
 ## SDK HTTP ownership Go-first evidence (2026-10-10)
 
 Constructor/Open, retained Login/close and representative content/resource entries now link four unchanged-Go producers and their sealed fixtures. All673 identities/statuses/verified platforms and Rust mappings remain unchanged; CloseIdleConnections remains pending until genuine owned native controls are connected. [Bounded evidence](sdk-http-ownership.md) distinguishes30 ownership,21 Login,9 native HTTP/1 and24 Context cases from Rust implementation and native-platform verification. The published full Rust baseline is preserved, not relabeled as a new ownership pass.
+
+## Ordinary HTTP/1 candidate (2026-10-10)
+
+Only sdk/pixiv:Client.CloseIdleConnections advances from pending to in_progress. All673 identities and prior verified_platforms are preserved:614 in_progress,59 pending,zero verified. Constructor/Open entries gain normal SDK/native source and test links, with validated Go mappings versus retained anonymous-resource Rust extensions explicit. [Current bounded mapping](sdk-http-ownership.md#connected-ordinary-http1-candidate-2026-10-10) covers five of nine native retirement rows plus four distinct ownership lifecycles, not nine retirement rows. Remaining Context/Close/retained Login/buffered-body/default-construction/HTTP2/platform/distribution obligations remain differences.

@@ -1,0 +1,323 @@
+package main
+
+import (
+	"bufio"
+	"context"
+	"crypto/ecdsa"
+	"crypto/elliptic"
+	"crypto/rand"
+	"crypto/tls"
+	"crypto/x509"
+	"crypto/x509/pkix"
+	"encoding/json"
+	"encoding/pem"
+	"errors"
+	"fmt"
+	"io"
+	"math/big"
+	"net"
+	"net/http"
+	"os"
+	"path/filepath"
+	"strconv"
+	"sync"
+	"sync/atomic"
+	"syscall"
+	"time"
+)
+
+const bound = 10 * time.Second
+
+var outputMu sync.Mutex
+
+func emit(event any) {
+	outputMu.Lock()
+	defer outputMu.Unlock()
+	if err := json.NewEncoder(os.Stdout).Encode(event); err != nil {
+		panic(err)
+	}
+}
+
+type plan struct {
+	Name, Host, Target, Phase string
+	ID                        int64
+	release                   chan struct{}
+	once                      sync.Once
+}
+
+func (p *plan) unblock() { p.once.Do(func() { close(p.release) }) }
+
+type command struct {
+	Command string `json:"command"`
+	Name    string `json:"name"`
+	Host    string `json:"host"`
+	Target  string `json:"target"`
+	Phase   string `json:"phase"`
+	ID      int64  `json:"id"`
+}
+
+type peer struct {
+	mu       sync.Mutex
+	plans    map[string][]*plan
+	allPlans map[string]*plan
+	requests []map[string]any
+	closed   []int
+	conns    map[int]net.Conn
+	cleanup  atomic.Bool
+}
+
+type connection struct {
+	net.Conn
+	id int
+}
+
+type physicalConnection struct {
+	net.Conn
+	id       int
+	peer     *peer
+	once     sync.Once
+	observed atomic.Bool
+}
+
+func (c *physicalConnection) Read(b []byte) (int, error) {
+	n, err := c.Conn.Read(b)
+	if errors.Is(err, io.EOF) || errors.Is(err, syscall.ECONNRESET) {
+		c.once.Do(func() {
+			c.observed.Store(true)
+			cleanup := c.peer.cleanup.Load()
+			c.peer.mu.Lock()
+			if !cleanup {
+				c.peer.closed = append(c.peer.closed, c.id)
+			}
+			c.peer.mu.Unlock()
+			emit(map[string]any{"event": "peer_closed", "connection": c.id, "owned_cleanup": cleanup, "raw_error": err.Error()})
+		})
+	}
+	return n, err
+}
+
+func (c *physicalConnection) Close() error {
+	if !c.peer.cleanup.Load() && !c.observed.Load() {
+		_ = c.Conn.SetReadDeadline(time.Now().Add(bound))
+		var remaining [4096]byte
+		for {
+			if _, err := c.Read(remaining[:]); err != nil {
+				break
+			}
+		}
+	}
+	return c.Conn.Close()
+}
+
+type connectionKey struct{}
+
+type connectListener struct {
+	net.Listener
+	certificate tls.Certificate
+	peer        *peer
+	sequence    int
+}
+
+func (l *connectListener) Accept() (net.Conn, error) {
+	raw, err := l.Listener.Accept()
+	if err != nil {
+		return nil, err
+	}
+	_ = raw.SetDeadline(time.Now().Add(bound))
+	reader := bufio.NewReader(raw)
+	r, err := http.ReadRequest(reader)
+	if err != nil {
+		_ = raw.Close()
+		return nil, err
+	}
+	if r.Method != "CONNECT" || (r.Host != "app-api.pixiv.net:443" && r.Host != "i.pximg.net:443") || reader.Buffered() != 0 {
+		_ = raw.Close()
+		return nil, fmt.Errorf("unexpected owned CONNECT %s %s", r.Method, r.Host)
+	}
+	if _, err := io.WriteString(raw, "HTTP/1.1 200 Connection Established\r\n\r\n"); err != nil {
+		_ = raw.Close()
+		return nil, err
+	}
+	l.sequence++
+	physical := &physicalConnection{Conn: raw, id: l.sequence, peer: l.peer}
+	socket := tls.Server(physical, &tls.Config{Certificates: []tls.Certificate{l.certificate}, MinVersion: tls.VersionTLS12, NextProtos: []string{"http/1.1"}})
+	if err := socket.Handshake(); err != nil {
+		_ = raw.Close()
+		return nil, err
+	}
+	state := socket.ConnectionState()
+	if state.NegotiatedProtocol != "" && state.NegotiatedProtocol != "http/1.1" {
+		_ = raw.Close()
+		return nil, fmt.Errorf("unexpected owned ALPN %q", state.NegotiatedProtocol)
+	}
+	_ = raw.SetDeadline(time.Time{})
+	c := &connection{Conn: socket, id: l.sequence}
+	l.peer.mu.Lock()
+	l.peer.conns[c.id] = c
+	l.peer.mu.Unlock()
+	emit(map[string]any{"event": "connected", "connection": c.id, "sni": state.ServerName, "alpn": state.NegotiatedProtocol, "connect_target": r.Host})
+	return c, nil
+}
+
+func (p *peer) serve(w http.ResponseWriter, r *http.Request) {
+	key := r.Host + r.URL.RequestURI()
+	p.mu.Lock()
+	queue := p.plans[key]
+	if len(queue) == 0 {
+		p.mu.Unlock()
+		emit(map[string]any{"event": "error", "detail": "unplanned request " + key})
+		http.Error(w, "unplanned owned fixture", 500)
+		return
+	}
+	item := queue[0]
+	p.plans[key] = queue[1:]
+	wire := map[string]any{"step": item.Name, "connection": r.Context().Value(connectionKey{}).(int), "method": r.Method, "host": r.Host, "target": r.URL.RequestURI(), "protocol": r.Proto, "authorization": r.Header.Get("Authorization"), "user_id": r.Header.Get("X-User-Id"), "accept_language": r.Header.Get("Accept-Language"), "refresh_token": ""}
+	p.requests = append(p.requests, wire)
+	p.mu.Unlock()
+	emit(map[string]any{"event": "request", "wire": wire})
+	body := fmt.Sprintf(`{"illust":{"id":%d,"create_date":"2026-01-02T03:04:05Z","meta_single_page":{"original_image_url":"https://i.pximg.net/idle-native-h1.fixture"}}}`, item.ID)
+	contentType := "application/json"
+	if r.Host == "i.pximg.net" {
+		body, contentType = "abc", "application/octet-stream"
+	}
+	if item.Phase == "headers" {
+		emit(map[string]any{"event": "barrier", "name": item.Name, "phase": item.Phase})
+		select {
+		case <-item.release:
+		case <-r.Context().Done():
+			return
+		}
+	}
+	w.Header().Set("Content-Type", contentType)
+	w.Header().Set("Content-Length", strconv.Itoa(len(body)))
+	w.WriteHeader(http.StatusOK)
+	if item.Phase == "body" {
+		if _, err := io.WriteString(w, body[:1]); err != nil {
+			return
+		}
+		w.(http.Flusher).Flush()
+		emit(map[string]any{"event": "barrier", "name": item.Name, "phase": item.Phase})
+		select {
+		case <-item.release:
+		case <-r.Context().Done():
+			return
+		}
+		_, _ = io.WriteString(w, body[1:])
+	} else {
+		_, _ = io.WriteString(w, body)
+	}
+}
+
+func certificates() ([]byte, tls.Certificate) {
+	rootKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	if err != nil {
+		panic(err)
+	}
+	root := &x509.Certificate{SerialNumber: big.NewInt(1), Subject: pkix.Name{CommonName: "Owned ordinary SDK HTTP1 fixture root"}, NotBefore: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC), NotAfter: time.Date(2035, 1, 1, 0, 0, 0, 0, time.UTC), IsCA: true, BasicConstraintsValid: true, KeyUsage: x509.KeyUsageCertSign}
+	rootDER, err := x509.CreateCertificate(rand.Reader, root, root, &rootKey.PublicKey, rootKey)
+	if err != nil {
+		panic(err)
+	}
+	key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	if err != nil {
+		panic(err)
+	}
+	leaf := &x509.Certificate{SerialNumber: big.NewInt(2), Subject: pkix.Name{CommonName: "Owned ordinary SDK HTTP1 fixture"}, DNSNames: []string{"app-api.pixiv.net", "i.pximg.net"}, NotBefore: root.NotBefore, NotAfter: root.NotAfter, KeyUsage: x509.KeyUsageDigitalSignature, ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth}}
+	leafDER, err := x509.CreateCertificate(rand.Reader, leaf, root, &key.PublicKey, rootKey)
+	if err != nil {
+		panic(err)
+	}
+	return pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: rootDER}), tls.Certificate{Certificate: [][]byte{leafDER}, PrivateKey: key}
+}
+
+func main() {
+	if len(os.Args) != 2 {
+		panic("expected owned fixture directory")
+	}
+	lifetime := time.AfterFunc(45*time.Second, func() { panic("owned HTTP1 peer exceeded bounded lifetime") })
+	defer lifetime.Stop()
+	root, certificate := certificates()
+	if err := os.WriteFile(filepath.Join(os.Args[1], "root.pem"), root, 0600); err != nil {
+		panic(err)
+	}
+	listener, err := net.Listen("tcp4", "127.0.0.1:0")
+	if err != nil {
+		panic(err)
+	}
+	p := &peer{plans: map[string][]*plan{}, allPlans: map[string]*plan{}, requests: []map[string]any{}, closed: []int{}, conns: map[int]net.Conn{}}
+	owned := &connectListener{Listener: listener, certificate: certificate, peer: p}
+	server := &http.Server{Handler: http.HandlerFunc(p.serve), ReadHeaderTimeout: bound, ConnContext: func(ctx context.Context, c net.Conn) context.Context {
+		return context.WithValue(ctx, connectionKey{}, c.(*connection).id)
+	}, ConnState: func(c net.Conn, state http.ConnState) {
+		if state == http.StateClosed {
+			emit(map[string]any{"event": "server_closed", "connection": c.(*connection).id})
+		}
+	}}
+	done := make(chan error, 1)
+	go func() { done <- server.Serve(owned) }()
+	emit(map[string]any{"event": "ready", "proxy": "http://" + listener.Addr().String()})
+	scanner := bufio.NewScanner(os.Stdin)
+	for scanner.Scan() {
+		var c command
+		if err := json.Unmarshal(scanner.Bytes(), &c); err != nil {
+			panic(err)
+		}
+		switch c.Command {
+		case "plan":
+			if c.Host != "app-api.pixiv.net" && c.Host != "i.pximg.net" {
+				panic("unapproved plan host")
+			}
+			if c.Phase != "" && c.Phase != "headers" && c.Phase != "body" {
+				panic("unapproved plan phase")
+			}
+			item := &plan{Name: c.Name, Host: c.Host, Target: c.Target, Phase: c.Phase, ID: c.ID, release: make(chan struct{})}
+			if c.Phase == "" {
+				item.unblock()
+			}
+			p.mu.Lock()
+			if p.allPlans[c.Name] != nil {
+				panic("duplicate owned plan")
+			}
+			p.allPlans[c.Name] = item
+			key := c.Host + c.Target
+			p.plans[key] = append(p.plans[key], item)
+			p.mu.Unlock()
+			emit(map[string]any{"event": "planned", "name": c.Name})
+		case "release":
+			p.mu.Lock()
+			item := p.allPlans[c.Name]
+			p.mu.Unlock()
+			if item == nil {
+				panic("missing owned plan")
+			}
+			item.unblock()
+		case "snapshot":
+			p.mu.Lock()
+			emit(map[string]any{"event": "snapshot", "requests": p.requests, "peer_closed_before_cleanup": p.closed})
+			p.mu.Unlock()
+		case "stop":
+			p.cleanup.Store(true)
+			p.mu.Lock()
+			for _, item := range p.allPlans {
+				item.unblock()
+			}
+			p.mu.Unlock()
+			if err := server.Close(); err != nil {
+				panic(err)
+			}
+			select {
+			case err := <-done:
+				if !errors.Is(err, http.ErrServerClosed) {
+					panic(err)
+				}
+			case <-time.After(bound):
+				panic("owned HTTP1 peer failed to join")
+			}
+			emit(map[string]any{"event": "stopped"})
+			return
+		default:
+			panic("unknown owned fixture command")
+		}
+	}
+	panic("missing owned stop command")
+}

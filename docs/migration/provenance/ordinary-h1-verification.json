@@ -1,0 +1,245 @@
+{
+  "schema_version": 1,
+  "base_sha": "b093eae0df1d12dd6a0d5e12127bfcd3e2c167d7",
+  "frozen_go": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "recorded_at_utc": "2026-10-10T20:16:03.809259+00:00",
+  "scope": "Bounded connected ordinary HTTP/1 actual-pool retirement/retention and explicit SDK owner versus injected owner mapping. Full migration remains incomplete.",
+  "full_gate": {
+    "script": "scripts/check-rust.ps1",
+    "script_unchanged": true,
+    "started_utc": "2026-10-10T20:03:23Z",
+    "ended_utc": "2026-10-10T20:11:01Z",
+    "exit": 0,
+    "formatter": "passed",
+    "strict_workspace_all_target_clippy": "passed",
+    "workspace_top_level_passes": 1030,
+    "owned_nested_child_passes": 7,
+    "raw_visible_passes": 1037,
+    "failures": 0,
+    "ignored": 11,
+    "child_only_filtered_out": 12,
+    "filtered_explanation": "The filters are from existing owned subprocess child dispatches, not omitted workspace tests. Six FANBOX children plus one login handoff child.",
+    "release": "optimized release passed, 59.43 seconds",
+    "retained_native_witnesses": 9
+  },
+  "go_final": {
+    "exit": 0,
+    "top_level_passes": 184,
+    "nested_passes": 446,
+    "child_dispatch_skips": [
+      "TestMigrationClientOwnershipEntropyChild",
+      "TestMigrationLoginEnvironmentProxyChild",
+      "TestMigrationLoginOwnershipChild"
+    ],
+    "skips_explanation": "Dedicated owned child entry points are dispatched by parent subprocess tests; skips in normal package run are not dropped contract expectations.",
+    "vet": "SDK, migration ledger and owned helper passed",
+    "gofmt": "empty diff"
+  },
+  "preservation": {
+    "sealed_gate_inputs": 9308,
+    "unchanged_published_fixtures_reference_data": 312,
+    "unchanged_frozen_go_production_modules": 434,
+    "ledger_entry_count": 673,
+    "ledger_status_counts": {
+      "in_progress": 614,
+      "pending": 59,
+      "verified": 0
+    },
+    "ledger_status_changes": [
+      [
+        "sdk/pixiv:Client.CloseIdleConnections",
+        "pending",
+        "in_progress"
+      ]
+    ],
+    "platform_verification_unchanged": true,
+    "git_diff_check": "passed",
+    "cargo_lock": "Only same-version reqwest and hyper-util registry-to-path activation; unrelated tempfile/getrandom update restored before locked validation."
+  },
+  "native_repetition": {
+    "sdk_raw_tcp_runs": 20,
+    "sdk_tests_each_run": 7,
+    "sdk_schedules_each_run": 9,
+    "sdk_raw_tcp_witnesses": 180,
+    "core_runs": 10,
+    "core_tests_each_run": 13,
+    "failures": 0
+  },
+  "historical_evidence": {
+    "sdk_owned_api_red_exit": 101,
+    "native_unpatched_api_red_exit": 101,
+    "first_core_pass": "12 schedules with weaker EOF/TTL bound; superseded by strengthened 13 schedule run.",
+    "first_sdk_tls_pass": "TLS-layer EOF observer only; retained as weaker historical evidence. Strengthened raw TCP below TLS observer is used for final proof.",
+    "cargo_activation_log_exit": null,
+    "cargo_activation_note": "A command transcript, not an independently claimed terminal gate."
+  },
+  "independent_review": "docs/migration/provenance/ordinary-h1-implementation-review.json",
+  "limits": [
+    "Only five of nine sealed Go H1 retirement rows mapped; four distinct owner lifecycle schedules are additional, not the other four retirement rows.",
+    "Buffered but unconsumed native frames may return to pool before Go-equivalent raw-body terminal consumption. Genuine body lease, EOF acknowledgement, explicit Close/drain and Context implementation follows.",
+    "Four explicit Body.Close/cancellation retirement rows, all 21 retained Login schedules and 20 nonnil caller-Context schedules remain pending runtime integration.",
+    "Default-labelled lifecycle tests use explicit owned custom native configuration; no actual default constructor or complete OAuth Open assembly claim.",
+    "Default TTL 90 seconds and limits are source-backed; native tests use bounded custom TTLs. Dead-driver guard release has source review, no private pool-introspection witness.",
+    "HTTP/2 disabled and relay admission/TTL, ordinary Accept, native OS/arch/provider behavior, arbitrary Drop/panic/IO races and full workspace distribution/license union remain open.",
+    "The earlier denied supplemental multiplex/unfinished-HEAD/upload probe was not retried.",
+    "No live accounts, external media or user native environment effects.",
+    "Published baseline replay scripts were normalized to mode 644 by the parent with unchanged bytes and explicit bash invocation; current new artifacts are all mode 644."
+  ],
+  "evidence_files": {
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-cargo-activation.log.gz": {
+      "source": "/tmp/ordinary-h1-cargo-activation.log",
+      "source_sha256": "76161eb33770e947c6986344eb3dca28c36d12924a18ca95cda86c194a897839",
+      "sha256": "e8fffb6040a7a63431f94cb512b3fad994e7a7d303c3e83b4849cbeb5f1e16c3",
+      "exit": null
+    },
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-fmt-first.log.gz": {
+      "source": "/tmp/ordinary-h1-fmt-first.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "exit": 0
+    },
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-focused-clippy.log.gz": {
+      "source": "/tmp/ordinary-h1-focused-clippy.log",
+      "source_sha256": "c87092f92fb0424ab8cb68e76444ee6569161e6b6cc7c0f08346f1961787674f",
+      "sha256": "aa09e3b35edc2ea1a0607523b434fbb8c5f8e2af7b1f57830d8a2a32fdbca0cc",
+      "exit": 0
+    },
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-fullgate.log.gz": {
+      "source": "/tmp/ordinary-h1-fullgate.log",
+      "source_sha256": "e4bcadaa0c06d29307f46c8b9cc6f2ff24502370c987399567de98806d6e5fa5",
+      "sha256": "e17549017e77fbcd143274d65e2121f0abfdf7c48d41eb9fffb019173a8d9045",
+      "exit": 0
+    },
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-go-final.log.gz": {
+      "source": "/tmp/ordinary-h1-go-final.log",
+      "source_sha256": "59d78ff1bffd5ab1101b2eef5e496dfddd73aa9f5f7854dfa510ed51a5f7fa28",
+      "sha256": "5fd1a0b5f92aea206bb30c720644ee34a509d01febe9390916d2444accc3530b",
+      "exit": 0
+    },
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-native-api-red.log.gz": {
+      "source": "/tmp/ordinary-h1-native-api-red.log",
+      "source_sha256": "53067c9deff2942dfd811fbc5ae71b5f8a2299ac2bd3edb3f07c9989c14e3d75",
+      "sha256": "590b788511572da4d6dc2aa774a4032987e20dfe56393006d7939c30b284a7eb",
+      "exit": 101
+    },
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-native-first.log.gz": {
+      "source": "/tmp/ordinary-h1-native-first.log",
+      "source_sha256": "9351b5e0d42fe3071a1107dffee2f67e7c1ed7f1e78e3689b612461098f2424d",
+      "sha256": "0501bc9d1dcec43bc9ea1e82dbf14e72c18f9420e854a7b233707b38ac25ab71",
+      "exit": 0
+    },
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-native-repeat.log.gz": {
+      "source": "/tmp/ordinary-h1-native-repeat.log",
+      "source_sha256": "98cf8e87c6eb7976fcb1bd6798e6857dd4f275dbe9221f2253c1727362498876",
+      "sha256": "09f6d679e997a4e061d95ed4b6faf8248a4147d93acce755295c2ac139a397d8",
+      "exit": 0
+    },
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-native-sdk-first.log.gz": {
+      "source": "/tmp/ordinary-h1-native-sdk-first.log",
+      "source_sha256": "4dddf373150321f36f898b130fc6b3d1b23db3290fd410fc5826ef0883f795cd",
+      "sha256": "b7979853c61650e99b988c0b2d1c77537eca5004fa03173a618249c11606a2c4",
+      "exit": 0
+    },
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-native-sdk-raw-first.log.gz": {
+      "source": "/tmp/ordinary-h1-native-sdk-raw-first.log",
+      "source_sha256": "f2ffddba5009d9f0161d5adad7392496bff10b5fb77844921c184be701e45492",
+      "sha256": "a8df3ab7b4b6f4218c14d7977007d3ff7ad8112b0506e16823bc8a30e0e1bd5f",
+      "exit": 0
+    },
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-sdk-app-focused.log.gz": {
+      "source": "/tmp/ordinary-h1-sdk-app-focused.log",
+      "source_sha256": "43285fd06adb50931c317ef5833924576b024dfa1f92a195c1cba57ca61bc9d5",
+      "sha256": "edb1a931936f26e38368ec12eced8e34b0c0a4c54b57910749e44d89cdc8f22c",
+      "exit": 0
+    },
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-sdk-owned-connected-first.log.gz": {
+      "source": "/tmp/ordinary-h1-sdk-owned-connected-first.log",
+      "source_sha256": "bc3e38cbe41fdf607ac4b8d164f9e683ab61b4c8bf9ed3ccd0d28b13a826255d",
+      "sha256": "b41b3a3829ffef2acdb40caa2d98d27fbf19a9d59a379954434373de30094437",
+      "exit": 0
+    },
+    "docs/migration/provenance/ordinary-h1-verification/sdk-owned-api-red.log.gz": {
+      "source": "/tmp/sdk-owned-api-red.log",
+      "source_sha256": "60484e1e2f28c2de96b12b699bf03705b47d19c89397712f7ea2064ac6e027dc",
+      "sha256": "b3c586032c08ed50ec9a13bdabf6895f0c57b3af55b6de457d7d1f0b49d8a2a7",
+      "exit": 101
+    },
+    "docs/migration/provenance/ordinary-h1-verification/sdk-owned-port-green.log.gz": {
+      "source": "/tmp/sdk-owned-port-green.log",
+      "source_sha256": "00d8cad947e7358ecd521bc7265c7058acffd9e6c5c437784e1f09ad2d88c094",
+      "sha256": "a463e4f59edba8da4da29cec6d6511b64a0aae323d9f1aa68c60b660a7f59b33",
+      "exit": 0
+    },
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-fullgate-inputs.json": {
+      "source": "/tmp/ordinary-h1-fullgate-inputs.json",
+      "sha256": "4159f4c42b01cc46a397c0b99961855ce2d03052a09ea2b0cfa82b443783443d"
+    },
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-preserved-fixtures.json": {
+      "source": "/tmp/ordinary-h1-preserved-fixtures.json",
+      "sha256": "f8dc11a0c081e18d30d440e7330facf0eecc033de86914cd8e620bbf7f748962"
+    },
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-fullgate.started": {
+      "source": "/tmp/ordinary-h1-fullgate.started",
+      "sha256": "c397f1e820dd31e7de06c423e77c52e597e287415617d469abd464f6043a4657"
+    },
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-fullgate.ended": {
+      "source": "/tmp/ordinary-h1-fullgate.ended",
+      "sha256": "bef64780c45fd88aab9499dcec2cc63597705bfc4edc2ed918b21a98a38d01a2"
+    },
+    "docs/migration/provenance/ordinary-h1-verification/ordinary-h1-fullgate.exit": {
+      "source": "/tmp/ordinary-h1-fullgate.exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    "docs/migration/provenance/ordinary-h1-verification/fullgate-native-witness/active-body-retired-after-close.json": {
+      "source": "/tmp/ordinary-sdk-h1-fullgate-witness/active-body-retired-after-close.json",
+      "sha256": "8918e3145d9656eacf3edb886e52a5487d8580506c3358195d0796ec1fc5ff95"
+    },
+    "docs/migration/provenance/ordinary-h1-verification/fullgate-native-witness/active-headers-retired-after-close.json": {
+      "source": "/tmp/ordinary-sdk-h1-fullgate-witness/active-headers-retired-after-close.json",
+      "sha256": "fc3254c02c4243b4ff9401fdf35d42c67b578a9a06a836d516a26d15e1947549"
+    },
+    "docs/migration/provenance/ordinary-h1-verification/fullgate-native-witness/default-paced.json": {
+      "source": "/tmp/ordinary-sdk-h1-fullgate-witness/default-paced.json",
+      "sha256": "0cf36f062e117540a0be85c01ee1cc01b985d8803dcb8e4f8cbe1136369a727d"
+    },
+    "docs/migration/provenance/ordinary-h1-verification/fullgate-native-witness/default.json": {
+      "source": "/tmp/ordinary-sdk-h1-fullgate-witness/default.json",
+      "sha256": "570016a2b6456b12137f833149b2c6a777f3952b2617b92bd6ab8c2cb26c94f9"
+    },
+    "docs/migration/provenance/ordinary-h1-verification/fullgate-native-witness/injected-shared-paced.json": {
+      "source": "/tmp/ordinary-sdk-h1-fullgate-witness/injected-shared-paced.json",
+      "sha256": "3317d42cc38d87d36739eadbd25f0e1e7c742c4001621549c179f114edd28263"
+    },
+    "docs/migration/provenance/ordinary-h1-verification/fullgate-native-witness/injected-shared.json": {
+      "source": "/tmp/ordinary-sdk-h1-fullgate-witness/injected-shared.json",
+      "sha256": "1d2478c82d0d4c7d705ccf718c11e3349737170e2fe2a86db7f68019a10ea6b2"
+    },
+    "docs/migration/provenance/ordinary-h1-verification/fullgate-native-witness/mixed-idle-and-active-repeated-close.json": {
+      "source": "/tmp/ordinary-sdk-h1-fullgate-witness/mixed-idle-and-active-repeated-close.json",
+      "sha256": "f2a8bb7c126e755a20e619a047d7c622acf11dcfbf22b61742b7fa27447e6574"
+    },
+    "docs/migration/provenance/ordinary-h1-verification/fullgate-native-witness/next-acquisition-resets-newly-idle-retirement.json": {
+      "source": "/tmp/ordinary-sdk-h1-fullgate-witness/next-acquisition-resets-newly-idle-retirement.json",
+      "sha256": "cd9e2361b4883606ac6c6732218336e587d6604b6a3980952f28c4f13b5c3bf2"
+    },
+    "docs/migration/provenance/ordinary-h1-verification/fullgate-native-witness/resource-eof-after-close-retires-active-connection.json": {
+      "source": "/tmp/ordinary-sdk-h1-fullgate-witness/resource-eof-after-close-retires-active-connection.json",
+      "sha256": "666964f3cf341473bdce3c5963d5868e9969f71ea279fef9a3b0366429e52884"
+    }
+  },
+  "execution_environment": {
+    "platform": "Linux cloud workspace",
+    "rust": "1.93.0",
+    "go": "1.27.1 official toolchain",
+    "powershell": "7.6.6 official toolchain",
+    "cargo": "offline, locked, CARGO_INCREMENTAL=0, dev/test debug=0",
+    "powershell_telemetry_optout": "1 before launch",
+    "native_bindgen": "LIBCLANG_PATH=/lib/x86_64-linux-gnu; BINDGEN_EXTRA_CLANG_ARGS=-isystem /usr/lib/gcc/x86_64-linux-gnu/14/include",
+    "go_network": "GOPROXY=off, GOWORK=off, GOTOOLCHAIN=local, -mod=readonly",
+    "native_sqlite": "owned official sqlite3 executable",
+    "native_helper": "PIXIV_NATIVE_GO points to official workspace Go; only owned local synthetic H1 CONNECT/TLS peer",
+    "fullgate_command": "pwsh -NoLogo -NoProfile -File scripts/check-rust.ps1 with the scoped environment above",
+    "native_repeat_command": "20 locked offline client_idle_native runs with --test-threads=4, then 10 locked offline ordinary_h1_pool runs; original output retained",
+    "go_checks": "SDK full package tests, migration ledger tests, focused package/helper vet, gofmt verification"
+  }
+}

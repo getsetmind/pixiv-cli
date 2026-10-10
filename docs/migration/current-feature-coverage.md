@@ -4,7 +4,7 @@ Inventory at signed checkpoint `40faef3f48af16be4acf3044f103532d518449c1` (2026-
 
 ## Public surface
 
-The ledger preserves 673 identities. All 84 CLI entries, 54 Pixiv MCP tools and 11 FANBOX MCP tools are connected/in_progress. No entry is verified. The 60 pending SDK/type/private-adapter rows are not 60 missing user features: several have existing Rust representations but lack complete contract/native verification. Status and feature presence are different observations.
+The ledger preserves 673 identities. All 84 CLI entries, 54 Pixiv MCP tools and 11 FANBOX MCP tools are connected/in_progress. No entry is verified. The 59 pending SDK/type/private-adapter rows are not 59 missing user features: several have existing Rust representations but lack complete contract/native verification. Status and feature presence are different observations.
 
 ## Connected families
 
@@ -23,7 +23,7 @@ Representative published test families and exact bounded counts remain in `contr
 ## Concrete unfinished connections
 
 1. Root debug diagnostic started/completed/failed events, scope propagation and diagnostic-writer joining are connected in the current bounded root-diagnostics slice (see [scope](root-diagnostics.md)). The inventory base above predates this slice. Ten actual Linux whole-output rows plus separate routing/exclusion smoke paths do not establish the complete historical root matrix, native cleanup or every MCP/updater runtime scope schedule
-2. Public/default Pixiv/Login HTTP-client ownership and physical idle retirement are missing connections. SDK Transport lacks the ownership-aware idle-close contract. Frozen normal CLI resolves proxy presence even when empty and injects its network client, so its SDK CloseIdle intentionally does not retire that caller-owned client; unconditionally replacing Execution's no-op would break that distinction. Public/default SDK and absent-override Login Begin own their default-cloned client; Login Complete must retain that Begin-time choice. Lease completion or reqwest Client drop/swap alone does not establish native idle-versus-active retirement
+2. Ordinary Pixiv HTTP1 ownership-aware idle control is connected in a bounded candidate: actual reqwest/Hyper pool retirement, active/idle retention, deadline tasks and injected caller-owned no-op. Five/nine retirement rows plus four separate ownership lifecycle schedules use explicit custom-client ownership transfer over actual synthetic TLS/TCP peers. Default/OAuth full construction, retained Login, caller Context/explicit Body.Close and buffered-but-unconsumed resource timing remain pending. Frozen normal CLI injects its resolved network client, including an empty proxy override; Execution therefore invokes ownership-aware cleanup without closing that caller-owned client. Login Complete must retain Begin-time choice. Sender retirement, request completion and TLS close_notify alone are not physical TCP shutdown proof
 3. Relay serving still uses `hyper::server::conn::http1`; HTTP/2 capability remains unimplemented. Separately, the workspace ordinary reqwest configuration disables defaults and omits its `http2` feature. FANBOX/ASCII2D native HTTP/2 support does not establish ordinary Pixiv/Login or relay protocol parity
 4. Auth database Close-error propagation and wider Context/client/IO ownership remain incomplete
 5. Rust-native installation/build provenance corresponding to Go `debug.ReadBuildInfo` is unmapped
@@ -38,3 +38,6 @@ Linux owned subprocess/file/SQLite/codec/native TLS observations coexist with so
 Additional required debts include Accept-header parity, expired-positive HTTP pacing, parser/raw-byte/EOF/cancellation schedules, simultaneous MCP EOF behavior, Go goroutine/body-close versus Rust future-drop timing, Unix signal restoration, destructive explicitly repeated Windows association cleanup, historical archive/ZIP64 grammar, formal build metadata, licenses/signing/packaging and all supported OS/architecture build/runtime matrices. Public type/API representation differences and Go-only nil/private/open-string witnesses remain named.
 
 Historical sections saying updater was unimplemented describe earlier checkpoints; current updater scope and final validation supersede that state without removing its historical evidence. After root diagnostics, close the concrete SDK ownership/Context, HTTP/2/header/pacing, cleanup/EOF, native build and distribution gaps before final replacement/acceptance.
+
+
+Ordinary H1 candidate ledger: 614 in_progress,59 pending,zero verified across the same673 identities; only sdk/pixiv:Client.CloseIdleConnections advances. Native SDK mapping is five retirement schedules plus four distinct ownership lifecycles, not all nine retirement rows. See [current scope](sdk-http-ownership.md#connected-ordinary-http1-candidate-2026-10-10). Final full gate/review is recorded before publication; this inventory does not itself certify migration completion.

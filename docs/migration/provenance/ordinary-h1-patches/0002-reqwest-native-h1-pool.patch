@@ -1,0 +1,180 @@
+--- a/reqwest-0.13.5/src/async_impl/client.rs
++++ b/reqwest-0.13.5/src/async_impl/client.rs
+@@ -4,26 +4,30 @@
+ use std::net::IpAddr;
+ use std::pin::Pin;
+ use std::sync::Arc;
+-use std::task::{ready, Context, Poll};
++use std::task::{Context, Poll, ready};
+ use std::time::Duration;
+ use std::{collections::HashMap, convert::TryInto, net::SocketAddr};
+ use std::{fmt, str};
+ 
++use super::Body;
+ use super::request::{Request, RequestBuilder};
+ use super::response::Response;
+-use super::Body;
++#[cfg(feature = "__tls")]
++use crate::Certificate;
++#[cfg(any(feature = "__native-tls", feature = "__rustls"))]
++use crate::Identity;
++#[cfg(feature = "http3")]
++use crate::async_impl::h3_client::H3Client;
+ #[cfg(feature = "http3")]
+ use crate::async_impl::h3_client::connect::{H3ClientConfig, H3Connector};
+-#[cfg(feature = "http3")]
+-use crate::async_impl::h3_client::H3Client;
+ use crate::config::{RequestConfig, TotalTimeout};
+ #[cfg(unix)]
+ use crate::connect::uds::UnixSocketProvider;
+ #[cfg(target_os = "windows")]
+ use crate::connect::windows_named_pipe::WindowsNamedPipeProvider;
+ use crate::connect::{
++    BoxedConnectorLayer, BoxedConnectorService, Connector, ConnectorBuilder,
+     sealed::{Conn, Unnameable},
+-    BoxedConnectorLayer, BoxedConnectorService, Connector, ConnectorBuilder,
+ };
+ #[cfg(feature = "cookies")]
+ use crate::cookie;
+@@ -31,7 +35,7 @@
+ use crate::cookie::service::CookieService;
+ #[cfg(feature = "hickory-dns")]
+ use crate::dns::hickory::HickoryDnsResolver;
+-use crate::dns::{gai::GaiResolver, DnsResolverWithOverrides, DynResolver, Resolve};
++use crate::dns::{DnsResolverWithOverrides, DynResolver, Resolve, gai::GaiResolver};
+ use crate::error::{self, BoxError};
+ use crate::into_url::try_uri;
+ use crate::proxy::Matcher as ProxyMatcher;
+@@ -40,15 +44,11 @@
+ use crate::tls::CertificateRevocationList;
+ #[cfg(feature = "__tls")]
+ use crate::tls::{self, TlsBackend};
+-#[cfg(feature = "__tls")]
+-use crate::Certificate;
+-#[cfg(any(feature = "__native-tls", feature = "__rustls"))]
+-use crate::Identity;
+ use crate::{IntoUrl, Method, Proxy, Url};
+ 
+-use http::header::{Entry, HeaderMap, HeaderValue, ACCEPT, PROXY_AUTHORIZATION, USER_AGENT};
++use http::Uri;
++use http::header::{ACCEPT, Entry, HeaderMap, HeaderValue, PROXY_AUTHORIZATION, USER_AGENT};
+ use http::uri::Scheme;
+-use http::Uri;
+ use hyper_util::client::legacy::connect::HttpConnector;
+ #[cfg(feature = "__native-tls")]
+ use native_tls_crate::TlsConnector;
+@@ -173,6 +173,8 @@
+     connection_verbose: bool,
+     pool_idle_timeout: Option<Duration>,
+     pool_max_idle_per_host: usize,
++    pool_idle_retention: bool,
++    pool_max_idle_connections: usize,
+     tcp_keepalive: Option<Duration>,
+     tcp_keepalive_interval: Option<Duration>,
+     tcp_keepalive_retries: Option<u32>,
+@@ -301,6 +303,8 @@
+                 connection_verbose: false,
+                 pool_idle_timeout: Some(Duration::from_secs(90)),
+                 pool_max_idle_per_host: usize::MAX,
++                pool_idle_retention: false,
++                pool_max_idle_connections: usize::MAX,
+                 tcp_keepalive: Some(Duration::from_secs(15)),
+                 tcp_keepalive_interval: Some(Duration::from_secs(15)),
+                 tcp_keepalive_retries: Some(3),
+@@ -737,7 +741,7 @@
+                         if !config.tls_certs_only {
+                             // Should this just warn? Error for now...
+                             return Err(crate::error::builder(
+-                                    "disabling rustls hostname verification only allowed with tls_certs_only()"
++                                "disabling rustls hostname verification only allowed with tls_certs_only()",
+                             ));
+                         }
+ 
+@@ -979,6 +983,8 @@
+         builder.pool_timer(hyper_util::rt::TokioTimer::new());
+         builder.pool_idle_timeout(config.pool_idle_timeout);
+         builder.pool_max_idle_per_host(config.pool_max_idle_per_host);
++        builder.pool_idle_retention(config.pool_idle_retention);
++        builder.pool_max_idle_connections(config.pool_max_idle_connections);
+ 
+         if config.http09_responses {
+             builder.http09_responses(true);
+@@ -1015,6 +1021,7 @@
+         };
+ 
+         let hyper_client = builder.build(connector_builder.build(config.connector_layers));
++        let pool_control = hyper_client.clone();
+         let hyper_service = HyperService {
+             hyper: hyper_client,
+         };
+@@ -1057,6 +1064,7 @@
+ 
+         Ok(Client {
+             inner: Arc::new(ClientRef {
++                pool_control,
+                 accepts: config.accepts,
+                 #[cfg(feature = "cookies")]
+                 cookie_store: config.cookie_store.clone(),
+@@ -1490,6 +1498,25 @@
+ 
+     // HTTP options
+ 
++    /// Retain the actual HTTP/1 pool through active requests and idle-entry deadlines.
++    ///
++    /// This policy preserves idle sockets after the last client handle is dropped.
++    /// Each idle deadline starts when that connection actually returns to the pool.
++    /// Defaults to false.
++    pub fn pool_idle_retention(mut self, retain: bool) -> ClientBuilder {
++        self.config.pool_idle_retention = retain;
++        self
++    }
++
++    /// Set the maximum number of idle HTTP/1 connections across all hosts.
++    ///
++    /// The oldest idle connection is retired when this limit is exceeded.
++    /// Defaults to no global limit.
++    pub fn pool_max_idle_connections(mut self, max: usize) -> ClientBuilder {
++        self.config.pool_max_idle_connections = max;
++        self
++    }
++
+     /// Set an optional timeout for idle sockets being kept-alive.
+     ///
+     /// Pass `None` to disable timeout.
+@@ -2511,6 +2538,14 @@
+ }
+ 
+ impl Client {
++    /// Close idle HTTP/1 connections while allowing active responses to finish.
++    ///
++    /// Active connections retire when next idle unless a new request acquires a
++    /// connection. This operation is repeatable and does not disable the client.
++    pub fn close_idle_connections(&self) {
++        self.inner.pool_control.close_idle_connections();
++    }
++
+     /// Constructs a new `Client`.
+     ///
+     /// # Panics
+@@ -2805,6 +2840,13 @@
+ 
+         f.field("accepts", &self.accepts);
+ 
++        if self.pool_idle_retention {
++            f.field("pool_idle_retention", &true);
++        }
++        if self.pool_max_idle_connections != usize::MAX {
++            f.field("pool_max_idle_connections", &self.pool_max_idle_connections);
++        }
++
+         if !self.proxies.is_empty() {
+             f.field("proxies", &self.proxies);
+         }
+@@ -2961,6 +3003,7 @@
+ type LayeredFuture<T> = <LayeredService<T> as Service<http::Request<Body>>>::Future;
+ 
+ struct ClientRef {
++    pool_control: HyperClient,
+     accepts: Accepts,
+     #[cfg(feature = "cookies")]
+     cookie_store: Option<Arc<dyn cookie::CookieStore>>,
