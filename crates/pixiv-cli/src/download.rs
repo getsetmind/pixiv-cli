@@ -59,6 +59,11 @@ struct Prepared {
     ndjson: bool,
     fail_fast: bool,
 }
+#[derive(Clone, Copy)]
+enum Presentation {
+    Report,
+    Record,
+}
 fn usage(value: impl Into<String>) -> CommandError {
     CommandError::Usage(value.into())
 }
@@ -474,8 +479,18 @@ impl DownloadCommand {
             .await;
         }
         let execution = open()?;
-        self.execute_prepared(&execution, context, prepared, out, err, factory)
-            .await
+        self.execute_prepared(
+            &execution,
+            context,
+            prepared,
+            DownloadSinks {
+                output: out,
+                error: err,
+            },
+            factory,
+            Presentation::Report,
+        )
+        .await
     }
     async fn execute_prepared<
         T: Transport + 'static,
@@ -487,13 +502,17 @@ impl DownloadCommand {
         execution: &Execution<T>,
         context: &Context,
         prepared: Prepared,
-        out: Arc<Mutex<W>>,
-        err: Arc<Mutex<E>>,
+        sinks: DownloadSinks<W, E>,
         factory: F,
+        presentation: Presentation,
     ) -> Result<(), CommandError>
     where
         F: Fn(Arc<Client<T>>) -> Arc<dyn DownloadSaveClient> + Send + Sync + 'static,
     {
+        let DownloadSinks {
+            output: out,
+            error: err,
+        } = sinks;
         let sources = prepared.sources.clone();
         let result = Arc::new(Mutex::new(None));
         let captured = result.clone();
@@ -516,12 +535,18 @@ impl DownloadCommand {
                     let attempt =
                         download_sources(&context, client.as_ref(), &sources, &request).await;
                     let committed = report_committed(&attempt.report);
-                    let outcome = present(
-                        attempt,
-                        &modes,
-                        &mut *out.lock().unwrap_or_else(|e| e.into_inner()),
-                        &mut *err.lock().unwrap_or_else(|e| e.into_inner()),
-                    );
+                    let outcome = match presentation {
+                        Presentation::Report => present(
+                            attempt,
+                            &modes,
+                            &mut *out.lock().unwrap_or_else(|e| e.into_inner()),
+                            &mut *err.lock().unwrap_or_else(|e| e.into_inner()),
+                        ),
+                        Presentation::Record => present_record(
+                            attempt,
+                            &mut *err.lock().unwrap_or_else(|e| e.into_inner()),
+                        ),
+                    };
                     let (original, error) = match outcome {
                         Ok(()) => (None, None),
                         Err(error) => {
@@ -624,13 +649,7 @@ enum ReportRecord<'a> {
     Artifact(Artifact<'a>),
     Failure(Failure),
 }
-fn present<W: Write + ?Sized, E: Write + ?Sized>(
-    attempt: DownloadAttempt,
-    prepared: &Prepared,
-    out: &mut W,
-    err: &mut E,
-) -> Result<(), CommandError> {
-    let report = attempt.report;
+fn write_warnings<E: Write + ?Sized>(report: &DownloadReport, err: &mut E) -> io::Result<()> {
     for warning in &report.warnings {
         let mut label = if warning.illust_id > 0 {
             format!("artwork {}", warning.illust_id)
@@ -642,6 +661,34 @@ fn present<W: Write + ?Sized, E: Write + ?Sized>(
         }
         writeln!(err, "warning: {label}: {}", warning.message)?;
     }
+    Ok(())
+}
+fn present_record<E: Write + ?Sized>(
+    attempt: DownloadAttempt,
+    err: &mut E,
+) -> Result<(), CommandError> {
+    let business = attempt.error.or_else(|| report_error(&attempt.report));
+    let warning = write_warnings(&attempt.report, err).err();
+    match (business, warning) {
+        (None, None) => Ok(()),
+        (Some(error), None) => Err(error.into()),
+        (None, Some(error)) => Err(SchedulerError::Message(error.to_string()).into()),
+        (Some(error), Some(warning)) => {
+            Err(
+                SchedulerError::Joined(vec![error, SchedulerError::Message(warning.to_string())])
+                    .into(),
+            )
+        }
+    }
+}
+fn present<W: Write + ?Sized, E: Write + ?Sized>(
+    attempt: DownloadAttempt,
+    prepared: &Prepared,
+    out: &mut W,
+    err: &mut E,
+) -> Result<(), CommandError> {
+    let report = attempt.report;
+    write_warnings(&report, err)?;
     if let Some(error) = attempt.error {
         return Err(error.into());
     }
@@ -784,12 +831,16 @@ async fn records<
             break;
         }
         number += 1;
-        let parsed = crate::record_input::parse_go(&line);
+        let at_eof = !line.ends_with(b"\n");
+        let parsed = crate::record_input::parse_go_line(&line);
         let (code, message) = match parsed {
             Err(message) => ("invalid_record", message),
             Ok((_, typ, _))
                 if !matches!(typ.as_str(), "artwork" | "illust" | "manga" | "ugoira") =>
             {
+                if let Some(error) = context.error() {
+                    return Err(SchedulerError::from(error).into());
+                }
                 (
                     "unsupported_type",
                     format!(
@@ -799,8 +850,11 @@ async fn records<
                 )
             }
             Ok((id, _, _)) => {
-                let id = id.trim().parse::<i64>().ok().filter(|id| *id > 0);
+                let id = id.parse::<i64>().ok().filter(|id| *id > 0);
                 let Some(id) = id else {
+                    if let Some(error) = context.error() {
+                        return Err(SchedulerError::from(error).into());
+                    }
                     write_record_diagnostic(
                         &sinks.error,
                         &line,
@@ -809,7 +863,7 @@ async fn records<
                         "record id must be a positive integer: record id must be a positive integer".into(),
                     )?;
                     failed = true;
-                    if prepared.fail_fast {
+                    if prepared.fail_fast || at_eof {
                         break;
                     }
                     continue;
@@ -829,27 +883,35 @@ async fn records<
                                 execution,
                                 context,
                                 request,
-                                sinks.output.clone(),
-                                sinks.error.clone(),
+                                DownloadSinks {
+                                    output: sinks.output.clone(),
+                                    error: sinks.error.clone(),
+                                },
                                 move |client| factory(client),
+                                Presentation::Record,
                             )
                             .await
                     }
                     Err(error) => Err(SchedulerError::Shared(error.clone()).into()),
                 };
-                if let Some(error) = context.error() {
-                    return Err(SchedulerError::from(error).into());
-                }
                 match outcome {
+                    Ok(()) if at_eof => break,
                     Ok(()) => continue,
-                    Err(CommandError::Output(error)) => return Err(CommandError::Output(error)),
-                    Err(error) => ("action_failed", error.to_string()),
+                    Err(error) => {
+                        if let Some(error) = context.error() {
+                            return Err(SchedulerError::from(error).into());
+                        }
+                        if let CommandError::Output(error) = error {
+                            return Err(CommandError::Output(error));
+                        }
+                        ("action_failed", error.to_string())
+                    }
                 }
             }
         };
         write_record_diagnostic(&sinks.error, &line, number, code, message)?;
         failed = true;
-        if options.on_error == "fail-fast" {
+        if prepared.fail_fast || at_eof {
             break;
         }
     }
@@ -866,13 +928,7 @@ fn write_record_diagnostic<E: Write + ?Sized>(
     code: &str,
     message: String,
 ) -> Result<(), CommandError> {
-    let identity: serde_json::Value = serde_json::from_slice(line).unwrap_or_default();
-    let id = match &identity["id"] {
-        serde_json::Value::String(value) => value.clone(),
-        serde_json::Value::Number(value) => value.to_string(),
-        _ => String::new(),
-    };
-    let typ = identity["type"].as_str().unwrap_or("").to_owned();
+    let (id, typ) = crate::record_input::diagnostic_identity(line);
     let diagnostic = Diagnostic {
         kind: "record_error",
         operation: "download",

@@ -1048,7 +1048,8 @@
         "crates/pixiv-cli/src/bookmark_reads.rs",
         "crates/pixiv-cli/src/bookmark_lists.rs",
         "crates/pixiv-cli/src/record_input.rs",
-        "crates/pixiv-cli/src/main.rs"
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/record_input/json.rs"
       ],
       "tests": [
         "internal/cli/migration_bookmark_reads_test.go",
@@ -1058,13 +1059,17 @@
         "internal/cli/migration_bookmark_reads_pool_test.go",
         "crates/pixiv-cli/tests/bookmark_reads.rs",
         "crates/pixiv-cli/tests/bookmark_reads_startup.rs",
-        "crates/pixiv-cli/tests/bookmark_reads_pool.rs"
+        "crates/pixiv-cli/tests/bookmark_reads_pool.rs",
+        "internal/cli/commands/pixiv/bookmark/migration_record_whitespace_test.go",
+        "crates/pixiv-cli/tests/bookmark_record_whitespace.rs"
       ],
       "verified_platforms": [
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "既存SDK detail/tagsをCLI全kindへ接続。Go8628処理行と8592保存済み境界、312pool行、独立Run startupを比較。869 Cobra leaf parser行はRustの拒否のみ検査しexact leaf診断/exitは未検証。fixture直積の監査と範囲はcontracts.md/contract-matrix-audit.md。raw-wire/全通信/取消/parallel、root parser3/Linux公開面snapshot、全flag/help/TTY/OS hooks、他platform/配布は未検証。"
+        "既存SDK detail/tagsをCLI全kindへ接続。Go8628処理行と8592保存済み境界、312pool行、独立Run startupを比較。869 Cobra leaf parser行はRustの拒否のみ検査しexact leaf診断/exitは未検証。fixture直積の監査と範囲はcontracts.md/contract-matrix-audit.md。raw-wire/全通信/取消/parallel、root parser3、全flag/help/TTY/OS hooks、他platform/配布は未検証。",
+        "downloadのNDJSON line TrimSpaceとbookmarkのraw whole-body JSON検証を分けるGo-first whitespace9行を追加する。NBSP suffixのshared helper regressionをgenuine public red→greenで修正し、bookmarkのnative全入出力互換へ外挿しない。",
+        "Linux CLI登録inventoryはrecord checkpointで元Goから追加採取しWindows版とbyte一致した。native全動作・全flag/help/TTY/OS hooksや他platformの未検証範囲は維持する。"
       ]
     },
     {
@@ -1078,7 +1083,9 @@
         "crates/pixiv-cli/src/bookmark_lists.rs",
         "crates/pixiv-cli/src/artwork_list.rs",
         "crates/pixiv-cli/src/novel_list.rs",
-        "crates/pixiv-cli/src/main.rs"
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/record_input.rs",
+        "crates/pixiv-cli/src/record_input/json.rs"
       ],
       "tests": [
         "internal/cli/migration_bookmark_lists_test.go",
@@ -1087,13 +1094,17 @@
         "crates/pixiv-cli/tests/bookmark_lists.rs",
         "crates/pixiv-cli/tests/bookmark_lists_startup.rs",
         "crates/pixiv-cli/tests/bookmark_lists_pool.rs",
-        "internal/cli/migration_bookmark_lists_records_test.go"
+        "internal/cli/migration_bookmark_lists_records_test.go",
+        "internal/cli/commands/pixiv/bookmark/migration_record_whitespace_test.go",
+        "crates/pixiv-cli/tests/bookmark_record_whitespace.rs"
       ],
       "verified_platforms": [
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "Go1873出力/input/window/writerと1296 record入力、724 startup、240 real保存済みpoolケースを比較。bookmark listのartwork/novel/allとuser bookmarks、text/URL/record入力・validation順・明示false/auto・buffer/private spoolを維持。allはartwork→novelの単一logical budgetとbatch checkpoint、失敗時whole-page replay・試行ごとのomitted ID解決、singleは最初のtarget保持。Go内部committedはRustの実replay/request/output/state/leaseで間接観測しtest-only APIを追加しない。root parser3/Linux公開面snapshot、全flag/help/TTY/OS hooks、wire/全通信/取消/他platformは未検証。"
+        "Go1873出力/input/window/writerと1296 record入力、724 startup、240 real保存済みpoolケースを比較。bookmark listのartwork/novel/allとuser bookmarks、text/URL/record入力・validation順・明示false/auto・buffer/private spoolを維持。allはartwork→novelの単一logical budgetとbatch checkpoint、失敗時whole-page replay・試行ごとのomitted ID解決、singleは最初のtarget保持。Go内部committedはRustの実replay/request/output/state/leaseで間接観測しtest-only APIを追加しない。root parser3、全flag/help/TTY/OS hooks、wire/全通信/取消/他platformは未検証。",
+        "downloadのNDJSON line TrimSpaceとbookmarkのraw whole-body JSON検証を分けるGo-first whitespace9行を追加する。NBSP suffixのshared helper regressionをgenuine public red→greenで修正し、bookmarkのnative全入出力互換へ外挿しない。",
+        "Linux CLI登録inventoryはrecord checkpointで元Goから追加採取しWindows版とbyte一致した。native全動作・全flag/help/TTY/OS hooksや他platformの未検証範囲は維持する。"
       ]
     },
     {
@@ -1134,7 +1145,8 @@
         "crates/pixiv-cli/src/bookmark_reads.rs",
         "crates/pixiv-cli/src/bookmark_lists.rs",
         "crates/pixiv-cli/src/record_input.rs",
-        "crates/pixiv-cli/src/main.rs"
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/record_input/json.rs"
       ],
       "tests": [
         "internal/cli/migration_bookmark_reads_test.go",
@@ -1144,13 +1156,17 @@
         "internal/cli/migration_bookmark_reads_pool_test.go",
         "crates/pixiv-cli/tests/bookmark_reads.rs",
         "crates/pixiv-cli/tests/bookmark_reads_startup.rs",
-        "crates/pixiv-cli/tests/bookmark_reads_pool.rs"
+        "crates/pixiv-cli/tests/bookmark_reads_pool.rs",
+        "internal/cli/commands/pixiv/bookmark/migration_record_whitespace_test.go",
+        "crates/pixiv-cli/tests/bookmark_record_whitespace.rs"
       ],
       "verified_platforms": [
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "既存SDK detail/tagsをCLI全kindへ接続。Go8628処理行と8592保存済み境界、312pool行、独立Run startupを比較。869 Cobra leaf parser行はRustの拒否のみ検査しexact leaf診断/exitは未検証。fixture直積の監査と範囲はcontracts.md/contract-matrix-audit.md。raw-wire/全通信/取消/parallel、root parser3/Linux公開面snapshot、全flag/help/TTY/OS hooks、他platform/配布は未検証。"
+        "既存SDK detail/tagsをCLI全kindへ接続。Go8628処理行と8592保存済み境界、312pool行、独立Run startupを比較。869 Cobra leaf parser行はRustの拒否のみ検査しexact leaf診断/exitは未検証。fixture直積の監査と範囲はcontracts.md/contract-matrix-audit.md。raw-wire/全通信/取消/parallel、root parser3、全flag/help/TTY/OS hooks、他platform/配布は未検証。",
+        "downloadのNDJSON line TrimSpaceとbookmarkのraw whole-body JSON検証を分けるGo-first whitespace9行を追加する。NBSP suffixのshared helper regressionをgenuine public red→greenで修正し、bookmarkのnative全入出力互換へ外挿しない。",
+        "Linux CLI登録inventoryはrecord checkpointで元Goから追加採取しWindows版とbyte一致した。native全動作・全flag/help/TTY/OS hooksや他platformの未検証範囲は維持する。"
       ]
     },
     {
@@ -1176,7 +1192,8 @@
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "Go98 exact direct/saved・81 real-pool・30 actual startup行でread全kind/stampsのDTO/metadata/input/output/要求/stateを比較。commentは全logical traversalをbufferしてlease内output、stampsはRead解放後output。human single Write/short success・Go URL拒否・config/DB stageを維持。create/reply/delete/stamp mutationは未実装。full Rust gateは承認後のtask-local telemetry opt-out・offline再実行で終了0、272passed/既存3ignored、release成功。全flag/help/TTY/OS hooks、root parser/Linux snapshot、全通信/取消/並行/他platform・配布は未検証。"
+        "Go98 exact direct/saved・81 real-pool・30 actual startup行でread全kind/stampsのDTO/metadata/input/output/要求/stateを比較。commentは全logical traversalをbufferしてlease内output、stampsはRead解放後output。human single Write/short success・Go URL拒否・config/DB stageを維持。create/reply/delete/stamp mutationは未実装。full Rust gateは承認後のtask-local telemetry opt-out・offline再実行で終了0、272passed/既存3ignored、release成功。全flag/help/TTY/OS hooks、root parser、全通信/取消/並行/他platform・配布は未検証。",
+        "Linux CLI登録inventoryはrecord checkpointで元Goから追加採取しWindows版とbyte一致した。native全動作・全flag/help/TTY/OS hooksや他platformの未検証範囲は維持する。"
       ]
     },
     {
@@ -1322,7 +1339,8 @@
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "Go98 exact direct/saved・81 real-pool・30 actual startup行でread全kind/stampsのDTO/metadata/input/output/要求/stateを比較。commentは全logical traversalをbufferしてlease内output、stampsはRead解放後output。human single Write/short success・Go URL拒否・config/DB stageを維持。create/reply/delete/stamp mutationは未実装。full Rust gateは承認後のtask-local telemetry opt-out・offline再実行で終了0、272passed/既存3ignored、release成功。全flag/help/TTY/OS hooks、root parser/Linux snapshot、全通信/取消/並行/他platform・配布は未検証。"
+        "Go98 exact direct/saved・81 real-pool・30 actual startup行でread全kind/stampsのDTO/metadata/input/output/要求/stateを比較。commentは全logical traversalをbufferしてlease内output、stampsはRead解放後output。human single Write/short success・Go URL拒否・config/DB stageを維持。create/reply/delete/stamp mutationは未実装。full Rust gateは承認後のtask-local telemetry opt-out・offline再実行で終了0、272passed/既存3ignored、release成功。全flag/help/TTY/OS hooks、root parser、全通信/取消/並行/他platform・配布は未検証。",
+        "Linux CLI登録inventoryはrecord checkpointで元Goから追加採取しWindows版とbyte一致した。native全動作・全flag/help/TTY/OS hooksや他platformの未検証範囲は維持する。"
       ]
     },
     {
@@ -1598,7 +1616,7 @@
         "小説詳細を SDK・保存済みアカウントへ接続。Go 出力126ケース、ID/URL 入力122ケース、設定・DB 作成順と --content の拒否24ケースを比較。小説メタデータの human/JSON/NDJSON と refresh CAS/Bearer は確認済み。小説の record/text パイプ、全 flag 構文・TTY/出力 override、部分 writer 失敗・取消・実 HTTPS・他 OS は未検証。",
         "detail --type user を SDK と保存済みアカウントへ接続。Go の66ケースで human/JSON/NDJSON、プロフィール・作業環境、Web ページ表示の user-info/query/fragment 除去と不正 URL の拒否を比較し、refresh CAS/Bearer も確認。実子プロセス24ケースでユーザー URL、入力/type/content、設定不正の優先順と DB 作成順を比較。全 ID/URL 構文・record/text パイプ・aggregate JSON・TTY/全 flag・部分 writer 失敗・取消・実 HTTPS と他 OS/arch は未検証。",
         "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。",
-        "Go CLI 公開面の Linux amd64 snapshot は未取得で、TestMigrationCLIContractKeepsCommandsAliasesAndFlags は cli.linux-amd64.json 不在で失敗する。対象 raw wire 比較と Go vet、同 snapshot 検査以外の CLI 検証は成功したが、Linux 公開面全体の検証とは扱わない。",
+        "当時のGo root検証はLinux CLI inventory snapshot不在で失敗した。record checkpointで既存capture flagから実Linux Cobra登録を採取し、元Windows snapshotとbyte一致を確認した。登録inventoryの不足は解消したが、Linux全CLI動作・全flag/help/TTY/native hooks・他platformの検証とは扱わない。",
         "novel --content の固定Go早期拒否を追加36ケースで比較。ID/URL/record/設定/DB/account/HTTPの前に失敗し、余分なfetchを行わない。本文取得を成功として実装しない。"
       ]
     },
@@ -1655,7 +1673,10 @@
         "crates/pixiv-app/src/download/ugoira.rs",
         "crates/pixiv-app/src/download/native_encoder.rs",
         "crates/pixiv-app/src/download/zip_directory.rs",
-        "crates/pixiv-app/src/download/file_replace.rs"
+        "crates/pixiv-app/src/download/file_replace.rs",
+        "crates/pixiv-cli/src/record_input.rs",
+        "crates/pixiv-cli/src/record_input/json.rs",
+        "crates/pixiv-cli/src/lib.rs"
       ],
       "tests": [
         "internal/media/downloader/migration_direct_sources_test.go",
@@ -1682,11 +1703,18 @@
         "crates/pixiv-app/tests/ugoira_encoder.rs",
         "crates/pixiv-app/tests/ugoira_zip_directory.rs",
         "internal/cli/commands/pixiv/download/migration_ugoira_workflow_test.go",
-        "crates/pixiv-cli/tests/download_ugoira.rs"
+        "crates/pixiv-cli/tests/download_ugoira.rs",
+        "internal/cli/pipeline/migration_download_records_test.go",
+        "internal/cli/commands/pixiv/download/migration_record_workflow_test.go",
+        "internal/cli/migration_record_download_startup_test.go",
+        "crates/pixiv-cli/tests/download_record_codec.rs",
+        "crates/pixiv-cli/tests/download_records.rs",
+        "crates/pixiv-cli/tests/download_record_startup.rs",
+        "internal/cli/pipeline/migration_download_record_cancel_test.go"
       ],
       "verified_platforms": [],
       "differences": [
-        "direct URL/opaque refとstatic artwork PID/artwork URLを保存済みExecution・SDK metadata/ref saveへ接続する。全5quality/pages/filename・directory templates/MIME publication/partial commitを対象比較する。user/bookmark展開・record実行・randomは残るworkflowである。",
+        "direct URL/opaque refとstatic artwork PID/artwork URLを保存済みExecution・SDK metadata/ref saveへ接続する。全5quality/pages/filename・directory templates/MIME publication/partial commitを対象比較する。user/bookmark展開・randomは残るworkflowで、recordの後続対象比較は別記する。",
         "Go fixtureはapp26行、CLI63行、root27行。rootの実Linux子プロセス比較は安全な23行に限定し、native hooks/read-error4行を実行しない。",
         "全URL grammar/非UTF8、native IO/OS、全writer/cancel/race/TTY/public SDK lifecycleは未検証。Go productionにpersisted resume/job schemaやdownload progress callback注入はなく、Rustに新契約として追加しない。",
         "CLI text/JSONとpublication前後4組を実Execution/SDK/account poolで比較し、Output(BrokenPipe)をcallbackからroot終了0へ保持する。",
@@ -1695,8 +1723,9 @@
         "static Go fixture app82/CLI40、actual root preflight8行。CLIはgenuine saved SQLite pool/SDK metadata/resource/ref destination/output/file/stateで比較する。native Rust binary8行はaccounts/network無しのpreflightであり、成功したnative binary media取得へ数えない。NDJSON root error policyの実差分をGo-firstで修正する。",
         "Go ManagerのID昇順・page_countとpage vector不整合による同名overwriteを保持する。runtime worker boundはGo GOMAXPROCSとRust available_parallelismで同一制御ではない。leading-dot suffix/publicationはGo-first追加5行で固定する。任意Go ArtworkKind string custom producerはpermanent Go-only契約を残し、Rust closed enumとのrepresentation差分をpendingに保持する。native filesystem wording/非UTF8/path/platform・全publication IOは未検証。",
         "ugoira GIF/APNG/ZIP/rawをGo-first app70・CLI67・MCP41・native Linux26・rawZIP73行で対象比較する。source path/native coreと32 checked vendor patchesを再利用し、元root lock276 identities・vendor1633 checksumsを保持/確認する。resolved encoder21 dependency version置換とparallel miniz_oxide0.9.1追加は元Go artifactと異なりprovenanceへ明記する。全platform/image/nativecancel/FFI injected lifecycleのverifiedではない。",
-        "CLI/MCP private hook/event/per-attempt manager fieldsを直接同一視しない。public rawZIP success frame_report、failure class/quarantine/cleanupを比較するがprivate failure reportactual/undeclaredはGo-only。user/bookmark全visual kind、record全workflow・random、SDKHTTP2/Accept/ownership等はpendingである。",
-        "ugoira最終fullscriptは終了0・296秒、meaningful594/raw595passed・ignored11、optimized release58.65秒。Formatter/Clippyの先行failureを残し、dependency-onlyformatmetadataとequivalent let-chainをreviewした後に全stageをfresh実行する。全Go production/source identityとtested snapshotを保持し、operation全体のverifiedにはしない。"
+        "CLI/MCP private hook/event/per-attempt manager fieldsを直接同一視しない。public rawZIP success frame_report、failure class/quarantine/cleanupを比較するがprivate failure reportactual/undeclaredはGo-only。user/bookmark全visual kind・random、public Record/SDKHTTP2/Accept/ownership等はpendingで、recordの後続対象比較は別記する。",
+        "ugoira最終fullscriptは終了0・296秒、meaningful594/raw595passed・ignored11、optimized release58.65秒。Formatter/Clippyの先行failureを残し、dependency-onlyformatmetadataとequivalent let-chainをreviewした後に全stageをfresh実行する。全Go production/source identityとtested snapshotを保持し、operation全体のverifiedにはしない。",
+        "record streamをGo-first codec168・saved59（元58 unchanged+EOF1）・root59・read-cancel2行で対象比較する。Rustはpublic rejection77、actual private source parser217+raw identity217、saved全59、same-Execution2、safe native preflight14/public startup composition39/fatal presentation-only4を区別する。Go private callback/port/reader/OAuth body/close schedulesを同一視しない。fullscript終了0・305秒、255 targets/meaningful605/raw606passed・ignored11、release34.13秒。全Go5packages/vetと独立reviewが成功し、CLI recordの限定scopeを接続するがdownload全体のverifiedではない。"
       ]
     },
     {
@@ -2049,7 +2078,8 @@
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "MyPixiv users/worksとoptional USER_ID全kindを共有list/output/poolへ接続。75 exact main処理、2 leaf拒否、24実startup・1 reader-error証拠、33 scalar/parser値、18poolを固定Goと比較。usersはno-input/no-autoNDJSON、worksはoptional text入力/autoNDJSON、全branchのraw human表示を維持。leaf exact診断/exit、anonymous nonce、group help/全flag/TTY/OS hooks、root parser3/Linux snapshot、raw-wire/全通信/取消/並行/他platform・配布は未検証。"
+        "MyPixiv users/worksとoptional USER_ID全kindを共有list/output/poolへ接続。75 exact main処理、2 leaf拒否、24実startup・1 reader-error証拠、33 scalar/parser値、18poolを固定Goと比較。usersはno-input/no-autoNDJSON、worksはoptional text入力/autoNDJSON、全branchのraw human表示を維持。leaf exact診断/exit、anonymous nonce、group help/全flag/TTY/OS hooks、root parser3、raw-wire/全通信/取消/並行/他platform・配布は未検証。",
+        "Linux CLI登録inventoryはrecord checkpointで元Goから追加採取しWindows版とbyte一致した。native全動作・全flag/help/TTY/OS hooksや他platformの未検証範囲は維持する。"
       ]
     },
     {
@@ -2080,7 +2110,8 @@
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "MyPixiv users/worksとoptional USER_ID全kindを共有list/output/poolへ接続。75 exact main処理、2 leaf拒否、24実startup・1 reader-error証拠、33 scalar/parser値、18poolを固定Goと比較。usersはno-input/no-autoNDJSON、worksはoptional text入力/autoNDJSON、全branchのraw human表示を維持。leaf exact診断/exit、anonymous nonce、group help/全flag/TTY/OS hooks、root parser3/Linux snapshot、raw-wire/全通信/取消/並行/他platform・配布は未検証。"
+        "MyPixiv users/worksとoptional USER_ID全kindを共有list/output/poolへ接続。75 exact main処理、2 leaf拒否、24実startup・1 reader-error証拠、33 scalar/parser値、18poolを固定Goと比較。usersはno-input/no-autoNDJSON、worksはoptional text入力/autoNDJSON、全branchのraw human表示を維持。leaf exact診断/exit、anonymous nonce、group help/全flag/TTY/OS hooks、root parser3、raw-wire/全通信/取消/並行/他platform・配布は未検証。",
+        "Linux CLI登録inventoryはrecord checkpointで元Goから追加採取しWindows版とbyte一致した。native全動作・全flag/help/TTY/OS hooksや他platformの未検証範囲は維持する。"
       ]
     },
     {
@@ -2111,7 +2142,8 @@
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "MyPixiv users/worksとoptional USER_ID全kindを共有list/output/poolへ接続。75 exact main処理、2 leaf拒否、24実startup・1 reader-error証拠、33 scalar/parser値、18poolを固定Goと比較。usersはno-input/no-autoNDJSON、worksはoptional text入力/autoNDJSON、全branchのraw human表示を維持。leaf exact診断/exit、anonymous nonce、group help/全flag/TTY/OS hooks、root parser3/Linux snapshot、raw-wire/全通信/取消/並行/他platform・配布は未検証。"
+        "MyPixiv users/worksとoptional USER_ID全kindを共有list/output/poolへ接続。75 exact main処理、2 leaf拒否、24実startup・1 reader-error証拠、33 scalar/parser値、18poolを固定Goと比較。usersはno-input/no-autoNDJSON、worksはoptional text入力/autoNDJSON、全branchのraw human表示を維持。leaf exact診断/exit、anonymous nonce、group help/全flag/TTY/OS hooks、root parser3、raw-wire/全通信/取消/並行/他platform・配布は未検証。",
+        "Linux CLI登録inventoryはrecord checkpointで元Goから追加採取しWindows版とbyte一致した。native全動作・全flag/help/TTY/OS hooksや他platformの未検証範囲は維持する。"
       ]
     },
     {
@@ -2230,7 +2262,8 @@
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "全kind/--type/content-type・human/JSON/NDJSONのGo231出力ケース、216startup・165stdin・129pool/writerケースを比較。204startupは実子process、12read failureはRead APIで比較。raw作品window後filter、CLI重複保持、allの1visual取得と私有spool再初期化、singleJSON lease後/all humanJSON lease中commit、NDJSON出力後replay禁止を維持。Go先行のinvalid UTF8 kind/conflictとmock temp creation/privacy/cleanupも比較。共有raw-wire/任意JSON精度/cursor、root parser3差分・Linux公開面snapshot、全flag/help/TTY/OS hooks・通信/Options・取消/deadline/concurrency/disconnect・正常実HTTPS・他OS/archは未検証。"
+        "全kind/--type/content-type・human/JSON/NDJSONのGo231出力ケース、216startup・165stdin・129pool/writerケースを比較。204startupは実子process、12read failureはRead APIで比較。raw作品window後filter、CLI重複保持、allの1visual取得と私有spool再初期化、singleJSON lease後/all humanJSON lease中commit、NDJSON出力後replay禁止を維持。Go先行のinvalid UTF8 kind/conflictとmock temp creation/privacy/cleanupも比較。共有raw-wire/任意JSON精度/cursor、root parser3差分、全flag/help/TTY/OS hooks・通信/Options・取消/deadline/concurrency/disconnect・正常実HTTPS・他OS/archは未検証。",
+        "Linux CLI登録inventoryはrecord checkpointで元Goから追加採取しWindows版とbyte一致した。native全動作・全flag/help/TTY/OS hooksや他platformの未検証範囲は維持する。"
       ]
     },
     {
@@ -2344,7 +2377,7 @@
         "search --type user の309ケースで直接 SDK・保存済み account・実子プロセスの入力、出力、論理ページ、writer 失敗、禁止 flag と起動順を Linux amd64 で比較。pixiv user search の互換入口、全 flag/help・TTY、実 HTTPS・取消/deadline・pool と他 OS/arch は未移植または未検証。workspace の必須チェック（Formatter・Clippy・162 tests・release build）は Linux amd64 で成功。",
         "selector の従来 fixture は認証済み owner/SDK を注入した比較であり、SDK 内の sort validation error を実起動へ流用していた差を解消。既存の SDK error/envelope の比較を維持し、別の Go real-startup 99ケースで隔離 HOME の未認証診断と config/DB 作成順を比較する。bookmark/date/options/page の子プロセスを一時 HOME/USERPROFILE へ隔離し、実ホームは参照しない。",
         "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。",
-        "Go CLI 公開面の Linux amd64 snapshot は未取得で、TestMigrationCLIContractKeepsCommandsAliasesAndFlags は cli.linux-amd64.json 不在で失敗する。対象 raw wire 比較と Go vet、同 snapshot 検査以外の CLI 検証は成功したが、Linux 公開面全体の検証とは扱わない。"
+        "当時のGo root検証はLinux CLI inventory snapshot不在で失敗した。record checkpointで既存capture flagから実Linux Cobra登録を採取し、元Windows snapshotとbyte一致を確認した。登録inventoryの不足は解消したが、Linux全CLI動作・全flag/help/TTY/native hooks・他platformの検証とは扱わない。"
       ]
     },
     {
@@ -2384,7 +2417,8 @@
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "series --type novel を Go69出力/起動・99textstdin・3poolシナリオで比較。最初のmetadata、全取得後の出力、lease中JSONcommitと再実行時のmetadata/items破棄を維持。artwork seriesもGo69出力/起動・99textstdin・21pool/writerケースで比較。human/NDJSONのcommit、JSONの初期cursorからのreplayとlease解放後commitを維持。共有raw-wire/root parser/Linux公開面snapshot、全flag/help/TTY/通信/取消/deadline・正常実HTTPS・他OS/archは未検証。 pool JSON stderrは構造とretry deadline範囲を比較し、全字句表記は未検証。"
+        "series --type novel を Go69出力/起動・99textstdin・3poolシナリオで比較。最初のmetadata、全取得後の出力、lease中JSONcommitと再実行時のmetadata/items破棄を維持。artwork seriesもGo69出力/起動・99textstdin・21pool/writerケースで比較。human/NDJSONのcommit、JSONの初期cursorからのreplayとlease解放後commitを維持。共有raw-wire/root parser、全flag/help/TTY/通信/取消/deadline・正常実HTTPS・他OS/archは未検証。 pool JSON stderrは構造とretry deadline範囲を比較し、全字句表記は未検証。",
+        "Linux CLI登録inventoryはrecord checkpointで元Goから追加採取しWindows版とbyte一致した。native全動作・全flag/help/TTY/OS hooksや他platformの未検証範囲は維持する。"
       ]
     },
     {
@@ -2413,7 +2447,8 @@
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "timeline following/latest全kind・旧alias・local subtype filterを共通list traversal/output/poolへ接続。Go73処理行と保存済み境界、2 leaf拒否行、22実startup、18pool、33 scalar flag行/実parser値を比較。2 Cobra leaf診断/exitとanonymous repeated-cursor生診断nonceは未検証、観測を保持。timeline限定Go base0/bool解析・数値overflow順・Go引用を固定し、他commandのparserを変更しない。group単体help/全flag/help/TTY/OS hooks、root parser3/Linux snapshot、raw-wire/全通信/取消/parallel/他platform・配布は未検証。"
+        "timeline following/latest全kind・旧alias・local subtype filterを共通list traversal/output/poolへ接続。Go73処理行と保存済み境界、2 leaf拒否行、22実startup、18pool、33 scalar flag行/実parser値を比較。2 Cobra leaf診断/exitとanonymous repeated-cursor生診断nonceは未検証、観測を保持。timeline限定Go base0/bool解析・数値overflow順・Go引用を固定し、他commandのparserを変更しない。group単体help/全flag/help/TTY/OS hooks、root parser3、raw-wire/全通信/取消/parallel/他platform・配布は未検証。",
+        "Linux CLI登録inventoryはrecord checkpointで元Goから追加採取しWindows版とbyte一致した。native全動作・全flag/help/TTY/OS hooksや他platformの未検証範囲は維持する。"
       ]
     },
     {
@@ -2442,7 +2477,8 @@
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "timeline following/latest全kind・旧alias・local subtype filterを共通list traversal/output/poolへ接続。Go73処理行と保存済み境界、2 leaf拒否行、22実startup、18pool、33 scalar flag行/実parser値を比較。2 Cobra leaf診断/exitとanonymous repeated-cursor生診断nonceは未検証、観測を保持。timeline限定Go base0/bool解析・数値overflow順・Go引用を固定し、他commandのparserを変更しない。group単体help/全flag/help/TTY/OS hooks、root parser3/Linux snapshot、raw-wire/全通信/取消/parallel/他platform・配布は未検証。"
+        "timeline following/latest全kind・旧alias・local subtype filterを共通list traversal/output/poolへ接続。Go73処理行と保存済み境界、2 leaf拒否行、22実startup、18pool、33 scalar flag行/実parser値を比較。2 Cobra leaf診断/exitとanonymous repeated-cursor生診断nonceは未検証、観測を保持。timeline限定Go base0/bool解析・数値overflow順・Go引用を固定し、他commandのparserを変更しない。group単体help/全flag/help/TTY/OS hooks、root parser3、raw-wire/全通信/取消/parallel/他platform・配布は未検証。",
+        "Linux CLI登録inventoryはrecord checkpointで元Goから追加採取しWindows版とbyte一致した。native全動作・全flag/help/TTY/OS hooksや他platformの未検証範囲は維持する。"
       ]
     },
     {
@@ -2471,7 +2507,8 @@
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "timeline following/latest全kind・旧alias・local subtype filterを共通list traversal/output/poolへ接続。Go73処理行と保存済み境界、2 leaf拒否行、22実startup、18pool、33 scalar flag行/実parser値を比較。2 Cobra leaf診断/exitとanonymous repeated-cursor生診断nonceは未検証、観測を保持。timeline限定Go base0/bool解析・数値overflow順・Go引用を固定し、他commandのparserを変更しない。group単体help/全flag/help/TTY/OS hooks、root parser3/Linux snapshot、raw-wire/全通信/取消/parallel/他platform・配布は未検証。"
+        "timeline following/latest全kind・旧alias・local subtype filterを共通list traversal/output/poolへ接続。Go73処理行と保存済み境界、2 leaf拒否行、22実startup、18pool、33 scalar flag行/実parser値を比較。2 Cobra leaf診断/exitとanonymous repeated-cursor生診断nonceは未検証、観測を保持。timeline限定Go base0/bool解析・数値overflow順・Go引用を固定し、他commandのparserを変更しない。group単体help/全flag/help/TTY/OS hooks、root parser3、raw-wire/全通信/取消/parallel/他platform・配布は未検証。",
+        "Linux CLI登録inventoryはrecord checkpointで元Goから追加採取しWindows版とbyte一致した。native全動作・全flag/help/TTY/OS hooksや他platformの未検証範囲は維持する。"
       ]
     },
     {
@@ -2522,7 +2559,8 @@
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "user detail/searchの実Go入口を既存canonical fetch/JSON/search/list/pool処理へ接続。61 actual startup・8 profile表示、owner surface255 reused search行を比較し、Go225 owner replayと30既存shared wire証拠を区別。detailはtext-only入力/no NDJSON・safe human表示・user_id prefix/empty input/URL拒否を維持しroot detailのraw表示を変更しない。共通scalar lexemes、group/全flag/help/TTY/OS startup、root parser3/Linux snapshot、全通信/取消/並行/他platform・配布は未検証。"
+        "user detail/searchの実Go入口を既存canonical fetch/JSON/search/list/pool処理へ接続。61 actual startup・8 profile表示、owner surface255 reused search行を比較し、Go225 owner replayと30既存shared wire証拠を区別。detailはtext-only入力/no NDJSON・safe human表示・user_id prefix/empty input/URL拒否を維持しroot detailのraw表示を変更しない。共通scalar lexemes、group/全flag/help/TTY/OS startup、root parser3、全通信/取消/並行/他platform・配布は未検証。",
+        "Linux CLI登録inventoryはrecord checkpointで元Goから追加採取しWindows版とbyte一致した。native全動作・全flag/help/TTY/OS hooksや他platformの未検証範囲は維持する。"
       ]
     },
     {
@@ -2551,7 +2589,8 @@
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "Go400出力/format/window/writer・270隔離startup・108poolケースとinvalidUTF8/read境界を比較。explicit99/omitted42 targetをretryでもcacheし、novel headingの0、Go user URL拒否、CLI重複、JSON lease解放後commitを維持。config/ID/type/plan/proxy/format/DB/authの順序を保持。共有raw-wire/parser3差分/Linux公開面snapshot、全flag/help/TTY/OS hooks・通信/取消/deadline/concurrency/disconnect・実HTTPS・他OS/archは未検証。"
+        "Go400出力/format/window/writer・270隔離startup・108poolケースとinvalidUTF8/read境界を比較。explicit99/omitted42 targetをretryでもcacheし、novel headingの0、Go user URL拒否、CLI重複、JSON lease解放後commitを維持。config/ID/type/plan/proxy/format/DB/authの順序を保持。共有raw-wire/parser3差分、全flag/help/TTY/OS hooks・通信/取消/deadline/concurrency/disconnect・実HTTPS・他OS/archは未検証。",
+        "Linux CLI登録inventoryはrecord checkpointで元Goから追加採取しWindows版とbyte一致した。native全動作・全flag/help/TTY/OS hooksや他platformの未検証範囲は維持する。"
       ]
     },
     {
@@ -2578,7 +2617,8 @@
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "Go790出力/window/writer、588 startup、189保存済みpoolケースを比較。followingだけauto NDJSONを使わず、relatedは必須ID。optional targetは最初のclientで解決しretryでも保持、CLI重複保持・human見出し・private JSON spool/lease後commit・明示falseと狭いrestrict検証順を保持。588 startup中584はprocess比較（explicit reader-failure4行はpublic boundaryでreader bypassも確認）、omitted reader-failure4行はpublic APIと固定診断を比較。共通text/ID helperをuserworksと再利用。root parser3差分・Linux公開面snapshot不在、全flag/help/TTY/OS hooks、全通信/取消/他platformは未検証。"
+        "Go790出力/window/writer、588 startup、189保存済みpoolケースを比較。followingだけauto NDJSONを使わず、relatedは必須ID。optional targetは最初のclientで解決しretryでも保持、CLI重複保持・human見出し・private JSON spool/lease後commit・明示falseと狭いrestrict検証順を保持。588 startup中584はprocess比較（explicit reader-failure4行はpublic boundaryでreader bypassも確認）、omitted reader-failure4行はpublic APIと固定診断を比較。共通text/ID helperをuserworksと再利用。root parser3差分、全flag/help/TTY/OS hooks、全通信/取消/他platformは未検証。",
+        "Linux CLI登録inventoryはrecord checkpointで元Goから追加採取しWindows版とbyte一致した。native全動作・全flag/help/TTY/OS hooksや他platformの未検証範囲は維持する。"
       ]
     },
     {
@@ -2607,7 +2647,8 @@
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "Go1873出力/input/window/writerと1296 record入力、724 startup、240 real保存済みpoolケースを比較。bookmark listのartwork/novel/allとuser bookmarks、text/URL/record入力・validation順・明示false/auto・buffer/private spoolを維持。allはartwork→novelの単一logical budgetとbatch checkpoint、失敗時whole-page replay・試行ごとのomitted ID解決、singleは最初のtarget保持。Go内部committedはRustの実replay/request/output/state/leaseで間接観測しtest-only APIを追加しない。root parser3/Linux公開面snapshot、全flag/help/TTY/OS hooks、wire/全通信/取消/他platformは未検証。"
+        "Go1873出力/input/window/writerと1296 record入力、724 startup、240 real保存済みpoolケースを比較。bookmark listのartwork/novel/allとuser bookmarks、text/URL/record入力・validation順・明示false/auto・buffer/private spoolを維持。allはartwork→novelの単一logical budgetとbatch checkpoint、失敗時whole-page replay・試行ごとのomitted ID解決、singleは最初のtarget保持。Go内部committedはRustの実replay/request/output/state/leaseで間接観測しtest-only APIを追加しない。root parser3、全flag/help/TTY/OS hooks、wire/全通信/取消/他platformは未検証。",
+        "Linux CLI登録inventoryはrecord checkpointで元Goから追加採取しWindows版とbyte一致した。native全動作・全flag/help/TTY/OS hooksや他platformの未検証範囲は維持する。"
       ]
     },
     {
@@ -2634,7 +2675,8 @@
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "user detail/searchの実Go入口を既存canonical fetch/JSON/search/list/pool処理へ接続。61 actual startup・8 profile表示、owner surface255 reused search行を比較し、Go225 owner replayと30既存shared wire証拠を区別。detailはtext-only入力/no NDJSON・safe human表示・user_id prefix/empty input/URL拒否を維持しroot detailのraw表示を変更しない。共通scalar lexemes、group/全flag/help/TTY/OS startup、root parser3/Linux snapshot、全通信/取消/並行/他platform・配布は未検証。"
+        "user detail/searchの実Go入口を既存canonical fetch/JSON/search/list/pool処理へ接続。61 actual startup・8 profile表示、owner surface255 reused search行を比較し、Go225 owner replayと30既存shared wire証拠を区別。detailはtext-only入力/no NDJSON・safe human表示・user_id prefix/empty input/URL拒否を維持しroot detailのraw表示を変更しない。共通scalar lexemes、group/全flag/help/TTY/OS startup、root parser3、全通信/取消/並行/他platform・配布は未検証。",
+        "Linux CLI登録inventoryはrecord checkpointで元Goから追加採取しWindows版とbyte一致した。native全動作・全flag/help/TTY/OS hooksや他platformの未検証範囲は維持する。"
       ]
     },
     {
@@ -2742,7 +2784,8 @@
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "Go790出力/window/writer、588 startup、189保存済みpoolケースを比較。followingだけauto NDJSONを使わず、relatedは必須ID。optional targetは最初のclientで解決しretryでも保持、CLI重複保持・human見出し・private JSON spool/lease後commit・明示falseと狭いrestrict検証順を保持。588 startup中584はprocess比較（explicit reader-failure4行はpublic boundaryでreader bypassも確認）、omitted reader-failure4行はpublic APIと固定診断を比較。共通text/ID helperをuserworksと再利用。root parser3差分・Linux公開面snapshot不在、全flag/help/TTY/OS hooks、全通信/取消/他platformは未検証。"
+        "Go790出力/window/writer、588 startup、189保存済みpoolケースを比較。followingだけauto NDJSONを使わず、relatedは必須ID。optional targetは最初のclientで解決しretryでも保持、CLI重複保持・human見出し・private JSON spool/lease後commit・明示falseと狭いrestrict検証順を保持。588 startup中584はprocess比較（explicit reader-failure4行はpublic boundaryでreader bypassも確認）、omitted reader-failure4行はpublic APIと固定診断を比較。共通text/ID helperをuserworksと再利用。root parser3差分、全flag/help/TTY/OS hooks、全通信/取消/他platformは未検証。",
+        "Linux CLI登録inventoryはrecord checkpointで元Goから追加採取しWindows版とbyte一致した。native全動作・全flag/help/TTY/OS hooksや他platformの未検証範囲は維持する。"
       ]
     },
     {
@@ -2769,7 +2812,8 @@
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "Go790出力/window/writer、588 startup、189保存済みpoolケースを比較。followingだけauto NDJSONを使わず、relatedは必須ID。optional targetは最初のclientで解決しretryでも保持、CLI重複保持・human見出し・private JSON spool/lease後commit・明示falseと狭いrestrict検証順を保持。588 startup中584はprocess比較（explicit reader-failure4行はpublic boundaryでreader bypassも確認）、omitted reader-failure4行はpublic APIと固定診断を比較。共通text/ID helperをuserworksと再利用。root parser3差分・Linux公開面snapshot不在、全flag/help/TTY/OS hooks、全通信/取消/他platformは未検証。"
+        "Go790出力/window/writer、588 startup、189保存済みpoolケースを比較。followingだけauto NDJSONを使わず、relatedは必須ID。optional targetは最初のclientで解決しretryでも保持、CLI重複保持・human見出し・private JSON spool/lease後commit・明示falseと狭いrestrict検証順を保持。588 startup中584はprocess比較（explicit reader-failure4行はpublic boundaryでreader bypassも確認）、omitted reader-failure4行はpublic APIと固定診断を比較。共通text/ID helperをuserworksと再利用。root parser3差分、全flag/help/TTY/OS hooks、全通信/取消/他platformは未検証。",
+        "Linux CLI登録inventoryはrecord checkpointで元Goから追加採取しWindows版とbyte一致した。native全動作・全flag/help/TTY/OS hooksや他platformの未検証範囲は維持する。"
       ]
     },
     {
@@ -2798,7 +2842,8 @@
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "Go400出力/format/window/writer・270隔離startup・108poolケースとinvalidUTF8/read境界を比較。explicit99/omitted42 targetをretryでもcacheし、novel headingの0、Go user URL拒否、CLI重複、JSON lease解放後commitを維持。config/ID/type/plan/proxy/format/DB/authの順序を保持。共有raw-wire/parser3差分/Linux公開面snapshot、全flag/help/TTY/OS hooks・通信/取消/deadline/concurrency/disconnect・実HTTPS・他OS/archは未検証。"
+        "Go400出力/format/window/writer・270隔離startup・108poolケースとinvalidUTF8/read境界を比較。explicit99/omitted42 targetをretryでもcacheし、novel headingの0、Go user URL拒否、CLI重複、JSON lease解放後commitを維持。config/ID/type/plan/proxy/format/DB/authの順序を保持。共有raw-wire/parser3差分、全flag/help/TTY/OS hooks・通信/取消/deadline/concurrency/disconnect・実HTTPS・他OS/archは未検証。",
+        "Linux CLI登録inventoryはrecord checkpointで元Goから追加採取しWindows版とbyte一致した。native全動作・全flag/help/TTY/OS hooksや他platformの未検証範囲は維持する。"
       ]
     },
     {
@@ -2825,7 +2870,8 @@
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "Go790出力/window/writer、588 startup、189保存済みpoolケースを比較。followingだけauto NDJSONを使わず、relatedは必須ID。optional targetは最初のclientで解決しretryでも保持、CLI重複保持・human見出し・private JSON spool/lease後commit・明示falseと狭いrestrict検証順を保持。588 startup中584はprocess比較（explicit reader-failure4行はpublic boundaryでreader bypassも確認）、omitted reader-failure4行はpublic APIと固定診断を比較。共通text/ID helperをuserworksと再利用。root parser3差分・Linux公開面snapshot不在、全flag/help/TTY/OS hooks、全通信/取消/他platformは未検証。"
+        "Go790出力/window/writer、588 startup、189保存済みpoolケースを比較。followingだけauto NDJSONを使わず、relatedは必須ID。optional targetは最初のclientで解決しretryでも保持、CLI重複保持・human見出し・private JSON spool/lease後commit・明示falseと狭いrestrict検証順を保持。588 startup中584はprocess比較（explicit reader-failure4行はpublic boundaryでreader bypassも確認）、omitted reader-failure4行はpublic APIと固定診断を比較。共通text/ID helperをuserworksと再利用。root parser3差分、全flag/help/TTY/OS hooks、全通信/取消/他platformは未検証。",
+        "Linux CLI登録inventoryはrecord checkpointで元Goから追加採取しWindows版とbyte一致した。native全動作・全flag/help/TTY/OS hooksや他platformの未検証範囲は維持する。"
       ]
     },
     {
@@ -2852,7 +2898,8 @@
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "user detail/searchの実Go入口を既存canonical fetch/JSON/search/list/pool処理へ接続。61 actual startup・8 profile表示、owner surface255 reused search行を比較し、Go225 owner replayと30既存shared wire証拠を区別。detailはtext-only入力/no NDJSON・safe human表示・user_id prefix/empty input/URL拒否を維持しroot detailのraw表示を変更しない。共通scalar lexemes、group/全flag/help/TTY/OS startup、root parser3/Linux snapshot、全通信/取消/並行/他platform・配布は未検証。"
+        "user detail/searchの実Go入口を既存canonical fetch/JSON/search/list/pool処理へ接続。61 actual startup・8 profile表示、owner surface255 reused search行を比較し、Go225 owner replayと30既存shared wire証拠を区別。detailはtext-only入力/no NDJSON・safe human表示・user_id prefix/empty input/URL拒否を維持しroot detailのraw表示を変更しない。共通scalar lexemes、group/全flag/help/TTY/OS startup、root parser3、全通信/取消/並行/他platform・配布は未検証。",
+        "Linux CLI登録inventoryはrecord checkpointで元Goから追加採取しWindows版とbyte一致した。native全動作・全flag/help/TTY/OS hooksや他platformの未検証範囲は維持する。"
       ]
     },
     {
@@ -3319,7 +3366,7 @@
         "static metadata unknown wire kindはpublic KindUnknownとしてstaticを保存し、UTC dayを跨ぐdate namingも比較する。notifications/cancelledはpage1 published/page2 live atomic tempのowned stdio schedule1件をGo-firstで比較する。全cancel/disconnect/signal/EOF scheduleのverifiedではない。Go-only lease callback/internal countersをRust adapter Dropと同一視しない。",
         "Go ManagerのID昇順・page_countとpage vector不整合による同名overwriteを保持する。runtime worker boundはGo GOMAXPROCSとRust available_parallelismで同一制御ではない。leading-dot suffix/publicationはGo-first追加5行で固定する。任意Go ArtworkKind string custom producerはpermanent Go-only契約を残し、Rust closed enumとのrepresentation差分をpendingに保持する。native filesystem wording/非UTF8/path/platform・全publication IOは未検証。",
         "ugoira GIF/APNG/ZIP/rawをGo-first app70・CLI67・MCP41・native Linux26・rawZIP73行で対象比較する。source path/native coreと32 checked vendor patchesを再利用し、元root lock276 identities・vendor1633 checksumsを保持/確認する。resolved encoder21 dependency version置換とparallel miniz_oxide0.9.1追加は元Go artifactと異なりprovenanceへ明記する。全platform/image/nativecancel/FFI injected lifecycleのverifiedではない。",
-        "CLI/MCP private hook/event/per-attempt manager fieldsを直接同一視しない。public rawZIP success frame_report、failure class/quarantine/cleanupを比較するがprivate failure reportactual/undeclaredはGo-only。user/bookmark全visual kind、record全workflow・random、SDKHTTP2/Accept/ownership等はpendingである。",
+        "CLI/MCP private hook/event/per-attempt manager fieldsを直接同一視しない。public rawZIP success frame_report、failure class/quarantine/cleanupを比較するがprivate failure reportactual/undeclaredはGo-only。user/bookmark全visual kind・random、public Record/SDKHTTP2/Accept/ownership等はpendingである。CLI recordの後続対象比較をMCP recordstream機能へ読み替えない。",
         "ugoira最終fullscriptは終了0・296秒、meaningful594/raw595passed・ignored11、optimized release58.65秒。Formatter/Clippyの先行failureを残し、dependency-onlyformatmetadataとequivalent let-chainをreviewした後に全stageをfresh実行する。全Go production/source identityとtested snapshotを保持し、operation全体のverifiedにはしない。"
       ]
     },
@@ -3533,7 +3580,8 @@
         "linux-amd64 (partial)"
       ],
       "differences": [
-        "Go34ケースと2account poolシナリオを直接・stdio・保存済みaccountで比較。kind+IDのdedup、論理pagination、失敗時の初期pagination、再実行時の全取得破棄を維持。既存16toolの順序を保持し17番目へ追加。共有raw-wire/root parser/Linux公開面snapshot、全JSON/通信/取消/deadline/disconnect・実HTTPS・他OS/archは未検証。"
+        "Go34ケースと2account poolシナリオを直接・stdio・保存済みaccountで比較。kind+IDのdedup、論理pagination、失敗時の初期pagination、再実行時の全取得破棄を維持。既存16toolの順序を保持し17番目へ追加。共有raw-wire/root parser、全JSON/通信/取消/deadline/disconnect・実HTTPS・他OS/archは未検証。",
+        "Linux CLI登録inventoryはrecord checkpointで元Goから追加採取しWindows版とbyte一致した。native全動作・全flag/help/TTY/OS hooksや他platformの未検証範囲は維持する。"
       ]
     },
     {
@@ -4041,7 +4089,7 @@
       "differences": [
         "Go の182ケースと schema を Linux amd64 で直接呼出し・stdio・保存済み account stdio から比較。workspace の必須チェック（Formatter・Clippy・162 tests・release build）は Linux amd64 で成功。全 schema/数値構文、取消/deadline・pool replay・disconnect、実 HTTPS、共有通信と他 OS/arch は未検証。",
         "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。",
-        "Go CLI 公開面の Linux amd64 snapshot は未取得で、TestMigrationCLIContractKeepsCommandsAliasesAndFlags は cli.linux-amd64.json 不在で失敗する。対象 raw wire 比較と Go vet、同 snapshot 検査以外の CLI 検証は成功したが、Linux 公開面全体の検証とは扱わない。"
+        "当時のGo root検証はLinux CLI inventory snapshot不在で失敗した。record checkpointで既存capture flagから実Linux Cobra登録を採取し、元Windows snapshotとbyte一致を確認した。登録inventoryの不足は解消したが、Linux全CLI動作・全flag/help/TTY/native hooks・他platformの検証とは扱わない。"
       ]
     },
     {
@@ -4330,7 +4378,7 @@
       "differences": [
         "実 Go MCP の schema と25ケースを直接呼出し・stdio・保存済みアカウント stdio で比較。完全な user detail envelope を canonical user record にし、required user_id、未知 key、非整数、float64 経由の int64 overflow と不正応答を拒否する。refresh CAS/Bearer と要求数も比較。全 schema/数値/JSON 構文、取消/deadline・pool replay・disconnect、実 HTTPS と他 OS/arch は未検証。",
         "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。",
-        "Go CLI 公開面の Linux amd64 snapshot は未取得で、TestMigrationCLIContractKeepsCommandsAliasesAndFlags は cli.linux-amd64.json 不在で失敗する。対象 raw wire 比較と Go vet、同 snapshot 検査以外の CLI 検証は成功したが、Linux 公開面全体の検証とは扱わない。"
+        "当時のGo root検証はLinux CLI inventory snapshot不在で失敗した。record checkpointで既存capture flagから実Linux Cobra登録を採取し、元Windows snapshotとbyte一致を確認した。登録inventoryの不足は解消したが、Linux全CLI動作・全flag/help/TTY/native hooks・他platformの検証とは扱わない。"
       ]
     },
     {

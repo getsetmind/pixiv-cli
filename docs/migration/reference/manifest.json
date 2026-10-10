@@ -4,7 +4,8 @@
   "upstream_commit": "2b3ccbb1ca54bec9effdf8fc5e57515bda2370ab",
   "capture_toolchain": "go version go1.27.1 windows/amd64",
   "cli_capture_platforms": [
-    "windows-amd64"
+    "windows-amd64",
+    "linux-amd64"
   ],
   "captures": [
     {
@@ -22,6 +23,20 @@
     {
       "file": "sdk.json",
       "sha256": "61ee0868d6d0e320610ee3a487e8a8cd0d756ab301b3a50d94bbdd8f35acacfe"
+    },
+    {
+      "file": "cli.linux-amd64.json",
+      "sha256": "ac70fa5b0116e9a75a22d6f328634ce7940560560b229507330418e8abf9df95"
+    }
+  ],
+  "additional_cli_capture_evidence": [
+    {
+      "file": "cli.linux-amd64.json",
+      "toolchain": "go version go1.27.1 linux/amd64",
+      "method": "Existing TestMigrationCLIContractKeepsCommandsAliasesAndFlags -migration-update-cli; actual Linux Cobra command registration, no command actions",
+      "frozen_go_production_unchanged": true,
+      "windows_inventory_byte_identical": true,
+      "scope": "Command/alias/flag inventory only; no native Windows/Linux behavior equivalence or other platform validation"
     }
   ]
 }

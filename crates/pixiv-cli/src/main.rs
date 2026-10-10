@@ -1690,6 +1690,24 @@ fn execute_config(root_context: &pixiv_app::lifecycle::Context) -> Result<(), Co
     )
 }
 
+#[derive(Debug)]
+struct DownloadConfigReadError {
+    path: std::path::PathBuf,
+    cause: pixiv_app::config::ConfigError,
+}
+
+impl std::fmt::Display for DownloadConfigReadError {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(formatter, "read {}: is a directory", self.path.display())
+    }
+}
+
+impl std::error::Error for DownloadConfigReadError {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        Some(&self.cause)
+    }
+}
+
 async fn execute_download(
     root_context: &pixiv_app::lifecycle::Context,
 ) -> (Result<(), CommandError>, bool, bool) {
@@ -1725,7 +1743,18 @@ async fn execute_download(
             store
                 .current()
                 .and_then(|snapshot| snapshot.runtime())
-                .map_err(pixiv_app::scheduler::SchedulerError::from)?;
+                .map_err(|error| {
+                    if cfg!(unix)
+                        && matches!(&error, pixiv_app::config::ConfigError::Io(cause) if cause.kind() == io::ErrorKind::IsADirectory)
+                    {
+                        CommandError::State(Box::new(DownloadConfigReadError {
+                            path: store.path().to_owned(),
+                            cause: error,
+                        }))
+                    } else {
+                        pixiv_app::scheduler::SchedulerError::from(error).into()
+                    }
+                })?;
         }
         command
             .execute_http(

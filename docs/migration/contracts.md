@@ -1816,3 +1816,35 @@ fullscript初回はFormatterだけで終了1となった。cargo fmt --allが新
 genuine runtime redsはshared unsupported-ugoira、CLI archive serialization/pipeline execution、MCP file metadata、repeated ZIP64 extraとnative caller-drop prior-source replayである。native adapter sourceは回復前にdraft済みだったため、missing-native-API redを実行したとは数えない。manager synthetic ZIP UTF8 flag不足はtest-harness修正でありproduction差分の証拠へ数えない。26 native一致SHAは元Go artifact対新source buildの対象比較で、dev fixtureの一致から全optimized画像・mid-frame cancellation・他5 native targetsの実行を推定しない。
 
 独立reviewはsource lifecycle/atomic publication、Go omissions/private correspondence、元ZIP69期待値保持、source/fixture hashes、4830 tracked encoder/quantette filesのbyte identity、1633 vendor checksums、元root276 entries+42 additions、95-package native closure/21 replacements+parallel miniz_oxide追加、dependency-onlyformatmetadataを確認しscoped approvalした。全source/fixture/Cargo/formatmetadataはfullgate snapshotから変更0で、fullgate後は結果文書だけを更新する。Go production/go.mod/go.sum・original Go-owned Rust/source/vendor/staticlibは固定refと変更0。user/bookmark全visual kind、full record workflow、random、native/public SDK/HTTP2/Accept/signal restoration等は引き続きpendingで、download全体のverifiedにはしない。
+
+<!-- RECORD_DOWNLOAD_CHECKPOINT -->
+## download record stream と保存済み実行の接続
+
+参照は `4b4426487ef18bed276706daec385e0d0a6979f9`。Go productionを変えず、pipeline codec168行、saved download58行、root/startup59行（安全な実Linux子プロセス14行）を先に固定した。fixture source guard35 entriesを固定git objectとcurrent production bytesへ独立照合した。Go capture/replay/focused race/vet/gofmtは成功している。以下は対象の契約であり、Rust最終gateの成功や全downloadの完了を表さない。
+
+初期classifierはASCII JSON whitespaceだけを読み、first `{` ならprefixをrecord readerへ戻す。text sourceは全入力を1 sourceとし末尾LF/CRLFを1回だけ除去する。明示sourceがあればstdinを読まない。record readerは物理行番号、空行error、64KiB超、最後の改行無し行を保持する。非EOF read errorの不完全行をactionへ渡さない。recordごとのUnicode TrimSpace、Goのinvalid UTF8 per-byte replacement、JSON depth10000、数値ID lexeme/文字列ID、required field順と重複keyをfixtureに残す。diagnostic identityはtrim前のraw lineから最初のJSON valueを独立decodeし、巨大数値の元lexemeや後続junkを保持するため、strict whole-line parseとは別の境界である。
+
+recordはartwork/illust/manga/ugoiraを受け入れ、URL fieldの非空条件と実actionのint64 IDを区別する。全JSON/NDJSON flag組合せでartifact stdoutを出さず、normal argumentのoutput conflict検証を迂回する。skipでも最後にPipelineDiagnosticErrorを返し、fail-fastは最初の失敗で止まる。business/operation errorをwarningsより先に計算し、warning writer failureをtyped causeへjoinする。diagnostic writer failureと取消は継続可能なbusiness failureとは分ける。
+
+各recordにfresh pool attemptを使う。以前のrecordがpublish済みでも後のrecordのprecommit rate failureはreplayできるが、同じrecordのpublished prefixはreplayを止める。CDN429はupstream_errorで、regular-quality resource再解決のmetadata429はtyped rate_limitedとなる。OAuth refresh429はtypedでもopen段階でreplay/freezeしない。held live leaseのGate待機取消、owned partial body取消、atomic/ugoira temp cleanup、後続record停止と保存済みstateの再利用を固定した。
+
+Go private callback/port/gate event・reader `(data,error)` 同時return・resolved sourceの直接観測は、Rust public commandやnative binaryの証拠と同一視しない。Rust commandがExecutionをconsumeする境界では、同じconfig/DBのfresh command followupと同じExecution ownerのlifecycle比較を分ける。startup hooks SPIの合成実行をactual mainの成功media取得へ数えない。generic pipeline callback error wrappersもactual DownloadReportのbusiness errorと別である。
+
+user/bookmarkの全visual kind展開、MCP random、public Record全体、native IO/他platform、SDK HTTP2/Accept/Context/ownership、Tokio signal restorationとWindows repeated temporary cleanupの既存差分は引き続き未完了として追跡する。Go productionにないpersisted resume/jobや新progress emissionを追加契約として扱わない。
+
+追加のGo-first取消2行は、classifierのprefix取得後にline readがContextをcancelするowned readerを使う。valid objectのunsupported type/invalid int64 IDはconsume errorとなり、diagnosticよりContext errorを優先する。malformed JSONのparse diagnosticとは順序を分ける。保存済み成功callbackが取消したfinal unterminated EOF行も追加1行で固定し、元saved58の全fixture内容は追加行を除いたGo serializationのSHA復元で一致する。追加行のgenuine Rust redを保存した後、EOF終端で不要な次loopのContext checkを行わない修正をした。
+
+全Go root packageを初めてこのcheckpointで実行すると、既存CLI inventory testが未採取の`cli.linux-amd64.json`を要求して失敗した。失敗logは残し、skip/期待値削除ではなく既存capture flagで実Linux Cobra登録を採取した。原Go productionが固定refと一致することを確認し、Linux snapshot SHA `ac70fa5b0116e9a75a22d6f328634ce7940560560b229507330418e8abf9df95` は元Windows inventoryとbyte-identicalだった。manifestの元capture_toolchain/Windows snapshotと全旧SHAは保持し、追加Linux capture/provenanceを記録する。これはcommand/alias/flag登録の比較であり、native Windows/Linuxの動作一致や他platform実行を意味しない。
+
+<!-- RECORD_DOWNLOAD_CHECKPOINT_FINAL_EVIDENCE -->
+最終unchanged `scripts/check-rust.ps1` は終了sentinel0・305秒。Formatter、strict workspace/all-target Clippy、255 test targets（meaningful605passed/0failed、raw606、ignored11 unchanged）、optimized release34.13秒が成功した。既存terminal_prompt_childのno-env early-return scaffold1をmeaningfulへ数えず、ignoredの追加や旧assertionの削除/緩和を行わない。offline/telemetry opt-out/dev-test debug0/incremental0と全script stagesを維持する。source/tests/fixtures/referenceはgate開始snapshotから変更0で、後続変更は結果/status文書だけである。
+
+今回の比較はGo codec168行からの217 physical-line parser observations/217 independent raw identitiesとpublic rejection77行、saved59行（元58の全JSON SHA復元一致+EOF1）、same-Execution2 tests、root59行中safe actual Linux binary14/public composition39/fatal presentation-only4、whole-body bookmark9、read-cancel2である。root zero-read/private manager errorの2行とprivate observersはGo-only evidenceとして明示し、全59 native root flowsや全codec callback error再現とは表現しない。Rust startup SPIではconfig/exit/output/action IDs/startup subset/unread explicit input/cached factoryを比較するが、Go private ports/pool/chunking/signals/nonzero read schedulesとsource DB layoutは比較しない。
+
+red logsはoriginal公開codec77中21差分、修復codec+original downloadでsaved58中36差分、追加EOF1のerror/cause2差分、NBSP public validation3差分、valid parsed read-cancel2の余分diagnostics、実native config directory/read contextとfatal Unix EPIPE wordingを保持する。warning business-first typed joins、no-trim ID、first-value identity、raw whole-body対line-only Unicode trim、EOFとvalidation-error取消順を修正し、bookmark/mutation/既存direct/static/ugoira/pool/owned-outputをfocusedおよび全gateで回帰検証した。
+
+Go最終recoveryはpipeline/download/bookmark/migration-ledger/rootの5 full packages、rootのactual native preflight14、5 package vetが終了0・72秒。先行full rootは既存Linux snapshot不在のみで終了1・45秒となり、そのlogと元Windows snapshot/manifest全旧SHAを保持する。Linux inventory追加後にroot全suite（68.485秒）をskip無しで再実行した。各Go-first generation/replay/race/vet/gofmt logsも保持する。公開面inventoryの解消をnative全platform検証へ外挿しない。
+
+独立reviewはfrozen source guards、genuine Go callsとpublic/private boundaries、raw/line helper regression、typed warning joins/replay、EOF/取消順、native child RAII、元saved58全JSON SHA復元、元codec168/startup59 fixture bytes、追加Linux inventory/provenance、source/test snapshot不変を確認してscoped approvalした。Rust media adapter releaseをGo client-close/under-lease countersと同一視しない。fresh CLI followupの同config/DB再利用とsame-Execution lifecycle proofを分け、OAuth refreshのTransport取消をGo owned response-body取消と同等なstreaming IO証拠へ数えない。
+
+元Go production/go.mod/go.sum、published Cargo dependencies/native core/vendor/staticlib/format metadata/fullscriptは変更0。user/bookmark全visual kind・全page展開、MCP random、public Record全体とSDK Context/ownership/idle-close/HTTP2/Accept、全native IO/他platform、signal restoration/Windows repeated cleanupの既存未完了範囲を保持し、operation statusはin_progressのままとする。

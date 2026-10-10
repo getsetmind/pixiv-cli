@@ -79,6 +79,9 @@ impl fmt::Display for CommandError {
             Self::Message(message) => f.write_str(message),
             Self::Usage(message) => f.write_str(message),
             Self::MessageText(message) | Self::Startup(message) => f.write_str(message),
+            Self::Output(error) if cfg!(unix) && error.raw_os_error() == Some(32) => {
+                f.write_str("broken pipe")
+            }
             Self::Output(error) => error.fmt(f),
             Self::App(error) => error.fmt(f),
             Self::State(error) => error.fmt(f),
