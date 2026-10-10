@@ -26,6 +26,7 @@ pub mod novel_series;
 pub mod ranking;
 pub mod recommended;
 mod record_input;
+pub mod reverse_search;
 pub mod search;
 pub mod startup;
 pub mod terminal_prompt;
@@ -53,6 +54,7 @@ pub enum DetailOutput {
 #[derive(Debug)]
 pub enum CommandError {
     Sdk(Error),
+    ReverseSearch(pixiv_app::reverse_search::Error),
     LabeledSdk(&'static str, Error),
     Message(&'static str),
     Usage(String),
@@ -92,6 +94,7 @@ impl fmt::Display for CommandError {
                 Ok(())
             }
             Self::Sdk(error) => error.fmt(f),
+            Self::ReverseSearch(error) => error.fmt(f),
             Self::LabeledSdk(label, error) => write!(f, "{label}: {error}"),
             Self::Message(message) => f.write_str(message),
             Self::Usage(message) => f.write_str(message),
@@ -111,6 +114,7 @@ impl std::error::Error for CommandError {
         match self {
             Self::Joined(errors) => errors.first().map(|error| error as &dyn std::error::Error),
             Self::Sdk(error) | Self::LabeledSdk(_, error) => Some(error),
+            Self::ReverseSearch(error) => Some(error),
             Self::Output(error) => Some(error),
             Self::App(error) => Some(error),
             Self::State(error) => Some(error.as_ref()),
@@ -141,6 +145,7 @@ impl CommandError {
             Self::Sdk(error) | Self::LabeledSdk(_, error) => Some(error),
             Self::App(error) => error.classified(),
             Self::Message(_)
+            | Self::ReverseSearch(_)
             | Self::Usage(_)
             | Self::MessageText(_)
             | Self::Startup(_)

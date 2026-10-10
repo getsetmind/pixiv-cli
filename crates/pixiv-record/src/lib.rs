@@ -10,6 +10,9 @@ pub enum RecordError {
     UnsupportedArtworkKind,
     InvalidId,
     Serialization,
+    UnsupportedIdentityType,
+    NonCanonicalArtworkIdentityUrl,
+    NonCanonicalUserIdentityUrl,
 }
 impl RecordError {
     pub fn message(self) -> &'static str {
@@ -17,6 +20,11 @@ impl RecordError {
             Self::UnsupportedArtworkKind => "unsupported artwork kind for record",
             Self::InvalidId => "record id must be positive",
             Self::Serialization => "record serialization failed",
+            Self::UnsupportedIdentityType => "identity record type must be artwork or user",
+            Self::NonCanonicalArtworkIdentityUrl => {
+                "record url must be canonical for artwork identity"
+            }
+            Self::NonCanonicalUserIdentityUrl => "record url must be canonical for user identity",
         }
     }
 }
@@ -79,4 +87,20 @@ pub fn from_user_preview(preview: &pixiv_sdk::models::UserPreview) -> Result<Val
     record["type"] = "user".into();
     record["url"] = format!("https://www.pixiv.net/users/{}", preview.user.id).into();
     Ok(record)
+}
+
+pub fn from_identity(id: i64, kind: &str, raw_url: &str) -> Result<Value, RecordError> {
+    if id <= 0 {
+        return Err(RecordError::InvalidId);
+    }
+    let (path, url_error) = match kind {
+        "artwork" => ("artworks", RecordError::NonCanonicalArtworkIdentityUrl),
+        "user" => ("users", RecordError::NonCanonicalUserIdentityUrl),
+        _ => return Err(RecordError::UnsupportedIdentityType),
+    };
+    let canonical_url = format!("https://www.pixiv.net/{path}/{id}");
+    if raw_url != canonical_url {
+        return Err(url_error);
+    }
+    Ok(serde_json::json!({"id": id.to_string(), "type": kind, "url": canonical_url}))
 }

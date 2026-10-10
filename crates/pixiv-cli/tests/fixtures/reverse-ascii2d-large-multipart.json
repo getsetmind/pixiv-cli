@@ -1,0 +1,245 @@
+{
+  "cases": [
+    {
+      "error": null,
+      "idle_closes": 1,
+      "name": "success",
+      "requests": [
+        {
+          "body_nil": true,
+          "context_canceled": false,
+          "context_same": true,
+          "context_value": "owned-large-multipart",
+          "method": "GET",
+          "multipart": null,
+          "path": "",
+          "unknown_length": false,
+          "url": "https://ascii2d.invalid"
+        },
+        {
+          "body_nil": false,
+          "context_canceled": false,
+          "context_same": true,
+          "context_value": "owned-large-multipart",
+          "method": "POST",
+          "multipart": {
+            "boundary_decoded_length": 30,
+            "boundary_length": 60,
+            "boundary_lower_hex": true,
+            "canonical_sha256": "152286320763c2feab4b143a250687752580174f7996c9db26f6f9a9a060388b",
+            "complete_framing": true,
+            "exceeds_old_native_limit": true,
+            "image_matches_snapshot": true,
+            "media_type": "multipart/form-data",
+            "parameters": {
+              "boundary": "\u003cGENERATED_BOUNDARY\u003e"
+            },
+            "parts": [
+              {
+                "content_type": "",
+                "filename": "",
+                "headers": {
+                  "Content-Disposition": [
+                    "form-data; name=\"authenticity_token\""
+                  ]
+                },
+                "name": "authenticity_token",
+                "sha256": "8ba3ba0ec7543308df5c623072123086c0d9d365b25551cc34d0fceb4f1c8043",
+                "size": 131072
+              },
+              {
+                "content_type": "image/png",
+                "filename": "image.png",
+                "headers": {
+                  "Content-Disposition": [
+                    "form-data; name=\"file\"; filename=\"image.png\""
+                  ],
+                  "Content-Type": [
+                    "image/png"
+                  ]
+                },
+                "name": "file",
+                "sha256": "20d9d2d0048d3b4fe358b3646686e79a9cd6f5353ae3b29a6114d76da8ca7a05",
+                "size": 10485760
+              }
+            ],
+            "token_matches_form": true,
+            "wire_size": 10617185
+          },
+          "path": "/search/file",
+          "unknown_length": true,
+          "url": "https://ascii2d.invalid/search/file"
+        },
+        {
+          "body_nil": true,
+          "context_canceled": false,
+          "context_same": true,
+          "context_value": "owned-large-multipart",
+          "method": "GET",
+          "multipart": null,
+          "path": "/search/color/0123456789abcdef0123456789abcdef",
+          "unknown_length": false,
+          "url": "https://ascii2d.invalid/search/color/0123456789abcdef0123456789abcdef"
+        }
+      ],
+      "response_close_counts": [
+        1,
+        1,
+        1
+      ],
+      "search": {
+        "matches": [
+          {
+            "rank": 1,
+            "similarity": 0,
+            "index_id": 0,
+            "index_name": "pixiv",
+            "title": "Fixture title",
+            "author": "Fixture author",
+            "external_urls": [
+              "https://www.pixiv.net/artworks/123",
+              "https://www.pixiv.net/users/456"
+            ]
+          }
+        ],
+        "provider": "ascii2d-color"
+      },
+      "session": true,
+      "snapshot_bytes_retained": true,
+      "snapshot_closed_error": "image snapshot is closed",
+      "snapshot_sha256": "20d9d2d0048d3b4fe358b3646686e79a9cd6f5353ae3b29a6114d76da8ca7a05",
+      "snapshot_size": 10485760
+    },
+    {
+      "error": {
+        "canceled": true,
+        "message": "context canceled"
+      },
+      "idle_closes": 1,
+      "name": "cancel-after-complete-upload",
+      "requests": [
+        {
+          "body_nil": true,
+          "context_canceled": false,
+          "context_same": true,
+          "context_value": "owned-large-multipart",
+          "method": "GET",
+          "multipart": null,
+          "path": "",
+          "unknown_length": false,
+          "url": "https://ascii2d.invalid"
+        },
+        {
+          "body_nil": false,
+          "context_canceled": false,
+          "context_same": true,
+          "context_value": "owned-large-multipart",
+          "method": "POST",
+          "multipart": {
+            "boundary_decoded_length": 30,
+            "boundary_length": 60,
+            "boundary_lower_hex": true,
+            "canonical_sha256": "152286320763c2feab4b143a250687752580174f7996c9db26f6f9a9a060388b",
+            "complete_framing": true,
+            "exceeds_old_native_limit": true,
+            "image_matches_snapshot": true,
+            "media_type": "multipart/form-data",
+            "parameters": {
+              "boundary": "\u003cGENERATED_BOUNDARY\u003e"
+            },
+            "parts": [
+              {
+                "content_type": "",
+                "filename": "",
+                "headers": {
+                  "Content-Disposition": [
+                    "form-data; name=\"authenticity_token\""
+                  ]
+                },
+                "name": "authenticity_token",
+                "sha256": "8ba3ba0ec7543308df5c623072123086c0d9d365b25551cc34d0fceb4f1c8043",
+                "size": 131072
+              },
+              {
+                "content_type": "image/png",
+                "filename": "image.png",
+                "headers": {
+                  "Content-Disposition": [
+                    "form-data; name=\"file\"; filename=\"image.png\""
+                  ],
+                  "Content-Type": [
+                    "image/png"
+                  ]
+                },
+                "name": "file",
+                "sha256": "20d9d2d0048d3b4fe358b3646686e79a9cd6f5353ae3b29a6114d76da8ca7a05",
+                "size": 10485760
+              }
+            ],
+            "token_matches_form": true,
+            "wire_size": 10617185
+          },
+          "path": "/search/file",
+          "unknown_length": true,
+          "url": "https://ascii2d.invalid/search/file"
+        }
+      ],
+      "response_close_counts": [
+        1
+      ],
+      "search": null,
+      "session": false,
+      "snapshot_bytes_retained": true,
+      "snapshot_closed_error": "image snapshot is closed",
+      "snapshot_sha256": "20d9d2d0048d3b4fe358b3646686e79a9cd6f5353ae3b29a6114d76da8ca7a05",
+      "snapshot_size": 10485760
+    },
+    {
+      "error": {
+        "canceled": true,
+        "message": "context canceled"
+      },
+      "idle_closes": 1,
+      "name": "pre-canceled-upload",
+      "requests": [],
+      "response_close_counts": [],
+      "search": null,
+      "session": false,
+      "snapshot_bytes_retained": true,
+      "snapshot_closed_error": "image snapshot is closed",
+      "snapshot_sha256": "20d9d2d0048d3b4fe358b3646686e79a9cd6f5353ae3b29a6114d76da8ca7a05",
+      "snapshot_size": 10485760
+    }
+  ],
+  "evidence": "Actual unchanged frozen Go public Loader/New/Upload/Session.Search/Close with an owned generated PNG padded to exactly 10 MiB and a 131072-byte synthetic CSRF token. Injected http.RoundTripper consumes every multipart byte before returning; only generated boundary tokens are canonicalized. Source file changes after Load, while snapshot and uploaded image retain exact original bytes. Caller context identity/value, cancellation, response body closure, snapshot closure and one-time idle closure are observed.",
+  "go_version": "go1.27.1",
+  "input": {
+    "endpoint": "https://ascii2d.invalid",
+    "hash": "0123456789abcdef0123456789abcdef",
+    "home_template": "\u003chtml\u003e\u003cbody\u003e\u003cform id=\"file_upload\" enctype=\"multipart/form-data\" action=\"/search/file\" method=\"post\"\u003e\u003cinput type=\"hidden\" name=\"authenticity_token\" value=\"fixture-csrf\"\u003e\u003cinput type=\"file\" name=\"file\"\u003e\u003c/form\u003e\u003c/body\u003e\u003c/html\u003e",
+    "image_prefix_hex": "89504e470d0a1a0a0000000d4948445200000001000000010802000000907753de0000001149444154789c000400fbff02112233030000b6006936df7c2c0000000049454e44ae426082",
+    "image_sha256": "20d9d2d0048d3b4fe358b3646686e79a9cd6f5353ae3b29a6114d76da8ca7a05",
+    "image_size": 10485760,
+    "result_html": "\u003chtml\u003e\u003cbody\u003e\u003cdiv class=\"row item-box\"\u003e\u003cdiv class=\"image-box\"\u003equery image\u003c/div\u003e\u003c/div\u003e\u003cdiv class=\"row item-box\"\u003e\u003cdiv class=\"image-box\"\u003e\u003cimg src=\"/thumbnail/fixture.jpg\"\u003e\u003c/div\u003e\u003cdiv class=\"info-box\"\u003e\u003cdiv\u003e1200x800 JPEG 100KB\u003c/div\u003e\u003cdiv class=\"detail-box\"\u003e\u003ch6\u003e\u003ca href=\"https://www.pixiv.net/artworks/123\"\u003eFixture title\u003c/a\u003e\u003c/h6\u003e\u003ch6\u003e\u003ca href=\"https://www.pixiv.net/users/456\"\u003eFixture author\u003c/a\u003e\u003c/h6\u003e\u003csmall\u003epixiv\u003c/small\u003e\u003c/div\u003e\u003c/div\u003e\u003c/div\u003e\u003c/body\u003e\u003c/html\u003e",
+    "token_byte": "T",
+    "token_sha256": "8ba3ba0ec7543308df5c623072123086c0d9d365b25551cc34d0fceb4f1c8043",
+    "token_size": 131072
+  },
+  "limitations": [
+    "Synthetic dependency responses only; no external image, provider request, browser, credential, account or native wire probe.",
+    "The Rust NativeHttpTransport/SDK RawTransport comparison exercises the genuine body Vec boundary, not native TLS/fingerprint or HTTP wire equivalence. Go reader content length zero maps to SDK unknown length minus one."
+  ],
+  "repository_head": "71d798690ac0e80942803641d9d7e5129d0e749b",
+  "schema": 1,
+  "source_commit": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "source_sha256": {
+    "internal/services/reversesearch/ascii2d/client.go": "a92e94d8cb7c42805d66df3bd7d2c6f08beb315218fbcde42f2b674fbb1890e9",
+    "internal/services/reversesearch/ascii2d/html.go": "683a37188dc9823b0f0ab77904ae00a13fb85f38572dd44a6960c214c1635e0b",
+    "internal/services/reversesearch/ascii2d/solver.go": "ae70c6b2f8012f985c87da72efc85749acb69b3589ef93016c95c2062828c82a",
+    "internal/services/reversesearch/ascii2d/solver_state.go": "898ce8f370b759ed3a27f02898a57da70981c26f598b0096f3129c3945d34008",
+    "internal/services/reversesearch/ascii2d/transport.go": "a489d18b93012f2a1ef186bb570a0d295197919f1557c90aa2384cfb267ddfa5",
+    "internal/services/reversesearch/contracts.go": "dd6e7df4143baab4ef8afc5dbc80f428391dc90e47c7e8f5eeae2dc7568522df",
+    "internal/services/reversesearch/errors.go": "8d7d8964cae1a095aa3bcff72e56b36b9e3d27c9844bd6e6301210164569b4f0",
+    "internal/services/reversesearch/source.go": "e42ac2585b190ff8092afca916e02a643160904e81c685571d45bc3cf8c82e0f"
+  }
+}

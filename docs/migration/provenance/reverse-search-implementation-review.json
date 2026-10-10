@@ -1,0 +1,552 @@
+{
+  "schema_version": 1,
+  "reviewed_utc": "2026-10-10T15:56:55.910330+00:00",
+  "decision": "approved_bounded_connected_checkpoint",
+  "unresolved_blocking_findings": [],
+  "base_sha": "71d798690ac0e80942803641d9d7e5129d0e749b",
+  "frozen_go": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "scope": "Independent source and existing-evidence review of the connected reverse source/provider/CLI/MCP workflow at owned synthetic and bounded Linux runtime boundaries; no complete feature, migration or native/platform parity approval",
+  "reviewer_actions": {
+    "read_frozen_go_and_current_source": true,
+    "read_tests_documents_manifests_and_logs": true,
+    "ran_cargo": false,
+    "ran_go": false,
+    "ran_repository_tests": false,
+    "network_or_native_probe": false,
+    "wrote_only_repository_files": [
+      "docs/migration/provenance/reverse-search-implementation-review.md",
+      "docs/migration/provenance/reverse-search-implementation-review.json"
+    ]
+  },
+  "candidate_manifest": {
+    "path": "/tmp/reverse-search-implementation-review-candidate2.json",
+    "sha256": "02f0003e31b0e4c88394e7326cf895d6d25852eea474beb1b4bd0c952c75bf30",
+    "file_count": 58,
+    "total_bytes": 2426425,
+    "created_utc": "2026-10-10T15:54:08.643723+00:00",
+    "exact_changed_file_set": true,
+    "hash_drift": []
+  },
+  "candidate_binding_scope": "All final changed/new tracked or nonignored files except the two review artifacts; all pre-gate inputs separately checked; only documented post-gate document changes permitted",
+  "candidate_file_sha256": {
+    "Cargo.lock": "007bf67041cf7758edf2c1ba3a486c5c405529bdd46c72f150e3e86a44256c5c",
+    "crates/pixiv-app/Cargo.toml": "e9fa9d7a0f2ab1099b81615c4fe8e3c45d6ae54ddbd629d2189e4e2c5ae4509b",
+    "crates/pixiv-app/src/lib.rs": "7152119ba4e3bcad52f27b01eccffdf397203594cfdb91e66b340d6747eda02b",
+    "crates/pixiv-app/src/reverse_search/aggregator.rs": "a08ac1daec8c46572a3dff8440e7daf12566088fb66537135c68f844ee64072a",
+    "crates/pixiv-app/src/reverse_search/ascii2d/cookies.rs": "bc3ac86235b012476f0d4ff73af997822df3870fe0cfc1b566f85186f9a2caae",
+    "crates/pixiv-app/src/reverse_search/ascii2d/html.rs": "541c60ae8984d88f95885c153b043d0c053cc18f8b9ed57508b7eedc2ec15895",
+    "crates/pixiv-app/src/reverse_search/ascii2d/mod.rs": "34c8e73cb93e633731c9fdb7d20281d131a6a955e5a3f93ef0aed007f58e7cc2",
+    "crates/pixiv-app/src/reverse_search/ascii2d/solver.rs": "07299a60158351ec11492c93d82531db49b86a290055ee56365c5daf1460f34b",
+    "crates/pixiv-app/src/reverse_search/assembly.rs": "8ad31f1656f848a1d80ecd1ba4a6b79bf4f05f82e832bb5a5e419f284e6a520b",
+    "crates/pixiv-app/src/reverse_search/errors.rs": "205b4992350c834490d0afd2d6cc36f69e43f33597ef869cd29b295ffc39e74f",
+    "crates/pixiv-app/src/reverse_search/facade.rs": "259d96884bd57730ccd4b9e1f042dbfd937aa609f52b19cfafe8c76e99c0efb2",
+    "crates/pixiv-app/src/reverse_search/http.rs": "2f6aa043b9ee592c9aeb7ffd2775fac5d0290ab7f59e3ac61c5747aff7cf4792",
+    "crates/pixiv-app/src/reverse_search/mod.rs": "2f73467018f376c67cf583800a3b706f81bdc3501dd0c4a53f286e014304888a",
+    "crates/pixiv-app/src/reverse_search/normalize.rs": "704622acc572a579afb864a88d2bda9534b380adeaf01e26bc2c070adba58e0e",
+    "crates/pixiv-app/src/reverse_search/saucenao.rs": "e0bf59ea26272d94181f96416853c82daaf9bba556e97431152c5d47d1d81ee1",
+    "crates/pixiv-app/src/reverse_search/source.rs": "e404e983db302d98d4decca1d85201557b767de96099f6eb3607d276f5ef25f9",
+    "crates/pixiv-app/tests/reverse_ascii2d.rs": "f0d03ac6a1cbc94b764408bc4f6123218cbddb601e2ce31bb83a8d04a5ce5238",
+    "crates/pixiv-app/tests/reverse_assembly.rs": "6e85ea00a8541c820b2ca6db25f170208dc0f53d64fce2df727db766eb712de6",
+    "crates/pixiv-app/tests/reverse_core.rs": "2a63db20a42b52ef4b0a3377f463f9c92314ccecb562e33495dc4da5fd88c1d9",
+    "crates/pixiv-app/tests/reverse_core_support/aggregate.rs": "676a5425813fc63d548fc96696e1f71273c60bf6fc6588589a3d4ec393e779db",
+    "crates/pixiv-app/tests/reverse_core_support/facade.rs": "69444e1e1c226984c527ac2d3f137b0cf324efa9102257a5a2ef074895df7fa9",
+    "crates/pixiv-app/tests/reverse_core_support/mod.rs": "0d4d0ea0f3400fced5b373291710013acf1a9d50675becf5f38392331cfbfacf",
+    "crates/pixiv-app/tests/reverse_core_support/source.rs": "131d30fb109edc5f1cd2701a3ad576b9f48f0d161a50866530bc09c6f4a1ad19",
+    "crates/pixiv-app/tests/reverse_http.rs": "7ba6de792630e48675d6671835d045692747f26ef73665f755267241a3770056",
+    "crates/pixiv-app/tests/reverse_native_multipart.rs": "bb1a07ede12d85e20461e11584633af944cb4e66df39c9bf668a1018027168d7",
+    "crates/pixiv-app/tests/reverse_saucenao.rs": "3ac546aee1b7b74702fdac5cce98870684c7ae7de4a1616023224c99bff099b6",
+    "crates/pixiv-app/tests/reverse_saucenao_support/mod.rs": "800430d7bb048d88309e47f92e446444f11a5ed7b101bd858ca0a87f68266152",
+    "crates/pixiv-cli/src/lib.rs": "24d398120c2831bcf45d62cebd392550110420872c38bf13361af4f3d7f6f60d",
+    "crates/pixiv-cli/src/main.rs": "6828a4b64f481897118a8ad5a8ceed080bbf216dad3ae7c9e5a229c472921c32",
+    "crates/pixiv-cli/src/reverse_search.rs": "a0415b24270e84bbabefa4f198b8d5b05d709eaac0144100f14665283e657de3",
+    "crates/pixiv-cli/src/search.rs": "35385dd5330e7214d5d36192f7eddb73db54468c17afe3cd22b29572d27d2724",
+    "crates/pixiv-cli/tests/fixtures/reverse-ascii2d-large-multipart.json": "8d85ad24c441234f7645e0454d7faf28f20ae0dcbdfce9b26423f5df3224b266",
+    "crates/pixiv-cli/tests/reverse_process.rs": "eef2d004319866c6ff399eefed0d2c2fb2cd89760ad599aa921ee3f27320a409",
+    "crates/pixiv-cli/tests/reverse_root.rs": "671f0450d1632ea5e7771b911340b4a54fa66426bd76f0762ad0ee074c6cb6c8",
+    "crates/pixiv-cli/tests/reverse_search.rs": "851f0dd1d5f947ff3ccad360d2449d94ee9bea2da9a8cbdd64421fccd841906f",
+    "crates/pixiv-cli/tests/support/reverse_root.rs": "af3ed273108b1d090e716bfc7b8c69f2df174425ef217963c83052956d0a342c",
+    "crates/pixiv-cli/tests/support/reverse_search_cli.rs": "3e536baf809d2098e1622e57f76b716ffa2e828b0c8700cbf82d6669be02ec76",
+    "crates/pixiv-mcp/src/lib.rs": "161b66e1bc6f0be8aa9bbe68d612fab58e9163e609b568ae0b48cb4ec1e57412",
+    "crates/pixiv-mcp/src/reverse_search.rs": "6a9711a9d4ee7c1ee8304565b7cdcda70a9d6d836c6bed9ec2e5785abbf39435",
+    "crates/pixiv-mcp/src/stdio.rs": "b1e02e3872b976ea65e621fd45b7b766274be2ed3fad0980216a28d3f6aa5efa",
+    "crates/pixiv-mcp/tests/reverse_search.rs": "3afaa2d09dd6c9ba6cafdc9a3f0c395ee66cd6f9276c8d602f759116f8cdb1b9",
+    "crates/pixiv-mcp/tests/reverse_stdio.rs": "98e3fe1e60c9641a5cc3fdc7cffc2bf524ff0bc925ea8b5c8337e0b13b4e9792",
+    "crates/pixiv-mcp/tests/stdio.rs": "2e8e713b35f9cdc89e4fbdbe59be831c9008cc5abeaac6663f7d1acbe2e13859",
+    "crates/pixiv-mcp/tests/support/implemented_catalog.rs": "4a6ae1b52a1d907f6464dec8c75ada526d1e97cb7f88ed792c123a6d9b54d569",
+    "crates/pixiv-mcp/tests/support/reverse_search.rs": "c3515dfea71997a16a29f719d2cab877cbd2b7bb35bc190741acdf7c0ad73ddf",
+    "crates/pixiv-mcp/tests/support/reverse_stdio.rs": "8b64849a10a0ecd34e807feb5202465462a4ddf4376db78d134b6843e511232e",
+    "crates/pixiv-record/src/lib.rs": "df89c489c5cd9d3afb0deb1d87e1f41b10eb7efcaabf8ffdf7b35a3be460ba16",
+    "crates/pixiv-record/tests/reverse_identity.rs": "3243ba572aa8a614b6a092b9a78cc5de3c5b8480c3b0a4e5e08d69c503e939bc",
+    "crates/pixiv-sdk/src/fanbox/native.rs": "fbc089cdf53d2a7f67ca5f5af1861243d736305f92b13395aa491b730b6e745c",
+    "crates/pixiv-sdk/tests/reverse_native.rs": "d26c59ecb755f2b3a363352f7797b3b1008002d093160cc73757dad4097745d2",
+    "docs/migration/contracts.md": "ed73dab9cc25c997017f60718595ffbe79e072c55c64f9637c5635652465747f",
+    "docs/migration/ledger.json": "ad5ab1a5fa2b0fe7d6ff0ef4814f11d90cb27d1bf5a3ef5c3730a52644c70a8c",
+    "docs/migration/ledger.md": "457709762e90197de1d8a0b508dd8caf0a72f215804d473be0a0038aff8867cd",
+    "docs/migration/provenance/reverse-search-implementation-baseline.json": "eb6dc8daa4cfbae300d0d9ea0b9573f6547ae3cc353efa8a22a1e340dec500a6",
+    "docs/migration/provenance/reverse-search-implementation-gates.json": "68ec343723d80dbe3635a4ee0cc776a0db1a2f40b64d1b67dc9411b5054894fd",
+    "docs/migration/remaining-features.md": "a8ee2d7005d9fc604de3814ab70a94bf778f16b706850ffd80a9f90bca6847cc",
+    "docs/migration/reverse-search-contracts.md": "3c1724c4ba442c9c03e2bca53c4f3229fbd9bd01689fa6e383a978de51278e69",
+    "internal/services/reversesearch/ascii2d/migration_large_multipart_test.go": "ddbbfa8a51ab062c3c8817525f9431f1a85e1a3fbf21a6629aad6fd2d71c12ce"
+  },
+  "candidate_file_bytes": {
+    "Cargo.lock": 81755,
+    "crates/pixiv-app/Cargo.toml": 1605,
+    "crates/pixiv-app/src/lib.rs": 1190,
+    "crates/pixiv-app/src/reverse_search/aggregator.rs": 11172,
+    "crates/pixiv-app/src/reverse_search/ascii2d/cookies.rs": 5383,
+    "crates/pixiv-app/src/reverse_search/ascii2d/html.rs": 5885,
+    "crates/pixiv-app/src/reverse_search/ascii2d/mod.rs": 34534,
+    "crates/pixiv-app/src/reverse_search/ascii2d/solver.rs": 16393,
+    "crates/pixiv-app/src/reverse_search/assembly.rs": 3015,
+    "crates/pixiv-app/src/reverse_search/errors.rs": 9417,
+    "crates/pixiv-app/src/reverse_search/facade.rs": 3791,
+    "crates/pixiv-app/src/reverse_search/http.rs": 13326,
+    "crates/pixiv-app/src/reverse_search/mod.rs": 9614,
+    "crates/pixiv-app/src/reverse_search/normalize.rs": 3223,
+    "crates/pixiv-app/src/reverse_search/saucenao.rs": 30168,
+    "crates/pixiv-app/src/reverse_search/source.rs": 19987,
+    "crates/pixiv-app/tests/reverse_ascii2d.rs": 42955,
+    "crates/pixiv-app/tests/reverse_assembly.rs": 10866,
+    "crates/pixiv-app/tests/reverse_core.rs": 11348,
+    "crates/pixiv-app/tests/reverse_core_support/aggregate.rs": 13133,
+    "crates/pixiv-app/tests/reverse_core_support/facade.rs": 8697,
+    "crates/pixiv-app/tests/reverse_core_support/mod.rs": 4066,
+    "crates/pixiv-app/tests/reverse_core_support/source.rs": 15294,
+    "crates/pixiv-app/tests/reverse_http.rs": 25424,
+    "crates/pixiv-app/tests/reverse_native_multipart.rs": 14821,
+    "crates/pixiv-app/tests/reverse_saucenao.rs": 13202,
+    "crates/pixiv-app/tests/reverse_saucenao_support/mod.rs": 12399,
+    "crates/pixiv-cli/src/lib.rs": 15750,
+    "crates/pixiv-cli/src/main.rs": 88289,
+    "crates/pixiv-cli/src/reverse_search.rs": 11925,
+    "crates/pixiv-cli/src/search.rs": 36052,
+    "crates/pixiv-cli/tests/fixtures/reverse-ascii2d-large-multipart.json": 10655,
+    "crates/pixiv-cli/tests/reverse_process.rs": 7867,
+    "crates/pixiv-cli/tests/reverse_root.rs": 16053,
+    "crates/pixiv-cli/tests/reverse_search.rs": 16422,
+    "crates/pixiv-cli/tests/support/reverse_root.rs": 14417,
+    "crates/pixiv-cli/tests/support/reverse_search_cli.rs": 17924,
+    "crates/pixiv-mcp/src/lib.rs": 8117,
+    "crates/pixiv-mcp/src/reverse_search.rs": 10189,
+    "crates/pixiv-mcp/src/stdio.rs": 47533,
+    "crates/pixiv-mcp/tests/reverse_search.rs": 3285,
+    "crates/pixiv-mcp/tests/reverse_stdio.rs": 20446,
+    "crates/pixiv-mcp/tests/stdio.rs": 27149,
+    "crates/pixiv-mcp/tests/support/implemented_catalog.rs": 2066,
+    "crates/pixiv-mcp/tests/support/reverse_search.rs": 2818,
+    "crates/pixiv-mcp/tests/support/reverse_stdio.rs": 3923,
+    "crates/pixiv-record/src/lib.rs": 4020,
+    "crates/pixiv-record/tests/reverse_identity.rs": 1508,
+    "crates/pixiv-sdk/src/fanbox/native.rs": 12166,
+    "crates/pixiv-sdk/tests/reverse_native.rs": 6283,
+    "docs/migration/contracts.md": 446732,
+    "docs/migration/ledger.json": 994163,
+    "docs/migration/ledger.md": 6488,
+    "docs/migration/provenance/reverse-search-implementation-baseline.json": 66752,
+    "docs/migration/provenance/reverse-search-implementation-gates.json": 18729,
+    "docs/migration/remaining-features.md": 53683,
+    "docs/migration/reverse-search-contracts.md": 20682,
+    "internal/services/reversesearch/ascii2d/migration_large_multipart_test.go": 11676
+  },
+  "self_hash_exclusions": [
+    "docs/migration/provenance/reverse-search-implementation-review.md",
+    "docs/migration/provenance/reverse-search-implementation-review.json"
+  ],
+  "markdown_review": {
+    "path": "docs/migration/provenance/reverse-search-implementation-review.md",
+    "sha256": "2c94ae0e89d12f7ce98c07425f52aeb826f5292473fd26bfb973af644d619671"
+  },
+  "independent_checks": {
+    "candidate_matches_disk": true,
+    "candidate_matches_exact_git_changed_set": true,
+    "protected_go_disk_and_frozen_git_blob_equality": 434,
+    "protected_fixtures_disk_and_published_git_blob_equality": 109,
+    "published_json": 107,
+    "published_pem": 2,
+    "protected_drift": [],
+    "gate_input_count": 8933,
+    "gate_source_test_fixture_dependency_script_drift": [],
+    "post_gate_preexisting_input_drift": [
+      "docs/migration/contracts.md",
+      "docs/migration/ledger.json",
+      "docs/migration/ledger.md",
+      "docs/migration/remaining-features.md",
+      "docs/migration/reverse-search-contracts.md"
+    ],
+    "all_cited_log_hashes_equal": true,
+    "unchanged_mandatory_script_matches_base": true,
+    "production_rust_test_attributes_found": false,
+    "old_mcp_catalog_assertions_preserved": true,
+    "ledger_ids_preserved": 673,
+    "ledger_platform_drift": [],
+    "ledger_only_status_change": "mcp:pixiv:reverse_search pending→in_progress",
+    "ledger_counts": {
+      "in_progress": 612,
+      "pending": 61,
+      "verified": 0
+    }
+  },
+  "baseline": {
+    "path": "docs/migration/provenance/reverse-search-implementation-baseline.json",
+    "sha256": "eb6dc8daa4cfbae300d0d9ea0b9573f6547ae3cc353efa8a22a1e340dec500a6"
+  },
+  "gates_provenance": {
+    "path": "docs/migration/provenance/reverse-search-implementation-gates.json",
+    "sha256": "68ec343723d80dbe3635a4ee0cc776a0db1a2f40b64d1b67dc9411b5054894fd"
+  },
+  "pre_gate_manifest": {
+    "path": "/tmp/reverse-implementation-final2-fullgate-inputs.json",
+    "sha256": "e233551c226f64071f04cc3bcd686b57d2571aaa7bafdb5600962dd0e7c76496",
+    "file_count": 8933
+  },
+  "script_sha256": "a5cc6a8c5265061d8e25fa67f364b5f9253ba93fcbcd904e5ca768c3e77fb7f6",
+  "validation": {
+    "focused_go": {
+      "log": "/tmp/reverse-implementation-focused-go.jsonl",
+      "log_sha256": "9bea6f1a6ee53e492deb17d492a7da002060d216fe9f711e29cf178cc0cbd201",
+      "exit_code": 0,
+      "named_passes": 767,
+      "top_level": 46,
+      "nested": 721,
+      "package_passes": 6,
+      "skips": 0,
+      "failures": [],
+      "command": "GOPROXY=off GOSUMDB=off go test -json ./internal/services/reversesearch/... ./internal/cli ./internal/mcpserver/pixiv -run \"^(TestAggregatorAllFailureReturnsOrderedSafeErrorsAndAggregateError|TestAggregatorAllOneModeFailureIsPartialAndKeepsOtherResults|TestAggregatorAllRunsProviderBranchesAndASCII2DModesConcurrently|TestAggregatorCancellationAbortsWholeAllRequestWithoutPartial|TestAggregatorCloseClosesProviderClientsOnce|TestAggregatorSinglePreflightRejectsBeforeReadingSource|TestAggregatorSingleProviderFailureReturnsSafeEnvelopeAndError|TestAggregatorSingleSauceNAOSuccessProducesCanonicalEnvelope|TestCLIReverseSearchClosesSearcherOnceAndKeepsJSONOnStdout|TestCancellationDuringSnapshotCopyRemainsAnOverallCancellation|TestCloseStateClosesInReverseOrderOnceAndJoinsErrors|TestFacadeCloseClosesPayloadSearcherOnceAndPreservesError|TestFacadeLoadsOnePayloadSnapshotDelegatesAndCleansIt|TestFacadePreflightFailureDoesNotReadSource|TestFacadePreservesSafeInputAndCleansSnapshotWhenPayloadSearchFails|TestFileSourceCreatesPrivateStableSnapshot|TestFileSourceFollowsSymlinkAndRejectsNonRegularTarget|TestFileSourceRechecksTypeAfterOpen|TestFileSourceRejectsFIFOWithoutOpeningAReader|TestHTTPSourceFetchesPrivateAddressOnceIntoSnapshot|TestImageSearchBuildsReverseSearchWithCLIProxyOverride|TestMCPReverseSearchPassesConfiguredUserAgentToAssembly|TestMCPReverseSearchRegistersSearcherForStdioLifetime|TestMCPReverseSearchUsesConfiguredServiceProxyBeforeGlobal|TestMCPReverseSearchUsesStartupConfigAndProxySnapshot|TestMigrationASCII2DProtocolFrozenGo|TestMigrationMCPReverseSearchMatchesFrozenConnectedWire|TestMigrationMCPReverseSearchStdioHelper|TestMigrationReverseSauceNAOFrozenGo|TestMigrationReverseSearchCLIPreservesConnectedRootContracts|TestMigrationReverseSearchCore|TestNewWithClientPassesFlareSolverrToASCII2D|TestNewWithClientSeparatesBrowserASCII2DFromStandardClients|TestReverseSearchConfigurationFailureKeepsEmptyEnvelope|TestReverseSearchFailurePreservesSafeStructuredEnvelope|TestReverseSearchPartialResultIsNotMCPError|TestReverseSearchPublishesClosedInputAndEnvelopeSchemas|TestReverseSearchReturnsStructuredEnvelopeAndRecord|TestReverseSearchStableSolverErrorKeepsStructuredErrorEnvelope|TestReverseSearchUsesStartupProviderWhenInputOmitsOverride|TestSearchUserReturnsSourceAndStructuredPreviews|TestSnapshotCloseRemovesPayloadAndPreventsReopen|TestURLSourceCancellationRemovesPartialSnapshot|TestURLSourceHTTPFailureDoesNotReadOrExposeResponseBody|TestURLSourceRejectsUserinfoUnsupportedSchemeAndMalformedHTTPWithoutFetching|TestURLSourceRevalidatesRedirectAndFinalResponseURL)$\" -count=1"
+    },
+    "additive_large_multipart_go": {
+      "log": "/tmp/reverse-implementation-large-go-final.jsonl",
+      "log_sha256": "a4faf0dc055de44ea59401ca6447d65ad8be71df3bace0508c96a5e9ff207b08",
+      "exit_code": 0,
+      "named_passes": 4,
+      "top_level": 1,
+      "nested": 3,
+      "package_passes": 1,
+      "skips": 0,
+      "failures": [],
+      "command": "GOPROXY=off GOSUMDB=off go test -json ./internal/services/reversesearch/ascii2d -run ^TestMigrationASCII2DLargeMultipartFrozenGo$ -count=1"
+    },
+    "vet": {
+      "log": "/tmp/reverse-implementation-final-vet.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exit_code": 0
+    },
+    "gofmt": {
+      "log": "/tmp/reverse-implementation-gofmt.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exit_code": 0
+    },
+    "additive_gofmt": {
+      "log": "/tmp/reverse-implementation-large-gofmt.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exit_code": 0
+    },
+    "catalog_focused": {
+      "log": "/tmp/reverse-mcp-catalog-focused.log",
+      "log_sha256": "ccac699ed6c253e5c1b0c18b7a215ce4280b96ff19f4621c729a3a9232c447a6",
+      "exit_code": 0,
+      "raw_reported_passes": 7,
+      "reported_failures": 0,
+      "ignored": 0,
+      "completed_result_lines": 1,
+      "cargo_target_passes": 7,
+      "cargo_target_ignored": 0,
+      "child_reported_passes": 0,
+      "counter_definition": "Raw counts include child result summaries; cargo-target counts use the last summary within each Running/Doc-tests section, valid for terminal completed gate"
+    },
+    "full_rust": {
+      "log": "/tmp/reverse-implementation-final2-fullgate.log",
+      "log_sha256": "791caa4fab95cb47e3292897a273b7b7c6b025ea5315da73c79226c621b1282b",
+      "exit_code": 0,
+      "raw_reported_passes": 926,
+      "reported_failures": 0,
+      "ignored": 11,
+      "completed_result_lines": 322,
+      "cargo_target_passes": 919,
+      "cargo_target_ignored": 11,
+      "child_reported_passes": 7,
+      "counter_definition": "Raw counts include child result summaries; cargo-target counts use the last summary within each Running/Doc-tests section, valid for terminal completed gate",
+      "stages": {
+        "formatter": "passed",
+        "clippy_workspace_all_targets_strict": "passed",
+        "workspace_tests": "passed",
+        "release_build": "passed"
+      },
+      "started_utc": "2026-10-10T15:39:41Z",
+      "finished_utc": "2026-10-10T15:45:30Z",
+      "release_seconds": 65,
+      "seconds": 349.0,
+      "command": "POWERSHELL_TELEMETRY_OPTOUT=1; pwsh -NoLogo -NoProfile -File scripts/check-rust.ps1 (official Rust1.93.0, offline/locked; owned SQLite shell; native clang environment)",
+      "nonfatal_release_dependency_warnings": "Existing vendored zip emits four lifetime-style warnings; unchanged mandatory script succeeds; no lint allowance or script weakening added"
+    },
+    "validator": {
+      "log": "/tmp/reverse-implementation-final-validator2.log",
+      "log_sha256": "39633eb3ddb476287b32246b7369b2fee6be790bcbe728f476406a70c5a96125",
+      "exit_code": 0
+    },
+    "diff_check": {
+      "log": "/tmp/reverse-implementation-final-diff-check2.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exit_code": 0
+    }
+  },
+  "preserved_failed_attempts": [
+    {
+      "log": "/tmp/reverse-implementation-fullgate.log",
+      "log_sha256": "bfdfc7b4d4860969d0422b29f1bd38245f1ff6d2f2a8741dc3c6eb2fdc1aeb6b",
+      "exit_code": 1,
+      "failure_scope": "strict Clippy test helper acronym SDK; formatter passed, tests/release not reached"
+    },
+    {
+      "log": "/tmp/reverse-implementation-final-fullgate.log",
+      "log_sha256": "92cf4161210c2f8c1f7a9cbc383ec148b25cc09d157c60442f00cf5aabbb2e8d",
+      "exit_code": 1,
+      "raw_reported_passes": 732,
+      "reported_failures": 1,
+      "ignored": 10,
+      "completed_result_lines": 237,
+      "cargo_target_passes": 731,
+      "cargo_target_ignored": 10,
+      "child_reported_passes": 1,
+      "counter_definition": "Raw counts include child result summaries; cargo-target counts use the last summary within each Running/Doc-tests section, valid for terminal completed gate",
+      "failure_scope": "formatter/strictClippy passed; one old MCP stdio exact catalog array omitted reverse_search, corrected with one additive expected descriptor preserving old assertions; release not reached"
+    },
+    {
+      "log": "/tmp/reverse-implementation-related-go.jsonl",
+      "log_sha256": "b88ebe142562214f772b0b62cbe382bda5c15c464d78fdcaf4fcd963438458e5",
+      "exit_code": 1,
+      "named_passes": 2533,
+      "top_level": 372,
+      "nested": 2161,
+      "package_passes": 4,
+      "skips": 22,
+      "failures": [
+        "TestMigrationFanboxBrowserImport",
+        "github.com/FlanChanXwO/pixiv-cli/internal/cli",
+        "TestMigrationMCPUserWorksMatchesFrozenContracts",
+        "github.com/FlanChanXwO/pixiv-cli/internal/mcpserver/pixiv"
+      ],
+      "failure_scope": "first broad Go run: missing SQLite shell environment plus existing nondeterministic MCP UserWorks overlapping schema first diagnostic"
+    },
+    {
+      "log": "/tmp/reverse-implementation-related-go-correct-env.jsonl",
+      "log_sha256": "6e231efceff83b3ccb83a793cca6b7b68ff13d760eefac78449072419cccf22d",
+      "exit_code": 1,
+      "named_passes": 2616,
+      "top_level": 373,
+      "nested": 2243,
+      "package_passes": 5,
+      "skips": 22,
+      "failures": [
+        "TestMigrationMCPBookmarkReadsMatchesFrozenContracts",
+        "github.com/FlanChanXwO/pixiv-cli/internal/mcpserver/pixiv"
+      ],
+      "failure_scope": "corrected owned SQLite environment broad Go run: existing nondeterministic MCP BookmarkReads overlapping schema first diagnostic selects user_id -1 instead of frozen page0"
+    }
+  ],
+  "boundary_scope": {
+    "core": {
+      "frozen_rows": 99,
+      "runtime_representable_rows": 91,
+      "go_only_nil_metadata_rows": 8
+    },
+    "saucenao": {
+      "frozen_harness_rows": 277,
+      "non_nil_runtime_rows": 268,
+      "go_nil_receiver_representational_rows": 9,
+      "empty_key_client_invalid_configuration_correspondence_rows": 8,
+      "go_only_nil_close_without_rust_close_call_rows": 1
+    },
+    "ascii2d": {
+      "public_frozen_rows": 192,
+      "rust_representable_rows": 176,
+      "go_only_public_nil_zero_rows": 16,
+      "private_go_only_cache_rows": 12
+    },
+    "cli": {
+      "scoped_observable_rows": 147,
+      "frozen_rows": 148,
+      "module_rows": 126,
+      "module_connected_image_rows": 101,
+      "module_validation_rows": 25,
+      "distinct_root_remainder_rows": 21,
+      "go_only_private_constructor_replacement_row": 44
+    },
+    "mcp": {
+      "original_go_capture_calls": 60,
+      "scalar_frozen_rows": 52,
+      "note": "Rust fixture replay and separate lifecycle/duplex/owned child schedules; do not treat original Go call count as independent native wire evidence",
+      "rust_direct_executor_rows": 35,
+      "frozen_lifecycle_schedules": {
+        "cancellation_reuse_calls": 2,
+        "out_of_order_reuse_calls": 3,
+        "owned_go_child_tool_frames": 3,
+        "owned_go_child_frames_reaching_searcher": 2
+      }
+    },
+    "additive_large_multipart": {
+      "cases": 3,
+      "image_bytes": 10485760,
+      "csrf_token_bytes": 131072,
+      "multipart_bytes": 10617185,
+      "boundary": "actual Rust ASCII2D Client and NativeHttpTransport with SDKRawTransport owned mock; no physical native upload equivalence"
+    }
+  },
+  "new_rust_target_tests": {
+    "pixiv-app/reverse_core": 13,
+    "pixiv-app/reverse_http": 14,
+    "pixiv-app/reverse_native_multipart": 1,
+    "pixiv-app/reverse_ascii2d": 8,
+    "pixiv-app/reverse_saucenao": 3,
+    "pixiv-app/reverse_assembly": 8,
+    "pixiv-cli/reverse_search": 7,
+    "pixiv-cli/reverse_process": 4,
+    "pixiv-cli/reverse_root": 5,
+    "pixiv-mcp/reverse_search": 3,
+    "pixiv-mcp/reverse_stdio": 7,
+    "pixiv-record/reverse_identity": 2,
+    "pixiv-sdk/reverse_native": 5
+  },
+  "new_rust_test_total": 80,
+  "review_observations": [
+    "Source-first account-independent CLI routing, real production assembly, safe summaries, preflight before I/O, one immutable snapshot, fixed provider order and response-beside-error outcomes are connected",
+    "CLI safe diagnostic codes and MCP structured safe errors retain their separate frozen boundaries; exact record int64 strings and evidence ordering remain distinct from Go structured numeric float projection",
+    "Once-owned facade/aggregator cleanup and caller-owned MCP Searcher are checked only for the captured and supplemental schedules, not arbitrary future drop or concurrent dependency behavior",
+    "Source and Sauce ordinary HTTP readers stream without aggregate image cap; ASCII2D caps image10MiB only; native raw port buffers uncapped complete body and maps zero reader length to unknown -1",
+    "Existing Chrome146 native infrastructure is reused with additive ASCII2D policy and preserved FANBOX default/profile/certificate/lifecycle source; mocks and source checks are not physical native equivalence",
+    "Two exact NDJSON producer rows are accepted by public read parsers without proving all generic Go multi-record consumer behavior"
+  ],
+  "resolved_review_findings": [
+    {
+      "finding": "Invented native aggregate multipart cap",
+      "resolution": "Go-first additive three-case public capture and genuine Rust runtime RED preceded cap removal; exact max-image/large-token body crosses actual Client→NativeHttpTransport→mocked SDK RawTransport",
+      "remaining_scope": "Vec buffering and mocked raw boundary do not prove physical native upload"
+    },
+    {
+      "finding": "Local and ready URL source copy monopolized same-task cancellation",
+      "resolution": "Genuine local, buffered URL and MCP local-copy runtime RED preceded per32KiB yields; cleanup/no provider/reuse and final bytes-plus-EOF Go quirk retained",
+      "remaining_scope": "Blocking Read/OS call cannot be interrupted while in progress"
+    },
+    {
+      "finding": "Stale old MCP exact catalog expected array",
+      "resolution": "One additive descriptor and catalog-name registration; all old assertions retained, focused7/7 and final mandatory gate pass"
+    },
+    {
+      "finding": "Failed full-gate test summaries initially omitted in draft counts",
+      "resolution": "Final accounting preserves second attempt one failure and distinguishes919target from926raw passes"
+    },
+    {
+      "finding": "SauceNAO277 runtime wording overstated nil-receiver boundary",
+      "resolution": "Final docs/ledger/gates explicitly state268non-nil runtime plus9nil representational rows:8empty-key invalid-config correspondences and1Go-only nilClose without RustClose"
+    }
+  ],
+  "genuine_runtime_red": [
+    {
+      "log": "/tmp/reverse-local-copy-cancellation-red.log",
+      "sha256": "77d692dba4c58da9c97cdff9c6d34a38ebacae556cadacb23965e36d550745ba",
+      "outcome": "preserved genuine runtime RED, fixed without changing published expectations"
+    },
+    {
+      "log": "/tmp/reverse-buffered-url-cancellation-red.log",
+      "sha256": "bfe9cd90dbc0d913efe1c939f971ddbf41780917ecaa1c28ff5bd06ac705004c",
+      "outcome": "preserved genuine runtime RED, fixed without changing published expectations"
+    },
+    {
+      "log": "/tmp/reverse-mcp-local-cancellation-red.log",
+      "sha256": "202538dcb5c5248afed9ae0b96ebee9a48d1426ad54c7ac8ba3742c1b0e70931",
+      "outcome": "preserved genuine runtime RED, fixed without changing published expectations"
+    },
+    {
+      "log": "/tmp/reverse-native-framing-red.log",
+      "sha256": "c38cc1d81f50fa495775ef07107f7321de6680b6720e6ec1c7ced224862393a8",
+      "outcome": "preserved genuine runtime RED, fixed without changing published expectations"
+    }
+  ],
+  "preserved_test_first_red": [
+    {
+      "log": "/tmp/reverse-core-rust-api-red.log",
+      "sha256": "bfcbb49ddd9950bcefb03676518dd853c8c78b5feedb39f8497e9a1173cb76b4",
+      "classification": "missing production API/module compile RED"
+    },
+    {
+      "log": "/tmp/reverse-native-api-red.log",
+      "sha256": "bc83494d52925d1b980ce71e26672d5f105b33fb53a865135c37ed284262e9b5",
+      "classification": "missing production API/module compile RED"
+    },
+    {
+      "log": "/tmp/reverse_http-api-red.log",
+      "sha256": "cd2c8ccf831fae0a7ca340abb8870e83afc5f56f677733805432090995171676",
+      "classification": "missing production API/module compile RED"
+    },
+    {
+      "log": "/tmp/reverse-saucenao-rust-api-red.log",
+      "sha256": "8d0182708db96cf4e44809dc8effcee0fe17ea9ddd07997160244adccfe821e6",
+      "classification": "missing production API/module compile RED"
+    },
+    {
+      "log": "/tmp/reverse_ascii2d-api-red.log",
+      "sha256": "ede05b0659c53d594634dc94dc691e06665b5213411c7f527141c2582286a66a",
+      "classification": "missing production API/module compile RED"
+    },
+    {
+      "log": "/tmp/reverse-record-api-red.log",
+      "sha256": "2cebc167f3488a4bb871fb18c7ebdefb1a0115630c50ce7c3d27819fda4b1a58",
+      "classification": "missing production API/module compile RED"
+    },
+    {
+      "log": "/tmp/reverse-mcp-api-red.log",
+      "sha256": "e2b08427d0931228fbd2e31dc34579ac04280564cb8b142089a8949b8dd2e0ba",
+      "classification": "dependency-blocked ASCII2D construction; not isolated MCP missing-API proof"
+    },
+    {
+      "log": "/tmp/reverse-assembly-api-red.log",
+      "sha256": "3de6c15bf2c4945892f99321f394792c1f85e0f685e6c8d748b67f3612557ff3",
+      "classification": "missing production API/module compile RED"
+    },
+    {
+      "log": "/tmp/reverse-cli-api-red.log",
+      "sha256": "5715e60e57ee54c17005c3858f63c0e179daeefa00d1807c5a05a88f9ab5b4ba",
+      "classification": "missing production API/module compile RED"
+    },
+    {
+      "log": "/tmp/reverse-cli-process-red.log",
+      "sha256": "87e0ecd17603ef5695a5e7b7ed27543603a0ef63c4837b365dcf701ede7d647d",
+      "classification": "real subprocess flag/route preflight mismatch before root wiring"
+    }
+  ],
+  "additive_fixture_identity": {
+    "internal/services/reversesearch/ascii2d/migration_large_multipart_test.go": "ddbbfa8a51ab062c3c8817525f9431f1a85e1a3fbf21a6629aad6fd2d71c12ce",
+    "crates/pixiv-cli/tests/fixtures/reverse-ascii2d-large-multipart.json": "8d85ad24c441234f7645e0454d7faf28f20ae0dcbdfce9b26423f5df3224b266",
+    "crates/pixiv-app/tests/reverse_native_multipart.rs": "bb1a07ede12d85e20461e11584633af944cb4e66df39c9bf668a1018027168d7"
+  },
+  "additive_go_source_identity_log": {
+    "log": "/tmp/pixiv-ascii2d-large-go-identities.log",
+    "sha256": "d5c715919224bf882b6961559d02de131bc6eb20432948b7f5aa4d3ea0cc13e1"
+  },
+  "preserved_original_invented_cap": {
+    "/tmp/reverse-http-before-uncapped-framing-production.rs": "a5195457fb6030387d4cac083e58c6c1ba368c2119e5d0542081d4d83f57f932",
+    "/tmp/reverse-http-before-uncapped-framing.rs": "6f57713137a50529dfded1bb5287f7ae24407b1fe20f26c31ef599550fcbbe0d"
+  },
+  "limitations": [
+    "Whole migration remains incomplete; updater/distribution and compatibility debts remain",
+    "Native Windows/Darwin and all six OS/arch runtime/ABI execution remain unverified for this slice",
+    "Native Chrome146 transport reused; source/mock-only reverse header/multipart comparisons do not prove physical TLS/H2/upload equivalence; denied supplemental multiplex/unfinished-HEAD/upload probe remains unattempted",
+    "Reqwest0.13.5 adds Accept: */* where Go does not; HTTP2 relay and full transport/proxy/error parity remain debts",
+    "Native raw port buffers Vec bodies without an invented total cap; source/Sauce ordinary HTTP stream, ASCII image limit10MiB only; arbitrary blocking Reader/OS read cannot be forcibly interrupted",
+    "Public SDK context/client ownership, idle/pacing/release and whole arbitrary Go URL/HTML/JSON grammar/raw-number/error metadata parity remain incomplete",
+    "CLI row44 privateGo constructor replacement, private ASCII cache and Go nil/zero-only representations remain explicitly Go-only",
+    "MCP pending EOF differs: Go suppresses pending response after readErr whereas Rust drains/emits; generic Go NDJSON consumer scheduling/error/lifecycle remains unverified",
+    "Broader Go package attempts failed existing nondeterministic overlapping schema first-diagnostic selections; no fixture changes or opt-in normalization used",
+    "No external media/account/credential/browser/native association effects used; owned synthetic sources/keys/processes/loopback and real production boundaries only",
+    "SauceNAO277 harness rows are not277 runtime calls:268 non-nil runtime rows, eight empty-key Client correspondence for Go nil receivers, one Go-only nil Close without a Rust Close call",
+    "SauceNAO nil-receiver correspondence is representational; eight invalid-config calls and one Go-only nilClose do not establish a Rust nil-client API",
+    "Core8 and ASCII2D16 nil/mutated-request/zero-only rows, ASCII2D12 private cache rows and CLI row44 private constructor replacement remain outside runtime parity",
+    "Successful provider searches in the shipped binary remain unverified; real subprocess proof is the documented missing-key/startup boundaries",
+    "Arbitrary filesystem races/ACLs/IO faults, future-drop/concurrent cleanup and all generic consumer schedules remain outside captured evidence"
+  ],
+  "approval_conditions": [
+    "Only sealed58-file bounded connected checkpoint and these two review additions are approved",
+    "No whole feature or platform status promotion; retain all current failures and explicitly recorded differences",
+    "Production/test/fixture/dependency/script changes invalidate the gate-bound decision; documentation claim changes require renewed hash-bound review",
+    "No commit, push, release publication, denied native probe or real credential/media/account effect is authorized by this review"
+  ]
+}

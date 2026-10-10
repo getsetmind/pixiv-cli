@@ -22,6 +22,8 @@ pub struct SearchInput {
     pub trending_tags: bool,
     #[arg(long = "type", short = 't')]
     pub entity: Option<String>,
+    #[arg(long)]
+    pub provider: Option<String>,
     #[arg(skip)]
     changed_flags: Vec<&'static str>,
     #[arg(skip)]
@@ -39,6 +41,7 @@ impl SearchInput {
         Self {
             trending_tags: false,
             entity: Some("novel".into()),
+            provider: None,
             changed_flags: vec![],
             user_owner: false,
             query,
@@ -74,6 +77,8 @@ impl SearchInput {
             ("limit", "limit"),
             ("page", "page"),
             ("ndjson", "ndjson"),
+            ("json", "json"),
+            ("provider", "provider"),
         ]
         .into_iter()
         .filter_map(|(name, id)| {
@@ -81,6 +86,10 @@ impl SearchInput {
                 .then_some(name)
         })
         .collect();
+    }
+
+    pub fn changed_flags(&self) -> &[&'static str] {
+        &self.changed_flags
     }
 
     pub fn novel_request(
@@ -226,7 +235,11 @@ impl SearchInput {
                 "--trending-tags cannot be combined with --type or --content-type",
             ));
         }
-        if let Some(name) = self.changed_flags.first() {
+        if let Some(name) = self
+            .changed_flags
+            .iter()
+            .find(|name| !matches!(**name, "json" | "provider"))
+        {
             return Err(CommandError::MessageText(format!(
                 "--{name} is not supported with --trending-tags"
             )));

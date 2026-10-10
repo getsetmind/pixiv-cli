@@ -54,3 +54,7 @@ go test ./scripts/tests/migration -run '^TestMigration(SDK|MCP)' -count=1 -args 
 ## Reverse-search Go-first evidence
 
 The CLI search and MCP reverse_search entries now link actual connected Go test producers before Rust implementation. Their existing status and verified_platforms are unchanged. This contracts-only boundary is documented in [reverse-search-contracts.md](reverse-search-contracts.md); fixture count is evidence, not feature completion.
+
+## Reverse-search connected continuation (2026-10-10)
+
+The connected candidate adds shared source/provider assembly and actual CLI/MCP output/cleanup to the historical Go-first freeze. Only `mcp:pixiv:reverse_search` changes from pending to in_progress; CLI search was already in_progress. The673 identities remain unchanged:612 in_progress,61 pending and zero verified. Existing verified_platforms are retained without additions. [Current bounded scope](reverse-search-contracts.md#connected-rust-candidate-2026-10-10) records core91/99, SauceNAO268 non-nil runtime/277 harness rows (nine nil-receiver representational rows), ASCII2D176/192 public rows, CLI147/148 and separately scoped MCP52 raw-wire/35 direct-result/lifecycle schedules. Third full-script terminal exit0 and focused Go success coexist with the retained broad Go schema-diagnostic failures and native/compatibility debts; declaration counts are not a completion percentage.

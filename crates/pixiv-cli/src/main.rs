@@ -1291,6 +1291,60 @@ async fn execute(
         .await;
     }
 
+    if let Command::Search {
+        input, connection, ..
+    } = &args.command
+    {
+        let source = search_word.as_deref().unwrap_or("");
+        let reverse_input = pixiv_cli_rs::reverse_search::Input {
+            source: source.to_owned(),
+            provider: input.provider.clone().unwrap_or_default(),
+            changed_flags: input
+                .changed_flags()
+                .iter()
+                .map(|flag| (*flag).to_owned())
+                .collect(),
+            ndjson: input.ndjson,
+            json_changed: input.changed_flags().contains(&"json"),
+        };
+        pixiv_cli_rs::reverse_search::validate_input(&reverse_input)?;
+        if pixiv_cli_rs::reverse_search::is_image_source(source) {
+            let (_, config) = account_config
+                .as_ref()
+                .expect("search startup was resolved");
+            let runtime = config
+                .current()
+                .and_then(|snapshot| snapshot.runtime())
+                .map_err(pixiv_app::scheduler::SchedulerError::from)?;
+            let proxy = connection.override_value()?;
+            let provider = pixiv_cli_rs::reverse_search::resolve_provider(
+                input.provider.as_deref().unwrap_or(""),
+                &runtime.reverse_search_provider,
+            )?;
+            let mode = input.output_mode(runtime.output_json, io::stdout().is_terminal())?;
+            *ndjson_output = mode == DetailOutput::Ndjson;
+            let searcher = pixiv_app::reverse_search::assembly::build(
+                pixiv_app::reverse_search::assembly::Options::from_runtime(&runtime, proxy),
+            )
+            .map_err(CommandError::ReverseSearch)?;
+            let result = pixiv_cli_rs::reverse_search::run(
+                searcher.as_ref(),
+                std::sync::Arc::new(root_context.clone()),
+                pixiv_app::reverse_search::Request {
+                    source: source.to_owned(),
+                    provider,
+                    pixiv_only: runtime.reverse_search_pixiv_only,
+                },
+                mode,
+                &mut io::stdout().lock(),
+                Some(&mut io::stderr().lock()),
+            )
+            .await;
+            let cleanup = searcher.close().await.map_err(CommandError::ReverseSearch);
+            return pixiv_cli_rs::finish_with_cleanup(result, cleanup);
+        }
+    }
+
     let detail_id = match &args.command {
         Command::Detail {
             source,
@@ -1634,81 +1688,101 @@ async fn execute(
             pixiv_app::connection::CommandConnection::resolve(&runtime, proxy)
                 .map_err(pixiv_app::scheduler::SchedulerError::Proxy)?;
         }
-        let database = pixiv_app::database::Database::open(&directory)
-            .map_err(|error| CommandError::State(Box::new(error)))?;
         let download_runtime = config
             .current()
             .and_then(|snapshot| snapshot.runtime())
             .map_err(pixiv_app::scheduler::SchedulerError::from)?;
-        let download_defaults = pixiv_mcp::download::DownloadDefaults::from(&download_runtime);
-        let execution = std::sync::Arc::new(pixiv_app::execution::Execution::http(
-            config,
-            std::sync::Arc::new(std::sync::Mutex::new(database)),
-        ));
-        let random_execution = execution.clone();
-        let random_defaults = download_defaults.clone();
-        let random_account = pixiv_mcp::runtime::Account {
-            user_id: 0,
-            https_proxy_override: proxy.map(str::to_owned),
-        };
-        let download_execution = execution.clone();
-        let download_account = pixiv_mcp::runtime::Account {
-            user_id: 0,
-            https_proxy_override: proxy.map(str::to_owned),
-        };
-        let download = move |context, input| -> pixiv_mcp::download::DownloadFuture {
-            let execution = download_execution.clone();
-            let defaults = download_defaults.clone();
-            let account = download_account.clone();
-            Box::pin(async move {
-                pixiv_mcp::download::saved_download_with_account(
-                    &execution,
-                    &context,
-                    &defaults,
-                    input,
-                    &account,
-                    std::sync::Arc::new(|client| {
-                        std::sync::Arc::new(pixiv_app::download::NativeDownloadSaveClient::new(
-                            client,
-                        ))
-                    }),
-                )
-                .await
-            })
-        };
-        let random = move |context, input| -> pixiv_mcp::download::DownloadFuture {
-            let execution = random_execution.clone();
-            let defaults = random_defaults.clone();
-            let account = random_account.clone();
-            Box::pin(async move {
-                pixiv_mcp::download::saved_download_random_with_account(
-                    &execution,
-                    &context,
-                    &defaults,
-                    input,
-                    &account,
-                    std::sync::Arc::new(|client| {
-                        std::sync::Arc::new(pixiv_app::download::NativeDownloadSaveClient::new(
-                            client,
-                        ))
-                    }),
-                )
-                .await
-            })
-        };
-        pixiv_mcp::stdio::serve_saved_with_downloads_context(
-            &execution,
-            proxy,
-            pixiv_mcp::stdio::DownloadExecutors {
-                download: Some(&download),
-                random_from_recommendation: Some(&random),
-            },
-            root_context,
-            tokio::io::stdin(),
-            &mut tokio::io::stdout(),
+        let reverse_searcher = pixiv_app::reverse_search::assembly::build(
+            pixiv_app::reverse_search::assembly::Options::from_runtime(&download_runtime, proxy),
         )
-        .await?;
-        return Ok(());
+        .map_err(CommandError::ReverseSearch)?;
+        let reverse_executor = pixiv_mcp::reverse_search::ReverseExecutor::new(
+            reverse_searcher.clone(),
+            pixiv_app::reverse_search::Provider::from(
+                download_runtime.reverse_search_provider.as_str(),
+            ),
+            download_runtime.reverse_search_pixiv_only,
+        );
+        let result = async {
+            let database = pixiv_app::database::Database::open(&directory)
+                .map_err(|error| CommandError::State(Box::new(error)))?;
+            let download_defaults = pixiv_mcp::download::DownloadDefaults::from(&download_runtime);
+            let execution = std::sync::Arc::new(pixiv_app::execution::Execution::http(
+                config,
+                std::sync::Arc::new(std::sync::Mutex::new(database)),
+            ));
+            let random_execution = execution.clone();
+            let random_defaults = download_defaults.clone();
+            let random_account = pixiv_mcp::runtime::Account {
+                user_id: 0,
+                https_proxy_override: proxy.map(str::to_owned),
+            };
+            let download_execution = execution.clone();
+            let download_account = pixiv_mcp::runtime::Account {
+                user_id: 0,
+                https_proxy_override: proxy.map(str::to_owned),
+            };
+            let download = move |context, input| -> pixiv_mcp::download::DownloadFuture {
+                let execution = download_execution.clone();
+                let defaults = download_defaults.clone();
+                let account = download_account.clone();
+                Box::pin(async move {
+                    pixiv_mcp::download::saved_download_with_account(
+                        &execution,
+                        &context,
+                        &defaults,
+                        input,
+                        &account,
+                        std::sync::Arc::new(|client| {
+                            std::sync::Arc::new(pixiv_app::download::NativeDownloadSaveClient::new(
+                                client,
+                            ))
+                        }),
+                    )
+                    .await
+                })
+            };
+            let random = move |context, input| -> pixiv_mcp::download::DownloadFuture {
+                let execution = random_execution.clone();
+                let defaults = random_defaults.clone();
+                let account = random_account.clone();
+                Box::pin(async move {
+                    pixiv_mcp::download::saved_download_random_with_account(
+                        &execution,
+                        &context,
+                        &defaults,
+                        input,
+                        &account,
+                        std::sync::Arc::new(|client| {
+                            std::sync::Arc::new(pixiv_app::download::NativeDownloadSaveClient::new(
+                                client,
+                            ))
+                        }),
+                    )
+                    .await
+                })
+            };
+            pixiv_mcp::stdio::serve_saved_with_reverse_and_downloads_context(
+                &execution,
+                proxy,
+                pixiv_mcp::stdio::DownloadExecutors {
+                    download: Some(&download),
+                    random_from_recommendation: Some(&random),
+                },
+                Some(&reverse_executor),
+                root_context,
+                tokio::io::stdin(),
+                &mut tokio::io::stdout(),
+            )
+            .await?;
+            Ok(())
+        }
+        .await;
+        let cleanup = reverse_searcher
+            .close()
+            .await
+            .map_err(CommandError::ReverseSearch);
+        return pixiv_cli_rs::finish_with_cleanup(result, cleanup);
     }
     match args.command {
         Command::Auth

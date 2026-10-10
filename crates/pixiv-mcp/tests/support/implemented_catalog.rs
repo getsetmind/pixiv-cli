@@ -1,6 +1,6 @@
 use serde_json::Value;
 
-const IMPLEMENTED_NAMES: [&str; 53] = [
+const IMPLEMENTED_NAMES: [&str; 54] = [
     "illust_detail",
     "search_illust",
     "trending_tags_illust",
@@ -54,6 +54,7 @@ const IMPLEMENTED_NAMES: [&str; 53] = [
     "stamp_novel_comment",
     "download",
     "download_random_from_recommendation",
+    "reverse_search",
 ];
 
 pub fn assert_catalog(tools: &[Value]) {

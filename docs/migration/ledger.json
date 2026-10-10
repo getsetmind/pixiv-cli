@@ -2688,7 +2688,23 @@
         "crates/pixiv-cli/src/novel_list.rs",
         "crates/pixiv-cli/src/user_search.rs",
         "crates/pixiv-sdk/src/user_wire.rs",
-        "crates/pixiv-sdk/src/pixiv.rs"
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-app/src/reverse_search/aggregator.rs",
+        "crates/pixiv-app/src/reverse_search/ascii2d/cookies.rs",
+        "crates/pixiv-app/src/reverse_search/ascii2d/html.rs",
+        "crates/pixiv-app/src/reverse_search/ascii2d/mod.rs",
+        "crates/pixiv-app/src/reverse_search/ascii2d/solver.rs",
+        "crates/pixiv-app/src/reverse_search/assembly.rs",
+        "crates/pixiv-app/src/reverse_search/errors.rs",
+        "crates/pixiv-app/src/reverse_search/facade.rs",
+        "crates/pixiv-app/src/reverse_search/http.rs",
+        "crates/pixiv-app/src/reverse_search/mod.rs",
+        "crates/pixiv-app/src/reverse_search/normalize.rs",
+        "crates/pixiv-app/src/reverse_search/saucenao.rs",
+        "crates/pixiv-app/src/reverse_search/source.rs",
+        "crates/pixiv-sdk/src/fanbox/native.rs",
+        "crates/pixiv-record/src/lib.rs",
+        "crates/pixiv-cli/src/reverse_search.rs"
       ],
       "tests": [
         "internal/cli/commands/pixiv/search/migration_dates_test.go#TestMigrationQuickDateRangesMatchFrozenTokyoBoundaries",
@@ -2752,7 +2768,19 @@
         "internal/services/reversesearch/saucenao/migration_protocol_test.go",
         "internal/services/reversesearch/ascii2d/migration_protocol_test.go",
         "internal/services/reversesearch/ascii2d/migration_solver_test.go",
-        "internal/cli/migration_reverse_search_test.go"
+        "internal/cli/migration_reverse_search_test.go",
+        "crates/pixiv-app/tests/reverse_core.rs",
+        "crates/pixiv-app/tests/reverse_saucenao.rs",
+        "crates/pixiv-app/tests/reverse_ascii2d.rs",
+        "crates/pixiv-app/tests/reverse_assembly.rs",
+        "crates/pixiv-app/tests/reverse_http.rs",
+        "crates/pixiv-app/tests/reverse_native_multipart.rs",
+        "crates/pixiv-sdk/tests/reverse_native.rs",
+        "crates/pixiv-record/tests/reverse_identity.rs",
+        "internal/services/reversesearch/ascii2d/migration_large_multipart_test.go",
+        "crates/pixiv-cli/tests/reverse_search.rs",
+        "crates/pixiv-cli/tests/reverse_root.rs",
+        "crates/pixiv-cli/tests/reverse_process.rs"
       ],
       "verified_platforms": [
         "windows-amd64",
@@ -2780,7 +2808,10 @@
         "selector の従来 fixture は認証済み owner/SDK を注入した比較であり、SDK 内の sort validation error を実起動へ流用していた差を解消。既存の SDK error/envelope の比較を維持し、別の Go real-startup 99ケースで隔離 HOME の未認証診断と config/DB 作成順を比較する。bookmark/date/options/page の子プロセスを一時 HOME/USERPROFILE へ隔離し、実ホームは参照しない。",
         "User と SearchUsers の raw wire を Go の177ケース（82/95）で比較。宣言済み key の ASCII/ſ/K folding、入力順の duplicate merge/reset、scalar/pointer null、sticky 型エラー・publicity の回復、未知9e999・総深さ10000/10001・末尾入力を再現。CLI User/SearchUsers 99/309、MCP 25/192ケースを直接・保存済み account・stdio で比較し、元の行と schema は維持。workspace 全必須チェックは Linux amd64 で162 passed・既存3 ignored・release 成功。残る差は作品/小説の埋め込み User と未キャッシュ user_profile metadata の Value decode。全 JSON/通信/SDK Options、取消/deadline・pool・resource 実取得・live HTTPS・TTY・他 OS/arch は未検証。",
         "当時のGo root検証はLinux CLI inventory snapshot不在で失敗した。record checkpointで既存capture flagから実Linux Cobra登録を採取し、元Windows snapshotとbyte一致を確認した。登録inventoryの不足は解消したが、Linux全CLI動作・全flag/help/TTY/native hooks・他platformの検証とは扱わない。",
-        "Reverse search Go-first contracts-only checkpoint: actual source/snapshot/facade/aggregator, SauceNAO and ASCII2D public protocols, root CLI and registered MCP synthetic boundaries are captured before Rust. No reverse Rust implementation or native Chrome146/runtime/platform equivalence is claimed; status/platforms remain unchanged. See reverse-search-contracts.md and reverse-search-contracts provenance."
+        "Reverse search Go-first contracts-only checkpoint: actual source/snapshot/facade/aggregator, SauceNAO and ASCII2D public protocols, root CLI and registered MCP synthetic boundaries are captured before Rust. No reverse Rust implementation or native Chrome146/runtime/platform equivalence is claimed; status/platforms remain unchanged. See reverse-search-contracts.md and reverse-search-contracts provenance.",
+        "Connected candidate from 71d79869 preserves frozen Go 4b442648 and prior contracts-only evidence: core91/99, SauceNAO268 non-nil runtime/277 harness rows (nine nil-receiver representational rows: eight empty-key Rust Client invalid-config correspondences, one Go-only nil Close without a Rust Close call), ASCII2D176/192 public rows; eight core and16 ASCII2D nil/zero/request-mutation rows plus12 private Go cache rows remain unrepresented. Native HTTP bridge14 and SDK native5 source/no-network tests do not establish physical upload/TLS/H2/proxy or native OS parity. Large multipart3 compares actual public Client→NativeHttpTransport→mocked SDK RawTransport with 10MiB image/128KiB token; complete Vec buffering is uncapped but physical native upload remains unverified.",
+        "Reverse image routing now precedes saved-account acquisition and connects real shared assembly/output/cleanup. CLI147/148 bounded observations comprise126 module rows (101 genuine loader/facade/aggregator image calls +25 validation) and21/22 distinct root remainder rows; row44 private Go constructor replacement remains Go-only. Four real Linux subprocess tests include an owned missing-key MCP binary. Two emitted NDJSON rows preserve exact bytes through public read-parser acceptance, without proving generic multi-record consumer scheduling; successful shipped-binary provider searches remain unverified.",
+        "Existing SDK public Context/client ownership/idle-close, Accept: */*, relay HTTP/2, pacing, signal restoration, repeated Windows cleanup, arbitrary JSON/URL/HTML/numeric/metadata/IO/private-cache/blocking-Read/future-drop/concurrent schedules and all OS/arch/distribution/updater debts remain. The required final unchanged full Rust script passes with terminal exit0 in349s, last-target summaries919passed/0failed/11unchanged ignored and926 raw visible passes including7 extra child summaries; optimized release1m05s. Two earlier failed full-script attempts and two broad Go schema-nondeterminism failures remain recorded. No expectation or opt-in normalization is changed, no denied supplemental native probe is retried and no verified platform is added."
       ]
     },
     {
@@ -4552,22 +4583,57 @@
     },
     {
       "id": "mcp:pixiv:reverse_search",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/mcp-pixiv.json",
         "key": "reverse_search"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-app/src/reverse_search/aggregator.rs",
+        "crates/pixiv-app/src/reverse_search/ascii2d/cookies.rs",
+        "crates/pixiv-app/src/reverse_search/ascii2d/html.rs",
+        "crates/pixiv-app/src/reverse_search/ascii2d/mod.rs",
+        "crates/pixiv-app/src/reverse_search/ascii2d/solver.rs",
+        "crates/pixiv-app/src/reverse_search/assembly.rs",
+        "crates/pixiv-app/src/reverse_search/errors.rs",
+        "crates/pixiv-app/src/reverse_search/facade.rs",
+        "crates/pixiv-app/src/reverse_search/http.rs",
+        "crates/pixiv-app/src/reverse_search/mod.rs",
+        "crates/pixiv-app/src/reverse_search/normalize.rs",
+        "crates/pixiv-app/src/reverse_search/saucenao.rs",
+        "crates/pixiv-app/src/reverse_search/source.rs",
+        "crates/pixiv-sdk/src/fanbox/native.rs",
+        "crates/pixiv-record/src/lib.rs",
+        "crates/pixiv-mcp/src/reverse_search.rs",
+        "crates/pixiv-mcp/src/lib.rs",
+        "crates/pixiv-mcp/src/stdio.rs",
+        "crates/pixiv-cli/src/main.rs"
+      ],
       "tests": [
         "internal/services/reversesearch/migration_core_test.go",
         "internal/services/reversesearch/saucenao/migration_protocol_test.go",
         "internal/services/reversesearch/ascii2d/migration_protocol_test.go",
         "internal/services/reversesearch/ascii2d/migration_solver_test.go",
-        "internal/mcpserver/pixiv/migration_reverse_search_test.go"
+        "internal/mcpserver/pixiv/migration_reverse_search_test.go",
+        "crates/pixiv-app/tests/reverse_core.rs",
+        "crates/pixiv-app/tests/reverse_saucenao.rs",
+        "crates/pixiv-app/tests/reverse_ascii2d.rs",
+        "crates/pixiv-app/tests/reverse_assembly.rs",
+        "crates/pixiv-app/tests/reverse_http.rs",
+        "crates/pixiv-app/tests/reverse_native_multipart.rs",
+        "crates/pixiv-sdk/tests/reverse_native.rs",
+        "crates/pixiv-record/tests/reverse_identity.rs",
+        "internal/services/reversesearch/ascii2d/migration_large_multipart_test.go",
+        "crates/pixiv-mcp/tests/reverse_search.rs",
+        "crates/pixiv-mcp/tests/reverse_stdio.rs",
+        "crates/pixiv-cli/tests/reverse_process.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Reverse search Go-first contracts-only checkpoint: actual source/snapshot/facade/aggregator, SauceNAO and ASCII2D public protocols, root CLI and registered MCP synthetic boundaries are captured before Rust. No reverse Rust implementation or native Chrome146/runtime/platform equivalence is claimed; status/platforms remain unchanged. See reverse-search-contracts.md and reverse-search-contracts provenance."
+        "Reverse search Go-first contracts-only checkpoint: actual source/snapshot/facade/aggregator, SauceNAO and ASCII2D public protocols, root CLI and registered MCP synthetic boundaries are captured before Rust. No reverse Rust implementation or native Chrome146/runtime/platform equivalence is claimed; status/platforms remain unchanged. See reverse-search-contracts.md and reverse-search-contracts provenance.",
+        "Connected candidate from 71d79869 preserves frozen Go 4b442648 and prior contracts-only evidence: core91/99, SauceNAO268 non-nil runtime/277 harness rows (nine nil-receiver representational rows: eight empty-key Rust Client invalid-config correspondences, one Go-only nil Close without a Rust Close call), ASCII2D176/192 public rows; eight core and16 ASCII2D nil/zero/request-mutation rows plus12 private Go cache rows remain unrepresented. Native HTTP bridge14 and SDK native5 source/no-network tests do not establish physical upload/TLS/H2/proxy or native OS parity. Large multipart3 compares actual public Client→NativeHttpTransport→mocked SDK RawTransport with 10MiB image/128KiB token; complete Vec buffering is uncapped but physical native upload remains unverified.",
+        "MCP reverse_search is registered and connected to real reverse assembly/owned binary startup. All52 scalar wire rows and35 eligible direct result rows from the frozen60-call Go capture are compared. Frozen cancellation/reuse has2 tool calls; concurrent/reuse has3. Sequential owned-Go-child initialization+3 tool responses includes2 Searcher calls. Supplementary parent-context and actual source-copy cancellation/reuse regressions remain distinct; successful shipped-binary provider searches remain unverified. Caller-supplied Searcher is not closed by the executor. Existing EOF difference remains Go pending-result suppression after readErr versus Rust drain/emission. Exact NDJSON public parser acceptance does not prove generic consumer scheduling.",
+        "Existing SDK public Context/client ownership/idle-close, Accept: */*, relay HTTP/2, pacing, signal restoration, repeated Windows cleanup, arbitrary JSON/URL/HTML/numeric/metadata/IO/private-cache/blocking-Read/future-drop/concurrent schedules and all OS/arch/distribution/updater debts remain. The required final unchanged full Rust script passes with terminal exit0 in349s, last-target summaries919passed/0failed/11unchanged ignored and926 raw visible passes including7 extra child summaries; optimized release1m05s. Two earlier failed full-script attempts and two broad Go schema-nondeterminism failures remain recorded. No expectation or opt-in normalization is changed, no denied supplemental native probe is retried and no verified platform is added."
       ]
     },
     {

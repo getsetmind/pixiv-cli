@@ -680,6 +680,7 @@ async fn stdio_publishes_implemented_tool_metadata_and_preserves_request_ids() {
             pixiv_mcp::comment_mutation_tool(pixiv_mcp::CommentMutation::StampNovel),
             pixiv_mcp::download::download_tool(),
             pixiv_mcp::download::download_random_tool(),
+            pixiv_mcp::reverse_search::reverse_search_tool(),
         ])
     );
     implemented_catalog::assert_catalog(responses[1]["result"]["tools"].as_array().unwrap());

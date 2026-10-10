@@ -15,9 +15,32 @@ mod profile;
 
 pub use wreq::tls::{CertificateFailureKind, CertificateVerificationError};
 
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub enum HeaderPolicy {
+    #[default]
+    Fanbox,
+    Ascii2d,
+}
+
+#[derive(Clone, Default)]
+pub struct NativeOptions {
+    pub proxy_url: String,
+    pub header_policy: HeaderPolicy,
+}
+
+impl fmt::Debug for NativeOptions {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter
+            .debug_struct("NativeOptions")
+            .field("header_policy", &self.header_policy)
+            .finish_non_exhaustive()
+    }
+}
+
 #[derive(Clone)]
 pub struct NativeTransport {
     client: wreq::Client,
+    header_policy: HeaderPolicy,
 }
 
 impl fmt::Debug for NativeTransport {
@@ -30,6 +53,14 @@ impl fmt::Debug for NativeTransport {
 
 impl NativeTransport {
     pub fn new(proxy_url: &str) -> Result<Self, ExternalError> {
+        Self::with_options(NativeOptions {
+            proxy_url: proxy_url.into(),
+            header_policy: HeaderPolicy::Fanbox,
+        })
+    }
+
+    pub fn with_options(options: NativeOptions) -> Result<Self, ExternalError> {
+        let proxy_url = options.proxy_url.as_str();
         let roots = CertStore::builder().set_default_paths().build()?;
         let mut builder = wreq::Client::builder()
             .tls_options(profile::tls_options())
@@ -46,6 +77,7 @@ impl NativeTransport {
         }
         Ok(Self {
             client: builder.build()?,
+            header_policy: options.header_policy,
         })
     }
 
@@ -90,26 +122,10 @@ impl NativeTransport {
         let decode_http1 = headers
             .get(wreq::header::ACCEPT_ENCODING)
             .is_some_and(|value| value.as_bytes().windows(4).any(|window| window == b"gzip"));
-        let mut order = OrigHeaderMap::new();
-        let browser_headers = ["accept", "cookie", "origin", "referer"];
-        if browser_headers
-            .iter()
-            .any(|name| headers.contains_key(*name))
-        {
-            for name in [
-                "accept",
-                "cookie",
-                "origin",
-                "referer",
-                "user-agent",
-                "accept-encoding",
-            ] {
-                order.insert(name);
-            }
-        } else {
-            order.insert("accept-encoding");
-            order.insert("user-agent");
-        }
+        let mut order = match self.header_policy {
+            HeaderPolicy::Fanbox => fanbox_header_order(&headers),
+            HeaderPolicy::Ascii2d => ascii2d_header_order(&headers),
+        };
         for name in headers.keys() {
             order.insert(name.clone());
         }
@@ -288,4 +304,71 @@ fn canonical_header(name: &str) -> String {
             result
         })
         .collect()
+}
+
+fn fanbox_header_order(headers: &HeaderMap) -> OrigHeaderMap {
+    let mut order = OrigHeaderMap::new();
+    let browser_headers = ["accept", "cookie", "origin", "referer"];
+    if browser_headers
+        .iter()
+        .any(|name| headers.contains_key(*name))
+    {
+        for name in [
+            "accept",
+            "cookie",
+            "origin",
+            "referer",
+            "user-agent",
+            "accept-encoding",
+        ] {
+            order.insert(name);
+        }
+    } else {
+        order.insert("accept-encoding");
+        order.insert("user-agent");
+    }
+    order
+}
+
+fn ascii2d_header_order(headers: &HeaderMap) -> OrigHeaderMap {
+    let mut order = OrigHeaderMap::new();
+    if header_nonempty(headers, "sec-ch-ua") {
+        order.insert("sec-ch-ua");
+        order.insert("sec-ch-ua-mobile");
+        if header_nonempty(headers, "sec-ch-ua-platform") {
+            order.insert("sec-ch-ua-platform");
+        }
+    }
+    if header_nonempty(headers, "upgrade-insecure-requests") {
+        order.insert("upgrade-insecure-requests");
+    }
+    for name in ["user-agent", "cookie", "accept"] {
+        order.insert(name);
+    }
+    if header_nonempty(headers, "origin") {
+        order.insert("origin");
+    }
+    if header_nonempty(headers, "referer") {
+        order.insert("referer");
+    }
+    for name in [
+        "sec-fetch-site",
+        "sec-fetch-mode",
+        "sec-fetch-user",
+        "sec-fetch-dest",
+        "accept-encoding",
+        "accept-language",
+    ] {
+        order.insert(name);
+    }
+    if header_nonempty(headers, "content-type") {
+        order.insert("content-type");
+    }
+    order
+}
+
+fn header_nonempty(headers: &HeaderMap, name: &str) -> bool {
+    headers
+        .get(name)
+        .is_some_and(|value| !value.as_bytes().is_empty())
 }

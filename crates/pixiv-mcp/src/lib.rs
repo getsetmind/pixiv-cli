@@ -15,6 +15,7 @@ mod trending;
 pub use ranking::{IllustRankingInput, illust_ranking, illust_ranking_tool};
 pub use trending::{TrendingTags, trending_tags_illust, trending_tags_illust_tool};
 pub mod download;
+pub mod reverse_search;
 pub mod runtime;
 pub mod stdio;
 pub use search::{IllustFilter, SearchIllustInput, search_illust, search_illust_tool};
