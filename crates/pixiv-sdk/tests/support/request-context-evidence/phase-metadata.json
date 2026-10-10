@@ -1,0 +1,147 @@
+{
+  "capture": {
+    "command": [
+      "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go",
+      "test",
+      "-mod=readonly",
+      "./sdk/pixiv",
+      "-run",
+      "^TestMigrationRequestContextMatchesFrozenGo$",
+      "-count=1",
+      "-timeout=1m",
+      "-json",
+      "-args",
+      "-migration-capture-request-context"
+    ],
+    "exit": 0,
+    "started_at_utc": "2026-10-10T19:35:54.663222+00:00",
+    "finished_at_utc": "2026-10-10T19:35:55.158161+00:00",
+    "elapsed_seconds": 0.495,
+    "stdout_path": "crates/pixiv-sdk/tests/support/request-context-evidence/capture.log",
+    "stderr_path": "crates/pixiv-sdk/tests/support/request-context-evidence/capture.stderr.log",
+    "top_level_passes": 1
+  },
+  "repeat": {
+    "command": [
+      "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go",
+      "test",
+      "-mod=readonly",
+      "./sdk/pixiv",
+      "-run",
+      "^TestMigrationRequestContextMatchesFrozenGo$",
+      "-count=10",
+      "-timeout=2m",
+      "-json"
+    ],
+    "exit": 0,
+    "started_at_utc": "2026-10-10T19:35:55.158799+00:00",
+    "finished_at_utc": "2026-10-10T19:35:55.727284+00:00",
+    "elapsed_seconds": 0.568,
+    "stdout_path": "crates/pixiv-sdk/tests/support/request-context-evidence/repeat.log",
+    "stderr_path": "crates/pixiv-sdk/tests/support/request-context-evidence/repeat.stderr.log",
+    "top_level_passes": 10
+  },
+  "race": {
+    "command": [
+      "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go",
+      "test",
+      "-race",
+      "-mod=readonly",
+      "./sdk/pixiv",
+      "-run",
+      "^TestMigrationRequestContextMatchesFrozenGo$",
+      "-count=2",
+      "-timeout=2m",
+      "-json"
+    ],
+    "exit": 0,
+    "started_at_utc": "2026-10-10T19:35:55.728013+00:00",
+    "finished_at_utc": "2026-10-10T19:36:00.873080+00:00",
+    "elapsed_seconds": 5.145,
+    "stdout_path": "crates/pixiv-sdk/tests/support/request-context-evidence/race.log",
+    "stderr_path": "crates/pixiv-sdk/tests/support/request-context-evidence/race.stderr.log",
+    "top_level_passes": 2
+  },
+  "related": {
+    "command": [
+      "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go",
+      "test",
+      "-mod=readonly",
+      "./sdk/pixiv",
+      "-run",
+      "^TestMigration(RequestContext|Pacing|DefaultSDKClient|OpenResource|OAuthRefresh|Artwork|Mutation|TransportFailure)",
+      "-count=1",
+      "-timeout=2m",
+      "-json"
+    ],
+    "exit": 0,
+    "started_at_utc": "2026-10-10T19:36:00.873637+00:00",
+    "finished_at_utc": "2026-10-10T19:36:01.945342+00:00",
+    "elapsed_seconds": 1.072,
+    "stdout_path": "crates/pixiv-sdk/tests/support/request-context-evidence/related.log",
+    "stderr_path": "crates/pixiv-sdk/tests/support/request-context-evidence/related.stderr.log"
+  },
+  "adapters": {
+    "command": [
+      "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go",
+      "test",
+      "-mod=readonly",
+      "./internal/services/pixiv/appapi",
+      "./internal/services/pixiv/oauth",
+      "./internal/services/pixiv/resource",
+      "./internal/shared/diagnostics",
+      "-count=1",
+      "-timeout=2m",
+      "-json"
+    ],
+    "exit": 0,
+    "started_at_utc": "2026-10-10T19:36:01.945903+00:00",
+    "finished_at_utc": "2026-10-10T19:36:02.531745+00:00",
+    "elapsed_seconds": 0.586,
+    "stdout_path": "crates/pixiv-sdk/tests/support/request-context-evidence/adapters.log",
+    "stderr_path": "crates/pixiv-sdk/tests/support/request-context-evidence/adapters.stderr.log"
+  },
+  "vet": {
+    "command": [
+      "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go",
+      "vet",
+      "-mod=readonly",
+      "./sdk/pixiv",
+      "./internal/services/pixiv/appapi",
+      "./internal/services/pixiv/oauth",
+      "./internal/services/pixiv/resource",
+      "./internal/shared/diagnostics"
+    ],
+    "exit": 0,
+    "started_at_utc": "2026-10-10T19:36:02.532304+00:00",
+    "finished_at_utc": "2026-10-10T19:36:02.905419+00:00",
+    "elapsed_seconds": 0.373,
+    "stdout_path": "crates/pixiv-sdk/tests/support/request-context-evidence/vet.log",
+    "stderr_path": "crates/pixiv-sdk/tests/support/request-context-evidence/vet.stderr.log"
+  },
+  "gofmt": {
+    "command": [
+      "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/gofmt",
+      "-l",
+      "sdk/pixiv/migration_request_context_test.go"
+    ],
+    "exit": 0,
+    "started_at_utc": "2026-10-10T19:36:02.906187+00:00",
+    "finished_at_utc": "2026-10-10T19:36:02.911338+00:00",
+    "elapsed_seconds": 0.005,
+    "stdout_path": "crates/pixiv-sdk/tests/support/request-context-evidence/gofmt.log",
+    "stderr_path": "crates/pixiv-sdk/tests/support/request-context-evidence/gofmt.stderr.log"
+  },
+  "replay": {
+    "command": [
+      "bash",
+      "crates/pixiv-sdk/tests/support/request_context_go_replay.sh"
+    ],
+    "exit": 0,
+    "started_at_utc": "2026-10-10T19:36:02.911762+00:00",
+    "finished_at_utc": "2026-10-10T19:36:03.479655+00:00",
+    "elapsed_seconds": 0.568,
+    "stdout_path": "crates/pixiv-sdk/tests/support/request-context-evidence/replay.log",
+    "stderr_path": "crates/pixiv-sdk/tests/support/request-context-evidence/replay.stderr.log"
+  }
+}

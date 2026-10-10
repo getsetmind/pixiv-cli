@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "frozen_go": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "capture_head": "f28be78e50348f98055b819ecebcfdc49dab1494",
+  "toolchain": "go version go1.27.1 linux/amd64",
+  "scope": "Actual public pixiv.New, Artwork, ArtworkPages and OpenResource using the SDK-owned clone of official Go net/http Transport on Linux/amd64, with local synthetic TLS HTTP/1.1 peers",
+  "rows": 9,
+  "row_names": [
+    "active-headers-retired-after-close",
+    "active-body-retired-after-close",
+    "next-acquisition-resets-newly-idle-retirement",
+    "mixed-idle-and-active-repeated-close",
+    "resource-eof-after-close-retires-active-connection",
+    "resource-early-close-discards-connection",
+    "cancel-active-headers-after-close",
+    "cancel-active-body-after-close",
+    "resource-cancel-body-after-close"
+  ],
+  "fixture_sha256": "21d7116fd252d80e961fed64533b733d66385595d0aa47ec553ca27a70c2b3ab",
+  "source_sha256": {
+    "go.mod": "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c",
+    "go.sum": "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e",
+    "sdk/pixiv/pixiv.go": "daefb42f9f90359f5ce3d326d18df7afe8c10615750d88fef049cce78224d317",
+    "sdk/pixiv/resource.go": "e94cdf3b2d7f67e159bd2481a1c419e887d842c903107767c4004e4f6a529ed8",
+    "sdk/pixiv/ops_artwork.go": "f8aa00684b84463c6ba82b18db87d4c2e403a0dcaa048f3c3282f6555fd7445c",
+    "sdk/pixiv/map_artwork.go": "45fe0a1d6b081ce2842ce536492b5a431bcf02940d94a29400b06cd8c441bb22",
+    "sdk/pixiv/errors.go": "9a1830393129ca195ef4d57c0bda17f219f0f750c7293abf5520aa888bfe81a8",
+    "sdk/resource.go": "0ce748e4141e33c9fd9dfdfaa8d5a0dbd3176146718eb398fc40c970e375e446",
+    "internal/services/pixiv/resource/resource.go": "c516f925b15a20531eba51f83e6a7797280b6569ad0fd519591e9330199b581a",
+    "internal/services/pixiv/appapi/appapi.go": "b5d9502ad9c534c88bda076740553c8bb6f389c3d2f4e3bd80c32c7f281ba9ff",
+    "internal/services/pixiv/endpoint/artwork/detail/detail.go": "653f5f87a0502487f8ea92824682039c34858d4327b758846def3f3b1e1fca62",
+    "internal/services/pixiv/protocol/failure.go": "974f40cb48806c84e166c325b44f6cea0923f9d3f054c70b4a758d48678ea0b3"
+  },
+  "protected_inventory": {
+    "unchanged_frozen_go_production_and_module_files": 434,
+    "comparison": "Full byte equality against git show at frozen_go, for every non-test .go file and go.mod/go.sum"
+  },
+  "official_toolchain_source_sha256": {
+    "src/net/http/transport.go": "b3c0ef6ea21d8bfa3d8ee4d6f53e3f5e5982c5d6bfcd14536437adeb214a6933"
+  },
+  "official_source_observations": [
+    {
+      "location": "net/http/transport.go:945-965",
+      "behavior": "CloseIdleConnections removes current idle entries and sets closeIdle=true; active connections are not interrupted"
+    },
+    {
+      "location": "net/http/transport.go:1201-1203",
+      "behavior": "A returning HTTP/1 connection is rejected while closeIdle remains true"
+    },
+    {
+      "location": "net/http/transport.go:1248-1251",
+      "behavior": "A later request pool acquisition clears closeIdle"
+    },
+    {
+      "location": "net/http/transport.go:2604-2624",
+      "behavior": "Body-return/drain and request cancellation are competing readLoop selections. Private idle-return callback snapshots on canceled response bodies are not deterministic"
+    },
+    {
+      "location": "net/http/transport.go:2419-2442",
+      "behavior": "Go 1.27.1 may drain an early-closed small response body for up to 50 milliseconds. The early-close case deliberately withholds the remaining body, verifies actual peer closure, and claims no ready-body early-close result"
+    }
+  ],
+  "commands": {
+    "capture": "GOPROXY=off GOWORK=off GOTOOLCHAIN=local go test -mod=readonly ./sdk/pixiv -run '^TestMigrationIdleNativeH1RetirementMatchesFrozenGo$' -count=1 -v -args -migration-update-idle-native-h1",
+    "repeat": "GOPROXY=off GOWORK=off GOTOOLCHAIN=local go test -mod=readonly ./sdk/pixiv -run '^TestMigrationIdleNativeH1RetirementMatchesFrozenGo$' -count=20",
+    "race": "GOPROXY=off GOWORK=off GOTOOLCHAIN=local go test -mod=readonly -race ./sdk/pixiv -run '^TestMigrationIdleNativeH1RetirementMatchesFrozenGo$' -count=20",
+    "regression": "GOPROXY=off GOWORK=off GOTOOLCHAIN=local go test -mod=readonly ./sdk/pixiv -count=1",
+    "vet": "GOPROXY=off GOWORK=off GOTOOLCHAIN=local go vet -mod=readonly ./sdk/pixiv",
+    "format": "gofmt -l sdk/pixiv/migration_idle_native_test.go"
+  },
+  "environment_sources": [
+    "/tmp/quantus-toolchain-env.txt",
+    "/tmp/pixiv-fanbox-native-build-env.sh"
+  ],
+  "verified_gates": {
+    "final_capture": "pass",
+    "final_repeat_20": "pass",
+    "final_race_20": "pass",
+    "sdk_package_regression": "pass",
+    "go_vet_sdk_pixiv": "pass",
+    "gofmt": "pass",
+    "frozen_production_and_modules": "pass"
+  },
+  "final_gate_go_reported_seconds": {
+    "capture": 0.117,
+    "repeat_20": 2.127,
+    "race_20": 5.066,
+    "sdk_package_regression": 1.253
+  },
+  "raw_observation_policy": {
+    "normalization": "None. All SDK errors, body-read errors, wire hosts/targets/methods/protocols, connection IDs, closure checkpoints and explicitly awaited idle-return events compare exactly",
+    "not_contractual": "Private idle-return observer snapshots without an explicit idle-return barrier are retained in raw-private-idle-traces.json and raw-private-idle-variation.json, not treated as proof of callback absence",
+    "mismatch_retention": [
+      "replays/race-10.log",
+      "replays/race-diagnostic-20.log",
+      "replays/race-diagnostic-100.log"
+    ]
+  },
+  "boundary_limits": [
+    "No HTTP/2, multiplexed streams, unfinished HEAD, upload, redirect, proxy, native Windows/Darwin, or real Pixiv/account/media behavior is established by these rows",
+    "Fixed logical app-api.pixiv.net and i.pximg.net URLs are mapped by a strict owned DialContext to an owned local listener. Proxy and HTTP/2 are disabled in the test-only default-transport template. No DNS, external network, credentials, host trust-store changes or InsecureSkipVerify are used",
+    "The synthetic TLS certificate is trusted only by the temporary test transport, with its synthetic DNS identity explicitly verified. The public SDK clones that template; Options.HTTPClient is not injected and no private Client ownership fields or resource caches are changed",
+    "Resource identity/locator preload uses the actual public ArtworkPages operation and its returned ResourceRef. Bodies are synthetic JSON and three literal bytes, not actual media",
+    "All barriers and SDK contexts are bounded by ten seconds. Cleanup cancels owned calls, releases response gates, joins SDK request workers and local peer handlers, closes sockets, and restores DefaultTransport; no t.Parallel or fixed sleeps are used",
+    "Peer closure is observed independently through server ConnState(StateClosed). Request and body completion, sender drop, and empty pool state are not used as substitutes for actual peer shutdown",
+    "Repeated close is exercised while active and in the mixed idle/active schedule. Default constructor validation, failed Open pool retention, caller-owned no-op and independent owned pools are handled by the separate client-ownership contract",
+    "No Cargo commands, Rust edits, Go production edits, go.mod/go.sum edits or previously denied supplemental probes are performed"
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "base_sha": "f28be78e50348f98055b819ecebcfdc49dab1494",
+  "frozen_go": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "recorded_at_utc": "2026-10-10T19:38:39.966686+00:00",
+  "scope": "Durable Go-first contract and official-source audit only; no Rust implementation/dependency activation",
+  "rows": {
+    "client_ownership": 30,
+    "login_ownership": 21,
+    "native_http1_retirement": 9,
+    "request_context_method_calls": 24,
+    "request_context_non_nil": 20,
+    "request_context_go_only_nil": 4
+  },
+  "fresh_go": {
+    "sdk_package_exit": 0,
+    "sdk_named_top_level_passes": 179,
+    "sdk_named_nested_passes": 388,
+    "sdk_dispatch_child_entry_skips": 3,
+    "skip_reason": "Three dedicated entry tests are invoked only by owned subprocess parents, not direct ordinary package dispatch",
+    "sdk_failures": 0,
+    "ledger_exit": 0,
+    "ledger_top_level_passes": 5,
+    "ledger_nested_passes": 58,
+    "ledger_skips": 0,
+    "vet": "SDK and ledger pass",
+    "gofmt": "All four new producers empty",
+    "diff_check": "pass"
+  },
+  "baseline_preservation": {
+    "base_sha": "f28be78e50348f98055b819ecebcfdc49dab1494",
+    "checked_at_utc": "2026-10-10T19:35:15.704635+00:00",
+    "prior_fullgate_executable_input_count": 8701,
+    "all_prior_inputs_unchanged": true,
+    "published_fixture_count": 123,
+    "all_published_fixtures_unchanged": true,
+    "frozen_go_production_module_count": 434,
+    "all_frozen_sources_unchanged": true,
+    "prior_fullgate": "/tmp/root-diagnostics-fullgate.log",
+    "prior_fullgate_exit": "0",
+    "rust_change_count": 0,
+    "cargo_activation": false
+  },
+  "ledger": {
+    "count": 673,
+    "identities_statuses_platforms_and_rust_mappings_unchanged": true,
+    "only_additive_go_contract_test_links": true
+  },
+  "rust_fullgate": {
+    "execution": "Not repeated: Rust source/tests/dependency/script inputs are all byte-identical to the fresh terminal prior gate, per repository unchanged-gate rule",
+    "historical_baseline_exit": 0,
+    "workspace_passes": 1005,
+    "owned_visible_child_passes": 7,
+    "raw_visible_passes": 1012,
+    "failures": 0,
+    "ignored": 11,
+    "started_utc": "2026-10-10T19:05:56Z",
+    "ended_utc": "2026-10-10T19:12:26Z",
+    "fmt": "pass",
+    "strict_workspace_all_target_clippy": "pass",
+    "release": "pass;43.32s",
+    "scope": "Baseline preservation, not an ownership/Context Rust implementation pass"
+  },
+  "publication_mode_exception": {
+    "prior_base": "f28be78e50348f98055b819ecebcfdc49dab1494",
+    "files": [
+      "crates/pixiv-cli/tests/support/diagnostics_dictionary_path_go_replay.sh",
+      "crates/pixiv-cli/tests/support/diagnostics_presenter_offset_go_replay.sh",
+      "crates/pixiv-cli/tests/support/diagnostics_root_joined_go_replay.sh"
+    ],
+    "tested_local_mode": "100755",
+    "published_and_normalized_mode": "100644",
+    "source_bytes_unchanged": true,
+    "invocation": "All documented commands explicitly use bash; bash -n and strict clean/tree verification passed after normalization",
+    "new_contract_scripts": "100644; explicit bash",
+    "current_new_script_normalization": "Before freeze the new Login replay was also normalized from 100755 to100644; source SHA unchanged, explicit bash replay previously passed and bash -n passed after normalization."
+  },
+  "independent_review": "sdk-ownership-contracts-review.json; scoped source/evidence review, no Rust implementation review",
+  "artifacts": [
+    {
+      "path": "docs/migration/provenance/sdk-ownership-contracts-evidence/combined-go.log.gz",
+      "raw_sha256": "56f21b8a24ad61235323a45dfbca90d5794d8ba0af37d28f9b8bc37d527b71b1",
+      "raw_bytes": 102225,
+      "compressed_sha256": "533c646ee109c1725967ac855a2a82026de4ce5311f3260bd64ac42450dc0710"
+    },
+    {
+      "path": "docs/migration/provenance/sdk-ownership-contracts-evidence/ledger.log.gz",
+      "raw_sha256": "66ada66b92b84f19b80b6e065f79d4a16a583a9b5ffdd21a550d776948650c00",
+      "raw_bytes": 11884,
+      "compressed_sha256": "fdead3bb9b0430ba3c833b478dabab1efb51d9d1b1a27cb0f14eb860281e24af"
+    },
+    {
+      "path": "docs/migration/provenance/sdk-ownership-contracts-evidence/baseline-inputs.json.gz",
+      "raw_sha256": "e7e0652afe891eeca36e98738cc017e809c387a9de5aeb338f4a849e74aa1c2e",
+      "raw_bytes": 1212979,
+      "compressed_sha256": "0e30c7504d51030f4c12deb7b363c0e1553a9b8ef6d111fbdeb012111fba420f"
+    },
+    {
+      "path": "docs/migration/provenance/sdk-ownership-contracts-evidence/baseline-proof.json.gz",
+      "raw_sha256": "69e14fc07ee46a7df2ec0a9251530b9f4ec89057157bda70ce41825abbc1c4cf",
+      "raw_bytes": 509,
+      "compressed_sha256": "0dbab460db167a75eaabbfad0b7ff9155a511aa57547c174b2c4900828693602"
+    }
+  ],
+  "limitations": [
+    "Owned Linux synthetic TLS HTTP/1 or injected HTTP/body ports only; no live credentials/account/media/browser/OS trust changes",
+    "Public contracts and Go-only nil/pointer/entropy/source/private telemetry distinguished in each producer",
+    "Request Timeout derivation uses real Go client around injected ports, not actual native timeout expiry",
+    "Unbarriered cancellation trace variation and superseded Login deadline-label evidence retained",
+    "HTTP2 feature/admission/pending-output/TTL audit is source-only; denied supplemental native probe not retried",
+    "Actual Rust activation and native OS/platform/distribution plus prior debts remain unfinished"
+  ],
+  "independent_review_sha256": "6a805303cd9d735bb0a78ff05c046da396ae6e3ac38770612794c18ca83c5709"
+}

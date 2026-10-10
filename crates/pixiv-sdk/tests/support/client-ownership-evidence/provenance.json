@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "frozen_go": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "capture_head": "f28be78e50348f98055b819ecebcfdc49dab1494",
+  "captured_at_utc": "2026-10-10T19:30:20.435583+00:00",
+  "go_version": "go1.27.1",
+  "platform": "linux/amd64",
+  "go_first_reference_sealed_before_rust": true,
+  "rows": {
+    "constructors": 11,
+    "native_lifecycle": 4,
+    "oauth": 8,
+    "construction_order": 7
+  },
+  "source_sha256": {
+    "go.mod": "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c",
+    "go.sum": "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e",
+    "internal/services/pixiv/appapi/appapi.go": "b5d9502ad9c534c88bda076740553c8bb6f389c3d2f4e3bd80c32c7f281ba9ff",
+    "internal/services/pixiv/oauth/oauth.go": "cdc91d906255256f452789a3ce4b5efd8844e5b84a44f29756c1172b051ce376",
+    "internal/services/pixiv/resource/resource.go": "c516f925b15a20531eba51f83e6a7797280b6569ad0fd519591e9330199b581a",
+    "internal/shared/diagnostics/diagnostics.go": "aecd4045f50f6bcf4cd20f316d680cbfb28e657f919ce1c0700dfdad8d5ddc76",
+    "sdk/error.go": "d8e48078c464f18a26cdcf32828e423dd948f17061269b222f82e08a8cee0041",
+    "sdk/pixiv/cursor.go": "7fc144718fb4d526680973e47d2b26b7b3628adb2e8e7daa26bb052fe4c5fe4e",
+    "sdk/pixiv/errors.go": "9a1830393129ca195ef4d57c0bda17f219f0f750c7293abf5520aa888bfe81a8",
+    "sdk/pixiv/pixiv.go": "daefb42f9f90359f5ce3d326d18df7afe8c10615750d88fef049cce78224d317"
+  },
+  "dependency_source_sha256": {
+    "Go1.27.1/src/crypto/rand/rand.go": "7c289648d453d0bdca0f05091d00bb86c94b69637080c748ff3d3476677521ac",
+    "go-resty/resty/v2@v2.17.2/client.go": "bc0107de3d9a596b6843dfd864f71208b81aa9c17402fd068a69d4acecb8783f",
+    "go-resty/resty/v2@v2.17.2/resty.go": "29be984b35ddc47ef4fd8445692c45564c9e39479be8467d9ef39ef590579e99"
+  },
+  "artifact_sha256": {
+    "sdk/pixiv/migration_client_ownership_test.go": "57d95727ee97ca2599ccdef0bbc79e05391ca06108f5392e33d0c656fe0b7487",
+    "crates/pixiv-sdk/tests/fixtures/client-ownership.json": "c9df7037ca933a443bfe43de5d4824ebfb8cc55ff0e2105f2b1e458782fdb56f",
+    "crates/pixiv-sdk/tests/support/client-ownership-evidence/replay.sh": "5f65a88045c93f10154785cb2c94b6e060125764b72a155800cdefb3145ca6eb",
+    "crates/pixiv-sdk/tests/support/client-ownership-evidence/entropy-fatal.raw.txt": "e204fa3a4120933c42b84302184c9eae7e98cc69c3bcdf0e3b2154ea65925c78",
+    "crates/pixiv-sdk/tests/support/client-ownership-evidence/capture.log": "90d8c83235c473a1b2c7a6df88819a15b48e12aa1cea69ed4a3716533e24f8f3",
+    "crates/pixiv-sdk/tests/support/client-ownership-evidence/repeat.log": "05dc1c6a0f593f6b1ae133cab814207ea3a09275d199330a674962385bff6989",
+    "crates/pixiv-sdk/tests/support/client-ownership-evidence/race.log": "0b0240c2ec871dcf0df38f72757e786cb8853ad923810f057a594ba019d10a53",
+    "crates/pixiv-sdk/tests/support/client-ownership-evidence/related.log": "3d992a0eefff2ddcb1055686ea042db86e0ee91e9d7074b13b46f01eca52a668",
+    "crates/pixiv-sdk/tests/support/client-ownership-evidence/vet.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "capture_command": "GOPROXY=off GOWORK=off GOTOOLCHAIN=local go test -mod=readonly ./sdk/pixiv -run '^TestMigrationClientOwnership(FrozenGo|EntropyChild)$' -count=1 -v -args -migration-capture-client-ownership",
+  "replay_command": "CLIENT_OWNERSHIP_REPEAT=20 bash crates/pixiv-sdk/tests/support/client-ownership-evidence/replay.sh",
+  "race_command": "GOPROXY=off GOWORK=off GOTOOLCHAIN=local go test -mod=readonly -race ./sdk/pixiv -run '^TestMigrationClientOwnership(FrozenGo|EntropyChild)$' -count=3 -v",
+  "related_command": "GOPROXY=off GOWORK=off GOTOOLCHAIN=local go test -mod=readonly ./sdk/pixiv -run '^(TestMigrationDefaultSDKClient|TestMigrationPacing|TestMigrationOAuthRefresh)' -count=1 -v",
+  "environment_sources": [
+    "/tmp/quantus-toolchain-env.txt",
+    "/tmp/pixiv-fanbox-native-build-env.sh"
+  ],
+  "verified_gates": {
+    "capture": "pass",
+    "repeat_count_20": "pass",
+    "race_count_3": "pass",
+    "gofmt": "pass",
+    "go_vet_sdk_pixiv": "pass",
+    "existing_default_timeout_pacing_oauth_reference_tests": "pass",
+    "sealed_repo_sources_equal_frozen_go": "pass",
+    "readonly_offline_module_policy": "pass",
+    "no_cargo_calls": "pass",
+    "bash_replay_syntax": "pass"
+  },
+  "package_test_seconds": {
+    "capture": 0.162,
+    "repeat_20": 3.093,
+    "race_3": 1.724,
+    "related": 0.508
+  },
+  "important_results": [
+    "Public default constructors own separate native pools through diagnostic and optional pacing wrappers; repeated CloseIdleConnections retires idle sockets without terminating the client or another default client pool.",
+    "Two SDK clients injected with one native caller client reuse one pool; SDK CloseIdleConnections is a no-op for that pool even with positive pacing.",
+    "Positive injected pacing derives an HTTPClient preserving Timeout, Jar, and CheckRedirect and uses DefaultTransport when caller.Transport is nil; nonpositive pacing preserves caller pointer. Real Resty initializes a nil caller.Transport for nonpaced injected clients, so that specific caller is mutated.",
+    "Actual public Open and OpenWith use owned synthetic OAuth TLS responses, bind verified identity, skip cursor entropy, rotate only fixture credentials, and share their HTTPClient with content operations. Default idle cleanup retires both idle OAuth and content connections; injected cleanup leaves them available. The closure observer explicitly records two retired idle connections for owned Open success and zero for injected success.",
+    "OAuth unauthorized, missing access token, and missing identity return no client and empty credentials. Native failure connections are not closed by Open; cleanup remains test-owned and no failure-cleanup behavior is invented.",
+    "Empty/blank access and refresh validation precedes default transport construction; a default transport type assertion occurs before New cursor entropy or Open OAuth. Injected invalid refresh input fails before its transport receives a request.",
+    "Official Go 1.27.1 crypto/rand.Read fatally aborts the owned subprocess on a synthetic Reader error. The entropy read length, fatal marker, and exit code 2 are captured; the SDK recoverable LocalStateError branch is a private source witness, not an executable public result."
+  ],
+  "boundaries": [
+    "Actual Linux/amd64 public SDK constructors, Open/OpenWith, Artwork, and CloseIdleConnections use the frozen production bytes. HTTP is only an owned local synthetic TLS HTTP/1 peer with a test-only trusted certificate, fixed TLS ServerName, disabled proxy/HTTP2, exact official-host dial allowlist redirected locally, and no OS trust modifications.",
+    "No real account, live authentication, browser, persistence, registry/HKCU mutation, external destination, supplemental denied probe, unfinished HEAD/upload, or multiplex schedule is used. Active header/body/drain/retirement schedules are separate client-idle-native-h1 evidence.",
+    "Pointer identity, wrapper chain, ownership fields, cursor entropy binding, preserved HTTPClient options, nil receiver guards, and SDK unreachable returned-entropy-error branches are explicitly private observations/source witnesses. Public native pool ownership is proven by recorded actual peer connections and a retained test-owned net.Conn closure observer.",
+    "Native request connection numbers are assigned at the owned peer ConnContext boundary. These deterministic ordinals retain request method, host, path, fixture Authorization, identity, language, and refresh input; ephemeral ports, raw socket addresses, timing, and pointer values are not substituted into comparison expectations.",
+    "Entropy raw combined output is preserved verbatim for this capture. Replay checks bounded subprocess completion, exact read-length marker, fatal prefix, and exit code instead of comparing nondeterministic goroutine numbers, addresses, or stacks. No returned SDK error is inferred from that fatal process.",
+    "The dependency guards require GOMODCACHE supplied by the documented environment scripts and seal official cached Resty source plus official Go random source. No module resolution or download is performed; GOPROXY is off, GOTOOLCHAIN local, and module writes are forbidden."
+  ],
+  "publication_modes": {
+    "new_replay_mode": "100644; invoke explicitly with bash, which was tested",
+    "inherited_exception": "The parent reported that three prior support replay scripts, including signed/GraphQL evidence, were published as 100644 despite local 100755 testing. Parent normalized only executable bits with unchanged bytes and documented bash invocation. This task modifies none of those existing files and publishes its new replay as 100644 with explicit bash invocation."
+  },
+  "safe_harness_adjustments": [
+    "The initial constructor expectation assumed injected clients were unchanged. Live Resty behavior for nil Transport disproved that assumption; the assertion and newly captured expectation now preserve the actual caller mutation. No production source or preexisting fixture was changed."
+  ]
+}

@@ -1,0 +1,235 @@
+{
+  "schema_version": 1,
+  "review_kind": "Independent bounded Go-first contract source and retained-evidence review",
+  "reviewed_base": "f28be78e50348f98055b819ecebcfdc49dab1494",
+  "frozen_go": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "decision": "bounded_approval",
+  "blocking_findings": [],
+  "checked_instructions": [
+    "AGENTS.md",
+    "docs/migration/strategy.md"
+  ],
+  "reviewer_execution": {
+    "allowed": "Read-only source, fixture, source-byte, artifact-hash and retained-log inspection. The only authorized write is this review artifact.",
+    "reran_tests": false,
+    "ran_cargo": false,
+    "modified_production": false,
+    "performed_network_or_native_probes": false,
+    "rust_implementation_reviewed": false,
+    "rust_parity_established": false
+  },
+  "source_preservation": {
+    "independently_compared_files": 434,
+    "comparison": "Every frozen non-test .go file plus go.mod and go.sum compared byte-for-byte with git show at frozen_go",
+    "mismatches": [],
+    "tracked_diff_at_review_start": "empty"
+  },
+  "reviewed_contracts": [
+    {
+      "name": "client-ownership",
+      "rows": {
+        "constructors": 11,
+        "native_lifecycle": 4,
+        "oauth": 8,
+        "construction_order": 7
+      },
+      "artifacts": [
+        {
+          "path": "sdk/pixiv/migration_client_ownership_test.go",
+          "sha256": "57d95727ee97ca2599ccdef0bbc79e05391ca06108f5392e33d0c656fe0b7487"
+        },
+        {
+          "path": "crates/pixiv-sdk/tests/fixtures/client-ownership.json",
+          "sha256": "c9df7037ca933a443bfe43de5d4824ebfb8cc55ff0e2105f2b1e458782fdb56f"
+        }
+      ],
+      "findings": [
+        "New validates trimmed empty access before building; default transport construction precedes cursor entropy. New with an opaque nonempty access token does not infer identity or call the wire.",
+        "Default clients own separate cloned native pools under diagnostic and optional positive-pacing wrappers. Caller-owned clients are not closed by SDK cleanup, including derived positive-pacing clients sharing a native pool.",
+        "Nonpositive pacing preserves the injected HTTPClient pointer. Actual Resty NewWithClient/createClient fills a nil Transport on that same caller object; the nil/nonpaced fixture honestly records caller_unchanged=false. Positive pacing derives a client before Resty, preserves Timeout/Jar/CheckRedirect, uses DefaultTransport for a nil inner transport and leaves the caller unchanged.",
+        "Public Open/OpenWith rotates synthetic refresh credentials, binds positive verified identity, skips cursor entropy and shares its HTTPClient with content. Default cleanup closes both idle OAuth and App API connections; injected cleanup is a no-op.",
+        "Unauthorized, missing access and missing identity observations return no client and empty credentials. The missing-access row reaches OAuth.Refresh's malformed-response rejection; it is not runtime proof of the later token-empty guard in OpenWith.",
+        "OpenWith has no failure-path CloseIdleConnections call, and the retained test-owned connection observer records zero closures after failed Open. No invented failure cleanup was added.",
+        "Owned fatal child records official Go 1.27.1 rand.Read failure, read size 16 and exit 2. Returned cursor entropy error branches remain private source witnesses rather than executable public error outcomes."
+      ],
+      "evidence_classification": "Public constructor, returned value/error, request and peer-pool observations coexist with private Go pointer, wrapper, ownership and cursor telemetry. The fixture private_source_witnesses and provenance boundaries explicitly label those fields; Rust pointer/transport shape equivalence is not claimed.",
+      "evidence_verification": {
+        "provenance_artifacts_hashed": 9,
+        "all_matched": true,
+        "retained_logs": "capture; exact replay count20; race count3; related default/pacing/OAuth tests; vet empty"
+      },
+      "provenance": "crates/pixiv-sdk/tests/support/client-ownership-evidence/provenance.json"
+    },
+    {
+      "name": "login-ownership",
+      "rows": 21,
+      "artifacts": [
+        {
+          "path": "sdk/pixiv/migration_login_ownership_test.go",
+          "sha256": "a999a895ae369325c8451d300402f9f448daeed37701a496f13700116feb9563"
+        },
+        {
+          "path": "crates/pixiv-sdk/tests/fixtures/login-ownership.json",
+          "sha256": "fa90b80d28050decd3e1eba5822e5f18039468cca8ae22c52e14d0cbd9128a6d"
+        }
+      ],
+      "findings": [
+        "BeginLogin selects its HTTP client after PKCE verifier and state generation; the two read sizes are 64 and32. Injected client selection bypasses the concrete default-transport assertion.",
+        "Begin retains the original injected HTTPClient object. Reassigning the Options field does not change routing, while changing the retained object's Transport does. Copied public handles share the one-shot gate.",
+        "Complete validates callback before CompareAndSwap. Invalid input leaves an unused session reusable and still wins error precedence after the session is used. A valid completion consumes the gate even on cancellation or transport failure; an in-flight copied-handle loser receives the stable already-used error with only one request.",
+        "Cleanup is a no-op for injected clients, does not consume the gate and preserves AuthorizationURL/AcceptsCallbackURL. The actual default public constructor owns distinct pools; copied-handle idle cleanup affects only its pool, and later global DefaultClient/DefaultTransport replacement does not reroute retained sessions.",
+        "Injected Timeout-zero transport receives the exact caller context, its values, deadline, diagnostic scope and Done/Err behavior. Already canceled/expired contexts may produce successful credentials when that transport returns success; unconditional pre-rejection would change the observed public outcome.",
+        "The active default Login schedule withholds response headers before release. It proves survival of an in-flight exchange and does not independently establish active response-body retirement; native H1 covers that distinct schedule.",
+        "Both failed randomness stages preserve official fatal-process results. Recoverable BeginLogin randomness-error branches are source-only, not runtime covered."
+      ],
+      "no_public_assertion_relaxed": "Independently compared preserved superseded-deadline-label fixture cases with final cases after removing only keys beginning go_only: all remaining input/observation values are equal. The final correction compares actual caller Deadline/has-deadline for WithoutCancel and adds exact Done-channel observations.",
+      "evidence_classification": "Go-only nil/zero/nil-context, exact identity, concrete assertion and entropy override observations carry go_only row/field names. Public success/error, request count, gate ordering, retained routing and real pool observations remain explicit and exact.",
+      "evidence_verification": {
+        "manifest_artifacts_hashed": 55,
+        "all_matched": true,
+        "retained_json_logs": "capture pass1; exact replay pass10; race pass2; related Login pass; OAuth/protocol package pass2; no fail events; vet/gofmt empty",
+        "fatal_children": "Both exit files contain2; stdout preserves read64 and read64/read32; stderr preserves fatal marker"
+      },
+      "provenance": "docs/migration/provenance/login-ownership-go.json"
+    },
+    {
+      "name": "client-idle-native-h1",
+      "rows": 9,
+      "artifacts": [
+        {
+          "path": "sdk/pixiv/migration_idle_native_test.go",
+          "sha256": "6353f973f1acd428fbef542ac1cd81945d22206a0aecde89bf9701e8bcd629d3"
+        },
+        {
+          "path": "crates/pixiv-sdk/tests/fixtures/client-idle-native-h1.json",
+          "sha256": "21d7116fd252d80e961fed64533b733d66385595d0aa47ec553ca27a70c2b3ab"
+        }
+      ],
+      "findings": [
+        "Actual public New clones a temporary default net/http.Transport template; no injected SDK client, ownership mutation or private resource cache preload is used. Public ArtworkPages supplies ResourceRef for actual OpenResource.",
+        "Headers and flushed-prefix barriers preserve the distinction between active request and active body. CloseIdleConnections leaves those operations successful and rejects their subsequent idle return unless a later acquisition resets transport closeIdle.",
+        "Mixed idle/active repeated cleanup closes the existing idle peer, then retires the active peer on successful EOF. A separate reset schedule proves a new acquisition allows the earlier active connection to become idle and be reused.",
+        "Resource EOF compares full abc body, status and body-close success. Early-close deliberately withholds unread body so Go 1.27.1's small-body drain cannot complete; actual peer shutdown is independently awaited before future fresh-then-reused connections.",
+        "Canceled Artwork preserves exact SDK error JSON and errors.Is(context.Canceled); canceled resource preserves successful Open status separately from body-read context-canceled error, prefix and Close result. Actual peer shutdown and next successful request remain exact.",
+        "Only explicitly awaited idle-return events enter final native idle_returns. Unbarriered early-close/canceled observer snapshots remain raw evidence; observed=false is not an assertion that the callback never happens."
+      ],
+      "private_variation_resolution": {
+        "source": "Official Go 1.27.1 net/http/transport.go readLoop2604-2624 selects between body-read/drain and ctx.Done. A canceled body may reach tryPutIdleConn and report bad-state rejection or take cancellation without that callback.",
+        "preserved_evidence": [
+          "crates/pixiv-sdk/tests/support/client-idle-native-h1-evidence/replays/race-10.log",
+          "crates/pixiv-sdk/tests/support/client-idle-native-h1-evidence/replays/race-diagnostic-20.log",
+          "crates/pixiv-sdk/tests/support/client-idle-native-h1-evidence/replays/race-diagnostic-100.log",
+          "crates/pixiv-sdk/tests/support/client-idle-native-h1-evidence/raw-private-idle-traces.json",
+          "crates/pixiv-sdk/tests/support/client-idle-native-h1-evidence/raw-private-idle-variation.json"
+        ],
+        "review_result": "Retained diagnostic100 log contains four first differences only in the unbarriered canceled PutIdleConn snapshot. Final source retains exact public SDK/error/body/wire/closure and awaited successful-EOF idle checks, without normalization. No public assertion relaxation found.",
+        "limitation": "Original full pre-correction source/fixture bytes are not provided in this evidence directory; no independent reconstruction or complete before/after fixture-byte comparison is claimed."
+      },
+      "evidence_verification": {
+        "manifest_artifacts_hashed": 16,
+        "all_matched": true,
+        "retained_logs": "Final capture, repeat20, race20 and full sdk/pixiv package success tails inspected; vet/gofmt empty"
+      },
+      "provenance": "crates/pixiv-sdk/tests/support/client-idle-native-h1-evidence/provenance.json"
+    },
+    {
+      "name": "request-context",
+      "rows": {
+        "total_public_method_scenarios": 24,
+        "portable_intent_scenarios": 20,
+        "explicit_go_only_nil_context_scenarios": 4
+      },
+      "artifacts": [
+        {
+          "path": "sdk/pixiv/migration_request_context_test.go",
+          "sha256": "394a268235a8ff7d47e56ceab4824b8f95aea525bdb45a540ad356413563ae59"
+        },
+        {
+          "path": "crates/pixiv-sdk/tests/fixtures/request-context.json",
+          "sha256": "5f956cb4ea55c8522e0d11292cff4f549d512b3746a35a6311fc2452d68b4d94"
+        },
+        {
+          "path": "crates/pixiv-sdk/tests/support/request_context_go_replay.sh",
+          "sha256": "061312a9bb8b113d11ec2f909cdf7835848c5071b709eb3ab90f75e199e1358e"
+        },
+        {
+          "path": "docs/migration/provenance/request-context-go.json",
+          "sha256": "2f0afd97a92ad0c2fd0c226b839f08502072255d75acfab757b25bf09e8c2cdc"
+        }
+      ],
+      "findings": [
+        "Actual frozen SDK GET, POST mutation, OpenWith and uncached resource metadata/media receive each operation's caller context. Successful OpenWith cases perform a later Artwork using a fresh context; the returned client does not retain the OAuth operation context.",
+        "Sequential and deterministic overlapping schedules on unpaced and positively paced clients preserve A/B/C values, deadlines and diagnostic sinks/request IDs. Canceling A does not cancel B or future C. No global/task-local context or broadcast cancellation is substituted.",
+        "Injected ports that ignore canceled/expired contexts may return successful GET, POST, Open and resource results. Ports that honor cancellation return classified upstream_unavailable with preserved cancellation/deadline cause. An unconditional cancellation precheck would discard recorded success.",
+        "An already-canceled first positively paced operation may reach the injected transport and succeed because no positive wait is required. Cancellation of an actual positive pacing wait remains covered by existing related pacing contracts, not by this first-call row.",
+        "Retry-After zero performs two requests with the same caller context. An already-canceled caller receiving429 with a positive Retry-After returns cancellation with one request. This row proves no retry request; subsequent B/C after that specific retry failure are not exercised here.",
+        "OpenResource uses the same caller context for uncached metadata and media, returns without reading body, and retains its legitimate public-produced URL registry across later different-context calls. A context-aware returned body observes A cancellation; future B reads fixture-media and remains alive.",
+        "Real net/http.Client Timeout around injected ports creates a strictly earlier derived request context, preserves value/scope and wraps returned media body. Request/body exact-context identity is false under Timeout, so exact caller identity is not assumed.",
+        "In the Timeout streaming row, B's body first-read and underlying Close snapshots are live; its final derived-body context is canceled after wrapper Close while caller B remains live. Official cancelTimerBody.Close calls the underlying Close then stopTimer, matching the runtime observation.",
+        "Go-only nil Resty contexts use Background; nil OpenResource performs needed metadata lookup first and then returns a classified error when NewRequestWithContext rejects nil. These four nil-input rows do not create a portable Rust nil-context requirement."
+      ],
+      "evidence_classification": "go_exact_caller_context, go_exact_caller_scope, go_http_client_relation and go_exact_transport_body explicitly name Go representation observations; nil input rows carry go_only. Portable caller data/deadline/scope, cancellation isolation, output, request count and body lifetime remain exact fixture values. deadline_relation is a declared exact-equality/strict-earlier relation, not a invented wall-clock deadline.",
+      "evidence_verification": {
+        "provenance_artifacts_hashed": 22,
+        "all_matched": true,
+        "frozen_source_guards_independently_checked": 12,
+        "dependency_source_guards_independently_checked": 6,
+        "retained_json_logs": "capture pass1; exact repeat pass10; race pass2; related SDK pass; adapter package pass4; no fail events; standalone replay successful; vet/gofmt empty"
+      },
+      "provenance": "docs/migration/provenance/request-context-go.json",
+      "limits": [
+        "Real http.Client Timeout derivation/body wrapper is observed around injected ports; no native HTTP timeout expiry or arbitrary timeout composition was probed.",
+        "Retry cancellation and shared A/B/C cancellation isolation are distinct scenarios; their untested cross-product is not claimed.",
+        "Existing retry/pacing/resource policy and broad OAuth matrices remain necessary."
+      ]
+    }
+  ],
+  "pinned_dependency_sources": {
+    "go_version": "go1.27.1",
+    "standard_sha256": {
+      "src/context/context.go": "971f00ffa375b79d3f65e6da33cca3a493cc3fce091c589233abfb4283e29b7d",
+      "src/net/http/client.go": "ced3428a85206de8de79c10de38d34951e0b9823c0ccb68ff51329d048a1f7b9",
+      "src/net/http/request.go": "c3257079994b4e4f74f01cef72508919983ba31f91fcf599d348e9d52cec1540",
+      "src/net/http/transport.go": "b3c0ef6ea21d8bfa3d8ee4d6f53e3f5e5982c5d6bfcd14536437adeb214a6933",
+      "src/crypto/rand/rand.go": "7c289648d453d0bdca0f05091d00bb86c94b69637080c748ff3d3476677521ac"
+    },
+    "resty_sha256": {
+      "go-resty/resty/v2@v2.17.2/resty.go": "29be984b35ddc47ef4fd8445692c45564c9e39479be8467d9ef39ef590579e99",
+      "go-resty/resty/v2@v2.17.2/client.go": "bc0107de3d9a596b6843dfd864f71208b81aa9c17402fd068a69d4acecb8783f",
+      "go-resty/resty/v2@v2.17.2/request.go": "77909fcd89b143995236e55474628c27398f55c6b1723792b4ef6434dd699030",
+      "go-resty/resty/v2@v2.17.2/middleware.go": "0d2ed4e3a7d0e120007c57238d6f99e1d46f07d1e978f6c7abf4166b4dfcf4c6"
+    },
+    "all_independently_hashed": true
+  },
+  "source_evidence": [
+    "sdk/pixiv/pixiv.go:143-171,183-204,256-268,278-314,369-405",
+    "sdk/pixiv/login.go:46-67,102-146,160-199",
+    "sdk/pixiv/cursor.go:335-341",
+    "internal/services/pixiv/oauth/oauth.go:47-79,109-136,151-157,191-206",
+    "sdk/pixiv/resource.go:144-181; internal/services/pixiv/resource/resource.go:81-140",
+    "Resty v2.17.2 resty.go:28-29 and client.go:1449-1452",
+    "Official Go1.27.1 crypto/rand/rand.go:44-68",
+    "Official Go1.27.1 net/http/transport.go:945-965,1201-1203,1248-1251,2419-2442,2604-2624",
+    "internal/services/pixiv/appapi/appapi.go:getJSONWithRetry,waitForRetryAfter,doJSON,doForm; sdk/pixiv/pixiv.go:pacingRoundTripper.RoundTrip",
+    "Resty v2.17.2 request.go:SetContext and middleware.go:createHTTPRequest; official Go1.27.1 net/http/client.go:218-274,357-418,996-1015",
+    "sdk/pixiv/migration_request_context_test.go:migrationRequestContextShared,migrationRequestContextSingle,migrationRequestContextStreaming,migrationRequestContextCheck"
+  ],
+  "limits": [
+    "Approval is for sealed additive frozen-Go contracts and evidence only. No Rust implementation, Rust lifecycle behavior, Rust tests, Cargo gates or parity result was reviewed.",
+    "Review did not execute Go tests, race tests, vet, gofmt, replay scripts, native/network probes or fixture recapture. Those gate outcomes are retained worker evidence, not fresh reviewer executions.",
+    "Observed native behavior is Linux/amd64 official Go1.27.1 with synthetic loopback TLS HTTP/1.1 peers, strict logical-host routing and temporary client certificate roots.",
+    "No native Windows/Darwin, HTTP/2 multiplexing, unfinished HEAD/upload, real Pixiv/account/media, browser, OS association/security or full CLI login wiring is established.",
+    "These rows are bounded slices; they do not replace preexisting PKCE/callback/response/redaction/concurrency or whole SDK contract matrices.",
+    "Connection ordinals are deterministic peer observations; ephemeral ports, timestamps, pointers and fatal stacks are not public comparison targets.",
+    "Exact context-interface/Done pointer identity and internal diagnostic scope identity are Go-only telemetry; a Rust API shape or pointer equivalence requirement is not inferred."
+  ],
+  "supplemental_document_scope": {
+    "path": "docs/migration/sdk-http-ownership.md",
+    "inspected_for": "Evidence classification and bounded Go contract wording only",
+    "result": "The document distinguishes Go-only runtime contracts, native H1 schedules, future Rust transport design and remaining validation obligations",
+    "official_rust_transport_receipt_reviewed": false,
+    "rust_design_or_implementation_approval": false
+  },
+  "reviewed_at_utc": "2026-10-10T19:38:40Z",
+  "summary": "Bounded approval of the final sealed30 Client,21 Login,9 native H1 and24 request-context scenarios; no blocking contract/source/evidence finding. No Rust implementation or parity was reviewed."
+}

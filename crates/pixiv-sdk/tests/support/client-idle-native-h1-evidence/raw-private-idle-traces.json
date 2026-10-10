@@ -1,0 +1,181 @@
+[
+  {
+    "name": "active-headers-retired-after-close",
+    "raw_private_idle_returns": [
+      {
+        "step": "active",
+        "observed": true,
+        "accepted": false,
+        "raw_error": "http: putIdleConn: CloseIdleConnections was called"
+      },
+      {
+        "step": "next",
+        "observed": true,
+        "accepted": true
+      }
+    ]
+  },
+  {
+    "name": "active-body-retired-after-close",
+    "raw_private_idle_returns": [
+      {
+        "step": "active",
+        "observed": true,
+        "accepted": false,
+        "raw_error": "http: putIdleConn: CloseIdleConnections was called"
+      },
+      {
+        "step": "next",
+        "observed": true,
+        "accepted": true
+      }
+    ]
+  },
+  {
+    "name": "next-acquisition-resets-newly-idle-retirement",
+    "raw_private_idle_returns": [
+      {
+        "step": "active",
+        "observed": true,
+        "accepted": true
+      },
+      {
+        "step": "resetting",
+        "observed": true,
+        "accepted": true
+      },
+      {
+        "step": "reused",
+        "observed": true,
+        "accepted": true
+      }
+    ]
+  },
+  {
+    "name": "mixed-idle-and-active-repeated-close",
+    "raw_private_idle_returns": [
+      {
+        "step": "warm",
+        "observed": true,
+        "accepted": true
+      },
+      {
+        "step": "active",
+        "observed": true,
+        "accepted": false,
+        "raw_error": "http: putIdleConn: CloseIdleConnections was called"
+      },
+      {
+        "step": "idle",
+        "observed": true,
+        "accepted": true
+      },
+      {
+        "step": "next",
+        "observed": true,
+        "accepted": true
+      }
+    ]
+  },
+  {
+    "name": "resource-eof-after-close-retires-active-connection",
+    "raw_private_idle_returns": [
+      {
+        "step": "metadata",
+        "observed": true,
+        "accepted": true
+      },
+      {
+        "step": "active-stream",
+        "observed": true,
+        "accepted": false,
+        "raw_error": "http: putIdleConn: CloseIdleConnections was called"
+      },
+      {
+        "step": "next-stream",
+        "observed": true,
+        "accepted": true
+      },
+      {
+        "step": "reused-stream",
+        "observed": true,
+        "accepted": true
+      }
+    ]
+  },
+  {
+    "name": "resource-early-close-discards-connection",
+    "raw_private_idle_returns": [
+      {
+        "step": "metadata",
+        "observed": true,
+        "accepted": true
+      },
+      {
+        "step": "early-stream",
+        "observed": false,
+        "accepted": false
+      },
+      {
+        "step": "next-stream",
+        "observed": true,
+        "accepted": true
+      },
+      {
+        "step": "reused-stream",
+        "observed": true,
+        "accepted": true
+      }
+    ]
+  },
+  {
+    "name": "cancel-active-headers-after-close",
+    "raw_private_idle_returns": [
+      {
+        "step": "canceled",
+        "observed": false,
+        "accepted": false
+      },
+      {
+        "step": "next",
+        "observed": true,
+        "accepted": true
+      }
+    ]
+  },
+  {
+    "name": "cancel-active-body-after-close",
+    "raw_private_idle_returns": [
+      {
+        "step": "canceled",
+        "observed": false,
+        "accepted": false
+      },
+      {
+        "step": "next",
+        "observed": true,
+        "accepted": true
+      }
+    ]
+  },
+  {
+    "name": "resource-cancel-body-after-close",
+    "raw_private_idle_returns": [
+      {
+        "step": "metadata",
+        "observed": true,
+        "accepted": true
+      },
+      {
+        "step": "canceled-stream",
+        "observed": false,
+        "accepted": false
+      },
+      {
+        "step": "next-stream",
+        "observed": true,
+        "accepted": true
+      }
+    ]
+  }
+]

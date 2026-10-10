@@ -1,0 +1,416 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-10T19:37:26.498896+00:00",
+  "reference_commit": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "migration_base_commit": "f28be78e50348f98055b819ecebcfdc49dab1494",
+  "oracle": "Actual public Go SDK calls with ordinary injected net/http.RoundTripper and response-body ports, synthetic bytes only",
+  "go_version": "go1.27.1",
+  "platform": [
+    "linux",
+    "amd64"
+  ],
+  "environment": {
+    "GOPROXY": "off",
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off",
+    "module_mode": "readonly",
+    "CGO_ENABLED": "1",
+    "official_toolchain_environment": "/tmp/quantus-toolchain-env.txt"
+  },
+  "boundary": {
+    "portable_runtime": "24 bounded scenarios include distinct context values/deadlines/scopes across sequential and overlapping calls on one SDK client; cancel A leaves B and future C usable; injected successful responses for canceled/expired GET, mutation, OpenWith and uncached metadata/media are preserved; returned-body cancellation reaches a context-aware body port; resource registry is shared across different call contexts; Retry-After wait honors cancellation",
+    "go_only_runtime": "Exact caller context/scope, caller-owned HTTP client identity or derivation, exact unwrapped Body identity and nil context representation are explicitly labeled Go witnesses, not Rust pointer/nil requirements",
+    "source_only": "Resty can initialize a caller HTTPClient nil Transport, and internal SDK ownership details are source-sealed here and runtime-frozen in the separate client-ownership fixture; no duplicate nil-transport matrix is claimed",
+    "diagnostic_runtime": "Positive pacing derives the diagnostic/pacing client and real network events carry each call’s own request ID/sink; unpaced injected client has no SDK diagnostic wrapper and produces no wrapper events",
+    "http_timeout_runtime": "Injected HTTPClient.Timeout=1m derives strictly earlier per-request deadline, preserves caller values and diagnostic scope, wraps returned media Body, and cancels only the derived media context on close",
+    "rust": "No Rust implementation, Cargo command or Rust parity result is claimed by this Go-first evidence"
+  },
+  "case_count": 24,
+  "case_names": [
+    "shared_sequential_unpaced",
+    "shared_overlapping_cancel_A_only_unpaced",
+    "shared_sequential_paced",
+    "shared_overlapping_cancel_A_only_paced",
+    "artwork_canceled_returns_success_even_if_context_done",
+    "artwork_expired_returns_success_even_if_context_done",
+    "artwork_nil_returns_success_even_if_context_done",
+    "addartworkbookmark_canceled_returns_success_even_if_context_done",
+    "addartworkbookmark_expired_returns_success_even_if_context_done",
+    "addartworkbookmark_nil_returns_success_even_if_context_done",
+    "openwith_canceled_returns_success_even_if_context_done",
+    "openwith_expired_returns_success_even_if_context_done",
+    "openwith_nil_returns_success_even_if_context_done",
+    "openresource_canceled_returns_success_even_if_context_done",
+    "openresource_expired_returns_success_even_if_context_done",
+    "openresource_nil_returns_success_even_if_context_done",
+    "artwork_canceled_returns_context_error_when_done",
+    "artwork_expired_returns_context_error_when_done",
+    "artwork_active_returns_success_even_if_context_done_client_timeout",
+    "artwork_canceled_returns_success_even_if_context_done_paced",
+    "artwork_active_returns_success_even_if_context_done_retry_after",
+    "artwork_canceled_returns_success_even_if_context_done_retry_after",
+    "returned_resource_body_cancellation_and_future_call",
+    "returned_resource_body_cancellation_and_future_call_client_timeout"
+  ],
+  "frozen_sources": [
+    {
+      "path": "go.mod",
+      "sha256": "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c"
+    },
+    {
+      "path": "go.sum",
+      "sha256": "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e"
+    },
+    {
+      "path": "internal/services/pixiv/appapi/appapi.go",
+      "sha256": "b5d9502ad9c534c88bda076740553c8bb6f389c3d2f4e3bd80c32c7f281ba9ff"
+    },
+    {
+      "path": "internal/services/pixiv/oauth/oauth.go",
+      "sha256": "cdc91d906255256f452789a3ce4b5efd8844e5b84a44f29756c1172b051ce376"
+    },
+    {
+      "path": "internal/services/pixiv/resource/resource.go",
+      "sha256": "c516f925b15a20531eba51f83e6a7797280b6569ad0fd519591e9330199b581a"
+    },
+    {
+      "path": "internal/shared/diagnostics/diagnostics.go",
+      "sha256": "aecd4045f50f6bcf4cd20f316d680cbfb28e657f919ce1c0700dfdad8d5ddc76"
+    },
+    {
+      "path": "sdk/error.go",
+      "sha256": "d8e48078c464f18a26cdcf32828e423dd948f17061269b222f82e08a8cee0041"
+    },
+    {
+      "path": "sdk/pixiv/errors.go",
+      "sha256": "9a1830393129ca195ef4d57c0bda17f219f0f750c7293abf5520aa888bfe81a8"
+    },
+    {
+      "path": "sdk/pixiv/ops_artwork.go",
+      "sha256": "f8aa00684b84463c6ba82b18db87d4c2e403a0dcaa048f3c3282f6555fd7445c"
+    },
+    {
+      "path": "sdk/pixiv/ops_mutation.go",
+      "sha256": "82e3e91b897ba8933ec1037d867052f7480da357e93cf71629c5f877f20baf0a"
+    },
+    {
+      "path": "sdk/pixiv/pixiv.go",
+      "sha256": "daefb42f9f90359f5ce3d326d18df7afe8c10615750d88fef049cce78224d317"
+    },
+    {
+      "path": "sdk/pixiv/resource.go",
+      "sha256": "e94cdf3b2d7f67e159bd2481a1c419e887d842c903107767c4004e4f6a529ed8"
+    }
+  ],
+  "dependency_sources": [
+    {
+      "path": "Go/src/context/context.go",
+      "sha256": "971f00ffa375b79d3f65e6da33cca3a493cc3fce091c589233abfb4283e29b7d"
+    },
+    {
+      "path": "Go/src/net/http/client.go",
+      "sha256": "ced3428a85206de8de79c10de38d34951e0b9823c0ccb68ff51329d048a1f7b9"
+    },
+    {
+      "path": "Go/src/net/http/request.go",
+      "sha256": "c3257079994b4e4f74f01cef72508919983ba31f91fcf599d348e9d52cec1540"
+    },
+    {
+      "path": "client.go",
+      "sha256": "bc0107de3d9a596b6843dfd864f71208b81aa9c17402fd068a69d4acecb8783f"
+    },
+    {
+      "path": "middleware.go",
+      "sha256": "0d2ed4e3a7d0e120007c57238d6f99e1d46f07d1e978f6c7abf4166b4dfcf4c6"
+    },
+    {
+      "path": "request.go",
+      "sha256": "77909fcd89b143995236e55474628c27398f55c6b1723792b4ef6434dd699030"
+    }
+  ],
+  "full_frozen_go_preservation": {
+    "reference_commit": "4b4426487ef18bed276706daec385e0d0a6979f9",
+    "paths_checked": 434,
+    "scope": "All reference-commit non-test .go paths plus go.mod and go.sum",
+    "differences": []
+  },
+  "phases": {
+    "capture": {
+      "command": [
+        "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go",
+        "test",
+        "-mod=readonly",
+        "./sdk/pixiv",
+        "-run",
+        "^TestMigrationRequestContextMatchesFrozenGo$",
+        "-count=1",
+        "-timeout=1m",
+        "-json",
+        "-args",
+        "-migration-capture-request-context"
+      ],
+      "exit": 0,
+      "started_at_utc": "2026-10-10T19:35:54.663222+00:00",
+      "finished_at_utc": "2026-10-10T19:35:55.158161+00:00",
+      "elapsed_seconds": 0.495,
+      "stdout_path": "crates/pixiv-sdk/tests/support/request-context-evidence/capture.log",
+      "stderr_path": "crates/pixiv-sdk/tests/support/request-context-evidence/capture.stderr.log",
+      "top_level_passes": 1
+    },
+    "repeat": {
+      "command": [
+        "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go",
+        "test",
+        "-mod=readonly",
+        "./sdk/pixiv",
+        "-run",
+        "^TestMigrationRequestContextMatchesFrozenGo$",
+        "-count=10",
+        "-timeout=2m",
+        "-json"
+      ],
+      "exit": 0,
+      "started_at_utc": "2026-10-10T19:35:55.158799+00:00",
+      "finished_at_utc": "2026-10-10T19:35:55.727284+00:00",
+      "elapsed_seconds": 0.568,
+      "stdout_path": "crates/pixiv-sdk/tests/support/request-context-evidence/repeat.log",
+      "stderr_path": "crates/pixiv-sdk/tests/support/request-context-evidence/repeat.stderr.log",
+      "top_level_passes": 10
+    },
+    "race": {
+      "command": [
+        "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go",
+        "test",
+        "-race",
+        "-mod=readonly",
+        "./sdk/pixiv",
+        "-run",
+        "^TestMigrationRequestContextMatchesFrozenGo$",
+        "-count=2",
+        "-timeout=2m",
+        "-json"
+      ],
+      "exit": 0,
+      "started_at_utc": "2026-10-10T19:35:55.728013+00:00",
+      "finished_at_utc": "2026-10-10T19:36:00.873080+00:00",
+      "elapsed_seconds": 5.145,
+      "stdout_path": "crates/pixiv-sdk/tests/support/request-context-evidence/race.log",
+      "stderr_path": "crates/pixiv-sdk/tests/support/request-context-evidence/race.stderr.log",
+      "top_level_passes": 2
+    },
+    "related": {
+      "command": [
+        "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go",
+        "test",
+        "-mod=readonly",
+        "./sdk/pixiv",
+        "-run",
+        "^TestMigration(RequestContext|Pacing|DefaultSDKClient|OpenResource|OAuthRefresh|Artwork|Mutation|TransportFailure)",
+        "-count=1",
+        "-timeout=2m",
+        "-json"
+      ],
+      "exit": 0,
+      "started_at_utc": "2026-10-10T19:36:00.873637+00:00",
+      "finished_at_utc": "2026-10-10T19:36:01.945342+00:00",
+      "elapsed_seconds": 1.072,
+      "stdout_path": "crates/pixiv-sdk/tests/support/request-context-evidence/related.log",
+      "stderr_path": "crates/pixiv-sdk/tests/support/request-context-evidence/related.stderr.log"
+    },
+    "adapters": {
+      "command": [
+        "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go",
+        "test",
+        "-mod=readonly",
+        "./internal/services/pixiv/appapi",
+        "./internal/services/pixiv/oauth",
+        "./internal/services/pixiv/resource",
+        "./internal/shared/diagnostics",
+        "-count=1",
+        "-timeout=2m",
+        "-json"
+      ],
+      "exit": 0,
+      "started_at_utc": "2026-10-10T19:36:01.945903+00:00",
+      "finished_at_utc": "2026-10-10T19:36:02.531745+00:00",
+      "elapsed_seconds": 0.586,
+      "stdout_path": "crates/pixiv-sdk/tests/support/request-context-evidence/adapters.log",
+      "stderr_path": "crates/pixiv-sdk/tests/support/request-context-evidence/adapters.stderr.log"
+    },
+    "vet": {
+      "command": [
+        "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go",
+        "vet",
+        "-mod=readonly",
+        "./sdk/pixiv",
+        "./internal/services/pixiv/appapi",
+        "./internal/services/pixiv/oauth",
+        "./internal/services/pixiv/resource",
+        "./internal/shared/diagnostics"
+      ],
+      "exit": 0,
+      "started_at_utc": "2026-10-10T19:36:02.532304+00:00",
+      "finished_at_utc": "2026-10-10T19:36:02.905419+00:00",
+      "elapsed_seconds": 0.373,
+      "stdout_path": "crates/pixiv-sdk/tests/support/request-context-evidence/vet.log",
+      "stderr_path": "crates/pixiv-sdk/tests/support/request-context-evidence/vet.stderr.log"
+    },
+    "gofmt": {
+      "command": [
+        "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/gofmt",
+        "-l",
+        "sdk/pixiv/migration_request_context_test.go"
+      ],
+      "exit": 0,
+      "started_at_utc": "2026-10-10T19:36:02.906187+00:00",
+      "finished_at_utc": "2026-10-10T19:36:02.911338+00:00",
+      "elapsed_seconds": 0.005,
+      "stdout_path": "crates/pixiv-sdk/tests/support/request-context-evidence/gofmt.log",
+      "stderr_path": "crates/pixiv-sdk/tests/support/request-context-evidence/gofmt.stderr.log"
+    },
+    "replay": {
+      "command": [
+        "bash",
+        "crates/pixiv-sdk/tests/support/request_context_go_replay.sh"
+      ],
+      "exit": 0,
+      "started_at_utc": "2026-10-10T19:36:02.911762+00:00",
+      "finished_at_utc": "2026-10-10T19:36:03.479655+00:00",
+      "elapsed_seconds": 0.568,
+      "stdout_path": "crates/pixiv-sdk/tests/support/request-context-evidence/replay.log",
+      "stderr_path": "crates/pixiv-sdk/tests/support/request-context-evidence/replay.stderr.log"
+    }
+  },
+  "artifacts": [
+    {
+      "path": "sdk/pixiv/migration_request_context_test.go",
+      "sha256": "394a268235a8ff7d47e56ceab4824b8f95aea525bdb45a540ad356413563ae59",
+      "bytes": 31105
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/fixtures/request-context.json",
+      "sha256": "5f956cb4ea55c8522e0d11292cff4f549d512b3746a35a6311fc2452d68b4d94",
+      "bytes": 62624
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/request_context_go_replay.sh",
+      "sha256": "061312a9bb8b113d11ec2f909cdf7835848c5071b709eb3ab90f75e199e1358e",
+      "bytes": 766
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/request-context-evidence/adapters.log",
+      "sha256": "eac9f96b8c7a29a1f1cc0fd51e1ced67adb5ed919a378fafe3144d07d66ad09d",
+      "bytes": 48360
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/request-context-evidence/adapters.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/request-context-evidence/capture.log",
+      "sha256": "80a6bab444fbae715e0b479661e8788280ea0420d4e1153bc71e3ca3aabee93a",
+      "bytes": 1769
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/request-context-evidence/capture.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/request-context-evidence/frozen-production.log",
+      "sha256": "4f09cc52eef0f2e86de795296af8f7b5a4568d42374f1232cb416126951a8692",
+      "bytes": 191
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/request-context-evidence/gofmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/request-context-evidence/gofmt.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/request-context-evidence/phase-metadata.json",
+      "sha256": "fd669c7f394026b467dc7077886cc56a19fad851d30b5baabcbad20775b2c9c8",
+      "bytes": 5127
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/request-context-evidence/race.log",
+      "sha256": "bbdc60c36337692355d72718f9890175549cc9f8ca47e460a7c0c766911b55e0",
+      "bytes": 2935
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/request-context-evidence/race.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/request-context-evidence/raw-capture.json",
+      "sha256": "5f956cb4ea55c8522e0d11292cff4f549d512b3746a35a6311fc2452d68b4d94",
+      "bytes": 62624
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/request-context-evidence/related.log",
+      "sha256": "43cae6db9e672419ed95fbee6c4a50b2995c3b0ca91721d5409c7dae769bab79",
+      "bytes": 13209
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/request-context-evidence/related.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/request-context-evidence/repeat.log",
+      "sha256": "8aadb89fcf4223e82bdceec9e979d5cbbda4983fded0783354b22590a67fba0e",
+      "bytes": 12272
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/request-context-evidence/repeat.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/request-context-evidence/replay.log",
+      "sha256": "920253afc2734f9781d3b00b340c72db71a2582734e7f98b08b3cacf1459258f",
+      "bytes": 168
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/request-context-evidence/replay.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/request-context-evidence/vet.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/request-context-evidence/vet.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  ],
+  "exploratory_history": [
+    "The first compile caught a Go function comparison in a test-only caller transport assertion. Replaced it with an ordinary pointer RoundTripper adapter and pointer sink; the failed compile made no runtime-contract claim and changed no production code.",
+    "Initial successful capture was extended before the final evidence run to include a fresh context call on the client returned by each successful OpenWith; final capture, repeat, race, adapter regressions, vet, gofmt and replay all use the final source/fixture pair.",
+    "The first provenance-only write invocation omitted the shell toolchain environment and stopped at a missing GOROOT before writing the report. The authorized environment was sourced and the report generation was rerun; test or production inputs were unaffected."
+  ],
+  "limitations": [
+    "Only synthetic public SDK calls, ordinary injected net/http.RoundTripper implementations and context-aware response-body ports are exercised; no external network or native protocol probes",
+    "go_exact_caller_context, go_exact_caller_scope, go_http_client_relation, go_exact_transport_body and nil_context cases are Go representation witnesses, not Rust pointer/nil requirements; Rust correspondence must preserve the portable context value, deadline, scope and isolated cancellation outcomes",
+    "deadline_relation records exact equality or strictly earlier derived deadline, not a wall-clock timestamp invented for client Timeout; each active input has a fixed explicit future deadline",
+    "No global/task-local context or automatic broadcast cancellation is modeled; no unconditional cancellation precheck may discard a successful injected response",
+    "This representative slice does not duplicate the full OAuth PKCE, resource policy, retry or pacing matrices, and makes no Rust implementation or native HTTP/2 coverage claim"
+  ],
+  "freeze_order": "Final source and fixture passed capture/count10/race count2, representative SDK and adapter regressions, vet, gofmt and exact replay. SHA seals were reported to the parent at 2026-10-10T19:36:15Z. No Rust implementation or delegation was performed by this worker. Only provenance/evidence records followed.",
+  "owned_write_scope": [
+    "sdk/pixiv/migration_request_context_test.go",
+    "crates/pixiv-sdk/tests/fixtures/request-context.json",
+    "crates/pixiv-sdk/tests/support/request_context_go_replay.sh",
+    "crates/pixiv-sdk/tests/support/request-context-evidence/",
+    "docs/migration/provenance/request-context-go.json"
+  ]
+}

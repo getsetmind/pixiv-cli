@@ -1,0 +1,760 @@
+[
+  {
+    "name": "active-headers-retired-after-close",
+    "schedule": [
+      "start Artwork 42 and wait for peer headers barrier",
+      "CloseIdleConnections while request is active",
+      "release response and await successful SDK result",
+      "observe rejected idle return and peer connection shutdown",
+      "Artwork 43 succeeds on a new connection"
+    ],
+    "public_sdk": [
+      {
+        "step": "active",
+        "operation": "Artwork",
+        "success": true,
+        "id": 42
+      },
+      {
+        "step": "next",
+        "operation": "Artwork",
+        "success": true,
+        "id": 43
+      }
+    ],
+    "native_http1_observations": {
+      "close_idle_calls": 1,
+      "requests": [
+        {
+          "step": "active",
+          "connection": 1,
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "target": "/v1/illust/detail?illust_id=42",
+          "protocol": "HTTP/1.1"
+        },
+        {
+          "step": "next",
+          "connection": 2,
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "target": "/v1/illust/detail?illust_id=43",
+          "protocol": "HTTP/1.1"
+        }
+      ],
+      "idle_returns": [
+        {
+          "step": "active",
+          "observed": true,
+          "accepted": false,
+          "raw_error": "http: putIdleConn: CloseIdleConnections was called"
+        },
+        {
+          "step": "next",
+          "observed": true,
+          "accepted": true
+        }
+      ],
+      "peer_closures_at_barriers": [
+        {
+          "barrier": "active response completed",
+          "connection": 1
+        }
+      ]
+    }
+  },
+  {
+    "name": "active-body-retired-after-close",
+    "schedule": [
+      "start Artwork 42 and wait for peer body barrier",
+      "CloseIdleConnections while request is active",
+      "release response and await successful SDK result",
+      "observe rejected idle return and peer connection shutdown",
+      "Artwork 43 succeeds on a new connection"
+    ],
+    "public_sdk": [
+      {
+        "step": "active",
+        "operation": "Artwork",
+        "success": true,
+        "id": 42
+      },
+      {
+        "step": "next",
+        "operation": "Artwork",
+        "success": true,
+        "id": 43
+      }
+    ],
+    "native_http1_observations": {
+      "close_idle_calls": 2,
+      "requests": [
+        {
+          "step": "active",
+          "connection": 1,
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "target": "/v1/illust/detail?illust_id=42",
+          "protocol": "HTTP/1.1"
+        },
+        {
+          "step": "next",
+          "connection": 2,
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "target": "/v1/illust/detail?illust_id=43",
+          "protocol": "HTTP/1.1"
+        }
+      ],
+      "idle_returns": [
+        {
+          "step": "active",
+          "observed": true,
+          "accepted": false,
+          "raw_error": "http: putIdleConn: CloseIdleConnections was called"
+        },
+        {
+          "step": "next",
+          "observed": true,
+          "accepted": true
+        }
+      ],
+      "peer_closures_at_barriers": [
+        {
+          "barrier": "active response completed",
+          "connection": 1
+        }
+      ]
+    }
+  },
+  {
+    "name": "next-acquisition-resets-newly-idle-retirement",
+    "schedule": [
+      "Artwork 42 waits after flushed body prefix on connection 1",
+      "CloseIdleConnections while 42 is active",
+      "Artwork 43 acquires connection 2 and waits before headers",
+      "release 42; its idle return is accepted",
+      "Artwork 44 reuses connection 1 while 43 is active",
+      "release 43; its idle return is accepted"
+    ],
+    "public_sdk": [
+      {
+        "step": "active",
+        "operation": "Artwork",
+        "success": true,
+        "id": 42
+      },
+      {
+        "step": "resetting",
+        "operation": "Artwork",
+        "success": true,
+        "id": 43
+      },
+      {
+        "step": "reused",
+        "operation": "Artwork",
+        "success": true,
+        "id": 44
+      }
+    ],
+    "native_http1_observations": {
+      "close_idle_calls": 1,
+      "requests": [
+        {
+          "step": "active",
+          "connection": 1,
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "target": "/v1/illust/detail?illust_id=42",
+          "protocol": "HTTP/1.1"
+        },
+        {
+          "step": "resetting",
+          "connection": 2,
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "target": "/v1/illust/detail?illust_id=43",
+          "protocol": "HTTP/1.1"
+        },
+        {
+          "step": "reused",
+          "connection": 1,
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "target": "/v1/illust/detail?illust_id=44",
+          "protocol": "HTTP/1.1"
+        }
+      ],
+      "idle_returns": [
+        {
+          "step": "active",
+          "observed": true,
+          "accepted": true
+        },
+        {
+          "step": "resetting",
+          "observed": true,
+          "accepted": true
+        },
+        {
+          "step": "reused",
+          "observed": true,
+          "accepted": true
+        }
+      ],
+      "peer_closures_at_barriers": []
+    }
+  },
+  {
+    "name": "mixed-idle-and-active-repeated-close",
+    "schedule": [
+      "warm connection 1 with Artwork 41",
+      "Artwork 42 holds connection 1 after flushed prefix",
+      "Artwork 43 completes and leaves connection 2 idle",
+      "call CloseIdleConnections twice; peer 2 closes",
+      "release 42; SDK succeeds and peer 1 closes",
+      "Artwork 44 succeeds on connection 3"
+    ],
+    "public_sdk": [
+      {
+        "step": "warm",
+        "operation": "Artwork",
+        "success": true,
+        "id": 41
+      },
+      {
+        "step": "active",
+        "operation": "Artwork",
+        "success": true,
+        "id": 42
+      },
+      {
+        "step": "idle",
+        "operation": "Artwork",
+        "success": true,
+        "id": 43
+      },
+      {
+        "step": "next",
+        "operation": "Artwork",
+        "success": true,
+        "id": 44
+      }
+    ],
+    "native_http1_observations": {
+      "close_idle_calls": 2,
+      "requests": [
+        {
+          "step": "warm",
+          "connection": 1,
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "target": "/v1/illust/detail?illust_id=41",
+          "protocol": "HTTP/1.1"
+        },
+        {
+          "step": "active",
+          "connection": 1,
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "target": "/v1/illust/detail?illust_id=42",
+          "protocol": "HTTP/1.1"
+        },
+        {
+          "step": "idle",
+          "connection": 2,
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "target": "/v1/illust/detail?illust_id=43",
+          "protocol": "HTTP/1.1"
+        },
+        {
+          "step": "next",
+          "connection": 3,
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "target": "/v1/illust/detail?illust_id=44",
+          "protocol": "HTTP/1.1"
+        }
+      ],
+      "idle_returns": [
+        {
+          "step": "warm",
+          "observed": true,
+          "accepted": true
+        },
+        {
+          "step": "active",
+          "observed": true,
+          "accepted": false,
+          "raw_error": "http: putIdleConn: CloseIdleConnections was called"
+        },
+        {
+          "step": "idle",
+          "observed": true,
+          "accepted": true
+        },
+        {
+          "step": "next",
+          "observed": true,
+          "accepted": true
+        }
+      ],
+      "peer_closures_at_barriers": [
+        {
+          "barrier": "idle pool close",
+          "connection": 2
+        },
+        {
+          "barrier": "active response completed",
+          "connection": 1
+        }
+      ]
+    }
+  },
+  {
+    "name": "resource-eof-after-close-retires-active-connection",
+    "schedule": [
+      "ArtworkPages resolves a synthetic resource on connection 1",
+      "OpenResource returns headers and a prefix from connection 2",
+      "CloseIdleConnections closes idle API connection 1",
+      "release remaining body and read through EOF",
+      "stream succeeds, its idle return is rejected, and peer 2 closes",
+      "next OpenResource succeeds on connection 3; a further open reuses 3"
+    ],
+    "public_sdk": [
+      {
+        "step": "metadata",
+        "operation": "ArtworkPages",
+        "success": true,
+        "id": 42
+      },
+      {
+        "step": "active-stream",
+        "operation": "OpenResource",
+        "success": true,
+        "status": 200,
+        "body": "abc",
+        "close_success": true
+      },
+      {
+        "step": "next-stream",
+        "operation": "OpenResource",
+        "success": true,
+        "status": 200,
+        "body": "abc",
+        "close_success": true
+      },
+      {
+        "step": "reused-stream",
+        "operation": "OpenResource",
+        "success": true,
+        "status": 200,
+        "body": "abc",
+        "close_success": true
+      }
+    ],
+    "native_http1_observations": {
+      "close_idle_calls": 1,
+      "requests": [
+        {
+          "step": "metadata",
+          "connection": 1,
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "target": "/v1/illust/detail?illust_id=42",
+          "protocol": "HTTP/1.1"
+        },
+        {
+          "step": "active-stream",
+          "connection": 2,
+          "method": "GET",
+          "host": "i.pximg.net",
+          "target": "/idle-native-h1.fixture",
+          "protocol": "HTTP/1.1"
+        },
+        {
+          "step": "next-stream",
+          "connection": 3,
+          "method": "GET",
+          "host": "i.pximg.net",
+          "target": "/idle-native-h1.fixture",
+          "protocol": "HTTP/1.1"
+        },
+        {
+          "step": "reused-stream",
+          "connection": 3,
+          "method": "GET",
+          "host": "i.pximg.net",
+          "target": "/idle-native-h1.fixture",
+          "protocol": "HTTP/1.1"
+        }
+      ],
+      "idle_returns": [
+        {
+          "step": "metadata",
+          "observed": true,
+          "accepted": true
+        },
+        {
+          "step": "active-stream",
+          "observed": true,
+          "accepted": false,
+          "raw_error": "http: putIdleConn: CloseIdleConnections was called"
+        },
+        {
+          "step": "next-stream",
+          "observed": true,
+          "accepted": true
+        },
+        {
+          "step": "reused-stream",
+          "observed": true,
+          "accepted": true
+        }
+      ],
+      "peer_closures_at_barriers": [
+        {
+          "barrier": "idle API pool close",
+          "connection": 1
+        },
+        {
+          "barrier": "stream EOF",
+          "connection": 2
+        }
+      ]
+    }
+  },
+  {
+    "name": "resource-early-close-discards-connection",
+    "schedule": [
+      "resolve synthetic resource using ArtworkPages",
+      "OpenResource returns after headers; read only the first body byte",
+      "close unread body and observe peer 2 shutdown independently",
+      "next OpenResource uses connection 3 and reads to EOF",
+      "a further OpenResource reuses connection 3"
+    ],
+    "public_sdk": [
+      {
+        "step": "metadata",
+        "operation": "ArtworkPages",
+        "success": true,
+        "id": 42
+      },
+      {
+        "step": "early-stream",
+        "operation": "OpenResource",
+        "success": true,
+        "status": 200,
+        "body": "a",
+        "close_success": true
+      },
+      {
+        "step": "next-stream",
+        "operation": "OpenResource",
+        "success": true,
+        "status": 200,
+        "body": "abc",
+        "close_success": true
+      },
+      {
+        "step": "reused-stream",
+        "operation": "OpenResource",
+        "success": true,
+        "status": 200,
+        "body": "abc",
+        "close_success": true
+      }
+    ],
+    "native_http1_observations": {
+      "close_idle_calls": 0,
+      "requests": [
+        {
+          "step": "metadata",
+          "connection": 1,
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "target": "/v1/illust/detail?illust_id=42",
+          "protocol": "HTTP/1.1"
+        },
+        {
+          "step": "early-stream",
+          "connection": 2,
+          "method": "GET",
+          "host": "i.pximg.net",
+          "target": "/idle-native-h1.fixture",
+          "protocol": "HTTP/1.1"
+        },
+        {
+          "step": "next-stream",
+          "connection": 3,
+          "method": "GET",
+          "host": "i.pximg.net",
+          "target": "/idle-native-h1.fixture",
+          "protocol": "HTTP/1.1"
+        },
+        {
+          "step": "reused-stream",
+          "connection": 3,
+          "method": "GET",
+          "host": "i.pximg.net",
+          "target": "/idle-native-h1.fixture",
+          "protocol": "HTTP/1.1"
+        }
+      ],
+      "idle_returns": [
+        {
+          "step": "metadata",
+          "observed": true,
+          "accepted": true
+        },
+        {
+          "step": "next-stream",
+          "observed": true,
+          "accepted": true
+        },
+        {
+          "step": "reused-stream",
+          "observed": true,
+          "accepted": true
+        }
+      ],
+      "peer_closures_at_barriers": [
+        {
+          "barrier": "early Body.Close",
+          "connection": 2
+        }
+      ]
+    }
+  },
+  {
+    "name": "cancel-active-headers-after-close",
+    "schedule": [
+      "Artwork 42 reaches peer headers barrier",
+      "CloseIdleConnections while active",
+      "cancel request context and await terminal SDK error",
+      "observe peer connection 1 shutdown",
+      "Artwork 43 succeeds on a new connection"
+    ],
+    "public_sdk": [
+      {
+        "step": "canceled",
+        "operation": "Artwork",
+        "success": false,
+        "error": {
+          "Product": "pixiv",
+          "Operation": "Artwork",
+          "Reason": "upstream_unavailable",
+          "Detail": "",
+          "HTTPStatus": 0,
+          "Transport": "http",
+          "Retry": {
+            "Safe": false,
+            "After": "0001-01-01T00:00:00Z",
+            "HasAfter": false
+          }
+        },
+        "context_canceled": true
+      },
+      {
+        "step": "next",
+        "operation": "Artwork",
+        "success": true,
+        "id": 43
+      }
+    ],
+    "native_http1_observations": {
+      "close_idle_calls": 1,
+      "requests": [
+        {
+          "step": "canceled",
+          "connection": 1,
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "target": "/v1/illust/detail?illust_id=42",
+          "protocol": "HTTP/1.1"
+        },
+        {
+          "step": "next",
+          "connection": 2,
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "target": "/v1/illust/detail?illust_id=43",
+          "protocol": "HTTP/1.1"
+        }
+      ],
+      "idle_returns": [
+        {
+          "step": "next",
+          "observed": true,
+          "accepted": true
+        }
+      ],
+      "peer_closures_at_barriers": [
+        {
+          "barrier": "terminal cancellation",
+          "connection": 1
+        }
+      ]
+    }
+  },
+  {
+    "name": "cancel-active-body-after-close",
+    "schedule": [
+      "Artwork 42 reaches peer body barrier",
+      "CloseIdleConnections while active",
+      "cancel request context and await terminal SDK error",
+      "observe peer connection 1 shutdown",
+      "Artwork 43 succeeds on a new connection"
+    ],
+    "public_sdk": [
+      {
+        "step": "canceled",
+        "operation": "Artwork",
+        "success": false,
+        "error": {
+          "Product": "pixiv",
+          "Operation": "Artwork",
+          "Reason": "upstream_unavailable",
+          "Detail": "",
+          "HTTPStatus": 0,
+          "Transport": "http",
+          "Retry": {
+            "Safe": false,
+            "After": "0001-01-01T00:00:00Z",
+            "HasAfter": false
+          }
+        },
+        "context_canceled": true
+      },
+      {
+        "step": "next",
+        "operation": "Artwork",
+        "success": true,
+        "id": 43
+      }
+    ],
+    "native_http1_observations": {
+      "close_idle_calls": 1,
+      "requests": [
+        {
+          "step": "canceled",
+          "connection": 1,
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "target": "/v1/illust/detail?illust_id=42",
+          "protocol": "HTTP/1.1"
+        },
+        {
+          "step": "next",
+          "connection": 2,
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "target": "/v1/illust/detail?illust_id=43",
+          "protocol": "HTTP/1.1"
+        }
+      ],
+      "idle_returns": [
+        {
+          "step": "next",
+          "observed": true,
+          "accepted": true
+        }
+      ],
+      "peer_closures_at_barriers": [
+        {
+          "barrier": "terminal cancellation",
+          "connection": 1
+        }
+      ]
+    }
+  },
+  {
+    "name": "resource-cancel-body-after-close",
+    "schedule": [
+      "resolve synthetic resource using ArtworkPages",
+      "OpenResource returns and first body byte is read",
+      "CloseIdleConnections closes idle API connection 1",
+      "cancel stream context and await context-canceled body read",
+      "observe peer connection 2 shutdown",
+      "next OpenResource succeeds on connection 3"
+    ],
+    "public_sdk": [
+      {
+        "step": "metadata",
+        "operation": "ArtworkPages",
+        "success": true,
+        "id": 42
+      },
+      {
+        "step": "canceled-stream",
+        "operation": "OpenResource",
+        "success": true,
+        "status": 200,
+        "body": "a",
+        "context_canceled": true,
+        "raw_read_error": "context canceled",
+        "close_success": true
+      },
+      {
+        "step": "next-stream",
+        "operation": "OpenResource",
+        "success": true,
+        "status": 200,
+        "body": "abc",
+        "close_success": true
+      }
+    ],
+    "native_http1_observations": {
+      "close_idle_calls": 1,
+      "requests": [
+        {
+          "step": "metadata",
+          "connection": 1,
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "target": "/v1/illust/detail?illust_id=42",
+          "protocol": "HTTP/1.1"
+        },
+        {
+          "step": "canceled-stream",
+          "connection": 2,
+          "method": "GET",
+          "host": "i.pximg.net",
+          "target": "/idle-native-h1.fixture",
+          "protocol": "HTTP/1.1"
+        },
+        {
+          "step": "next-stream",
+          "connection": 3,
+          "method": "GET",
+          "host": "i.pximg.net",
+          "target": "/idle-native-h1.fixture",
+          "protocol": "HTTP/1.1"
+        }
+      ],
+      "idle_returns": [
+        {
+          "step": "metadata",
+          "observed": true,
+          "accepted": true
+        },
+        {
+          "step": "next-stream",
+          "observed": true,
+          "accepted": true
+        }
+      ],
+      "peer_closures_at_barriers": [
+        {
+          "barrier": "idle API pool close",
+          "connection": 1
+        },
+        {
+          "barrier": "terminal stream cancellation",
+          "connection": 2
+        }
+      ]
+    }
+  }
+]

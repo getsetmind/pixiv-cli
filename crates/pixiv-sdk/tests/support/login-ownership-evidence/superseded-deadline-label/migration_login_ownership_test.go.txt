@@ -1,0 +1,651 @@
+package pixiv
+
+import (
+	"bytes"
+	"context"
+	"crypto/rand"
+	"crypto/sha256"
+	"crypto/tls"
+	"crypto/x509"
+	"encoding/base64"
+	"encoding/json"
+	"errors"
+	"flag"
+	"fmt"
+	"io"
+	"net"
+	"net/http"
+	"net/http/httptest"
+	"net/url"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"runtime"
+	"strconv"
+	"strings"
+	"sync"
+	"sync/atomic"
+	"testing"
+	"time"
+
+	"github.com/FlanChanXwO/pixiv-cli/internal/shared/diagnostics"
+	"github.com/FlanChanXwO/pixiv-cli/sdk"
+)
+
+var migrationCaptureLoginOwnership = flag.Bool("migration-capture-login-ownership", false, "capture frozen public LoginSession client and context ownership")
+
+const migrationLoginOwnershipChildEnv = "PIXIV_MIGRATION_LOGIN_OWNERSHIP_CHILD"
+const migrationLoginOwnershipPrefix = "OWNED_LOGIN_JSON:"
+
+type migrationLoginOwnershipRow struct {
+	Name        string         `json:"name"`
+	Input       map[string]any `json:"input"`
+	Observation map[string]any `json:"observation"`
+}
+
+type migrationLoginOwnershipSource struct {
+	Path   string `json:"path"`
+	SHA256 string `json:"sha256"`
+}
+
+type migrationLoginOwnershipFixture struct {
+	Reference       string                          `json:"reference"`
+	GoVersion       string                          `json:"go_version"`
+	Sources         []migrationLoginOwnershipSource `json:"sources"`
+	StandardSources []migrationLoginOwnershipSource `json:"standard_sources"`
+	Evidence        string                          `json:"evidence"`
+	Limitations     []string                        `json:"limitations"`
+	Cases           []migrationLoginOwnershipRow    `json:"cases"`
+}
+
+type migrationLoginOwnershipKey struct{}
+
+type migrationLoginOwnershipSink struct{ events *[]diagnostics.Event }
+
+func (s *migrationLoginOwnershipSink) Emit(event diagnostics.Event) {
+	*s.events = append(*s.events, event)
+}
+
+type migrationLoginOwnershipTransport struct {
+	calls   atomic.Int32
+	closes  atomic.Int32
+	inspect func(*http.Request) (*http.Response, error)
+}
+
+func (m *migrationLoginOwnershipTransport) RoundTrip(r *http.Request) (*http.Response, error) {
+	m.calls.Add(1)
+	if m.inspect != nil {
+		return m.inspect(r)
+	}
+	return migrationLoginOwnershipResponse(r), nil
+}
+
+func (m *migrationLoginOwnershipTransport) CloseIdleConnections() { m.closes.Add(1) }
+
+func migrationLoginOwnershipResponse(r *http.Request) *http.Response {
+	return &http.Response{StatusCode: http.StatusOK, Header: http.Header{"Content-Type": {"application/json"}}, Body: io.NopCloser(strings.NewReader(loginMigrationSuccess)), Request: r}
+}
+
+func migrationLoginOwnershipError(err error) map[string]any {
+	result := map[string]any{"reason": sdk.ReasonOf(err), "message": "", "canceled": errors.Is(err, context.Canceled), "deadline_exceeded": errors.Is(err, context.DeadlineExceeded)}
+	if err != nil {
+		result["message"] = err.Error()
+	}
+	var classified *sdk.Error
+	if errors.As(err, &classified) {
+		result["operation"] = classified.Operation
+		result["detail"] = classified.Detail
+		result["transport"] = classified.Transport
+		result["http_status"] = classified.HTTPStatus
+	}
+	return result
+}
+
+func migrationLoginOwnershipAwait[T any](t *testing.T, channel <-chan T, label string) T {
+	t.Helper()
+	select {
+	case value := <-channel:
+		return value
+	case <-time.After(3 * time.Second):
+		t.Fatalf("owned login %s did not complete", label)
+		var zero T
+		return zero
+	}
+}
+
+func migrationLoginOwnershipBegin(t *testing.T, client *http.Client) *LoginSession {
+	t.Helper()
+	session, err := BeginLogin(LoginOptions{HTTPClient: client})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return session
+}
+
+func migrationLoginOwnershipPKCE(session *LoginSession, request *http.Request) map[string]any {
+	authorization, _ := url.Parse(session.AuthorizationURL())
+	_ = request.ParseForm()
+	sum := sha256.Sum256([]byte(request.PostForm.Get("code_verifier")))
+	return map[string]any{"method": request.Method, "url": request.URL.String(), "code": request.PostForm.Get("code"), "pkce_matches_authorization": base64.RawURLEncoding.EncodeToString(sum[:]) == authorization.Query().Get("code_challenge")}
+}
+
+func migrationLoginOwnershipInjectedRows(t *testing.T) []migrationLoginOwnershipRow {
+	var rows []migrationLoginOwnershipRow
+	for _, change := range []string{"options_reassigned", "original_client_transport_reassigned"} {
+		original, replacement := &migrationLoginOwnershipTransport{}, &migrationLoginOwnershipTransport{}
+		client := &http.Client{Transport: original}
+		options := LoginOptions{HTTPClient: client}
+		session, err := BeginLogin(options)
+		if err != nil {
+			t.Fatal(err)
+		}
+		copy := *session
+		authorization := session.AuthorizationURL()
+		before := map[string]any{"network_calls": original.calls.Load(), "close_calls": original.closes.Load(), "go_only_retains_original_client_pointer": session.state.httpClient == client, "go_only_copies_share_state_pointer": session.state == copy.state, "go_only_session_owned": session.state.selfHTTP}
+		options.HTTPClient = &http.Client{Transport: replacement}
+		if change == "original_client_transport_reassigned" {
+			client.Transport = replacement
+		}
+		session.CloseIdleConnections()
+		copy.CloseIdleConnections()
+		_, invalid := copy.Complete(context.Background(), "bad?input")
+		beforeComplete := map[string]any{"authorization_unchanged": authorization == session.AuthorizationURL(), "accepts_callback": session.AcceptsCallbackURL("pixiv://account/login?code=x"), "invalid_callback_error": migrationLoginOwnershipError(invalid), "network_calls": original.calls.Load() + replacement.calls.Load(), "close_calls": original.closes.Load() + replacement.closes.Load(), "go_only_gate_used": session.state.used.Load()}
+		var request map[string]any
+		observe := func(r *http.Request) (*http.Response, error) {
+			request = migrationLoginOwnershipPKCE(session, r)
+			return migrationLoginOwnershipResponse(r), nil
+		}
+		original.inspect, replacement.inspect = observe, observe
+		credentials, completed := copy.Complete(context.Background(), " bare-code ")
+		_, reused := session.Complete(context.Background(), "x")
+		_, invalidAfter := session.Complete(context.Background(), "bad?input")
+		session.CloseIdleConnections()
+		copy.CloseIdleConnections()
+		rows = append(rows, migrationLoginOwnershipRow{"injected/" + change, map[string]any{"entry": "BeginLogin(HTTPClient), copied public handle, CloseIdleConnections, Complete", "change_after_begin": change, "invalid_callback": "bad?input", "valid_callback": " bare-code "}, map[string]any{"before": before, "before_complete": beforeComplete, "request": request, "user_id": credentials.UserID, "completed_error": migrationLoginOwnershipError(completed), "reused_error": migrationLoginOwnershipError(reused), "invalid_after_used_error": migrationLoginOwnershipError(invalidAfter), "original_calls": original.calls.Load(), "replacement_calls": replacement.calls.Load(), "close_calls": original.closes.Load() + replacement.closes.Load(), "authorization_unchanged": authorization == copy.AuthorizationURL(), "accepts_after_complete": copy.AcceptsCallbackURL("pixiv://account/login?code=x")}})
+	}
+	return rows
+}
+
+func migrationLoginOwnershipContextRows(t *testing.T) []migrationLoginOwnershipRow {
+	var rows []migrationLoginOwnershipRow
+	for _, mode := range []string{"live_valued_scoped_deadline", "canceled_transport_success", "expired_transport_success", "canceled_transport_obeys", "expired_transport_obeys", "cancel_during_roundtrip", "without_cancel", "transport_failure", "nil_context"} {
+		events := []diagnostics.Event{}
+		base := diagnostics.WithScope(context.WithValue(context.Background(), migrationLoginOwnershipKey{}, "owned-login-value"), &migrationLoginOwnershipSink{events: &events}, diagnostics.ModulePixivAuth, 73)
+		deadline := time.Date(2099, 1, 1, 0, 0, 0, 123456789, time.UTC)
+		if strings.HasPrefix(mode, "expired_") {
+			deadline = time.Unix(1, 123456789).UTC()
+		}
+		ctx, stop := context.WithDeadline(base, deadline)
+		if strings.HasPrefix(mode, "canceled_") {
+			stop()
+		}
+		if mode == "without_cancel" {
+			stop()
+			ctx = context.WithoutCancel(ctx)
+		}
+		if mode == "nil_context" {
+			ctx = nil
+		}
+		var observation map[string]any
+		entered, finished := make(chan struct{}, 1), make(chan error, 1)
+		transport := &migrationLoginOwnershipTransport{}
+		transport.inspect = func(r *http.Request) (*http.Response, error) {
+			actual := r.Context()
+			actualDeadline, hasDeadline := actual.Deadline()
+			actualScope, scoped := diagnostics.ScopeFromContext(actual)
+			callerScope, callerScoped := diagnostics.ScopeFromContext(ctx)
+			observation = map[string]any{"go_only_exact_context_interface": actual == ctx, "value": actual.Value(migrationLoginOwnershipKey{}), "scope_present": scoped, "go_only_exact_diagnostic_scope": scoped && callerScoped && actualScope == callerScope, "has_deadline": hasDeadline, "go_only_deadline_equals_caller": ctx != nil && actualDeadline == deadline, "done_nil": actual.Done() == nil, "context_error_before": migrationLoginOwnershipError(actual.Err())}
+			if hasDeadline {
+				observation["deadline_rfc3339_nano"] = actualDeadline.Format(time.RFC3339Nano)
+			}
+			diagnostics.Emit(actual, diagnostics.Event{Kind: diagnostics.EventNetworkRequest, Operation: "owned-login-probe"})
+			if mode == "cancel_during_roundtrip" {
+				entered <- struct{}{}
+				migrationLoginOwnershipAwait(t, actual.Done(), "caller cancellation")
+			}
+			observation["context_error_after"] = migrationLoginOwnershipError(actual.Err())
+			if mode == "transport_failure" {
+				return nil, errors.New("owned private transport detail")
+			}
+			if strings.HasSuffix(mode, "_obeys") || mode == "cancel_during_roundtrip" {
+				return nil, actual.Err()
+			}
+			return migrationLoginOwnershipResponse(r), nil
+		}
+		session := migrationLoginOwnershipBegin(t, &http.Client{Transport: transport})
+		_, invalid := session.Complete(ctx, "bad?input")
+		beforeValid := map[string]any{"invalid_error": migrationLoginOwnershipError(invalid), "network_calls": transport.calls.Load(), "go_only_gate_used": session.state.used.Load()}
+		var credentials Credentials
+		var err error
+		if mode == "cancel_during_roundtrip" {
+			go func() { credentials, err = session.Complete(ctx, "x"); finished <- err }()
+			migrationLoginOwnershipAwait(t, entered, "RoundTrip entry")
+			stop()
+			migrationLoginOwnershipAwait(t, finished, "canceled completion")
+		} else {
+			credentials, err = session.Complete(ctx, "x")
+		}
+		_, reused := session.Complete(context.Background(), "x")
+		stop()
+		rows = append(rows, migrationLoginOwnershipRow{func() string {
+			if mode == "nil_context" {
+				return "go_only/context/nil_context"
+			}
+			return "context/" + mode
+		}(), map[string]any{"entry": "public Complete with caller context and injected RoundTripper", "mode": mode, "http_client_timeout": "zero preserves exact caller context", "deadline": deadline.Format(time.RFC3339Nano), "value": "owned-login-value", "scope_request_id": 73}, map[string]any{"before_valid": beforeValid, "roundtrip": observation, "events": events, "user_id": credentials.UserID, "error": migrationLoginOwnershipError(err), "reused_error": migrationLoginOwnershipError(reused), "network_calls": transport.calls.Load(), "close_calls": transport.closes.Load(), "accepts_after_complete": session.AcceptsCallbackURL("pixiv://account/login?code=x")}})
+	}
+	return rows
+}
+
+func migrationLoginOwnershipSharedGate(t *testing.T) migrationLoginOwnershipRow {
+	entered, release := make(chan struct{}, 1), make(chan struct{})
+	transport := &migrationLoginOwnershipTransport{inspect: func(r *http.Request) (*http.Response, error) {
+		entered <- struct{}{}
+		migrationLoginOwnershipAwait(t, release, "in-flight completion release")
+		return migrationLoginOwnershipResponse(r), nil
+	}}
+	session := migrationLoginOwnershipBegin(t, &http.Client{Transport: transport})
+	copy := *session
+	first := make(chan error, 1)
+	go func() { _, err := copy.Complete(context.Background(), "x"); first <- err }()
+	migrationLoginOwnershipAwait(t, entered, "winning copy RoundTrip")
+	_, loser := session.Complete(context.Background(), "x")
+	_, invalid := copy.Complete(context.Background(), "bad?input")
+	copy.CloseIdleConnections()
+	whileInFlight := map[string]any{"loser_error": migrationLoginOwnershipError(loser), "invalid_error": migrationLoginOwnershipError(invalid), "network_calls": transport.calls.Load(), "close_calls": transport.closes.Load(), "authorization_same": copy.AuthorizationURL() == session.AuthorizationURL(), "accepts_callback": session.AcceptsCallbackURL("pixiv://account/login?code=x")}
+	close(release)
+	winner := migrationLoginOwnershipAwait(t, first, "winning completion")
+	return migrationLoginOwnershipRow{"copies/shared_gate_in_flight", map[string]any{"entry": "copied public handle", "schedule": "winning copy enters RoundTrip before original attempts Complete", "close_while_in_flight": true}, map[string]any{"while_in_flight": whileInFlight, "winner_error": migrationLoginOwnershipError(winner), "network_calls": transport.calls.Load(), "close_calls": transport.closes.Load()}}
+}
+
+func migrationLoginOwnershipNilRows(t *testing.T) []migrationLoginOwnershipRow {
+	var nilSession *LoginSession
+	zero := &LoginSession{}
+	var rows []migrationLoginOwnershipRow
+	for _, item := range []struct {
+		name    string
+		session *LoginSession
+	}{{"nil_pointer", nilSession}, {"zero_handle", zero}} {
+		item.session.CloseIdleConnections()
+		_, err := item.session.Complete(nil, "x")
+		rows = append(rows, migrationLoginOwnershipRow{"go_only/" + item.name, map[string]any{"entry": "public nil or zero handle", "caller_context": nil}, map[string]any{"authorization_url": item.session.AuthorizationURL(), "accepts_callback": item.session.AcceptsCallbackURL("pixiv://account/login?code=x"), "error": migrationLoginOwnershipError(err), "close_panicked": false}})
+	}
+	return rows
+}
+
+type migrationLoginOwnershipRandom struct {
+	reads []int
+	step  func(int)
+}
+
+func (r *migrationLoginOwnershipRandom) Read(p []byte) (int, error) {
+	r.reads = append(r.reads, len(p))
+	if r.step != nil {
+		r.step(len(r.reads))
+	}
+	for i := range p {
+		p[i] = byte(i + len(r.reads))
+	}
+	return len(p), nil
+}
+
+func migrationLoginOwnershipConstruction(t *testing.T, mode string) migrationLoginOwnershipRow {
+	oldRandom, oldTransport := rand.Reader, http.DefaultTransport
+	defer func() { rand.Reader, http.DefaultTransport = oldRandom, oldTransport }()
+	reader := &migrationLoginOwnershipRandom{}
+	rand.Reader = reader
+	original, replacement := &http.Transport{MaxIdleConns: 7}, &http.Transport{MaxIdleConns: 19}
+	http.DefaultTransport = original
+	reader.step = func(step int) {
+		if step == 2 {
+			switch mode {
+			case "client_selection_after_randomness":
+				http.DefaultTransport = replacement
+			case "nil_default_transport":
+				http.DefaultTransport = nil
+			case "incompatible_default_transport":
+				http.DefaultTransport = &migrationLoginOwnershipTransport{}
+			}
+		}
+	}
+	var session *LoginSession
+	var returned error
+	panicked := false
+	func() {
+		defer func() { panicked = recover() != nil }()
+		options := LoginOptions{}
+		if mode == "injected_bypasses_nil_default" {
+			http.DefaultTransport = nil
+			options.HTTPClient = &http.Client{Transport: &migrationLoginOwnershipTransport{}}
+		}
+		session, returned = BeginLogin(options)
+	}()
+	observation := map[string]any{"random_read_sizes": reader.reads, "go_only_panicked": panicked, "returned_session_nil": session == nil, "error": migrationLoginOwnershipError(returned)}
+	if session != nil {
+		observation["go_only_owned"] = session.state.selfHTTP
+		if tr, ok := session.state.httpClient.Transport.(*http.Transport); ok {
+			observation["go_only_cloned_transport_distinct"] = tr != http.DefaultTransport
+			observation["captured_max_idle_connections"] = tr.MaxIdleConns
+		}
+		session.CloseIdleConnections()
+	}
+	return migrationLoginOwnershipRow{"go_only/construction/" + mode, map[string]any{"entry": "public BeginLogin; isolated process overrides crypto/rand.Reader and default RoundTripper", "mode": mode, "randomness": "deterministic synthetic bytes; no production randomness change"}, observation}
+}
+
+func migrationLoginOwnershipOwnedPool(t *testing.T) migrationLoginOwnershipRow {
+	oldTransport, oldClient := http.DefaultTransport, http.DefaultClient
+	defer func() { http.DefaultTransport, http.DefaultClient = oldTransport, oldClient }()
+	type connection struct {
+		state  http.ConnState
+		idle   chan struct{}
+		closed chan struct{}
+	}
+	var mu sync.Mutex
+	connections := map[net.Conn]*connection{}
+	requestConnections := make(chan net.Conn, 4)
+	active, release := make(chan struct{}, 1), make(chan struct{})
+	server := httptest.NewUnstartedServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Host != "oauth.secure.pixiv.net" || r.Method != http.MethodPost || r.URL.Path != "/auth/token" {
+			t.Errorf("unexpected owned OAuth request: %s %s %s", r.Method, r.Host, r.URL.Path)
+		}
+		if err := r.ParseForm(); err != nil {
+			t.Error(err)
+		}
+		conn := r.Context().Value(migrationLoginOwnershipKey{}).(net.Conn)
+		requestConnections <- conn
+		if r.Form.Get("code") == "active" {
+			active <- struct{}{}
+			migrationLoginOwnershipAwait(t, release, "owned active response release")
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = io.WriteString(w, loginMigrationSuccess)
+	}))
+	server.Config.ConnContext = func(ctx context.Context, conn net.Conn) context.Context {
+		return context.WithValue(ctx, migrationLoginOwnershipKey{}, conn)
+	}
+	server.Config.ConnState = func(conn net.Conn, state http.ConnState) {
+		mu.Lock()
+		defer mu.Unlock()
+		entry, ok := connections[conn]
+		if !ok {
+			entry = &connection{idle: make(chan struct{}, 1), closed: make(chan struct{})}
+			connections[conn] = entry
+		}
+		entry.state = state
+		if state == http.StateIdle {
+			select {
+			case entry.idle <- struct{}{}:
+			default:
+			}
+		}
+		if state == http.StateClosed {
+			close(entry.closed)
+		}
+	}
+	server.StartTLS()
+	defer server.Close()
+	roots := x509.NewCertPool()
+	roots.AddCert(server.Certificate())
+	var dialCalls, replacementCalls atomic.Int32
+	original := &http.Transport{Proxy: nil, TLSClientConfig: &tls.Config{RootCAs: roots, ServerName: "example.com"}, DialContext: func(ctx context.Context, network, address string) (net.Conn, error) {
+		dialCalls.Add(1)
+		if address != "oauth.secure.pixiv.net:443" {
+			return nil, errors.New("unapproved owned fixture dial")
+		}
+		return (&net.Dialer{}).DialContext(ctx, network, server.Listener.Addr().String())
+	}}
+	defer original.CloseIdleConnections()
+	http.DefaultTransport = original
+	first, second, third := migrationLoginOwnershipBegin(t, nil), migrationLoginOwnershipBegin(t, nil), migrationLoginOwnershipBegin(t, nil)
+	defer first.CloseIdleConnections()
+	defer second.CloseIdleConnections()
+	defer third.CloseIdleConnections()
+	copy := *first
+	third.CloseIdleConnections()
+	before := map[string]any{"dial_calls": dialCalls.Load(), "accepts_after_preclose": third.AcceptsCallbackURL("pixiv://account/login?code=x"), "authorization_preserved_after_preclose": third.AuthorizationURL() != ""}
+	http.DefaultTransport = &http.Transport{DialContext: func(context.Context, string, string) (net.Conn, error) {
+		replacementCalls.Add(1)
+		return nil, errors.New("replaced default must not be used")
+	}}
+	defaultClientTrap := &migrationLoginOwnershipTransport{}
+	http.DefaultClient = &http.Client{Transport: defaultClientTrap}
+	context, stop := context.WithTimeout(context.Background(), 3*time.Second)
+	defer stop()
+	complete := func(session *LoginSession, code string) net.Conn {
+		credentials, err := session.Complete(context, code)
+		if err != nil || credentials.UserID != 42 {
+			t.Fatalf("owned completion user=%d error=%v", credentials.UserID, err)
+		}
+		conn := migrationLoginOwnershipAwait(t, requestConnections, "owned request connection")
+		mu.Lock()
+		entry := connections[conn]
+		mu.Unlock()
+		migrationLoginOwnershipAwait(t, entry.idle, "owned idle state")
+		return conn
+	}
+	firstConn, secondConn := complete(first, "first"), complete(second, "second")
+	copy.CloseIdleConnections()
+	first.CloseIdleConnections()
+	mu.Lock()
+	firstEntry, secondEntry := connections[firstConn], connections[secondConn]
+	mu.Unlock()
+	migrationLoginOwnershipAwait(t, firstEntry.closed, "first copied-handle idle close")
+	mu.Lock()
+	otherIdle := secondEntry.state == http.StateIdle
+	mu.Unlock()
+	_, reused := copy.Complete(context, "x")
+	thirdResult := make(chan error, 1)
+	go func() { _, err := third.Complete(context, "active"); thirdResult <- err }()
+	migrationLoginOwnershipAwait(t, active, "third active request")
+	thirdConn := migrationLoginOwnershipAwait(t, requestConnections, "third connection")
+	third.CloseIdleConnections()
+	mu.Lock()
+	thirdEntry := connections[thirdConn]
+	activeSurvived := thirdEntry.state == http.StateActive
+	mu.Unlock()
+	close(release)
+	thirdError := migrationLoginOwnershipAwait(t, thirdResult, "third completion")
+	migrationLoginOwnershipAwait(t, thirdEntry.idle, "third idle state")
+	third.CloseIdleConnections()
+	migrationLoginOwnershipAwait(t, thirdEntry.closed, "third owned idle close")
+	second.CloseIdleConnections()
+	migrationLoginOwnershipAwait(t, secondEntry.closed, "second owned idle close")
+	return migrationLoginOwnershipRow{"owned/default_pool_retained_and_nonterminal_close", map[string]any{"entry": "public BeginLogin(LoginOptions{}) and copied handle", "server": "owned loopback TLS OAuth response", "constructor_boundary": "default *http.Transport clone with owned dial routing and owned test certificate roots", "global_change_after_begin": "replace default transport and client", "cleanup": "close before exchange, repeated close, copy close, idle close, close during active response"}, map[string]any{"before_complete": before, "dial_calls": dialCalls.Load(), "replacement_default_dial_calls": replacementCalls.Load(), "replacement_default_client_calls": defaultClientTrap.calls.Load(), "independent_session_connections": firstConn != secondConn && secondConn != thirdConn && firstConn != thirdConn, "first_idle_closed_through_copy": true, "second_idle_survives_first_close": otherIdle, "third_active_survives_close": activeSurvived, "third_complete_error": migrationLoginOwnershipError(thirdError), "all_owned_idle_connections_closed": true, "reused_error": migrationLoginOwnershipError(reused), "authorization_same_through_copy": copy.AuthorizationURL() == first.AuthorizationURL(), "accepts_after_close_and_use": copy.AcceptsCallbackURL("pixiv://account/login?code=x")}}
+}
+
+func TestMigrationLoginOwnershipChild(t *testing.T) {
+	mode := os.Getenv(migrationLoginOwnershipChildEnv)
+	if mode == "" {
+		t.Skip("isolated ownership fixture child")
+	}
+	if strings.HasPrefix(mode, "entropy_failure_") {
+		stage, err := strconv.Atoi(strings.TrimPrefix(mode, "entropy_failure_"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		rand.Reader = &migrationLoginOwnershipFailureRandom{stage: stage}
+		_, _ = BeginLogin(LoginOptions{HTTPClient: &http.Client{Transport: &migrationLoginOwnershipTransport{}}})
+		t.Fatal("official crypto/rand.Read unexpectedly returned instead of fatal termination")
+	}
+	var row migrationLoginOwnershipRow
+	if mode == "owned_pool" {
+		row = migrationLoginOwnershipOwnedPool(t)
+	} else {
+		row = migrationLoginOwnershipConstruction(t, mode)
+	}
+	encoded, err := json.Marshal(row)
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Println(migrationLoginOwnershipPrefix + string(encoded))
+}
+
+type migrationLoginOwnershipFailureRandom struct{ stage, reads int }
+
+func (r *migrationLoginOwnershipFailureRandom) Read(p []byte) (int, error) {
+	r.reads++
+	fmt.Printf("OWNED_LOGIN_ENTROPY_READ:%d\n", len(p))
+	if r.reads == r.stage {
+		return 0, errors.New("owned synthetic entropy unavailable")
+	}
+	for i := range p {
+		p[i] = byte(i)
+	}
+	return len(p), nil
+}
+
+func migrationLoginOwnershipChildRow(t *testing.T, mode string) migrationLoginOwnershipRow {
+	t.Helper()
+	exe, err := os.Executable()
+	if err != nil {
+		t.Fatal(err)
+	}
+	command := exec.Command(exe, "-test.run=^TestMigrationLoginOwnershipChild$", "-test.v")
+	for _, value := range os.Environ() {
+		if strings.SplitN(value, "=", 2)[0] != migrationLoginOwnershipChildEnv {
+			command.Env = append(command.Env, value)
+		}
+	}
+	command.Env = append(command.Env, migrationLoginOwnershipChildEnv+"="+mode)
+	output, err := command.CombinedOutput()
+	if strings.HasPrefix(mode, "entropy_failure_") {
+		if err == nil {
+			t.Fatalf("entropy fatal child unexpectedly passed: %s", output)
+		}
+		var reads []int
+		fatal := false
+		for line := range strings.SplitSeq(string(output), "\n") {
+			if strings.HasPrefix(line, "OWNED_LOGIN_ENTROPY_READ:") {
+				n, _ := strconv.Atoi(strings.TrimPrefix(line, "OWNED_LOGIN_ENTROPY_READ:"))
+				reads = append(reads, n)
+			}
+			if strings.Contains(line, "fatal error: crypto/rand: failed to read random data") {
+				fatal = true
+			}
+		}
+		if !fatal {
+			t.Fatalf("unexpected entropy child failure: %v\n%s", err, output)
+		}
+		return migrationLoginOwnershipRow{"go_only/construction/" + mode, map[string]any{"entry": "public BeginLogin; isolated process overrides crypto/rand.Reader with a synthetic read error", "mode": mode}, map[string]any{"random_read_sizes": reads, "go_only_process_failed": true, "go_only_official_rand_read_fatal": fatal, "recoverable_begin_login_error_observed": false}}
+	}
+	if err != nil {
+		t.Fatalf("ownership child %s: %v\n%s", mode, err, output)
+	}
+	for line := range strings.SplitSeq(string(output), "\n") {
+		if strings.HasPrefix(line, migrationLoginOwnershipPrefix) {
+			var row migrationLoginOwnershipRow
+			if err := json.Unmarshal([]byte(strings.TrimPrefix(line, migrationLoginOwnershipPrefix)), &row); err != nil {
+				t.Fatal(err)
+			}
+			return row
+		}
+	}
+	t.Fatalf("ownership child %s did not report its observation: %s", mode, output)
+	return migrationLoginOwnershipRow{}
+}
+
+func TestMigrationLoginOwnershipMatchesFrozenGo(t *testing.T) {
+	const reference = "4b4426487ef18bed276706daec385e0d0a6979f9"
+	root := filepath.Join("..", "..")
+	sources := []migrationLoginOwnershipSource{
+		{"go.mod", "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c"},
+		{"go.sum", "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e"},
+		{"sdk/pixiv/login.go", "c3630d78fc4693b41c2954ee54d3feb21e643250e790215fed40f88b071a66de"},
+		{"sdk/pixiv/login_urls.go", "c8a88894d83eef0142281e443f088b02517a6804c8614a04203827a7917816b5"},
+		{"sdk/pixiv/errors.go", "9a1830393129ca195ef4d57c0bda17f219f0f750c7293abf5520aa888bfe81a8"},
+		{"sdk/pixiv/credentials.go", "8f29d1b3f42ea6769f350332942cef6b34059c680e5468b2b9b23ea265b1fdb6"},
+		{"sdk/error.go", "d8e48078c464f18a26cdcf32828e423dd948f17061269b222f82e08a8cee0041"},
+		{"internal/services/pixiv/oauth/oauth.go", "cdc91d906255256f452789a3ce4b5efd8844e5b84a44f29756c1172b051ce376"},
+		{"internal/services/pixiv/protocol/profile.go", "b8aa67d523d562b740c3b18f530c1562200dfc9ccf51caa920f45e9a457f470c"},
+		{"internal/services/pixiv/protocol/failure.go", "974f40cb48806c84e166c325b44f6cea0923f9d3f054c70b4a758d48678ea0b3"},
+		{"internal/services/pixiv/protocol/required.go", "87bdd5a3232e839e071a0f9af48e39c72905d6e38e0691733bba99dc239ab510"},
+		{"internal/services/pixiv/protocol/protocol.go", "af4dce0e3a9ed1ca7879215c19b7d340d439e7d9688a40f5e8c6e3c4ba76c0d6"},
+		{"internal/shared/diagnostics/diagnostics.go", "aecd4045f50f6bcf4cd20f316d680cbfb28e657f919ce1c0700dfdad8d5ddc76"},
+	}
+	standard := []migrationLoginOwnershipSource{
+		{"src/context/context.go", "971f00ffa375b79d3f65e6da33cca3a493cc3fce091c589233abfb4283e29b7d"},
+		{"src/net/http/client.go", "ced3428a85206de8de79c10de38d34951e0b9823c0ccb68ff51329d048a1f7b9"},
+		{"src/net/http/request.go", "c3257079994b4e4f74f01cef72508919983ba31f91fcf599d348e9d52cec1540"},
+		{"src/net/http/transport.go", "b3c0ef6ea21d8bfa3d8ee4d6f53e3f5e5982c5d6bfcd14536437adeb214a6933"},
+		{"src/crypto/rand/rand.go", "7c289648d453d0bdca0f05091d00bb86c94b69637080c748ff3d3476677521ac"},
+	}
+	for _, source := range sources {
+		current, err := os.ReadFile(filepath.Join(root, source.Path))
+		if err != nil {
+			t.Fatal(err)
+		}
+		command := exec.Command("git", "show", reference+":"+source.Path)
+		command.Dir = root
+		frozen, err := command.Output()
+		if err != nil {
+			t.Fatal(err)
+		}
+		if fmt.Sprintf("%x", sha256.Sum256(frozen)) != source.SHA256 || !bytes.Equal(current, frozen) {
+			t.Fatalf("%s differs from frozen Go", source.Path)
+		}
+	}
+	if runtime.Version() != "go1.27.1" {
+		t.Fatalf("Go version=%s", runtime.Version())
+	}
+	for _, source := range standard {
+		current, err := os.ReadFile(filepath.Join(runtime.GOROOT(), source.Path))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if fmt.Sprintf("%x", sha256.Sum256(current)) != source.SHA256 {
+			t.Fatalf("%s differs from official pinned Go", source.Path)
+		}
+	}
+	fixture := migrationLoginOwnershipFixture{Reference: reference, GoVersion: runtime.Version(), Sources: sources, StandardSources: standard,
+		Evidence: "Public BeginLogin and LoginSession methods through retained caller-owned RoundTrippers and an owned loopback TLS OAuth server. The default owned pool is created by the actual public constructor, not a private state/constructor seam. Global default-client/transport and entropy overrides run only in isolated child test processes. Exact fixture bytes are compared without normalizing source outcomes.",
+		Limitations: []string{
+			"Existing login_migration_contract_test.go and login_contract.rs remain the PKCE, callback, OAuth response, redaction and broad concurrency contracts. This additive fixture uses their synthetic success response and representative callback inputs without copying their entire matrices.",
+			"Go-only nil/zero handles, client/state pointer identity, concrete transport assertion and crypto/rand.Reader behavior have explicit go_only names. Rust API shape or pointer/nil equivalence is not assumed.",
+			"Exact caller context identity is observed with an injected HTTP client whose Timeout is zero. Values, fixed deadlines, diagnostic scope and actual Done/Err cancellation flow through the real OAuth adapter. Other HTTP-client timeout/redirect/deadline composition is outside this slice.",
+			"Injected transports may return OAuth success despite an already canceled/expired caller context. A Rust unconditional context precheck or cancellation race would change this observed contract.",
+			"Official Go 1.27.1 crypto/rand.Read terminates the process if an overridden Reader fails. Both entropy stages are observed in isolated fatal children; BeginLogin's recoverable random-error branches remain source-only and are not represented as successful runtime coverage.",
+			"The owned default pool uses three separate public sessions and completed HTTP/1.1 TLS exchanges to prove retained routing, independent pools, copied-handle idle release, pre-completion/repeated cleanup and survival of an active response. It establishes no HTTP/2 multiplexing, unfinished HEAD/upload or external-site behavior.",
+			"Only synthetic OAuth data and owned local server/test certificate roots are used. No live account, credentials extraction, OS trust/security/native association change, Rust production change, Cargo execution or non-Linux native validation is performed.",
+		}, Cases: []migrationLoginOwnershipRow{}}
+	fixture.Cases = append(fixture.Cases, migrationLoginOwnershipInjectedRows(t)...)
+	fixture.Cases = append(fixture.Cases, migrationLoginOwnershipContextRows(t)...)
+	fixture.Cases = append(fixture.Cases, migrationLoginOwnershipSharedGate(t))
+	fixture.Cases = append(fixture.Cases, migrationLoginOwnershipNilRows(t)...)
+	for _, mode := range []string{"client_selection_after_randomness", "nil_default_transport", "incompatible_default_transport", "injected_bypasses_nil_default", "entropy_failure_1", "entropy_failure_2", "owned_pool"} {
+		fixture.Cases = append(fixture.Cases, migrationLoginOwnershipChildRow(t, mode))
+	}
+	encoded, err := json.MarshalIndent(fixture, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	encoded = append(encoded, '\n')
+	path := filepath.Join(root, "crates", "pixiv-sdk", "tests", "fixtures", "login-ownership.json")
+	if *migrationCaptureLoginOwnership {
+		file, err := os.CreateTemp(filepath.Dir(path), ".login-ownership-*.json")
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer os.Remove(file.Name())
+		if _, err := file.Write(encoded); err != nil {
+			file.Close()
+			t.Fatal(err)
+		}
+		if err := file.Close(); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.Chmod(file.Name(), 0644); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.Rename(file.Name(), path); err != nil {
+			t.Fatal(err)
+		}
+		return
+	}
+	frozen, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(encoded, frozen) {
+		t.Fatal("public LoginSession ownership differs from exact frozen Go observation")
+	}
+}

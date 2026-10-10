@@ -1,0 +1,17 @@
+fatal error: crypto/rand: failed to read random data (see https://go.dev/issue/66821): owned synthetic entropy unavailable
+
+goroutine 8 [running]:
+crypto/rand.fatal({0x2ede0a404690?, 0xac4977?})
+	/workspace/scratch/cd334a12dde3/go-toolchain/go/src/runtime/panic.go:1180 +0x18
+crypto/rand.Read({0x2ede0a451c30, 0x20, 0x20?})
+	/workspace/scratch/cd334a12dde3/go-toolchain/go/src/crypto/rand/rand.go:64 +0xf3
+github.com/FlanChanXwO/pixiv-cli/internal/services/pixiv/oauth.RandomURLToken(0x20)
+	/workspace/scratch/cd334a12dde3/pixiv-cli-rs/internal/services/pixiv/oauth/oauth.go:154 +0x65
+github.com/FlanChanXwO/pixiv-cli/sdk/pixiv.BeginLogin({0x30?})
+	/workspace/scratch/cd334a12dde3/pixiv-cli-rs/sdk/pixiv/login.go:51 +0x54
+github.com/FlanChanXwO/pixiv-cli/sdk/pixiv.TestMigrationLoginOwnershipChild(0x2ede0a574b48)
+	/workspace/scratch/cd334a12dde3/pixiv-cli-rs/sdk/pixiv/migration_login_ownership_test.go:467 +0x20e
+testing.tRunner(0x2ede0a574b48, 0x11228b8)
+	/workspace/scratch/cd334a12dde3/go-toolchain/go/src/testing/testing.go:2193 +0xea
+created by testing.(*T).Run in goroutine 1
+	/workspace/scratch/cd334a12dde3/go-toolchain/go/src/testing/testing.go:2258 +0x4d4

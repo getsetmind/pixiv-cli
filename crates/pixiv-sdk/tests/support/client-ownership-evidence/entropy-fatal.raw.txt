@@ -1,0 +1,20 @@
+ownership-entropy-read=16
+fatal error: crypto/rand: failed to read random data (see https://go.dev/issue/66821): fixture entropy unavailable
+
+goroutine 8 [running]:
+crypto/rand.fatal({0x3b5464eb2690?, 0xac4951?})
+	/workspace/scratch/cd334a12dde3/go-toolchain/go/src/runtime/panic.go:1180 +0x18
+crypto/rand.Read({0x3b5464f05c50, 0x10, 0x10?})
+	/workspace/scratch/cd334a12dde3/go-toolchain/go/src/crypto/rand/rand.go:64 +0xf3
+github.com/FlanChanXwO/pixiv-cli/sdk/pixiv.newCursorInstanceID()
+	/workspace/scratch/cd334a12dde3/pixiv-cli-rs/sdk/pixiv/cursor.go:337 +0x27
+github.com/FlanChanXwO/pixiv-cli/sdk/pixiv.newClient(0x3b5464ea1b30, 0x0, {0xa8d1d8, 0xe}, {0x3b5464ea1b30, {0x0, 0x0}, {0x0}, {{0x0, 0x0, ...}}}, ...)
+	/workspace/scratch/cd334a12dde3/pixiv-cli-rs/sdk/pixiv/pixiv.go:200 +0x55
+github.com/FlanChanXwO/pixiv-cli/sdk/pixiv.NewWith({0xa8d1d8?, 0x10dfc40?}, {0x3b5464ea1b30, {0x0, 0x0}, {0x0}, {{0x0, 0x0, 0x0}}})
+	/workspace/scratch/cd334a12dde3/pixiv-cli-rs/sdk/pixiv/pixiv.go:189 +0xf2
+github.com/FlanChanXwO/pixiv-cli/sdk/pixiv.TestMigrationClientOwnershipEntropyChild(0x3b5464f7ab48)
+	/workspace/scratch/cd334a12dde3/pixiv-cli-rs/sdk/pixiv/migration_client_ownership_test.go:581 +0x171
+testing.tRunner(0x3b5464f7ab48, 0x1122998)
+	/workspace/scratch/cd334a12dde3/go-toolchain/go/src/testing/testing.go:2193 +0xea
+created by testing.(*T).Run in goroutine 1
+	/workspace/scratch/cd334a12dde3/go-toolchain/go/src/testing/testing.go:2258 +0x4d4

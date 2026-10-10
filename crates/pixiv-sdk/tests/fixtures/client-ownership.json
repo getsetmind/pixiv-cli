@@ -1,0 +1,1020 @@
+{
+  "schema_version": 1,
+  "source_commit": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "source_sha256": {
+    "go.mod": "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c",
+    "go.sum": "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e",
+    "internal/services/pixiv/appapi/appapi.go": "b5d9502ad9c534c88bda076740553c8bb6f389c3d2f4e3bd80c32c7f281ba9ff",
+    "internal/services/pixiv/oauth/oauth.go": "cdc91d906255256f452789a3ce4b5efd8844e5b84a44f29756c1172b051ce376",
+    "internal/services/pixiv/resource/resource.go": "c516f925b15a20531eba51f83e6a7797280b6569ad0fd519591e9330199b581a",
+    "internal/shared/diagnostics/diagnostics.go": "aecd4045f50f6bcf4cd20f316d680cbfb28e657f919ce1c0700dfdad8d5ddc76",
+    "sdk/error.go": "d8e48078c464f18a26cdcf32828e423dd948f17061269b222f82e08a8cee0041",
+    "sdk/pixiv/cursor.go": "7fc144718fb4d526680973e47d2b26b7b3628adb2e8e7daa26bb052fe4c5fe4e",
+    "sdk/pixiv/errors.go": "9a1830393129ca195ef4d57c0bda17f219f0f750c7293abf5520aa888bfe81a8",
+    "sdk/pixiv/pixiv.go": "daefb42f9f90359f5ce3d326d18df7afe8c10615750d88fef049cce78224d317"
+  },
+  "dependency_source_sha256": {
+    "Go1.27.1/src/crypto/rand/rand.go": "7c289648d453d0bdca0f05091d00bb86c94b69637080c748ff3d3476677521ac",
+    "go-resty/resty/v2@v2.17.2/client.go": "bc0107de3d9a596b6843dfd864f71208b81aa9c17402fd068a69d4acecb8783f",
+    "go-resty/resty/v2@v2.17.2/resty.go": "29be984b35ddc47ef4fd8445692c45564c9e39479be8467d9ef39ef590579e99"
+  },
+  "go_version": "go1.27.1",
+  "constructors": [
+    {
+      "name": "new-default",
+      "input": "  fixture-access  ",
+      "mode": "default",
+      "pacing_ms": 0,
+      "client_nil": false,
+      "owned": true,
+      "same_injected_client": false,
+      "wrappers": [
+        "diagnostic",
+        "native"
+      ],
+      "timeout_ms": 0,
+      "jar_preserved": false,
+      "redirect_preserved": false,
+      "caller_unchanged": true,
+      "identity": 0,
+      "cursor_entropy_bytes": 16,
+      "transport_calls": 0,
+      "injected_close_calls": 0,
+      "error": null
+    },
+    {
+      "name": "new-default-paced",
+      "input": "fixture-access",
+      "mode": "default",
+      "pacing_ms": 10,
+      "client_nil": false,
+      "owned": true,
+      "same_injected_client": false,
+      "wrappers": [
+        "diagnostic",
+        "pacing",
+        "native"
+      ],
+      "timeout_ms": 0,
+      "jar_preserved": false,
+      "redirect_preserved": false,
+      "caller_unchanged": true,
+      "identity": 0,
+      "cursor_entropy_bytes": 16,
+      "transport_calls": 0,
+      "injected_close_calls": 0,
+      "error": null
+    },
+    {
+      "name": "new-default-negative-pacing",
+      "input": "fixture-access",
+      "mode": "default",
+      "pacing_ms": -1,
+      "client_nil": false,
+      "owned": true,
+      "same_injected_client": false,
+      "wrappers": [
+        "diagnostic",
+        "native"
+      ],
+      "timeout_ms": 0,
+      "jar_preserved": false,
+      "redirect_preserved": false,
+      "caller_unchanged": true,
+      "identity": 0,
+      "cursor_entropy_bytes": 16,
+      "transport_calls": 0,
+      "injected_close_calls": 0,
+      "error": null
+    },
+    {
+      "name": "new-injected",
+      "input": "fixture-access",
+      "mode": "custom",
+      "pacing_ms": 0,
+      "client_nil": false,
+      "owned": false,
+      "same_injected_client": true,
+      "wrappers": [
+        "injected"
+      ],
+      "timeout_ms": 7000,
+      "jar_preserved": true,
+      "redirect_preserved": true,
+      "caller_unchanged": true,
+      "identity": 0,
+      "cursor_entropy_bytes": 16,
+      "transport_calls": 0,
+      "injected_close_calls": 0,
+      "error": null
+    },
+    {
+      "name": "new-opaque-access",
+      "input": " Cookie: fixture=value ",
+      "mode": "custom",
+      "pacing_ms": 0,
+      "client_nil": false,
+      "owned": false,
+      "same_injected_client": true,
+      "wrappers": [
+        "injected"
+      ],
+      "timeout_ms": 7000,
+      "jar_preserved": true,
+      "redirect_preserved": true,
+      "caller_unchanged": true,
+      "identity": 0,
+      "cursor_entropy_bytes": 16,
+      "transport_calls": 0,
+      "injected_close_calls": 0,
+      "error": null
+    },
+    {
+      "name": "new-injected-paced",
+      "input": "fixture-access",
+      "mode": "custom",
+      "pacing_ms": 10,
+      "client_nil": false,
+      "owned": false,
+      "same_injected_client": false,
+      "wrappers": [
+        "diagnostic",
+        "pacing",
+        "injected"
+      ],
+      "timeout_ms": 7000,
+      "jar_preserved": true,
+      "redirect_preserved": true,
+      "caller_unchanged": true,
+      "identity": 0,
+      "cursor_entropy_bytes": 16,
+      "transport_calls": 0,
+      "injected_close_calls": 0,
+      "error": null
+    },
+    {
+      "name": "new-injected-negative-pacing",
+      "input": "fixture-access",
+      "mode": "custom",
+      "pacing_ms": -1,
+      "client_nil": false,
+      "owned": false,
+      "same_injected_client": true,
+      "wrappers": [
+        "injected"
+      ],
+      "timeout_ms": 7000,
+      "jar_preserved": true,
+      "redirect_preserved": true,
+      "caller_unchanged": true,
+      "identity": 0,
+      "cursor_entropy_bytes": 16,
+      "transport_calls": 0,
+      "injected_close_calls": 0,
+      "error": null
+    },
+    {
+      "name": "new-injected-nil-transport",
+      "input": "fixture-access",
+      "mode": "nil",
+      "pacing_ms": 0,
+      "client_nil": false,
+      "owned": false,
+      "same_injected_client": true,
+      "wrappers": [
+        "native"
+      ],
+      "timeout_ms": 7000,
+      "jar_preserved": true,
+      "redirect_preserved": true,
+      "caller_unchanged": false,
+      "identity": 0,
+      "cursor_entropy_bytes": 16,
+      "transport_calls": 0,
+      "injected_close_calls": 0,
+      "error": null
+    },
+    {
+      "name": "new-injected-nil-transport-paced",
+      "input": "fixture-access",
+      "mode": "nil",
+      "pacing_ms": 10,
+      "client_nil": false,
+      "owned": false,
+      "same_injected_client": false,
+      "wrappers": [
+        "diagnostic",
+        "pacing",
+        "native"
+      ],
+      "timeout_ms": 7000,
+      "jar_preserved": true,
+      "redirect_preserved": true,
+      "caller_unchanged": true,
+      "identity": 0,
+      "cursor_entropy_bytes": 16,
+      "transport_calls": 0,
+      "injected_close_calls": 0,
+      "error": null
+    },
+    {
+      "name": "new-empty-default",
+      "input": "",
+      "mode": "default",
+      "pacing_ms": 0,
+      "client_nil": true,
+      "owned": false,
+      "same_injected_client": false,
+      "wrappers": [],
+      "timeout_ms": 0,
+      "jar_preserved": false,
+      "redirect_preserved": false,
+      "caller_unchanged": true,
+      "identity": 0,
+      "cursor_entropy_bytes": 0,
+      "transport_calls": 0,
+      "injected_close_calls": 0,
+      "error": {
+        "reason": "invalid_argument",
+        "operation": "New",
+        "detail": "access token is required",
+        "message": "pixiv:New: invalid_argument: access token is required"
+      }
+    },
+    {
+      "name": "new-blank-injected-paced",
+      "input": " \t\n",
+      "mode": "custom",
+      "pacing_ms": 10,
+      "client_nil": true,
+      "owned": false,
+      "same_injected_client": false,
+      "wrappers": [],
+      "timeout_ms": 0,
+      "jar_preserved": false,
+      "redirect_preserved": false,
+      "caller_unchanged": true,
+      "identity": 0,
+      "cursor_entropy_bytes": 0,
+      "transport_calls": 0,
+      "injected_close_calls": 0,
+      "error": {
+        "reason": "invalid_argument",
+        "operation": "New",
+        "detail": "access token is required",
+        "message": "pixiv:New: invalid_argument: access token is required"
+      }
+    }
+  ],
+  "native_lifecycle": [
+    {
+      "name": "default",
+      "pacing_ms": 0,
+      "owned": true,
+      "sequence": [
+        "a-request",
+        "a-request",
+        "b-request",
+        "b-request",
+        "a-close-idle",
+        "a-close-idle",
+        "a-request",
+        "b-request"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 1,
+          "authorization": "Bearer fixture-access",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": ""
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 1,
+          "authorization": "Bearer fixture-access",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": ""
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 2,
+          "authorization": "Bearer fixture-access",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": ""
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 2,
+          "authorization": "Bearer fixture-access",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": ""
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 3,
+          "authorization": "Bearer fixture-access",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": ""
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 2,
+          "authorization": "Bearer fixture-access",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": ""
+        }
+      ],
+      "connections_closed_before_test_cleanup": 1
+    },
+    {
+      "name": "default-paced",
+      "pacing_ms": 10,
+      "owned": true,
+      "sequence": [
+        "a-request",
+        "a-request",
+        "b-request",
+        "b-request",
+        "a-close-idle",
+        "a-close-idle",
+        "a-request",
+        "b-request"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 1,
+          "authorization": "Bearer fixture-access",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": ""
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 1,
+          "authorization": "Bearer fixture-access",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": ""
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 2,
+          "authorization": "Bearer fixture-access",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": ""
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 2,
+          "authorization": "Bearer fixture-access",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": ""
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 3,
+          "authorization": "Bearer fixture-access",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": ""
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 2,
+          "authorization": "Bearer fixture-access",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": ""
+        }
+      ],
+      "connections_closed_before_test_cleanup": 1
+    },
+    {
+      "name": "injected-shared",
+      "pacing_ms": 0,
+      "owned": false,
+      "sequence": [
+        "a-request",
+        "a-request",
+        "b-request",
+        "b-request",
+        "a-close-idle",
+        "a-close-idle",
+        "a-request",
+        "b-request"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 1,
+          "authorization": "Bearer fixture-access",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": ""
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 1,
+          "authorization": "Bearer fixture-access",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": ""
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 1,
+          "authorization": "Bearer fixture-access",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": ""
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 1,
+          "authorization": "Bearer fixture-access",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": ""
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 1,
+          "authorization": "Bearer fixture-access",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": ""
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 1,
+          "authorization": "Bearer fixture-access",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": ""
+        }
+      ],
+      "connections_closed_before_test_cleanup": 0
+    },
+    {
+      "name": "injected-shared-paced",
+      "pacing_ms": 10,
+      "owned": false,
+      "sequence": [
+        "a-request",
+        "a-request",
+        "b-request",
+        "b-request",
+        "a-close-idle",
+        "a-close-idle",
+        "a-request",
+        "b-request"
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 1,
+          "authorization": "Bearer fixture-access",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": ""
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 1,
+          "authorization": "Bearer fixture-access",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": ""
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 1,
+          "authorization": "Bearer fixture-access",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": ""
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 1,
+          "authorization": "Bearer fixture-access",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": ""
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 1,
+          "authorization": "Bearer fixture-access",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": ""
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 1,
+          "authorization": "Bearer fixture-access",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": ""
+        }
+      ],
+      "connections_closed_before_test_cleanup": 0
+    }
+  ],
+  "oauth": [
+    {
+      "pacing_ms": 0,
+      "connections_closed_after_sdk_cleanup": 2,
+      "name": "open-default-success",
+      "mode": "default",
+      "oauth_status": 200,
+      "oauth_body": "{\"access_token\":\"fixture-access\",\"refresh_token\":\"fixture-rotated\",\"user\":{\"id\":42,\"name\":\"fixture-name\"}}",
+      "client_nil": false,
+      "credentials_empty": false,
+      "owned": true,
+      "identity": 42,
+      "username": "fixture-name",
+      "access_token": "fixture-access",
+      "refresh_token": "fixture-rotated",
+      "cursor_instance_empty": true,
+      "connections_closed_after_open": 0,
+      "requests": [
+        {
+          "method": "POST",
+          "host": "oauth.secure.pixiv.net",
+          "path": "/auth/token",
+          "connection": 1,
+          "authorization": "",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": "fixture-refresh"
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 2,
+          "authorization": "Bearer fixture-access",
+          "user_id": "42",
+          "accept_language": "",
+          "refresh_token": ""
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 3,
+          "authorization": "Bearer fixture-access",
+          "user_id": "42",
+          "accept_language": "",
+          "refresh_token": ""
+        }
+      ],
+      "error": null
+    },
+    {
+      "pacing_ms": 0,
+      "connections_closed_after_sdk_cleanup": 0,
+      "name": "open-injected-success",
+      "mode": "injected",
+      "oauth_status": 200,
+      "oauth_body": "{\"access_token\":\"fixture-access\",\"refresh_token\":\"fixture-rotated\",\"user\":{\"id\":42,\"name\":\"fixture-name\"}}",
+      "client_nil": false,
+      "credentials_empty": false,
+      "owned": false,
+      "identity": 42,
+      "username": "fixture-name",
+      "access_token": "fixture-access",
+      "refresh_token": "fixture-rotated",
+      "cursor_instance_empty": true,
+      "connections_closed_after_open": 0,
+      "requests": [
+        {
+          "method": "POST",
+          "host": "oauth.secure.pixiv.net",
+          "path": "/auth/token",
+          "connection": 1,
+          "authorization": "",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": "fixture-refresh"
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 2,
+          "authorization": "Bearer fixture-access",
+          "user_id": "42",
+          "accept_language": "fixture-language",
+          "refresh_token": ""
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 2,
+          "authorization": "Bearer fixture-access",
+          "user_id": "42",
+          "accept_language": "fixture-language",
+          "refresh_token": ""
+        }
+      ],
+      "error": null
+    },
+    {
+      "pacing_ms": 10,
+      "connections_closed_after_sdk_cleanup": 2,
+      "name": "open-default-paced-success",
+      "mode": "default-paced",
+      "oauth_status": 200,
+      "oauth_body": "{\"access_token\":\"fixture-access\",\"refresh_token\":\"fixture-rotated\",\"user\":{\"id\":42,\"name\":\"fixture-name\"}}",
+      "client_nil": false,
+      "credentials_empty": false,
+      "owned": true,
+      "identity": 42,
+      "username": "fixture-name",
+      "access_token": "fixture-access",
+      "refresh_token": "fixture-rotated",
+      "cursor_instance_empty": true,
+      "connections_closed_after_open": 0,
+      "requests": [
+        {
+          "method": "POST",
+          "host": "oauth.secure.pixiv.net",
+          "path": "/auth/token",
+          "connection": 1,
+          "authorization": "",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": "fixture-refresh"
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 2,
+          "authorization": "Bearer fixture-access",
+          "user_id": "42",
+          "accept_language": "fixture-language",
+          "refresh_token": ""
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 3,
+          "authorization": "Bearer fixture-access",
+          "user_id": "42",
+          "accept_language": "fixture-language",
+          "refresh_token": ""
+        }
+      ],
+      "error": null
+    },
+    {
+      "pacing_ms": 10,
+      "connections_closed_after_sdk_cleanup": 0,
+      "name": "open-injected-paced-success",
+      "mode": "injected-paced",
+      "oauth_status": 200,
+      "oauth_body": "{\"access_token\":\"fixture-access\",\"refresh_token\":\"fixture-rotated\",\"user\":{\"id\":42,\"name\":\"fixture-name\"}}",
+      "client_nil": false,
+      "credentials_empty": false,
+      "owned": false,
+      "identity": 42,
+      "username": "fixture-name",
+      "access_token": "fixture-access",
+      "refresh_token": "fixture-rotated",
+      "cursor_instance_empty": true,
+      "connections_closed_after_open": 0,
+      "requests": [
+        {
+          "method": "POST",
+          "host": "oauth.secure.pixiv.net",
+          "path": "/auth/token",
+          "connection": 1,
+          "authorization": "",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": "fixture-refresh"
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 2,
+          "authorization": "Bearer fixture-access",
+          "user_id": "42",
+          "accept_language": "fixture-language",
+          "refresh_token": ""
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "connection": 2,
+          "authorization": "Bearer fixture-access",
+          "user_id": "42",
+          "accept_language": "fixture-language",
+          "refresh_token": ""
+        }
+      ],
+      "error": null
+    },
+    {
+      "pacing_ms": 0,
+      "connections_closed_after_sdk_cleanup": 0,
+      "name": "open-default-unauthorized",
+      "mode": "default",
+      "oauth_status": 401,
+      "oauth_body": "{\"error\":\"fixture\"}",
+      "client_nil": true,
+      "credentials_empty": true,
+      "owned": false,
+      "identity": 0,
+      "username": "",
+      "access_token": "",
+      "refresh_token": "",
+      "cursor_instance_empty": false,
+      "connections_closed_after_open": 0,
+      "requests": [
+        {
+          "method": "POST",
+          "host": "oauth.secure.pixiv.net",
+          "path": "/auth/token",
+          "connection": 1,
+          "authorization": "",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": "fixture-refresh"
+        }
+      ],
+      "error": {
+        "reason": "credentials_expired",
+        "operation": "Open",
+        "detail": "",
+        "message": "pixiv:Open: credentials_expired"
+      }
+    },
+    {
+      "pacing_ms": 0,
+      "connections_closed_after_sdk_cleanup": 0,
+      "name": "open-default-no-access",
+      "mode": "default",
+      "oauth_status": 200,
+      "oauth_body": "{\"refresh_token\":\"fixture-rotated\",\"user\":{\"id\":42}}",
+      "client_nil": true,
+      "credentials_empty": true,
+      "owned": false,
+      "identity": 0,
+      "username": "",
+      "access_token": "",
+      "refresh_token": "",
+      "cursor_instance_empty": false,
+      "connections_closed_after_open": 0,
+      "requests": [
+        {
+          "method": "POST",
+          "host": "oauth.secure.pixiv.net",
+          "path": "/auth/token",
+          "connection": 1,
+          "authorization": "",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": "fixture-refresh"
+        }
+      ],
+      "error": {
+        "reason": "malformed_upstream_response",
+        "operation": "Open",
+        "detail": "",
+        "message": "pixiv:Open: malformed_upstream_response"
+      }
+    },
+    {
+      "pacing_ms": 0,
+      "connections_closed_after_sdk_cleanup": 0,
+      "name": "open-default-no-identity",
+      "mode": "default",
+      "oauth_status": 200,
+      "oauth_body": "{\"access_token\":\"fixture-access\",\"user\":{\"name\":\"fixture-name\"}}",
+      "client_nil": true,
+      "credentials_empty": true,
+      "owned": false,
+      "identity": 0,
+      "username": "",
+      "access_token": "",
+      "refresh_token": "",
+      "cursor_instance_empty": false,
+      "connections_closed_after_open": 0,
+      "requests": [
+        {
+          "method": "POST",
+          "host": "oauth.secure.pixiv.net",
+          "path": "/auth/token",
+          "connection": 1,
+          "authorization": "",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": "fixture-refresh"
+        }
+      ],
+      "error": {
+        "reason": "malformed_upstream_response",
+        "operation": "Open",
+        "detail": "oauth response did not include account identity",
+        "message": "pixiv:Open: malformed_upstream_response: oauth response did not include account identity"
+      }
+    },
+    {
+      "pacing_ms": 0,
+      "connections_closed_after_sdk_cleanup": 0,
+      "name": "open-injected-no-identity",
+      "mode": "injected",
+      "oauth_status": 200,
+      "oauth_body": "{\"access_token\":\"fixture-access\",\"user\":{\"name\":\"fixture-name\"}}",
+      "client_nil": true,
+      "credentials_empty": true,
+      "owned": false,
+      "identity": 0,
+      "username": "",
+      "access_token": "",
+      "refresh_token": "",
+      "cursor_instance_empty": false,
+      "connections_closed_after_open": 0,
+      "requests": [
+        {
+          "method": "POST",
+          "host": "oauth.secure.pixiv.net",
+          "path": "/auth/token",
+          "connection": 1,
+          "authorization": "",
+          "user_id": "",
+          "accept_language": "",
+          "refresh_token": "fixture-refresh"
+        }
+      ],
+      "error": {
+        "reason": "malformed_upstream_response",
+        "operation": "Open",
+        "detail": "oauth response did not include account identity",
+        "message": "pixiv:Open: malformed_upstream_response: oauth response did not include account identity"
+      }
+    }
+  ],
+  "construction_order": [
+    {
+      "input": " \t\n",
+      "exit_code": 0,
+      "name": "new-empty-before-build",
+      "boundary": "public constructor",
+      "outcome": "returned",
+      "transport_calls": 0,
+      "entropy_bytes": 0,
+      "error": {
+        "reason": "invalid_argument",
+        "operation": "New",
+        "detail": "access token is required",
+        "message": "pixiv:New: invalid_argument: access token is required"
+      }
+    },
+    {
+      "input": " \t\n",
+      "exit_code": 0,
+      "name": "open-empty-before-build",
+      "boundary": "public constructor",
+      "outcome": "returned",
+      "transport_calls": 0,
+      "entropy_bytes": 0,
+      "error": {
+        "reason": "credentials_expired",
+        "operation": "Open",
+        "detail": "refresh token is required",
+        "message": "pixiv:Open: credentials_expired: refresh token is required"
+      }
+    },
+    {
+      "input": "fixture-access",
+      "exit_code": 0,
+      "name": "new-build-before-entropy",
+      "boundary": "public constructor",
+      "outcome": "default-transport-type-assertion-panic",
+      "transport_calls": 0,
+      "entropy_bytes": 0,
+      "error": null
+    },
+    {
+      "input": "fixture-refresh",
+      "exit_code": 0,
+      "name": "open-build-before-oauth",
+      "boundary": "public constructor",
+      "outcome": "default-transport-type-assertion-panic",
+      "transport_calls": 0,
+      "entropy_bytes": 0,
+      "error": null
+    },
+    {
+      "input": "PHPSESSID=fixture",
+      "exit_code": 0,
+      "name": "open-invalid-refresh-before-wire",
+      "boundary": "public OpenWith with injected fixture transport",
+      "outcome": "returned",
+      "transport_calls": 0,
+      "entropy_bytes": 0,
+      "error": {
+        "reason": "credentials_expired",
+        "operation": "Open",
+        "detail": "",
+        "message": "pixiv:Open: credentials_expired: pixiv upstream request failed"
+      }
+    },
+    {
+      "input": "fixture-refresh",
+      "exit_code": 0,
+      "name": "open-verified-identity-skips-entropy",
+      "boundary": "public OpenWith with injected fixture transport",
+      "outcome": "returned",
+      "transport_calls": 1,
+      "entropy_bytes": 0,
+      "error": null
+    },
+    {
+      "input": "fixture-access",
+      "exit_code": 2,
+      "name": "new-entropy-error",
+      "boundary": "actual Go 1.27.1 crypto/rand in owned subprocess",
+      "outcome": "fatal-process-exit",
+      "transport_calls": 0,
+      "entropy_bytes": 16,
+      "error": null
+    }
+  ],
+  "private_source_witnesses": [
+    "sdk/pixiv/pixiv.go:newClient calls newCursorInstanceID only for userID \u003c= 0 and returns its error before appapi/resource construction",
+    "sdk/pixiv/pixiv.go:NewWith wraps a returned newClient entropy error as New/LocalStateError/cannot initialize cursor instance; actual Go 1.27.1 rand.Read aborts instead of returning entropy errors",
+    "sdk/pixiv/pixiv.go:OpenWith rejects missing identity before newClient and supplies verified positive userID, so its cursor initialization error branch is not reached through successful public OAuth",
+    "sdk/pixiv/pixiv.go:OpenWith returns on refresh, missing token, missing identity, or cursor construction errors without calling CloseIdleConnections; native failure observations retain the idle OAuth connection until test-owned cleanup",
+    "go-resty/resty/v2@v2.17.2:NewWithClient/createClient mutates a caller HTTPClient with nil Transport to a newly allocated native transport when pacing is not positive; positive pacing derives a separate HTTPClient before Resty and leaves the caller unchanged",
+    "sdk/pixiv/pixiv.go:Client.CloseIdleConnections handles nil client, false selfHTTP, and nil httpClient as no-ops; owned diagnostic and pacing wrappers forward to an inner CloseIdleConnections method"
+  ]
+}

@@ -1,0 +1,661 @@
+{
+  "recorded_at_utc": "2026-10-10T19:31:46.577882+00:00",
+  "reference": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "published_base": "f28be78e50348f98055b819ecebcfdc49dab1494",
+  "go_version": "go1.27.1",
+  "environment_source": "/tmp/quantus-toolchain-env.txt",
+  "toolchain_controls": {
+    "GOTOOLCHAIN": "local",
+    "GOPROXY": "off",
+    "GOWORK": "off",
+    "module_access": "readonly and offline cached modules",
+    "GOROOT": "official Go 1.27.1 workspace installation, read-only source"
+  },
+  "scope": "Additive public LoginSession HTTP-client retention, idle cleanup ownership, one-shot/copy gate, and actual caller context propagation. Go-first contracts only.",
+  "case_count": 21,
+  "case_names": [
+    "injected/options_reassigned",
+    "injected/original_client_transport_reassigned",
+    "context/live_valued_scoped_deadline",
+    "context/canceled_transport_success",
+    "context/expired_transport_success",
+    "context/canceled_transport_obeys",
+    "context/expired_transport_obeys",
+    "context/cancel_during_roundtrip",
+    "context/without_cancel",
+    "context/transport_failure",
+    "go_only/context/nil_context",
+    "copies/shared_gate_in_flight",
+    "go_only/nil_pointer",
+    "go_only/zero_handle",
+    "go_only/construction/client_selection_after_randomness",
+    "go_only/construction/nil_default_transport",
+    "go_only/construction/incompatible_default_transport",
+    "go_only/construction/injected_bypasses_nil_default",
+    "go_only/construction/entropy_failure_1",
+    "go_only/construction/entropy_failure_2",
+    "owned/default_pool_retained_and_nonterminal_close"
+  ],
+  "evidence_classes": {
+    "public_injected_roundtripper": "Caller HTTP client object retention, live caller transport mutation, no close responsibility, one-shot failure/cancellation and copied in-flight gate",
+    "public_constructor_real_owned_pool": "Three public BeginLogin sessions own independent cloned normal net/http.Transport pools. Owned loopback TLS server and per-client test-certificate roots prove retained routing, idle closure through copy and active response survival",
+    "go_only_runtime": "Nil/zero handle, nil caller context, exact context/client/state/scope identity, nil/incompatible default transport panic, reader override order and isolated crypto/rand fatal process outcomes",
+    "source_only": "Recoverable BeginLogin randomness-error return branches are unreachable in the observed official Go 1.27.1 failed-reader flow; no runtime coverage is claimed",
+    "rust": "No implementation, Cargo run or Rust parity result is claimed by this record"
+  },
+  "frozen_sources": [
+    {
+      "path": "go.mod",
+      "sha256": "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c"
+    },
+    {
+      "path": "go.sum",
+      "sha256": "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e"
+    },
+    {
+      "path": "sdk/pixiv/login.go",
+      "sha256": "c3630d78fc4693b41c2954ee54d3feb21e643250e790215fed40f88b071a66de"
+    },
+    {
+      "path": "sdk/pixiv/login_urls.go",
+      "sha256": "c8a88894d83eef0142281e443f088b02517a6804c8614a04203827a7917816b5"
+    },
+    {
+      "path": "sdk/pixiv/errors.go",
+      "sha256": "9a1830393129ca195ef4d57c0bda17f219f0f750c7293abf5520aa888bfe81a8"
+    },
+    {
+      "path": "sdk/pixiv/credentials.go",
+      "sha256": "8f29d1b3f42ea6769f350332942cef6b34059c680e5468b2b9b23ea265b1fdb6"
+    },
+    {
+      "path": "sdk/error.go",
+      "sha256": "d8e48078c464f18a26cdcf32828e423dd948f17061269b222f82e08a8cee0041"
+    },
+    {
+      "path": "internal/services/pixiv/oauth/oauth.go",
+      "sha256": "cdc91d906255256f452789a3ce4b5efd8844e5b84a44f29756c1172b051ce376"
+    },
+    {
+      "path": "internal/services/pixiv/protocol/profile.go",
+      "sha256": "b8aa67d523d562b740c3b18f530c1562200dfc9ccf51caa920f45e9a457f470c"
+    },
+    {
+      "path": "internal/services/pixiv/protocol/failure.go",
+      "sha256": "974f40cb48806c84e166c325b44f6cea0923f9d3f054c70b4a758d48678ea0b3"
+    },
+    {
+      "path": "internal/services/pixiv/protocol/required.go",
+      "sha256": "87bdd5a3232e839e071a0f9af48e39c72905d6e38e0691733bba99dc239ab510"
+    },
+    {
+      "path": "internal/services/pixiv/protocol/protocol.go",
+      "sha256": "af4dce0e3a9ed1ca7879215c19b7d340d439e7d9688a40f5e8c6e3c4ba76c0d6"
+    },
+    {
+      "path": "internal/shared/diagnostics/diagnostics.go",
+      "sha256": "aecd4045f50f6bcf4cd20f316d680cbfb28e657f919ce1c0700dfdad8d5ddc76"
+    }
+  ],
+  "official_standard_sources": [
+    {
+      "path": "src/context/context.go",
+      "sha256": "971f00ffa375b79d3f65e6da33cca3a493cc3fce091c589233abfb4283e29b7d"
+    },
+    {
+      "path": "src/net/http/client.go",
+      "sha256": "ced3428a85206de8de79c10de38d34951e0b9823c0ccb68ff51329d048a1f7b9"
+    },
+    {
+      "path": "src/net/http/request.go",
+      "sha256": "c3257079994b4e4f74f01cef72508919983ba31f91fcf599d348e9d52cec1540"
+    },
+    {
+      "path": "src/net/http/transport.go",
+      "sha256": "b3c0ef6ea21d8bfa3d8ee4d6f53e3f5e5982c5d6bfcd14536437adeb214a6933"
+    },
+    {
+      "path": "src/crypto/rand/rand.go",
+      "sha256": "7c289648d453d0bdca0f05091d00bb86c94b69637080c748ff3d3476677521ac"
+    }
+  ],
+  "resty_dependency_sources": [
+    {
+      "module": "github.com/go-resty/resty/v2@v2.17.2",
+      "path": "client.go",
+      "sha256": "bc0107de3d9a596b6843dfd864f71208b81aa9c17402fd068a69d4acecb8783f"
+    },
+    {
+      "module": "github.com/go-resty/resty/v2@v2.17.2",
+      "path": "request.go",
+      "sha256": "77909fcd89b143995236e55474628c27398f55c6b1723792b4ef6434dd699030"
+    },
+    {
+      "module": "github.com/go-resty/resty/v2@v2.17.2",
+      "path": "middleware.go",
+      "sha256": "0d2ed4e3a7d0e120007c57238d6f99e1d46f07d1e978f6c7abf4166b4dfcf4c6"
+    }
+  ],
+  "full_frozen_go_preservation": {
+    "paths_checked": 434,
+    "scope": "All non-test .go paths present in reference commit plus go.mod and go.sum",
+    "differences": [],
+    "evidence_path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/frozen-production.log"
+  },
+  "phases": {
+    "capture": {
+      "command": [
+        "go",
+        "test",
+        "-mod=readonly",
+        "./sdk/pixiv",
+        "-run",
+        "^TestMigrationLoginOwnershipMatchesFrozenGo$",
+        "-count=1",
+        "-timeout=1m",
+        "-json",
+        "-args",
+        "-migration-capture-login-ownership"
+      ],
+      "exit": 0,
+      "started_at_utc": "2026-10-10T19:30:21.979919+00:00",
+      "finished_at_utc": "2026-10-10T19:30:23.773261+00:00",
+      "elapsed_seconds": 1.793,
+      "stdout_path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/capture.log",
+      "stderr_path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/capture.stderr.log"
+    },
+    "repeat": {
+      "command": [
+        "go",
+        "test",
+        "-mod=readonly",
+        "./sdk/pixiv",
+        "-run",
+        "^TestMigrationLoginOwnershipMatchesFrozenGo$",
+        "-count=10",
+        "-timeout=2m",
+        "-json"
+      ],
+      "exit": 0,
+      "started_at_utc": "2026-10-10T19:30:23.773568+00:00",
+      "finished_at_utc": "2026-10-10T19:30:24.749897+00:00",
+      "elapsed_seconds": 0.976,
+      "stdout_path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/repeat.json",
+      "stderr_path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/repeat.stderr.log",
+      "top_level_passes": 10,
+      "package_elapsed_seconds": 0.58
+    },
+    "race": {
+      "command": [
+        "go",
+        "test",
+        "-race",
+        "-mod=readonly",
+        "./sdk/pixiv",
+        "-run",
+        "^TestMigrationLoginOwnershipMatchesFrozenGo$",
+        "-count=2",
+        "-timeout=2m",
+        "-json"
+      ],
+      "exit": 0,
+      "started_at_utc": "2026-10-10T19:30:24.750102+00:00",
+      "finished_at_utc": "2026-10-10T19:30:39.766178+00:00",
+      "elapsed_seconds": 15.016,
+      "stdout_path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/race.json",
+      "stderr_path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/race.stderr.log",
+      "top_level_passes": 2,
+      "package_elapsed_seconds": 11.324
+    },
+    "related": {
+      "command": [
+        "go",
+        "test",
+        "-mod=readonly",
+        "./sdk/pixiv",
+        "-run",
+        "^Test(MigrationLogin|LoginSession|OfficialOAuth)",
+        "-count=1",
+        "-timeout=2m",
+        "-json"
+      ],
+      "exit": 0,
+      "started_at_utc": "2026-10-10T19:30:39.766393+00:00",
+      "finished_at_utc": "2026-10-10T19:30:40.324174+00:00",
+      "elapsed_seconds": 0.558,
+      "stdout_path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/related.log",
+      "stderr_path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/related.stderr.log"
+    },
+    "oauth": {
+      "command": [
+        "go",
+        "test",
+        "-mod=readonly",
+        "./internal/services/pixiv/oauth",
+        "./internal/services/pixiv/protocol",
+        "-count=1",
+        "-timeout=2m",
+        "-json"
+      ],
+      "exit": 0,
+      "started_at_utc": "2026-10-10T19:30:40.324347+00:00",
+      "finished_at_utc": "2026-10-10T19:30:40.666449+00:00",
+      "elapsed_seconds": 0.342,
+      "stdout_path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/oauth.log",
+      "stderr_path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/oauth.stderr.log"
+    },
+    "replay": {
+      "command": [
+        "bash",
+        "crates/pixiv-sdk/tests/support/login_ownership_go_replay.sh"
+      ],
+      "exit": 0,
+      "started_at_utc": "2026-10-10T19:30:40.666636+00:00",
+      "finished_at_utc": "2026-10-10T19:30:41.474213+00:00",
+      "elapsed_seconds": 0.808,
+      "stdout_path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/replay.log",
+      "stderr_path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/replay.stderr.log"
+    },
+    "vet": {
+      "command": [
+        "go",
+        "vet",
+        "-mod=readonly",
+        "./sdk/pixiv"
+      ],
+      "exit": 0,
+      "started_at_utc": "2026-10-10T19:30:41.474745+00:00",
+      "finished_at_utc": "2026-10-10T19:30:41.577264+00:00",
+      "elapsed_seconds": 0.103,
+      "stdout_path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/vet.log",
+      "stderr_path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/vet.stderr.log"
+    },
+    "gofmt": {
+      "command": [
+        "gofmt",
+        "-l",
+        "sdk/pixiv/migration_login_ownership_test.go"
+      ],
+      "exit": 0,
+      "started_at_utc": "2026-10-10T19:30:41.577440+00:00",
+      "finished_at_utc": "2026-10-10T19:30:41.581739+00:00",
+      "elapsed_seconds": 0.004,
+      "stdout_path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/gofmt.log",
+      "stderr_path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/gofmt.stderr.log"
+    }
+  },
+  "expected_entropy_fatal_children": [
+    {
+      "stage": 1,
+      "expected_exit": 2,
+      "recoverable_BeginLogin_error_observed": false,
+      "random_read_sizes": [
+        64
+      ],
+      "stdout_path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/entropy-failure-1.stdout.log",
+      "stderr_path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/entropy-failure-1.stderr.log"
+    },
+    {
+      "stage": 2,
+      "expected_exit": 2,
+      "recoverable_BeginLogin_error_observed": false,
+      "random_read_sizes": [
+        64,
+        32
+      ],
+      "stdout_path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/entropy-failure-2.stdout.log",
+      "stderr_path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/entropy-failure-2.stderr.log"
+    }
+  ],
+  "publication_mode_exception": {
+    "prior_normalization_at_utc": "2026-10-10T19:19:00Z",
+    "description": "The three previously published replay scripts had locally tested mode 100755 and published Git mode 100644. Only their executable bits were normalized at 19:19 UTC, followed by verification of clean HEAD f28be78, origin tree equality and bash syntax. Their source bytes are independently confirmed equal to the base commit here. Documented commands use explicit bash. No old script bytes or modes were changed for this slice.",
+    "files": [
+      {
+        "path": "crates/pixiv-cli/tests/support/diagnostics_dictionary_path_go_replay.sh",
+        "sha256": "2b4cba48699a5ed4b883a60b6cd5db187aedf617d6a96ec353fe5e9224efd5dc",
+        "bytes": 1115,
+        "current_filesystem_mode": "0o644",
+        "published_git_mode": "100644",
+        "prior_tested_local_mode": "100755",
+        "source_bytes_unchanged": true,
+        "commands_use_explicit_bash": true
+      },
+      {
+        "path": "crates/pixiv-cli/tests/support/diagnostics_presenter_offset_go_replay.sh",
+        "sha256": "9f4a0e976654761b951f03b86b60aca76de0ba2e3ca0915627374a380c34f7bb",
+        "bytes": 1227,
+        "current_filesystem_mode": "0o644",
+        "published_git_mode": "100644",
+        "prior_tested_local_mode": "100755",
+        "source_bytes_unchanged": true,
+        "commands_use_explicit_bash": true
+      },
+      {
+        "path": "crates/pixiv-cli/tests/support/diagnostics_root_joined_go_replay.sh",
+        "sha256": "d14a29ca377db8fff35409d3e29b8d7f8fc86c885888773ca8904fe92f5666ec",
+        "bytes": 960,
+        "current_filesystem_mode": "0o644",
+        "published_git_mode": "100644",
+        "prior_tested_local_mode": "100755",
+        "source_bytes_unchanged": true,
+        "commands_use_explicit_bash": true
+      }
+    ],
+    "prior_verification_reported_at_utc": "2026-10-10T19:28:28Z"
+  },
+  "auxiliary_inventory_correction": "An initial all-current-tracked-Go inventory included an added non-test-suffixed support oracle absent from the reference commit and git show returned 128. The completed preservation check instead inventories all reference-commit production Go paths and the two module files; no source edits or denied access were involved.",
+  "artifacts": [
+    {
+      "path": "sdk/pixiv/migration_login_ownership_test.go",
+      "sha256": "a999a895ae369325c8451d300402f9f448daeed37701a496f13700116feb9563",
+      "bytes": 32902
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/fixtures/login-ownership.json",
+      "sha256": "fa90b80d28050decd3e1eba5822e5f18039468cca8ae22c52e14d0cbd9128a6d",
+      "bytes": 43760
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login_ownership_go_replay.sh",
+      "sha256": "6f825dfca88573764e1753b8ce700acb0dfa48757d3613cbec32f26d6ab5a796",
+      "bytes": 765
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/capture.log",
+      "sha256": "7e443b896846ef6b16addaa6811fd562f2859603c8095a4a8cb87a1378808724",
+      "bytes": 1481
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/capture.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/compile-child.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/entropy-failure-1.exit",
+      "sha256": "53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3",
+      "bytes": 2
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/entropy-failure-1.stderr.log",
+      "sha256": "5462d4b981b3a9f4a22ba004a767e7f341253bb89b5bfb3c4094495ec0cef9ef",
+      "bytes": 1345
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/entropy-failure-1.stdout.log",
+      "sha256": "1e717b86398e8a18a68247581e0809c322ff0c0f4bc6667174940e06d1404fc7",
+      "bytes": 71
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/entropy-failure-2.exit",
+      "sha256": "53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3",
+      "bytes": 2
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/entropy-failure-2.stderr.log",
+      "sha256": "4350ce2a06b777edbb05435cbe93d66cb517d767052fb4864ebb0388804ffc49",
+      "bytes": 1169
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/entropy-failure-2.stdout.log",
+      "sha256": "842328895249d0d6e42d6f230118a3fb65e81d2e2638c30802de8dd593c53455",
+      "bytes": 99
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/frozen-production.log",
+      "sha256": "8eef7769fc0d9dcffa125aa74fa3ea08861116318c01d9aca17bb9f0a3e38384",
+      "bytes": 167
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/gofmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/gofmt.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/oauth.log",
+      "sha256": "0d5c1635996312c78d4d87ac98e85b9482bc3c32c45570e2006bbbb786651242",
+      "bytes": 66118
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/oauth.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/phase-metadata.json",
+      "sha256": "dccc451c630d072a759f4b4c48e8a3153890a92ccf1cdd52b828123d43d9b0fb",
+      "bytes": 4362
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/race.json",
+      "sha256": "d1e86f3d52ee6827d75c36cead170800e2c4b43a2df8171296e7b5a15a18e784",
+      "bytes": 2361
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/race.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/raw-capture.json",
+      "sha256": "fa90b80d28050decd3e1eba5822e5f18039468cca8ae22c52e14d0cbd9128a6d",
+      "bytes": 43760
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/related.log",
+      "sha256": "0915561f8f2d0294d187306f6472179b388d0cc5a51412a42a9c3c977cdbd8a4",
+      "bytes": 77091
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/related.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/repeat.json",
+      "sha256": "2d54414ba75327030a50ae1ff80f60fc8801fed50990a699303e8508f07a300f",
+      "bytes": 9399
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/repeat.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/replay.log",
+      "sha256": "7ebf766cd2a3e09f34fe964588a55202da05d379d69b62d3d0374ec6b6659ec9",
+      "bytes": 167
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/replay.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/superseded-deadline-label/artifacts.sha256",
+      "sha256": "10e6a109ea967c6b637f9990afc6b24aeec4bd61d33aa22884c37e63edeec1e1",
+      "bytes": 3552
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/superseded-deadline-label/capture.log",
+      "sha256": "2db4ea92fc4fab3f67bb040c5198229cd477835102fd30234d00439f336350c6",
+      "bytes": 1480
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/superseded-deadline-label/capture.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/superseded-deadline-label/compile-child.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/superseded-deadline-label/entropy-failure-1.exit",
+      "sha256": "53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3",
+      "bytes": 2
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/superseded-deadline-label/entropy-failure-1.stderr.log",
+      "sha256": "3cf7b6701caf9247dc12cfc39ebdd3a5ecb0b1df522c271a00fbecc7058e44d7",
+      "bytes": 1345
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/superseded-deadline-label/entropy-failure-1.stdout.log",
+      "sha256": "1e717b86398e8a18a68247581e0809c322ff0c0f4bc6667174940e06d1404fc7",
+      "bytes": 71
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/superseded-deadline-label/entropy-failure-2.exit",
+      "sha256": "53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3",
+      "bytes": 2
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/superseded-deadline-label/entropy-failure-2.stderr.log",
+      "sha256": "6200ee6407eb3e373c47aab8695f7f56681361c67e8039f4713d95f9c567f053",
+      "bytes": 1168
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/superseded-deadline-label/entropy-failure-2.stdout.log",
+      "sha256": "842328895249d0d6e42d6f230118a3fb65e81d2e2638c30802de8dd593c53455",
+      "bytes": 99
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/superseded-deadline-label/frozen-production.log",
+      "sha256": "8eef7769fc0d9dcffa125aa74fa3ea08861116318c01d9aca17bb9f0a3e38384",
+      "bytes": 167
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/superseded-deadline-label/gofmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/superseded-deadline-label/login-ownership.json",
+      "sha256": "5c2672dcd1c7f83335cfe69a0cac8f32073ac4a6b2a873aadce98a85241c4ce0",
+      "bytes": 43346
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/superseded-deadline-label/migration_login_ownership_test.go.txt",
+      "sha256": "7df7ff0b1e0c107f0a2093af86962e20a6f008a5fc5308bf05bb6fa015b1f4cd",
+      "bytes": 32646
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/superseded-deadline-label/oauth.log",
+      "sha256": "a43514c4cb5f3fa4d52d51862ce5b2276d7d671ea108b4b26f3f0a6b2b43c5eb",
+      "bytes": 66120
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/superseded-deadline-label/oauth.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/superseded-deadline-label/phase-metadata.json",
+      "sha256": "ab084675900481663fbdd3a2081c21cc7df548c6180ed88835a6dd5f32f7c039",
+      "bytes": 2276
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/superseded-deadline-label/race.json",
+      "sha256": "8405fb25746cb5452837840f9b707878e0ae1125c50855a31b26adab246ce876",
+      "bytes": 2362
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/superseded-deadline-label/raw-capture.json",
+      "sha256": "5c2672dcd1c7f83335cfe69a0cac8f32073ac4a6b2a873aadce98a85241c4ce0",
+      "bytes": 43346
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/superseded-deadline-label/related.log",
+      "sha256": "5ddac317200ff9ffd5567d407a2087d47463094bc805e3e7fc23b36326931f7d",
+      "bytes": 77101
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/superseded-deadline-label/related.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/superseded-deadline-label/repeat.json",
+      "sha256": "207d0a34c248d5ea435029ee1ae7ba51888d64953daec2bf1a52568a243e2baa",
+      "bytes": 9396
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/superseded-deadline-label/replay.log",
+      "sha256": "fe2b70526a21997332c1dbacabbbd70af3f584cd7953a501137d80aeee3ca620",
+      "bytes": 167
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/superseded-deadline-label/replay.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/superseded-deadline-label/vet.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/vet.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/vet.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  ],
+  "limitations": [
+    "Existing login_migration_contract_test.go and login_contract.rs remain the PKCE, callback, OAuth response, redaction and broad concurrency contracts. This additive fixture uses their synthetic success response and representative callback inputs without copying their entire matrices.",
+    "Go-only nil/zero handles, client/state pointer identity, concrete transport assertion and crypto/rand.Reader behavior have explicit go_only names. Rust API shape or pointer/nil equivalence is not assumed.",
+    "Exact caller context identity is observed with an injected HTTP client whose Timeout is zero. Values, fixed deadlines, diagnostic scope and actual Done/Err cancellation flow through the real OAuth adapter. Other HTTP-client timeout/redirect/deadline composition is outside this slice.",
+    "Injected transports may return OAuth success despite an already canceled/expired caller context. A Rust unconditional context precheck or cancellation race would change this observed contract.",
+    "Official Go 1.27.1 crypto/rand.Read terminates the process if an overridden Reader fails. Both entropy stages are observed in isolated fatal children; BeginLogin's recoverable random-error branches remain source-only and are not represented as successful runtime coverage.",
+    "The owned default pool uses three separate public sessions and completed HTTP/1.1 TLS exchanges to prove retained routing, independent pools, copied-handle idle release, pre-completion/repeated cleanup and survival of an active response. It establishes no HTTP/2 multiplexing, unfinished HEAD/upload or external-site behavior.",
+    "Only synthetic OAuth data and owned local server/test certificate roots are used. No live account, credentials extraction, OS trust/security/native association change, Rust production change, Cargo execution or non-Linux native validation is performed."
+  ],
+  "freeze_order": "Final corrected source/fixture passed fresh capture, exact replay count10, exact race count2, relevant Login and OAuth/protocol regressions, replay script, vet and gofmt before final source/fixture seals were established at 2026-10-10T19:31:06Z. Only final raw fatal-output verification and evidence/provenance writes followed; all production Go, module files and existing PKCE/callback fixtures remained untouched.",
+  "final_source_and_fixture": [
+    {
+      "path": "sdk/pixiv/migration_login_ownership_test.go",
+      "sha256": "a999a895ae369325c8451d300402f9f448daeed37701a496f13700116feb9563",
+      "bytes": 32902
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/fixtures/login-ownership.json",
+      "sha256": "fa90b80d28050decd3e1eba5822e5f18039468cca8ae22c52e14d0cbd9128a6d",
+      "bytes": 43760
+    }
+  ],
+  "superseded_deadline_observation": {
+    "reason": "The earlier go_only_deadline_equals_caller compared against the original fixed input deadline. For WithoutCancel, both actual caller and RoundTrip correctly have no deadline, so final observation compares actual caller Deadline and has-deadline exactly. Exact Done-channel identity is now also recorded. Go production behavior and existing PKCE/callback fixtures did not change.",
+    "source_and_fixture": [
+      {
+        "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/superseded-deadline-label/migration_login_ownership_test.go.txt",
+        "sha256": "7df7ff0b1e0c107f0a2093af86962e20a6f008a5fc5308bf05bb6fa015b1f4cd",
+        "bytes": 32646
+      },
+      {
+        "path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/superseded-deadline-label/login-ownership.json",
+        "sha256": "5c2672dcd1c7f83335cfe69a0cac8f32073ac4a6b2a873aadce98a85241c4ce0",
+        "bytes": 43346
+      }
+    ],
+    "original_evidence_directory": "crates/pixiv-sdk/tests/support/login-ownership-evidence/superseded-deadline-label",
+    "original_evidence_preserved_unchanged": true,
+    "prior_manifest_is_historical": "Its paths describe the earlier sealed artifacts. Preserved prior source, fixture and provenance are stored beside the original manifest and logs.",
+    "evidence_preservation_scope": "Original source, fixture, raw logs and historical artifact manifest are preserved byte-for-byte. Generated provenance is represented by this current record."
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "capture": {
+    "command": [
+      "go",
+      "test",
+      "-mod=readonly",
+      "./sdk/pixiv",
+      "-run",
+      "^TestMigrationLoginOwnershipMatchesFrozenGo$",
+      "-count=1",
+      "-timeout=1m",
+      "-json",
+      "-args",
+      "-migration-capture-login-ownership"
+    ],
+    "exit": 0,
+    "started_at_utc": "2026-10-10T19:27:31.964103+00:00",
+    "finished_at_utc": "2026-10-10T19:27:32.443159+00:00",
+    "elapsed_seconds": 0.479,
+    "stdout_path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/capture.log",
+    "stderr_path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/capture.stderr.log"
+  },
+  "related": {
+    "command": [
+      "go",
+      "test",
+      "-mod=readonly",
+      "./sdk/pixiv",
+      "-run",
+      "^Test(MigrationLogin|LoginSession|OfficialOAuth)",
+      "-count=1",
+      "-timeout=2m",
+      "-json"
+    ],
+    "exit": 0,
+    "started_at_utc": "2026-10-10T19:27:32.443359+00:00",
+    "finished_at_utc": "2026-10-10T19:27:33.042594+00:00",
+    "elapsed_seconds": 0.599,
+    "stdout_path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/related.log",
+    "stderr_path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/related.stderr.log"
+  },
+  "oauth": {
+    "command": [
+      "go",
+      "test",
+      "-mod=readonly",
+      "./internal/services/pixiv/oauth",
+      "./internal/services/pixiv/protocol",
+      "-count=1",
+      "-timeout=2m",
+      "-json"
+    ],
+    "exit": 0,
+    "started_at_utc": "2026-10-10T19:27:33.042750+00:00",
+    "finished_at_utc": "2026-10-10T19:27:33.511865+00:00",
+    "elapsed_seconds": 0.469,
+    "stdout_path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/oauth.log",
+    "stderr_path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/oauth.stderr.log"
+  },
+  "replay": {
+    "command": [
+      "bash",
+      "crates/pixiv-sdk/tests/support/login_ownership_go_replay.sh"
+    ],
+    "exit": 0,
+    "started_at_utc": "2026-10-10T19:27:33.512028+00:00",
+    "finished_at_utc": "2026-10-10T19:27:34.173116+00:00",
+    "elapsed_seconds": 0.661,
+    "stdout_path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/replay.log",
+    "stderr_path": "crates/pixiv-sdk/tests/support/login-ownership-evidence/replay.stderr.log"
+  }
+}

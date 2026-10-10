@@ -1,0 +1,1264 @@
+{
+  "reference": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "go_version": "go1.27.1",
+  "sources": [
+    {
+      "path": "go.mod",
+      "sha256": "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c"
+    },
+    {
+      "path": "go.sum",
+      "sha256": "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e"
+    },
+    {
+      "path": "sdk/pixiv/login.go",
+      "sha256": "c3630d78fc4693b41c2954ee54d3feb21e643250e790215fed40f88b071a66de"
+    },
+    {
+      "path": "sdk/pixiv/login_urls.go",
+      "sha256": "c8a88894d83eef0142281e443f088b02517a6804c8614a04203827a7917816b5"
+    },
+    {
+      "path": "sdk/pixiv/errors.go",
+      "sha256": "9a1830393129ca195ef4d57c0bda17f219f0f750c7293abf5520aa888bfe81a8"
+    },
+    {
+      "path": "sdk/pixiv/credentials.go",
+      "sha256": "8f29d1b3f42ea6769f350332942cef6b34059c680e5468b2b9b23ea265b1fdb6"
+    },
+    {
+      "path": "sdk/error.go",
+      "sha256": "d8e48078c464f18a26cdcf32828e423dd948f17061269b222f82e08a8cee0041"
+    },
+    {
+      "path": "internal/services/pixiv/oauth/oauth.go",
+      "sha256": "cdc91d906255256f452789a3ce4b5efd8844e5b84a44f29756c1172b051ce376"
+    },
+    {
+      "path": "internal/services/pixiv/protocol/profile.go",
+      "sha256": "b8aa67d523d562b740c3b18f530c1562200dfc9ccf51caa920f45e9a457f470c"
+    },
+    {
+      "path": "internal/services/pixiv/protocol/failure.go",
+      "sha256": "974f40cb48806c84e166c325b44f6cea0923f9d3f054c70b4a758d48678ea0b3"
+    },
+    {
+      "path": "internal/services/pixiv/protocol/required.go",
+      "sha256": "87bdd5a3232e839e071a0f9af48e39c72905d6e38e0691733bba99dc239ab510"
+    },
+    {
+      "path": "internal/services/pixiv/protocol/protocol.go",
+      "sha256": "af4dce0e3a9ed1ca7879215c19b7d340d439e7d9688a40f5e8c6e3c4ba76c0d6"
+    },
+    {
+      "path": "internal/shared/diagnostics/diagnostics.go",
+      "sha256": "aecd4045f50f6bcf4cd20f316d680cbfb28e657f919ce1c0700dfdad8d5ddc76"
+    }
+  ],
+  "standard_sources": [
+    {
+      "path": "src/context/context.go",
+      "sha256": "971f00ffa375b79d3f65e6da33cca3a493cc3fce091c589233abfb4283e29b7d"
+    },
+    {
+      "path": "src/net/http/client.go",
+      "sha256": "ced3428a85206de8de79c10de38d34951e0b9823c0ccb68ff51329d048a1f7b9"
+    },
+    {
+      "path": "src/net/http/request.go",
+      "sha256": "c3257079994b4e4f74f01cef72508919983ba31f91fcf599d348e9d52cec1540"
+    },
+    {
+      "path": "src/net/http/transport.go",
+      "sha256": "b3c0ef6ea21d8bfa3d8ee4d6f53e3f5e5982c5d6bfcd14536437adeb214a6933"
+    },
+    {
+      "path": "src/crypto/rand/rand.go",
+      "sha256": "7c289648d453d0bdca0f05091d00bb86c94b69637080c748ff3d3476677521ac"
+    }
+  ],
+  "evidence": "Public BeginLogin and LoginSession methods through retained caller-owned RoundTrippers and an owned loopback TLS OAuth server. The default owned pool is created by the actual public constructor, not a private state/constructor seam. Global default-client/transport and entropy overrides run only in isolated child test processes. Exact fixture bytes are compared without normalizing source outcomes.",
+  "limitations": [
+    "Existing login_migration_contract_test.go and login_contract.rs remain the PKCE, callback, OAuth response, redaction and broad concurrency contracts. This additive fixture uses their synthetic success response and representative callback inputs without copying their entire matrices.",
+    "Go-only nil/zero handles, client/state pointer identity, concrete transport assertion and crypto/rand.Reader behavior have explicit go_only names. Rust API shape or pointer/nil equivalence is not assumed.",
+    "Exact caller context identity is observed with an injected HTTP client whose Timeout is zero. Values, fixed deadlines, diagnostic scope and actual Done/Err cancellation flow through the real OAuth adapter. Other HTTP-client timeout/redirect/deadline composition is outside this slice.",
+    "Injected transports may return OAuth success despite an already canceled/expired caller context. A Rust unconditional context precheck or cancellation race would change this observed contract.",
+    "Official Go 1.27.1 crypto/rand.Read terminates the process if an overridden Reader fails. Both entropy stages are observed in isolated fatal children; BeginLogin's recoverable random-error branches remain source-only and are not represented as successful runtime coverage.",
+    "The owned default pool uses three separate public sessions and completed HTTP/1.1 TLS exchanges to prove retained routing, independent pools, copied-handle idle release, pre-completion/repeated cleanup and survival of an active response. It establishes no HTTP/2 multiplexing, unfinished HEAD/upload or external-site behavior.",
+    "Only synthetic OAuth data and owned local server/test certificate roots are used. No live account, credentials extraction, OS trust/security/native association change, Rust production change, Cargo execution or non-Linux native validation is performed."
+  ],
+  "cases": [
+    {
+      "name": "injected/options_reassigned",
+      "input": {
+        "change_after_begin": "options_reassigned",
+        "entry": "BeginLogin(HTTPClient), copied public handle, CloseIdleConnections, Complete",
+        "invalid_callback": "bad?input",
+        "valid_callback": " bare-code "
+      },
+      "observation": {
+        "accepts_after_complete": true,
+        "authorization_unchanged": true,
+        "before": {
+          "close_calls": 0,
+          "go_only_copies_share_state_pointer": true,
+          "go_only_retains_original_client_pointer": true,
+          "go_only_session_owned": false,
+          "network_calls": 0
+        },
+        "before_complete": {
+          "accepts_callback": true,
+          "authorization_unchanged": true,
+          "close_calls": 0,
+          "go_only_gate_used": false,
+          "invalid_callback_error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "detail": "login callback is invalid",
+            "http_status": 0,
+            "message": "pixiv:Complete: invalid_argument: login callback is invalid",
+            "operation": "Complete",
+            "reason": "invalid_argument",
+            "transport": ""
+          },
+          "network_calls": 0
+        },
+        "close_calls": 0,
+        "completed_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "message": "",
+          "reason": ""
+        },
+        "invalid_after_used_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "detail": "login callback is invalid",
+          "http_status": 0,
+          "message": "pixiv:Complete: invalid_argument: login callback is invalid",
+          "operation": "Complete",
+          "reason": "invalid_argument",
+          "transport": ""
+        },
+        "original_calls": 1,
+        "replacement_calls": 0,
+        "request": {
+          "code": "bare-code",
+          "method": "POST",
+          "pkce_matches_authorization": true,
+          "url": "https://oauth.secure.pixiv.net/auth/token"
+        },
+        "reused_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "detail": "login session was already used",
+          "http_status": 0,
+          "message": "pixiv:Complete: invalid_argument: login session was already used",
+          "operation": "Complete",
+          "reason": "invalid_argument",
+          "transport": ""
+        },
+        "user_id": 42
+      }
+    },
+    {
+      "name": "injected/original_client_transport_reassigned",
+      "input": {
+        "change_after_begin": "original_client_transport_reassigned",
+        "entry": "BeginLogin(HTTPClient), copied public handle, CloseIdleConnections, Complete",
+        "invalid_callback": "bad?input",
+        "valid_callback": " bare-code "
+      },
+      "observation": {
+        "accepts_after_complete": true,
+        "authorization_unchanged": true,
+        "before": {
+          "close_calls": 0,
+          "go_only_copies_share_state_pointer": true,
+          "go_only_retains_original_client_pointer": true,
+          "go_only_session_owned": false,
+          "network_calls": 0
+        },
+        "before_complete": {
+          "accepts_callback": true,
+          "authorization_unchanged": true,
+          "close_calls": 0,
+          "go_only_gate_used": false,
+          "invalid_callback_error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "detail": "login callback is invalid",
+            "http_status": 0,
+            "message": "pixiv:Complete: invalid_argument: login callback is invalid",
+            "operation": "Complete",
+            "reason": "invalid_argument",
+            "transport": ""
+          },
+          "network_calls": 0
+        },
+        "close_calls": 0,
+        "completed_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "message": "",
+          "reason": ""
+        },
+        "invalid_after_used_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "detail": "login callback is invalid",
+          "http_status": 0,
+          "message": "pixiv:Complete: invalid_argument: login callback is invalid",
+          "operation": "Complete",
+          "reason": "invalid_argument",
+          "transport": ""
+        },
+        "original_calls": 0,
+        "replacement_calls": 1,
+        "request": {
+          "code": "bare-code",
+          "method": "POST",
+          "pkce_matches_authorization": true,
+          "url": "https://oauth.secure.pixiv.net/auth/token"
+        },
+        "reused_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "detail": "login session was already used",
+          "http_status": 0,
+          "message": "pixiv:Complete: invalid_argument: login session was already used",
+          "operation": "Complete",
+          "reason": "invalid_argument",
+          "transport": ""
+        },
+        "user_id": 42
+      }
+    },
+    {
+      "name": "context/live_valued_scoped_deadline",
+      "input": {
+        "deadline": "2099-01-01T00:00:00.123456789Z",
+        "entry": "public Complete with caller context and injected RoundTripper",
+        "http_client_timeout": "zero preserves exact caller context",
+        "mode": "live_valued_scoped_deadline",
+        "scope_request_id": 73,
+        "value": "owned-login-value"
+      },
+      "observation": {
+        "accepts_after_complete": true,
+        "before_valid": {
+          "go_only_gate_used": false,
+          "invalid_error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "detail": "login callback is invalid",
+            "http_status": 0,
+            "message": "pixiv:Complete: invalid_argument: login callback is invalid",
+            "operation": "Complete",
+            "reason": "invalid_argument",
+            "transport": ""
+          },
+          "network_calls": 0
+        },
+        "close_calls": 0,
+        "error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "message": "",
+          "reason": ""
+        },
+        "events": [
+          {
+            "Module": "Pixiv authentication",
+            "Kind": "network_request",
+            "Operation": "owned-login-probe",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 73,
+            "Duration": 0
+          }
+        ],
+        "network_calls": 1,
+        "reused_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "detail": "login session was already used",
+          "http_status": 0,
+          "message": "pixiv:Complete: invalid_argument: login session was already used",
+          "operation": "Complete",
+          "reason": "invalid_argument",
+          "transport": ""
+        },
+        "roundtrip": {
+          "context_error_after": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "message": "",
+            "reason": ""
+          },
+          "context_error_before": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "message": "",
+            "reason": ""
+          },
+          "deadline_rfc3339_nano": "2099-01-01T00:00:00.123456789Z",
+          "done_nil": false,
+          "go_only_deadline_equals_caller": true,
+          "go_only_exact_context_interface": true,
+          "go_only_exact_diagnostic_scope": true,
+          "has_deadline": true,
+          "scope_present": true,
+          "value": "owned-login-value"
+        },
+        "user_id": 42
+      }
+    },
+    {
+      "name": "context/canceled_transport_success",
+      "input": {
+        "deadline": "2099-01-01T00:00:00.123456789Z",
+        "entry": "public Complete with caller context and injected RoundTripper",
+        "http_client_timeout": "zero preserves exact caller context",
+        "mode": "canceled_transport_success",
+        "scope_request_id": 73,
+        "value": "owned-login-value"
+      },
+      "observation": {
+        "accepts_after_complete": true,
+        "before_valid": {
+          "go_only_gate_used": false,
+          "invalid_error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "detail": "login callback is invalid",
+            "http_status": 0,
+            "message": "pixiv:Complete: invalid_argument: login callback is invalid",
+            "operation": "Complete",
+            "reason": "invalid_argument",
+            "transport": ""
+          },
+          "network_calls": 0
+        },
+        "close_calls": 0,
+        "error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "message": "",
+          "reason": ""
+        },
+        "events": [
+          {
+            "Module": "Pixiv authentication",
+            "Kind": "network_request",
+            "Operation": "owned-login-probe",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 73,
+            "Duration": 0
+          }
+        ],
+        "network_calls": 1,
+        "reused_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "detail": "login session was already used",
+          "http_status": 0,
+          "message": "pixiv:Complete: invalid_argument: login session was already used",
+          "operation": "Complete",
+          "reason": "invalid_argument",
+          "transport": ""
+        },
+        "roundtrip": {
+          "context_error_after": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "message": "context canceled",
+            "reason": ""
+          },
+          "context_error_before": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "message": "context canceled",
+            "reason": ""
+          },
+          "deadline_rfc3339_nano": "2099-01-01T00:00:00.123456789Z",
+          "done_nil": false,
+          "go_only_deadline_equals_caller": true,
+          "go_only_exact_context_interface": true,
+          "go_only_exact_diagnostic_scope": true,
+          "has_deadline": true,
+          "scope_present": true,
+          "value": "owned-login-value"
+        },
+        "user_id": 42
+      }
+    },
+    {
+      "name": "context/expired_transport_success",
+      "input": {
+        "deadline": "1970-01-01T00:00:01.123456789Z",
+        "entry": "public Complete with caller context and injected RoundTripper",
+        "http_client_timeout": "zero preserves exact caller context",
+        "mode": "expired_transport_success",
+        "scope_request_id": 73,
+        "value": "owned-login-value"
+      },
+      "observation": {
+        "accepts_after_complete": true,
+        "before_valid": {
+          "go_only_gate_used": false,
+          "invalid_error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "detail": "login callback is invalid",
+            "http_status": 0,
+            "message": "pixiv:Complete: invalid_argument: login callback is invalid",
+            "operation": "Complete",
+            "reason": "invalid_argument",
+            "transport": ""
+          },
+          "network_calls": 0
+        },
+        "close_calls": 0,
+        "error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "message": "",
+          "reason": ""
+        },
+        "events": [
+          {
+            "Module": "Pixiv authentication",
+            "Kind": "network_request",
+            "Operation": "owned-login-probe",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 73,
+            "Duration": 0
+          }
+        ],
+        "network_calls": 1,
+        "reused_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "detail": "login session was already used",
+          "http_status": 0,
+          "message": "pixiv:Complete: invalid_argument: login session was already used",
+          "operation": "Complete",
+          "reason": "invalid_argument",
+          "transport": ""
+        },
+        "roundtrip": {
+          "context_error_after": {
+            "canceled": false,
+            "deadline_exceeded": true,
+            "message": "context deadline exceeded",
+            "reason": ""
+          },
+          "context_error_before": {
+            "canceled": false,
+            "deadline_exceeded": true,
+            "message": "context deadline exceeded",
+            "reason": ""
+          },
+          "deadline_rfc3339_nano": "1970-01-01T00:00:01.123456789Z",
+          "done_nil": false,
+          "go_only_deadline_equals_caller": true,
+          "go_only_exact_context_interface": true,
+          "go_only_exact_diagnostic_scope": true,
+          "has_deadline": true,
+          "scope_present": true,
+          "value": "owned-login-value"
+        },
+        "user_id": 42
+      }
+    },
+    {
+      "name": "context/canceled_transport_obeys",
+      "input": {
+        "deadline": "2099-01-01T00:00:00.123456789Z",
+        "entry": "public Complete with caller context and injected RoundTripper",
+        "http_client_timeout": "zero preserves exact caller context",
+        "mode": "canceled_transport_obeys",
+        "scope_request_id": 73,
+        "value": "owned-login-value"
+      },
+      "observation": {
+        "accepts_after_complete": true,
+        "before_valid": {
+          "go_only_gate_used": false,
+          "invalid_error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "detail": "login callback is invalid",
+            "http_status": 0,
+            "message": "pixiv:Complete: invalid_argument: login callback is invalid",
+            "operation": "Complete",
+            "reason": "invalid_argument",
+            "transport": ""
+          },
+          "network_calls": 0
+        },
+        "close_calls": 0,
+        "error": {
+          "canceled": true,
+          "deadline_exceeded": false,
+          "detail": "",
+          "http_status": 0,
+          "message": "pixiv:Complete: upstream_unavailable: pixiv upstream transport failed",
+          "operation": "Complete",
+          "reason": "upstream_unavailable",
+          "transport": "http"
+        },
+        "events": [
+          {
+            "Module": "Pixiv authentication",
+            "Kind": "network_request",
+            "Operation": "owned-login-probe",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 73,
+            "Duration": 0
+          }
+        ],
+        "network_calls": 1,
+        "reused_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "detail": "login session was already used",
+          "http_status": 0,
+          "message": "pixiv:Complete: invalid_argument: login session was already used",
+          "operation": "Complete",
+          "reason": "invalid_argument",
+          "transport": ""
+        },
+        "roundtrip": {
+          "context_error_after": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "message": "context canceled",
+            "reason": ""
+          },
+          "context_error_before": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "message": "context canceled",
+            "reason": ""
+          },
+          "deadline_rfc3339_nano": "2099-01-01T00:00:00.123456789Z",
+          "done_nil": false,
+          "go_only_deadline_equals_caller": true,
+          "go_only_exact_context_interface": true,
+          "go_only_exact_diagnostic_scope": true,
+          "has_deadline": true,
+          "scope_present": true,
+          "value": "owned-login-value"
+        },
+        "user_id": 0
+      }
+    },
+    {
+      "name": "context/expired_transport_obeys",
+      "input": {
+        "deadline": "1970-01-01T00:00:01.123456789Z",
+        "entry": "public Complete with caller context and injected RoundTripper",
+        "http_client_timeout": "zero preserves exact caller context",
+        "mode": "expired_transport_obeys",
+        "scope_request_id": 73,
+        "value": "owned-login-value"
+      },
+      "observation": {
+        "accepts_after_complete": true,
+        "before_valid": {
+          "go_only_gate_used": false,
+          "invalid_error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "detail": "login callback is invalid",
+            "http_status": 0,
+            "message": "pixiv:Complete: invalid_argument: login callback is invalid",
+            "operation": "Complete",
+            "reason": "invalid_argument",
+            "transport": ""
+          },
+          "network_calls": 0
+        },
+        "close_calls": 0,
+        "error": {
+          "canceled": false,
+          "deadline_exceeded": true,
+          "detail": "",
+          "http_status": 0,
+          "message": "pixiv:Complete: upstream_unavailable: pixiv upstream transport failed",
+          "operation": "Complete",
+          "reason": "upstream_unavailable",
+          "transport": "http"
+        },
+        "events": [
+          {
+            "Module": "Pixiv authentication",
+            "Kind": "network_request",
+            "Operation": "owned-login-probe",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 73,
+            "Duration": 0
+          }
+        ],
+        "network_calls": 1,
+        "reused_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "detail": "login session was already used",
+          "http_status": 0,
+          "message": "pixiv:Complete: invalid_argument: login session was already used",
+          "operation": "Complete",
+          "reason": "invalid_argument",
+          "transport": ""
+        },
+        "roundtrip": {
+          "context_error_after": {
+            "canceled": false,
+            "deadline_exceeded": true,
+            "message": "context deadline exceeded",
+            "reason": ""
+          },
+          "context_error_before": {
+            "canceled": false,
+            "deadline_exceeded": true,
+            "message": "context deadline exceeded",
+            "reason": ""
+          },
+          "deadline_rfc3339_nano": "1970-01-01T00:00:01.123456789Z",
+          "done_nil": false,
+          "go_only_deadline_equals_caller": true,
+          "go_only_exact_context_interface": true,
+          "go_only_exact_diagnostic_scope": true,
+          "has_deadline": true,
+          "scope_present": true,
+          "value": "owned-login-value"
+        },
+        "user_id": 0
+      }
+    },
+    {
+      "name": "context/cancel_during_roundtrip",
+      "input": {
+        "deadline": "2099-01-01T00:00:00.123456789Z",
+        "entry": "public Complete with caller context and injected RoundTripper",
+        "http_client_timeout": "zero preserves exact caller context",
+        "mode": "cancel_during_roundtrip",
+        "scope_request_id": 73,
+        "value": "owned-login-value"
+      },
+      "observation": {
+        "accepts_after_complete": true,
+        "before_valid": {
+          "go_only_gate_used": false,
+          "invalid_error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "detail": "login callback is invalid",
+            "http_status": 0,
+            "message": "pixiv:Complete: invalid_argument: login callback is invalid",
+            "operation": "Complete",
+            "reason": "invalid_argument",
+            "transport": ""
+          },
+          "network_calls": 0
+        },
+        "close_calls": 0,
+        "error": {
+          "canceled": true,
+          "deadline_exceeded": false,
+          "detail": "",
+          "http_status": 0,
+          "message": "pixiv:Complete: upstream_unavailable: pixiv upstream transport failed",
+          "operation": "Complete",
+          "reason": "upstream_unavailable",
+          "transport": "http"
+        },
+        "events": [
+          {
+            "Module": "Pixiv authentication",
+            "Kind": "network_request",
+            "Operation": "owned-login-probe",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 73,
+            "Duration": 0
+          }
+        ],
+        "network_calls": 1,
+        "reused_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "detail": "login session was already used",
+          "http_status": 0,
+          "message": "pixiv:Complete: invalid_argument: login session was already used",
+          "operation": "Complete",
+          "reason": "invalid_argument",
+          "transport": ""
+        },
+        "roundtrip": {
+          "context_error_after": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "message": "context canceled",
+            "reason": ""
+          },
+          "context_error_before": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "message": "",
+            "reason": ""
+          },
+          "deadline_rfc3339_nano": "2099-01-01T00:00:00.123456789Z",
+          "done_nil": false,
+          "go_only_deadline_equals_caller": true,
+          "go_only_exact_context_interface": true,
+          "go_only_exact_diagnostic_scope": true,
+          "has_deadline": true,
+          "scope_present": true,
+          "value": "owned-login-value"
+        },
+        "user_id": 0
+      }
+    },
+    {
+      "name": "context/without_cancel",
+      "input": {
+        "deadline": "2099-01-01T00:00:00.123456789Z",
+        "entry": "public Complete with caller context and injected RoundTripper",
+        "http_client_timeout": "zero preserves exact caller context",
+        "mode": "without_cancel",
+        "scope_request_id": 73,
+        "value": "owned-login-value"
+      },
+      "observation": {
+        "accepts_after_complete": true,
+        "before_valid": {
+          "go_only_gate_used": false,
+          "invalid_error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "detail": "login callback is invalid",
+            "http_status": 0,
+            "message": "pixiv:Complete: invalid_argument: login callback is invalid",
+            "operation": "Complete",
+            "reason": "invalid_argument",
+            "transport": ""
+          },
+          "network_calls": 0
+        },
+        "close_calls": 0,
+        "error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "message": "",
+          "reason": ""
+        },
+        "events": [
+          {
+            "Module": "Pixiv authentication",
+            "Kind": "network_request",
+            "Operation": "owned-login-probe",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 73,
+            "Duration": 0
+          }
+        ],
+        "network_calls": 1,
+        "reused_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "detail": "login session was already used",
+          "http_status": 0,
+          "message": "pixiv:Complete: invalid_argument: login session was already used",
+          "operation": "Complete",
+          "reason": "invalid_argument",
+          "transport": ""
+        },
+        "roundtrip": {
+          "context_error_after": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "message": "",
+            "reason": ""
+          },
+          "context_error_before": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "message": "",
+            "reason": ""
+          },
+          "done_nil": true,
+          "go_only_deadline_equals_caller": false,
+          "go_only_exact_context_interface": true,
+          "go_only_exact_diagnostic_scope": true,
+          "has_deadline": false,
+          "scope_present": true,
+          "value": "owned-login-value"
+        },
+        "user_id": 42
+      }
+    },
+    {
+      "name": "context/transport_failure",
+      "input": {
+        "deadline": "2099-01-01T00:00:00.123456789Z",
+        "entry": "public Complete with caller context and injected RoundTripper",
+        "http_client_timeout": "zero preserves exact caller context",
+        "mode": "transport_failure",
+        "scope_request_id": 73,
+        "value": "owned-login-value"
+      },
+      "observation": {
+        "accepts_after_complete": true,
+        "before_valid": {
+          "go_only_gate_used": false,
+          "invalid_error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "detail": "login callback is invalid",
+            "http_status": 0,
+            "message": "pixiv:Complete: invalid_argument: login callback is invalid",
+            "operation": "Complete",
+            "reason": "invalid_argument",
+            "transport": ""
+          },
+          "network_calls": 0
+        },
+        "close_calls": 0,
+        "error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "detail": "transport: unknown",
+          "http_status": 0,
+          "message": "pixiv:Complete: upstream_unavailable: transport: unknown",
+          "operation": "Complete",
+          "reason": "upstream_unavailable",
+          "transport": "http"
+        },
+        "events": [
+          {
+            "Module": "Pixiv authentication",
+            "Kind": "network_request",
+            "Operation": "owned-login-probe",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 73,
+            "Duration": 0
+          }
+        ],
+        "network_calls": 1,
+        "reused_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "detail": "login session was already used",
+          "http_status": 0,
+          "message": "pixiv:Complete: invalid_argument: login session was already used",
+          "operation": "Complete",
+          "reason": "invalid_argument",
+          "transport": ""
+        },
+        "roundtrip": {
+          "context_error_after": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "message": "",
+            "reason": ""
+          },
+          "context_error_before": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "message": "",
+            "reason": ""
+          },
+          "deadline_rfc3339_nano": "2099-01-01T00:00:00.123456789Z",
+          "done_nil": false,
+          "go_only_deadline_equals_caller": true,
+          "go_only_exact_context_interface": true,
+          "go_only_exact_diagnostic_scope": true,
+          "has_deadline": true,
+          "scope_present": true,
+          "value": "owned-login-value"
+        },
+        "user_id": 0
+      }
+    },
+    {
+      "name": "go_only/context/nil_context",
+      "input": {
+        "deadline": "2099-01-01T00:00:00.123456789Z",
+        "entry": "public Complete with caller context and injected RoundTripper",
+        "http_client_timeout": "zero preserves exact caller context",
+        "mode": "nil_context",
+        "scope_request_id": 73,
+        "value": "owned-login-value"
+      },
+      "observation": {
+        "accepts_after_complete": true,
+        "before_valid": {
+          "go_only_gate_used": false,
+          "invalid_error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "detail": "login callback is invalid",
+            "http_status": 0,
+            "message": "pixiv:Complete: invalid_argument: login callback is invalid",
+            "operation": "Complete",
+            "reason": "invalid_argument",
+            "transport": ""
+          },
+          "network_calls": 0
+        },
+        "close_calls": 0,
+        "error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "message": "",
+          "reason": ""
+        },
+        "events": [],
+        "network_calls": 1,
+        "reused_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "detail": "login session was already used",
+          "http_status": 0,
+          "message": "pixiv:Complete: invalid_argument: login session was already used",
+          "operation": "Complete",
+          "reason": "invalid_argument",
+          "transport": ""
+        },
+        "roundtrip": {
+          "context_error_after": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "message": "",
+            "reason": ""
+          },
+          "context_error_before": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "message": "",
+            "reason": ""
+          },
+          "done_nil": true,
+          "go_only_deadline_equals_caller": false,
+          "go_only_exact_context_interface": false,
+          "go_only_exact_diagnostic_scope": false,
+          "has_deadline": false,
+          "scope_present": false,
+          "value": null
+        },
+        "user_id": 42
+      }
+    },
+    {
+      "name": "copies/shared_gate_in_flight",
+      "input": {
+        "close_while_in_flight": true,
+        "entry": "copied public handle",
+        "schedule": "winning copy enters RoundTrip before original attempts Complete"
+      },
+      "observation": {
+        "close_calls": 0,
+        "network_calls": 1,
+        "while_in_flight": {
+          "accepts_callback": true,
+          "authorization_same": true,
+          "close_calls": 0,
+          "invalid_error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "detail": "login callback is invalid",
+            "http_status": 0,
+            "message": "pixiv:Complete: invalid_argument: login callback is invalid",
+            "operation": "Complete",
+            "reason": "invalid_argument",
+            "transport": ""
+          },
+          "loser_error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "detail": "login session was already used",
+            "http_status": 0,
+            "message": "pixiv:Complete: invalid_argument: login session was already used",
+            "operation": "Complete",
+            "reason": "invalid_argument",
+            "transport": ""
+          },
+          "network_calls": 1
+        },
+        "winner_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "message": "",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "name": "go_only/nil_pointer",
+      "input": {
+        "caller_context": null,
+        "entry": "public nil or zero handle"
+      },
+      "observation": {
+        "accepts_callback": false,
+        "authorization_url": "",
+        "close_panicked": false,
+        "error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "detail": "login session is nil",
+          "http_status": 0,
+          "message": "pixiv:Complete: invalid_argument: login session is nil",
+          "operation": "Complete",
+          "reason": "invalid_argument",
+          "transport": ""
+        }
+      }
+    },
+    {
+      "name": "go_only/zero_handle",
+      "input": {
+        "caller_context": null,
+        "entry": "public nil or zero handle"
+      },
+      "observation": {
+        "accepts_callback": false,
+        "authorization_url": "",
+        "close_panicked": false,
+        "error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "detail": "login session is nil",
+          "http_status": 0,
+          "message": "pixiv:Complete: invalid_argument: login session is nil",
+          "operation": "Complete",
+          "reason": "invalid_argument",
+          "transport": ""
+        }
+      }
+    },
+    {
+      "name": "go_only/construction/client_selection_after_randomness",
+      "input": {
+        "entry": "public BeginLogin; isolated process overrides crypto/rand.Reader and default RoundTripper",
+        "mode": "client_selection_after_randomness",
+        "randomness": "deterministic synthetic bytes; no production randomness change"
+      },
+      "observation": {
+        "captured_max_idle_connections": 19,
+        "error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "message": "",
+          "reason": ""
+        },
+        "go_only_cloned_transport_distinct": true,
+        "go_only_owned": true,
+        "go_only_panicked": false,
+        "random_read_sizes": [
+          64,
+          32
+        ],
+        "returned_session_nil": false
+      }
+    },
+    {
+      "name": "go_only/construction/nil_default_transport",
+      "input": {
+        "entry": "public BeginLogin; isolated process overrides crypto/rand.Reader and default RoundTripper",
+        "mode": "nil_default_transport",
+        "randomness": "deterministic synthetic bytes; no production randomness change"
+      },
+      "observation": {
+        "error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "message": "",
+          "reason": ""
+        },
+        "go_only_panicked": true,
+        "random_read_sizes": [
+          64,
+          32
+        ],
+        "returned_session_nil": true
+      }
+    },
+    {
+      "name": "go_only/construction/incompatible_default_transport",
+      "input": {
+        "entry": "public BeginLogin; isolated process overrides crypto/rand.Reader and default RoundTripper",
+        "mode": "incompatible_default_transport",
+        "randomness": "deterministic synthetic bytes; no production randomness change"
+      },
+      "observation": {
+        "error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "message": "",
+          "reason": ""
+        },
+        "go_only_panicked": true,
+        "random_read_sizes": [
+          64,
+          32
+        ],
+        "returned_session_nil": true
+      }
+    },
+    {
+      "name": "go_only/construction/injected_bypasses_nil_default",
+      "input": {
+        "entry": "public BeginLogin; isolated process overrides crypto/rand.Reader and default RoundTripper",
+        "mode": "injected_bypasses_nil_default",
+        "randomness": "deterministic synthetic bytes; no production randomness change"
+      },
+      "observation": {
+        "error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "message": "",
+          "reason": ""
+        },
+        "go_only_owned": false,
+        "go_only_panicked": false,
+        "random_read_sizes": [
+          64,
+          32
+        ],
+        "returned_session_nil": false
+      }
+    },
+    {
+      "name": "go_only/construction/entropy_failure_1",
+      "input": {
+        "entry": "public BeginLogin; isolated process overrides crypto/rand.Reader with a synthetic read error",
+        "mode": "entropy_failure_1"
+      },
+      "observation": {
+        "go_only_official_rand_read_fatal": true,
+        "go_only_process_failed": true,
+        "random_read_sizes": [
+          64
+        ],
+        "recoverable_begin_login_error_observed": false
+      }
+    },
+    {
+      "name": "go_only/construction/entropy_failure_2",
+      "input": {
+        "entry": "public BeginLogin; isolated process overrides crypto/rand.Reader with a synthetic read error",
+        "mode": "entropy_failure_2"
+      },
+      "observation": {
+        "go_only_official_rand_read_fatal": true,
+        "go_only_process_failed": true,
+        "random_read_sizes": [
+          64,
+          32
+        ],
+        "recoverable_begin_login_error_observed": false
+      }
+    },
+    {
+      "name": "owned/default_pool_retained_and_nonterminal_close",
+      "input": {
+        "cleanup": "close before exchange, repeated close, copy close, idle close, close during active response",
+        "constructor_boundary": "default *http.Transport clone with owned dial routing and owned test certificate roots",
+        "entry": "public BeginLogin(LoginOptions{}) and copied handle",
+        "global_change_after_begin": "replace default transport and client",
+        "server": "owned loopback TLS OAuth response"
+      },
+      "observation": {
+        "accepts_after_close_and_use": true,
+        "all_owned_idle_connections_closed": true,
+        "authorization_same_through_copy": true,
+        "before_complete": {
+          "accepts_after_preclose": true,
+          "authorization_preserved_after_preclose": true,
+          "dial_calls": 0
+        },
+        "dial_calls": 3,
+        "first_idle_closed_through_copy": true,
+        "independent_session_connections": true,
+        "replacement_default_client_calls": 0,
+        "replacement_default_dial_calls": 0,
+        "reused_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "detail": "login session was already used",
+          "http_status": 0,
+          "message": "pixiv:Complete: invalid_argument: login session was already used",
+          "operation": "Complete",
+          "reason": "invalid_argument",
+          "transport": ""
+        },
+        "second_idle_survives_first_close": true,
+        "third_active_survives_close": true,
+        "third_complete_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "message": "",
+          "reason": ""
+        }
+      }
+    }
+  ]
+}

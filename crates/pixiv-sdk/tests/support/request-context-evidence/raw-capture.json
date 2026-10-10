@@ -1,0 +1,2103 @@
+{
+  "schema_version": 1,
+  "source_commit": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "go_version": "go1.27.1",
+  "source_sha256": {
+    "go.mod": "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c",
+    "go.sum": "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e",
+    "internal/services/pixiv/appapi/appapi.go": "b5d9502ad9c534c88bda076740553c8bb6f389c3d2f4e3bd80c32c7f281ba9ff",
+    "internal/services/pixiv/oauth/oauth.go": "cdc91d906255256f452789a3ce4b5efd8844e5b84a44f29756c1172b051ce376",
+    "internal/services/pixiv/resource/resource.go": "c516f925b15a20531eba51f83e6a7797280b6569ad0fd519591e9330199b581a",
+    "internal/shared/diagnostics/diagnostics.go": "aecd4045f50f6bcf4cd20f316d680cbfb28e657f919ce1c0700dfdad8d5ddc76",
+    "sdk/error.go": "d8e48078c464f18a26cdcf32828e423dd948f17061269b222f82e08a8cee0041",
+    "sdk/pixiv/errors.go": "9a1830393129ca195ef4d57c0bda17f219f0f750c7293abf5520aa888bfe81a8",
+    "sdk/pixiv/ops_artwork.go": "f8aa00684b84463c6ba82b18db87d4c2e403a0dcaa048f3c3282f6555fd7445c",
+    "sdk/pixiv/ops_mutation.go": "82e3e91b897ba8933ec1037d867052f7480da357e93cf71629c5f877f20baf0a",
+    "sdk/pixiv/pixiv.go": "daefb42f9f90359f5ce3d326d18df7afe8c10615750d88fef049cce78224d317",
+    "sdk/pixiv/resource.go": "e94cdf3b2d7f67e159bd2481a1c419e887d842c903107767c4004e4f6a529ed8"
+  },
+  "dependency_sha256": {
+    "Go/src/context/context.go": "971f00ffa375b79d3f65e6da33cca3a493cc3fce091c589233abfb4283e29b7d",
+    "Go/src/net/http/client.go": "ced3428a85206de8de79c10de38d34951e0b9823c0ccb68ff51329d048a1f7b9",
+    "Go/src/net/http/request.go": "c3257079994b4e4f74f01cef72508919983ba31f91fcf599d348e9d52cec1540",
+    "client.go": "bc0107de3d9a596b6843dfd864f71208b81aa9c17402fd068a69d4acecb8783f",
+    "middleware.go": "0d2ed4e3a7d0e120007c57238d6f99e1d46f07d1e978f6c7abf4166b4dfcf4c6",
+    "request.go": "77909fcd89b143995236e55474628c27398f55c6b1723792b4ef6434dd699030"
+  },
+  "cases": [
+    {
+      "name": "shared_sequential_unpaced",
+      "pacing_ms": 0,
+      "client_timeout_ms": 0,
+      "go_http_client_relation": "exact_caller_owned_client",
+      "transport_behavior": "success_with_per_operation_context",
+      "inputs": [
+        {
+          "caller": "A",
+          "state": "active",
+          "deadline": "2100-01-01T00:00:11Z",
+          "request_id": 11
+        },
+        {
+          "caller": "B",
+          "state": "active",
+          "deadline": "2100-01-01T00:00:22Z",
+          "request_id": 22
+        },
+        {
+          "caller": "C",
+          "state": "active",
+          "deadline": "2100-01-01T00:00:33Z",
+          "request_id": 33
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "context": {
+            "value": "A",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        },
+        {
+          "method": "POST",
+          "host": "app-api.pixiv.net",
+          "path": "/v2/illust/bookmark/add",
+          "context": {
+            "value": "B",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "context": {
+            "value": "A",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        },
+        {
+          "method": "POST",
+          "host": "app-api.pixiv.net",
+          "path": "/v2/illust/bookmark/add",
+          "context": {
+            "value": "B",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "context": {
+            "value": "C",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "operation": "Artwork",
+          "caller": "A",
+          "reason": "",
+          "context_error": "",
+          "result": "artwork_73"
+        },
+        {
+          "operation": "AddArtworkBookmark",
+          "caller": "B",
+          "reason": "",
+          "context_error": "",
+          "result": "bookmark_success"
+        },
+        {
+          "operation": "Artwork",
+          "caller": "A",
+          "reason": "",
+          "context_error": "",
+          "result": "artwork_73"
+        },
+        {
+          "operation": "AddArtworkBookmark",
+          "caller": "B",
+          "reason": "",
+          "context_error": "",
+          "result": "bookmark_success"
+        },
+        {
+          "operation": "Artwork",
+          "caller": "C",
+          "reason": "",
+          "context_error": "",
+          "result": "artwork_73"
+        }
+      ],
+      "network_events": [],
+      "body_contexts": [],
+      "go_exact_transport_body": false,
+      "body_reads_before_return": 0,
+      "caller_alive_after_body_close": false,
+      "final_contexts": [
+        {
+          "value": "A",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "canceled",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        },
+        {
+          "value": "B",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        },
+        {
+          "value": "C",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        }
+      ]
+    },
+    {
+      "name": "shared_overlapping_cancel_A_only_unpaced",
+      "pacing_ms": 0,
+      "client_timeout_ms": 0,
+      "go_http_client_relation": "exact_caller_owned_client",
+      "transport_behavior": "A_waits_for_own_cancellation_B_and_future_C_succeed",
+      "inputs": [
+        {
+          "caller": "A",
+          "state": "active",
+          "deadline": "2100-01-01T00:00:11Z",
+          "request_id": 11
+        },
+        {
+          "caller": "B",
+          "state": "active",
+          "deadline": "2100-01-01T00:00:22Z",
+          "request_id": 22
+        },
+        {
+          "caller": "C",
+          "state": "active",
+          "deadline": "2100-01-01T00:00:33Z",
+          "request_id": 33
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "context": {
+            "value": "A",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        },
+        {
+          "method": "POST",
+          "host": "app-api.pixiv.net",
+          "path": "/v2/illust/bookmark/add",
+          "context": {
+            "value": "B",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "context": {
+            "value": "C",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "operation": "Artwork",
+          "caller": "A",
+          "reason": "upstream_unavailable",
+          "context_error": "canceled",
+          "result": ""
+        },
+        {
+          "operation": "AddArtworkBookmark",
+          "caller": "B",
+          "reason": "",
+          "context_error": "",
+          "result": "bookmark_success"
+        },
+        {
+          "operation": "Artwork",
+          "caller": "C",
+          "reason": "",
+          "context_error": "",
+          "result": "artwork_73"
+        }
+      ],
+      "network_events": [],
+      "body_contexts": [],
+      "go_exact_transport_body": false,
+      "body_reads_before_return": 0,
+      "caller_alive_after_body_close": false,
+      "final_contexts": [
+        {
+          "value": "A",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "canceled",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        },
+        {
+          "value": "B",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        },
+        {
+          "value": "C",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        }
+      ]
+    },
+    {
+      "name": "shared_sequential_paced",
+      "pacing_ms": 1,
+      "client_timeout_ms": 0,
+      "go_http_client_relation": "derived_caller_owned_client_with_shared_pacing_and_diagnostics",
+      "transport_behavior": "success_with_per_operation_context",
+      "inputs": [
+        {
+          "caller": "A",
+          "state": "active",
+          "deadline": "2100-01-01T00:00:11Z",
+          "request_id": 11
+        },
+        {
+          "caller": "B",
+          "state": "active",
+          "deadline": "2100-01-01T00:00:22Z",
+          "request_id": 22
+        },
+        {
+          "caller": "C",
+          "state": "active",
+          "deadline": "2100-01-01T00:00:33Z",
+          "request_id": 33
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "context": {
+            "value": "A",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        },
+        {
+          "method": "POST",
+          "host": "app-api.pixiv.net",
+          "path": "/v2/illust/bookmark/add",
+          "context": {
+            "value": "B",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "context": {
+            "value": "A",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        },
+        {
+          "method": "POST",
+          "host": "app-api.pixiv.net",
+          "path": "/v2/illust/bookmark/add",
+          "context": {
+            "value": "B",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "context": {
+            "value": "C",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "operation": "Artwork",
+          "caller": "A",
+          "reason": "",
+          "context_error": "",
+          "result": "artwork_73"
+        },
+        {
+          "operation": "AddArtworkBookmark",
+          "caller": "B",
+          "reason": "",
+          "context_error": "",
+          "result": "bookmark_success"
+        },
+        {
+          "operation": "Artwork",
+          "caller": "A",
+          "reason": "",
+          "context_error": "",
+          "result": "artwork_73"
+        },
+        {
+          "operation": "AddArtworkBookmark",
+          "caller": "B",
+          "reason": "",
+          "context_error": "",
+          "result": "bookmark_success"
+        },
+        {
+          "operation": "Artwork",
+          "caller": "C",
+          "reason": "",
+          "context_error": "",
+          "result": "artwork_73"
+        }
+      ],
+      "network_events": [
+        {
+          "caller": "A",
+          "module": "Pixiv network",
+          "kind": "network_request",
+          "request_id": 11,
+          "route": "App API",
+          "resource": "/v1/illust/detail",
+          "status": 200
+        },
+        {
+          "caller": "B",
+          "module": "Pixiv network",
+          "kind": "network_request",
+          "request_id": 22,
+          "route": "App API",
+          "resource": "/v2/illust/bookmark/add",
+          "status": 200
+        },
+        {
+          "caller": "A",
+          "module": "Pixiv network",
+          "kind": "network_request",
+          "request_id": 11,
+          "route": "App API",
+          "resource": "/v1/illust/detail",
+          "status": 200
+        },
+        {
+          "caller": "B",
+          "module": "Pixiv network",
+          "kind": "network_request",
+          "request_id": 22,
+          "route": "App API",
+          "resource": "/v2/illust/bookmark/add",
+          "status": 200
+        },
+        {
+          "caller": "C",
+          "module": "Pixiv network",
+          "kind": "network_request",
+          "request_id": 33,
+          "route": "App API",
+          "resource": "/v1/illust/detail",
+          "status": 200
+        }
+      ],
+      "body_contexts": [],
+      "go_exact_transport_body": false,
+      "body_reads_before_return": 0,
+      "caller_alive_after_body_close": false,
+      "final_contexts": [
+        {
+          "value": "A",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "canceled",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        },
+        {
+          "value": "B",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        },
+        {
+          "value": "C",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        }
+      ]
+    },
+    {
+      "name": "shared_overlapping_cancel_A_only_paced",
+      "pacing_ms": 1,
+      "client_timeout_ms": 0,
+      "go_http_client_relation": "derived_caller_owned_client_with_shared_pacing_and_diagnostics",
+      "transport_behavior": "A_waits_for_own_cancellation_B_and_future_C_succeed",
+      "inputs": [
+        {
+          "caller": "A",
+          "state": "active",
+          "deadline": "2100-01-01T00:00:11Z",
+          "request_id": 11
+        },
+        {
+          "caller": "B",
+          "state": "active",
+          "deadline": "2100-01-01T00:00:22Z",
+          "request_id": 22
+        },
+        {
+          "caller": "C",
+          "state": "active",
+          "deadline": "2100-01-01T00:00:33Z",
+          "request_id": 33
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "context": {
+            "value": "A",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        },
+        {
+          "method": "POST",
+          "host": "app-api.pixiv.net",
+          "path": "/v2/illust/bookmark/add",
+          "context": {
+            "value": "B",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "context": {
+            "value": "C",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "operation": "Artwork",
+          "caller": "A",
+          "reason": "upstream_unavailable",
+          "context_error": "canceled",
+          "result": ""
+        },
+        {
+          "operation": "AddArtworkBookmark",
+          "caller": "B",
+          "reason": "",
+          "context_error": "",
+          "result": "bookmark_success"
+        },
+        {
+          "operation": "Artwork",
+          "caller": "C",
+          "reason": "",
+          "context_error": "",
+          "result": "artwork_73"
+        }
+      ],
+      "network_events": [
+        {
+          "caller": "B",
+          "module": "Pixiv network",
+          "kind": "network_request",
+          "request_id": 22,
+          "route": "App API",
+          "resource": "/v2/illust/bookmark/add",
+          "status": 200
+        },
+        {
+          "caller": "A",
+          "module": "Pixiv network",
+          "kind": "failed",
+          "request_id": 11,
+          "route": "App API",
+          "resource": "",
+          "status": 0
+        },
+        {
+          "caller": "C",
+          "module": "Pixiv network",
+          "kind": "network_request",
+          "request_id": 33,
+          "route": "App API",
+          "resource": "/v1/illust/detail",
+          "status": 200
+        }
+      ],
+      "body_contexts": [],
+      "go_exact_transport_body": false,
+      "body_reads_before_return": 0,
+      "caller_alive_after_body_close": false,
+      "final_contexts": [
+        {
+          "value": "A",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "canceled",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        },
+        {
+          "value": "B",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        },
+        {
+          "value": "C",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        }
+      ]
+    },
+    {
+      "name": "artwork_canceled_returns_success_even_if_context_done",
+      "pacing_ms": 0,
+      "client_timeout_ms": 0,
+      "go_http_client_relation": "exact_caller_owned_client",
+      "transport_behavior": "returns_success_even_if_context_done",
+      "inputs": [
+        {
+          "caller": "single",
+          "state": "canceled",
+          "deadline": "2100-01-01T00:00:44Z",
+          "request_id": 44
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "context": {
+            "value": "single",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "canceled",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "operation": "Artwork",
+          "caller": "single",
+          "reason": "",
+          "context_error": "",
+          "result": "artwork_73"
+        }
+      ],
+      "network_events": [],
+      "body_contexts": [],
+      "go_exact_transport_body": false,
+      "body_reads_before_return": 0,
+      "caller_alive_after_body_close": false,
+      "final_contexts": [
+        {
+          "value": "single",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "canceled",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        }
+      ]
+    },
+    {
+      "name": "artwork_expired_returns_success_even_if_context_done",
+      "pacing_ms": 0,
+      "client_timeout_ms": 0,
+      "go_http_client_relation": "exact_caller_owned_client",
+      "transport_behavior": "returns_success_even_if_context_done",
+      "inputs": [
+        {
+          "caller": "single",
+          "state": "expired",
+          "deadline": "2020-01-01T00:00:44Z",
+          "request_id": 44
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "context": {
+            "value": "single",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "deadline_exceeded",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "operation": "Artwork",
+          "caller": "single",
+          "reason": "",
+          "context_error": "",
+          "result": "artwork_73"
+        }
+      ],
+      "network_events": [],
+      "body_contexts": [],
+      "go_exact_transport_body": false,
+      "body_reads_before_return": 0,
+      "caller_alive_after_body_close": false,
+      "final_contexts": [
+        {
+          "value": "single",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "deadline_exceeded",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        }
+      ]
+    },
+    {
+      "name": "artwork_nil_returns_success_even_if_context_done",
+      "pacing_ms": 0,
+      "client_timeout_ms": 0,
+      "go_http_client_relation": "exact_caller_owned_client",
+      "go_only": "nil_context_representation_not_a_portable_Rust_input",
+      "transport_behavior": "returns_success_even_if_context_done",
+      "inputs": [
+        {
+          "caller": "single",
+          "state": "nil",
+          "deadline": "",
+          "request_id": 44
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "context": {
+            "value": "",
+            "go_exact_caller_context": false,
+            "deadline_relation": "none",
+            "error": "",
+            "scope_present": false,
+            "go_exact_caller_scope": false
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "operation": "Artwork",
+          "caller": "single",
+          "reason": "",
+          "context_error": "",
+          "result": "artwork_73"
+        }
+      ],
+      "network_events": [],
+      "body_contexts": [],
+      "go_exact_transport_body": false,
+      "body_reads_before_return": 0,
+      "caller_alive_after_body_close": false,
+      "final_contexts": []
+    },
+    {
+      "name": "addartworkbookmark_canceled_returns_success_even_if_context_done",
+      "pacing_ms": 0,
+      "client_timeout_ms": 0,
+      "go_http_client_relation": "exact_caller_owned_client",
+      "transport_behavior": "returns_success_even_if_context_done",
+      "inputs": [
+        {
+          "caller": "single",
+          "state": "canceled",
+          "deadline": "2100-01-01T00:00:44Z",
+          "request_id": 44
+        }
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "host": "app-api.pixiv.net",
+          "path": "/v2/illust/bookmark/add",
+          "context": {
+            "value": "single",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "canceled",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "operation": "AddArtworkBookmark",
+          "caller": "single",
+          "reason": "",
+          "context_error": "",
+          "result": "bookmark_success"
+        }
+      ],
+      "network_events": [],
+      "body_contexts": [],
+      "go_exact_transport_body": false,
+      "body_reads_before_return": 0,
+      "caller_alive_after_body_close": false,
+      "final_contexts": [
+        {
+          "value": "single",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "canceled",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        }
+      ]
+    },
+    {
+      "name": "addartworkbookmark_expired_returns_success_even_if_context_done",
+      "pacing_ms": 0,
+      "client_timeout_ms": 0,
+      "go_http_client_relation": "exact_caller_owned_client",
+      "transport_behavior": "returns_success_even_if_context_done",
+      "inputs": [
+        {
+          "caller": "single",
+          "state": "expired",
+          "deadline": "2020-01-01T00:00:44Z",
+          "request_id": 44
+        }
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "host": "app-api.pixiv.net",
+          "path": "/v2/illust/bookmark/add",
+          "context": {
+            "value": "single",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "deadline_exceeded",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "operation": "AddArtworkBookmark",
+          "caller": "single",
+          "reason": "",
+          "context_error": "",
+          "result": "bookmark_success"
+        }
+      ],
+      "network_events": [],
+      "body_contexts": [],
+      "go_exact_transport_body": false,
+      "body_reads_before_return": 0,
+      "caller_alive_after_body_close": false,
+      "final_contexts": [
+        {
+          "value": "single",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "deadline_exceeded",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        }
+      ]
+    },
+    {
+      "name": "addartworkbookmark_nil_returns_success_even_if_context_done",
+      "pacing_ms": 0,
+      "client_timeout_ms": 0,
+      "go_http_client_relation": "exact_caller_owned_client",
+      "go_only": "nil_context_representation_not_a_portable_Rust_input",
+      "transport_behavior": "returns_success_even_if_context_done",
+      "inputs": [
+        {
+          "caller": "single",
+          "state": "nil",
+          "deadline": "",
+          "request_id": 44
+        }
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "host": "app-api.pixiv.net",
+          "path": "/v2/illust/bookmark/add",
+          "context": {
+            "value": "",
+            "go_exact_caller_context": false,
+            "deadline_relation": "none",
+            "error": "",
+            "scope_present": false,
+            "go_exact_caller_scope": false
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "operation": "AddArtworkBookmark",
+          "caller": "single",
+          "reason": "",
+          "context_error": "",
+          "result": "bookmark_success"
+        }
+      ],
+      "network_events": [],
+      "body_contexts": [],
+      "go_exact_transport_body": false,
+      "body_reads_before_return": 0,
+      "caller_alive_after_body_close": false,
+      "final_contexts": []
+    },
+    {
+      "name": "openwith_canceled_returns_success_even_if_context_done",
+      "pacing_ms": 0,
+      "client_timeout_ms": 0,
+      "go_http_client_relation": "exact_caller_owned_client",
+      "transport_behavior": "returns_success_even_if_context_done",
+      "inputs": [
+        {
+          "caller": "single",
+          "state": "canceled",
+          "deadline": "2100-01-01T00:00:44Z",
+          "request_id": 44
+        },
+        {
+          "caller": "after-open",
+          "state": "active",
+          "deadline": "2100-01-01T00:00:45Z",
+          "request_id": 45
+        }
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "host": "oauth.secure.pixiv.net",
+          "path": "/auth/token",
+          "context": {
+            "value": "single",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "canceled",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "context": {
+            "value": "after-open",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "operation": "OpenWith",
+          "caller": "single",
+          "reason": "",
+          "context_error": "",
+          "result": "opened_identity_42"
+        },
+        {
+          "operation": "Artwork",
+          "caller": "after-open",
+          "reason": "",
+          "context_error": "",
+          "result": "artwork_73"
+        }
+      ],
+      "network_events": [],
+      "body_contexts": [],
+      "go_exact_transport_body": false,
+      "body_reads_before_return": 0,
+      "caller_alive_after_body_close": false,
+      "final_contexts": [
+        {
+          "value": "single",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "canceled",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        },
+        {
+          "value": "after-open",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        }
+      ]
+    },
+    {
+      "name": "openwith_expired_returns_success_even_if_context_done",
+      "pacing_ms": 0,
+      "client_timeout_ms": 0,
+      "go_http_client_relation": "exact_caller_owned_client",
+      "transport_behavior": "returns_success_even_if_context_done",
+      "inputs": [
+        {
+          "caller": "single",
+          "state": "expired",
+          "deadline": "2020-01-01T00:00:44Z",
+          "request_id": 44
+        },
+        {
+          "caller": "after-open",
+          "state": "active",
+          "deadline": "2100-01-01T00:00:45Z",
+          "request_id": 45
+        }
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "host": "oauth.secure.pixiv.net",
+          "path": "/auth/token",
+          "context": {
+            "value": "single",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "deadline_exceeded",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "context": {
+            "value": "after-open",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "operation": "OpenWith",
+          "caller": "single",
+          "reason": "",
+          "context_error": "",
+          "result": "opened_identity_42"
+        },
+        {
+          "operation": "Artwork",
+          "caller": "after-open",
+          "reason": "",
+          "context_error": "",
+          "result": "artwork_73"
+        }
+      ],
+      "network_events": [],
+      "body_contexts": [],
+      "go_exact_transport_body": false,
+      "body_reads_before_return": 0,
+      "caller_alive_after_body_close": false,
+      "final_contexts": [
+        {
+          "value": "single",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "deadline_exceeded",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        },
+        {
+          "value": "after-open",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        }
+      ]
+    },
+    {
+      "name": "openwith_nil_returns_success_even_if_context_done",
+      "pacing_ms": 0,
+      "client_timeout_ms": 0,
+      "go_http_client_relation": "exact_caller_owned_client",
+      "go_only": "nil_context_representation_not_a_portable_Rust_input",
+      "transport_behavior": "returns_success_even_if_context_done",
+      "inputs": [
+        {
+          "caller": "single",
+          "state": "nil",
+          "deadline": "",
+          "request_id": 44
+        },
+        {
+          "caller": "after-open",
+          "state": "active",
+          "deadline": "2100-01-01T00:00:45Z",
+          "request_id": 45
+        }
+      ],
+      "requests": [
+        {
+          "method": "POST",
+          "host": "oauth.secure.pixiv.net",
+          "path": "/auth/token",
+          "context": {
+            "value": "",
+            "go_exact_caller_context": false,
+            "deadline_relation": "none",
+            "error": "",
+            "scope_present": false,
+            "go_exact_caller_scope": false
+          }
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "context": {
+            "value": "after-open",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "operation": "OpenWith",
+          "caller": "single",
+          "reason": "",
+          "context_error": "",
+          "result": "opened_identity_42"
+        },
+        {
+          "operation": "Artwork",
+          "caller": "after-open",
+          "reason": "",
+          "context_error": "",
+          "result": "artwork_73"
+        }
+      ],
+      "network_events": [],
+      "body_contexts": [],
+      "go_exact_transport_body": false,
+      "body_reads_before_return": 0,
+      "caller_alive_after_body_close": false,
+      "final_contexts": [
+        {
+          "value": "after-open",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        }
+      ]
+    },
+    {
+      "name": "openresource_canceled_returns_success_even_if_context_done",
+      "pacing_ms": 0,
+      "client_timeout_ms": 0,
+      "go_http_client_relation": "exact_caller_owned_client",
+      "transport_behavior": "returns_success_even_if_context_done",
+      "inputs": [
+        {
+          "caller": "single",
+          "state": "canceled",
+          "deadline": "2100-01-01T00:00:44Z",
+          "request_id": 44
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "context": {
+            "value": "single",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "canceled",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        },
+        {
+          "method": "GET",
+          "host": "i.pximg.net",
+          "path": "/context-fixture.png",
+          "context": {
+            "value": "single",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "canceled",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "operation": "OpenResource",
+          "caller": "single",
+          "reason": "",
+          "context_error": "",
+          "result": "resource_200"
+        }
+      ],
+      "network_events": [],
+      "body_contexts": [
+        {
+          "value": "single",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "canceled",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        },
+        {
+          "value": "single",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "canceled",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        }
+      ],
+      "body_bytes": "fixture-media",
+      "go_exact_transport_body": true,
+      "body_reads_before_return": 0,
+      "caller_alive_after_body_close": false,
+      "final_contexts": [
+        {
+          "value": "single",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "canceled",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        }
+      ]
+    },
+    {
+      "name": "openresource_expired_returns_success_even_if_context_done",
+      "pacing_ms": 0,
+      "client_timeout_ms": 0,
+      "go_http_client_relation": "exact_caller_owned_client",
+      "transport_behavior": "returns_success_even_if_context_done",
+      "inputs": [
+        {
+          "caller": "single",
+          "state": "expired",
+          "deadline": "2020-01-01T00:00:44Z",
+          "request_id": 44
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "context": {
+            "value": "single",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "deadline_exceeded",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        },
+        {
+          "method": "GET",
+          "host": "i.pximg.net",
+          "path": "/context-fixture.png",
+          "context": {
+            "value": "single",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "deadline_exceeded",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "operation": "OpenResource",
+          "caller": "single",
+          "reason": "",
+          "context_error": "",
+          "result": "resource_200"
+        }
+      ],
+      "network_events": [],
+      "body_contexts": [
+        {
+          "value": "single",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "deadline_exceeded",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        },
+        {
+          "value": "single",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "deadline_exceeded",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        }
+      ],
+      "body_bytes": "fixture-media",
+      "go_exact_transport_body": true,
+      "body_reads_before_return": 0,
+      "caller_alive_after_body_close": false,
+      "final_contexts": [
+        {
+          "value": "single",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "deadline_exceeded",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        }
+      ]
+    },
+    {
+      "name": "openresource_nil_returns_success_even_if_context_done",
+      "pacing_ms": 0,
+      "client_timeout_ms": 0,
+      "go_http_client_relation": "exact_caller_owned_client",
+      "go_only": "nil_context_representation_not_a_portable_Rust_input",
+      "transport_behavior": "returns_success_even_if_context_done",
+      "inputs": [
+        {
+          "caller": "single",
+          "state": "nil",
+          "deadline": "",
+          "request_id": 44
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "context": {
+            "value": "",
+            "go_exact_caller_context": false,
+            "deadline_relation": "none",
+            "error": "",
+            "scope_present": false,
+            "go_exact_caller_scope": false
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "operation": "OpenResource",
+          "caller": "single",
+          "reason": "upstream_unavailable",
+          "context_error": "other",
+          "result": ""
+        }
+      ],
+      "network_events": [],
+      "body_contexts": [],
+      "go_exact_transport_body": false,
+      "body_reads_before_return": 0,
+      "caller_alive_after_body_close": false,
+      "final_contexts": []
+    },
+    {
+      "name": "artwork_canceled_returns_context_error_when_done",
+      "pacing_ms": 0,
+      "client_timeout_ms": 0,
+      "go_http_client_relation": "exact_caller_owned_client",
+      "transport_behavior": "returns_context_error_when_done",
+      "inputs": [
+        {
+          "caller": "single",
+          "state": "canceled",
+          "deadline": "2100-01-01T00:00:44Z",
+          "request_id": 44
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "context": {
+            "value": "single",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "canceled",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "operation": "Artwork",
+          "caller": "single",
+          "reason": "upstream_unavailable",
+          "context_error": "canceled",
+          "result": ""
+        }
+      ],
+      "network_events": [],
+      "body_contexts": [],
+      "go_exact_transport_body": false,
+      "body_reads_before_return": 0,
+      "caller_alive_after_body_close": false,
+      "final_contexts": [
+        {
+          "value": "single",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "canceled",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        }
+      ]
+    },
+    {
+      "name": "artwork_expired_returns_context_error_when_done",
+      "pacing_ms": 0,
+      "client_timeout_ms": 0,
+      "go_http_client_relation": "exact_caller_owned_client",
+      "transport_behavior": "returns_context_error_when_done",
+      "inputs": [
+        {
+          "caller": "single",
+          "state": "expired",
+          "deadline": "2020-01-01T00:00:44Z",
+          "request_id": 44
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "context": {
+            "value": "single",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "deadline_exceeded",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "operation": "Artwork",
+          "caller": "single",
+          "reason": "upstream_unavailable",
+          "context_error": "deadline_exceeded",
+          "result": ""
+        }
+      ],
+      "network_events": [],
+      "body_contexts": [],
+      "go_exact_transport_body": false,
+      "body_reads_before_return": 0,
+      "caller_alive_after_body_close": false,
+      "final_contexts": [
+        {
+          "value": "single",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "deadline_exceeded",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        }
+      ]
+    },
+    {
+      "name": "artwork_active_returns_success_even_if_context_done_client_timeout",
+      "pacing_ms": 0,
+      "client_timeout_ms": 60000,
+      "go_http_client_relation": "exact_caller_owned_client",
+      "transport_behavior": "returns_success_even_if_context_done",
+      "inputs": [
+        {
+          "caller": "single",
+          "state": "active",
+          "deadline": "2100-01-01T00:00:44Z",
+          "request_id": 44
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "context": {
+            "value": "single",
+            "go_exact_caller_context": false,
+            "deadline_relation": "http_client_shorter",
+            "error": "",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "operation": "Artwork",
+          "caller": "single",
+          "reason": "",
+          "context_error": "",
+          "result": "artwork_73"
+        }
+      ],
+      "network_events": [],
+      "body_contexts": [],
+      "go_exact_transport_body": false,
+      "body_reads_before_return": 0,
+      "caller_alive_after_body_close": false,
+      "final_contexts": [
+        {
+          "value": "single",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        }
+      ]
+    },
+    {
+      "name": "artwork_canceled_returns_success_even_if_context_done_paced",
+      "pacing_ms": 1,
+      "client_timeout_ms": 0,
+      "go_http_client_relation": "derived_caller_owned_client_with_shared_pacing_and_diagnostics",
+      "transport_behavior": "returns_success_even_if_context_done",
+      "inputs": [
+        {
+          "caller": "single",
+          "state": "canceled",
+          "deadline": "2100-01-01T00:00:44Z",
+          "request_id": 44
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "context": {
+            "value": "single",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "canceled",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "operation": "Artwork",
+          "caller": "single",
+          "reason": "",
+          "context_error": "",
+          "result": "artwork_73"
+        }
+      ],
+      "network_events": [
+        {
+          "caller": "single",
+          "module": "Pixiv network",
+          "kind": "network_request",
+          "request_id": 44,
+          "route": "App API",
+          "resource": "/v1/illust/detail",
+          "status": 200
+        }
+      ],
+      "body_contexts": [],
+      "go_exact_transport_body": false,
+      "body_reads_before_return": 0,
+      "caller_alive_after_body_close": false,
+      "final_contexts": [
+        {
+          "value": "single",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "canceled",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        }
+      ]
+    },
+    {
+      "name": "artwork_active_returns_success_even_if_context_done_retry_after",
+      "pacing_ms": 0,
+      "client_timeout_ms": 0,
+      "go_http_client_relation": "exact_caller_owned_client",
+      "transport_behavior": "first_429_then_success_with_same_context_unless_retry_wait_canceled",
+      "inputs": [
+        {
+          "caller": "single",
+          "state": "active",
+          "deadline": "2100-01-01T00:00:44Z",
+          "request_id": 44
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "context": {
+            "value": "single",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        },
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "context": {
+            "value": "single",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "operation": "Artwork",
+          "caller": "single",
+          "reason": "",
+          "context_error": "",
+          "result": "artwork_73"
+        }
+      ],
+      "network_events": [],
+      "body_contexts": [],
+      "go_exact_transport_body": false,
+      "body_reads_before_return": 0,
+      "caller_alive_after_body_close": false,
+      "final_contexts": [
+        {
+          "value": "single",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        }
+      ]
+    },
+    {
+      "name": "artwork_canceled_returns_success_even_if_context_done_retry_after",
+      "pacing_ms": 0,
+      "client_timeout_ms": 0,
+      "go_http_client_relation": "exact_caller_owned_client",
+      "transport_behavior": "first_429_then_success_with_same_context_unless_retry_wait_canceled",
+      "inputs": [
+        {
+          "caller": "single",
+          "state": "canceled",
+          "deadline": "2100-01-01T00:00:44Z",
+          "request_id": 44
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "context": {
+            "value": "single",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "canceled",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "operation": "Artwork",
+          "caller": "single",
+          "reason": "upstream_unavailable",
+          "context_error": "canceled",
+          "result": ""
+        }
+      ],
+      "network_events": [],
+      "body_contexts": [],
+      "go_exact_transport_body": false,
+      "body_reads_before_return": 0,
+      "caller_alive_after_body_close": false,
+      "final_contexts": [
+        {
+          "value": "single",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "canceled",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        }
+      ]
+    },
+    {
+      "name": "returned_resource_body_cancellation_and_future_call",
+      "pacing_ms": 0,
+      "client_timeout_ms": 0,
+      "go_http_client_relation": "exact_caller_owned_client",
+      "transport_behavior": "headers_succeed_body_reads_honor_own_context",
+      "inputs": [
+        {
+          "caller": "stream-A",
+          "state": "active",
+          "deadline": "2100-01-01T00:00:55Z",
+          "request_id": 55
+        },
+        {
+          "caller": "stream-B",
+          "state": "active",
+          "deadline": "2100-01-01T00:01:06Z",
+          "request_id": 66
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "context": {
+            "value": "stream-A",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        },
+        {
+          "method": "GET",
+          "host": "i.pximg.net",
+          "path": "/context-fixture.png",
+          "context": {
+            "value": "stream-A",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        },
+        {
+          "method": "GET",
+          "host": "i.pximg.net",
+          "path": "/context-fixture.png",
+          "context": {
+            "value": "stream-B",
+            "go_exact_caller_context": true,
+            "deadline_relation": "caller",
+            "error": "",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "operation": "OpenResource",
+          "caller": "stream-A",
+          "reason": "",
+          "context_error": "",
+          "result": "resource_200_before_body_read"
+        },
+        {
+          "operation": "OpenResource",
+          "caller": "stream-B",
+          "reason": "",
+          "context_error": "",
+          "result": "cached_resource_200"
+        }
+      ],
+      "network_events": [],
+      "body_contexts": [
+        {
+          "value": "stream-A",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "canceled",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        },
+        {
+          "value": "stream-A",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "canceled",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        },
+        {
+          "value": "stream-B",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        },
+        {
+          "value": "stream-B",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        },
+        {
+          "value": "stream-B",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        }
+      ],
+      "body_read_error": "canceled",
+      "body_bytes": "fixture-media",
+      "go_exact_transport_body": true,
+      "body_reads_before_return": 0,
+      "caller_alive_after_body_close": true,
+      "final_contexts": [
+        {
+          "value": "stream-A",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "canceled",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        },
+        {
+          "value": "stream-B",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        }
+      ]
+    },
+    {
+      "name": "returned_resource_body_cancellation_and_future_call_client_timeout",
+      "pacing_ms": 0,
+      "client_timeout_ms": 60000,
+      "go_http_client_relation": "exact_caller_owned_client",
+      "transport_behavior": "headers_succeed_body_reads_honor_own_context",
+      "inputs": [
+        {
+          "caller": "stream-A",
+          "state": "active",
+          "deadline": "2100-01-01T00:00:55Z",
+          "request_id": 55
+        },
+        {
+          "caller": "stream-B",
+          "state": "active",
+          "deadline": "2100-01-01T00:01:06Z",
+          "request_id": 66
+        }
+      ],
+      "requests": [
+        {
+          "method": "GET",
+          "host": "app-api.pixiv.net",
+          "path": "/v1/illust/detail",
+          "context": {
+            "value": "stream-A",
+            "go_exact_caller_context": false,
+            "deadline_relation": "http_client_shorter",
+            "error": "",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        },
+        {
+          "method": "GET",
+          "host": "i.pximg.net",
+          "path": "/context-fixture.png",
+          "context": {
+            "value": "stream-A",
+            "go_exact_caller_context": false,
+            "deadline_relation": "http_client_shorter",
+            "error": "",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        },
+        {
+          "method": "GET",
+          "host": "i.pximg.net",
+          "path": "/context-fixture.png",
+          "context": {
+            "value": "stream-B",
+            "go_exact_caller_context": false,
+            "deadline_relation": "http_client_shorter",
+            "error": "",
+            "scope_present": true,
+            "go_exact_caller_scope": true
+          }
+        }
+      ],
+      "outcomes": [
+        {
+          "operation": "OpenResource",
+          "caller": "stream-A",
+          "reason": "",
+          "context_error": "",
+          "result": "resource_200_before_body_read"
+        },
+        {
+          "operation": "OpenResource",
+          "caller": "stream-B",
+          "reason": "",
+          "context_error": "",
+          "result": "cached_resource_200"
+        }
+      ],
+      "network_events": [],
+      "body_contexts": [
+        {
+          "value": "stream-A",
+          "go_exact_caller_context": false,
+          "deadline_relation": "http_client_shorter",
+          "error": "canceled",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        },
+        {
+          "value": "stream-A",
+          "go_exact_caller_context": false,
+          "deadline_relation": "http_client_shorter",
+          "error": "canceled",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        },
+        {
+          "value": "stream-B",
+          "go_exact_caller_context": false,
+          "deadline_relation": "http_client_shorter",
+          "error": "",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        },
+        {
+          "value": "stream-B",
+          "go_exact_caller_context": false,
+          "deadline_relation": "http_client_shorter",
+          "error": "",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        },
+        {
+          "value": "stream-B",
+          "go_exact_caller_context": false,
+          "deadline_relation": "http_client_shorter",
+          "error": "canceled",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        }
+      ],
+      "body_read_error": "canceled",
+      "body_bytes": "fixture-media",
+      "go_exact_transport_body": false,
+      "body_reads_before_return": 0,
+      "caller_alive_after_body_close": true,
+      "final_contexts": [
+        {
+          "value": "stream-A",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "canceled",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        },
+        {
+          "value": "stream-B",
+          "go_exact_caller_context": true,
+          "deadline_relation": "caller",
+          "error": "",
+          "scope_present": true,
+          "go_exact_caller_scope": true
+        }
+      ]
+    }
+  ],
+  "source_witnesses": [
+    "Go public SDK methods receive context per operation; NewWith stores no caller context, and OpenWith's OAuth context is not retained as the returned client's future operation context",
+    "Options.HTTPClient with nonpositive pacing returns the exact caller client without diagnostic wrapping; Resty NewWithClient may initialize its nil Transport, independently frozen by client-ownership.json",
+    "positive pacing derives a caller-owned client, preserving Timeout/Jar/CheckRedirect and sharing diagnostic then pacing wrappers across operation families",
+    "Go net/http.Client Timeout can derive a shorter request context and wrap returned Body in cancelTimerBody; Close cancels that derived context without canceling the caller",
+    "Resty SetContext(nil) leaves the net/http request's Background context; resource.Open instead passes nil to NewRequestWithContext and returns a classified transport error after any required metadata lookup",
+    "retry wait selects caller Done and propagates cancellation; pacing checks Done only when a positive wait is needed, so the first canceled call can still reach an injected transport",
+    "OpenResource propagates the same per-operation context through uncached metadata and media requests and returns an unread body; resolved URLs are client-scoped and future context calls reuse that registry"
+  ],
+  "limitations": [
+    "Only synthetic public SDK calls, ordinary injected net/http.RoundTripper implementations and context-aware response-body ports are exercised; no external network or native protocol probes",
+    "go_exact_caller_context, go_exact_caller_scope, go_http_client_relation, go_exact_transport_body and nil_context cases are Go representation witnesses, not Rust pointer/nil requirements; Rust correspondence must preserve the portable context value, deadline, scope and isolated cancellation outcomes",
+    "deadline_relation records exact equality or strictly earlier derived deadline, not a wall-clock timestamp invented for client Timeout; each active input has a fixed explicit future deadline",
+    "No global/task-local context or automatic broadcast cancellation is modeled; no unconditional cancellation precheck may discard a successful injected response",
+    "This representative slice does not duplicate the full OAuth PKCE, resource policy, retry or pacing matrices, and makes no Rust implementation or native HTTP/2 coverage claim"
+  ]
+}

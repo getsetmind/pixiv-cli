@@ -10245,7 +10245,9 @@
         "sdk/pixiv/migration_login_environment_proxy_test.go",
         "crates/pixiv-sdk/tests/environment_proxy.rs",
         "crates/pixiv-sdk/tests/fixtures/login_environment_proxy.json",
-        "crates/pixiv-cli/tests/auth_login_contract.rs"
+        "crates/pixiv-cli/tests/auth_login_contract.rs",
+        "sdk/pixiv/migration_login_ownership_test.go",
+        "crates/pixiv-sdk/tests/fixtures/login-ownership.json"
       ],
       "verified_platforms": [],
       "differences": [
@@ -10339,7 +10341,9 @@
         "crates/pixiv-sdk/tests/transport_failure.rs#sdk_transport_failures_match_go_classification_and_consume_error_bodies",
         "crates/pixiv-app/tests/pool_session.rs#execution_write_never_replays_an_invoked_mutation_and_releases_its_account",
         "crates/pixiv-cli/tests/mutations.rs#bookmark_follow_preserve_frozen_go_cli_and_saved_account_contracts",
-        "crates/pixiv-mcp/tests/bookmark_follow.rs#bookmarks_and_follows_match_go_schemas_results_forms_and_saved_stdio_without_replay"
+        "crates/pixiv-mcp/tests/bookmark_follow.rs#bookmarks_and_follows_match_go_schemas_results_forms_and_saved_stdio_without_replay",
+        "sdk/pixiv/migration_request_context_test.go",
+        "crates/pixiv-sdk/tests/fixtures/request-context.json"
       ],
       "verified_platforms": [
         "windows-amd64",
@@ -10430,7 +10434,9 @@
         "sdk/pixiv/migration_transport_failure_test.go#TestMigrationSDKTransportFailureClassificationAndBodyConsumption",
         "crates/pixiv-sdk/tests/transport_failure.rs#sdk_transport_failures_match_go_classification_and_consume_error_bodies",
         "sdk/pixiv/migration_artwork_series_test.go#TestMigrationArtworkNullTags",
-        "crates/pixiv-sdk/tests/artwork_series.rs#shared_artwork_tags_preserve_null_elements_and_reject_invalid_fields_like_go"
+        "crates/pixiv-sdk/tests/artwork_series.rs#shared_artwork_tags_preserve_null_elements_and_reject_invalid_fields_like_go",
+        "sdk/pixiv/migration_request_context_test.go",
+        "crates/pixiv-sdk/tests/fixtures/request-context.json"
       ],
       "verified_platforms": [
         "windows-amd64",
@@ -10601,7 +10607,12 @@
         "key": "sdk/pixiv:Client.CloseIdleConnections"
       },
       "rust_sources": [],
-      "tests": [],
+      "tests": [
+        "sdk/pixiv/migration_client_ownership_test.go",
+        "crates/pixiv-sdk/tests/fixtures/client-ownership.json",
+        "sdk/pixiv/migration_idle_native_test.go",
+        "crates/pixiv-sdk/tests/fixtures/client-idle-native-h1.json"
+      ],
       "verified_platforms": [],
       "differences": []
     },
@@ -11038,7 +11049,9 @@
       "tests": [
         "sdk/pixiv/migration_open_resource_test.go#TestMigrationOpenResourceMatchesFrozenMetadataResolution",
         "crates/pixiv-sdk/tests/artwork_open_resource.rs",
-        "crates/pixiv-sdk/tests/resource_stream.rs"
+        "crates/pixiv-sdk/tests/resource_stream.rs",
+        "sdk/pixiv/migration_request_context_test.go",
+        "crates/pixiv-sdk/tests/fixtures/request-context.json"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -12354,7 +12367,10 @@
         "key": "sdk/pixiv:diagnosticRoundTripper.CloseIdleConnections"
       },
       "rust_sources": [],
-      "tests": [],
+      "tests": [
+        "sdk/pixiv/migration_client_ownership_test.go",
+        "crates/pixiv-sdk/tests/fixtures/client-ownership.json"
+      ],
       "verified_platforms": [],
       "differences": []
     },
@@ -12744,7 +12760,10 @@
         "key": "sdk/pixiv:LoginSession.CloseIdleConnections"
       },
       "rust_sources": [],
-      "tests": [],
+      "tests": [
+        "sdk/pixiv/migration_login_ownership_test.go",
+        "crates/pixiv-sdk/tests/fixtures/login-ownership.json"
+      ],
       "verified_platforms": [],
       "differences": [
         "CLI loginは実environment HTTP transportを生成するが、公開SDKのGo LoginOptionsに相当するStart時HTTPClient injection/ownership・session-owned client生成とexplicit CloseIdleConnectionsは未移植。Complete時caller-owned Transport注入やCLIのHTTP/CONNECT等の16対象例（未知scheme・port0を含む）をこの公開APIの互換へ外挿しない。偽no-op APIを追加しない。"
@@ -12774,7 +12793,9 @@
         "sdk/pixiv/migration_login_environment_proxy_test.go",
         "crates/pixiv-sdk/tests/environment_proxy.rs",
         "crates/pixiv-sdk/tests/fixtures/login_environment_proxy.json",
-        "crates/pixiv-cli/tests/auth_login_contract.rs"
+        "crates/pixiv-cli/tests/auth_login_contract.rs",
+        "sdk/pixiv/migration_login_ownership_test.go",
+        "crates/pixiv-sdk/tests/fixtures/login-ownership.json"
       ],
       "verified_platforms": [],
       "differences": [
@@ -12942,7 +12963,9 @@
         "crates/pixiv-sdk/tests/pacing.rs#default_http_transport_keeps_a_pending_response_after_the_prototype_sixty_second_limit",
         "crates/pixiv-sdk/tests/pacing.rs#aborting_a_resource_pacing_wait_releases_the_queue_without_consuming_a_request_start",
         "sdk/pixiv/migration_redirect_test.go#TestMigrationSDKHTTPRedirectPreservesMethodsHeadersAndOriginalBody",
-        "crates/pixiv-sdk/tests/http_redirect.rs#sdk_http_redirect_matches_go_methods_headers_body_and_limit"
+        "crates/pixiv-sdk/tests/http_redirect.rs#sdk_http_redirect_matches_go_methods_headers_body_and_limit",
+        "sdk/pixiv/migration_client_ownership_test.go",
+        "crates/pixiv-sdk/tests/fixtures/client-ownership.json"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -12972,7 +12995,9 @@
         "crates/pixiv-sdk/tests/pacing.rs#default_http_transport_keeps_a_pending_response_after_the_prototype_sixty_second_limit",
         "crates/pixiv-sdk/tests/pacing.rs#aborting_a_resource_pacing_wait_releases_the_queue_without_consuming_a_request_start",
         "sdk/pixiv/migration_redirect_test.go#TestMigrationSDKHTTPRedirectPreservesMethodsHeadersAndOriginalBody",
-        "crates/pixiv-sdk/tests/http_redirect.rs#sdk_http_redirect_matches_go_methods_headers_body_and_limit"
+        "crates/pixiv-sdk/tests/http_redirect.rs#sdk_http_redirect_matches_go_methods_headers_body_and_limit",
+        "sdk/pixiv/migration_client_ownership_test.go",
+        "crates/pixiv-sdk/tests/fixtures/client-ownership.json"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -14061,7 +14086,9 @@
         "sdk/pixiv/migration_redirect_test.go#TestMigrationSDKHTTPRedirectPreservesMethodsHeadersAndOriginalBody",
         "crates/pixiv-sdk/tests/http_redirect.rs#sdk_http_redirect_matches_go_methods_headers_body_and_limit",
         "sdk/pixiv/migration_transport_failure_test.go#TestMigrationSDKTransportFailureClassificationAndBodyConsumption",
-        "crates/pixiv-sdk/tests/transport_failure.rs#sdk_transport_failures_match_go_classification_and_consume_error_bodies"
+        "crates/pixiv-sdk/tests/transport_failure.rs#sdk_transport_failures_match_go_classification_and_consume_error_bodies",
+        "sdk/pixiv/migration_client_ownership_test.go",
+        "crates/pixiv-sdk/tests/fixtures/client-ownership.json"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -14095,7 +14122,11 @@
         "sdk/pixiv/migration_redirect_test.go#TestMigrationSDKHTTPRedirectPreservesMethodsHeadersAndOriginalBody",
         "crates/pixiv-sdk/tests/http_redirect.rs#sdk_http_redirect_matches_go_methods_headers_body_and_limit",
         "sdk/pixiv/migration_transport_failure_test.go#TestMigrationSDKTransportFailureClassificationAndBodyConsumption",
-        "crates/pixiv-sdk/tests/transport_failure.rs#sdk_transport_failures_match_go_classification_and_consume_error_bodies"
+        "crates/pixiv-sdk/tests/transport_failure.rs#sdk_transport_failures_match_go_classification_and_consume_error_bodies",
+        "sdk/pixiv/migration_client_ownership_test.go",
+        "crates/pixiv-sdk/tests/fixtures/client-ownership.json",
+        "sdk/pixiv/migration_request_context_test.go",
+        "crates/pixiv-sdk/tests/fixtures/request-context.json"
       ],
       "verified_platforms": [
         "windows-amd64"
@@ -14164,7 +14195,10 @@
         "key": "sdk/pixiv:pacingRoundTripper.CloseIdleConnections"
       },
       "rust_sources": [],
-      "tests": [],
+      "tests": [
+        "sdk/pixiv/migration_client_ownership_test.go",
+        "crates/pixiv-sdk/tests/fixtures/client-ownership.json"
+      ],
       "verified_platforms": [],
       "differences": []
     },

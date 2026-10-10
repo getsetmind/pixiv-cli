@@ -66,3 +66,7 @@ The existing `cli:pixiv update` row links all seven frozen Go producers while re
 ## Connected updater candidate (2026-10-10)
 
 Only `cli:pixiv update` advances from pending to in_progress, with normal app/CLI source and test ownership and no verified platform. The 673 identities are preserved: 613 in_progress, 60 pending and zero verified. [Bounded implementation scope](updater-implementation.md) retains original 1,148 Go observations plus 58 actual supplemental observations without changing published fixtures. Injectable CLI 109 rows and actual binary 18 frozen parser/help observations do not establish all 158 behavioral root rows. Diagnostics/error-joining, native transport/OS/distribution and wider lifecycle debts remain explicit. Final gate and scoped review evidence are recorded independently.
+
+## SDK HTTP ownership Go-first evidence (2026-10-10)
+
+Constructor/Open, retained Login/close and representative content/resource entries now link four unchanged-Go producers and their sealed fixtures. All673 identities/statuses/verified platforms and Rust mappings remain unchanged; CloseIdleConnections remains pending until genuine owned native controls are connected. [Bounded evidence](sdk-http-ownership.md) distinguishes30 ownership,21 Login,9 native HTTP/1 and24 Context cases from Rust implementation and native-platform verification. The published full Rust baseline is preserved, not relabeled as a new ownership pass.

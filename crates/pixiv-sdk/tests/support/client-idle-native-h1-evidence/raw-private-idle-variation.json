@@ -1,0 +1,27 @@
+{
+  "schedule": "cancel-active-body-after-close",
+  "actual_barriers": [
+    "peer sent headers and flushed the first JSON byte",
+    "client GotFirstResponseByte trace observed",
+    "CloseIdleConnections returned while body remained incomplete",
+    "request context canceled",
+    "SDK errors.Is(context.Canceled) observed with exact stable error JSON",
+    "peer connection 1 shutdown observed before the next successful request on connection 2"
+  ],
+  "source_private_observer_snapshots": [
+    {
+      "step": "canceled",
+      "observed": false,
+      "accepted": false
+    },
+    {
+      "step": "canceled",
+      "observed": true,
+      "accepted": false,
+      "raw_error": "http: putIdleConn: connection is in bad state"
+    }
+  ],
+  "retained_original_diagnostic_log": "replays/race-diagnostic-100.log",
+  "diagnostic_reproduction": "Four of 100 race-instrumented replays reported this exact private-trace-only difference at byte 15177. All public SDK, peer request, shutdown, and successful-EOF idle-return assertions passed. The prior race-10.log retains the original unexplained mismatch; no logs were overwritten to turn a failure into success.",
+  "scope": "These are raw private observer snapshots, not normalized SDK errors or an assertion that an unobserved callback never occurs. Only actual idle-return events awaited by successful-EOF barriers are compared in the final fixture."
+}
