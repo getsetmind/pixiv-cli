@@ -1,0 +1,143 @@
+{
+  "contracts_base": "b093eae0df1d12dd6a0d5e12127bfcd3e2c167d7",
+  "frozen_go": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "route": "SDK Client artwork/artwork_pages/open_resource -> HttpTransport::from_client -> ordinary reqwest/Rustls -> exact loopback CONNECT allowlist -> owned stdlib TLS HTTP/1 peer",
+  "rust_tests": 7,
+  "runnable_native_http1_schedules": [
+    {
+      "name": "active-headers-retired-after-close",
+      "assertions": [
+        "exact public SDK success/id/status/body",
+        "exact request connection IDs/method/official logical host/target/HTTP1.1",
+        "close-idle call count",
+        "independent client-originated TLS peer EOF/reset at sealed barrier",
+        "exact physical shutdown count before owned peer cleanup"
+      ]
+    },
+    {
+      "name": "active-body-retired-after-close",
+      "assertions": [
+        "exact public SDK success/id/status/body",
+        "exact request connection IDs/method/official logical host/target/HTTP1.1",
+        "close-idle call count",
+        "independent client-originated TLS peer EOF/reset at sealed barrier",
+        "exact physical shutdown count before owned peer cleanup"
+      ]
+    },
+    {
+      "name": "next-acquisition-resets-newly-idle-retirement",
+      "assertions": [
+        "exact public SDK success/id/status/body",
+        "exact request connection IDs/method/official logical host/target/HTTP1.1",
+        "close-idle call count",
+        "independent client-originated TLS peer EOF/reset at sealed barrier",
+        "exact physical shutdown count before owned peer cleanup"
+      ]
+    },
+    {
+      "name": "mixed-idle-and-active-repeated-close",
+      "assertions": [
+        "exact public SDK success/id/status/body",
+        "exact request connection IDs/method/official logical host/target/HTTP1.1",
+        "close-idle call count",
+        "independent client-originated TLS peer EOF/reset at sealed barrier",
+        "exact physical shutdown count before owned peer cleanup"
+      ]
+    },
+    {
+      "name": "resource-eof-after-close-retires-active-connection",
+      "assertions": [
+        "exact public SDK success/id/status/body",
+        "exact request connection IDs/method/official logical host/target/HTTP1.1",
+        "close-idle call count",
+        "independent client-originated TLS peer EOF/reset at sealed barrier",
+        "exact physical shutdown count before owned peer cleanup"
+      ]
+    }
+  ],
+  "runnable_ownership_native_lifecycle_schedules": [
+    "default",
+    "default-paced",
+    "injected-shared",
+    "injected-shared-paced"
+  ],
+  "ownership_mapping": "default schedule uses explicit ownership transfer of a normal custom native client; injected schedule uses validated caller-owned constructor and native client clone sharing; pacing remains SDK with_pacing",
+  "unmapped_native_http1_schedules": [
+    {
+      "name": "resource-early-close-discards-connection",
+      "reason": "Go explicit fallible Body.Close has no corresponding current SDK ResourceBody API; future drop is not asserted equivalent"
+    },
+    {
+      "name": "cancel-active-headers-after-close",
+      "reason": "current ordinary SDK calls/resource body do not carry caller Context; aborting a Rust future is not a caller Context cancellation mapping"
+    },
+    {
+      "name": "cancel-active-body-after-close",
+      "reason": "current ordinary SDK calls/resource body do not carry caller Context; aborting a Rust future is not a caller Context cancellation mapping"
+    },
+    {
+      "name": "resource-cancel-body-after-close",
+      "reason": "current ordinary SDK calls/resource body do not carry caller Context; aborting a Rust future is not a caller Context cancellation mapping"
+    }
+  ],
+  "not_claimed": [
+    "Go private PutIdleConn callbacks/acceptance or private raw error strings",
+    "Go ResourceBody.Close success, including EOF-row close_success",
+    "public default constructor transport configuration via synthetic routing: tests transfer a normally built custom client",
+    "Windows or Darwin execution",
+    "HTTP2, multiplexing, unfinished HEAD, uploads, any denied supplemental probe",
+    "real accounts, credentials, media, OS trust, environment/registry/security settings, external network destination",
+    "full unchanged Rust validation script for the complete current implementation, pending parent gate"
+  ],
+  "barriers": {
+    "active": "Go source-issued plan registration and request events; before-headers gate or flushed-body-prefix gate; incomplete SDK task and later successful response",
+    "retirement": "wrapped raw TCP reader beneath TLS observes remote EOF or ECONNRESET before helper cleanup; normal server close drains bounded remaining raw owned bytes to peer EOF before local close; TLS close_notify alone is never reported as a physical shutdown",
+    "reuse": "next actual SDK request must report exact frozen connection ID; no fixed sleep or retry relaxes expectation",
+    "idle_return_limit": "hyper-util client.rs returns H1 sender via separately spawned on_idle future; public SDK EOF completion alone does not establish pool insertion, and tests do not assert private PutIdleConn"
+  },
+  "helper": {
+    "source": "crates/pixiv-sdk/tests/helpers/ordinary_h1_peer.go",
+    "toolchain": "official Go1.27.1",
+    "dependencies": "Go standard library only",
+    "lifetime_seconds": 45,
+    "barrier_timeout_seconds": 10,
+    "cleanup": "stop closes only owned server/listener/socket resources; cleanup flag prevents local stop from being counted as peer physical EOF; ordinary close drain is bounded by ten seconds; Rust Drop kills/waits owned child and joins stdout reader on failure; each test directory removed"
+  },
+  "verification": {
+    "gofmt": "passed",
+    "go_vet": "passed",
+    "go_build": "passed",
+    "go_test": "passed; helper is command-line-arguments with no Go test functions",
+    "rustfmt": "passed",
+    "cargo": {
+      "invocation_owner": "parent; this worker did not invoke Cargo",
+      "serialized_first_run": "superseded TLS-layer observer passed seven tests; current raw TCP observer rerun pending parent",
+      "log": "replays/native-first.log",
+      "raw_witnesses": "native-raw-first/",
+      "core_run": "13 bare-reqwest tests also passed in same log; owned by separate core worker and not counted as SDK schedules",
+      "serialized_raw_first_run": "passed: 7 tests, 0 failed/ignored/filtered; 5 portable retirement/resource schedules plus 4 ownership lifecycle schedules and 1 sealed-nine scope assertion; raw TCP observer beneath TLS",
+      "raw_log": "replays/native-raw-first.log",
+      "repeats": "passed: 20 source-sealed native SDK runs, each 7 passed/0 failed/0 ignored/0 filtered, with --test-threads=4 and unique per-run witnesses; 180 native schedule witnesses total; separate core worker 10 runs of 13 also passed",
+      "raw_first_command": "PIXIV_NATIVE_GO=$GOROOT/bin/go PIXIV_ORDINARY_SDK_H1_WITNESS_DIR=/tmp/ordinary-sdk-h1-raw-witness cargo test --offline --locked -p pixiv-sdk --test client_idle_native -- --test-threads=1",
+      "repeat_plan": "terminal exit0; SDK repeat outcomes and witness counts independently checked by this worker",
+      "repeat_log": "replays/native-raw-repeat-20-and-core-10.log",
+      "repeat_witnesses": "native-raw-repeat-20/1..20/"
+    },
+    "platform": "Linux x86_64 only",
+    "frozen_fixtures": "git diff --exit-code b093eae0df1d12dd6a0d5e12127bfcd3e2c167d7 -- client-ownership.json client-idle-native-h1.json passed; exact bytes unchanged"
+  },
+  "source_sha256": {
+    "docs/migration/sdk-http-ownership.md": "e921059e9f5c1e2f90e50bbddba572f0242d79cebdd0c33a480e4fec769dbcc2",
+    "crates/pixiv-sdk/tests/fixtures/client-ownership.json": "c9df7037ca933a443bfe43de5d4824ebfb8cc55ff0e2105f2b1e458782fdb56f",
+    "crates/pixiv-sdk/tests/fixtures/client-idle-native-h1.json": "21d7116fd252d80e961fed64533b733d66385595d0aa47ec553ca27a70c2b3ab",
+    "sdk/pixiv/migration_client_ownership_test.go": "57d95727ee97ca2599ccdef0bbc79e05391ca06108f5392e33d0c656fe0b7487",
+    "sdk/pixiv/migration_idle_native_test.go": "6353f973f1acd428fbef542ac1cd81945d22206a0aecde89bf9701e8bcd629d3",
+    "crates/pixiv-sdk/tests/helpers/ordinary_h1_peer.go": "6050188b1d87b746387991a15d627b4e91864d9cb8a502b6ff77661c0dd514ec",
+    "crates/pixiv-sdk/tests/client_idle_native.rs": "e7e1c38997b656e9fb926a629933778e0afa176f385ad70f9a0c78e2c4ea9164"
+  },
+  "superseded_evidence": {
+    "directory": "superseded-tls-layer/",
+    "log": "replays/native-first.log",
+    "status": "prior seven tests passed with a TLS-layer EOF observer; superseded because close_notify alone does not independently prove raw TCP peer EOF; portable request/public SDK observations retained, raw TCP shutdown not claimed"
+  }
+}

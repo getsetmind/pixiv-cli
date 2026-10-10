@@ -1,0 +1,77 @@
+warning: btls-sys@0.5.6: applying post quantum crypto patch to boringssl
+warning: btls-sys@0.5.6: applying patch to boringssl
+warning: btls-sys@0.5.6: applying loongarch patch to boringssl
+warning: btls-sys@0.5.6: applying windows cross compile patch to boringssl
+warning: unnecessary transmute
+    --> /workspace/scratch/cd334a12dde3/pixiv-cli-rs/target/debug/build/btls-sys-ea9df40196cfbb14/out/bindings.rs:6447:18
+     |
+6447 |         unsafe { ::std::mem::transmute(self._bitfield_1.get(0usize, 24u8) as u32) }
+     |                  ---------------------^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |                  |
+     |                  help: replace this with: `u32::cast_signed`
+     |
+     = note: `#[warn(unnecessary_transmutes)]` on by default
+
+warning: unnecessary transmute
+    --> /workspace/scratch/cd334a12dde3/pixiv-cli-rs/target/debug/build/btls-sys-ea9df40196cfbb14/out/bindings.rs:6452:28
+     |
+6452 |             let val: u32 = ::std::mem::transmute(val);
+     |                            ---------------------^^^^^
+     |                            |
+     |                            help: replace this with: `i32::cast_unsigned`
+
+warning: unnecessary transmute
+    --> /workspace/scratch/cd334a12dde3/pixiv-cli-rs/target/debug/build/btls-sys-ea9df40196cfbb14/out/bindings.rs:6459:13
+     |
+6459 |               ::std::mem::transmute(<__BindgenBitfieldUnit<[u8; 3usize]>>::raw_get(
+     |               ^--------------------
+     |               |
+     |  _____________help: replace this with: `u32::cast_signed`
+     | |
+6460 | |                 ::std::ptr::addr_of!((*this)._bitfield_1),
+6461 | |                 0usize,
+6462 | |                 24u8,
+6463 | |             ) as u32)
+     | |_____________________^
+
+warning: unnecessary transmute
+    --> /workspace/scratch/cd334a12dde3/pixiv-cli-rs/target/debug/build/btls-sys-ea9df40196cfbb14/out/bindings.rs:6469:28
+     |
+6469 |             let val: u32 = ::std::mem::transmute(val);
+     |                            ---------------------^^^^^
+     |                            |
+     |                            help: replace this with: `i32::cast_unsigned`
+
+warning: unnecessary transmute
+    --> /workspace/scratch/cd334a12dde3/pixiv-cli-rs/target/debug/build/btls-sys-ea9df40196cfbb14/out/bindings.rs:6482:41
+     |
+6482 |             let _flags2: u32 = unsafe { ::std::mem::transmute(_flags2) };
+     |                                         ---------------------^^^^^^^^^
+     |                                         |
+     |                                         help: replace this with: `i32::cast_unsigned`
+
+warning: `btls-sys` (lib) generated 5 warnings (run `cargo fix --lib -p btls-sys` to apply 5 suggestions)
+warning: unused variable: `timer`
+    --> third_party/rust/ordinary/hyper-util-0.1.21/src/client/legacy/client.rs:1597:32
+     |
+1597 |     pub fn timer<M>(&mut self, timer: M) -> &mut Self
+     |                                ^^^^^ help: if this is intentional, prefix it with an underscore: `_timer`
+     |
+     = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `hyper-util` (lib) generated 1 warning (run `cargo fix --lib -p hyper-util` to apply 1 suggestion)
+   Compiling pixiv-sdk v0.1.0 (/workspace/scratch/cd334a12dde3/pixiv-cli-rs/crates/pixiv-sdk)
+    Finished `test` profile [unoptimized] target(s) in 0.88s
+     Running tests/client_idle_native.rs (target/debug/deps/client_idle_native-c57e934287767a73)
+
+running 7 tests
+test active_body_survives_repeated_close_then_the_real_tls_peer_retires ... ok
+test active_headers_survive_close_then_the_real_tls_peer_retires ... ok
+test new_acquisition_resets_future_idle_retirement_and_reuses_the_original_peer ... ok
+test owned_and_caller_shared_native_pools_match_four_go_lifecycle_schedules ... ok
+test repeated_close_retires_idle_and_future_idle_without_interrupting_active_body ... ok
+test resource_eof_preserves_all_bytes_then_retires_the_active_media_peer ... ok
+test sealed_nine_rows_keep_four_unmapped_context_and_explicit_body_close_edges_visible ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.39s
+

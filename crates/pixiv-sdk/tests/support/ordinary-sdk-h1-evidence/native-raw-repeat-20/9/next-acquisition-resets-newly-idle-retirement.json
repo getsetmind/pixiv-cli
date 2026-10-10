@@ -1,0 +1,211 @@
+{
+  "portable_observation": {
+    "name": "next-acquisition-resets-newly-idle-retirement",
+    "native_http1_observations": {
+      "close_idle_calls": 1,
+      "peer_closures_at_barriers": [],
+      "requests": [
+        {
+          "connection": 1,
+          "host": "app-api.pixiv.net",
+          "method": "GET",
+          "protocol": "HTTP/1.1",
+          "step": "active",
+          "target": "/v1/illust/detail?illust_id=42"
+        },
+        {
+          "connection": 2,
+          "host": "app-api.pixiv.net",
+          "method": "GET",
+          "protocol": "HTTP/1.1",
+          "step": "resetting",
+          "target": "/v1/illust/detail?illust_id=43"
+        },
+        {
+          "connection": 1,
+          "host": "app-api.pixiv.net",
+          "method": "GET",
+          "protocol": "HTTP/1.1",
+          "step": "reused",
+          "target": "/v1/illust/detail?illust_id=44"
+        }
+      ]
+    },
+    "not_compared": [
+      "Go-private PutIdleConn callbacks and error strings",
+      "Go Body.Close success"
+    ],
+    "public_sdk": [
+      {
+        "id": 42,
+        "operation": "Artwork",
+        "step": "active",
+        "success": true
+      },
+      {
+        "id": 43,
+        "operation": "Artwork",
+        "step": "resetting",
+        "success": true
+      },
+      {
+        "id": 44,
+        "operation": "Artwork",
+        "step": "reused",
+        "success": true
+      }
+    ]
+  },
+  "raw_peer_events": [
+    {
+      "event": "ready",
+      "proxy": "http://127.0.0.1:41705"
+    },
+    {
+      "event": "planned",
+      "name": "active"
+    },
+    {
+      "alpn": "http/1.1",
+      "connect_target": "app-api.pixiv.net:443",
+      "connection": 1,
+      "event": "connected",
+      "sni": "app-api.pixiv.net"
+    },
+    {
+      "event": "request",
+      "wire": {
+        "accept_language": "",
+        "authorization": "Bearer fixture-access",
+        "connection": 1,
+        "host": "app-api.pixiv.net",
+        "method": "GET",
+        "protocol": "HTTP/1.1",
+        "refresh_token": "",
+        "step": "active",
+        "target": "/v1/illust/detail?illust_id=42",
+        "user_id": ""
+      }
+    },
+    {
+      "event": "barrier",
+      "name": "active",
+      "phase": "body"
+    },
+    {
+      "event": "planned",
+      "name": "resetting"
+    },
+    {
+      "alpn": "http/1.1",
+      "connect_target": "app-api.pixiv.net:443",
+      "connection": 2,
+      "event": "connected",
+      "sni": "app-api.pixiv.net"
+    },
+    {
+      "event": "request",
+      "wire": {
+        "accept_language": "",
+        "authorization": "Bearer fixture-access",
+        "connection": 2,
+        "host": "app-api.pixiv.net",
+        "method": "GET",
+        "protocol": "HTTP/1.1",
+        "refresh_token": "",
+        "step": "resetting",
+        "target": "/v1/illust/detail?illust_id=43",
+        "user_id": ""
+      }
+    },
+    {
+      "event": "barrier",
+      "name": "resetting",
+      "phase": "headers"
+    },
+    {
+      "event": "planned",
+      "name": "reused"
+    },
+    {
+      "event": "request",
+      "wire": {
+        "accept_language": "",
+        "authorization": "Bearer fixture-access",
+        "connection": 1,
+        "host": "app-api.pixiv.net",
+        "method": "GET",
+        "protocol": "HTTP/1.1",
+        "refresh_token": "",
+        "step": "reused",
+        "target": "/v1/illust/detail?illust_id=44",
+        "user_id": ""
+      }
+    },
+    {
+      "event": "snapshot",
+      "peer_closed_before_cleanup": [],
+      "requests": [
+        {
+          "accept_language": "",
+          "authorization": "Bearer fixture-access",
+          "connection": 1,
+          "host": "app-api.pixiv.net",
+          "method": "GET",
+          "protocol": "HTTP/1.1",
+          "refresh_token": "",
+          "step": "active",
+          "target": "/v1/illust/detail?illust_id=42",
+          "user_id": ""
+        },
+        {
+          "accept_language": "",
+          "authorization": "Bearer fixture-access",
+          "connection": 2,
+          "host": "app-api.pixiv.net",
+          "method": "GET",
+          "protocol": "HTTP/1.1",
+          "refresh_token": "",
+          "step": "resetting",
+          "target": "/v1/illust/detail?illust_id=43",
+          "user_id": ""
+        },
+        {
+          "accept_language": "",
+          "authorization": "Bearer fixture-access",
+          "connection": 1,
+          "host": "app-api.pixiv.net",
+          "method": "GET",
+          "protocol": "HTTP/1.1",
+          "refresh_token": "",
+          "step": "reused",
+          "target": "/v1/illust/detail?illust_id=44",
+          "user_id": ""
+        }
+      ]
+    },
+    {
+      "connection": 1,
+      "event": "peer_closed",
+      "owned_cleanup": false,
+      "raw_error": "EOF"
+    },
+    {
+      "connection": 1,
+      "event": "server_closed"
+    },
+    {
+      "connection": 2,
+      "event": "peer_closed",
+      "owned_cleanup": false,
+      "raw_error": "EOF"
+    },
+    {
+      "connection": 2,
+      "event": "server_closed"
+    },
+    {
+      "event": "stopped"
+    }
+  ]
+}

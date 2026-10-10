@@ -1,0 +1,65 @@
+{
+  "contracts_base": "b093eae0df1d12dd6a0d5e12127bfcd3e2c167d7",
+  "sdk_test_source": "crates/pixiv-sdk/tests/client_idle_native.rs",
+  "peer_source": "crates/pixiv-sdk/tests/helpers/ordinary_h1_peer.go",
+  "execution_platform": "Linux x86_64",
+  "known_toolchain": "official Go1.27.1; Rust1.93.0",
+  "cargo_owner": "parent serialized all Cargo; worker invoked no Cargo",
+  "commands": {
+    "go_format": "GOPROXY=off GOWORK=off GOTOOLCHAIN=local \"$GOROOT/bin/gofmt\" -d crates/pixiv-sdk/tests/helpers/ordinary_h1_peer.go",
+    "go_vet": "GOPROXY=off GOWORK=off GOTOOLCHAIN=local \"$GOROOT/bin/go\" vet -mod=readonly crates/pixiv-sdk/tests/helpers/ordinary_h1_peer.go",
+    "go_build": "GOPROXY=off GOWORK=off GOTOOLCHAIN=local \"$GOROOT/bin/go\" build -mod=readonly -o /tmp/owned-ordinary-sdk-h1-peer crates/pixiv-sdk/tests/helpers/ordinary_h1_peer.go",
+    "go_test": "GOPROXY=off GOWORK=off GOTOOLCHAIN=local \"$GOROOT/bin/go\" test -mod=readonly crates/pixiv-sdk/tests/helpers/ordinary_h1_peer.go",
+    "rustfmt": "rustfmt --edition 2024 --check crates/pixiv-sdk/tests/client_idle_native.rs",
+    "sdk_raw_first": "PIXIV_NATIVE_GO=$GOROOT/bin/go PIXIV_ORDINARY_SDK_H1_WITNESS_DIR=/tmp/ordinary-sdk-h1-raw-witness cargo test --offline --locked -p pixiv-sdk --test client_idle_native -- --test-threads=1",
+    "sdk_raw_repeats": "20 source-sealed parent Cargo runs with --offline --locked -p pixiv-sdk --test client_idle_native -- --test-threads=4; PIXIV_NATIVE_GO=$GOROOT/bin/go and PIXIV_ORDINARY_SDK_H1_WITNESS_DIR=/tmp/ordinary-sdk-h1-raw-repeat/N for N=1..20"
+  },
+  "results": {
+    "go_format": 0,
+    "go_vet": 0,
+    "go_build": 0,
+    "go_test": 0,
+    "rustfmt": 0,
+    "sdk_raw_first": {
+      "exit": 0,
+      "tests_passed": 7,
+      "native_schedules": 9,
+      "scope_assertions": 1
+    },
+    "sdk_raw_repeats": {
+      "exit": 0,
+      "runs": 20,
+      "tests_per_run": 7,
+      "native_schedules_per_run": 9,
+      "witnesses": 180,
+      "test_threads": 4,
+      "failures": 0
+    }
+  },
+  "source_sha256": {
+    "docs/migration/sdk-http-ownership.md": "e921059e9f5c1e2f90e50bbddba572f0242d79cebdd0c33a480e4fec769dbcc2",
+    "crates/pixiv-sdk/tests/fixtures/client-ownership.json": "c9df7037ca933a443bfe43de5d4824ebfb8cc55ff0e2105f2b1e458782fdb56f",
+    "crates/pixiv-sdk/tests/fixtures/client-idle-native-h1.json": "21d7116fd252d80e961fed64533b733d66385595d0aa47ec553ca27a70c2b3ab",
+    "sdk/pixiv/migration_client_ownership_test.go": "57d95727ee97ca2599ccdef0bbc79e05391ca06108f5392e33d0c656fe0b7487",
+    "sdk/pixiv/migration_idle_native_test.go": "6353f973f1acd428fbef542ac1cd81945d22206a0aecde89bf9701e8bcd629d3",
+    "crates/pixiv-sdk/tests/helpers/ordinary_h1_peer.go": "6050188b1d87b746387991a15d627b4e91864d9cb8a502b6ff77661c0dd514ec",
+    "crates/pixiv-sdk/tests/client_idle_native.rs": "e7e1c38997b656e9fb926a629933778e0afa176f385ad70f9a0c78e2c4ea9164"
+  },
+  "limitations": [
+    "Go private PutIdleConn callbacks/acceptance or private raw error strings",
+    "Go ResourceBody.Close success, including EOF-row close_success",
+    "public default constructor transport configuration via synthetic routing: tests transfer a normally built custom client",
+    "Windows or Darwin execution",
+    "HTTP2, multiplexing, unfinished HEAD, uploads, any denied supplemental probe",
+    "real accounts, credentials, media, OS trust, environment/registry/security settings, external network destination",
+    "full unchanged Rust validation script for the complete current implementation, pending parent gate"
+  ],
+  "superseded_evidence": {
+    "directory": "superseded-tls-layer/",
+    "log": "replays/native-first.log",
+    "status": "prior seven tests passed with a TLS-layer EOF observer; superseded because close_notify alone does not independently prove raw TCP peer EOF; portable request/public SDK observations retained, raw TCP shutdown not claimed"
+  },
+  "full_unchanged_rust_gate": "separate parent responsibility; not claimed by this focused evidence",
+  "exact_mapping": "mapping.json",
+  "evidence_log": "replays/native-raw-repeat-20-and-core-10.log"
+}

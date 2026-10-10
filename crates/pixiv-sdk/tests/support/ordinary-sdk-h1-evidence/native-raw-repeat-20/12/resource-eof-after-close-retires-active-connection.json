@@ -1,0 +1,283 @@
+{
+  "portable_observation": {
+    "name": "resource-eof-after-close-retires-active-connection",
+    "native_http1_observations": {
+      "close_idle_calls": 1,
+      "peer_closures_at_barriers": [
+        {
+          "barrier": "idle API pool close",
+          "connection": 1
+        },
+        {
+          "barrier": "stream EOF",
+          "connection": 2
+        }
+      ],
+      "requests": [
+        {
+          "connection": 1,
+          "host": "app-api.pixiv.net",
+          "method": "GET",
+          "protocol": "HTTP/1.1",
+          "step": "metadata",
+          "target": "/v1/illust/detail?illust_id=42"
+        },
+        {
+          "connection": 2,
+          "host": "i.pximg.net",
+          "method": "GET",
+          "protocol": "HTTP/1.1",
+          "step": "active-stream",
+          "target": "/idle-native-h1.fixture"
+        },
+        {
+          "connection": 3,
+          "host": "i.pximg.net",
+          "method": "GET",
+          "protocol": "HTTP/1.1",
+          "step": "next-stream",
+          "target": "/idle-native-h1.fixture"
+        },
+        {
+          "connection": 3,
+          "host": "i.pximg.net",
+          "method": "GET",
+          "protocol": "HTTP/1.1",
+          "step": "reused-stream",
+          "target": "/idle-native-h1.fixture"
+        }
+      ]
+    },
+    "not_compared": [
+      "Go-private PutIdleConn callbacks and error strings",
+      "Go Body.Close success"
+    ],
+    "public_sdk": [
+      {
+        "id": 42,
+        "operation": "ArtworkPages",
+        "step": "metadata",
+        "success": true
+      },
+      {
+        "body": "abc",
+        "operation": "OpenResource",
+        "status": 200,
+        "step": "active-stream",
+        "success": true
+      },
+      {
+        "body": "abc",
+        "operation": "OpenResource",
+        "status": 200,
+        "step": "next-stream",
+        "success": true
+      },
+      {
+        "body": "abc",
+        "operation": "OpenResource",
+        "status": 200,
+        "step": "reused-stream",
+        "success": true
+      }
+    ]
+  },
+  "raw_peer_events": [
+    {
+      "event": "ready",
+      "proxy": "http://127.0.0.1:43617"
+    },
+    {
+      "event": "planned",
+      "name": "metadata"
+    },
+    {
+      "alpn": "http/1.1",
+      "connect_target": "app-api.pixiv.net:443",
+      "connection": 1,
+      "event": "connected",
+      "sni": "app-api.pixiv.net"
+    },
+    {
+      "event": "request",
+      "wire": {
+        "accept_language": "",
+        "authorization": "Bearer fixture-access",
+        "connection": 1,
+        "host": "app-api.pixiv.net",
+        "method": "GET",
+        "protocol": "HTTP/1.1",
+        "refresh_token": "",
+        "step": "metadata",
+        "target": "/v1/illust/detail?illust_id=42",
+        "user_id": ""
+      }
+    },
+    {
+      "event": "planned",
+      "name": "active-stream"
+    },
+    {
+      "alpn": "http/1.1",
+      "connect_target": "i.pximg.net:443",
+      "connection": 2,
+      "event": "connected",
+      "sni": "i.pximg.net"
+    },
+    {
+      "event": "request",
+      "wire": {
+        "accept_language": "",
+        "authorization": "",
+        "connection": 2,
+        "host": "i.pximg.net",
+        "method": "GET",
+        "protocol": "HTTP/1.1",
+        "refresh_token": "",
+        "step": "active-stream",
+        "target": "/idle-native-h1.fixture",
+        "user_id": ""
+      }
+    },
+    {
+      "event": "barrier",
+      "name": "active-stream",
+      "phase": "body"
+    },
+    {
+      "connection": 1,
+      "event": "peer_closed",
+      "owned_cleanup": false,
+      "raw_error": "EOF"
+    },
+    {
+      "connection": 1,
+      "event": "server_closed"
+    },
+    {
+      "connection": 2,
+      "event": "peer_closed",
+      "owned_cleanup": false,
+      "raw_error": "EOF"
+    },
+    {
+      "connection": 2,
+      "event": "server_closed"
+    },
+    {
+      "event": "planned",
+      "name": "next-stream"
+    },
+    {
+      "alpn": "http/1.1",
+      "connect_target": "i.pximg.net:443",
+      "connection": 3,
+      "event": "connected",
+      "sni": "i.pximg.net"
+    },
+    {
+      "event": "request",
+      "wire": {
+        "accept_language": "",
+        "authorization": "",
+        "connection": 3,
+        "host": "i.pximg.net",
+        "method": "GET",
+        "protocol": "HTTP/1.1",
+        "refresh_token": "",
+        "step": "next-stream",
+        "target": "/idle-native-h1.fixture",
+        "user_id": ""
+      }
+    },
+    {
+      "event": "planned",
+      "name": "reused-stream"
+    },
+    {
+      "event": "request",
+      "wire": {
+        "accept_language": "",
+        "authorization": "",
+        "connection": 3,
+        "host": "i.pximg.net",
+        "method": "GET",
+        "protocol": "HTTP/1.1",
+        "refresh_token": "",
+        "step": "reused-stream",
+        "target": "/idle-native-h1.fixture",
+        "user_id": ""
+      }
+    },
+    {
+      "event": "snapshot",
+      "peer_closed_before_cleanup": [
+        1,
+        2
+      ],
+      "requests": [
+        {
+          "accept_language": "",
+          "authorization": "Bearer fixture-access",
+          "connection": 1,
+          "host": "app-api.pixiv.net",
+          "method": "GET",
+          "protocol": "HTTP/1.1",
+          "refresh_token": "",
+          "step": "metadata",
+          "target": "/v1/illust/detail?illust_id=42",
+          "user_id": ""
+        },
+        {
+          "accept_language": "",
+          "authorization": "",
+          "connection": 2,
+          "host": "i.pximg.net",
+          "method": "GET",
+          "protocol": "HTTP/1.1",
+          "refresh_token": "",
+          "step": "active-stream",
+          "target": "/idle-native-h1.fixture",
+          "user_id": ""
+        },
+        {
+          "accept_language": "",
+          "authorization": "",
+          "connection": 3,
+          "host": "i.pximg.net",
+          "method": "GET",
+          "protocol": "HTTP/1.1",
+          "refresh_token": "",
+          "step": "next-stream",
+          "target": "/idle-native-h1.fixture",
+          "user_id": ""
+        },
+        {
+          "accept_language": "",
+          "authorization": "",
+          "connection": 3,
+          "host": "i.pximg.net",
+          "method": "GET",
+          "protocol": "HTTP/1.1",
+          "refresh_token": "",
+          "step": "reused-stream",
+          "target": "/idle-native-h1.fixture",
+          "user_id": ""
+        }
+      ]
+    },
+    {
+      "connection": 3,
+      "event": "peer_closed",
+      "owned_cleanup": false,
+      "raw_error": "EOF"
+    },
+    {
+      "connection": 3,
+      "event": "server_closed"
+    },
+    {
+      "event": "stopped"
+    }
+  ]
+}
