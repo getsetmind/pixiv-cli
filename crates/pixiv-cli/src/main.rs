@@ -209,6 +209,8 @@ enum Command {
     Config,
     #[command(about = "Download illustrations")]
     Download,
+    #[command(about = "Read the Pixiv encyclopedia (dic.pixiv.net)")]
+    Dic,
     #[command(args_override_self = true)]
     Comment {
         #[command(flatten)]
@@ -331,6 +333,15 @@ async fn main() {
     if std::env::args().nth(1).as_deref() == Some("config") {
         let result = execute_config(&root_context);
         let exit = finish_command(result, false, false, &mut io::stderr().lock());
+        if exit != 0 {
+            drop(owner);
+            std::process::exit(exit);
+        }
+        return;
+    }
+    if std::env::args().nth(1).as_deref() == Some("dic") {
+        let (result, ndjson, machine) = execute_dictionary(&root_context).await;
+        let exit = finish_command(result, ndjson, machine, &mut io::stderr().lock());
         if exit != 0 {
             drop(owner);
             std::process::exit(exit);
@@ -489,6 +500,7 @@ async fn main() {
         Command::Auth
         | Command::Download
         | Command::Config
+        | Command::Dic
         | Command::Mcp { .. }
         | Command::Bookmark { .. }
         | Command::Follow { .. }
@@ -564,6 +576,7 @@ async fn main() {
         Command::Auth
         | Command::Download
         | Command::Config
+        | Command::Dic
         | Command::Mcp { .. }
         | Command::Bookmark { .. }
         | Command::Follow { .. }
@@ -1686,6 +1699,7 @@ async fn execute(
     match args.command {
         Command::Auth
         | Command::Config
+        | Command::Dic
         | Command::Download
         | Command::Comment { .. }
         | Command::Mypixiv { .. }
@@ -1704,6 +1718,56 @@ async fn execute(
             unreachable!("commands use saved-account or local execution")
         }
     }
+}
+
+async fn execute_dictionary(
+    root_context: &pixiv_app::lifecycle::Context,
+) -> (Result<(), CommandError>, bool, bool) {
+    use pixiv_cli_rs::dictionary::{DictionaryCommand, service};
+    let args: Vec<String> = std::env::args().skip(2).collect();
+    let (ndjson, machine) = DictionaryCommand::output_policy_requested(&args);
+    let result = async {
+        let command = DictionaryCommand::parse_root(&args)?;
+        let config = if command.requires_runtime() {
+            pixiv_cli_rs::startup::run_system_startup(root_context, &mut io::stderr())?;
+            let directory = pixiv_app::callback_handler::app_data_directory()
+                .map_err(|error| CommandError::MessageText(error.to_string()))?;
+            let config = pixiv_app::config::Store::new(directory.join("config.toml"));
+            config
+                .ensure_defaults()
+                .map_err(pixiv_app::scheduler::SchedulerError::from)?;
+            config
+                .current()
+                .and_then(|snapshot| snapshot.runtime())
+                .map_err(pixiv_app::scheduler::SchedulerError::from)?;
+            Some(config)
+        } else {
+            None
+        };
+        if command.render_help("pixiv dic").is_some() {
+            command.write_help("pixiv dic", io::stdout());
+            return Ok(());
+        }
+        command.validate_options()?;
+        let transport = service::HttpTransport::new().map_err(CommandError::State)?;
+        let client = service::Client::new(Some(transport));
+        let config = config.expect("dictionary leaf startup was resolved");
+        command
+            .execute(&client, root_context, io::stdout(), move |override_json| {
+                if let Some(value) = override_json {
+                    return Ok(value);
+                }
+                config
+                    .current()
+                    .and_then(|snapshot| snapshot.runtime())
+                    .map(|runtime| runtime.output_json)
+                    .map_err(pixiv_app::scheduler::SchedulerError::from)
+                    .map_err(Into::into)
+            })
+            .await
+    }
+    .await;
+    (result, ndjson, machine)
 }
 
 fn execute_config(root_context: &pixiv_app::lifecycle::Context) -> Result<(), CommandError> {

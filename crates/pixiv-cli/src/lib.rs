@@ -9,6 +9,7 @@ pub mod bookmark_reads;
 pub mod comment_mutations;
 pub mod comment_reads;
 pub mod config_commands;
+pub mod dictionary;
 pub mod download;
 pub mod interrupt;
 mod json_spool;

@@ -1,0 +1,2498 @@
+{
+  "reference": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "sources": {
+    "go.mod": "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c",
+    "go.sum": "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e",
+    "internal/cli/commands/lifecycle.go": "d81bfb1a664832ec707dba371a102da56baa05f3aa079905dad48de309e38080",
+    "internal/cli/commands/pixiv/dic/article.go": "3a269ed0c18e2b6c4d4de3ac26e555fb540b75a9ff53f65e80c7305795fcc494",
+    "internal/cli/commands/pixiv/dic/dic.go": "291a50c64e94cfce5251a98bead928b3d802712521748e0061870f9f4a3c67db",
+    "internal/cli/commands/pixiv/dic/search.go": "c8d0b86236b2cccd161c2c1b3c6e518b23c7dabea5d1c9985ac82cccb954387b"
+  },
+  "cobra": {
+    "module": "github.com/spf13/cobra",
+    "version": "v1.10.1",
+    "sum": "h1:lJeBwCfmrnXthfAupyUTzJ/J4Nc1RsHC/mSRU2dll/s=",
+    "origin": {
+      "VCS": "git",
+      "URL": "https://github.com/spf13/cobra",
+      "Hash": "7da941c3547e93b8c9f70bbd3befca79c6335388",
+      "Ref": "refs/tags/v1.10.1"
+    },
+    "sources": {
+      "cobra.go": "aae7502e789e42469bcb2fc110af87fd02451d3b509c5b0bed782ada17338c5f",
+      "command.go": "797ff14415e5fe31a22f7be52525cc0c809e1e8b6450e42d52afeb4f08389e61",
+      "go.mod": "a501ef186772adafdaabb7aa78623b691890e87accd0715674e69949da6b586e"
+    }
+  },
+  "gaps": [
+    "Standalone dic.New executes the real default Cobra help path; root-prefixed help bytes and root startup remain in the separate immutable owner/startup fixtures.",
+    "Cobra's defaultHelpFunc ignores the results of its three fmt writes and returns nil. Its generic HelpFunc emits stderr only when the help renderer returns an error; that branch is not reached here.",
+    "Injected owned writers model finite success, short-nil, zero-nil, one-call failures, partial failures and EPIPE. Native operating-system pipes, process signals and closed console handles are not observed."
+  ],
+  "rows": [
+    {
+      "input": {
+        "name": "bare-group/success",
+        "args": [],
+        "stdout_writer": "success",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic",
+        "stdout": "Read the Pixiv encyclopedia (dic.pixiv.net)\n\nUsage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Read the Pixiv encyclopedia (dic.pixiv.net)\n",
+            "count": 44,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+            "count": 370,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "bare-group/short-nil",
+        "args": [],
+        "stdout_writer": "short-nil",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic",
+        "stdout": "Read the Pixiv encycloUsage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  h",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Read the Pixiv encyclopedia (dic.pixiv.net)\n",
+            "count": 22,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 0,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+            "count": 185,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "bare-group/zero-nil",
+        "args": [],
+        "stdout_writer": "zero-nil",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic",
+        "stdout": "",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Read the Pixiv encyclopedia (dic.pixiv.net)\n",
+            "count": 0,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 0,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+            "count": 0,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "bare-group/fail-first",
+        "args": [],
+        "stdout_writer": "fail-first",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic",
+        "stdout": "\nUsage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Read the Pixiv encyclopedia (dic.pixiv.net)\n",
+            "count": 0,
+            "error": "synthetic dictionary help writer failure"
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+            "count": 370,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "bare-group/fail-second",
+        "args": [],
+        "stdout_writer": "fail-second",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic",
+        "stdout": "Read the Pixiv encyclopedia (dic.pixiv.net)\nUsage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Read the Pixiv encyclopedia (dic.pixiv.net)\n",
+            "count": 44,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 0,
+            "error": "synthetic dictionary help writer failure"
+          },
+          {
+            "input": "Usage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+            "count": 370,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "bare-group/fail-third",
+        "args": [],
+        "stdout_writer": "fail-third",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic",
+        "stdout": "Read the Pixiv encyclopedia (dic.pixiv.net)\n\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Read the Pixiv encyclopedia (dic.pixiv.net)\n",
+            "count": 44,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+            "count": 0,
+            "error": "synthetic dictionary help writer failure"
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "bare-group/partial-error-first",
+        "args": [],
+        "stdout_writer": "partial-error-first",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic",
+        "stdout": "Read \nUsage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Read the Pixiv encyclopedia (dic.pixiv.net)\n",
+            "count": 5,
+            "error": "synthetic dictionary help writer failure"
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+            "count": 370,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "bare-group/partial-error-second",
+        "args": [],
+        "stdout_writer": "partial-error-second",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic",
+        "stdout": "Read the Pixiv encyclopedia (dic.pixiv.net)\n\nUsage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Read the Pixiv encyclopedia (dic.pixiv.net)\n",
+            "count": 44,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": "synthetic dictionary help writer failure"
+          },
+          {
+            "input": "Usage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+            "count": 370,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "bare-group/partial-error-third",
+        "args": [],
+        "stdout_writer": "partial-error-third",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic",
+        "stdout": "Read the Pixiv encyclopedia (dic.pixiv.net)\n\nUsage",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Read the Pixiv encyclopedia (dic.pixiv.net)\n",
+            "count": 44,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+            "count": 5,
+            "error": "synthetic dictionary help writer failure"
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "bare-group/broken-pipe-first",
+        "args": [],
+        "stdout_writer": "broken-pipe-first",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic",
+        "stdout": "\nUsage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Read the Pixiv encyclopedia (dic.pixiv.net)\n",
+            "count": 0,
+            "error": "broken pipe"
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+            "count": 370,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "bare-group/broken-pipe-second",
+        "args": [],
+        "stdout_writer": "broken-pipe-second",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic",
+        "stdout": "Read the Pixiv encyclopedia (dic.pixiv.net)\nUsage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Read the Pixiv encyclopedia (dic.pixiv.net)\n",
+            "count": 44,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 0,
+            "error": "broken pipe"
+          },
+          {
+            "input": "Usage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+            "count": 370,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "bare-group/broken-pipe-third",
+        "args": [],
+        "stdout_writer": "broken-pipe-third",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic",
+        "stdout": "Read the Pixiv encyclopedia (dic.pixiv.net)\n\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Read the Pixiv encyclopedia (dic.pixiv.net)\n",
+            "count": 44,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+            "count": 0,
+            "error": "broken pipe"
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "bare-group/success/stderr-fail-first",
+        "args": [],
+        "stdout_writer": "success",
+        "stderr_writer": "fail-first"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic",
+        "stdout": "Read the Pixiv encyclopedia (dic.pixiv.net)\n\nUsage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Read the Pixiv encyclopedia (dic.pixiv.net)\n",
+            "count": 44,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+            "count": 370,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "bare-group/fail-first/stderr-fail-first",
+        "args": [],
+        "stdout_writer": "fail-first",
+        "stderr_writer": "fail-first"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic",
+        "stdout": "\nUsage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Read the Pixiv encyclopedia (dic.pixiv.net)\n",
+            "count": 0,
+            "error": "synthetic dictionary help writer failure"
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+            "count": 370,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "group-help/success",
+        "args": [
+          "--help"
+        ],
+        "stdout_writer": "success",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic",
+        "stdout": "Read the Pixiv encyclopedia (dic.pixiv.net)\n\nUsage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Read the Pixiv encyclopedia (dic.pixiv.net)\n",
+            "count": 44,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+            "count": 370,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "group-help/short-nil",
+        "args": [
+          "--help"
+        ],
+        "stdout_writer": "short-nil",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic",
+        "stdout": "Read the Pixiv encycloUsage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  h",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Read the Pixiv encyclopedia (dic.pixiv.net)\n",
+            "count": 22,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 0,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+            "count": 185,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "group-help/zero-nil",
+        "args": [
+          "--help"
+        ],
+        "stdout_writer": "zero-nil",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic",
+        "stdout": "",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Read the Pixiv encyclopedia (dic.pixiv.net)\n",
+            "count": 0,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 0,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+            "count": 0,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "group-help/fail-first",
+        "args": [
+          "--help"
+        ],
+        "stdout_writer": "fail-first",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic",
+        "stdout": "\nUsage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Read the Pixiv encyclopedia (dic.pixiv.net)\n",
+            "count": 0,
+            "error": "synthetic dictionary help writer failure"
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+            "count": 370,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "group-help/fail-second",
+        "args": [
+          "--help"
+        ],
+        "stdout_writer": "fail-second",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic",
+        "stdout": "Read the Pixiv encyclopedia (dic.pixiv.net)\nUsage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Read the Pixiv encyclopedia (dic.pixiv.net)\n",
+            "count": 44,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 0,
+            "error": "synthetic dictionary help writer failure"
+          },
+          {
+            "input": "Usage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+            "count": 370,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "group-help/fail-third",
+        "args": [
+          "--help"
+        ],
+        "stdout_writer": "fail-third",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic",
+        "stdout": "Read the Pixiv encyclopedia (dic.pixiv.net)\n\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Read the Pixiv encyclopedia (dic.pixiv.net)\n",
+            "count": 44,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+            "count": 0,
+            "error": "synthetic dictionary help writer failure"
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "group-help/partial-error-first",
+        "args": [
+          "--help"
+        ],
+        "stdout_writer": "partial-error-first",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic",
+        "stdout": "Read \nUsage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Read the Pixiv encyclopedia (dic.pixiv.net)\n",
+            "count": 5,
+            "error": "synthetic dictionary help writer failure"
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+            "count": 370,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "group-help/partial-error-second",
+        "args": [
+          "--help"
+        ],
+        "stdout_writer": "partial-error-second",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic",
+        "stdout": "Read the Pixiv encyclopedia (dic.pixiv.net)\n\nUsage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Read the Pixiv encyclopedia (dic.pixiv.net)\n",
+            "count": 44,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": "synthetic dictionary help writer failure"
+          },
+          {
+            "input": "Usage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+            "count": 370,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "group-help/partial-error-third",
+        "args": [
+          "--help"
+        ],
+        "stdout_writer": "partial-error-third",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic",
+        "stdout": "Read the Pixiv encyclopedia (dic.pixiv.net)\n\nUsage",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Read the Pixiv encyclopedia (dic.pixiv.net)\n",
+            "count": 44,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+            "count": 5,
+            "error": "synthetic dictionary help writer failure"
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "group-help/broken-pipe-first",
+        "args": [
+          "--help"
+        ],
+        "stdout_writer": "broken-pipe-first",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic",
+        "stdout": "\nUsage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Read the Pixiv encyclopedia (dic.pixiv.net)\n",
+            "count": 0,
+            "error": "broken pipe"
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+            "count": 370,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "group-help/broken-pipe-second",
+        "args": [
+          "--help"
+        ],
+        "stdout_writer": "broken-pipe-second",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic",
+        "stdout": "Read the Pixiv encyclopedia (dic.pixiv.net)\nUsage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Read the Pixiv encyclopedia (dic.pixiv.net)\n",
+            "count": 44,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 0,
+            "error": "broken pipe"
+          },
+          {
+            "input": "Usage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+            "count": 370,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "group-help/broken-pipe-third",
+        "args": [
+          "--help"
+        ],
+        "stdout_writer": "broken-pipe-third",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic",
+        "stdout": "Read the Pixiv encyclopedia (dic.pixiv.net)\n\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Read the Pixiv encyclopedia (dic.pixiv.net)\n",
+            "count": 44,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+            "count": 0,
+            "error": "broken pipe"
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "group-help/success/stderr-fail-first",
+        "args": [
+          "--help"
+        ],
+        "stdout_writer": "success",
+        "stderr_writer": "fail-first"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic",
+        "stdout": "Read the Pixiv encyclopedia (dic.pixiv.net)\n\nUsage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Read the Pixiv encyclopedia (dic.pixiv.net)\n",
+            "count": 44,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+            "count": 370,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "group-help/fail-first/stderr-fail-first",
+        "args": [
+          "--help"
+        ],
+        "stdout_writer": "fail-first",
+        "stderr_writer": "fail-first"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic",
+        "stdout": "\nUsage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Read the Pixiv encyclopedia (dic.pixiv.net)\n",
+            "count": 0,
+            "error": "synthetic dictionary help writer failure"
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic [flags]\n  dic [command]\n\nAvailable Commands:\n  article     Fetch one Pixiv encyclopedia article\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  search      Search Pixiv encyclopedia articles\n\nFlags:\n  -h, --help   help for dic\n\nUse \"dic [command] --help\" for more information about a command.\n",
+            "count": 370,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "article-help/success",
+        "args": [
+          "article",
+          "--help"
+        ],
+        "stdout_writer": "success",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic article",
+        "stdout": "Fetch one Pixiv encyclopedia article\n\nUsage:\n  dic article \u003ctitle|url\u003e [flags]\n\nFlags:\n  -h, --help          help for article\n  -j, --json          print JSON\n      --lang string   article language: ja or en (default \"ja\")\n      --no-counters   skip the view and work counters\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Fetch one Pixiv encyclopedia article\n",
+            "count": 37,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic article \u003ctitle|url\u003e [flags]\n\nFlags:\n  -h, --help          help for article\n  -j, --json          print JSON\n      --lang string   article language: ja or en (default \"ja\")\n      --no-counters   skip the view and work counters\n",
+            "count": 239,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "article-help/short-nil",
+        "args": [
+          "article",
+          "--help"
+        ],
+        "stdout_writer": "short-nil",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic article",
+        "stdout": "Fetch one Pixiv enUsage:\n  dic article \u003ctitle|url\u003e [flags]\n\nFlags:\n  -h, --help          help for article\n  -j, --json          print JSO",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Fetch one Pixiv encyclopedia article\n",
+            "count": 18,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 0,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic article \u003ctitle|url\u003e [flags]\n\nFlags:\n  -h, --help          help for article\n  -j, --json          print JSON\n      --lang string   article language: ja or en (default \"ja\")\n      --no-counters   skip the view and work counters\n",
+            "count": 119,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "article-help/zero-nil",
+        "args": [
+          "article",
+          "--help"
+        ],
+        "stdout_writer": "zero-nil",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic article",
+        "stdout": "",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Fetch one Pixiv encyclopedia article\n",
+            "count": 0,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 0,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic article \u003ctitle|url\u003e [flags]\n\nFlags:\n  -h, --help          help for article\n  -j, --json          print JSON\n      --lang string   article language: ja or en (default \"ja\")\n      --no-counters   skip the view and work counters\n",
+            "count": 0,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "article-help/fail-first",
+        "args": [
+          "article",
+          "--help"
+        ],
+        "stdout_writer": "fail-first",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic article",
+        "stdout": "\nUsage:\n  dic article \u003ctitle|url\u003e [flags]\n\nFlags:\n  -h, --help          help for article\n  -j, --json          print JSON\n      --lang string   article language: ja or en (default \"ja\")\n      --no-counters   skip the view and work counters\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Fetch one Pixiv encyclopedia article\n",
+            "count": 0,
+            "error": "synthetic dictionary help writer failure"
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic article \u003ctitle|url\u003e [flags]\n\nFlags:\n  -h, --help          help for article\n  -j, --json          print JSON\n      --lang string   article language: ja or en (default \"ja\")\n      --no-counters   skip the view and work counters\n",
+            "count": 239,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "article-help/fail-second",
+        "args": [
+          "article",
+          "--help"
+        ],
+        "stdout_writer": "fail-second",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic article",
+        "stdout": "Fetch one Pixiv encyclopedia article\nUsage:\n  dic article \u003ctitle|url\u003e [flags]\n\nFlags:\n  -h, --help          help for article\n  -j, --json          print JSON\n      --lang string   article language: ja or en (default \"ja\")\n      --no-counters   skip the view and work counters\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Fetch one Pixiv encyclopedia article\n",
+            "count": 37,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 0,
+            "error": "synthetic dictionary help writer failure"
+          },
+          {
+            "input": "Usage:\n  dic article \u003ctitle|url\u003e [flags]\n\nFlags:\n  -h, --help          help for article\n  -j, --json          print JSON\n      --lang string   article language: ja or en (default \"ja\")\n      --no-counters   skip the view and work counters\n",
+            "count": 239,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "article-help/fail-third",
+        "args": [
+          "article",
+          "--help"
+        ],
+        "stdout_writer": "fail-third",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic article",
+        "stdout": "Fetch one Pixiv encyclopedia article\n\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Fetch one Pixiv encyclopedia article\n",
+            "count": 37,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic article \u003ctitle|url\u003e [flags]\n\nFlags:\n  -h, --help          help for article\n  -j, --json          print JSON\n      --lang string   article language: ja or en (default \"ja\")\n      --no-counters   skip the view and work counters\n",
+            "count": 0,
+            "error": "synthetic dictionary help writer failure"
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "article-help/partial-error-first",
+        "args": [
+          "article",
+          "--help"
+        ],
+        "stdout_writer": "partial-error-first",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic article",
+        "stdout": "Fetch\nUsage:\n  dic article \u003ctitle|url\u003e [flags]\n\nFlags:\n  -h, --help          help for article\n  -j, --json          print JSON\n      --lang string   article language: ja or en (default \"ja\")\n      --no-counters   skip the view and work counters\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Fetch one Pixiv encyclopedia article\n",
+            "count": 5,
+            "error": "synthetic dictionary help writer failure"
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic article \u003ctitle|url\u003e [flags]\n\nFlags:\n  -h, --help          help for article\n  -j, --json          print JSON\n      --lang string   article language: ja or en (default \"ja\")\n      --no-counters   skip the view and work counters\n",
+            "count": 239,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "article-help/partial-error-second",
+        "args": [
+          "article",
+          "--help"
+        ],
+        "stdout_writer": "partial-error-second",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic article",
+        "stdout": "Fetch one Pixiv encyclopedia article\n\nUsage:\n  dic article \u003ctitle|url\u003e [flags]\n\nFlags:\n  -h, --help          help for article\n  -j, --json          print JSON\n      --lang string   article language: ja or en (default \"ja\")\n      --no-counters   skip the view and work counters\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Fetch one Pixiv encyclopedia article\n",
+            "count": 37,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": "synthetic dictionary help writer failure"
+          },
+          {
+            "input": "Usage:\n  dic article \u003ctitle|url\u003e [flags]\n\nFlags:\n  -h, --help          help for article\n  -j, --json          print JSON\n      --lang string   article language: ja or en (default \"ja\")\n      --no-counters   skip the view and work counters\n",
+            "count": 239,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "article-help/partial-error-third",
+        "args": [
+          "article",
+          "--help"
+        ],
+        "stdout_writer": "partial-error-third",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic article",
+        "stdout": "Fetch one Pixiv encyclopedia article\n\nUsage",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Fetch one Pixiv encyclopedia article\n",
+            "count": 37,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic article \u003ctitle|url\u003e [flags]\n\nFlags:\n  -h, --help          help for article\n  -j, --json          print JSON\n      --lang string   article language: ja or en (default \"ja\")\n      --no-counters   skip the view and work counters\n",
+            "count": 5,
+            "error": "synthetic dictionary help writer failure"
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "article-help/broken-pipe-first",
+        "args": [
+          "article",
+          "--help"
+        ],
+        "stdout_writer": "broken-pipe-first",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic article",
+        "stdout": "\nUsage:\n  dic article \u003ctitle|url\u003e [flags]\n\nFlags:\n  -h, --help          help for article\n  -j, --json          print JSON\n      --lang string   article language: ja or en (default \"ja\")\n      --no-counters   skip the view and work counters\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Fetch one Pixiv encyclopedia article\n",
+            "count": 0,
+            "error": "broken pipe"
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic article \u003ctitle|url\u003e [flags]\n\nFlags:\n  -h, --help          help for article\n  -j, --json          print JSON\n      --lang string   article language: ja or en (default \"ja\")\n      --no-counters   skip the view and work counters\n",
+            "count": 239,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "article-help/broken-pipe-second",
+        "args": [
+          "article",
+          "--help"
+        ],
+        "stdout_writer": "broken-pipe-second",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic article",
+        "stdout": "Fetch one Pixiv encyclopedia article\nUsage:\n  dic article \u003ctitle|url\u003e [flags]\n\nFlags:\n  -h, --help          help for article\n  -j, --json          print JSON\n      --lang string   article language: ja or en (default \"ja\")\n      --no-counters   skip the view and work counters\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Fetch one Pixiv encyclopedia article\n",
+            "count": 37,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 0,
+            "error": "broken pipe"
+          },
+          {
+            "input": "Usage:\n  dic article \u003ctitle|url\u003e [flags]\n\nFlags:\n  -h, --help          help for article\n  -j, --json          print JSON\n      --lang string   article language: ja or en (default \"ja\")\n      --no-counters   skip the view and work counters\n",
+            "count": 239,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "article-help/broken-pipe-third",
+        "args": [
+          "article",
+          "--help"
+        ],
+        "stdout_writer": "broken-pipe-third",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic article",
+        "stdout": "Fetch one Pixiv encyclopedia article\n\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Fetch one Pixiv encyclopedia article\n",
+            "count": 37,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic article \u003ctitle|url\u003e [flags]\n\nFlags:\n  -h, --help          help for article\n  -j, --json          print JSON\n      --lang string   article language: ja or en (default \"ja\")\n      --no-counters   skip the view and work counters\n",
+            "count": 0,
+            "error": "broken pipe"
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "article-help/success/stderr-fail-first",
+        "args": [
+          "article",
+          "--help"
+        ],
+        "stdout_writer": "success",
+        "stderr_writer": "fail-first"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic article",
+        "stdout": "Fetch one Pixiv encyclopedia article\n\nUsage:\n  dic article \u003ctitle|url\u003e [flags]\n\nFlags:\n  -h, --help          help for article\n  -j, --json          print JSON\n      --lang string   article language: ja or en (default \"ja\")\n      --no-counters   skip the view and work counters\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Fetch one Pixiv encyclopedia article\n",
+            "count": 37,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic article \u003ctitle|url\u003e [flags]\n\nFlags:\n  -h, --help          help for article\n  -j, --json          print JSON\n      --lang string   article language: ja or en (default \"ja\")\n      --no-counters   skip the view and work counters\n",
+            "count": 239,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "article-help/fail-first/stderr-fail-first",
+        "args": [
+          "article",
+          "--help"
+        ],
+        "stdout_writer": "fail-first",
+        "stderr_writer": "fail-first"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic article",
+        "stdout": "\nUsage:\n  dic article \u003ctitle|url\u003e [flags]\n\nFlags:\n  -h, --help          help for article\n  -j, --json          print JSON\n      --lang string   article language: ja or en (default \"ja\")\n      --no-counters   skip the view and work counters\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Fetch one Pixiv encyclopedia article\n",
+            "count": 0,
+            "error": "synthetic dictionary help writer failure"
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic article \u003ctitle|url\u003e [flags]\n\nFlags:\n  -h, --help          help for article\n  -j, --json          print JSON\n      --lang string   article language: ja or en (default \"ja\")\n      --no-counters   skip the view and work counters\n",
+            "count": 239,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "search-help/success",
+        "args": [
+          "search",
+          "--help"
+        ],
+        "stdout_writer": "success",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic search",
+        "stdout": "Search Pixiv encyclopedia articles\n\nUsage:\n  dic search \u003cquery\u003e [flags]\n\nFlags:\n  -h, --help        help for search\n  -j, --json        print JSON\n  -n, --limit int   maximum results; 0 returns every article on the page\n      --ndjson      print one encyclopedia article as JSON per line\n      --page int    1-based result page (default 1)\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Search Pixiv encyclopedia articles\n",
+            "count": 35,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic search \u003cquery\u003e [flags]\n\nFlags:\n  -h, --help        help for search\n  -j, --json        print JSON\n  -n, --limit int   maximum results; 0 returns every article on the page\n      --ndjson      print one encyclopedia article as JSON per line\n      --page int    1-based result page (default 1)\n",
+            "count": 304,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "search-help/short-nil",
+        "args": [
+          "search",
+          "--help"
+        ],
+        "stdout_writer": "short-nil",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic search",
+        "stdout": "Search Pixiv encyUsage:\n  dic search \u003cquery\u003e [flags]\n\nFlags:\n  -h, --help        help for search\n  -j, --json        print JSON\n  -n, --limit int   maximum results; 0 re",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Search Pixiv encyclopedia articles\n",
+            "count": 17,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 0,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic search \u003cquery\u003e [flags]\n\nFlags:\n  -h, --help        help for search\n  -j, --json        print JSON\n  -n, --limit int   maximum results; 0 returns every article on the page\n      --ndjson      print one encyclopedia article as JSON per line\n      --page int    1-based result page (default 1)\n",
+            "count": 152,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "search-help/zero-nil",
+        "args": [
+          "search",
+          "--help"
+        ],
+        "stdout_writer": "zero-nil",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic search",
+        "stdout": "",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Search Pixiv encyclopedia articles\n",
+            "count": 0,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 0,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic search \u003cquery\u003e [flags]\n\nFlags:\n  -h, --help        help for search\n  -j, --json        print JSON\n  -n, --limit int   maximum results; 0 returns every article on the page\n      --ndjson      print one encyclopedia article as JSON per line\n      --page int    1-based result page (default 1)\n",
+            "count": 0,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "search-help/fail-first",
+        "args": [
+          "search",
+          "--help"
+        ],
+        "stdout_writer": "fail-first",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic search",
+        "stdout": "\nUsage:\n  dic search \u003cquery\u003e [flags]\n\nFlags:\n  -h, --help        help for search\n  -j, --json        print JSON\n  -n, --limit int   maximum results; 0 returns every article on the page\n      --ndjson      print one encyclopedia article as JSON per line\n      --page int    1-based result page (default 1)\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Search Pixiv encyclopedia articles\n",
+            "count": 0,
+            "error": "synthetic dictionary help writer failure"
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic search \u003cquery\u003e [flags]\n\nFlags:\n  -h, --help        help for search\n  -j, --json        print JSON\n  -n, --limit int   maximum results; 0 returns every article on the page\n      --ndjson      print one encyclopedia article as JSON per line\n      --page int    1-based result page (default 1)\n",
+            "count": 304,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "search-help/fail-second",
+        "args": [
+          "search",
+          "--help"
+        ],
+        "stdout_writer": "fail-second",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic search",
+        "stdout": "Search Pixiv encyclopedia articles\nUsage:\n  dic search \u003cquery\u003e [flags]\n\nFlags:\n  -h, --help        help for search\n  -j, --json        print JSON\n  -n, --limit int   maximum results; 0 returns every article on the page\n      --ndjson      print one encyclopedia article as JSON per line\n      --page int    1-based result page (default 1)\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Search Pixiv encyclopedia articles\n",
+            "count": 35,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 0,
+            "error": "synthetic dictionary help writer failure"
+          },
+          {
+            "input": "Usage:\n  dic search \u003cquery\u003e [flags]\n\nFlags:\n  -h, --help        help for search\n  -j, --json        print JSON\n  -n, --limit int   maximum results; 0 returns every article on the page\n      --ndjson      print one encyclopedia article as JSON per line\n      --page int    1-based result page (default 1)\n",
+            "count": 304,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "search-help/fail-third",
+        "args": [
+          "search",
+          "--help"
+        ],
+        "stdout_writer": "fail-third",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic search",
+        "stdout": "Search Pixiv encyclopedia articles\n\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Search Pixiv encyclopedia articles\n",
+            "count": 35,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic search \u003cquery\u003e [flags]\n\nFlags:\n  -h, --help        help for search\n  -j, --json        print JSON\n  -n, --limit int   maximum results; 0 returns every article on the page\n      --ndjson      print one encyclopedia article as JSON per line\n      --page int    1-based result page (default 1)\n",
+            "count": 0,
+            "error": "synthetic dictionary help writer failure"
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "search-help/partial-error-first",
+        "args": [
+          "search",
+          "--help"
+        ],
+        "stdout_writer": "partial-error-first",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic search",
+        "stdout": "Searc\nUsage:\n  dic search \u003cquery\u003e [flags]\n\nFlags:\n  -h, --help        help for search\n  -j, --json        print JSON\n  -n, --limit int   maximum results; 0 returns every article on the page\n      --ndjson      print one encyclopedia article as JSON per line\n      --page int    1-based result page (default 1)\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Search Pixiv encyclopedia articles\n",
+            "count": 5,
+            "error": "synthetic dictionary help writer failure"
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic search \u003cquery\u003e [flags]\n\nFlags:\n  -h, --help        help for search\n  -j, --json        print JSON\n  -n, --limit int   maximum results; 0 returns every article on the page\n      --ndjson      print one encyclopedia article as JSON per line\n      --page int    1-based result page (default 1)\n",
+            "count": 304,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "search-help/partial-error-second",
+        "args": [
+          "search",
+          "--help"
+        ],
+        "stdout_writer": "partial-error-second",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic search",
+        "stdout": "Search Pixiv encyclopedia articles\n\nUsage:\n  dic search \u003cquery\u003e [flags]\n\nFlags:\n  -h, --help        help for search\n  -j, --json        print JSON\n  -n, --limit int   maximum results; 0 returns every article on the page\n      --ndjson      print one encyclopedia article as JSON per line\n      --page int    1-based result page (default 1)\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Search Pixiv encyclopedia articles\n",
+            "count": 35,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": "synthetic dictionary help writer failure"
+          },
+          {
+            "input": "Usage:\n  dic search \u003cquery\u003e [flags]\n\nFlags:\n  -h, --help        help for search\n  -j, --json        print JSON\n  -n, --limit int   maximum results; 0 returns every article on the page\n      --ndjson      print one encyclopedia article as JSON per line\n      --page int    1-based result page (default 1)\n",
+            "count": 304,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "search-help/partial-error-third",
+        "args": [
+          "search",
+          "--help"
+        ],
+        "stdout_writer": "partial-error-third",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic search",
+        "stdout": "Search Pixiv encyclopedia articles\n\nUsage",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Search Pixiv encyclopedia articles\n",
+            "count": 35,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic search \u003cquery\u003e [flags]\n\nFlags:\n  -h, --help        help for search\n  -j, --json        print JSON\n  -n, --limit int   maximum results; 0 returns every article on the page\n      --ndjson      print one encyclopedia article as JSON per line\n      --page int    1-based result page (default 1)\n",
+            "count": 5,
+            "error": "synthetic dictionary help writer failure"
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "search-help/broken-pipe-first",
+        "args": [
+          "search",
+          "--help"
+        ],
+        "stdout_writer": "broken-pipe-first",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic search",
+        "stdout": "\nUsage:\n  dic search \u003cquery\u003e [flags]\n\nFlags:\n  -h, --help        help for search\n  -j, --json        print JSON\n  -n, --limit int   maximum results; 0 returns every article on the page\n      --ndjson      print one encyclopedia article as JSON per line\n      --page int    1-based result page (default 1)\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Search Pixiv encyclopedia articles\n",
+            "count": 0,
+            "error": "broken pipe"
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic search \u003cquery\u003e [flags]\n\nFlags:\n  -h, --help        help for search\n  -j, --json        print JSON\n  -n, --limit int   maximum results; 0 returns every article on the page\n      --ndjson      print one encyclopedia article as JSON per line\n      --page int    1-based result page (default 1)\n",
+            "count": 304,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "search-help/broken-pipe-second",
+        "args": [
+          "search",
+          "--help"
+        ],
+        "stdout_writer": "broken-pipe-second",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic search",
+        "stdout": "Search Pixiv encyclopedia articles\nUsage:\n  dic search \u003cquery\u003e [flags]\n\nFlags:\n  -h, --help        help for search\n  -j, --json        print JSON\n  -n, --limit int   maximum results; 0 returns every article on the page\n      --ndjson      print one encyclopedia article as JSON per line\n      --page int    1-based result page (default 1)\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Search Pixiv encyclopedia articles\n",
+            "count": 35,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 0,
+            "error": "broken pipe"
+          },
+          {
+            "input": "Usage:\n  dic search \u003cquery\u003e [flags]\n\nFlags:\n  -h, --help        help for search\n  -j, --json        print JSON\n  -n, --limit int   maximum results; 0 returns every article on the page\n      --ndjson      print one encyclopedia article as JSON per line\n      --page int    1-based result page (default 1)\n",
+            "count": 304,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "search-help/broken-pipe-third",
+        "args": [
+          "search",
+          "--help"
+        ],
+        "stdout_writer": "broken-pipe-third",
+        "stderr_writer": "success"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic search",
+        "stdout": "Search Pixiv encyclopedia articles\n\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Search Pixiv encyclopedia articles\n",
+            "count": 35,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic search \u003cquery\u003e [flags]\n\nFlags:\n  -h, --help        help for search\n  -j, --json        print JSON\n  -n, --limit int   maximum results; 0 returns every article on the page\n      --ndjson      print one encyclopedia article as JSON per line\n      --page int    1-based result page (default 1)\n",
+            "count": 0,
+            "error": "broken pipe"
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "search-help/success/stderr-fail-first",
+        "args": [
+          "search",
+          "--help"
+        ],
+        "stdout_writer": "success",
+        "stderr_writer": "fail-first"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic search",
+        "stdout": "Search Pixiv encyclopedia articles\n\nUsage:\n  dic search \u003cquery\u003e [flags]\n\nFlags:\n  -h, --help        help for search\n  -j, --json        print JSON\n  -n, --limit int   maximum results; 0 returns every article on the page\n      --ndjson      print one encyclopedia article as JSON per line\n      --page int    1-based result page (default 1)\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Search Pixiv encyclopedia articles\n",
+            "count": 35,
+            "error": ""
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic search \u003cquery\u003e [flags]\n\nFlags:\n  -h, --help        help for search\n  -j, --json        print JSON\n  -n, --limit int   maximum results; 0 returns every article on the page\n      --ndjson      print one encyclopedia article as JSON per line\n      --page int    1-based result page (default 1)\n",
+            "count": 304,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    },
+    {
+      "input": {
+        "name": "search-help/fail-first/stderr-fail-first",
+        "args": [
+          "search",
+          "--help"
+        ],
+        "stdout_writer": "fail-first",
+        "stderr_writer": "fail-first"
+      },
+      "result": {
+        "error": "",
+        "error_broken_pipe": false,
+        "selected": "dic search",
+        "stdout": "\nUsage:\n  dic search \u003cquery\u003e [flags]\n\nFlags:\n  -h, --help        help for search\n  -j, --json        print JSON\n  -n, --limit int   maximum results; 0 returns every article on the page\n      --ndjson      print one encyclopedia article as JSON per line\n      --page int    1-based result page (default 1)\n",
+        "stderr": "",
+        "stdout_writes": [
+          {
+            "input": "Search Pixiv encyclopedia articles\n",
+            "count": 0,
+            "error": "synthetic dictionary help writer failure"
+          },
+          {
+            "input": "\n",
+            "count": 1,
+            "error": ""
+          },
+          {
+            "input": "Usage:\n  dic search \u003cquery\u003e [flags]\n\nFlags:\n  -h, --help        help for search\n  -j, --json        print JSON\n  -n, --limit int   maximum results; 0 returns every article on the page\n      --ndjson      print one encyclopedia article as JSON per line\n      --page int    1-based result page (default 1)\n",
+            "count": 304,
+            "error": ""
+          }
+        ],
+        "stderr_writes": [],
+        "events": [
+          "stdout:1",
+          "stdout:2",
+          "stdout:3"
+        ],
+        "input_reads": 0,
+        "reader_calls": 0,
+        "json_out_calls": 0,
+        "usage_error_calls": 0
+      }
+    }
+  ]
+}

@@ -115,3 +115,12 @@ Go-first owner97・saved workflow74・root startup52を保存済みmetadata CLI�
 Go-only owner port/model7・CloseClient failure4・debug/startup hook5、raw parser/help bytes、Usage wrapper typed source、全ready-result/HTTP/native/他platformは未完了である。body比較はofficial requestを記録したtest-owned loopback HTTP routeであり、外部HTTPS成功へ外挿しない。SDK公開Context/HTTP2/Accept/ownership/idle-close・HTTP expired-positive pacing・signal restoration・Windows repeated cleanup等の既存負債も残る。台帳のugoiraだけをpending→in_progressとし、verified_platformsを増やさない。次の独立sliceはanonymous辞典article/searchのCLI、その後FANBOX・reverse search・updateと残る互換境界である。
 
 このscopeの最終unchanged fullscriptは終了0・253秒、262 Running＋5 Doc-tests、268 summaries、meaningful637/raw638 passed・failed0・既存ignored11、optimized release34.83秒で成功した。related Go owner全test/internal CLI ugoira比較/vet、3fixtureのcapture/replay/race/gofmtと独立reviewを対象として記録する。先行targeted Clippy helper failureは保持し、同等のlet-chainへ修正後に全stageを実行する。全Go production/module434・native/vendor/Cargo/script4834 pathsが元bytesのままであり、全migration完了とは扱わない。
+
+## anonymous dictionary CLI の対象比較
+
+固定Goのowner207・actual-root startup79・service/native181行を匿名article/searchへ接続する。Rustは実service・独立native HTTP・CLI presenterとowned processを使い、config順序、環境proxy、counter best-effort、JSON/NDJSON・limit・short nil writes・error sourceを保持する。辞典は指定した1pageの取得で、認証済みSDK Client/App API・MCP/account/poolを使わない。Go-only Reader/hooks/TLS/update/private RoundTripperとlifecycle、直接empty-Accept wire差・truncated-body immediate source差、全parser grammar/native IO/他OSは未完了である。台帳のdic3件だけをin_progressにし、全platform verifiedへ変更しない。
+
+次はFANBOX session/read/resource/CLI/MCP、reverse image search、signed updateと残る互換境界へ続ける。既存SDK HTTP2/Accept/public Context/client ownership/idle-close・HTTP expired-positive pacing・signal restoration・Windows repeated cleanupを隠さない。FANBOX nativeのChrome fingerprint transportを通常reqwestで同一と主張しない。
+
+
+この辞典scopeの最終unchanged fullscriptは終了0・255秒、265 Running＋5 Doc-tests、271 summaries、meaningful654/raw655 passed・failed0・既存ignored11、optimized release35.92秒で成功した。related Go3packages/vetとmigration validator/vet、4fixtureのGo-first capture/replay/race/gofmt、独立source/provenance reviewを限定して記録する。先行body2assertion/Clippy failuresを保持し、元expectationを変更せず修正した。native empty-Accept/source/lifecycle等の具体差分は残り、辞典を全OS verifiedや全migration完了へ変更しない。

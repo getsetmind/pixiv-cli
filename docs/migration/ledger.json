@@ -1622,39 +1622,90 @@
     },
     {
       "id": "cli:pixiv dic",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv dic"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-cli/src/dictionary/mod.rs",
+        "crates/pixiv-cli/src/dictionary/service.rs",
+        "crates/pixiv-cli/src/main.rs"
+      ],
+      "tests": [
+        "internal/cli/commands/pixiv/dic/migration_owner_test.go",
+        "internal/cli/migration_dictionary_startup_test.go",
+        "internal/services/dic/migration_service_test.go",
+        "internal/services/dic/migration_transport_test.go",
+        "crates/pixiv-cli/tests/dictionary_owner.rs",
+        "crates/pixiv-cli/tests/dictionary_service.rs",
+        "crates/pixiv-cli/tests/dictionary_startup.rs",
+        "internal/cli/commands/pixiv/dic/migration_help_writer_test.go"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "匿名のactual service/CLIをGo-first owner207・startup79・service/native181行で固定し、Rustの公開transport・CLI・owned subprocessへ接続する。辞典は認証済みSDK Client/App API・MCP/account/SQLiteを使わず、configと環境proxy・JSON/NDJSON・counterのbest-effortを元Goどおり保持する。",
+        "Go-only Reader/JSON port・startup hook/debug/local TLS・private RoundTripper lifecycleと直接empty Acceptのwire差、truncated bodyのimmediate source差、全HTML/URL/JSON grammar・native TLS・他OSは未完了。既存SDK HTTP2/Accept/ownership・expired-positive HTTP pacing・signal restoration・Windows repeated cleanup等の負債を保持し、verified_platformsを増やさない。",
+        "最終unchanged fullscript終了0・255秒、meaningful654/raw655passed・failed0・既存ignored11、optimized release35.92秒。focused owner6/service7/startup4とGo関連3packages/vet・migration validatorが成功。Go production434とnative/vendor/fullscriptを保持し、既存locked reqwest依存登録2metadataだけを変更する。"
+      ]
     },
     {
       "id": "cli:pixiv dic article",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv dic article"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-cli/src/dictionary/mod.rs",
+        "crates/pixiv-cli/src/dictionary/service.rs",
+        "crates/pixiv-cli/src/main.rs"
+      ],
+      "tests": [
+        "internal/cli/commands/pixiv/dic/migration_owner_test.go",
+        "internal/cli/migration_dictionary_startup_test.go",
+        "internal/services/dic/migration_service_test.go",
+        "internal/services/dic/migration_transport_test.go",
+        "crates/pixiv-cli/tests/dictionary_owner.rs",
+        "crates/pixiv-cli/tests/dictionary_service.rs",
+        "crates/pixiv-cli/tests/dictionary_startup.rs",
+        "internal/cli/commands/pixiv/dic/migration_help_writer_test.go"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "匿名のactual service/CLIをGo-first owner207・startup79・service/native181行で固定し、Rustの公開transport・CLI・owned subprocessへ接続する。辞典は認証済みSDK Client/App API・MCP/account/SQLiteを使わず、configと環境proxy・JSON/NDJSON・counterのbest-effortを元Goどおり保持する。",
+        "Go-only Reader/JSON port・startup hook/debug/local TLS・private RoundTripper lifecycleと直接empty Acceptのwire差、truncated bodyのimmediate source差、全HTML/URL/JSON grammar・native TLS・他OSは未完了。既存SDK HTTP2/Accept/ownership・expired-positive HTTP pacing・signal restoration・Windows repeated cleanup等の負債を保持し、verified_platformsを増やさない。",
+        "最終unchanged fullscript終了0・255秒、meaningful654/raw655passed・failed0・既存ignored11、optimized release35.92秒。focused owner6/service7/startup4とGo関連3packages/vet・migration validatorが成功。Go production434とnative/vendor/fullscriptを保持し、既存locked reqwest依存登録2metadataだけを変更する。"
+      ]
     },
     {
       "id": "cli:pixiv dic search",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv dic search"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-cli/src/dictionary/mod.rs",
+        "crates/pixiv-cli/src/dictionary/service.rs",
+        "crates/pixiv-cli/src/main.rs"
+      ],
+      "tests": [
+        "internal/cli/commands/pixiv/dic/migration_owner_test.go",
+        "internal/cli/migration_dictionary_startup_test.go",
+        "internal/services/dic/migration_service_test.go",
+        "internal/services/dic/migration_transport_test.go",
+        "crates/pixiv-cli/tests/dictionary_owner.rs",
+        "crates/pixiv-cli/tests/dictionary_service.rs",
+        "crates/pixiv-cli/tests/dictionary_startup.rs",
+        "internal/cli/commands/pixiv/dic/migration_help_writer_test.go"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "匿名のactual service/CLIをGo-first owner207・startup79・service/native181行で固定し、Rustの公開transport・CLI・owned subprocessへ接続する。辞典は認証済みSDK Client/App API・MCP/account/SQLiteを使わず、configと環境proxy・JSON/NDJSON・counterのbest-effortを元Goどおり保持する。",
+        "Go-only Reader/JSON port・startup hook/debug/local TLS・private RoundTripper lifecycleと直接empty Acceptのwire差、truncated bodyのimmediate source差、全HTML/URL/JSON grammar・native TLS・他OSは未完了。既存SDK HTTP2/Accept/ownership・expired-positive HTTP pacing・signal restoration・Windows repeated cleanup等の負債を保持し、verified_platformsを増やさない。",
+        "最終unchanged fullscript終了0・255秒、meaningful654/raw655passed・failed0・既存ignored11、optimized release35.92秒。focused owner6/service7/startup4とGo関連3packages/vet・migration validatorが成功。Go production434とnative/vendor/fullscriptを保持し、既存locked reqwest依存登録2metadataだけを変更する。"
+      ]
     },
     {
       "id": "cli:pixiv download",
