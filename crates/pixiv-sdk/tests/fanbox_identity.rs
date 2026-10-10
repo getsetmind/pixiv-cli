@@ -1,10 +1,13 @@
 mod fanbox_support;
-use fanbox_support::{FixtureTransport, SESSION, context_for, error_projection, expected_error};
+use fanbox_support::{
+    FixtureTransport, SESSION, body_bytes, context_for, error_projection, expected_error,
+};
 use pixiv_sdk::{
     context::{Context, RequestContext},
     fanbox::{Client, CurrentUserRequest, FlareSolverrOptions, Options, SessionCredentials, User},
 };
 use serde_json::{Value, json};
+use sha2::{Digest, Sha256};
 use std::{
     collections::BTreeSet,
     sync::{Arc, atomic::Ordering},
@@ -213,6 +216,92 @@ async fn captured_public_html_identity_preserves_all_67_parser_cases() {
     let cases = fixture["cases"].as_array().unwrap();
     assert_eq!(cases.len(), 67);
     assert_public_html_cases(cases).await;
+}
+const JSON_BYTES_FIXTURE: &[u8] = include_bytes!("fixtures/fanbox-identity-json-bytes.json");
+fn json_bytes_rows() -> Vec<Value> {
+    let fixture: Value = serde_json::from_slice(JSON_BYTES_FIXTURE).unwrap();
+    assert_eq!(
+        fixture["source_commit"],
+        "4b4426487ef18bed276706daec385e0d0a6979f9"
+    );
+    assert_eq!(fixture["public_operation"], "fanbox.Client.CurrentUser");
+    let cases = fixture["cases"].as_array().unwrap().clone();
+    assert_eq!(cases.len(), 47);
+    cases
+}
+fn json_bytes_family(family: &str, count: usize) -> Vec<Value> {
+    let prefix = format!("{family}/");
+    let cases: Vec<_> = json_bytes_rows()
+        .into_iter()
+        .filter(|case| case["name"].as_str().unwrap().starts_with(&prefix))
+        .collect();
+    assert_eq!(cases.len(), count, "{family} captured rows");
+    cases
+}
+#[test]
+fn frozen_public_identity_json_bytes_preserve_exact_47_capture_inputs() {
+    assert_eq!(JSON_BYTES_FIXTURE.len(), 773_942);
+    assert_eq!(
+        format!("{:x}", Sha256::digest(JSON_BYTES_FIXTURE)),
+        "8baf77f9538cb08d5a5b6bc0766e06b49dd8b3ef7f88f192027e7d58c9bdeb60"
+    );
+    let cases = json_bytes_rows();
+    assert_eq!(
+        cases
+            .iter()
+            .map(|case| case["name"].as_str().unwrap())
+            .collect::<BTreeSet<_>>()
+            .len(),
+        47
+    );
+    for (family, count) in [
+        ("surrogate", 11),
+        ("syntax", 7),
+        ("utf8", 11),
+        ("depth", 9),
+        ("html_preprocessing", 4),
+        ("precedence", 5),
+    ] {
+        json_bytes_family(family, count);
+    }
+    for case in cases {
+        assert_eq!(case["input"]["operation"], "sdk_current_user");
+        for step in case["input"]["steps"].as_array().unwrap() {
+            assert!(
+                step.get("body").is_none(),
+                "{} must remain raw bytes",
+                case["name"]
+            );
+            assert!(step["body_hex"].is_string());
+            assert!(step["body_length"].is_u64());
+            assert!(step["body_sha256"].is_string());
+            body_bytes(step);
+        }
+    }
+}
+#[tokio::test]
+async fn captured_public_identity_json_strings_replace_surrogates_in_known_and_ignored_fields() {
+    assert_public_html_cases(&json_bytes_family("surrogate", 11)).await;
+}
+#[tokio::test]
+async fn captured_public_identity_json_strings_reject_malformed_escapes_everywhere() {
+    assert_public_html_cases(&json_bytes_family("syntax", 7)).await;
+}
+#[tokio::test]
+async fn captured_public_identity_json_utf8_preserves_per_byte_replacement_and_syntax_errors() {
+    assert_public_html_cases(&json_bytes_family("utf8", 11)).await;
+}
+#[tokio::test]
+async fn captured_public_identity_json_depth_counts_enclosing_and_ignored_containers() {
+    assert_public_html_cases(&json_bytes_family("depth", 9)).await;
+}
+#[tokio::test]
+async fn captured_public_identity_html_preprocessing_preserves_raw_json_bytes() {
+    assert_public_html_cases(&json_bytes_family("html_preprocessing", 4)).await;
+}
+#[tokio::test]
+async fn captured_public_identity_json_errors_preserve_read_close_and_validation_precedence() {
+    assert_public_html_cases(&json_bytes_family("precedence", 5)).await;
 }
 async fn assert_public_html_cases(cases: &[Value]) {
     for case in cases {

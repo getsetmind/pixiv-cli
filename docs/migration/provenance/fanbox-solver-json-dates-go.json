@@ -1,0 +1,410 @@
+{
+  "artifacts": {
+    "development_75_row_capture": {
+      "exit": 0,
+      "log": {
+        "bytes": 83929,
+        "modified_utc": "2026-10-10T07:56:03.244792+00:00",
+        "path": "/tmp/fanbox-solver-json-dates/development-75-row-capture.log",
+        "sha256": "6b8586897cde7e8f21c63bc24b7122206d0c2003bbbdb703c356bbbe2c2efa23"
+      },
+      "superseded_by_final_capture": true
+    },
+    "observation_summary": {
+      "bytes": 47734,
+      "modified_utc": "2026-10-10T07:58:46.908572+00:00",
+      "path": "/tmp/fanbox-solver-json-dates/observation-summary.json",
+      "sha256": "ae1311288cc068ef22519a4d3b8ca72634aa57f4936f495248d156aa36b0ea62"
+    },
+    "runner": {
+      "bytes": 1390,
+      "modified_utc": "2026-10-10T07:57:11.377218+00:00",
+      "path": "/tmp/fanbox-solver-json-dates/run-gates.sh",
+      "sha256": "0b2b85d45b1ff9ee76e5a8c041c706c63b795c11c90261670f0e9fb223660636"
+    },
+    "runner_exit": 0,
+    "runner_log": {
+      "bytes": 0,
+      "modified_utc": "2026-10-10T07:57:11.377218+00:00",
+      "path": "/tmp/fanbox-solver-json-dates/run-gates.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "sha256_after": {
+      "bytes": 241,
+      "modified_utc": "2026-10-10T07:57:17.928181+00:00",
+      "path": "/tmp/fanbox-solver-json-dates/sha256-after.txt",
+      "sha256": "bea31146506b5999ed48cb2f76673ff946de6369326499a5b8acaff9eeb3ecf4"
+    },
+    "sha256_before": {
+      "bytes": 241,
+      "modified_utc": "2026-10-10T07:57:12.236189+00:00",
+      "path": "/tmp/fanbox-solver-json-dates/sha256-before.txt",
+      "sha256": "bea31146506b5999ed48cb2f76673ff946de6369326499a5b8acaff9eeb3ecf4"
+    },
+    "source_guard_script": {
+      "bytes": 2283,
+      "modified_utc": "2026-10-10T07:57:11.376060+00:00",
+      "path": "/tmp/fanbox-solver-json-dates/source-guard.py",
+      "sha256": "0b3e483a31766d29dec6370d504d73c3a3c474013cce540eb022d144a8699879"
+    }
+  },
+  "authorized_write_scope": [
+    "sdk/fanbox/migration_solver_json_dates_test.go",
+    "crates/pixiv-sdk/tests/fixtures/fanbox-solver-json-dates.json",
+    "/tmp/fanbox-solver-json-dates artifacts"
+  ],
+  "checks": {
+    "capture": {
+      "case_rows_per_repetition": 79,
+      "command": "go test ./sdk/fanbox -run '^TestMigrationFanboxSolverJSONDatesFrozenGo$' -count=1 -json -args -migration-capture-fanbox-solver-json-dates",
+      "exit": 0,
+      "final_source_snapshot": true,
+      "finished_utc": "2026-10-10T16:56:04.372218341+09:00",
+      "log": {
+        "bytes": 87865,
+        "modified_utc": "2026-10-10T07:56:04.368298+00:00",
+        "path": "/tmp/fanbox-solver-json-dates/capture.log",
+        "sha256": "7d478cd6e5e847953104fc5bf5e71bc3e4e97b0efe90951956adbf462f6fa3f0"
+      },
+      "raw_failures": 0,
+      "raw_skips": 0,
+      "raw_subtest_passes": 79,
+      "raw_top_level_passes": 1,
+      "repeats": 1,
+      "started_utc": "2026-10-10T16:56:04.117668392+09:00"
+    },
+    "gofmt": {
+      "command": "files=$(gofmt -l sdk/fanbox/migration_solver_json_dates_test.go); printf \"%s\" \"$files\"; test -z \"$files\"",
+      "exit": 0,
+      "final_source_snapshot": true,
+      "finished_utc": "2026-10-10T07:57:17.086814251Z",
+      "log": {
+        "bytes": 0,
+        "modified_utc": "2026-10-10T07:57:17.079308+00:00",
+        "path": "/tmp/fanbox-solver-json-dates/gofmt.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "started_utc": "2026-10-10T07:57:17.079277184Z"
+    },
+    "race": {
+      "case_rows_per_repetition": 79,
+      "command": "go test -race ./sdk/fanbox -run '^TestMigrationFanboxSolverJSONDatesFrozenGo$' -count=1 -json",
+      "exit": 0,
+      "final_source_snapshot": true,
+      "finished_utc": "2026-10-10T16:57:16.932444904+09:00",
+      "log": {
+        "bytes": 87882,
+        "modified_utc": "2026-10-10T07:57:16.928182+00:00",
+        "path": "/tmp/fanbox-solver-json-dates/race.log",
+        "sha256": "018f41cf11ff552ab80fb4c52cf30365a6da3f8ffebff8dc42749881952ae803"
+      },
+      "raw_failures": 0,
+      "raw_skips": 0,
+      "raw_subtest_passes": 79,
+      "raw_top_level_passes": 1,
+      "repeats": 1,
+      "started_utc": "2026-10-10T16:57:14.099316778+09:00"
+    },
+    "replay": {
+      "case_rows_per_repetition": 79,
+      "command": "go test ./sdk/fanbox -run '^TestMigrationFanboxSolverJSONDatesFrozenGo$' -count=3 -json",
+      "exit": 0,
+      "final_source_snapshot": true,
+      "finished_utc": "2026-10-10T16:57:13.398222118+09:00",
+      "log": {
+        "bytes": 262357,
+        "modified_utc": "2026-10-10T07:57:13.396187+00:00",
+        "path": "/tmp/fanbox-solver-json-dates/replay.log",
+        "sha256": "b61e6dfe92ff630a23d524cdce41aa29d6016c71f7ca0300d9742492f22a979c"
+      },
+      "raw_failures": 0,
+      "raw_skips": 0,
+      "raw_subtest_passes": 237,
+      "raw_top_level_passes": 3,
+      "repeats": 3,
+      "started_utc": "2026-10-10T16:57:12.74202977+09:00"
+    },
+    "vet": {
+      "command": "go vet ./sdk/fanbox",
+      "exit": 0,
+      "final_source_snapshot": true,
+      "finished_utc": "2026-10-10T07:57:17.078192096Z",
+      "log": {
+        "bytes": 0,
+        "modified_utc": "2026-10-10T07:57:16.940740+00:00",
+        "path": "/tmp/fanbox-solver-json-dates/vet.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "started_utc": "2026-10-10T07:57:16.940689262Z"
+    }
+  },
+  "created_utc": "2026-10-10T07:58:46.908602+00:00",
+  "cwd": "/workspace/scratch/cd334a12dde3/pixiv-cli-rs",
+  "evidence": "Actual unchanged frozen public OpenWith/CurrentUser and ordinary owned anonymous HTTP/1 loopback control through the published public93 harness. Only solver response bytes change from the existing future-cache input. Test-only hex preserves malformed UTF-8 through fixture marshaling and decodes directly to the bytes written by the loopback handler; every row is replayed from canonical hex. Native/API identity responses, two public calls, error/DTO/source, native header state/cache and diagnostics are actual public observations. Total JSON object/array depth includes the enclosing root, solution and cookie envelopes. Stream rows distinguish the first complete decoded value from unparsed malformed, deeply nested or incomplete second values. Expiry uses only the actual solver's RFC3339 and http.TimeFormat layouts, with source-formatted RFC1123/RFC1123Z/RFC850/ANSIC rejection or acceptance boundaries captured at the same public operation.",
+  "execution_scope": {
+    "cargo_executed": false,
+    "clock_injection_or_private_expiry_helper_used": false,
+    "environment": "source /tmp/quantus-toolchain-env.txt; source /tmp/pixiv-rust-validation-env.sh; GOPROXY=off GOSUMDB=off",
+    "external_network_auth_media_browser_host_trust_head_upload_executed": false,
+    "native_probe_executed": false,
+    "network": "owned anonymous stdlib HTTP/1 loopback only; injected native/API homepage response",
+    "private_solver_seam_used": false,
+    "rust_modified": false
+  },
+  "frozen_go_commit": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "full_parity_claimed": false,
+  "go_only_boundaries": [
+    "Original Go production, identity309/public67/tokenizer14, solver124/public93/aliases7 and redirect3 evidence remain unchanged",
+    "Concrete Go error/sentinel identities, reader call topology and default control User-Agent/HTTP version projections retain the published public93 boundaries",
+    "Date acceptance and retained native clearance are observed; the private parsed expiry timestamp is not exposed or synthesized. All accepted date samples are future 2035 dates; numeric baseline expiry stays 4102444800",
+    "A valid HTTP date weekday token may disagree with the date. The solver does not call http.ParseTime, and two-digit RFC850 years do not acquire its broader parsing or pivot semantics"
+  ],
+  "go_version": "go1.27.1",
+  "inventory": {
+    "actual_anonymous_control_requests": 79,
+    "actual_injected_native_requests": 198,
+    "case_names": [
+      "json_string/user_agent_lone_high",
+      "json_string/user_agent_lone_low",
+      "json_string/user_agent_valid_pair",
+      "json_string/user_agent_high_then_plain",
+      "json_string/user_agent_reversed_pair",
+      "json_string/user_agent_short_escape",
+      "json_string/user_agent_invalid_hex",
+      "json_string/user_agent_unknown_escape",
+      "json_string/user_agent_unescaped_newline",
+      "json_string/user_agent_replacement_then_newline",
+      "json_string/user_agent_replacement_then_cr",
+      "json_string/user_agent_replacement_then_del",
+      "json_string/ignored_lone_surrogate",
+      "json_string/ignored_valid_pair",
+      "json_string/ignored_malformed_escape",
+      "json_string/ignored_cookie_name_surrogate",
+      "json_string/ignored_cookie_name_pair",
+      "json_string/ignored_cookie_value_surrogate_and_newline",
+      "json_string/ignored_cookie_value_pair",
+      "json_string/ignored_cookie_malformed_escape",
+      "json_string/clearance_name_surrogate",
+      "json_string/clearance_value_surrogate",
+      "json_string/clearance_value_pair",
+      "json_utf8/user_agent_invalid_leading",
+      "json_utf8/user_agent_truncated",
+      "json_utf8/user_agent_invalid_continuation",
+      "json_utf8/user_agent_overlong",
+      "json_utf8/user_agent_utf8_encoded_surrogate",
+      "json_utf8/user_agent_outside_unicode",
+      "json_utf8/ignored_value",
+      "json_utf8/ignored_member_name",
+      "json_utf8/ignored_cookie_name",
+      "json_utf8/ignored_cookie_value",
+      "json_utf8/clearance_value",
+      "json_utf8/replacement_then_newline",
+      "json_depth/ignored_root_10000",
+      "json_depth/ignored_solution_10000",
+      "json_depth/ignored_cookie_10000",
+      "json_depth/ignored_root_10001",
+      "json_depth/ignored_solution_10001",
+      "json_depth/ignored_cookie_10001",
+      "json_stream/trailing_invalid_escape",
+      "json_stream/trailing_invalid_utf8",
+      "json_stream/trailing_deep_complete_second_value",
+      "json_stream/trailing_deep_incomplete_second_value",
+      "json_stream/incomplete_first_document",
+      "json_stream/incomplete_ignored_first_value",
+      "json_root/array",
+      "json_root/boolean",
+      "json_root/number",
+      "json_root/string",
+      "expiry_rfc3339/seconds_59",
+      "expiry_rfc3339/seconds_60",
+      "expiry_rfc3339/nano_seconds_59",
+      "expiry_rfc3339/nano_seconds_60",
+      "expiry_rfc3339/fraction_comma",
+      "expiry_rfc3339/fraction_beyond_nanoseconds",
+      "expiry_rfc3339/fraction_missing_digits",
+      "expiry_rfc3339/fraction_positive_zone",
+      "expiry_rfc3339/fraction_negative_zone",
+      "expiry_rfc3339/zone_hour_24",
+      "expiry_rfc3339/zone_hour_25",
+      "expiry_rfc3339/zone_minute_60",
+      "expiry_rfc3339/zone_minute_61",
+      "expiry_rfc3339/two_digit_year_35",
+      "expiry_http_date/timeformat_valid",
+      "expiry_http_date/timeformat_weekday_mismatch",
+      "expiry_http_date/timeformat_weekday_invalid",
+      "expiry_http_date/timeformat_seconds_60",
+      "expiry_http_date/timeformat_fraction",
+      "expiry_http_date/timeformat_two_digit_year_35",
+      "expiry_http_date/timeformat_two_digit_year_69",
+      "expiry_http_date/rfc1123_gmt",
+      "expiry_http_date/rfc1123_utc",
+      "expiry_http_date/rfc1123_other_zone",
+      "expiry_http_date/rfc1123z",
+      "expiry_http_date/rfc850_year_35",
+      "expiry_http_date/rfc850_year_69",
+      "expiry_http_date/ansic"
+    ],
+    "families": {
+      "expiry_http_date": 14,
+      "expiry_rfc3339": 14,
+      "json_depth": 6,
+      "json_root": 4,
+      "json_stream": 6,
+      "json_string": 23,
+      "json_utf8": 12
+    },
+    "first_public_call_error_codes": {
+      "": 40,
+      "malformed_upstream_response": 39
+    },
+    "invalid_utf8_exact_hex_rows": [
+      "json_utf8/user_agent_invalid_leading",
+      "json_utf8/user_agent_truncated",
+      "json_utf8/user_agent_invalid_continuation",
+      "json_utf8/user_agent_overlong",
+      "json_utf8/user_agent_utf8_encoded_surrogate",
+      "json_utf8/user_agent_outside_unicode",
+      "json_utf8/ignored_value",
+      "json_utf8/ignored_member_name",
+      "json_utf8/ignored_cookie_name",
+      "json_utf8/ignored_cookie_value",
+      "json_utf8/clearance_value",
+      "json_utf8/replacement_then_newline",
+      "json_stream/trailing_invalid_utf8"
+    ],
+    "root_null_preexisting_contract": "fanbox-solver-public.json:control/null_document",
+    "rows": 79
+  },
+  "limitations": [
+    "This bounded string/byte/depth/stream/date supplement does not claim full encoding/json or general date parser parity",
+    "Only anonymous owned HTTP/1 loopback control and injected native/API responses execute; no native HTTP/2, external authentication, media, account, browser, host trust, HEAD or upload work",
+    "No private Solver/session seam, runtime clock injection or private expiry helper is used. Exact fractional expiry nanoseconds and timezone offsets are not individually observable through this fixed future-cache public workflow"
+  ],
+  "new_files": {
+    "fixture": {
+      "bytes": 1038438,
+      "modified_utc": "2026-10-10T07:56:04.364298+00:00",
+      "path": "/workspace/scratch/cd334a12dde3/pixiv-cli-rs/crates/pixiv-sdk/tests/fixtures/fanbox-solver-json-dates.json",
+      "sha256": "6793ce0d58bca871bb3b081808ebdff1aa6af87f06404110107dfebfc0f9572e"
+    },
+    "go_test": {
+      "bytes": 18384,
+      "modified_utc": "2026-10-10T07:56:02.920301+00:00",
+      "path": "/workspace/scratch/cd334a12dde3/pixiv-cli-rs/sdk/fanbox/migration_solver_json_dates_test.go",
+      "sha256": "eab317ca10b81c7b3003e8e614b5e640a6e1d778cdeb3b07d380ef4fca569ee1"
+    }
+  },
+  "public_operation": "fanbox.Client.CurrentUser",
+  "published_baseline": "3dee232bf2571abbb9835fcd5ba9d5042aa0ec03",
+  "source_guards": {
+    "after": {
+      "bytes": 127937,
+      "modified_utc": "2026-10-10T07:57:17.920181+00:00",
+      "path": "/tmp/fanbox-solver-json-dates/source-guard-after.json",
+      "sha256": "f41ccbaecfc36eef1e4c24e8c0c9f38bd5fed91970b3b44ca5edc0b879485771"
+    },
+    "before": {
+      "bytes": 127937,
+      "modified_utc": "2026-10-10T07:57:12.228189+00:00",
+      "path": "/tmp/fanbox-solver-json-dates/source-guard-before.json",
+      "sha256": "f41ccbaecfc36eef1e4c24e8c0c9f38bd5fed91970b3b44ca5edc0b879485771"
+    },
+    "before_after_bytes_equal": true,
+    "differences": [],
+    "frozen_go_production_module_paths": 434,
+    "production_full_manifest_in_guard_artifacts": true,
+    "protected_published_files": {
+      "crates/pixiv-sdk/tests/fixtures/fanbox-identity-protocol.json": {
+        "actual_sha256": "cab8573fbc51a49be2eadb540c25d5386739edc2329eaa80e0ca4d9f6e2c611b",
+        "bytes": 674880,
+        "case_count": 309,
+        "equal": true,
+        "published_sha256": "cab8573fbc51a49be2eadb540c25d5386739edc2329eaa80e0ca4d9f6e2c611b"
+      },
+      "crates/pixiv-sdk/tests/fixtures/fanbox-identity-public-html.json": {
+        "actual_sha256": "fe0eee2fc4f5d08c717a223f0df043c003458c1893fe55e95f66ac4df043e388",
+        "bytes": 224486,
+        "case_count": 67,
+        "equal": true,
+        "published_sha256": "fe0eee2fc4f5d08c717a223f0df043c003458c1893fe55e95f66ac4df043e388"
+      },
+      "crates/pixiv-sdk/tests/fixtures/fanbox-identity-tokenizer-regressions.json": {
+        "actual_sha256": "732d71a38a98407dbf874586c3f77412d4b34006ac916590e5593321da79129a",
+        "bytes": 36646,
+        "case_count": 14,
+        "equal": true,
+        "published_sha256": "732d71a38a98407dbf874586c3f77412d4b34006ac916590e5593321da79129a"
+      },
+      "crates/pixiv-sdk/tests/fixtures/fanbox-solver-public-aliases.json": {
+        "actual_sha256": "81e88cc966ae90cd837a8bde8ea7ad9fdeb83c4d3419f2509d55a64c19e745cf",
+        "bytes": 73062,
+        "case_count": 7,
+        "equal": true,
+        "published_sha256": "81e88cc966ae90cd837a8bde8ea7ad9fdeb83c4d3419f2509d55a64c19e745cf"
+      },
+      "crates/pixiv-sdk/tests/fixtures/fanbox-solver-public.json": {
+        "actual_sha256": "a908d47882462e698b67d80f2f48cfab578964e675029afe973a8a024711ba80",
+        "bytes": 800150,
+        "case_count": 93,
+        "equal": true,
+        "published_sha256": "a908d47882462e698b67d80f2f48cfab578964e675029afe973a8a024711ba80"
+      },
+      "crates/pixiv-sdk/tests/fixtures/fanbox-solver-redirect.json": {
+        "actual_sha256": "6a8db01180325dc9074984b4b763250d0029118889ed7e5141a8ae1554709651",
+        "bytes": 12015,
+        "case_count": 3,
+        "equal": true,
+        "published_sha256": "6a8db01180325dc9074984b4b763250d0029118889ed7e5141a8ae1554709651"
+      },
+      "crates/pixiv-sdk/tests/fixtures/fanbox-solver.json": {
+        "actual_sha256": "45ed3d463ce1159290dbb6686490e754e30d4540a108754571a926b8bba6f382",
+        "bytes": 771775,
+        "case_count": 124,
+        "equal": true,
+        "published_sha256": "45ed3d463ce1159290dbb6686490e754e30d4540a108754571a926b8bba6f382"
+      },
+      "internal/services/fanbox/protocol/migration_solver_redirect_test.go": {
+        "actual_sha256": "40a96c8b674c9f5f9185f9b9be49616b6ccd108c9375c76531d54de7f4896da2",
+        "bytes": 14364,
+        "equal": true,
+        "published_sha256": "40a96c8b674c9f5f9185f9b9be49616b6ccd108c9375c76531d54de7f4896da2"
+      },
+      "internal/services/fanbox/protocol/migration_solver_test.go": {
+        "actual_sha256": "c9a27c01aafbf271dc7a6b33cab8959a7b8e721b9b3d0edc6d41941d7aae1f56",
+        "bytes": 46504,
+        "equal": true,
+        "published_sha256": "c9a27c01aafbf271dc7a6b33cab8959a7b8e721b9b3d0edc6d41941d7aae1f56"
+      },
+      "sdk/fanbox/migration_identity_protocol_test.go": {
+        "actual_sha256": "65784f3eaf202bc3799e7ee252c6c75e8e6b3a2ab259ef0b273db9f1e56b7015",
+        "bytes": 40968,
+        "equal": true,
+        "published_sha256": "65784f3eaf202bc3799e7ee252c6c75e8e6b3a2ab259ef0b273db9f1e56b7015"
+      },
+      "sdk/fanbox/migration_identity_public_html_test.go": {
+        "actual_sha256": "b71cd78abd9d2e98b26cef97a8cbcbcd648b8b53a506389c669525c28c3b09c9",
+        "bytes": 9927,
+        "equal": true,
+        "published_sha256": "b71cd78abd9d2e98b26cef97a8cbcbcd648b8b53a506389c669525c28c3b09c9"
+      },
+      "sdk/fanbox/migration_identity_tokenizer_regression_test.go": {
+        "actual_sha256": "f27059d6a92cd3f16a8067929a254a53f058ce68eca19eef04ec46666745ae90",
+        "bytes": 5995,
+        "equal": true,
+        "published_sha256": "f27059d6a92cd3f16a8067929a254a53f058ce68eca19eef04ec46666745ae90"
+      },
+      "sdk/fanbox/migration_solver_public_aliases_test.go": {
+        "actual_sha256": "bbca2490257049b75b4883b97428b44d794bc0d290e668040d30151e040f9a80",
+        "bytes": 6569,
+        "equal": true,
+        "published_sha256": "bbca2490257049b75b4883b97428b44d794bc0d290e668040d30151e040f9a80"
+      },
+      "sdk/fanbox/migration_solver_public_test.go": {
+        "actual_sha256": "a21a5a150c8a644d7874f5e94cbcf78716742279048a41f680d1ede0a5d6fa34",
+        "bytes": 23920,
+        "equal": true,
+        "published_sha256": "a21a5a150c8a644d7874f5e94cbcf78716742279048a41f680d1ede0a5d6fa34"
+      }
+    }
+  }
+}

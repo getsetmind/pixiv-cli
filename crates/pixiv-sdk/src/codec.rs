@@ -156,7 +156,7 @@ impl<'de> DeserializeSeed<'de> for PayloadSeed<'_> {
     }
 }
 
-pub(crate) fn normalize_json(raw: &[u8]) -> Result<String> {
+pub(crate) fn go_utf8(raw: &[u8]) -> String {
     // Lossy decoding groups invalid bytes, unlike Go's JSON decoder.
     let mut text = String::new();
     let mut remaining = raw;
@@ -176,6 +176,11 @@ pub(crate) fn normalize_json(raw: &[u8]) -> Result<String> {
             }
         }
     }
+    text
+}
+
+pub(crate) fn normalize_json(raw: &[u8]) -> Result<String> {
+    let text = go_utf8(raw);
     let bytes = text.as_bytes();
     let mut normalized = Vec::with_capacity(bytes.len());
     let mut index = 0;

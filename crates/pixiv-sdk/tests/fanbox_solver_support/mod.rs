@@ -11,10 +11,11 @@ use pixiv_sdk::{
     },
 };
 use serde_json::{Value, json};
+use sha2::{Digest, Sha256};
 use std::{
     any::TypeId,
     collections::BTreeMap,
-    fmt,
+    fmt, io,
     sync::{
         Arc, Mutex,
         atomic::{AtomicBool, AtomicUsize, Ordering},
@@ -27,6 +28,34 @@ use tokio::{
     sync::{Notify, mpsc},
 };
 pub const SESSION: &str = "synthetic-contract-session";
+pub fn body_bytes(step: &Value) -> Vec<u8> {
+    let bytes = match step["body_hex"].as_str() {
+        Some(hex) => {
+            assert_eq!(hex.len() % 2, 0, "raw body hex length");
+            assert!(
+                hex.bytes()
+                    .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte)),
+                "raw body hex must be lowercase"
+            );
+            hex.as_bytes()
+                .chunks_exact(2)
+                .map(|pair| u8::from_str_radix(std::str::from_utf8(pair).unwrap(), 16).unwrap())
+                .collect()
+        }
+        None => step["body"].as_str().unwrap_or("").as_bytes().to_vec(),
+    };
+    if let Some(length) = step["body_length"].as_u64() {
+        assert_eq!(bytes.len() as u64, length, "raw body length");
+    }
+    if let Some(sha256) = step["body_sha256"].as_str() {
+        assert_eq!(
+            format!("{:x}", Sha256::digest(&bytes)),
+            sha256,
+            "raw body SHA256"
+        );
+    }
+    bytes
+}
 pub fn event(event: Event) -> Value {
     json!({"Module":event.module,"Kind":event.kind,"Operation":event.operation,"Resource":event.resource,"Route":event.route,"Target":event.target,"Proxy":event.proxy,"UserAgent":event.user_agent,"Reason":event.reason,"Status":event.status,"Count":event.count,"RequestID":event.request_id,"Duration":event.duration_ns})
 }
@@ -122,6 +151,7 @@ struct Record {
 }
 struct Body {
     step: Value,
+    bytes: Vec<u8>,
     offset: usize,
     record: Arc<Mutex<Record>>,
     armed: Option<Arc<AtomicBool>>,
@@ -141,7 +171,7 @@ fn external(kind: &str) -> Option<ExternalError> {
 impl RawBody for Body {
     fn read<'a>(&'a mut self, output: &'a mut [u8]) -> BodyFuture<'a, RawRead> {
         Box::pin(async move {
-            let bytes = self.step["body"].as_str().unwrap_or("").as_bytes();
+            let bytes = &self.bytes;
             let limit = self.step["chunk"]
                 .as_u64()
                 .filter(|count| *count > 0)
@@ -307,6 +337,7 @@ impl RawTransport for Native {
                 headers,
                 content_length: step["content_length"].as_i64().unwrap_or(0),
                 body: Some(Box::new(Body {
+                    bytes: body_bytes(&step),
                     step,
                     offset: 0,
                     record,
@@ -362,10 +393,13 @@ impl Control {
         let (entered_tx, entered) = mpsc::unbounded_channel();
         let (canceled_tx, canceled) = mpsc::unbounded_channel();
         let (finished_tx, finished) = mpsc::unbounded_channel();
-        let steps = input["control_steps"]
-            .as_array()
-            .cloned()
-            .unwrap_or_default();
+        let steps = match input.get("control_response_hex") {
+            Some(hex) => vec![json!({"status":200,"body_hex":hex})],
+            None => input["control_steps"]
+                .as_array()
+                .cloned()
+                .unwrap_or_default(),
+        };
         let blocked = input["mode"] != "";
         let releases = (0..steps.len())
             .map(|_| Arc::new(Notify::new()))
@@ -436,36 +470,13 @@ async fn serve(
     blocked: bool,
     signals: Signals,
 ) {
-    let mut bytes = Vec::new();
-    loop {
-        let mut byte = [0];
-        if socket.read_exact(&mut byte).await.is_err() {
-            return;
-        };
-        bytes.push(byte[0]);
-        if bytes.ends_with(b"\r\n\r\n") {
-            break;
-        }
-    }
-    let text = String::from_utf8(bytes).unwrap();
-    let mut lines = text.split("\r\n");
-    let first = lines.next().unwrap().split_whitespace().collect::<Vec<_>>();
-    let headers = lines
-        .filter_map(|line| line.split_once(':'))
-        .map(|(key, value)| (key.to_ascii_lowercase(), value.trim().to_owned()))
-        .collect::<BTreeMap<_, _>>();
-    let length = headers
-        .get("content-length")
-        .unwrap()
-        .parse::<usize>()
-        .unwrap();
-    let mut body = vec![0; length];
-    socket.read_exact(&mut body).await.unwrap();
-    let get = |name: &str| headers.get(name).cloned().unwrap_or_default();
+    let Ok((request, _)) = control_request(&mut socket).await else {
+        return;
+    };
     let index = {
         let mut requests = requests.lock().unwrap();
         let index = requests.len();
-        requests.push(json!({"method":first[0],"path":first[1],"body":String::from_utf8(body).unwrap(),"content_length":length,"accept":get("accept"),"content_type":get("content-type"),"cookie":get("cookie"),"origin":get("origin"),"referer":get("referer")}));
+        requests.push(request);
         index
     };
     let step = steps
@@ -476,7 +487,7 @@ async fn serve(
         let mut byte = [0];
         tokio::select! {_=gates[index].notified()=>{},_=socket.read(&mut byte)=>{signals.canceled.send(index).unwrap();gates[index].notified().await;}}
     }
-    let body = step["body"].as_str().unwrap_or("");
+    let body = body_bytes(step);
     let status = step["status"].as_u64().unwrap();
     let mut response = format!(
         "HTTP/1.1 {status} Owned\r\nContent-Length: {}\r\nConnection: close\r\n",
@@ -486,11 +497,153 @@ async fn serve(
         response.push_str(&format!("Location: {location}\r\n"));
     }
     response.push_str("\r\n");
-    response.push_str(body);
-    let _ = socket.write_all(response.as_bytes()).await;
+    let mut response = response.into_bytes();
+    response.extend_from_slice(&body);
+    let _ = socket.write_all(&response).await;
     let _ = socket.shutdown().await;
     if blocked {
         let _ = signals.finished.send(index);
+    }
+}
+async fn control_request(socket: &mut TcpStream) -> io::Result<(Value, String)> {
+    let mut bytes = Vec::new();
+    loop {
+        let mut byte = [0];
+        socket.read_exact(&mut byte).await?;
+        bytes.push(byte[0]);
+        if bytes.ends_with(b"\r\n\r\n") {
+            break;
+        }
+    }
+    let invalid = || io::Error::new(io::ErrorKind::InvalidData, "invalid owned control request");
+    let text = String::from_utf8(bytes).map_err(|_| invalid())?;
+    let mut lines = text.split("\r\n");
+    let first = lines
+        .next()
+        .ok_or_else(invalid)?
+        .split_whitespace()
+        .collect::<Vec<_>>();
+    if first.len() != 3 {
+        return Err(invalid());
+    }
+    let headers = lines
+        .filter_map(|line| line.split_once(':'))
+        .map(|(key, value)| (key.to_ascii_lowercase(), value.trim().to_owned()))
+        .collect::<BTreeMap<_, _>>();
+    let length = headers
+        .get("content-length")
+        .ok_or_else(invalid)?
+        .parse::<usize>()
+        .map_err(|_| invalid())?;
+    let mut body = vec![0; length];
+    socket.read_exact(&mut body).await?;
+    let body = String::from_utf8(body).map_err(|_| invalid())?;
+    let get = |name: &str| headers.get(name).cloned().unwrap_or_default();
+    Ok((
+        json!({"method":first[0],"path":first[1],"body":body,"content_length":length,"accept":get("accept"),"content_type":get("content-type"),"cookie":get("cookie"),"origin":get("origin"),"referer":get("referer")}),
+        first[2].to_owned(),
+    ))
+}
+pub struct StreamControl {
+    pub url: String,
+    pub requests: Arc<Mutex<Vec<Value>>>,
+    pub flushed: mpsc::UnboundedReceiver<io::Result<usize>>,
+    release: Arc<Notify>,
+    released: Arc<AtomicBool>,
+    finished: Arc<AtomicBool>,
+    task: Option<tokio::task::JoinHandle<()>>,
+}
+impl StreamControl {
+    pub async fn new(prefix: Vec<u8>, remainder: Vec<u8>) -> Self {
+        let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let url = format!("http://{}", listener.local_addr().unwrap());
+        let requests = Arc::new(Mutex::new(vec![]));
+        let release = Arc::new(Notify::new());
+        let released = Arc::new(AtomicBool::new(false));
+        let finished = Arc::new(AtomicBool::new(false));
+        let (flushed_tx, flushed) = mpsc::unbounded_channel();
+        let recorded = requests.clone();
+        let gate = release.clone();
+        let done = finished.clone();
+        let task = tokio::spawn(async move {
+            let setup = async {
+                let (mut socket, _) = listener.accept().await?;
+                let (request, protocol) = control_request(&mut socket).await?;
+                if protocol != "HTTP/1.1" {
+                    return Err(io::Error::new(
+                        io::ErrorKind::InvalidData,
+                        "stream control requires ordinary HTTP/1.1",
+                    ));
+                }
+                recorded.lock().unwrap().push(request);
+                socket
+                    .write_all(b"HTTP/1.1 200 Owned\r\nContent-Type: application/json\r\nTransfer-Encoding: chunked\r\nConnection: close\r\n\r\n")
+                    .await?;
+                let mut chunk = format!("{:x}\r\n", prefix.len()).into_bytes();
+                chunk.extend_from_slice(&prefix);
+                chunk.extend_from_slice(b"\r\n");
+                socket.write_all(&chunk).await?;
+                socket.flush().await?;
+                Ok::<_, io::Error>(socket)
+            }
+            .await;
+            match setup {
+                Ok(mut socket) => {
+                    let _ = flushed_tx.send(Ok(prefix.len()));
+                    // A peer disconnect must not release the withheld remainder or EOF.
+                    gate.notified().await;
+                    let mut tail = format!("{:x}\r\n", remainder.len()).into_bytes();
+                    tail.extend_from_slice(&remainder);
+                    tail.extend_from_slice(b"\r\n0\r\n\r\n");
+                    let _ = socket.write_all(&tail).await;
+                    let _ = socket.shutdown().await;
+                }
+                Err(error) => {
+                    let _ = flushed_tx.send(Err(error));
+                }
+            }
+            done.store(true, Ordering::SeqCst);
+        });
+        Self {
+            url,
+            requests,
+            flushed,
+            release,
+            released,
+            finished,
+            task: Some(task),
+        }
+    }
+    pub fn completion(&self, prefix_bytes_written: usize) -> Value {
+        let released = self.released.load(Ordering::SeqCst);
+        json!({"prefix_flushed":true,"prefix_bytes_written":prefix_bytes_written,"return_before_release":!released,"remainder_released_before_return":released,"handler_finished_before_return":self.finished.load(Ordering::SeqCst)})
+    }
+    pub fn release(&self) {
+        if !self.released.swap(true, Ordering::SeqCst) {
+            self.release.notify_one();
+        }
+    }
+    pub async fn finish(&mut self) -> std::result::Result<(), String> {
+        self.release();
+        let Some(mut task) = self.task.take() else {
+            return Ok(());
+        };
+        match tokio::time::timeout(std::time::Duration::from_secs(5), &mut task).await {
+            Ok(result) => result.map_err(|error| format!("owned stream handler failed: {error}")),
+            Err(_) => {
+                task.abort();
+                let _ = task.await;
+                Err("five-second failure guard: owned stream handler did not drain".into())
+            }
+        }
+    }
+}
+impl Drop for StreamControl {
+    fn drop(&mut self) {
+        self.release();
+        if let Some(task) = &self.task {
+            task.abort();
+        }
     }
 }
 pub async fn receive(receiver: &mut mpsc::UnboundedReceiver<usize>) -> usize {

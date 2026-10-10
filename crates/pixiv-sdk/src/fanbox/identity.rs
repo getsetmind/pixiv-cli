@@ -161,6 +161,12 @@ fn optional_text(value: Option<&RawValue>) -> Option<String> {
 fn parse_identity(document: &[u8]) -> std::result::Result<User, Failure> {
     let metadata = metadata_content(document)
         .ok_or_else(|| Failure::message("FANBOX metadata tag was not found"))?;
+    // Go retains literal attribute NULs, which JSON rejects; html5ever replaces them.
+    if metadata.raw_nul {
+        return Err(Failure::message("FANBOX metadata is not valid JSON"));
+    }
+    let metadata = crate::codec::normalize_json(metadata.value.as_bytes())
+        .map_err(|_| Failure::message("FANBOX metadata is not valid JSON"))?;
     let mut user = UserWire::default();
     merge_envelope(&metadata, &mut user)
         .map_err(|_| Failure::message("FANBOX metadata is not valid JSON"))?;
@@ -208,7 +214,7 @@ fn parse_identity(document: &[u8]) -> std::result::Result<User, Failure> {
 }
 struct RawTag {
     source: String,
-    attributes: Vec<(String, std::ops::Range<usize>)>,
+    attributes: Vec<(String, std::ops::Range<usize>, std::ops::Range<usize>)>,
 }
 fn html_space(byte: u8) -> bool {
     matches!(byte, b' ' | b'\t' | b'\n' | b'\r' | b'\x0c')
@@ -257,12 +263,11 @@ fn metadata_tag_source(span: &str) -> Option<RawTag> {
             {
                 at += 1;
             }
-            attributes.push((
-                source[attr_start..at]
-                    .replace('\0', "\u{fffd}")
-                    .to_ascii_lowercase(),
-                attr_start..at,
-            ));
+            let name = source[attr_start..at]
+                .replace('\0', "\u{fffd}")
+                .to_ascii_lowercase();
+            let name_range = attr_start..at;
+            let mut value_range = at..at;
             while bytes.get(at).is_some_and(|byte| html_space(*byte)) {
                 at += 1;
             }
@@ -277,21 +282,26 @@ fn metadata_tag_source(span: &str) -> Option<RawTag> {
                     .copied()
                 {
                     at += 1;
+                    let value_start = at;
                     while bytes.get(at).is_some_and(|byte| *byte != quote) {
                         at += 1;
                     }
+                    value_range = value_start..at;
                     if at < bytes.len() {
                         at += 1;
                     }
                 } else {
+                    let value_start = at;
                     while bytes
                         .get(at)
                         .is_some_and(|byte| !html_space(*byte) && *byte != b'>')
                     {
                         at += 1;
                     }
+                    value_range = value_start..at;
                 }
             }
+            attributes.push((name, name_range, value_range));
         }
     }
     None
@@ -315,7 +325,7 @@ fn preserved_attributes(raw: &RawTag) -> Vec<(String, String)> {
     let mut rewritten = String::new();
     let mut at = 0;
     let mut names = std::collections::BTreeMap::new();
-    for (index, (name, range)) in raw.attributes.iter().enumerate() {
+    for (index, (name, range, _)) in raw.attributes.iter().enumerate() {
         let replacement = format!("fanbox-attribute-{index}");
         rewritten.push_str(&raw.source[at..range.start]);
         rewritten.push_str(&replacement);
@@ -339,11 +349,15 @@ fn preserved_attributes(raw: &RawTag) -> Vec<(String, String)> {
         .map(|(name, value)| (names.remove(&name).unwrap_or(name), value))
         .collect()
 }
+struct MetadataContent {
+    value: String,
+    raw_nul: bool,
+}
 struct MetadataSink<'a> {
     input: &'a BufferQueue,
     document: &'a str,
     boundary: Cell<usize>,
-    metadata: RefCell<Option<String>>,
+    metadata: RefCell<Option<MetadataContent>>,
 }
 impl MetadataSink<'_> {
     fn consumed(&self) -> usize {
@@ -370,11 +384,16 @@ impl TokenSink for MetadataSink<'_> {
         let source = self.document.get(self.boundary.replace(end)..end);
         let is_end = tag.kind == TagKind::EndTag;
         if !is_end && tag.name.as_ref() == "meta" && self.metadata.borrow().is_none() {
+            let raw = source.and_then(metadata_tag_source);
+            let raw_nul = raw.as_ref().is_some_and(|raw| {
+                raw.attributes
+                    .iter()
+                    .rev()
+                    .find(|(name, _, _)| name == "content")
+                    .is_some_and(|(_, _, value)| raw.source[value.clone()].contains('\0'))
+            });
             let attributes = if tag.had_duplicate_attributes {
-                source
-                    .and_then(metadata_tag_source)
-                    .map(|raw| preserved_attributes(&raw))
-                    .unwrap_or_default()
+                raw.as_ref().map(preserved_attributes).unwrap_or_default()
             } else {
                 tag.attrs
                     .into_iter()
@@ -391,7 +410,10 @@ impl TokenSink for MetadataSink<'_> {
                 }
             }
             if name.trim().eq_ignore_ascii_case("metadata") && !content.trim().is_empty() {
-                *self.metadata.borrow_mut() = Some(content);
+                *self.metadata.borrow_mut() = Some(MetadataContent {
+                    value: content,
+                    raw_nul,
+                });
             }
         }
         // Go activates raw text for these names even on self-closing start tags.
@@ -409,8 +431,8 @@ impl TokenSink for MetadataSink<'_> {
         TokenSinkResult::Continue
     }
 }
-fn metadata_content(document: &[u8]) -> Option<String> {
-    let document = String::from_utf8_lossy(document);
+fn metadata_content(document: &[u8]) -> Option<MetadataContent> {
+    let document = crate::codec::go_utf8(document);
     let input = BufferQueue::default();
     input.push_back(StrTendril::from_slice(&document));
     let tokenizer = Tokenizer::new(

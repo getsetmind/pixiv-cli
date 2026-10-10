@@ -7,6 +7,7 @@ use pixiv_sdk::{
     },
 };
 use serde_json::{Value, json};
+use sha2::{Digest, Sha256};
 use std::{
     collections::BTreeMap,
     error::Error as StdError,
@@ -18,6 +19,34 @@ use std::{
 };
 
 pub const SESSION: &str = "synthetic-contract-session";
+pub fn body_bytes(step: &Value) -> Vec<u8> {
+    let bytes = match step["body_hex"].as_str() {
+        Some(hex) => {
+            assert_eq!(hex.len() % 2, 0, "raw body hex length");
+            assert!(
+                hex.bytes()
+                    .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte)),
+                "raw body hex must be lowercase"
+            );
+            hex.as_bytes()
+                .chunks_exact(2)
+                .map(|pair| u8::from_str_radix(std::str::from_utf8(pair).unwrap(), 16).unwrap())
+                .collect()
+        }
+        None => step["body"].as_str().unwrap_or("").as_bytes().to_vec(),
+    };
+    if let Some(length) = step["body_length"].as_u64() {
+        assert_eq!(bytes.len() as u64, length, "raw body length");
+    }
+    if let Some(sha256) = step["body_sha256"].as_str() {
+        assert_eq!(
+            format!("{:x}", Sha256::digest(&bytes)),
+            sha256,
+            "raw body SHA256"
+        );
+    }
+    bytes
+}
 #[derive(Debug)]
 struct ExternalFailure(Option<Cause>);
 impl fmt::Display for ExternalFailure {
@@ -49,6 +78,7 @@ pub struct BodyRecord {
 }
 struct FixtureBody {
     step: Value,
+    bytes: Vec<u8>,
     offset: usize,
     cancel: Context,
     record: Arc<Mutex<BodyRecord>>,
@@ -59,7 +89,7 @@ impl RawBody for FixtureBody {
             if self.step["cancel_on_read"] == true {
                 self.cancel.cancel();
             }
-            let body = self.step["body"].as_str().unwrap_or("").as_bytes();
+            let body = &self.bytes;
             let limit = self.step["chunk"]
                 .as_u64()
                 .filter(|count| *count > 0)
@@ -178,6 +208,7 @@ impl RawTransport for FixtureTransport {
                 body: injected.then(|| {
                     Box::new(FixtureBody {
                         step: step.clone(),
+                        bytes: body_bytes(step),
                         offset: 0,
                         cancel: self.cancel.clone(),
                         record,

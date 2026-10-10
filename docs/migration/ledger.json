@@ -6765,7 +6765,18 @@
         "crates/pixiv-sdk/src/context.rs",
         "crates/pixiv-sdk/src/diagnostics.rs",
         "crates/pixiv-app/src/lifecycle.rs",
-        "crates/pixiv-app/src/diagnostics.rs"
+        "crates/pixiv-app/src/diagnostics.rs",
+        "crates/pixiv-sdk/src/fanbox/mod.rs",
+        "crates/pixiv-sdk/src/fanbox/identity.rs",
+        "crates/pixiv-sdk/src/fanbox/options.rs",
+        "crates/pixiv-sdk/src/fanbox/models.rs",
+        "crates/pixiv-sdk/src/fanbox/transport.rs",
+        "crates/pixiv-sdk/src/fanbox/solver.rs",
+        "crates/pixiv-sdk/src/fanbox/native.rs",
+        "crates/pixiv-sdk/src/fanbox/profile.rs",
+        "crates/pixiv-sdk/src/codec.rs",
+        "crates/pixiv-sdk/src/fanbox/json.rs",
+        "crates/pixiv-sdk/src/fanbox/expiry_date.rs"
       ],
       "tests": [
         "sdk/fanbox/migration_identity_protocol_test.go",
@@ -6776,13 +6787,33 @@
         "crates/pixiv-sdk/tests/fixtures/fanbox-solver.json",
         "crates/pixiv-sdk/tests/fixtures/fanbox-native-profile.json",
         "crates/pixiv-sdk/tests/fixtures/fanbox-context-ownership.json",
-        "crates/pixiv-sdk/tests/context_ownership.rs"
+        "crates/pixiv-sdk/tests/context_ownership.rs",
+        "crates/pixiv-sdk/tests/fanbox_identity.rs",
+        "crates/pixiv-sdk/tests/fanbox_solver.rs",
+        "crates/pixiv-sdk/tests/fanbox_native.rs",
+        "sdk/fanbox/migration_identity_public_html_test.go",
+        "sdk/fanbox/migration_solver_public_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-identity-public-html.json",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-public.json",
+        "sdk/fanbox/migration_identity_tokenizer_regression_test.go",
+        "sdk/fanbox/migration_solver_public_aliases_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-identity-tokenizer-regressions.json",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-public-aliases.json",
+        "crates/pixiv-sdk/tests/fanbox_source_attributes.rs",
+        "sdk/fanbox/migration_identity_json_bytes_test.go",
+        "sdk/fanbox/migration_solver_json_dates_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-identity-json-bytes.json",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-json-dates.json",
+        "sdk/fanbox/migration_solver_stream_completion_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-stream-completion.json"
       ],
       "verified_platforms": [],
       "differences": [
         "Restored Go-first contract only: 309 rows across 20 bounded identity/options/protocol families captured from frozen Go with injected owned HTTP boundaries. FANBOX Rust implementation, native fingerprint/media behavior, resources/content and platform parity remain pending; no verified platform added.",
         "Fresh Go-first solver124/context41/native6 observations are frozen. Native six owned scenarios verify the actual Go factory only; no Rust FANBOX native/solver/identity implementation or platform equivalence is claimed. Supplemental multiplex/HEAD/upload remains denied and was not retried. Repaired native evidence replaces the preliminary seal without changing production Go.",
-        "Only the shared context/diagnostics foundation is implemented: 20 mapped frozen rows in 8 Rust tests plus 4 paused-clock regression tests. The 9 SDK-forwarding and 6 FANBOX lifecycle rows await production integration. Existing Pixiv Facade forwards caller context unchanged. Rust monotonic Instant/lazy error or awaited timer differs from independent Go Done timers; arbitrary Go comparable keys/interface identities/nil panics and wall-clock timestamps remain Go-only. Public app source paths are compatibility reexports; no verified_platforms is added."
+        "Only the shared context/diagnostics foundation is implemented: 20 mapped frozen rows in 8 Rust tests plus 4 paused-clock regression tests. The 9 SDK-forwarding and 6 FANBOX lifecycle rows await production integration. Existing Pixiv Facade forwards caller context unchanged. Rust monotonic Instant/lazy error or awaited timer differs from independent Go Done timers; arbitrary Go comparable keys/interface identities/nil panics and wall-clock timestamps remain Go-only. Public app source paths are compatibility reexports; no verified_platforms is added.",
+        "2026-10-10 public SDK identity/options/solver implementation: 156 representable public rows, actual public HTML67, SDK context8 and public solver93 map frozen Go. Private Session is not exported; no public test-only solver control transport. Raw native six-scenario comparison uses the request captured at Go Session boundary, not complete Session/application equivalence. Native/body decompression, resource/content, saved CLI/MCP, arbitrary Go type/nil cases and unrestricted native/platform behavior remain unfinished; no verified platform added. Current checkpoint aggregate gates and review are recorded separately.",
+        "Fresh Go-first public identity47/solver79 exact-byte rows cover surrogate replacement, invalid UTF-8, nesting10000, selected literal-NUL metadata and the two actual solver expiry layouts. Genuine Rust semantic RED precedes focused GREEN. First-root normalization excludes ignored later bytes. Scalar-root streaming timing and unrestricted grammar remain open; private nanoseconds/offset fields are source-derived rather than public capture assertions. Final aggregate gate/review evidence is recorded separately; no verified platform added."
       ]
     },
     {
@@ -6800,7 +6831,10 @@
         "crates/pixiv-sdk/src/fanbox/transport.rs",
         "crates/pixiv-sdk/src/fanbox/solver.rs",
         "crates/pixiv-sdk/src/fanbox/native.rs",
-        "crates/pixiv-sdk/src/fanbox/profile.rs"
+        "crates/pixiv-sdk/src/fanbox/profile.rs",
+        "crates/pixiv-sdk/src/codec.rs",
+        "crates/pixiv-sdk/src/fanbox/json.rs",
+        "crates/pixiv-sdk/src/fanbox/expiry_date.rs"
       ],
       "tests": [
         "sdk/fanbox/migration_identity_protocol_test.go",
@@ -6822,14 +6856,21 @@
         "sdk/fanbox/migration_solver_public_aliases_test.go",
         "crates/pixiv-sdk/tests/fixtures/fanbox-identity-tokenizer-regressions.json",
         "crates/pixiv-sdk/tests/fixtures/fanbox-solver-public-aliases.json",
-        "crates/pixiv-sdk/tests/fanbox_source_attributes.rs"
+        "crates/pixiv-sdk/tests/fanbox_source_attributes.rs",
+        "sdk/fanbox/migration_identity_json_bytes_test.go",
+        "sdk/fanbox/migration_solver_json_dates_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-identity-json-bytes.json",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-json-dates.json",
+        "sdk/fanbox/migration_solver_stream_completion_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-stream-completion.json"
       ],
       "verified_platforms": [],
       "differences": [
         "Restored Go-first contract only: 309 rows across 20 bounded identity/options/protocol families captured from frozen Go with injected owned HTTP boundaries. FANBOX Rust implementation, native fingerprint/media behavior, resources/content and platform parity remain pending; no verified platform added.",
         "Fresh Go-first solver124/context41/native6 observations are frozen. Native six owned scenarios verify the actual Go factory only; no Rust FANBOX native/solver/identity implementation or platform equivalence is claimed. Supplemental multiplex/HEAD/upload remains denied and was not retried. Repaired native evidence replaces the preliminary seal without changing production Go.",
         "2026-10-10 public SDK identity/options/solver implementation: 156 representable public rows, actual public HTML67, SDK context8 and public solver93 map frozen Go. Private Session is not exported; no public test-only solver control transport. Raw native six-scenario comparison uses the request captured at Go Session boundary, not complete Session/application equivalence. Native/body decompression, resource/content, saved CLI/MCP, arbitrary Go type/nil cases and unrestricted native/platform behavior remain unfinished; no verified platform added. Current checkpoint aggregate gates and review are recorded separately.",
-        "Independent review added separate actual Go14 tokenizer/identity fold/decimal-port and Go7 solver fold regressions. Genuine Rust runtime RED precedes callback-aligned duplicate recovery, Go ASCII-schema SimpleFold and preserved decimal authority fixes. Original309/public67/public93/core124/redirect3 input/observation expectations remain unchanged. Lone-surrogate replacement, JSON depth10000 and solver date grammar remain concrete next-slice gaps; native6 remains a bounded Linux raw factory comparison, not full Session/platform verification."
+        "Independent review added separate actual Go14 tokenizer/identity fold/decimal-port and Go7 solver fold regressions. Genuine Rust runtime RED precedes callback-aligned duplicate recovery, Go ASCII-schema SimpleFold and preserved decimal authority fixes. Original309/public67/public93/core124/redirect3 input/observation expectations remain unchanged. Lone-surrogate replacement, JSON depth10000 and solver date grammar remain concrete next-slice gaps; native6 remains a bounded Linux raw factory comparison, not full Session/platform verification.",
+        "Fresh Go-first public identity47/solver79 exact-byte rows cover surrogate replacement, invalid UTF-8, nesting10000, selected literal-NUL metadata and the two actual solver expiry layouts. Genuine Rust semantic RED precedes focused GREEN. First-root normalization excludes ignored later bytes. Scalar-root streaming timing and unrestricted grammar remain open; private nanoseconds/offset fields are source-derived rather than public capture assertions. Final aggregate gate/review evidence is recorded separately; no verified platform added."
       ]
     },
     {
@@ -6895,7 +6936,10 @@
         "crates/pixiv-sdk/src/fanbox/transport.rs",
         "crates/pixiv-sdk/src/fanbox/solver.rs",
         "crates/pixiv-sdk/src/fanbox/native.rs",
-        "crates/pixiv-sdk/src/fanbox/profile.rs"
+        "crates/pixiv-sdk/src/fanbox/profile.rs",
+        "crates/pixiv-sdk/src/codec.rs",
+        "crates/pixiv-sdk/src/fanbox/json.rs",
+        "crates/pixiv-sdk/src/fanbox/expiry_date.rs"
       ],
       "tests": [
         "sdk/fanbox/migration_identity_protocol_test.go",
@@ -6917,14 +6961,21 @@
         "sdk/fanbox/migration_solver_public_aliases_test.go",
         "crates/pixiv-sdk/tests/fixtures/fanbox-identity-tokenizer-regressions.json",
         "crates/pixiv-sdk/tests/fixtures/fanbox-solver-public-aliases.json",
-        "crates/pixiv-sdk/tests/fanbox_source_attributes.rs"
+        "crates/pixiv-sdk/tests/fanbox_source_attributes.rs",
+        "sdk/fanbox/migration_identity_json_bytes_test.go",
+        "sdk/fanbox/migration_solver_json_dates_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-identity-json-bytes.json",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-json-dates.json",
+        "sdk/fanbox/migration_solver_stream_completion_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-stream-completion.json"
       ],
       "verified_platforms": [],
       "differences": [
         "Restored Go-first contract only: 309 rows across 20 bounded identity/options/protocol families captured from frozen Go with injected owned HTTP boundaries. FANBOX Rust implementation, native fingerprint/media behavior, resources/content and platform parity remain pending; no verified platform added.",
         "Fresh Go-first solver124/context41/native6 observations are frozen. Native six owned scenarios verify the actual Go factory only; no Rust FANBOX native/solver/identity implementation or platform equivalence is claimed. Supplemental multiplex/HEAD/upload remains denied and was not retried. Repaired native evidence replaces the preliminary seal without changing production Go.",
         "2026-10-10 public SDK identity/options/solver implementation: 156 representable public rows, actual public HTML67, SDK context8 and public solver93 map frozen Go. Private Session is not exported; no public test-only solver control transport. Raw native six-scenario comparison uses the request captured at Go Session boundary, not complete Session/application equivalence. Native/body decompression, resource/content, saved CLI/MCP, arbitrary Go type/nil cases and unrestricted native/platform behavior remain unfinished; no verified platform added. Current checkpoint aggregate gates and review are recorded separately.",
-        "Independent review added separate actual Go14 tokenizer/identity fold/decimal-port and Go7 solver fold regressions. Genuine Rust runtime RED precedes callback-aligned duplicate recovery, Go ASCII-schema SimpleFold and preserved decimal authority fixes. Original309/public67/public93/core124/redirect3 input/observation expectations remain unchanged. Lone-surrogate replacement, JSON depth10000 and solver date grammar remain concrete next-slice gaps; native6 remains a bounded Linux raw factory comparison, not full Session/platform verification."
+        "Independent review added separate actual Go14 tokenizer/identity fold/decimal-port and Go7 solver fold regressions. Genuine Rust runtime RED precedes callback-aligned duplicate recovery, Go ASCII-schema SimpleFold and preserved decimal authority fixes. Original309/public67/public93/core124/redirect3 input/observation expectations remain unchanged. Lone-surrogate replacement, JSON depth10000 and solver date grammar remain concrete next-slice gaps; native6 remains a bounded Linux raw factory comparison, not full Session/platform verification.",
+        "Fresh Go-first public identity47/solver79 exact-byte rows cover surrogate replacement, invalid UTF-8, nesting10000, selected literal-NUL metadata and the two actual solver expiry layouts. Genuine Rust semantic RED precedes focused GREEN. First-root normalization excludes ignored later bytes. Scalar-root streaming timing and unrestricted grammar remain open; private nanoseconds/offset fields are source-derived rather than public capture assertions. Final aggregate gate/review evidence is recorded separately; no verified platform added."
       ]
     },
     {
@@ -7026,7 +7077,10 @@
         "crates/pixiv-sdk/src/fanbox/transport.rs",
         "crates/pixiv-sdk/src/fanbox/solver.rs",
         "crates/pixiv-sdk/src/fanbox/native.rs",
-        "crates/pixiv-sdk/src/fanbox/profile.rs"
+        "crates/pixiv-sdk/src/fanbox/profile.rs",
+        "crates/pixiv-sdk/src/codec.rs",
+        "crates/pixiv-sdk/src/fanbox/json.rs",
+        "crates/pixiv-sdk/src/fanbox/expiry_date.rs"
       ],
       "tests": [
         "sdk/fanbox/migration_identity_protocol_test.go",
@@ -7042,13 +7096,20 @@
         "sdk/fanbox/migration_solver_public_aliases_test.go",
         "crates/pixiv-sdk/tests/fixtures/fanbox-identity-tokenizer-regressions.json",
         "crates/pixiv-sdk/tests/fixtures/fanbox-solver-public-aliases.json",
-        "crates/pixiv-sdk/tests/fanbox_source_attributes.rs"
+        "crates/pixiv-sdk/tests/fanbox_source_attributes.rs",
+        "sdk/fanbox/migration_identity_json_bytes_test.go",
+        "sdk/fanbox/migration_solver_json_dates_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-identity-json-bytes.json",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-json-dates.json",
+        "sdk/fanbox/migration_solver_stream_completion_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-stream-completion.json"
       ],
       "verified_platforms": [],
       "differences": [
         "Restored Go-first contract only: 309 rows across 20 bounded identity/options/protocol families captured from frozen Go with injected owned HTTP boundaries. FANBOX Rust implementation, native fingerprint/media behavior, resources/content and platform parity remain pending; no verified platform added.",
         "2026-10-10 public SDK identity/options/solver implementation: 156 representable public rows, actual public HTML67, SDK context8 and public solver93 map frozen Go. Private Session is not exported; no public test-only solver control transport. Raw native six-scenario comparison uses the request captured at Go Session boundary, not complete Session/application equivalence. Native/body decompression, resource/content, saved CLI/MCP, arbitrary Go type/nil cases and unrestricted native/platform behavior remain unfinished; no verified platform added. Current checkpoint aggregate gates and review are recorded separately.",
-        "Independent review added separate actual Go14 tokenizer/identity fold/decimal-port and Go7 solver fold regressions. Genuine Rust runtime RED precedes callback-aligned duplicate recovery, Go ASCII-schema SimpleFold and preserved decimal authority fixes. Original309/public67/public93/core124/redirect3 input/observation expectations remain unchanged. Lone-surrogate replacement, JSON depth10000 and solver date grammar remain concrete next-slice gaps; native6 remains a bounded Linux raw factory comparison, not full Session/platform verification."
+        "Independent review added separate actual Go14 tokenizer/identity fold/decimal-port and Go7 solver fold regressions. Genuine Rust runtime RED precedes callback-aligned duplicate recovery, Go ASCII-schema SimpleFold and preserved decimal authority fixes. Original309/public67/public93/core124/redirect3 input/observation expectations remain unchanged. Lone-surrogate replacement, JSON depth10000 and solver date grammar remain concrete next-slice gaps; native6 remains a bounded Linux raw factory comparison, not full Session/platform verification.",
+        "Fresh Go-first public identity47/solver79 exact-byte rows cover surrogate replacement, invalid UTF-8, nesting10000, selected literal-NUL metadata and the two actual solver expiry layouts. Genuine Rust semantic RED precedes focused GREEN. First-root normalization excludes ignored later bytes. Scalar-root streaming timing and unrestricted grammar remain open; private nanoseconds/offset fields are source-derived rather than public capture assertions. Final aggregate gate/review evidence is recorded separately; no verified platform added."
       ]
     },
     {
@@ -7222,7 +7283,10 @@
         "crates/pixiv-sdk/src/fanbox/transport.rs",
         "crates/pixiv-sdk/src/fanbox/solver.rs",
         "crates/pixiv-sdk/src/fanbox/native.rs",
-        "crates/pixiv-sdk/src/fanbox/profile.rs"
+        "crates/pixiv-sdk/src/fanbox/profile.rs",
+        "crates/pixiv-sdk/src/codec.rs",
+        "crates/pixiv-sdk/src/fanbox/json.rs",
+        "crates/pixiv-sdk/src/fanbox/expiry_date.rs"
       ],
       "tests": [
         "sdk/fanbox/migration_identity_protocol_test.go",
@@ -7238,13 +7302,20 @@
         "sdk/fanbox/migration_solver_public_aliases_test.go",
         "crates/pixiv-sdk/tests/fixtures/fanbox-identity-tokenizer-regressions.json",
         "crates/pixiv-sdk/tests/fixtures/fanbox-solver-public-aliases.json",
-        "crates/pixiv-sdk/tests/fanbox_source_attributes.rs"
+        "crates/pixiv-sdk/tests/fanbox_source_attributes.rs",
+        "sdk/fanbox/migration_identity_json_bytes_test.go",
+        "sdk/fanbox/migration_solver_json_dates_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-identity-json-bytes.json",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-json-dates.json",
+        "sdk/fanbox/migration_solver_stream_completion_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-stream-completion.json"
       ],
       "verified_platforms": [],
       "differences": [
         "Restored Go-first contract only: 309 rows across 20 bounded identity/options/protocol families captured from frozen Go with injected owned HTTP boundaries. FANBOX Rust implementation, native fingerprint/media behavior, resources/content and platform parity remain pending; no verified platform added.",
         "2026-10-10 public SDK identity/options/solver implementation: 156 representable public rows, actual public HTML67, SDK context8 and public solver93 map frozen Go. Private Session is not exported; no public test-only solver control transport. Raw native six-scenario comparison uses the request captured at Go Session boundary, not complete Session/application equivalence. Native/body decompression, resource/content, saved CLI/MCP, arbitrary Go type/nil cases and unrestricted native/platform behavior remain unfinished; no verified platform added. Current checkpoint aggregate gates and review are recorded separately.",
-        "Independent review added separate actual Go14 tokenizer/identity fold/decimal-port and Go7 solver fold regressions. Genuine Rust runtime RED precedes callback-aligned duplicate recovery, Go ASCII-schema SimpleFold and preserved decimal authority fixes. Original309/public67/public93/core124/redirect3 input/observation expectations remain unchanged. Lone-surrogate replacement, JSON depth10000 and solver date grammar remain concrete next-slice gaps; native6 remains a bounded Linux raw factory comparison, not full Session/platform verification."
+        "Independent review added separate actual Go14 tokenizer/identity fold/decimal-port and Go7 solver fold regressions. Genuine Rust runtime RED precedes callback-aligned duplicate recovery, Go ASCII-schema SimpleFold and preserved decimal authority fixes. Original309/public67/public93/core124/redirect3 input/observation expectations remain unchanged. Lone-surrogate replacement, JSON depth10000 and solver date grammar remain concrete next-slice gaps; native6 remains a bounded Linux raw factory comparison, not full Session/platform verification.",
+        "Fresh Go-first public identity47/solver79 exact-byte rows cover surrogate replacement, invalid UTF-8, nesting10000, selected literal-NUL metadata and the two actual solver expiry layouts. Genuine Rust semantic RED precedes focused GREEN. First-root normalization excludes ignored later bytes. Scalar-root streaming timing and unrestricted grammar remain open; private nanoseconds/offset fields are source-derived rather than public capture assertions. Final aggregate gate/review evidence is recorded separately; no verified platform added."
       ]
     },
     {
@@ -7286,7 +7357,10 @@
         "crates/pixiv-sdk/src/fanbox/transport.rs",
         "crates/pixiv-sdk/src/fanbox/solver.rs",
         "crates/pixiv-sdk/src/fanbox/native.rs",
-        "crates/pixiv-sdk/src/fanbox/profile.rs"
+        "crates/pixiv-sdk/src/fanbox/profile.rs",
+        "crates/pixiv-sdk/src/codec.rs",
+        "crates/pixiv-sdk/src/fanbox/json.rs",
+        "crates/pixiv-sdk/src/fanbox/expiry_date.rs"
       ],
       "tests": [
         "sdk/fanbox/migration_identity_protocol_test.go",
@@ -7308,14 +7382,21 @@
         "sdk/fanbox/migration_solver_public_aliases_test.go",
         "crates/pixiv-sdk/tests/fixtures/fanbox-identity-tokenizer-regressions.json",
         "crates/pixiv-sdk/tests/fixtures/fanbox-solver-public-aliases.json",
-        "crates/pixiv-sdk/tests/fanbox_source_attributes.rs"
+        "crates/pixiv-sdk/tests/fanbox_source_attributes.rs",
+        "sdk/fanbox/migration_identity_json_bytes_test.go",
+        "sdk/fanbox/migration_solver_json_dates_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-identity-json-bytes.json",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-json-dates.json",
+        "sdk/fanbox/migration_solver_stream_completion_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-stream-completion.json"
       ],
       "verified_platforms": [],
       "differences": [
         "Restored Go-first contract only: 309 rows across 20 bounded identity/options/protocol families captured from frozen Go with injected owned HTTP boundaries. FANBOX Rust implementation, native fingerprint/media behavior, resources/content and platform parity remain pending; no verified platform added.",
         "Fresh Go-first solver124/context41/native6 observations are frozen. Native six owned scenarios verify the actual Go factory only; no Rust FANBOX native/solver/identity implementation or platform equivalence is claimed. Supplemental multiplex/HEAD/upload remains denied and was not retried. Repaired native evidence replaces the preliminary seal without changing production Go.",
         "2026-10-10 public SDK identity/options/solver implementation: 156 representable public rows, actual public HTML67, SDK context8 and public solver93 map frozen Go. Private Session is not exported; no public test-only solver control transport. Raw native six-scenario comparison uses the request captured at Go Session boundary, not complete Session/application equivalence. Native/body decompression, resource/content, saved CLI/MCP, arbitrary Go type/nil cases and unrestricted native/platform behavior remain unfinished; no verified platform added. Current checkpoint aggregate gates and review are recorded separately.",
-        "Independent review added separate actual Go14 tokenizer/identity fold/decimal-port and Go7 solver fold regressions. Genuine Rust runtime RED precedes callback-aligned duplicate recovery, Go ASCII-schema SimpleFold and preserved decimal authority fixes. Original309/public67/public93/core124/redirect3 input/observation expectations remain unchanged. Lone-surrogate replacement, JSON depth10000 and solver date grammar remain concrete next-slice gaps; native6 remains a bounded Linux raw factory comparison, not full Session/platform verification."
+        "Independent review added separate actual Go14 tokenizer/identity fold/decimal-port and Go7 solver fold regressions. Genuine Rust runtime RED precedes callback-aligned duplicate recovery, Go ASCII-schema SimpleFold and preserved decimal authority fixes. Original309/public67/public93/core124/redirect3 input/observation expectations remain unchanged. Lone-surrogate replacement, JSON depth10000 and solver date grammar remain concrete next-slice gaps; native6 remains a bounded Linux raw factory comparison, not full Session/platform verification.",
+        "Fresh Go-first public identity47/solver79 exact-byte rows cover surrogate replacement, invalid UTF-8, nesting10000, selected literal-NUL metadata and the two actual solver expiry layouts. Genuine Rust semantic RED precedes focused GREEN. First-root normalization excludes ignored later bytes. Scalar-root streaming timing and unrestricted grammar remain open; private nanoseconds/offset fields are source-derived rather than public capture assertions. Final aggregate gate/review evidence is recorded separately; no verified platform added."
       ]
     },
     {
@@ -7393,7 +7474,10 @@
         "crates/pixiv-sdk/src/fanbox/transport.rs",
         "crates/pixiv-sdk/src/fanbox/solver.rs",
         "crates/pixiv-sdk/src/fanbox/native.rs",
-        "crates/pixiv-sdk/src/fanbox/profile.rs"
+        "crates/pixiv-sdk/src/fanbox/profile.rs",
+        "crates/pixiv-sdk/src/codec.rs",
+        "crates/pixiv-sdk/src/fanbox/json.rs",
+        "crates/pixiv-sdk/src/fanbox/expiry_date.rs"
       ],
       "tests": [
         "sdk/fanbox/migration_identity_protocol_test.go",
@@ -7415,14 +7499,21 @@
         "sdk/fanbox/migration_solver_public_aliases_test.go",
         "crates/pixiv-sdk/tests/fixtures/fanbox-identity-tokenizer-regressions.json",
         "crates/pixiv-sdk/tests/fixtures/fanbox-solver-public-aliases.json",
-        "crates/pixiv-sdk/tests/fanbox_source_attributes.rs"
+        "crates/pixiv-sdk/tests/fanbox_source_attributes.rs",
+        "sdk/fanbox/migration_identity_json_bytes_test.go",
+        "sdk/fanbox/migration_solver_json_dates_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-identity-json-bytes.json",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-json-dates.json",
+        "sdk/fanbox/migration_solver_stream_completion_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-stream-completion.json"
       ],
       "verified_platforms": [],
       "differences": [
         "Restored Go-first contract only: 309 rows across 20 bounded identity/options/protocol families captured from frozen Go with injected owned HTTP boundaries. FANBOX Rust implementation, native fingerprint/media behavior, resources/content and platform parity remain pending; no verified platform added.",
         "Fresh Go-first solver124/context41/native6 observations are frozen. Native six owned scenarios verify the actual Go factory only; no Rust FANBOX native/solver/identity implementation or platform equivalence is claimed. Supplemental multiplex/HEAD/upload remains denied and was not retried. Repaired native evidence replaces the preliminary seal without changing production Go.",
         "2026-10-10 public SDK identity/options/solver implementation: 156 representable public rows, actual public HTML67, SDK context8 and public solver93 map frozen Go. Private Session is not exported; no public test-only solver control transport. Raw native six-scenario comparison uses the request captured at Go Session boundary, not complete Session/application equivalence. Native/body decompression, resource/content, saved CLI/MCP, arbitrary Go type/nil cases and unrestricted native/platform behavior remain unfinished; no verified platform added. Current checkpoint aggregate gates and review are recorded separately.",
-        "Independent review added separate actual Go14 tokenizer/identity fold/decimal-port and Go7 solver fold regressions. Genuine Rust runtime RED precedes callback-aligned duplicate recovery, Go ASCII-schema SimpleFold and preserved decimal authority fixes. Original309/public67/public93/core124/redirect3 input/observation expectations remain unchanged. Lone-surrogate replacement, JSON depth10000 and solver date grammar remain concrete next-slice gaps; native6 remains a bounded Linux raw factory comparison, not full Session/platform verification."
+        "Independent review added separate actual Go14 tokenizer/identity fold/decimal-port and Go7 solver fold regressions. Genuine Rust runtime RED precedes callback-aligned duplicate recovery, Go ASCII-schema SimpleFold and preserved decimal authority fixes. Original309/public67/public93/core124/redirect3 input/observation expectations remain unchanged. Lone-surrogate replacement, JSON depth10000 and solver date grammar remain concrete next-slice gaps; native6 remains a bounded Linux raw factory comparison, not full Session/platform verification.",
+        "Fresh Go-first public identity47/solver79 exact-byte rows cover surrogate replacement, invalid UTF-8, nesting10000, selected literal-NUL metadata and the two actual solver expiry layouts. Genuine Rust semantic RED precedes focused GREEN. First-root normalization excludes ignored later bytes. Scalar-root streaming timing and unrestricted grammar remain open; private nanoseconds/offset fields are source-derived rather than public capture assertions. Final aggregate gate/review evidence is recorded separately; no verified platform added."
       ]
     },
     {
@@ -7440,7 +7531,10 @@
         "crates/pixiv-sdk/src/fanbox/transport.rs",
         "crates/pixiv-sdk/src/fanbox/solver.rs",
         "crates/pixiv-sdk/src/fanbox/native.rs",
-        "crates/pixiv-sdk/src/fanbox/profile.rs"
+        "crates/pixiv-sdk/src/fanbox/profile.rs",
+        "crates/pixiv-sdk/src/codec.rs",
+        "crates/pixiv-sdk/src/fanbox/json.rs",
+        "crates/pixiv-sdk/src/fanbox/expiry_date.rs"
       ],
       "tests": [
         "sdk/fanbox/migration_identity_protocol_test.go",
@@ -7462,14 +7556,21 @@
         "sdk/fanbox/migration_solver_public_aliases_test.go",
         "crates/pixiv-sdk/tests/fixtures/fanbox-identity-tokenizer-regressions.json",
         "crates/pixiv-sdk/tests/fixtures/fanbox-solver-public-aliases.json",
-        "crates/pixiv-sdk/tests/fanbox_source_attributes.rs"
+        "crates/pixiv-sdk/tests/fanbox_source_attributes.rs",
+        "sdk/fanbox/migration_identity_json_bytes_test.go",
+        "sdk/fanbox/migration_solver_json_dates_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-identity-json-bytes.json",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-json-dates.json",
+        "sdk/fanbox/migration_solver_stream_completion_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-stream-completion.json"
       ],
       "verified_platforms": [],
       "differences": [
         "Restored Go-first contract only: 309 rows across 20 bounded identity/options/protocol families captured from frozen Go with injected owned HTTP boundaries. FANBOX Rust implementation, native fingerprint/media behavior, resources/content and platform parity remain pending; no verified platform added.",
         "Fresh Go-first solver124/context41/native6 observations are frozen. Native six owned scenarios verify the actual Go factory only; no Rust FANBOX native/solver/identity implementation or platform equivalence is claimed. Supplemental multiplex/HEAD/upload remains denied and was not retried. Repaired native evidence replaces the preliminary seal without changing production Go.",
         "2026-10-10 public SDK identity/options/solver implementation: 156 representable public rows, actual public HTML67, SDK context8 and public solver93 map frozen Go. Private Session is not exported; no public test-only solver control transport. Raw native six-scenario comparison uses the request captured at Go Session boundary, not complete Session/application equivalence. Native/body decompression, resource/content, saved CLI/MCP, arbitrary Go type/nil cases and unrestricted native/platform behavior remain unfinished; no verified platform added. Current checkpoint aggregate gates and review are recorded separately.",
-        "Independent review added separate actual Go14 tokenizer/identity fold/decimal-port and Go7 solver fold regressions. Genuine Rust runtime RED precedes callback-aligned duplicate recovery, Go ASCII-schema SimpleFold and preserved decimal authority fixes. Original309/public67/public93/core124/redirect3 input/observation expectations remain unchanged. Lone-surrogate replacement, JSON depth10000 and solver date grammar remain concrete next-slice gaps; native6 remains a bounded Linux raw factory comparison, not full Session/platform verification."
+        "Independent review added separate actual Go14 tokenizer/identity fold/decimal-port and Go7 solver fold regressions. Genuine Rust runtime RED precedes callback-aligned duplicate recovery, Go ASCII-schema SimpleFold and preserved decimal authority fixes. Original309/public67/public93/core124/redirect3 input/observation expectations remain unchanged. Lone-surrogate replacement, JSON depth10000 and solver date grammar remain concrete next-slice gaps; native6 remains a bounded Linux raw factory comparison, not full Session/platform verification.",
+        "Fresh Go-first public identity47/solver79 exact-byte rows cover surrogate replacement, invalid UTF-8, nesting10000, selected literal-NUL metadata and the two actual solver expiry layouts. Genuine Rust semantic RED precedes focused GREEN. First-root normalization excludes ignored later bytes. Scalar-root streaming timing and unrestricted grammar remain open; private nanoseconds/offset fields are source-derived rather than public capture assertions. Final aggregate gate/review evidence is recorded separately; no verified platform added."
       ]
     },
     {
@@ -7859,7 +7960,10 @@
         "crates/pixiv-sdk/src/fanbox/transport.rs",
         "crates/pixiv-sdk/src/fanbox/solver.rs",
         "crates/pixiv-sdk/src/fanbox/native.rs",
-        "crates/pixiv-sdk/src/fanbox/profile.rs"
+        "crates/pixiv-sdk/src/fanbox/profile.rs",
+        "crates/pixiv-sdk/src/codec.rs",
+        "crates/pixiv-sdk/src/fanbox/json.rs",
+        "crates/pixiv-sdk/src/fanbox/expiry_date.rs"
       ],
       "tests": [
         "sdk/fanbox/migration_identity_protocol_test.go",
@@ -7875,13 +7979,20 @@
         "sdk/fanbox/migration_solver_public_aliases_test.go",
         "crates/pixiv-sdk/tests/fixtures/fanbox-identity-tokenizer-regressions.json",
         "crates/pixiv-sdk/tests/fixtures/fanbox-solver-public-aliases.json",
-        "crates/pixiv-sdk/tests/fanbox_source_attributes.rs"
+        "crates/pixiv-sdk/tests/fanbox_source_attributes.rs",
+        "sdk/fanbox/migration_identity_json_bytes_test.go",
+        "sdk/fanbox/migration_solver_json_dates_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-identity-json-bytes.json",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-json-dates.json",
+        "sdk/fanbox/migration_solver_stream_completion_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-stream-completion.json"
       ],
       "verified_platforms": [],
       "differences": [
         "Restored Go-first contract only: 309 rows across 20 bounded identity/options/protocol families captured from frozen Go with injected owned HTTP boundaries. FANBOX Rust implementation, native fingerprint/media behavior, resources/content and platform parity remain pending; no verified platform added.",
         "2026-10-10 public SDK identity/options/solver implementation: 156 representable public rows, actual public HTML67, SDK context8 and public solver93 map frozen Go. Private Session is not exported; no public test-only solver control transport. Raw native six-scenario comparison uses the request captured at Go Session boundary, not complete Session/application equivalence. Native/body decompression, resource/content, saved CLI/MCP, arbitrary Go type/nil cases and unrestricted native/platform behavior remain unfinished; no verified platform added. Current checkpoint aggregate gates and review are recorded separately.",
-        "Independent review added separate actual Go14 tokenizer/identity fold/decimal-port and Go7 solver fold regressions. Genuine Rust runtime RED precedes callback-aligned duplicate recovery, Go ASCII-schema SimpleFold and preserved decimal authority fixes. Original309/public67/public93/core124/redirect3 input/observation expectations remain unchanged. Lone-surrogate replacement, JSON depth10000 and solver date grammar remain concrete next-slice gaps; native6 remains a bounded Linux raw factory comparison, not full Session/platform verification."
+        "Independent review added separate actual Go14 tokenizer/identity fold/decimal-port and Go7 solver fold regressions. Genuine Rust runtime RED precedes callback-aligned duplicate recovery, Go ASCII-schema SimpleFold and preserved decimal authority fixes. Original309/public67/public93/core124/redirect3 input/observation expectations remain unchanged. Lone-surrogate replacement, JSON depth10000 and solver date grammar remain concrete next-slice gaps; native6 remains a bounded Linux raw factory comparison, not full Session/platform verification.",
+        "Fresh Go-first public identity47/solver79 exact-byte rows cover surrogate replacement, invalid UTF-8, nesting10000, selected literal-NUL metadata and the two actual solver expiry layouts. Genuine Rust semantic RED precedes focused GREEN. First-root normalization excludes ignored later bytes. Scalar-root streaming timing and unrestricted grammar remain open; private nanoseconds/offset fields are source-derived rather than public capture assertions. Final aggregate gate/review evidence is recorded separately; no verified platform added."
       ]
     },
     {
@@ -7899,7 +8010,10 @@
         "crates/pixiv-sdk/src/fanbox/transport.rs",
         "crates/pixiv-sdk/src/fanbox/solver.rs",
         "crates/pixiv-sdk/src/fanbox/native.rs",
-        "crates/pixiv-sdk/src/fanbox/profile.rs"
+        "crates/pixiv-sdk/src/fanbox/profile.rs",
+        "crates/pixiv-sdk/src/codec.rs",
+        "crates/pixiv-sdk/src/fanbox/json.rs",
+        "crates/pixiv-sdk/src/fanbox/expiry_date.rs"
       ],
       "tests": [
         "sdk/fanbox/migration_identity_protocol_test.go",
@@ -7915,13 +8029,20 @@
         "sdk/fanbox/migration_solver_public_aliases_test.go",
         "crates/pixiv-sdk/tests/fixtures/fanbox-identity-tokenizer-regressions.json",
         "crates/pixiv-sdk/tests/fixtures/fanbox-solver-public-aliases.json",
-        "crates/pixiv-sdk/tests/fanbox_source_attributes.rs"
+        "crates/pixiv-sdk/tests/fanbox_source_attributes.rs",
+        "sdk/fanbox/migration_identity_json_bytes_test.go",
+        "sdk/fanbox/migration_solver_json_dates_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-identity-json-bytes.json",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-json-dates.json",
+        "sdk/fanbox/migration_solver_stream_completion_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-stream-completion.json"
       ],
       "verified_platforms": [],
       "differences": [
         "Restored Go-first contract only: 309 rows across 20 bounded identity/options/protocol families captured from frozen Go with injected owned HTTP boundaries. FANBOX Rust implementation, native fingerprint/media behavior, resources/content and platform parity remain pending; no verified platform added.",
         "2026-10-10 public SDK identity/options/solver implementation: 156 representable public rows, actual public HTML67, SDK context8 and public solver93 map frozen Go. Private Session is not exported; no public test-only solver control transport. Raw native six-scenario comparison uses the request captured at Go Session boundary, not complete Session/application equivalence. Native/body decompression, resource/content, saved CLI/MCP, arbitrary Go type/nil cases and unrestricted native/platform behavior remain unfinished; no verified platform added. Current checkpoint aggregate gates and review are recorded separately.",
-        "Independent review added separate actual Go14 tokenizer/identity fold/decimal-port and Go7 solver fold regressions. Genuine Rust runtime RED precedes callback-aligned duplicate recovery, Go ASCII-schema SimpleFold and preserved decimal authority fixes. Original309/public67/public93/core124/redirect3 input/observation expectations remain unchanged. Lone-surrogate replacement, JSON depth10000 and solver date grammar remain concrete next-slice gaps; native6 remains a bounded Linux raw factory comparison, not full Session/platform verification."
+        "Independent review added separate actual Go14 tokenizer/identity fold/decimal-port and Go7 solver fold regressions. Genuine Rust runtime RED precedes callback-aligned duplicate recovery, Go ASCII-schema SimpleFold and preserved decimal authority fixes. Original309/public67/public93/core124/redirect3 input/observation expectations remain unchanged. Lone-surrogate replacement, JSON depth10000 and solver date grammar remain concrete next-slice gaps; native6 remains a bounded Linux raw factory comparison, not full Session/platform verification.",
+        "Fresh Go-first public identity47/solver79 exact-byte rows cover surrogate replacement, invalid UTF-8, nesting10000, selected literal-NUL metadata and the two actual solver expiry layouts. Genuine Rust semantic RED precedes focused GREEN. First-root normalization excludes ignored later bytes. Scalar-root streaming timing and unrestricted grammar remain open; private nanoseconds/offset fields are source-derived rather than public capture assertions. Final aggregate gate/review evidence is recorded separately; no verified platform added."
       ]
     },
     {
@@ -7939,7 +8060,10 @@
         "crates/pixiv-sdk/src/fanbox/transport.rs",
         "crates/pixiv-sdk/src/fanbox/solver.rs",
         "crates/pixiv-sdk/src/fanbox/native.rs",
-        "crates/pixiv-sdk/src/fanbox/profile.rs"
+        "crates/pixiv-sdk/src/fanbox/profile.rs",
+        "crates/pixiv-sdk/src/codec.rs",
+        "crates/pixiv-sdk/src/fanbox/json.rs",
+        "crates/pixiv-sdk/src/fanbox/expiry_date.rs"
       ],
       "tests": [
         "sdk/fanbox/migration_identity_protocol_test.go",
@@ -7955,13 +8079,20 @@
         "sdk/fanbox/migration_solver_public_aliases_test.go",
         "crates/pixiv-sdk/tests/fixtures/fanbox-identity-tokenizer-regressions.json",
         "crates/pixiv-sdk/tests/fixtures/fanbox-solver-public-aliases.json",
-        "crates/pixiv-sdk/tests/fanbox_source_attributes.rs"
+        "crates/pixiv-sdk/tests/fanbox_source_attributes.rs",
+        "sdk/fanbox/migration_identity_json_bytes_test.go",
+        "sdk/fanbox/migration_solver_json_dates_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-identity-json-bytes.json",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-json-dates.json",
+        "sdk/fanbox/migration_solver_stream_completion_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-stream-completion.json"
       ],
       "verified_platforms": [],
       "differences": [
         "Restored Go-first contract only: 309 rows across 20 bounded identity/options/protocol families captured from frozen Go with injected owned HTTP boundaries. FANBOX Rust implementation, native fingerprint/media behavior, resources/content and platform parity remain pending; no verified platform added.",
         "2026-10-10 public SDK identity/options/solver implementation: 156 representable public rows, actual public HTML67, SDK context8 and public solver93 map frozen Go. Private Session is not exported; no public test-only solver control transport. Raw native six-scenario comparison uses the request captured at Go Session boundary, not complete Session/application equivalence. Native/body decompression, resource/content, saved CLI/MCP, arbitrary Go type/nil cases and unrestricted native/platform behavior remain unfinished; no verified platform added. Current checkpoint aggregate gates and review are recorded separately.",
-        "Independent review added separate actual Go14 tokenizer/identity fold/decimal-port and Go7 solver fold regressions. Genuine Rust runtime RED precedes callback-aligned duplicate recovery, Go ASCII-schema SimpleFold and preserved decimal authority fixes. Original309/public67/public93/core124/redirect3 input/observation expectations remain unchanged. Lone-surrogate replacement, JSON depth10000 and solver date grammar remain concrete next-slice gaps; native6 remains a bounded Linux raw factory comparison, not full Session/platform verification."
+        "Independent review added separate actual Go14 tokenizer/identity fold/decimal-port and Go7 solver fold regressions. Genuine Rust runtime RED precedes callback-aligned duplicate recovery, Go ASCII-schema SimpleFold and preserved decimal authority fixes. Original309/public67/public93/core124/redirect3 input/observation expectations remain unchanged. Lone-surrogate replacement, JSON depth10000 and solver date grammar remain concrete next-slice gaps; native6 remains a bounded Linux raw factory comparison, not full Session/platform verification.",
+        "Fresh Go-first public identity47/solver79 exact-byte rows cover surrogate replacement, invalid UTF-8, nesting10000, selected literal-NUL metadata and the two actual solver expiry layouts. Genuine Rust semantic RED precedes focused GREEN. First-root normalization excludes ignored later bytes. Scalar-root streaming timing and unrestricted grammar remain open; private nanoseconds/offset fields are source-derived rather than public capture assertions. Final aggregate gate/review evidence is recorded separately; no verified platform added."
       ]
     },
     {
@@ -7979,7 +8110,10 @@
         "crates/pixiv-sdk/src/fanbox/transport.rs",
         "crates/pixiv-sdk/src/fanbox/solver.rs",
         "crates/pixiv-sdk/src/fanbox/native.rs",
-        "crates/pixiv-sdk/src/fanbox/profile.rs"
+        "crates/pixiv-sdk/src/fanbox/profile.rs",
+        "crates/pixiv-sdk/src/codec.rs",
+        "crates/pixiv-sdk/src/fanbox/json.rs",
+        "crates/pixiv-sdk/src/fanbox/expiry_date.rs"
       ],
       "tests": [
         "sdk/fanbox/migration_identity_protocol_test.go",
@@ -7995,13 +8129,20 @@
         "sdk/fanbox/migration_solver_public_aliases_test.go",
         "crates/pixiv-sdk/tests/fixtures/fanbox-identity-tokenizer-regressions.json",
         "crates/pixiv-sdk/tests/fixtures/fanbox-solver-public-aliases.json",
-        "crates/pixiv-sdk/tests/fanbox_source_attributes.rs"
+        "crates/pixiv-sdk/tests/fanbox_source_attributes.rs",
+        "sdk/fanbox/migration_identity_json_bytes_test.go",
+        "sdk/fanbox/migration_solver_json_dates_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-identity-json-bytes.json",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-json-dates.json",
+        "sdk/fanbox/migration_solver_stream_completion_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-stream-completion.json"
       ],
       "verified_platforms": [],
       "differences": [
         "Restored Go-first contract only: 309 rows across 20 bounded identity/options/protocol families captured from frozen Go with injected owned HTTP boundaries. FANBOX Rust implementation, native fingerprint/media behavior, resources/content and platform parity remain pending; no verified platform added.",
         "2026-10-10 public SDK identity/options/solver implementation: 156 representable public rows, actual public HTML67, SDK context8 and public solver93 map frozen Go. Private Session is not exported; no public test-only solver control transport. Raw native six-scenario comparison uses the request captured at Go Session boundary, not complete Session/application equivalence. Native/body decompression, resource/content, saved CLI/MCP, arbitrary Go type/nil cases and unrestricted native/platform behavior remain unfinished; no verified platform added. Current checkpoint aggregate gates and review are recorded separately.",
-        "Independent review added separate actual Go14 tokenizer/identity fold/decimal-port and Go7 solver fold regressions. Genuine Rust runtime RED precedes callback-aligned duplicate recovery, Go ASCII-schema SimpleFold and preserved decimal authority fixes. Original309/public67/public93/core124/redirect3 input/observation expectations remain unchanged. Lone-surrogate replacement, JSON depth10000 and solver date grammar remain concrete next-slice gaps; native6 remains a bounded Linux raw factory comparison, not full Session/platform verification."
+        "Independent review added separate actual Go14 tokenizer/identity fold/decimal-port and Go7 solver fold regressions. Genuine Rust runtime RED precedes callback-aligned duplicate recovery, Go ASCII-schema SimpleFold and preserved decimal authority fixes. Original309/public67/public93/core124/redirect3 input/observation expectations remain unchanged. Lone-surrogate replacement, JSON depth10000 and solver date grammar remain concrete next-slice gaps; native6 remains a bounded Linux raw factory comparison, not full Session/platform verification.",
+        "Fresh Go-first public identity47/solver79 exact-byte rows cover surrogate replacement, invalid UTF-8, nesting10000, selected literal-NUL metadata and the two actual solver expiry layouts. Genuine Rust semantic RED precedes focused GREEN. First-root normalization excludes ignored later bytes. Scalar-root streaming timing and unrestricted grammar remain open; private nanoseconds/offset fields are source-derived rather than public capture assertions. Final aggregate gate/review evidence is recorded separately; no verified platform added."
       ]
     },
     {

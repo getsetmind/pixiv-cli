@@ -336,7 +336,8 @@ impl Inner {
                 return Err(malformed());
             };
             bytes.extend_from_slice(&chunk);
-            let mut decoder = serde_json::Deserializer::from_slice(&bytes);
+            let text = super::json::first_value(&bytes).map_err(|_| malformed())?;
+            let mut decoder = serde_json::Deserializer::from_str(&text);
             match Box::<RawValue>::deserialize(&mut decoder) {
                 Ok(document) => {
                     drop(response);
@@ -547,15 +548,9 @@ fn parse_expiry(raw: &RawValue) -> std::result::Result<Expiry, Failure> {
         });
     }
     let text = text.ok_or_else(malformed)?;
-    let date = chrono::DateTime::parse_from_rfc3339(&text)
-        .map(|date| date.with_timezone(&chrono::Utc))
-        .or_else(|_| {
-            chrono::NaiveDateTime::parse_from_str(&text, "%a, %d %b %Y %H:%M:%S GMT")
-                .map(|date| date.and_utc())
-        })
-        .map_err(|_| malformed())?;
+    let (seconds, nanoseconds) = super::expiry_date::parse(&text).ok_or_else(malformed)?;
     Ok(Expiry {
-        seconds: date.timestamp().wrapping_add(UNIX_TO_INTERNAL_SECONDS),
-        nanoseconds: date.timestamp_subsec_nanos(),
+        seconds: seconds.wrapping_add(UNIX_TO_INTERNAL_SECONDS),
+        nanoseconds,
     })
 }
