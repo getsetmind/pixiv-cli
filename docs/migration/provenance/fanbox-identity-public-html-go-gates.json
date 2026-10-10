@@ -1,0 +1,224 @@
+{
+  "created_at_utc": "2026-10-10T06:45:53.786369+00:00",
+  "base_commit": "51dcb2c4f6e196372f0f022170d8b53f1f5eff3a",
+  "source_commit": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "go_version": "go1.27.1",
+  "public_operation": "fanbox.Client.CurrentUser",
+  "case_count": 67,
+  "reused_inputs": {
+    "user": 48,
+    "document": 19,
+    "exact_source_documents": true,
+    "source_fixture_case_count": 309
+  },
+  "successful_identity_outcomes": 25,
+  "classified_upstream_error_outcomes": 42,
+  "error_messages": {
+    "": 25,
+    "fanbox:CurrentUser: upstream_error: FANBOX metadata has no valid user id": 16,
+    "fanbox:CurrentUser: upstream_error: FANBOX metadata has no display name": 3,
+    "fanbox:CurrentUser: upstream_error: FANBOX metadata is not valid JSON": 12,
+    "fanbox:CurrentUser: upstream_error: FANBOX metadata has an invalid creator id": 3,
+    "fanbox:CurrentUser: upstream_error: FANBOX metadata has an invalid creator status": 2,
+    "fanbox:CurrentUser: upstream_error: FANBOX metadata tag was not found": 6
+  },
+  "injected_requests": 67,
+  "owned_bodies": 67,
+  "bodies_closed_once": 67,
+  "fixture_bytes": 224486,
+  "sha256": {
+    "sdk/fanbox/migration_identity_public_html_test.go": "b71cd78abd9d2e98b26cef97a8cbcbcd648b8b53a506389c669525c28c3b09c9",
+    "crates/pixiv-sdk/tests/fixtures/fanbox-identity-public-html.json": "fe0eee2fc4f5d08c717a223f0df043c003458c1893fe55e95f66ac4df043e388"
+  },
+  "protected_original_sha256": {
+    "sdk/fanbox/migration_identity_protocol_test.go": "65784f3eaf202bc3799e7ee252c6c75e8e6b3a2ab259ef0b273db9f1e56b7015",
+    "crates/pixiv-sdk/tests/fixtures/fanbox-identity-protocol.json": "cab8573fbc51a49be2eadb540c25d5386739edc2329eaa80e0ca4d9f6e2c611b"
+  },
+  "protected_original_bytes_equal_base_commit": true,
+  "capture_replay_fixture_unchanged": true,
+  "checks": {
+    "gofmt": {
+      "exit": 0,
+      "status": "passed",
+      "command": "gofmt -w sdk/fanbox/migration_identity_public_html_test.go && test -z \"$(gofmt -l sdk/fanbox/migration_identity_public_html_test.go)\"",
+      "log": "/tmp/fanbox-identity-public-html/gofmt.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "Only the new owned Go supplement file; gofmt -l was empty"
+    },
+    "capture": {
+      "exit": 0,
+      "status": "passed",
+      "command": "go test ./sdk/fanbox -run ^TestMigrationFanboxIdentityPublicHTMLFrozenGo$ -count=1 -v -args -migration-capture-fanbox-identity-public-html",
+      "log": "/tmp/fanbox-identity-public-html/capture.log",
+      "log_sha256": "fb91e21bd28a145298f8a4851e9450c10714c24f3e8b43389586af8d62e0c43c",
+      "started_utc": "2026-10-10T06:41:48Z",
+      "finished_utc": "2026-10-10T06:41:49Z",
+      "public_html_subcases_passed": 67,
+      "scope": "Only actual public SDK CurrentUser with synthetic owned injected transport; frozen sources, stdlib and dependency archives/extracted bytes guarded"
+    },
+    "replay": {
+      "exit": 0,
+      "status": "passed",
+      "command": "go test ./sdk/fanbox -run ^TestMigrationFanboxIdentityPublicHTMLFrozenGo$ -count=1 -v",
+      "log": "/tmp/fanbox-identity-public-html/replay.log",
+      "log_sha256": "4af8c83f62c8c9cbc8b728616c79b20741335e2d932a23367b96c32cd381f1ce",
+      "started_utc": "2026-10-10T06:42:00Z",
+      "finished_utc": "2026-10-10T06:42:01Z",
+      "public_html_subcases_passed": 67,
+      "scope": "Only actual public SDK CurrentUser with synthetic owned injected transport; frozen sources, stdlib and dependency archives/extracted bytes guarded"
+    },
+    "related": {
+      "exit": 0,
+      "status": "passed",
+      "command": "go test ./sdk/fanbox ./internal/services/fanbox/protocol -run \\^\\(TestMigrationFanboxIdentityPublicHTMLFrozenGo\\|TestCurrentUser\\|TestValidateSession\\|TestValidateSessionExpired\\|TestSessionCredentialsRedaction\\|TestParseIdentityMetadataHTML.\\*\\|TestCurrentUserParsesHomepageMetadata\\|TestCurrentUserRejectsMissingMetadata\\|TestNormalizeCookieHeader.\\*\\)\\$ -count=1",
+      "log": "/tmp/fanbox-identity-public-html/related.log",
+      "log_sha256": "88ce9e17d734af23d43a2c92a06fa60488b662ae8e59708d12c91adc66bfffc0",
+      "started_utc": "2026-10-10T06:43:41Z",
+      "finished_utc": "2026-10-10T06:43:42Z",
+      "scope": "Narrow identity/public SDK selectors only; SDK has 5 selected top-level tests including 67 public HTML subcases; protocol has 8 selected identity/cookie top-level tests; all transport responses are injected",
+      "packages_passed": 2,
+      "selected_top_level_test_count": 13
+    },
+    "race": {
+      "exit": 0,
+      "status": "passed",
+      "command": "go test -race ./sdk/fanbox ./internal/services/fanbox/protocol -run \\^\\(TestMigrationFanboxIdentityPublicHTMLFrozenGo\\|TestCurrentUser\\|TestValidateSession\\|TestValidateSessionExpired\\|TestSessionCredentialsRedaction\\|TestParseIdentityMetadataHTML.\\*\\|TestCurrentUserParsesHomepageMetadata\\|TestCurrentUserRejectsMissingMetadata\\|TestNormalizeCookieHeader.\\*\\)\\$ -count=1",
+      "log": "/tmp/fanbox-identity-public-html/race.log",
+      "log_sha256": "ab2f57b9ab286dc4c0d7560b19b5cc7cc1d6f13b3e54f3f94771101976cc9d5c",
+      "started_utc": "2026-10-10T06:43:42Z",
+      "finished_utc": "2026-10-10T06:43:45Z",
+      "scope": "Narrow identity/public SDK selectors only; SDK has 5 selected top-level tests including 67 public HTML subcases; protocol has 8 selected identity/cookie top-level tests; all transport responses are injected",
+      "packages_passed": 2,
+      "selected_top_level_test_count": 13
+    },
+    "vet": {
+      "exit": 0,
+      "status": "passed",
+      "command": "go vet ./sdk/fanbox ./internal/services/fanbox/protocol",
+      "log": "/tmp/fanbox-identity-public-html/vet.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "started_utc": "2026-10-10T06:43:45Z",
+      "finished_utc": "2026-10-10T06:43:45Z",
+      "scope": "Nonexecuting vet over SDK FANBOX and protocol packages"
+    },
+    "related-broad": {
+      "exit": 0,
+      "status": "passed",
+      "command": "go test ./sdk/fanbox ./internal/services/fanbox/protocol -count=1",
+      "log": "/tmp/fanbox-identity-public-html/related-broad.log",
+      "log_sha256": "b8c3bee9374e0d950988ec1e51af9a97d70307dacc35806efbd410306adbb536",
+      "started_utc": "2026-10-10T06:42:22Z",
+      "finished_utc": "2026-10-10T06:42:54Z",
+      "scope": "Full existing SDK FANBOX and protocol packages. This broader command executed the pre-existing approved six-case native loopback profile suite and existing package tests. It was broader than this supplement intended. No new or denied supplemental native/HEAD/upload/multiplex case was added or reconstructed.",
+      "packages_passed": 2,
+      "existing_native_profile_subcases_passed": 6
+    },
+    "race-broad-interrupted": {
+      "exit": 130,
+      "status": "interrupted",
+      "command": "go test -race ./sdk/fanbox ./internal/services/fanbox/protocol -count=1",
+      "log": "/tmp/fanbox-identity-public-html/race-broad-interrupted.log",
+      "log_sha256": "b1c592aaae7888e26a6870cf7652cbfa3e13d215f9213592c95ff9f4d780691b",
+      "started_utc": "2026-10-10T06:42:54Z",
+      "finished_utc": "2026-10-10T06:43:41Z",
+      "scope": "Full existing SDK FANBOX and protocol packages; interrupted once broad native-loopback scope was noticed. SDK package completed before interruption; no terminal protocol result. Native protocol subcase progress cannot be recovered from this nonverbose log and is not claimed.",
+      "packages_passed": 1,
+      "completed_packages": [
+        "github.com/FlanChanXwO/pixiv-cli/sdk/fanbox"
+      ],
+      "packages_without_terminal_result": [
+        "github.com/FlanChanXwO/pixiv-cli/internal/services/fanbox/protocol"
+      ],
+      "note": "/tmp/fanbox-identity-public-html/race-broad-interrupted.note"
+    }
+  },
+  "check_summary": {
+    "completed_passed_commands": 7,
+    "interrupted_commands": 1,
+    "narrow_supplement_passed_commands": 6,
+    "broader_related_passed_commands": 1,
+    "no_unreported_or_retried_interruption": true
+  },
+  "source_sha256": {
+    "go.mod": "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c",
+    "go.sum": "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e",
+    "internal/services/fanbox/protocol/cookie.go": "692013694d29e4fe67cee7641c4dcdafe73158bea107666c194e6305d33b45a9",
+    "internal/services/fanbox/protocol/identity.go": "10ba481b43e3ec7d0bdaa2defbbd629c4b5bb2aa169c5bff99c8e756de8143d9",
+    "internal/services/fanbox/protocol/protocol.go": "c153337aa61756f5d5ea36ec32ca272e68da8a1604c1d4a4e4d6bcb2c957fdd3",
+    "internal/services/fanbox/protocol/solver.go": "e55464b091fa6720b7134a9487684c6c0969f9b4921384ea0e091d634782fcea",
+    "sdk/error.go": "d8e48078c464f18a26cdcf32828e423dd948f17061269b222f82e08a8cee0041",
+    "sdk/fanbox/dto.go": "860f6d3f18d083526681cf86112dbbdb7faa382e1f9cac3e35b543f56c2df505",
+    "sdk/fanbox/errors.go": "523577a066e3d53ce9eced8c7afbe29f422a75ce6aca58bc3b5b6fbf8da59909",
+    "sdk/fanbox/fanbox.go": "2208576144b94b89efd57b6f054ee018268812d52d556fd0758e2ee322577542",
+    "sdk/fanbox/models.go": "1dd3928aa6752c51f114c678eef3b0a2b4784a275ec80fcdbbd61006407e4623",
+    "sdk/fanbox/ops.go": "868b3b68de07d7638af5f9dd3ab1be8f0c9751f222c05c7776cde092052a7c8d",
+    "sdk/fanbox/request.go": "deea7897788f1013297fc3cf03a7b71ff0d893335d6434d1908feb2245ece263"
+  },
+  "go_stdlib_sha256": {
+    "net/http/client.go": "ced3428a85206de8de79c10de38d34951e0b9823c0ccb68ff51329d048a1f7b9",
+    "net/http/request.go": "c3257079994b4e4f74f01cef72508919983ba31f91fcf599d348e9d52cec1540",
+    "net/http/response.go": "0b32a0b4ee51e00e3410764f3b2ffe1163dccb9cad548b097f47db85893a2f44"
+  },
+  "dependencies": [
+    {
+      "module": "github.com/bogdanfinn/fhttp",
+      "sum": "h1:LiQyHOY3i0QoxxNB7nq27/nGNNbtPj0fuBPozhR7Ws4=",
+      "version": "v0.6.8",
+      "zip_sha256": "51f74cb0f96633810038f94773bdbf0356c98a23d9de9eada3008521ae97f3cb"
+    },
+    {
+      "module": "github.com/bogdanfinn/tls-client",
+      "sum": "h1:KiFAlED55DJ8Fcocn+/1nX6PrDFcttIHAf/GDkV6KN8=",
+      "version": "v1.15.1",
+      "zip_sha256": "01aa0c1f09bc29397b97090a9fb03677ce22491f8a1cdd0a0dc7cdbce16cf031"
+    },
+    {
+      "module": "github.com/bogdanfinn/utls",
+      "sum": "h1:OuJ497cc7F3yKNVHRsYPQdGggmk5x6+V5ZlrCR7fOLU=",
+      "version": "v1.7.7-barnius",
+      "zip_sha256": "6e21ca668a463b41d3a4f92449e69872dbb0056b1d41b14b760e1237894203ef"
+    },
+    {
+      "module": "golang.org/x/net",
+      "sum": "h1:zyQRTTrjc33Lhh0fBgT/H3oZq9WuvRR5gPC70xpDiQU=",
+      "version": "v0.48.0",
+      "zip_sha256": "cf5206797e66bbe72fc13542d53a57d069a563cebb6d045c07a870eb4fd888c9"
+    }
+  ],
+  "go_only_projections": [
+    "go_only_format: Go fmt syntax and type spellings; credential redaction remains semantic",
+    "go_only_error_tree: concrete Go error types and unwrap/join topology; message/classification/context identity remain semantic",
+    "go_only_matches_reason: Go errors.Is with sdk.Error reason-only sentinel",
+    "go_only_read_calls and go_only_events: injected reader calls, sizes and ordering under Go io/net/http/json",
+    "go_only_injected_client_unchanged: Go pointer/dependency ownership comparison"
+  ],
+  "limitations": [
+    "Only the original 67 identity HTML inputs are supplemented; no added input matrix or changed original 309-row fixture/test bytes.",
+    "Owned synthetic response bodies and session values only; no external requests, native transport, live accounts, browser, media, HEAD or upload work.",
+    "SDK code is the actual sdk.Error.Reason; source_message is the actual errors.Unwrap result, or an empty string when absent.",
+    "Go-only error types, reader call topology and injected-client pointer ownership remain projections; SDK classifications, safe source messages, DTOs, request details, bytes read and close counts remain semantic."
+  ],
+  "validation_scope_disclosure": "The public fixture capture, unchanged replay and final identity-only related/race commands use synthetic injected transport and no native network. An earlier completed broader related command also executed the existing approved six native-loopback cases; an earlier broader race command was interrupted with SDK success and protocol unresolved. Both are preserved as separate logs and are not counted as focused no-network evidence. No new or denied supplemental scenario was executed.",
+  "environment": {
+    "canonical_sources": [
+      "/tmp/quantus-toolchain-env.txt",
+      "/tmp/pixiv-rust-validation-env.sh"
+    ],
+    "GOPROXY": "off",
+    "GOSUMDB": "off",
+    "GOTOOLCHAIN": "local",
+    "GOMODCACHE": "/workspace/scratch/cd334a12dde3/go-path/pkg/mod",
+    "toolchain": "/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go"
+  },
+  "owned_repository_files": [
+    "sdk/fanbox/migration_identity_public_html_test.go",
+    "crates/pixiv-sdk/tests/fixtures/fanbox-identity-public-html.json"
+  ],
+  "not_executed": [
+    "Cargo",
+    "Rust production changes",
+    "Go production/module changes",
+    "external/live account calls",
+    "new or denied supplemental native/multiplex/HEAD/upload scenarios"
+  ]
+}

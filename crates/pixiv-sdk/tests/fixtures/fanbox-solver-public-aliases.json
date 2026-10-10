@@ -1,0 +1,2179 @@
+{
+  "cases": [
+    {
+      "name": "unicode_alias/status_long_s",
+      "input": {
+        "mode": "",
+        "native_steps": [
+          {
+            "status": 403,
+            "body": "synthetic-challenge",
+            "headers": {
+              "Cf-Mitigated": [
+                "challenge"
+              ]
+            }
+          },
+          {
+            "status": 200,
+            "body": "\u003cmeta name=\"metadata\" content=\"{\u0026#34;context\u0026#34;:{\u0026#34;user\u0026#34;:{\u0026#34;userId\u0026#34;:42,\u0026#34;name\u0026#34;:\u0026#34; synthetic user \u0026#34;,\u0026#34;creatorId\u0026#34;:\u0026#34; artist \u0026#34;,\u0026#34;creatorStatus\u0026#34;:\u0026#34; active \u0026#34;,\u0026#34;isCreator\u0026#34;:true}}}\"\u003e"
+          },
+          {
+            "status": 200,
+            "body": "\u003cmeta name=\"metadata\" content=\"{\u0026#34;context\u0026#34;:{\u0026#34;user\u0026#34;:{\u0026#34;userId\u0026#34;:42,\u0026#34;name\u0026#34;:\u0026#34; synthetic user \u0026#34;,\u0026#34;creatorId\u0026#34;:\u0026#34; artist \u0026#34;,\u0026#34;creatorStatus\u0026#34;:\u0026#34; active \u0026#34;,\u0026#34;isCreator\u0026#34;:true}}}\"\u003e"
+          }
+        ],
+        "control_steps": [
+          {
+            "status": 200,
+            "body": "{\"ſtatus\":\"ok\",\"solution\":{\"userAgent\":\"synthetic-solver-agent\",\"cookies\":[{\"name\":\"cf_clearance\",\"value\":\"synthetic-clearance\",\"expiry\":4102444800}]}}"
+          }
+        ],
+        "calls": 2,
+        "solver_disabled": false,
+        "control_unavailable": false,
+        "solver_proxy": ""
+      },
+      "observation": {
+        "control_requests": [
+          {
+            "accept": "application/json",
+            "body": "{\"cmd\":\"request.get\",\"url\":\"https://www.fanbox.cc/\"}",
+            "content_length": 52,
+            "content_type": "application/json",
+            "cookie": "",
+            "go_only_default_user_agent": "Go-http-client/1.1",
+            "go_only_protocol": "HTTP/1.1",
+            "method": "POST",
+            "origin": "",
+            "path": "/v1",
+            "referer": ""
+          }
+        ],
+        "events": [
+          {
+            "Module": "FANBOX network",
+            "Kind": "network_request",
+            "Operation": "retrieving",
+            "Resource": "/",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "http://native-proxy.example:8888",
+            "UserAgent": "synthetic-native-agent",
+            "Reason": "",
+            "Status": 403,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "challenge",
+            "Operation": "request",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 403,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "solver_started",
+            "Operation": "challenge recovery",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "solver_completed",
+            "Operation": "clearance",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "replay",
+            "Operation": "request",
+            "Resource": "",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "network_request",
+            "Operation": "retrieving",
+            "Resource": "/",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "http://native-proxy.example:8888",
+            "UserAgent": "synthetic-solver-agent",
+            "Reason": "",
+            "Status": 200,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "network_request",
+            "Operation": "retrieving",
+            "Resource": "/",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "http://native-proxy.example:8888",
+            "UserAgent": "synthetic-solver-agent",
+            "Reason": "",
+            "Status": 200,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          }
+        ],
+        "native": {
+          "bodies": [
+            {
+              "bytes_read": 19,
+              "close_calls": 1,
+              "go_only_read_calls": 2
+            },
+            {
+              "bytes_read": 240,
+              "close_calls": 1,
+              "go_only_read_calls": 2
+            },
+            {
+              "bytes_read": 240,
+              "close_calls": 1,
+              "go_only_read_calls": 2
+            }
+          ],
+          "idle_calls": 2,
+          "requests": [
+            {
+              "caller": "single",
+              "context_canceled": false,
+              "context_has_deadline": false,
+              "headers": {
+                "Accept": [
+                  "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+                ],
+                "Cookie": [
+                  "FANBOXSESSID=[SYNTHETIC_SESSION]"
+                ],
+                "Origin": [
+                  "https://www.fanbox.cc"
+                ],
+                "Referer": [
+                  "https://www.fanbox.cc/"
+                ],
+                "User-Agent": [
+                  "synthetic-native-agent"
+                ]
+              },
+              "method": "GET",
+              "request_has_body": false,
+              "url": "https://www.fanbox.cc/"
+            },
+            {
+              "caller": "single",
+              "context_canceled": false,
+              "context_has_deadline": false,
+              "headers": {
+                "Accept": [
+                  "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+                ],
+                "Cookie": [
+                  "FANBOXSESSID=[SYNTHETIC_SESSION]; cf_clearance=synthetic-clearance"
+                ],
+                "Origin": [
+                  "https://www.fanbox.cc"
+                ],
+                "Referer": [
+                  "https://www.fanbox.cc/"
+                ],
+                "User-Agent": [
+                  "synthetic-solver-agent"
+                ]
+              },
+              "method": "GET",
+              "request_has_body": false,
+              "url": "https://www.fanbox.cc/"
+            },
+            {
+              "caller": "single",
+              "context_canceled": false,
+              "context_has_deadline": false,
+              "headers": {
+                "Accept": [
+                  "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+                ],
+                "Cookie": [
+                  "FANBOXSESSID=[SYNTHETIC_SESSION]; cf_clearance=synthetic-clearance"
+                ],
+                "Origin": [
+                  "https://www.fanbox.cc"
+                ],
+                "Referer": [
+                  "https://www.fanbox.cc/"
+                ],
+                "User-Agent": [
+                  "synthetic-solver-agent"
+                ]
+              },
+              "method": "GET",
+              "request_has_body": false,
+              "url": "https://www.fanbox.cc/"
+            }
+          ]
+        },
+        "outcomes": {
+          "single": [
+            {
+              "dto": {
+                "user_id": 42,
+                "display_name": "synthetic user",
+                "creator_id": "artist",
+                "creator_status": "active",
+                "is_creator": true
+              },
+              "error": {
+                "canceled": false,
+                "challenge": false,
+                "code": "",
+                "deadline": false,
+                "forbidden": false,
+                "go_only_error_tree": [],
+                "invalid_option": false,
+                "message": "",
+                "not_authenticated": false,
+                "reason": "",
+                "source_message": ""
+              }
+            },
+            {
+              "dto": {
+                "user_id": 42,
+                "display_name": "synthetic user",
+                "creator_id": "artist",
+                "creator_status": "active",
+                "is_creator": true
+              },
+              "error": {
+                "canceled": false,
+                "challenge": false,
+                "code": "",
+                "deadline": false,
+                "forbidden": false,
+                "go_only_error_tree": [],
+                "invalid_option": false,
+                "message": "",
+                "not_authenticated": false,
+                "reason": "",
+                "source_message": ""
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "unicode_alias/solution_long_s",
+      "input": {
+        "mode": "",
+        "native_steps": [
+          {
+            "status": 403,
+            "body": "synthetic-challenge",
+            "headers": {
+              "Cf-Mitigated": [
+                "challenge"
+              ]
+            }
+          },
+          {
+            "status": 200,
+            "body": "\u003cmeta name=\"metadata\" content=\"{\u0026#34;context\u0026#34;:{\u0026#34;user\u0026#34;:{\u0026#34;userId\u0026#34;:42,\u0026#34;name\u0026#34;:\u0026#34; synthetic user \u0026#34;,\u0026#34;creatorId\u0026#34;:\u0026#34; artist \u0026#34;,\u0026#34;creatorStatus\u0026#34;:\u0026#34; active \u0026#34;,\u0026#34;isCreator\u0026#34;:true}}}\"\u003e"
+          },
+          {
+            "status": 200,
+            "body": "\u003cmeta name=\"metadata\" content=\"{\u0026#34;context\u0026#34;:{\u0026#34;user\u0026#34;:{\u0026#34;userId\u0026#34;:42,\u0026#34;name\u0026#34;:\u0026#34; synthetic user \u0026#34;,\u0026#34;creatorId\u0026#34;:\u0026#34; artist \u0026#34;,\u0026#34;creatorStatus\u0026#34;:\u0026#34; active \u0026#34;,\u0026#34;isCreator\u0026#34;:true}}}\"\u003e"
+          }
+        ],
+        "control_steps": [
+          {
+            "status": 200,
+            "body": "{\"status\":\"ok\",\"ſolution\":{\"userAgent\":\"synthetic-solver-agent\",\"cookies\":[{\"name\":\"cf_clearance\",\"value\":\"synthetic-clearance\",\"expiry\":4102444800}]}}"
+          }
+        ],
+        "calls": 2,
+        "solver_disabled": false,
+        "control_unavailable": false,
+        "solver_proxy": ""
+      },
+      "observation": {
+        "control_requests": [
+          {
+            "accept": "application/json",
+            "body": "{\"cmd\":\"request.get\",\"url\":\"https://www.fanbox.cc/\"}",
+            "content_length": 52,
+            "content_type": "application/json",
+            "cookie": "",
+            "go_only_default_user_agent": "Go-http-client/1.1",
+            "go_only_protocol": "HTTP/1.1",
+            "method": "POST",
+            "origin": "",
+            "path": "/v1",
+            "referer": ""
+          }
+        ],
+        "events": [
+          {
+            "Module": "FANBOX network",
+            "Kind": "network_request",
+            "Operation": "retrieving",
+            "Resource": "/",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "http://native-proxy.example:8888",
+            "UserAgent": "synthetic-native-agent",
+            "Reason": "",
+            "Status": 403,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "challenge",
+            "Operation": "request",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 403,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "solver_started",
+            "Operation": "challenge recovery",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "solver_completed",
+            "Operation": "clearance",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "replay",
+            "Operation": "request",
+            "Resource": "",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "network_request",
+            "Operation": "retrieving",
+            "Resource": "/",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "http://native-proxy.example:8888",
+            "UserAgent": "synthetic-solver-agent",
+            "Reason": "",
+            "Status": 200,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "network_request",
+            "Operation": "retrieving",
+            "Resource": "/",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "http://native-proxy.example:8888",
+            "UserAgent": "synthetic-solver-agent",
+            "Reason": "",
+            "Status": 200,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          }
+        ],
+        "native": {
+          "bodies": [
+            {
+              "bytes_read": 19,
+              "close_calls": 1,
+              "go_only_read_calls": 2
+            },
+            {
+              "bytes_read": 240,
+              "close_calls": 1,
+              "go_only_read_calls": 2
+            },
+            {
+              "bytes_read": 240,
+              "close_calls": 1,
+              "go_only_read_calls": 2
+            }
+          ],
+          "idle_calls": 2,
+          "requests": [
+            {
+              "caller": "single",
+              "context_canceled": false,
+              "context_has_deadline": false,
+              "headers": {
+                "Accept": [
+                  "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+                ],
+                "Cookie": [
+                  "FANBOXSESSID=[SYNTHETIC_SESSION]"
+                ],
+                "Origin": [
+                  "https://www.fanbox.cc"
+                ],
+                "Referer": [
+                  "https://www.fanbox.cc/"
+                ],
+                "User-Agent": [
+                  "synthetic-native-agent"
+                ]
+              },
+              "method": "GET",
+              "request_has_body": false,
+              "url": "https://www.fanbox.cc/"
+            },
+            {
+              "caller": "single",
+              "context_canceled": false,
+              "context_has_deadline": false,
+              "headers": {
+                "Accept": [
+                  "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+                ],
+                "Cookie": [
+                  "FANBOXSESSID=[SYNTHETIC_SESSION]; cf_clearance=synthetic-clearance"
+                ],
+                "Origin": [
+                  "https://www.fanbox.cc"
+                ],
+                "Referer": [
+                  "https://www.fanbox.cc/"
+                ],
+                "User-Agent": [
+                  "synthetic-solver-agent"
+                ]
+              },
+              "method": "GET",
+              "request_has_body": false,
+              "url": "https://www.fanbox.cc/"
+            },
+            {
+              "caller": "single",
+              "context_canceled": false,
+              "context_has_deadline": false,
+              "headers": {
+                "Accept": [
+                  "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+                ],
+                "Cookie": [
+                  "FANBOXSESSID=[SYNTHETIC_SESSION]; cf_clearance=synthetic-clearance"
+                ],
+                "Origin": [
+                  "https://www.fanbox.cc"
+                ],
+                "Referer": [
+                  "https://www.fanbox.cc/"
+                ],
+                "User-Agent": [
+                  "synthetic-solver-agent"
+                ]
+              },
+              "method": "GET",
+              "request_has_body": false,
+              "url": "https://www.fanbox.cc/"
+            }
+          ]
+        },
+        "outcomes": {
+          "single": [
+            {
+              "dto": {
+                "user_id": 42,
+                "display_name": "synthetic user",
+                "creator_id": "artist",
+                "creator_status": "active",
+                "is_creator": true
+              },
+              "error": {
+                "canceled": false,
+                "challenge": false,
+                "code": "",
+                "deadline": false,
+                "forbidden": false,
+                "go_only_error_tree": [],
+                "invalid_option": false,
+                "message": "",
+                "not_authenticated": false,
+                "reason": "",
+                "source_message": ""
+              }
+            },
+            {
+              "dto": {
+                "user_id": 42,
+                "display_name": "synthetic user",
+                "creator_id": "artist",
+                "creator_status": "active",
+                "is_creator": true
+              },
+              "error": {
+                "canceled": false,
+                "challenge": false,
+                "code": "",
+                "deadline": false,
+                "forbidden": false,
+                "go_only_error_tree": [],
+                "invalid_option": false,
+                "message": "",
+                "not_authenticated": false,
+                "reason": "",
+                "source_message": ""
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "unicode_alias/user_agent_long_s",
+      "input": {
+        "mode": "",
+        "native_steps": [
+          {
+            "status": 403,
+            "body": "synthetic-challenge",
+            "headers": {
+              "Cf-Mitigated": [
+                "challenge"
+              ]
+            }
+          },
+          {
+            "status": 200,
+            "body": "\u003cmeta name=\"metadata\" content=\"{\u0026#34;context\u0026#34;:{\u0026#34;user\u0026#34;:{\u0026#34;userId\u0026#34;:42,\u0026#34;name\u0026#34;:\u0026#34; synthetic user \u0026#34;,\u0026#34;creatorId\u0026#34;:\u0026#34; artist \u0026#34;,\u0026#34;creatorStatus\u0026#34;:\u0026#34; active \u0026#34;,\u0026#34;isCreator\u0026#34;:true}}}\"\u003e"
+          },
+          {
+            "status": 200,
+            "body": "\u003cmeta name=\"metadata\" content=\"{\u0026#34;context\u0026#34;:{\u0026#34;user\u0026#34;:{\u0026#34;userId\u0026#34;:42,\u0026#34;name\u0026#34;:\u0026#34; synthetic user \u0026#34;,\u0026#34;creatorId\u0026#34;:\u0026#34; artist \u0026#34;,\u0026#34;creatorStatus\u0026#34;:\u0026#34; active \u0026#34;,\u0026#34;isCreator\u0026#34;:true}}}\"\u003e"
+          }
+        ],
+        "control_steps": [
+          {
+            "status": 200,
+            "body": "{\"status\":\"ok\",\"solution\":{\"uſerAgent\":\"synthetic-solver-agent\",\"cookies\":[{\"name\":\"cf_clearance\",\"value\":\"synthetic-clearance\",\"expiry\":4102444800}]}}"
+          }
+        ],
+        "calls": 2,
+        "solver_disabled": false,
+        "control_unavailable": false,
+        "solver_proxy": ""
+      },
+      "observation": {
+        "control_requests": [
+          {
+            "accept": "application/json",
+            "body": "{\"cmd\":\"request.get\",\"url\":\"https://www.fanbox.cc/\"}",
+            "content_length": 52,
+            "content_type": "application/json",
+            "cookie": "",
+            "go_only_default_user_agent": "Go-http-client/1.1",
+            "go_only_protocol": "HTTP/1.1",
+            "method": "POST",
+            "origin": "",
+            "path": "/v1",
+            "referer": ""
+          }
+        ],
+        "events": [
+          {
+            "Module": "FANBOX network",
+            "Kind": "network_request",
+            "Operation": "retrieving",
+            "Resource": "/",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "http://native-proxy.example:8888",
+            "UserAgent": "synthetic-native-agent",
+            "Reason": "",
+            "Status": 403,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "challenge",
+            "Operation": "request",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 403,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "solver_started",
+            "Operation": "challenge recovery",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "solver_completed",
+            "Operation": "clearance",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "replay",
+            "Operation": "request",
+            "Resource": "",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "network_request",
+            "Operation": "retrieving",
+            "Resource": "/",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "http://native-proxy.example:8888",
+            "UserAgent": "synthetic-solver-agent",
+            "Reason": "",
+            "Status": 200,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "network_request",
+            "Operation": "retrieving",
+            "Resource": "/",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "http://native-proxy.example:8888",
+            "UserAgent": "synthetic-solver-agent",
+            "Reason": "",
+            "Status": 200,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          }
+        ],
+        "native": {
+          "bodies": [
+            {
+              "bytes_read": 19,
+              "close_calls": 1,
+              "go_only_read_calls": 2
+            },
+            {
+              "bytes_read": 240,
+              "close_calls": 1,
+              "go_only_read_calls": 2
+            },
+            {
+              "bytes_read": 240,
+              "close_calls": 1,
+              "go_only_read_calls": 2
+            }
+          ],
+          "idle_calls": 2,
+          "requests": [
+            {
+              "caller": "single",
+              "context_canceled": false,
+              "context_has_deadline": false,
+              "headers": {
+                "Accept": [
+                  "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+                ],
+                "Cookie": [
+                  "FANBOXSESSID=[SYNTHETIC_SESSION]"
+                ],
+                "Origin": [
+                  "https://www.fanbox.cc"
+                ],
+                "Referer": [
+                  "https://www.fanbox.cc/"
+                ],
+                "User-Agent": [
+                  "synthetic-native-agent"
+                ]
+              },
+              "method": "GET",
+              "request_has_body": false,
+              "url": "https://www.fanbox.cc/"
+            },
+            {
+              "caller": "single",
+              "context_canceled": false,
+              "context_has_deadline": false,
+              "headers": {
+                "Accept": [
+                  "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+                ],
+                "Cookie": [
+                  "FANBOXSESSID=[SYNTHETIC_SESSION]; cf_clearance=synthetic-clearance"
+                ],
+                "Origin": [
+                  "https://www.fanbox.cc"
+                ],
+                "Referer": [
+                  "https://www.fanbox.cc/"
+                ],
+                "User-Agent": [
+                  "synthetic-solver-agent"
+                ]
+              },
+              "method": "GET",
+              "request_has_body": false,
+              "url": "https://www.fanbox.cc/"
+            },
+            {
+              "caller": "single",
+              "context_canceled": false,
+              "context_has_deadline": false,
+              "headers": {
+                "Accept": [
+                  "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+                ],
+                "Cookie": [
+                  "FANBOXSESSID=[SYNTHETIC_SESSION]; cf_clearance=synthetic-clearance"
+                ],
+                "Origin": [
+                  "https://www.fanbox.cc"
+                ],
+                "Referer": [
+                  "https://www.fanbox.cc/"
+                ],
+                "User-Agent": [
+                  "synthetic-solver-agent"
+                ]
+              },
+              "method": "GET",
+              "request_has_body": false,
+              "url": "https://www.fanbox.cc/"
+            }
+          ]
+        },
+        "outcomes": {
+          "single": [
+            {
+              "dto": {
+                "user_id": 42,
+                "display_name": "synthetic user",
+                "creator_id": "artist",
+                "creator_status": "active",
+                "is_creator": true
+              },
+              "error": {
+                "canceled": false,
+                "challenge": false,
+                "code": "",
+                "deadline": false,
+                "forbidden": false,
+                "go_only_error_tree": [],
+                "invalid_option": false,
+                "message": "",
+                "not_authenticated": false,
+                "reason": "",
+                "source_message": ""
+              }
+            },
+            {
+              "dto": {
+                "user_id": 42,
+                "display_name": "synthetic user",
+                "creator_id": "artist",
+                "creator_status": "active",
+                "is_creator": true
+              },
+              "error": {
+                "canceled": false,
+                "challenge": false,
+                "code": "",
+                "deadline": false,
+                "forbidden": false,
+                "go_only_error_tree": [],
+                "invalid_option": false,
+                "message": "",
+                "not_authenticated": false,
+                "reason": "",
+                "source_message": ""
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "unicode_alias/cookies_kelvin",
+      "input": {
+        "mode": "",
+        "native_steps": [
+          {
+            "status": 403,
+            "body": "synthetic-challenge",
+            "headers": {
+              "Cf-Mitigated": [
+                "challenge"
+              ]
+            }
+          },
+          {
+            "status": 200,
+            "body": "\u003cmeta name=\"metadata\" content=\"{\u0026#34;context\u0026#34;:{\u0026#34;user\u0026#34;:{\u0026#34;userId\u0026#34;:42,\u0026#34;name\u0026#34;:\u0026#34; synthetic user \u0026#34;,\u0026#34;creatorId\u0026#34;:\u0026#34; artist \u0026#34;,\u0026#34;creatorStatus\u0026#34;:\u0026#34; active \u0026#34;,\u0026#34;isCreator\u0026#34;:true}}}\"\u003e"
+          },
+          {
+            "status": 200,
+            "body": "\u003cmeta name=\"metadata\" content=\"{\u0026#34;context\u0026#34;:{\u0026#34;user\u0026#34;:{\u0026#34;userId\u0026#34;:42,\u0026#34;name\u0026#34;:\u0026#34; synthetic user \u0026#34;,\u0026#34;creatorId\u0026#34;:\u0026#34; artist \u0026#34;,\u0026#34;creatorStatus\u0026#34;:\u0026#34; active \u0026#34;,\u0026#34;isCreator\u0026#34;:true}}}\"\u003e"
+          }
+        ],
+        "control_steps": [
+          {
+            "status": 200,
+            "body": "{\"status\":\"ok\",\"solution\":{\"userAgent\":\"synthetic-solver-agent\",\"cooKies\":[{\"name\":\"cf_clearance\",\"value\":\"synthetic-clearance\",\"expiry\":4102444800}]}}"
+          }
+        ],
+        "calls": 2,
+        "solver_disabled": false,
+        "control_unavailable": false,
+        "solver_proxy": ""
+      },
+      "observation": {
+        "control_requests": [
+          {
+            "accept": "application/json",
+            "body": "{\"cmd\":\"request.get\",\"url\":\"https://www.fanbox.cc/\"}",
+            "content_length": 52,
+            "content_type": "application/json",
+            "cookie": "",
+            "go_only_default_user_agent": "Go-http-client/1.1",
+            "go_only_protocol": "HTTP/1.1",
+            "method": "POST",
+            "origin": "",
+            "path": "/v1",
+            "referer": ""
+          }
+        ],
+        "events": [
+          {
+            "Module": "FANBOX network",
+            "Kind": "network_request",
+            "Operation": "retrieving",
+            "Resource": "/",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "http://native-proxy.example:8888",
+            "UserAgent": "synthetic-native-agent",
+            "Reason": "",
+            "Status": 403,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "challenge",
+            "Operation": "request",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 403,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "solver_started",
+            "Operation": "challenge recovery",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "solver_completed",
+            "Operation": "clearance",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "replay",
+            "Operation": "request",
+            "Resource": "",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "network_request",
+            "Operation": "retrieving",
+            "Resource": "/",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "http://native-proxy.example:8888",
+            "UserAgent": "synthetic-solver-agent",
+            "Reason": "",
+            "Status": 200,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "network_request",
+            "Operation": "retrieving",
+            "Resource": "/",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "http://native-proxy.example:8888",
+            "UserAgent": "synthetic-solver-agent",
+            "Reason": "",
+            "Status": 200,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          }
+        ],
+        "native": {
+          "bodies": [
+            {
+              "bytes_read": 19,
+              "close_calls": 1,
+              "go_only_read_calls": 2
+            },
+            {
+              "bytes_read": 240,
+              "close_calls": 1,
+              "go_only_read_calls": 2
+            },
+            {
+              "bytes_read": 240,
+              "close_calls": 1,
+              "go_only_read_calls": 2
+            }
+          ],
+          "idle_calls": 2,
+          "requests": [
+            {
+              "caller": "single",
+              "context_canceled": false,
+              "context_has_deadline": false,
+              "headers": {
+                "Accept": [
+                  "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+                ],
+                "Cookie": [
+                  "FANBOXSESSID=[SYNTHETIC_SESSION]"
+                ],
+                "Origin": [
+                  "https://www.fanbox.cc"
+                ],
+                "Referer": [
+                  "https://www.fanbox.cc/"
+                ],
+                "User-Agent": [
+                  "synthetic-native-agent"
+                ]
+              },
+              "method": "GET",
+              "request_has_body": false,
+              "url": "https://www.fanbox.cc/"
+            },
+            {
+              "caller": "single",
+              "context_canceled": false,
+              "context_has_deadline": false,
+              "headers": {
+                "Accept": [
+                  "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+                ],
+                "Cookie": [
+                  "FANBOXSESSID=[SYNTHETIC_SESSION]; cf_clearance=synthetic-clearance"
+                ],
+                "Origin": [
+                  "https://www.fanbox.cc"
+                ],
+                "Referer": [
+                  "https://www.fanbox.cc/"
+                ],
+                "User-Agent": [
+                  "synthetic-solver-agent"
+                ]
+              },
+              "method": "GET",
+              "request_has_body": false,
+              "url": "https://www.fanbox.cc/"
+            },
+            {
+              "caller": "single",
+              "context_canceled": false,
+              "context_has_deadline": false,
+              "headers": {
+                "Accept": [
+                  "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+                ],
+                "Cookie": [
+                  "FANBOXSESSID=[SYNTHETIC_SESSION]; cf_clearance=synthetic-clearance"
+                ],
+                "Origin": [
+                  "https://www.fanbox.cc"
+                ],
+                "Referer": [
+                  "https://www.fanbox.cc/"
+                ],
+                "User-Agent": [
+                  "synthetic-solver-agent"
+                ]
+              },
+              "method": "GET",
+              "request_has_body": false,
+              "url": "https://www.fanbox.cc/"
+            }
+          ]
+        },
+        "outcomes": {
+          "single": [
+            {
+              "dto": {
+                "user_id": 42,
+                "display_name": "synthetic user",
+                "creator_id": "artist",
+                "creator_status": "active",
+                "is_creator": true
+              },
+              "error": {
+                "canceled": false,
+                "challenge": false,
+                "code": "",
+                "deadline": false,
+                "forbidden": false,
+                "go_only_error_tree": [],
+                "invalid_option": false,
+                "message": "",
+                "not_authenticated": false,
+                "reason": "",
+                "source_message": ""
+              }
+            },
+            {
+              "dto": {
+                "user_id": 42,
+                "display_name": "synthetic user",
+                "creator_id": "artist",
+                "creator_status": "active",
+                "is_creator": true
+              },
+              "error": {
+                "canceled": false,
+                "challenge": false,
+                "code": "",
+                "deadline": false,
+                "forbidden": false,
+                "go_only_error_tree": [],
+                "invalid_option": false,
+                "message": "",
+                "not_authenticated": false,
+                "reason": "",
+                "source_message": ""
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "unicode_alias/cookies_long_s",
+      "input": {
+        "mode": "",
+        "native_steps": [
+          {
+            "status": 403,
+            "body": "synthetic-challenge",
+            "headers": {
+              "Cf-Mitigated": [
+                "challenge"
+              ]
+            }
+          },
+          {
+            "status": 200,
+            "body": "\u003cmeta name=\"metadata\" content=\"{\u0026#34;context\u0026#34;:{\u0026#34;user\u0026#34;:{\u0026#34;userId\u0026#34;:42,\u0026#34;name\u0026#34;:\u0026#34; synthetic user \u0026#34;,\u0026#34;creatorId\u0026#34;:\u0026#34; artist \u0026#34;,\u0026#34;creatorStatus\u0026#34;:\u0026#34; active \u0026#34;,\u0026#34;isCreator\u0026#34;:true}}}\"\u003e"
+          },
+          {
+            "status": 200,
+            "body": "\u003cmeta name=\"metadata\" content=\"{\u0026#34;context\u0026#34;:{\u0026#34;user\u0026#34;:{\u0026#34;userId\u0026#34;:42,\u0026#34;name\u0026#34;:\u0026#34; synthetic user \u0026#34;,\u0026#34;creatorId\u0026#34;:\u0026#34; artist \u0026#34;,\u0026#34;creatorStatus\u0026#34;:\u0026#34; active \u0026#34;,\u0026#34;isCreator\u0026#34;:true}}}\"\u003e"
+          }
+        ],
+        "control_steps": [
+          {
+            "status": 200,
+            "body": "{\"status\":\"ok\",\"solution\":{\"userAgent\":\"synthetic-solver-agent\",\"cookieſ\":[{\"name\":\"cf_clearance\",\"value\":\"synthetic-clearance\",\"expiry\":4102444800}]}}"
+          }
+        ],
+        "calls": 2,
+        "solver_disabled": false,
+        "control_unavailable": false,
+        "solver_proxy": ""
+      },
+      "observation": {
+        "control_requests": [
+          {
+            "accept": "application/json",
+            "body": "{\"cmd\":\"request.get\",\"url\":\"https://www.fanbox.cc/\"}",
+            "content_length": 52,
+            "content_type": "application/json",
+            "cookie": "",
+            "go_only_default_user_agent": "Go-http-client/1.1",
+            "go_only_protocol": "HTTP/1.1",
+            "method": "POST",
+            "origin": "",
+            "path": "/v1",
+            "referer": ""
+          }
+        ],
+        "events": [
+          {
+            "Module": "FANBOX network",
+            "Kind": "network_request",
+            "Operation": "retrieving",
+            "Resource": "/",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "http://native-proxy.example:8888",
+            "UserAgent": "synthetic-native-agent",
+            "Reason": "",
+            "Status": 403,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "challenge",
+            "Operation": "request",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 403,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "solver_started",
+            "Operation": "challenge recovery",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "solver_completed",
+            "Operation": "clearance",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "replay",
+            "Operation": "request",
+            "Resource": "",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "network_request",
+            "Operation": "retrieving",
+            "Resource": "/",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "http://native-proxy.example:8888",
+            "UserAgent": "synthetic-solver-agent",
+            "Reason": "",
+            "Status": 200,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "network_request",
+            "Operation": "retrieving",
+            "Resource": "/",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "http://native-proxy.example:8888",
+            "UserAgent": "synthetic-solver-agent",
+            "Reason": "",
+            "Status": 200,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          }
+        ],
+        "native": {
+          "bodies": [
+            {
+              "bytes_read": 19,
+              "close_calls": 1,
+              "go_only_read_calls": 2
+            },
+            {
+              "bytes_read": 240,
+              "close_calls": 1,
+              "go_only_read_calls": 2
+            },
+            {
+              "bytes_read": 240,
+              "close_calls": 1,
+              "go_only_read_calls": 2
+            }
+          ],
+          "idle_calls": 2,
+          "requests": [
+            {
+              "caller": "single",
+              "context_canceled": false,
+              "context_has_deadline": false,
+              "headers": {
+                "Accept": [
+                  "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+                ],
+                "Cookie": [
+                  "FANBOXSESSID=[SYNTHETIC_SESSION]"
+                ],
+                "Origin": [
+                  "https://www.fanbox.cc"
+                ],
+                "Referer": [
+                  "https://www.fanbox.cc/"
+                ],
+                "User-Agent": [
+                  "synthetic-native-agent"
+                ]
+              },
+              "method": "GET",
+              "request_has_body": false,
+              "url": "https://www.fanbox.cc/"
+            },
+            {
+              "caller": "single",
+              "context_canceled": false,
+              "context_has_deadline": false,
+              "headers": {
+                "Accept": [
+                  "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+                ],
+                "Cookie": [
+                  "FANBOXSESSID=[SYNTHETIC_SESSION]; cf_clearance=synthetic-clearance"
+                ],
+                "Origin": [
+                  "https://www.fanbox.cc"
+                ],
+                "Referer": [
+                  "https://www.fanbox.cc/"
+                ],
+                "User-Agent": [
+                  "synthetic-solver-agent"
+                ]
+              },
+              "method": "GET",
+              "request_has_body": false,
+              "url": "https://www.fanbox.cc/"
+            },
+            {
+              "caller": "single",
+              "context_canceled": false,
+              "context_has_deadline": false,
+              "headers": {
+                "Accept": [
+                  "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+                ],
+                "Cookie": [
+                  "FANBOXSESSID=[SYNTHETIC_SESSION]; cf_clearance=synthetic-clearance"
+                ],
+                "Origin": [
+                  "https://www.fanbox.cc"
+                ],
+                "Referer": [
+                  "https://www.fanbox.cc/"
+                ],
+                "User-Agent": [
+                  "synthetic-solver-agent"
+                ]
+              },
+              "method": "GET",
+              "request_has_body": false,
+              "url": "https://www.fanbox.cc/"
+            }
+          ]
+        },
+        "outcomes": {
+          "single": [
+            {
+              "dto": {
+                "user_id": 42,
+                "display_name": "synthetic user",
+                "creator_id": "artist",
+                "creator_status": "active",
+                "is_creator": true
+              },
+              "error": {
+                "canceled": false,
+                "challenge": false,
+                "code": "",
+                "deadline": false,
+                "forbidden": false,
+                "go_only_error_tree": [],
+                "invalid_option": false,
+                "message": "",
+                "not_authenticated": false,
+                "reason": "",
+                "source_message": ""
+              }
+            },
+            {
+              "dto": {
+                "user_id": 42,
+                "display_name": "synthetic user",
+                "creator_id": "artist",
+                "creator_status": "active",
+                "is_creator": true
+              },
+              "error": {
+                "canceled": false,
+                "challenge": false,
+                "code": "",
+                "deadline": false,
+                "forbidden": false,
+                "go_only_error_tree": [],
+                "invalid_option": false,
+                "message": "",
+                "not_authenticated": false,
+                "reason": "",
+                "source_message": ""
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "unicode_alias/expires_long_s_past_cache",
+      "input": {
+        "mode": "",
+        "native_steps": [
+          {
+            "status": 403,
+            "body": "synthetic-challenge",
+            "headers": {
+              "Cf-Mitigated": [
+                "challenge"
+              ]
+            }
+          },
+          {
+            "status": 200,
+            "body": "\u003cmeta name=\"metadata\" content=\"{\u0026#34;context\u0026#34;:{\u0026#34;user\u0026#34;:{\u0026#34;userId\u0026#34;:42,\u0026#34;name\u0026#34;:\u0026#34; synthetic user \u0026#34;,\u0026#34;creatorId\u0026#34;:\u0026#34; artist \u0026#34;,\u0026#34;creatorStatus\u0026#34;:\u0026#34; active \u0026#34;,\u0026#34;isCreator\u0026#34;:true}}}\"\u003e"
+          },
+          {
+            "status": 200,
+            "body": "\u003cmeta name=\"metadata\" content=\"{\u0026#34;context\u0026#34;:{\u0026#34;user\u0026#34;:{\u0026#34;userId\u0026#34;:42,\u0026#34;name\u0026#34;:\u0026#34; synthetic user \u0026#34;,\u0026#34;creatorId\u0026#34;:\u0026#34; artist \u0026#34;,\u0026#34;creatorStatus\u0026#34;:\u0026#34; active \u0026#34;,\u0026#34;isCreator\u0026#34;:true}}}\"\u003e"
+          }
+        ],
+        "control_steps": [
+          {
+            "status": 200,
+            "body": "{\"status\":\"ok\",\"solution\":{\"userAgent\":\"synthetic-solver-agent\",\"cookies\":[{\"name\":\"cf_clearance\",\"value\":\"synthetic-clearance\",\"expireſ\":1}]}}"
+          }
+        ],
+        "calls": 2,
+        "solver_disabled": false,
+        "control_unavailable": false,
+        "solver_proxy": ""
+      },
+      "observation": {
+        "control_requests": [
+          {
+            "accept": "application/json",
+            "body": "{\"cmd\":\"request.get\",\"url\":\"https://www.fanbox.cc/\"}",
+            "content_length": 52,
+            "content_type": "application/json",
+            "cookie": "",
+            "go_only_default_user_agent": "Go-http-client/1.1",
+            "go_only_protocol": "HTTP/1.1",
+            "method": "POST",
+            "origin": "",
+            "path": "/v1",
+            "referer": ""
+          }
+        ],
+        "events": [
+          {
+            "Module": "FANBOX network",
+            "Kind": "network_request",
+            "Operation": "retrieving",
+            "Resource": "/",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "http://native-proxy.example:8888",
+            "UserAgent": "synthetic-native-agent",
+            "Reason": "",
+            "Status": 403,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "challenge",
+            "Operation": "request",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 403,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "solver_started",
+            "Operation": "challenge recovery",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "solver_completed",
+            "Operation": "clearance",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "replay",
+            "Operation": "request",
+            "Resource": "",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "network_request",
+            "Operation": "retrieving",
+            "Resource": "/",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "http://native-proxy.example:8888",
+            "UserAgent": "synthetic-native-agent",
+            "Reason": "",
+            "Status": 200,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "network_request",
+            "Operation": "retrieving",
+            "Resource": "/",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "http://native-proxy.example:8888",
+            "UserAgent": "synthetic-native-agent",
+            "Reason": "",
+            "Status": 200,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          }
+        ],
+        "native": {
+          "bodies": [
+            {
+              "bytes_read": 19,
+              "close_calls": 1,
+              "go_only_read_calls": 2
+            },
+            {
+              "bytes_read": 240,
+              "close_calls": 1,
+              "go_only_read_calls": 2
+            },
+            {
+              "bytes_read": 240,
+              "close_calls": 1,
+              "go_only_read_calls": 2
+            }
+          ],
+          "idle_calls": 2,
+          "requests": [
+            {
+              "caller": "single",
+              "context_canceled": false,
+              "context_has_deadline": false,
+              "headers": {
+                "Accept": [
+                  "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+                ],
+                "Cookie": [
+                  "FANBOXSESSID=[SYNTHETIC_SESSION]"
+                ],
+                "Origin": [
+                  "https://www.fanbox.cc"
+                ],
+                "Referer": [
+                  "https://www.fanbox.cc/"
+                ],
+                "User-Agent": [
+                  "synthetic-native-agent"
+                ]
+              },
+              "method": "GET",
+              "request_has_body": false,
+              "url": "https://www.fanbox.cc/"
+            },
+            {
+              "caller": "single",
+              "context_canceled": false,
+              "context_has_deadline": false,
+              "headers": {
+                "Accept": [
+                  "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+                ],
+                "Cookie": [
+                  "FANBOXSESSID=[SYNTHETIC_SESSION]"
+                ],
+                "Origin": [
+                  "https://www.fanbox.cc"
+                ],
+                "Referer": [
+                  "https://www.fanbox.cc/"
+                ],
+                "User-Agent": [
+                  "synthetic-native-agent"
+                ]
+              },
+              "method": "GET",
+              "request_has_body": false,
+              "url": "https://www.fanbox.cc/"
+            },
+            {
+              "caller": "single",
+              "context_canceled": false,
+              "context_has_deadline": false,
+              "headers": {
+                "Accept": [
+                  "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+                ],
+                "Cookie": [
+                  "FANBOXSESSID=[SYNTHETIC_SESSION]"
+                ],
+                "Origin": [
+                  "https://www.fanbox.cc"
+                ],
+                "Referer": [
+                  "https://www.fanbox.cc/"
+                ],
+                "User-Agent": [
+                  "synthetic-native-agent"
+                ]
+              },
+              "method": "GET",
+              "request_has_body": false,
+              "url": "https://www.fanbox.cc/"
+            }
+          ]
+        },
+        "outcomes": {
+          "single": [
+            {
+              "dto": {
+                "user_id": 42,
+                "display_name": "synthetic user",
+                "creator_id": "artist",
+                "creator_status": "active",
+                "is_creator": true
+              },
+              "error": {
+                "canceled": false,
+                "challenge": false,
+                "code": "",
+                "deadline": false,
+                "forbidden": false,
+                "go_only_error_tree": [],
+                "invalid_option": false,
+                "message": "",
+                "not_authenticated": false,
+                "reason": "",
+                "source_message": ""
+              }
+            },
+            {
+              "dto": {
+                "user_id": 42,
+                "display_name": "synthetic user",
+                "creator_id": "artist",
+                "creator_status": "active",
+                "is_creator": true
+              },
+              "error": {
+                "canceled": false,
+                "challenge": false,
+                "code": "",
+                "deadline": false,
+                "forbidden": false,
+                "go_only_error_tree": [],
+                "invalid_option": false,
+                "message": "",
+                "not_authenticated": false,
+                "reason": "",
+                "source_message": ""
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "unicode_alias/status_alias_last_wins",
+      "input": {
+        "mode": "",
+        "native_steps": [
+          {
+            "status": 403,
+            "body": "synthetic-challenge",
+            "headers": {
+              "Cf-Mitigated": [
+                "challenge"
+              ]
+            }
+          },
+          {
+            "status": 200,
+            "body": "\u003cmeta name=\"metadata\" content=\"{\u0026#34;context\u0026#34;:{\u0026#34;user\u0026#34;:{\u0026#34;userId\u0026#34;:42,\u0026#34;name\u0026#34;:\u0026#34; synthetic user \u0026#34;,\u0026#34;creatorId\u0026#34;:\u0026#34; artist \u0026#34;,\u0026#34;creatorStatus\u0026#34;:\u0026#34; active \u0026#34;,\u0026#34;isCreator\u0026#34;:true}}}\"\u003e"
+          },
+          {
+            "status": 200,
+            "body": "\u003cmeta name=\"metadata\" content=\"{\u0026#34;context\u0026#34;:{\u0026#34;user\u0026#34;:{\u0026#34;userId\u0026#34;:42,\u0026#34;name\u0026#34;:\u0026#34; synthetic user \u0026#34;,\u0026#34;creatorId\u0026#34;:\u0026#34; artist \u0026#34;,\u0026#34;creatorStatus\u0026#34;:\u0026#34; active \u0026#34;,\u0026#34;isCreator\u0026#34;:true}}}\"\u003e"
+          }
+        ],
+        "control_steps": [
+          {
+            "status": 200,
+            "body": "{\"status\":\"error\",\"ſtatus\":\"ok\",\"solution\":{\"userAgent\":\"synthetic-solver-agent\",\"cookies\":[{\"name\":\"cf_clearance\",\"value\":\"synthetic-clearance\",\"expiry\":4102444800}]}}"
+          }
+        ],
+        "calls": 2,
+        "solver_disabled": false,
+        "control_unavailable": false,
+        "solver_proxy": ""
+      },
+      "observation": {
+        "control_requests": [
+          {
+            "accept": "application/json",
+            "body": "{\"cmd\":\"request.get\",\"url\":\"https://www.fanbox.cc/\"}",
+            "content_length": 52,
+            "content_type": "application/json",
+            "cookie": "",
+            "go_only_default_user_agent": "Go-http-client/1.1",
+            "go_only_protocol": "HTTP/1.1",
+            "method": "POST",
+            "origin": "",
+            "path": "/v1",
+            "referer": ""
+          }
+        ],
+        "events": [
+          {
+            "Module": "FANBOX network",
+            "Kind": "network_request",
+            "Operation": "retrieving",
+            "Resource": "/",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "http://native-proxy.example:8888",
+            "UserAgent": "synthetic-native-agent",
+            "Reason": "",
+            "Status": 403,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "challenge",
+            "Operation": "request",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 403,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "solver_started",
+            "Operation": "challenge recovery",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "solver_completed",
+            "Operation": "clearance",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "replay",
+            "Operation": "request",
+            "Resource": "",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "network_request",
+            "Operation": "retrieving",
+            "Resource": "/",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "http://native-proxy.example:8888",
+            "UserAgent": "synthetic-solver-agent",
+            "Reason": "",
+            "Status": 200,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "network_request",
+            "Operation": "retrieving",
+            "Resource": "/",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "http://native-proxy.example:8888",
+            "UserAgent": "synthetic-solver-agent",
+            "Reason": "",
+            "Status": 200,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          }
+        ],
+        "native": {
+          "bodies": [
+            {
+              "bytes_read": 19,
+              "close_calls": 1,
+              "go_only_read_calls": 2
+            },
+            {
+              "bytes_read": 240,
+              "close_calls": 1,
+              "go_only_read_calls": 2
+            },
+            {
+              "bytes_read": 240,
+              "close_calls": 1,
+              "go_only_read_calls": 2
+            }
+          ],
+          "idle_calls": 2,
+          "requests": [
+            {
+              "caller": "single",
+              "context_canceled": false,
+              "context_has_deadline": false,
+              "headers": {
+                "Accept": [
+                  "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+                ],
+                "Cookie": [
+                  "FANBOXSESSID=[SYNTHETIC_SESSION]"
+                ],
+                "Origin": [
+                  "https://www.fanbox.cc"
+                ],
+                "Referer": [
+                  "https://www.fanbox.cc/"
+                ],
+                "User-Agent": [
+                  "synthetic-native-agent"
+                ]
+              },
+              "method": "GET",
+              "request_has_body": false,
+              "url": "https://www.fanbox.cc/"
+            },
+            {
+              "caller": "single",
+              "context_canceled": false,
+              "context_has_deadline": false,
+              "headers": {
+                "Accept": [
+                  "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+                ],
+                "Cookie": [
+                  "FANBOXSESSID=[SYNTHETIC_SESSION]; cf_clearance=synthetic-clearance"
+                ],
+                "Origin": [
+                  "https://www.fanbox.cc"
+                ],
+                "Referer": [
+                  "https://www.fanbox.cc/"
+                ],
+                "User-Agent": [
+                  "synthetic-solver-agent"
+                ]
+              },
+              "method": "GET",
+              "request_has_body": false,
+              "url": "https://www.fanbox.cc/"
+            },
+            {
+              "caller": "single",
+              "context_canceled": false,
+              "context_has_deadline": false,
+              "headers": {
+                "Accept": [
+                  "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+                ],
+                "Cookie": [
+                  "FANBOXSESSID=[SYNTHETIC_SESSION]; cf_clearance=synthetic-clearance"
+                ],
+                "Origin": [
+                  "https://www.fanbox.cc"
+                ],
+                "Referer": [
+                  "https://www.fanbox.cc/"
+                ],
+                "User-Agent": [
+                  "synthetic-solver-agent"
+                ]
+              },
+              "method": "GET",
+              "request_has_body": false,
+              "url": "https://www.fanbox.cc/"
+            }
+          ]
+        },
+        "outcomes": {
+          "single": [
+            {
+              "dto": {
+                "user_id": 42,
+                "display_name": "synthetic user",
+                "creator_id": "artist",
+                "creator_status": "active",
+                "is_creator": true
+              },
+              "error": {
+                "canceled": false,
+                "challenge": false,
+                "code": "",
+                "deadline": false,
+                "forbidden": false,
+                "go_only_error_tree": [],
+                "invalid_option": false,
+                "message": "",
+                "not_authenticated": false,
+                "reason": "",
+                "source_message": ""
+              }
+            },
+            {
+              "dto": {
+                "user_id": 42,
+                "display_name": "synthetic user",
+                "creator_id": "artist",
+                "creator_status": "active",
+                "is_creator": true
+              },
+              "error": {
+                "canceled": false,
+                "challenge": false,
+                "code": "",
+                "deadline": false,
+                "forbidden": false,
+                "go_only_error_tree": [],
+                "invalid_option": false,
+                "message": "",
+                "not_authenticated": false,
+                "reason": "",
+                "source_message": ""
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "evidence": "Actual unchanged frozen public OpenWith/CurrentUser and ordinary owned loopback control through the existing public93 harness. An ASCII-schema JSON member is changed to its Go Unicode SimpleFold alias, or one earlier status field is added to establish repeated alias ordering. The expires alias places the existing expiry/one raw value under the interchangeable expires member, with no competing expiry member. Native body bytes, DTO/error/source, native requests/cache/expiry and diagnostics are actual public observations. Long-s variants cover status, solution, userAgent, cookies and expires; Kelvin-sign covers cookies. The past-expiry alias reuses expiry/one to make recognition observable through clearance removal, rather than checking an unexposed private state.",
+  "go_only_boundaries": [
+    "Original public93/core124/redirect3 inputs, observations and source bytes remain unchanged",
+    "The same source-only protocol sentinel identities, error types, reader call topology and control default User-Agent/HTTP version projections from public93 are retained",
+    "Unicode field matching is encoding/json SimpleFold behavior, independent of Unicode normalization; cookie name values remain case-sensitive"
+  ],
+  "go_version": "go1.27.1",
+  "limitations": [
+    "This is a bounded seven-row actual public field-alias supplement, not a new Cartesian matrix or complete JSON parser parity",
+    "Only anonymous owned HTTP/1 loopback control and injected native/API responses execute; no native HTTP/2, external authentication, media, account, browser, host trust, HEAD or upload work",
+    "Unpaired-surrogate string replacement, \u003e10000-level JSON depth rejection, RFC3339 leap-second rejection and HTTP-date weekday handling remain source-confirmed follow-on candidates, with no runtime claim in this supplement"
+  ],
+  "protected_published_files_sha256": {
+    "crates/pixiv-sdk/tests/fixtures/fanbox-solver-public.json": "a908d47882462e698b67d80f2f48cfab578964e675029afe973a8a024711ba80",
+    "crates/pixiv-sdk/tests/fixtures/fanbox-solver-redirect.json": "6a8db01180325dc9074984b4b763250d0029118889ed7e5141a8ae1554709651",
+    "crates/pixiv-sdk/tests/fixtures/fanbox-solver.json": "45ed3d463ce1159290dbb6686490e754e30d4540a108754571a926b8bba6f382",
+    "internal/services/fanbox/protocol/migration_solver_redirect_test.go": "40a96c8b674c9f5f9185f9b9be49616b6ccd108c9375c76531d54de7f4896da2",
+    "internal/services/fanbox/protocol/migration_solver_test.go": "c9a27c01aafbf271dc7a6b33cab8959a7b8e721b9b3d0edc6d41941d7aae1f56",
+    "sdk/fanbox/migration_solver_public_test.go": "a21a5a150c8a644d7874f5e94cbcf78716742279048a41f680d1ede0a5d6fa34"
+  },
+  "public_operation": "fanbox.Client.CurrentUser",
+  "reused_public_case_by_supplement_case": {
+    "unicode_alias/cookies_kelvin": "cache/native_future",
+    "unicode_alias/cookies_long_s": "cache/native_future",
+    "unicode_alias/expires_long_s_past_cache": "expiry/one",
+    "unicode_alias/solution_long_s": "cache/native_future",
+    "unicode_alias/status_alias_last_wins": "cache/native_future",
+    "unicode_alias/status_long_s": "cache/native_future",
+    "unicode_alias/user_agent_long_s": "cache/native_future"
+  },
+  "source_commit": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "source_public_fixture_case_count": 93,
+  "source_sha256": {
+    "go.mod": "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c",
+    "go.sum": "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e",
+    "internal/services/fanbox/protocol/cookie.go": "692013694d29e4fe67cee7641c4dcdafe73158bea107666c194e6305d33b45a9",
+    "internal/services/fanbox/protocol/identity.go": "10ba481b43e3ec7d0bdaa2defbbd629c4b5bb2aa169c5bff99c8e756de8143d9",
+    "internal/services/fanbox/protocol/protocol.go": "c153337aa61756f5d5ea36ec32ca272e68da8a1604c1d4a4e4d6bcb2c957fdd3",
+    "internal/services/fanbox/protocol/solver.go": "e55464b091fa6720b7134a9487684c6c0969f9b4921384ea0e091d634782fcea",
+    "sdk/error.go": "d8e48078c464f18a26cdcf32828e423dd948f17061269b222f82e08a8cee0041",
+    "sdk/fanbox/dto.go": "860f6d3f18d083526681cf86112dbbdb7faa382e1f9cac3e35b543f56c2df505",
+    "sdk/fanbox/errors.go": "523577a066e3d53ce9eced8c7afbe29f422a75ce6aca58bc3b5b6fbf8da59909",
+    "sdk/fanbox/fanbox.go": "2208576144b94b89efd57b6f054ee018268812d52d556fd0758e2ee322577542",
+    "sdk/fanbox/models.go": "1dd3928aa6752c51f114c678eef3b0a2b4784a275ec80fcdbbd61006407e4623",
+    "sdk/fanbox/ops.go": "868b3b68de07d7638af5f9dd3ab1be8f0c9751f222c05c7776cde092052a7c8d",
+    "sdk/fanbox/request.go": "deea7897788f1013297fc3cf03a7b71ff0d893335d6434d1908feb2245ece263"
+  }
+}

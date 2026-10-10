@@ -1,0 +1,408 @@
+{
+  "artifact_runner": {
+    "exit": 0,
+    "log": {
+      "bytes": 382710,
+      "modified_utc": "2026-10-10T07:20:24.500655+00:00",
+      "path": "/tmp/fanbox-solver-public-recovery/run-read-only-gates.log",
+      "sha256": "2ff598d98af008765d80fad56824480321a39d93d2e36cf3d90266a07b5514a0"
+    },
+    "no_cargo_or_native_execution": true,
+    "no_source_or_fixture_writes": true,
+    "script": {
+      "bytes": 1543,
+      "modified_utc": "2026-10-10T07:20:19.891331+00:00",
+      "path": "/tmp/fanbox-solver-public-recovery/run-read-only-gates.sh",
+      "sha256": "d4f9cb5cee71a7f7f7d6a7d9b49081731fc9c66bdab35d7ce097b34565d65ac7"
+    }
+  },
+  "base_commit": "51dcb2c4f6e196372f0f022170d8b53f1f5eff3a",
+  "checks": {
+    "capture93_before_rust": {
+      "captured_before_first_post_production_rust_execution": true,
+      "captured_before_solver_rs_production_creation": true,
+      "case_rows": 93,
+      "command": "go test ./sdk/fanbox -run '^TestMigrationFanboxSolverPublicFrozenGo$' -count=1 -args -migration-capture-fanbox-solver-public",
+      "exit": 0,
+      "exit_evidence": "actual successful Go package output; enclosing execution completed exit0",
+      "log": {
+        "bytes": 2240,
+        "modified_utc": "2026-10-10T07:22:45.778195+00:00",
+        "path": "/tmp/fanbox-solver-public-recovery/capture93-observed-tool-transcript.json",
+        "sha256": "93cb824dabf94ea7bc8bea9144272049c58641822b0c9d97bbe95efa26a7e17a"
+      },
+      "log_kind": "preserved observed tool transcript extract, explicitly not an original raw tee log",
+      "repeat_count": 1,
+      "source_edits_in_this_manifest_task": false
+    },
+    "gofmt": {
+      "command": "bash -c files=$(gofmt -l sdk/fanbox/migration_solver_public_test.go); printf \"%s\" \"$files\"; test -z \"$files\"",
+      "exit": 0,
+      "finished_utc": "2026-10-10T07:20:24.614953884Z",
+      "fixture_writes": false,
+      "log": {
+        "bytes": 0,
+        "modified_utc": "2026-10-10T07:20:24.608289+00:00",
+        "path": "/tmp/fanbox-solver-public-recovery/gofmt.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "log_kind": "raw direct stdout/stderr, not reconstructed",
+      "post_rust_execution_read_only_revalidation": true,
+      "started_utc": "2026-10-10T07:20:24.608255175Z"
+    },
+    "race": {
+      "case_rows_per_repetition": 93,
+      "command": "go test -race ./sdk/fanbox -run ^TestMigrationFanboxSolverPublicFrozenGo$ -count=1 -json",
+      "exit": 0,
+      "finished_utc": "2026-10-10T07:20:24.500611446Z",
+      "fixture_writes": false,
+      "log": {
+        "bytes": 95980,
+        "modified_utc": "2026-10-10T07:20:24.487692+00:00",
+        "path": "/tmp/fanbox-solver-public-recovery/race.log",
+        "sha256": "ff9dc2b63801a4a0b0ec95f20e600588ca7bb22b5d2d6367d4f2687cfe34e110"
+      },
+      "log_kind": "raw direct stdout/stderr, not reconstructed",
+      "package_event_totals": {
+        "output": 2,
+        "pass": 1,
+        "start": 1
+      },
+      "post_rust_execution_read_only_revalidation": true,
+      "raw_subtest_passes": 93,
+      "raw_test_failures": 0,
+      "raw_test_skips": 0,
+      "raw_top_level_passes": 1,
+      "repeat_count": 1,
+      "started_utc": "2026-10-10T07:20:21.011538580Z",
+      "test_event_totals": {
+        "output": 189,
+        "pass": 94,
+        "run": 94
+      },
+      "top_level_test_event_totals": {
+        "output": 3,
+        "pass": 1,
+        "run": 1
+      }
+    },
+    "replay": {
+      "case_rows_per_repetition": 93,
+      "command": "go test ./sdk/fanbox -run ^TestMigrationFanboxSolverPublicFrozenGo$ -count=3 -json",
+      "exit": 0,
+      "finished_utc": "2026-10-10T07:20:21.009070273Z",
+      "fixture_writes": false,
+      "log": {
+        "bytes": 286730,
+        "modified_utc": "2026-10-10T07:20:20.999704+00:00",
+        "path": "/tmp/fanbox-solver-public-recovery/replay.log",
+        "sha256": "2ebd3827fcbaa52585799cc82843132bc1596a999476e772e12c876ae8c69053"
+      },
+      "log_kind": "raw direct stdout/stderr, not reconstructed",
+      "package_event_totals": {
+        "output": 2,
+        "pass": 1,
+        "start": 1
+      },
+      "post_rust_execution_read_only_revalidation": true,
+      "raw_subtest_passes": 279,
+      "raw_test_failures": 0,
+      "raw_test_skips": 0,
+      "raw_top_level_passes": 3,
+      "repeat_count": 3,
+      "started_utc": "2026-10-10T07:20:19.898128741Z",
+      "test_event_totals": {
+        "output": 567,
+        "pass": 282,
+        "run": 282
+      },
+      "top_level_test_event_totals": {
+        "output": 9,
+        "pass": 3,
+        "run": 3
+      }
+    },
+    "vet": {
+      "command": "go vet ./sdk/fanbox",
+      "exit": 0,
+      "finished_utc": "2026-10-10T07:20:24.605889151Z",
+      "fixture_writes": false,
+      "log": {
+        "bytes": 0,
+        "modified_utc": "2026-10-10T07:20:24.503176+00:00",
+        "path": "/tmp/fanbox-solver-public-recovery/vet.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "log_kind": "raw direct stdout/stderr, not reconstructed",
+      "post_rust_execution_read_only_revalidation": true,
+      "started_utc": "2026-10-10T07:20:24.503147497Z"
+    }
+  },
+  "created_utc": "2026-10-10T07:22:45.778374+00:00",
+  "cwd": "/workspace/scratch/cd334a12dde3/pixiv-cli-rs",
+  "fixture_inventory": {
+    "actual_anonymous_control_requests": 87,
+    "actual_native_requests": 197,
+    "case_name_prefix_counts": {
+      "cache": 2,
+      "concurrent": 4,
+      "control": 19,
+      "expiry": 22,
+      "solution": 31,
+      "workflow": 15
+    },
+    "go_top_level_test_name": "TestMigrationFanboxSolverPublicFrozenGo",
+    "public_operation": "fanbox.Client.CurrentUser",
+    "row_count_is_not_top_level_test_count": true,
+    "rows": 93,
+    "sequential_public_case_rows": 89,
+    "shared_waiter_public_case_rows": 4
+  },
+  "frozen_go_commit": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "limitations": [
+    "Only owned anonymous HTTP/1 loopback control and injected native/API transport are executed; no native HTTP/2, external authentication, media, HEAD, upload, browser, account or host trust work",
+    "Internal SolverHTTPClient remains solely the existing Go test seam; no public control transport or private Session/Solver test API is introduced",
+    "Loopback validates ordinary direct control and independence from native proxy; environment proxy bypass remains source-guarded because Go also exempts loopback hosts from environment proxy",
+    "Physical solver control response Close errors, ignored native transport cancellation, and stale transport-ignoring completion remain in unchanged private/source evidence, not claimed as public loopback parity",
+    "Historical capture outputs were originally delivered through tool responses, without tee log files. The manifest preserves truthful exact transcript extracts rather than inventing raw logs. Read-only revalidation now has original raw JSON logs and independently captured exit codes.",
+    "Full workspace Formatter/Clippy/tests/release validation is parent-owned and is not claimed by this public93 manifest."
+  ],
+  "original_core124_redirect3_unchanged_guard": {
+    "before_after_hash_listing": {
+      "after": {
+        "bytes": 1063,
+        "modified_utc": "2026-10-10T07:20:24.615691+00:00",
+        "path": "/tmp/fanbox-solver-public-recovery/sha256-after.txt",
+        "sha256": "e15f98a1a25905691c7067b4831077b1850338f4eb9c26c03e41354ddf24368c"
+      },
+      "before": {
+        "bytes": 1063,
+        "modified_utc": "2026-10-10T07:20:19.891706+00:00",
+        "path": "/tmp/fanbox-solver-public-recovery/sha256-before.txt",
+        "sha256": "e15f98a1a25905691c7067b4831077b1850338f4eb9c26c03e41354ddf24368c"
+      },
+      "bytes_equal": true
+    },
+    "core_case_count": 124,
+    "guard": {
+      "crates/pixiv-sdk/tests/fixtures/fanbox-solver-redirect.json": {
+        "actual_sha256": "6a8db01180325dc9074984b4b763250d0029118889ed7e5141a8ae1554709651",
+        "expected_sha256": "6a8db01180325dc9074984b4b763250d0029118889ed7e5141a8ae1554709651",
+        "matches": true
+      },
+      "crates/pixiv-sdk/tests/fixtures/fanbox-solver.json": {
+        "actual_sha256": "45ed3d463ce1159290dbb6686490e754e30d4540a108754571a926b8bba6f382",
+        "expected_sha256": "45ed3d463ce1159290dbb6686490e754e30d4540a108754571a926b8bba6f382",
+        "matches": true
+      },
+      "internal/services/fanbox/protocol/migration_solver_redirect_test.go": {
+        "actual_sha256": "40a96c8b674c9f5f9185f9b9be49616b6ccd108c9375c76531d54de7f4896da2",
+        "expected_sha256": "40a96c8b674c9f5f9185f9b9be49616b6ccd108c9375c76531d54de7f4896da2",
+        "matches": true
+      },
+      "internal/services/fanbox/protocol/migration_solver_test.go": {
+        "actual_sha256": "c9a27c01aafbf271dc7a6b33cab8959a7b8e721b9b3d0edc6d41941d7aae1f56",
+        "expected_sha256": "c9a27c01aafbf271dc7a6b33cab8959a7b8e721b9b3d0edc6d41941d7aae1f56",
+        "matches": true
+      }
+    },
+    "old_core_manifest_is_not_public93_evidence": true,
+    "old_core_manifest_reference_only": {
+      "bytes": 19181,
+      "modified_utc": "2026-10-10T06:07:01.022367+00:00",
+      "path": "/tmp/fanbox-solver-recovery/manifest.json",
+      "sha256": "cfbf052f207460dd1fd8ae115db20d50fe7d0390503224a755ca6256d878678a"
+    },
+    "redirect_case_count": 3
+  },
+  "owned_files": {
+    "crates/pixiv-sdk/src/fanbox/solver.rs": {
+      "bytes": 18599,
+      "modified_utc": "2026-10-10T07:04:54.855335+00:00",
+      "path": "/workspace/scratch/cd334a12dde3/pixiv-cli-rs/crates/pixiv-sdk/src/fanbox/solver.rs",
+      "sha256": "751802b61a7296fde80e7fb49c23c12b7269e99ee0dd561cfbc18f22c6cd66ba"
+    },
+    "crates/pixiv-sdk/tests/fanbox_solver.rs": {
+      "bytes": 10824,
+      "modified_utc": "2026-10-10T07:01:41.305834+00:00",
+      "path": "/workspace/scratch/cd334a12dde3/pixiv-cli-rs/crates/pixiv-sdk/tests/fanbox_solver.rs",
+      "sha256": "481d88eb741de2417fccc447c986a8b2d670252bb1da0868459090e3e2a2f3cf"
+    },
+    "crates/pixiv-sdk/tests/fanbox_solver_support/mod.rs": {
+      "bytes": 18336,
+      "modified_utc": "2026-10-10T06:57:51.281874+00:00",
+      "path": "/workspace/scratch/cd334a12dde3/pixiv-cli-rs/crates/pixiv-sdk/tests/fanbox_solver_support/mod.rs",
+      "sha256": "dce7f2fdf8cdb3e3496c10ec83c52a169eae8ba8b7dd298e48a5eadb5b70e008"
+    },
+    "crates/pixiv-sdk/tests/fixtures/fanbox-solver-public.json": {
+      "bytes": 800150,
+      "modified_utc": "2026-10-10T07:01:42.221507+00:00",
+      "path": "/workspace/scratch/cd334a12dde3/pixiv-cli-rs/crates/pixiv-sdk/tests/fixtures/fanbox-solver-public.json",
+      "sha256": "a908d47882462e698b67d80f2f48cfab578964e675029afe973a8a024711ba80"
+    },
+    "sdk/fanbox/migration_solver_public_test.go": {
+      "bytes": 23920,
+      "modified_utc": "2026-10-10T07:01:41.309509+00:00",
+      "path": "/workspace/scratch/cd334a12dde3/pixiv-cli-rs/sdk/fanbox/migration_solver_public_test.go",
+      "sha256": "a21a5a150c8a644d7874f5e94cbcf78716742279048a41f680d1ede0a5d6fa34"
+    }
+  },
+  "owned_files_sha256": {
+    "crates/pixiv-sdk/src/fanbox/solver.rs": "751802b61a7296fde80e7fb49c23c12b7269e99ee0dd561cfbc18f22c6cd66ba",
+    "crates/pixiv-sdk/tests/fanbox_solver.rs": "481d88eb741de2417fccc447c986a8b2d670252bb1da0868459090e3e2a2f3cf",
+    "crates/pixiv-sdk/tests/fanbox_solver_support/mod.rs": "dce7f2fdf8cdb3e3496c10ec83c52a169eae8ba8b7dd298e48a5eadb5b70e008",
+    "crates/pixiv-sdk/tests/fixtures/fanbox-solver-public.json": "a908d47882462e698b67d80f2f48cfab578964e675029afe973a8a024711ba80",
+    "sdk/fanbox/migration_solver_public_test.go": "a21a5a150c8a644d7874f5e94cbcf78716742279048a41f680d1ede0a5d6fa34"
+  },
+  "public92_to_public93": {
+    "added_case_name": "cache/native_future",
+    "added_count": 1,
+    "behavior": "Public anonymous solve, native replay and next CurrentUser request retain future cached agent/clearance",
+    "captured_before_first_post_production_rust_execution": true,
+    "final_fixture_written_utc": "2026-10-10T07:01:42.221507+00:00",
+    "final_rows": 93,
+    "missing_module_red_applies_to_public92_then_public93_capture_before_production": true,
+    "no_old124_or_redirect3_row_changed": true,
+    "note": "The added row was communicated to the parent before production implementation. The earlier missing-module RED predates the93-row supplement; it establishes missing implementation, not a runtime RED for93 rows.",
+    "previous_fixture_sha256": "0c08037e8e7d34d3f9699144a1cce45101475fb4576c25778449b1c325989f90",
+    "previous_go_harness_sha256": "5ea0138ada0b3f53c55b0b420f3880f572b283ca27bd8dc7e0ee2a46d6690b33",
+    "previous_hash_source": "actual observed SHA256 output reported before the added future-cache row; old92 fixture bytes were superseded, not retained as a second artifact",
+    "previous_rows": 92,
+    "source_expiry_unix_seconds": 4102444800,
+    "source_reused_case_name": "cache/native_future from unchanged solver124 fixture"
+  },
+  "retained_boundaries": [
+    "Original solver124 private state/call/time and redirect3 evidence remains byte-identical and is not projected into guessed public error expectations",
+    "Numeric expiry syntax is preserved as original raw JSON, including fraction/exponent and int64 domain; actual public decoder whitespace/null behavior is captured rather than inferred from private helper rows",
+    "Native body read topology, server default User-Agent/HTTP protocol, and custom context Done registration are Go-only; DTO/error/source, request payload/header scope, per-caller events, bytes read and Close counts are semantic",
+    "Concurrent observations are grouped by caller scope and request identity, retaining within-caller order without asserting scheduler order"
+  ],
+  "scope": "Actual PUBLIC FANBOX CurrentUser solver integration, public93 frozen Go capture and public Rust tests; distinct from unchanged older Go-only solver124 manifest",
+  "source_provenance": {
+    "guard_execution": "Actual public Go harness calls migrationFanboxPublicHTMLVerifyReference, verifies pinned Go1.27.1, byte equality with frozen source commit, standard-library SHA256, official dependency zip/extracted-file equality and original solver124/redirect3 hashes on each replay/race execution",
+    "identity309_go_stdlib_sha256": {
+      "net/http/client.go": "ced3428a85206de8de79c10de38d34951e0b9823c0ccb68ff51329d048a1f7b9",
+      "net/http/request.go": "c3257079994b4e4f74f01cef72508919983ba31f91fcf599d348e9d52cec1540",
+      "net/http/response.go": "0b32a0b4ee51e00e3410764f3b2ffe1163dccb9cad548b097f47db85893a2f44"
+    },
+    "identity309_official_dependencies": [
+      {
+        "module": "github.com/bogdanfinn/fhttp",
+        "sum": "h1:LiQyHOY3i0QoxxNB7nq27/nGNNbtPj0fuBPozhR7Ws4=",
+        "version": "v0.6.8",
+        "zip_sha256": "51f74cb0f96633810038f94773bdbf0356c98a23d9de9eada3008521ae97f3cb"
+      },
+      {
+        "module": "github.com/bogdanfinn/tls-client",
+        "sum": "h1:KiFAlED55DJ8Fcocn+/1nX6PrDFcttIHAf/GDkV6KN8=",
+        "version": "v1.15.1",
+        "zip_sha256": "01aa0c1f09bc29397b97090a9fb03677ce22491f8a1cdd0a0dc7cdbce16cf031"
+      },
+      {
+        "module": "github.com/bogdanfinn/utls",
+        "sum": "h1:OuJ497cc7F3yKNVHRsYPQdGggmk5x6+V5ZlrCR7fOLU=",
+        "version": "v1.7.7-barnius",
+        "zip_sha256": "6e21ca668a463b41d3a4f92449e69872dbb0056b1d41b14b760e1237894203ef"
+      },
+      {
+        "module": "golang.org/x/net",
+        "sum": "h1:zyQRTTrjc33Lhh0fBgT/H3oZq9WuvRR5gPC70xpDiQU=",
+        "version": "v0.48.0",
+        "zip_sha256": "cf5206797e66bbe72fc13542d53a57d069a563cebb6d045c07a870eb4fd888c9"
+      }
+    ],
+    "public_fixture_source_sha256": {
+      "go.mod": "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c",
+      "go.sum": "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e",
+      "internal/services/fanbox/protocol/cookie.go": "692013694d29e4fe67cee7641c4dcdafe73158bea107666c194e6305d33b45a9",
+      "internal/services/fanbox/protocol/identity.go": "10ba481b43e3ec7d0bdaa2defbbd629c4b5bb2aa169c5bff99c8e756de8143d9",
+      "internal/services/fanbox/protocol/protocol.go": "c153337aa61756f5d5ea36ec32ca272e68da8a1604c1d4a4e4d6bcb2c957fdd3",
+      "internal/services/fanbox/protocol/solver.go": "e55464b091fa6720b7134a9487684c6c0969f9b4921384ea0e091d634782fcea",
+      "sdk/error.go": "d8e48078c464f18a26cdcf32828e423dd948f17061269b222f82e08a8cee0041",
+      "sdk/fanbox/dto.go": "860f6d3f18d083526681cf86112dbbdb7faa382e1f9cac3e35b543f56c2df505",
+      "sdk/fanbox/errors.go": "523577a066e3d53ce9eced8c7afbe29f422a75ce6aca58bc3b5b6fbf8da59909",
+      "sdk/fanbox/fanbox.go": "2208576144b94b89efd57b6f054ee018268812d52d556fd0758e2ee322577542",
+      "sdk/fanbox/models.go": "1dd3928aa6752c51f114c678eef3b0a2b4784a275ec80fcdbbd61006407e4623",
+      "sdk/fanbox/ops.go": "868b3b68de07d7638af5f9dd3ab1be8f0c9751f222c05c7776cde092052a7c8d",
+      "sdk/fanbox/request.go": "deea7897788f1013297fc3cf03a7b71ff0d893335d6434d1908feb2245ece263"
+    }
+  },
+  "tests_first_sequence": {
+    "first_focused_post_production_rust_execution_exit": 101,
+    "first_focused_post_production_rust_result": "compiled solver but stopped on separate identity redirect/close_error/01 runtime mapping before solver target execution",
+    "go_public92_capture_and_seal": "2026-10-10T06:54Z",
+    "missing_module_red_error": "E0583 missing private solver.rs; separate native Debug error also present; no runtime RED claimed",
+    "parent_owned_missing_module_red_exit": 101,
+    "parent_owned_rust_artifacts": {
+      "first_focused_rust_exit": {
+        "bytes": 4,
+        "modified_utc": "2026-10-10T07:06:22.073041+00:00",
+        "path": "/tmp/pixiv-fanbox-sdk-identity-solver-first-focused.exit",
+        "sha256": "39b8dc3fc8b44765c8e6f1adee04c5b465e555ab791cc42d0d9e810d5b64297c"
+      },
+      "first_focused_rust_log": {
+        "bytes": 5513,
+        "modified_utc": "2026-10-10T07:06:22.065041+00:00",
+        "path": "/tmp/pixiv-fanbox-sdk-identity-solver-first-focused.log",
+        "sha256": "921d8cdaba36ae26708a00d2c2d20af067c54ba97c2582eda0252a321469e741"
+      },
+      "missing_module_red_exit": {
+        "bytes": 4,
+        "modified_utc": "2026-10-10T07:00:31.361976+00:00",
+        "path": "/tmp/pixiv-fanbox-public-solver-missing-module-red.exit",
+        "sha256": "39b8dc3fc8b44765c8e6f1adee04c5b465e555ab791cc42d0d9e810d5b64297c"
+      },
+      "missing_module_red_log": {
+        "bytes": 5289,
+        "modified_utc": "2026-10-10T07:00:31.333620+00:00",
+        "path": "/tmp/pixiv-fanbox-public-solver-missing-module-red.log",
+        "sha256": "08f12ee9475724cc52f59c4e8148bc0a945aab559a72918b0aa5b4f3d4949804"
+      },
+      "second_focused_rust_exit": {
+        "bytes": 2,
+        "modified_utc": "2026-10-10T07:12:57.024895+00:00",
+        "path": "/tmp/pixiv-fanbox-sdk-identity-solver-second-focused.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "second_focused_rust_log": {
+        "bytes": 3967,
+        "modified_utc": "2026-10-10T07:12:57.012410+00:00",
+        "path": "/tmp/pixiv-fanbox-sdk-identity-solver-second-focused.log",
+        "sha256": "7ccbd1cab8d0f58c5feb2a77f778f4674fbd5635cc3d884840cebb0aaa57cc88"
+      }
+    },
+    "public93_fixture_capture_utc": "2026-10-10T07:01:42.221507+00:00",
+    "public_rust_tests_written_and_rustfmt_checked_before_missing_module_red": true,
+    "second_focused_post_production_rust_execution_exit": 0,
+    "second_focused_rust_solver_result": "three solver tests passed;89 sequential public rows and four concurrent public rows; runtime2.86s",
+    "solver_rs_first_production_write_observed_utc": "2026-10-10T07:03:04Z",
+    "this_manifest_task_executed_cargo": false
+  },
+  "toolchain": {
+    "actual_go_env": {
+      "GOCACHE": "/workspace/scratch/cd334a12dde3/go-cache",
+      "GOMODCACHE": "/workspace/scratch/cd334a12dde3/go-path/pkg/mod",
+      "GOPATH": "/workspace/scratch/cd334a12dde3/go-path",
+      "GOPROXY": "off",
+      "GOROOT": "/workspace/scratch/cd334a12dde3/go-toolchain/go",
+      "GOSUMDB": "off",
+      "GOTOOLCHAIN": "local"
+    },
+    "canonical_go_environment": {
+      "bytes": 867,
+      "modified_utc": "2026-10-10T05:26:09.589925+00:00",
+      "path": "/tmp/quantus-toolchain-env.txt",
+      "sha256": "8134ecf516ad2127e04f96a198500da34104dde9107cdae71ab4f5eda80c218e"
+    },
+    "canonical_rust_environment_reference_only": {
+      "bytes": 1078,
+      "modified_utc": "2026-10-10T05:26:09.589965+00:00",
+      "path": "/tmp/pixiv-rust-validation-env.sh",
+      "sha256": "2dd5f9db8a8359c310ad8a2366d17d95da9341146579bfabc9a7f94dad07d159"
+    },
+    "go_version": "go1.27.1 linux/amd64",
+    "original_core_go_only_timezone_fields_not_normalized": true,
+    "public_fixture_timezone_independent": true,
+    "read_only_gate_command_prefix": "source /tmp/quantus-toolchain-env.txt; export GOPROXY=off GOSUMDB=off"
+  }
+}

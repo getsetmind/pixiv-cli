@@ -1,0 +1,216 @@
+{
+  "schema_version": 1,
+  "base_sha": "51dcb2c4f6e196372f0f022170d8b53f1f5eff3a",
+  "frozen_go": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "created_utc": "2026-10-10T07:40:01.605217+00:00",
+  "full_script": {
+    "command": "source /tmp/quantus-toolchain-env.txt; source /tmp/pixiv-rust-validation-env.sh; source /tmp/pixiv-fanbox-native-build-env.sh; export PIXIV_NATIVE_GO=/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go PIXIV_NATIVE_WITNESS_DIR=/tmp/pixiv-fanbox-sdk-fullgate-native-witness; /workspace/scratch/cd334a12dde3/pwsh-test/pwsh -NoProfile -File scripts/check-rust.ps1",
+    "exit": 0,
+    "elapsed_seconds": 419,
+    "optimized_release": "1m 48s",
+    "running_suites": 270,
+    "doc_suites": 5,
+    "child_summaries": 7,
+    "summaries": 282,
+    "raw_passes": 689,
+    "meaningful_passes": 687,
+    "failures": 0,
+    "ignored": 11,
+    "excluded_scaffolds": [
+      "existing terminal_prompt_child without mode:1",
+      "new fanbox_native_child without mode:1"
+    ],
+    "no_new_ignored_or_removed_assertions": true,
+    "dependency_warnings": "Existing upstream warnings and new bindgen-generated unnecessary-transmute warnings remain visible; workspace strict Clippy succeeds with unchanged script and flags."
+  },
+  "focused_command": "cargo fmt --all -- --check && cargo clippy --workspace --all-targets --locked --offline -- -D warnings && cargo test -p pixiv-sdk --test fanbox_identity --test fanbox_solver --test fanbox_source_attributes --locked --offline",
+  "focused_exit": 0,
+  "focused_tests": 14,
+  "related_go": {
+    "log": "/tmp/pixiv-fanbox-sdk-final-related-go.log",
+    "exit": 0,
+    "packages": [
+      "sdk/fanbox:all tests",
+      "internal/services/fanbox/protocol:TestMigrationFanboxMediaBodyContract only",
+      "scripts/tests/migration:all tests and vet"
+    ],
+    "top_level_passes": 32,
+    "nested_named_passes": 589,
+    "failures": 0,
+    "skips": 0,
+    "vet": 0,
+    "gofmt_empty": true,
+    "scope": "Owned injected transport/synthetic anonymous solver control and media decoder boundaries. No native protocol test in this final command. Separate Go manifests preserve each capture/replay/race result, including broad earlier native pass and interrupted race."
+  },
+  "pre_run_snapshot": {
+    "path": "/tmp/pixiv-fanbox-sdk-full-gate-source-snapshot.json",
+    "sha256": "2eb870f09a96ca796771ba3692cd463c87ac310ab25f5becc216c4484d7a4d52",
+    "files": 8672,
+    "source_test_fixture_dependency_changed_since_start": [],
+    "result_document_changes": [
+      "docs/migration/provenance/fanbox-identity-tokenizer-go-gates.json",
+      "docs/migration/contracts.md",
+      "docs/migration/ledger.json",
+      "docs/migration/remaining-features.md"
+    ]
+  },
+  "source_guard": {
+    "production_go_and_modules": 434,
+    "mismatches": [],
+    "prior_lock_package_versions_sources_and_checksums_removed": 0,
+    "lock_packages_added": 37,
+    "official_ignored_file_requires_force_staging": {
+      "path": "third_party/rust/fanbox/http2-0.5.20/Cargo.lock",
+      "sha256": "e83111b42bc7844b3f4669a0e55a5cf21548a6cce0bf093766f6930bd2f5a247",
+      "bytes": 21106,
+      "scope": "Included in full 1758-file family manifests and independent reconstruction. Not a workspace build input; omitted by Git exclude-standard pre-run inventory only."
+    }
+  },
+  "logs": [
+    {
+      "log": "/tmp/pixiv-fanbox-identity-first-red.log",
+      "sha256": "133f629a895f61a0b01ef53efacf6d98ce5ba1c404a7d66a8d392b4d06018929",
+      "bytes": 3876,
+      "exit": 101
+    },
+    {
+      "log": "/tmp/pixiv-fanbox-native-missing-api-red.log",
+      "sha256": "467ae9e4d4350d5e4c9daf8d39033bf1a5d0fbd9a5df39a474915372564f3278",
+      "bytes": 6106,
+      "exit": 101
+    },
+    {
+      "log": "/tmp/pixiv-fanbox-public-solver-missing-module-red.log",
+      "sha256": "08f12ee9475724cc52f59c4e8148bc0a945aab559a72918b0aa5b4f3d4949804",
+      "bytes": 5289,
+      "exit": 101
+    },
+    {
+      "log": "/tmp/pixiv-fanbox-native-first-offline-fetch.log",
+      "sha256": "98d82e0beccaaa5a0ccfc3e5aea262a93d4d1a9f2c80b891f98d229538e1c934",
+      "bytes": 371,
+      "exit": 101
+    },
+    {
+      "log": "/tmp/pixiv-fanbox-native-official-fetch.log",
+      "sha256": "55378ec25c14140c7cb5776dda229ea3b62af9b3c932721745d4da7813d0ea64",
+      "bytes": 2785,
+      "exit": 0
+    },
+    {
+      "log": "/tmp/pixiv-fanbox-native-first-focused.log",
+      "sha256": "bab63f288ef4b35eb575e44f769aee2f5ebf65d1806065557f7d379a45e42340",
+      "bytes": 15482,
+      "exit": 101
+    },
+    {
+      "log": "/tmp/pixiv-fanbox-native-second-focused.log",
+      "sha256": "e5f1bba4ed93cee50683a13550381fa71036e7afbd206db2471f050f53085ee2",
+      "bytes": 9954,
+      "exit": 101
+    },
+    {
+      "log": "/tmp/pixiv-fanbox-native-third-focused.log",
+      "sha256": "5b4a4fa2b03c2531b2934dc14e24e130fb3b4e4a0f011e7f2c00ef8ac6712648",
+      "bytes": 4438,
+      "exit": 0
+    },
+    {
+      "log": "/tmp/pixiv-fanbox-sdk-identity-solver-first-focused.log",
+      "sha256": "921d8cdaba36ae26708a00d2c2d20af067c54ba97c2582eda0252a321469e741",
+      "bytes": 5513,
+      "exit": 101
+    },
+    {
+      "log": "/tmp/pixiv-fanbox-sdk-identity-solver-second-focused.log",
+      "sha256": "7ccbd1cab8d0f58c5feb2a77f778f4674fbd5635cc3d884840cebb0aaa57cc88",
+      "bytes": 3967,
+      "exit": 0
+    },
+    {
+      "log": "/tmp/pixiv-fanbox-sdk-format-focused.log",
+      "sha256": "34f281b6814f12e2e3ef795148731009d2c6c537f7e17072b79e6277b09ec936",
+      "bytes": 34030,
+      "exit": 1
+    },
+    {
+      "log": "/tmp/pixiv-fanbox-sdk-strict-clippy-focused.log",
+      "sha256": "b236f2ac93f55a9a3b886c2cc4fc2dc010831f6e9ca6247ace9fb1baa44e5f26",
+      "bytes": 459119,
+      "exit": 101
+    },
+    {
+      "log": "/tmp/pixiv-fanbox-sdk-strict-clippy-second.log",
+      "sha256": "31590ad1c9b9dc6ccd92cc0d9bd5375d90473ee8e1854944b4c85fefda8c94e1",
+      "bytes": 456619,
+      "exit": 101
+    },
+    {
+      "log": "/tmp/pixiv-fanbox-sdk-strict-clippy-third.log",
+      "sha256": "b07b091d8ab0f3ca9823821b295bdfc825e3c53f4f08b49528b1669be3fd9cae",
+      "bytes": 456564,
+      "exit": 101
+    },
+    {
+      "log": "/tmp/pixiv-fanbox-source-attributes-red.log",
+      "sha256": "d482fba2a7df9097c9a776091413fc44f2a5ab31b85bb446d0d87b044b086495",
+      "bytes": 3951,
+      "exit": 101
+    },
+    {
+      "log": "/tmp/pixiv-fanbox-source-attributes-green.log",
+      "sha256": "09d6628f2cc51c4271517fa502d7fff1765ba80dd36aa46ce731d732797f24f9",
+      "bytes": 3091,
+      "exit": 0
+    },
+    {
+      "log": "/tmp/pixiv-fanbox-identity-all-regressions-red.log",
+      "sha256": "b2dfba244b9127f1c860421bea2e9eea274e7b0068053c8e5284448e9a9f7109",
+      "bytes": 5583,
+      "exit": 101
+    },
+    {
+      "log": "/tmp/pixiv-fanbox-identity-regressions-green.log",
+      "sha256": "b97e4094b6f160b7a764827764f35c63ee8dbfeca6c0494b2add1886e39bc759",
+      "bytes": 4661,
+      "exit": 101
+    },
+    {
+      "log": "/tmp/pixiv-fanbox-source-attributes-final-focused.log",
+      "sha256": "f39fdea2c5773d4ed7e1eb677528f27ff01ad7e119564022ee0812df38bdca18",
+      "bytes": 3185,
+      "exit": 0
+    },
+    {
+      "log": "/tmp/pixiv-fanbox-solver-aliases-red.log",
+      "sha256": "29ceb189999604ff7d348b44fdd0655ea8877fa9c4c1b53720b3ee9f64ba9d65",
+      "bytes": 5550,
+      "exit": 101
+    },
+    {
+      "log": "/tmp/pixiv-fanbox-sdk-final-focused.log",
+      "sha256": "257ff4d170f9899582f85cd45f7ce80b7f849f892e6d720540c9b4b105c21e41",
+      "bytes": 460953,
+      "exit": 0
+    },
+    {
+      "log": "/tmp/pixiv-fanbox-sdk-final-related-go.log",
+      "sha256": "1161df940280caba2f0740a1baee6d1dc53fd70d6b9482c5c9e42ee1e401d80e",
+      "bytes": 100123,
+      "exit": 0
+    },
+    {
+      "log": "/tmp/pixiv-fanbox-sdk-native-final-full-gates.log",
+      "sha256": "3886b27438fa95f86e4dce5012f5dbd51fa9af8f15cc45a497a439c75b794506",
+      "bytes": 1485924,
+      "exit": 0
+    }
+  ],
+  "scope_and_gaps": "Public identity156/publicHTML67/context8/solver93 plus bounded14+7 regressions and native6 raw Linux boundary. Media80 is Go-only. No full FANBOX/Session/native platform parity: saved app/CLI/MCP/content/resources/download and JSON surrogate/depth/date/general URL, TLS1.2/HRR/resumption/H1/proxy/concurrency/decoder/distribution remain pending. Denied supplemental multiplex/unfinished HEAD/upload probe is not retried or evidence.",
+  "final_ledger_validator": {
+    "command": "go test ./scripts/tests/migration -count=1 && go vet ./scripts/tests/migration",
+    "exit": 0,
+    "log": "/tmp/pixiv-fanbox-sdk-final-ledger-validator.log",
+    "sha256": "59e8c994390fc14f8dd30315710999dab40747cd737b898802b6fb4cd3575a3c"
+  }
+}

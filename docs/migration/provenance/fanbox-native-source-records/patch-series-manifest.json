@@ -1,0 +1,233 @@
+{
+  "schema_version": 1,
+  "snapshot_at_utc": "2026-10-10T07:21:32.957669+00:00",
+  "original_inventory_sha256": "4f5d2a59d2c4b5a40d2a6499eb4a2527a60b51f66ba4ec7ef96a1b09e265a3ff",
+  "patched_inventory_sha256": "78a081d82a021f10f80ee8ae00c36374d9cf512fbc4b425ca2d129182269fef7",
+  "patches": [
+    {
+      "order": 1,
+      "path": "third_party/rust/fanbox/patches/0001-boringssl-extension-shuffle-bounds.patch",
+      "description": "Fix the unused extension-suffix shuffle seed index and inclusive Fisher-Yates swap range in the upstream build patch; leave every packaged native blob unchanged.",
+      "bytes": 673,
+      "sha256": "7b409f69fb2a8b470e8d5b2ca31af1dc250c09f3bdd3ded0df5da65ab8b7e547",
+      "files": [
+        {
+          "path": "btls-sys-0.5.6/patches/boringssl.patch",
+          "before_sha256": "89612cb0cd2ac8f365ecda83b86fcea9aeb4ef67f285df784be71f64518daa8a",
+          "after_sha256": "ad57cbc6e593a4425ccd7602ecf473f437076c85f0c0d05a04dd47fd62cffc3d",
+          "before_bytes": 54446,
+          "after_bytes": 54454,
+          "before_crlf_count": 0,
+          "after_crlf_count": 0
+        }
+      ]
+    },
+    {
+      "order": 2,
+      "path": "third_party/rust/fanbox/patches/0002-btls-requested-trust-anchors.patch",
+      "description": "Expose the native requested-trust-anchor ClientHello setter without installing trust anchors or changing certificate verification.",
+      "bytes": 1057,
+      "sha256": "0752e2c1862fda4cb5746b7791e3c06e21dd893bc61a1544e70ccaee3ada2d08",
+      "files": [
+        {
+          "path": "btls-0.5.6/src/ssl/mod.rs",
+          "before_sha256": "ef88330333cca96304c26b61e13690c2972ba04d105cb4258a68284606c4016f",
+          "after_sha256": "a5afd3df655dc3072c55bba0259cd82cec7e355b9535e47e371e43d07afa6d37",
+          "before_bytes": 168034,
+          "after_bytes": 168619,
+          "before_crlf_count": 0,
+          "after_crlf_count": 0
+        }
+      ]
+    },
+    {
+      "order": 3,
+      "path": "third_party/rust/fanbox/patches/0003-btls-fallible-ssl-extra-data.patch",
+      "description": "Preserve Rust ownership when storing the certificate verification record in native SSL extra data fails.",
+      "bytes": 1092,
+      "sha256": "34e1ad78df6c8ad1777ebeea1b2e4852aa573fcd14a0aca6caddd569a3484c7a",
+      "files": [
+        {
+          "path": "btls-0.5.6/src/ssl/mod.rs",
+          "before_sha256": "a5afd3df655dc3072c55bba0259cd82cec7e355b9535e47e371e43d07afa6d37",
+          "after_sha256": "db8631b5207a35579bae384ce2089b7630935416a5fb9e80909d2c6d926cc466",
+          "before_bytes": 168619,
+          "after_bytes": 169256,
+          "before_crlf_count": 0,
+          "after_crlf_count": 0
+        }
+      ]
+    },
+    {
+      "order": 4,
+      "path": "third_party/rust/fanbox/patches/0004-wreq-tls-profile-and-certificate-errors.patch",
+      "description": "Add default-off requested-trust-anchor and bad_certificate alert policy; retain genuine verifier result, certificate, and internal failure in the error source chain.",
+      "bytes": 11485,
+      "sha256": "1293cf53b20f687c6cb877b6c3d64820db2b2352655bb01922f703f49e1fe4cd",
+      "files": [
+        {
+          "path": "wreq-6.0.0-rc.31/src/tls.rs",
+          "before_sha256": "ebf5f2299421c9d7bd4135deb3fb2d6b95aa522c457c0b1941f5d8b70f2320af",
+          "after_sha256": "21489a2d7db5295741a798d1626ca7be9ea4e1ad5ff111103fda8d5f29dfabf8",
+          "before_bytes": 18599,
+          "after_bytes": 22955,
+          "before_crlf_count": 0,
+          "after_crlf_count": 0
+        },
+        {
+          "path": "wreq-6.0.0-rc.31/src/tls/conn.rs",
+          "before_sha256": "fabfd49c172c0c27ea1d5a2579bf08e2cee7887414b72dc1c940dc414939f5fb",
+          "after_sha256": "4ed66d840d045789733856b8985a8a7b95fff4e0f3f543a0ea93fcf192277cd5",
+          "before_bytes": 18288,
+          "after_bytes": 20982,
+          "before_crlf_count": 0,
+          "after_crlf_count": 0
+        },
+        {
+          "path": "wreq-6.0.0-rc.31/src/tls/conn/service.rs",
+          "before_sha256": "cc69f4e4d6d587341fd7ae701669f295c0fadb981b1dc43927f74febb7439e12",
+          "after_sha256": "69ef152b341e0b669fa03defb234746328abcf4e0a25d229fac808cff42a4ef9",
+          "before_bytes": 4066,
+          "after_bytes": 4775,
+          "before_crlf_count": 0,
+          "after_crlf_count": 0
+        }
+      ]
+    },
+    {
+      "order": 5,
+      "path": "third_party/rust/fanbox/patches/0005-http2-atomic-idle-shutdown.patch",
+      "description": "Atomically retire only HTTP/2 connections without admitted requests or live streams; wait for flush and physical IO shutdown, retaining driver failures.",
+      "bytes": 10873,
+      "sha256": "2144becbd1eb82cfb216cba102dd8c61ab23f9be814c970ed61831402bb72fe3",
+      "files": [
+        {
+          "path": "http2-0.5.20/src/client.rs",
+          "before_sha256": "79148f75b4291fb79a4f8fa5e02fbd0264ab102ca91668df54c35c65cd8c83a9",
+          "after_sha256": "8e92b1b6107a87d24d695f23cd61ffa07d3ca5b223eb296015ed931482a8996d",
+          "before_bytes": 65158,
+          "after_bytes": 65406,
+          "before_crlf_count": 0,
+          "after_crlf_count": 0
+        },
+        {
+          "path": "http2-0.5.20/src/proto/connection.rs",
+          "before_sha256": "062bf540763a69443e53e0b240a2bd35688b3af367929b4d19dc896effc43085",
+          "after_sha256": "d4255aea194b2fe5c109513aff710e3e3b803f64061624e0aa68162c79fd205e",
+          "before_bytes": 23865,
+          "after_bytes": 25267,
+          "before_crlf_count": 0,
+          "after_crlf_count": 0
+        },
+        {
+          "path": "http2-0.5.20/src/proto/mod.rs",
+          "before_sha256": "4eba2e8b4eafc8fbb6fb55938ebdf35a260cfc8f508fbdbdf40a9c2d4e69ae86",
+          "after_sha256": "5a7b60c43cbdd23ce1c7371876bc43d0ba43cdff689f0a557e87c989b734b851",
+          "before_bytes": 1304,
+          "after_bytes": 1368,
+          "before_crlf_count": 0,
+          "after_crlf_count": 0
+        },
+        {
+          "path": "http2-0.5.20/src/proto/streams/mod.rs",
+          "before_sha256": "3eaa659e3533f6ccbecb7eeeee63d745da2720f31ce5d56d3a4cfa57c1877c96",
+          "after_sha256": "3005ca522f21ac0f457ac2f69ee108c5d34eb4c3a6222532bcb2b1dc7df1aff6",
+          "before_bytes": 3870,
+          "after_bytes": 3934,
+          "before_crlf_count": 0,
+          "after_crlf_count": 0
+        },
+        {
+          "path": "http2-0.5.20/src/proto/streams/streams.rs",
+          "before_sha256": "e223d1cb81c4b18029801ad765f8206cb719b8376f02f59d6bf2e4373ee215ff",
+          "after_sha256": "69612f00f61e10fd271be0a861c728892eaa9012cdf5e528d2968c53d3881d61",
+          "before_bytes": 58191,
+          "after_bytes": 62071,
+          "before_crlf_count": 0,
+          "after_crlf_count": 0
+        }
+      ]
+    },
+    {
+      "order": 6,
+      "path": "third_party/rust/fanbox/patches/0006-wreq-proto-idle-admission.patch",
+      "description": "Reserve admission across the asynchronous HTTP/2 dispatch queue and release it at stream creation, cancellation, or rejected dispatch; expose idle retirement state. Preserve CRLF.",
+      "bytes": 5701,
+      "sha256": "e84c28fedff24fd3def7205a361a28b42ce4274053775821e9a1c47f30fa6e6d",
+      "files": [
+        {
+          "path": "wreq-proto-0.2.5/src/conn/http2.rs",
+          "before_sha256": "f21dcea6c9afdcc431a078664dca1bfa365e594b8cbda9c771c248b90373fcc0",
+          "after_sha256": "74b743eca75a3cbe96d1f14f6e7f23fb690b9b309894b6a33add1b7fd639423a",
+          "before_bytes": 9182,
+          "after_bytes": 10389,
+          "before_crlf_count": 290,
+          "after_crlf_count": 318
+        },
+        {
+          "path": "wreq-proto-0.2.5/src/proto/http2/client.rs",
+          "before_sha256": "08ef0afdeb3721a68ee93e48893f06eddd83e251090cba35a63169dacb297b2f",
+          "after_sha256": "2fc2e695de94e8c8d40802dd00ab8f0ac03af09e89f7cf895ef403527ea5ba1b",
+          "before_bytes": 21540,
+          "after_bytes": 21765,
+          "before_crlf_count": 677,
+          "after_crlf_count": 681
+        }
+      ]
+    },
+    {
+      "order": 7,
+      "path": "third_party/rust/fanbox/patches/0007-wreq-logical-authority.patch",
+      "description": "Validate one logical Host authority independently of the dial target; preserve it for HTTP/1 retries and use it as HTTP/2 :authority without a redundant Host field.",
+      "bytes": 3657,
+      "sha256": "786e1386ea3e68fcb87f56cd0b8ae9c4936f1e9cf2c23fe69f6a6c008ea745fe",
+      "files": [
+        {
+          "path": "wreq-6.0.0-rc.31/src/client/layer/client.rs",
+          "before_sha256": "6edba5bdd405d6fe66ab103d96622ade51398fecbcd1193eba8277ec8ca79277",
+          "after_sha256": "8c60d3115263302b504a70348b2643d8bc1c1152741f853c2df3fb42adeb5b16",
+          "before_bytes": 42242,
+          "after_bytes": 44621,
+          "before_crlf_count": 0,
+          "after_crlf_count": 0
+        }
+      ]
+    },
+    {
+      "order": 8,
+      "path": "third_party/rust/fanbox/patches/0008-wreq-idle-pool-lifecycle.patch",
+      "description": "Expose a shared idle-only pool close future, preserve busy HTTP/2 connections, observe HTTP/1 driver shutdown, and retry an untouched request rejected by idle retirement.",
+      "bytes": 12617,
+      "sha256": "613a4e2f99304dcb4bf8db6db7b5b3d2e144373366580dc3656fbbdcc541e581",
+      "files": [
+        {
+          "path": "wreq-6.0.0-rc.31/src/client.rs",
+          "before_sha256": "6928304a94497219b1c90e3e44920df71f4596d002a2169299df5489e5629527",
+          "after_sha256": "d95e7d54c5907eaf97c5ca03d669c9c4b4cd7cbd738baa49f0bdd677e50d0377",
+          "before_bytes": 56428,
+          "after_bytes": 57087,
+          "before_crlf_count": 0,
+          "after_crlf_count": 0
+        },
+        {
+          "path": "wreq-6.0.0-rc.31/src/client/layer/client.rs",
+          "before_sha256": "8c60d3115263302b504a70348b2643d8bc1c1152741f853c2df3fb42adeb5b16",
+          "after_sha256": "9bbf90c5bcbe84e1183a2db55131872d04b1d1a5817000bd52219621eecb0f4e",
+          "before_bytes": 44621,
+          "after_bytes": 46953,
+          "before_crlf_count": 0,
+          "after_crlf_count": 0
+        },
+        {
+          "path": "wreq-6.0.0-rc.31/src/client/layer/client/pool.rs",
+          "before_sha256": "877821ec3f147210712491d3b64c869df48ac4c0ad1c65f8f6f19aa9c23d122d",
+          "after_sha256": "24fc6a07ea0bafdebb7f02de29f2e6d1497a4c10baa523a19e677a8bbdd6e940",
+          "before_bytes": 35105,
+          "after_bytes": 36221,
+          "before_crlf_count": 0,
+          "after_crlf_count": 0
+        }
+      ]
+    }
+  ]
+}

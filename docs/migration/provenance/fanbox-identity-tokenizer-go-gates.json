@@ -1,0 +1,140 @@
+{
+  "schema_version": 1,
+  "task": "bounded FANBOX public identity tokenizer/Unicode field-fold/decimal-port regression supplement",
+  "workspace": "/workspace/scratch/cd334a12dde3/pixiv-cli-rs",
+  "source_commit": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "go_version": "go1.27.1",
+  "toolchain_environment": {
+    "path": "/tmp/quantus-toolchain-env.txt",
+    "sha256": "8134ecf516ad2127e04f96a198500da34104dde9107cdae71ab4f5eda80c218e"
+  },
+  "case_count": 14,
+  "case_categories": {
+    "public_current_user": 9,
+    "comments_and_rawtext_duplicate_attributes": 6,
+    "json_unicode_simple_fold": 3,
+    "public_injected_open_with_decimal_ports": 5
+  },
+  "successful_public_outcomes": {
+    "current_user_success": 9,
+    "open_with_success": 5
+  },
+  "owned_artifacts": [
+    {
+      "path": "sdk/fanbox/migration_identity_tokenizer_regression_test.go",
+      "sha256": "f27059d6a92cd3f16a8067929a254a53f058ce68eca19eef04ec46666745ae90"
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/fixtures/fanbox-identity-tokenizer-regressions.json",
+      "sha256": "732d71a38a98407dbf874586c3f77412d4b34006ac916590e5593321da79129a"
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/fanbox_identity.rs",
+      "sha256": "7e1c3fc00d6c2d2532bd49a3bea4f72bf102d15a7e6dd36fc70a049018adef1e"
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/fanbox_support/mod.rs",
+      "sha256": "563edd98980b73db7904a8edbaf80cbbaed6d22ecdca8f41c6ccca76f1f3636d"
+    },
+    {
+      "path": "crates/pixiv-sdk/src/fanbox/identity.rs",
+      "sha256": "e9ca72e5402610e316a84cbb2c53d422cdfb3799212bc58fa006e584cb88fcfa"
+    },
+    {
+      "path": "crates/pixiv-sdk/src/fanbox/options.rs",
+      "sha256": "ef1760135ed14da3b28eadf222d2c30c7e3e8151d2ed2288b6e7a5a3d4d35b0d"
+    }
+  ],
+  "frozen_original_fixtures_unchanged": true,
+  "sourceguard": {
+    "path": "/tmp/fanbox-identity-tokenizer-regressions/sourceguard.json",
+    "sha256": "b5677786c24a0c0d303d06ef913227f085e2c0e92e1415331259fe48473d16da",
+    "verification_script": {
+      "path": "/tmp/fanbox-identity-tokenizer-regressions/verify-sourceguard.py",
+      "sha256": "af3d5b7cf3d95e2dc1eeb2ab585456e03382d69976b5014aae93e161d5a49ed2"
+    }
+  },
+  "go_gates": [
+    {
+      "name": "capture",
+      "command": "source /tmp/quantus-toolchain-env.txt; go test ./sdk/fanbox -run '^TestMigrationFanboxIdentityTokenizerRegressionsFrozenGo$' -count=1 -v -args -migration-capture-fanbox-identity-tokenizer-regressions",
+      "exit_code": 0,
+      "log": "/tmp/fanbox-identity-tokenizer-regressions/capture.log",
+      "log_sha256": "96aa9a596e396300bce930a1386459185c23872ec84aea83cc422e6565816ef4",
+      "scope": "Only actual public fourteen-row injected regression test with capture flag"
+    },
+    {
+      "name": "replay",
+      "command": "source /tmp/quantus-toolchain-env.txt; go test ./sdk/fanbox -run '^TestMigrationFanboxIdentityTokenizerRegressionsFrozenGo$' -count=1 -v",
+      "exit_code": 0,
+      "log": "/tmp/fanbox-identity-tokenizer-regressions/replay.log",
+      "log_sha256": "8f8c01dce25c3b1fb50feabdc375076148a6e08e62c8a677f20b902eb81638bb",
+      "scope": "Only actual public fourteen-row injected regression test without capture flag, byte-identical comparison"
+    },
+    {
+      "name": "race",
+      "command": "source /tmp/quantus-toolchain-env.txt; go test -race ./sdk/fanbox -run '^TestMigrationFanboxIdentityTokenizerRegressionsFrozenGo$' -count=1 -v",
+      "exit_code": 0,
+      "log": "/tmp/fanbox-identity-tokenizer-regressions/race.log",
+      "log_sha256": "ba0d992e3f38983312375d0da71be2d4d80ee6f09a00527e0a147f6296246af7",
+      "scope": "Only actual public fourteen-row injected regression test under Go race detector"
+    },
+    {
+      "name": "vet",
+      "command": "source /tmp/quantus-toolchain-env.txt; go vet ./sdk/fanbox",
+      "exit_code": 0,
+      "log": "/tmp/fanbox-identity-tokenizer-regressions/vet.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "go vet SDK FANBOX package and its test sources, no runtime test matrix"
+    },
+    {
+      "name": "gofmt",
+      "command": "source /tmp/quantus-toolchain-env.txt; gofmt -l sdk/fanbox/migration_identity_tokenizer_regression_test.go",
+      "exit_code": 0,
+      "log": "/tmp/fanbox-identity-tokenizer-regressions/gofmt.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "gofmt -l owned new Go supplemental test only, empty output required"
+    },
+    {
+      "name": "sourceguard",
+      "command": "python3 /tmp/fanbox-identity-tokenizer-regressions/verify-sourceguard.py",
+      "exit_code": 0,
+      "log": "/tmp/fanbox-identity-tokenizer-regressions/sourceguard.log",
+      "log_sha256": "cf6fe44efa3f308bad08df1cfc4e296f506d4d13e6de45278525ad37b361332a",
+      "scope": "Read-only hash and frozen-commit comparisons, including unchanged original309/public67 fixture guard"
+    }
+  ],
+  "rust_tests_first": {
+    "execution_owner": "Parent /root/continue_pixiv_windows_handler; this worker executed no Cargo",
+    "terminal_red": {
+      "log": "/tmp/pixiv-fanbox-identity-all-regressions-red.log",
+      "log_sha256": "b2dfba244b9127f1c860421bea2e9eea274e7b0068053c8e5284448e9a9f7109",
+      "exit_code": 101,
+      "runtime_results": "Original six identity tests passed; three new source-regression tests failed on actual abrupt comment, long-s isCreator and proxy port65536 Go outcomes before production fixes"
+    },
+    "identity_runtime_green": {
+      "log": "/tmp/pixiv-fanbox-identity-regressions-green.log",
+      "log_sha256": "b97e4094b6f160b7a764827764f35c63ee8dbfeca6c0494b2add1886e39bc759",
+      "combined_exit_code": 101,
+      "identity_result": "Nine identity tests passed, including three new regression tests and all pre-existing public156/public67/context8 tests",
+      "combined_failure": "Combined Cargo command returned101 solely because separate fanbox_source_attributes test resolved workspace source path from wrong crate cwd. Identity test binary completed9 passed/0 failed"
+    },
+    "separate_attribute_harness_correction": {
+      "log": "/tmp/pixiv-fanbox-source-attributes-final-focused.log",
+      "log_sha256": "f39fdea2c5773d4ed7e1eb677528f27ff01ad7e119564022ee0812df38bdca18",
+      "exit_code": 0,
+      "result": "Separate source-attribute harness terminal GREEN after parent-owned cwd correction; no fixture or identity expectation changes"
+    },
+    "aggregate_gate": "Parent-owned full formatter/linter/test/build still pending at this manifest snapshot"
+  },
+  "production_fix_scope": {
+    "identity.rs": "Actual html5ever structural token callbacks and remaining input queue align duplicate meta source spans; narrow attr-name span rewrite retains duplicate ordering before genuine tokenizer value decode. Shared private ASCII-named-field json_name_eq uses Go SimpleFold aliases U+017F and U+212A",
+    "options.rs": "Accepts Go-valid arbitrary decimal port syntax while preserving raw wire authority; host/path parsing fallback avoids WHATWG 16-bit range restriction. Earlier question_mark Clippy fix replaces host presence early-return with equivalent host_str()?"
+  },
+  "limitations": [
+    "No native transport or network/live credentials/browser/media/HEAD/upload/multiplexing probes were executed by this worker",
+    "Only added14 public source-review inputs are captured; original309/public67 remain unchanged",
+    "Go-only error type topology and reader invocation/events remain explicit projections",
+    "General JSON surrogate/depth, broad URL canonicalization and solver date-format debt remain outside this bounded regression supplement"
+  ]
+}

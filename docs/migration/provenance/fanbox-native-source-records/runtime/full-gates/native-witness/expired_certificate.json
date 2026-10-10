@@ -1,0 +1,224 @@
+{
+  "boundary_mapping": "Exact Go-observed Session request inputs are sent through the genuine public Rust native raw boundary. This establishes native transport wire/lifecycle evidence, not private Session or public SDK policy equivalence.",
+  "completed_idle_liveness_checks": 0,
+  "elapsed_ns": 4387681,
+  "error_mapping": "Rust typed native verification errors preserve actual X509 class and native source. Go concrete type names and diagnostic wording are retained unchanged in the sealed fixture and are not claimed Rust-compatible.",
+  "errors": [
+    {
+      "message": "error sending request for uri (https://localhost:40957/owned-native): client error (Connect)",
+      "recognized_rust_type": "wreq::Error"
+    },
+    {
+      "message": "client error (Connect)",
+      "recognized_rust_type": null
+    },
+    {
+      "message": "certificate verification failed: certificate has expired",
+      "recognized_rust_type": "wreq::tls::CertificateVerificationError"
+    },
+    {
+      "message": "[CERTIFICATE_VERIFY_FAILED]",
+      "recognized_rust_type": "btls::ssl::Error"
+    },
+    {
+      "message": "[CERTIFICATE_VERIFY_FAILED]",
+      "recognized_rust_type": "btls::error::ErrorStack"
+    }
+  ],
+  "name": "expired_certificate",
+  "native_certificate_failure": {
+    "certificate_der_hex": "3082017e30820123a003020102020102300a06082a8648ce3d040302302c312a3028060355040313214f776e65642046414e424f58206e617469766520636f6e747261637420726f6f74301e170d3230303130313030303030305a170d3231303130313030303030305a3025312330210603550403131a4f776e6564206e6174697665206c6f6f706261636b20706565723059301306072a8648ce3d020106082a8648ce3d030107034200049cfe0195802f5a9ef9a09f2d68a33e8df9aa60c1a09f9d25f2f9295a410abc8beb250db273202b93cf09fd57d3f582517776a8e6e0a7e0fb720cfdadc6c372f6a33d303b300e0603551d0f0101ff04040302078030130603551d25040c300a06082b0601050507030130140603551d11040d300b82096c6f63616c686f7374300a06082a8648ce3d0403020349003046022100d3e3a5072698a04f3235a7378ad59712fcb936cc06ef58a9966f66d762875f46022100d43060e9b00141561e94c292c595aa767aa3c0c1495c3724fbae225ff900eac1",
+    "kind": "Expired",
+    "original_native_verify_code": 10,
+    "original_native_verify_message": "certificate has expired"
+  },
+  "peer": {
+    "connections": [
+      {
+        "alpn": "",
+        "cipher_suite": 0,
+        "did_resume": false,
+        "frames": [],
+        "handshake_error": "remote error: tls: bad certificate",
+        "hello": {
+          "cipher_suites": [
+            27242,
+            4865,
+            4866,
+            4867,
+            49195,
+            49199,
+            49196,
+            49200,
+            52393,
+            52392,
+            49171,
+            49172,
+            156,
+            157,
+            47,
+            53
+          ],
+          "compression_hex": "00",
+          "extensions": [
+            {
+              "comparable_data": "",
+              "comparable_id": 2570,
+              "data_hex": "",
+              "id": 47802,
+              "length": 0
+            },
+            {
+              "comparable_data": "0a0a:fixed[00],11ec:random[1216],001d:random[32]",
+              "comparable_id": 51,
+              "data_hex": "04edaaaa00010011ec04c0f3fbc4916b97b57c9296ab172be6170ee5731ef596019b01ed32215755650cdc1aa2688bc8b2bcc7f7818b189d9de20deb33922d837f5ef0ae96f498879b816c3c14475a684227ab0b12c11c9b763044b17d9c535a3495c278cf6fd1b70f782946b01550e40faa9775acb1bc7b611cecfc4264556d5326afd0bba480535a1b3729e16596fb9b6d9352bcd3aa355e278d94d57d0d6888214260800c6b5e76159c222930c11f0228214465a118a141349c6b3af18bdd14387e4687a177021e558444d79e7eac41555c3926937e75505c9253b3b86990fc7a9a8bd826beb8052f096ad22a6cc37407b32254d9e1cf0b529feca9ccf079ae92659e7d7130cc879796395ad8316b54f7bc8e706c4f288523b72cf725489165bd1f5b26d9ecc7f2372950374688a6645932414b286facf33482e1a9ab895a49822df5b31c5ab2be06a49be0aac23ecaa6e3c37431e33d106592294608699c5730731872940ee28338ccf76c319640f6c73349f401f58aac7f7569eb98bf524a30e3274150509ec6d9c682362ce1a8209c65c3e80c8239091ca42b78ace731654125b1c7aaa38546e67a04f125075e0b2f46ec7f0f3b05f0684770f400360aa012783a1681605d352034a0538fc241af69477ed2ac84a0ba0fe64ae72c1b0fdb1d74a610d1124b1856cf96f677a576a75e0341019c21b0082ee68349ada0a19ba6ad2734332d80bd768185fd347e99c1ab8901cb5950b207426aef00c8d2c296b0e135c0a49caf11374c90a8c5b1605a5861322182ffcace1b2b57deb372492087e7bb5ea63852ea6cb70e15254116b31d7bca2014a95d7c779be780abcc06afb8333b7b2a16584ade19a5a3947886da0b0486b6fd717c4be27b4120c99e3218d252905f02aa709c5208020c09cb906e91bcfe493ac17b755812a96e199ae223a25af012d9ea025b2bb3fc6a9dbcd3cbbf062c5bca5830f71b72650d79f203aa7130bdc8c3332a696df3147306b815327d1f12628bf9b7dcab0f115c2526a04d58c45aac905817e8b0c11b846cf1b058643ae896c47fe569d3ccb2fe6053e1a102a345b0d1ec795b0776ac00c38335280e594edc74aedb6473edc72f42c376479a756e450af6b215f4cca22a925eef8a6a94eb9d22fcc0c31ca2fadab8ccdb767d0b5808b1467046a89b32b07c0c0cbbf5bba205a7351315cd11c2440b9a338bbc8d69a5e4593032a37d01b6b9ad927f4fdcc6639439d031837fa42476361caec19aaa9c1f05323bf8179d04a9a377846b7f046c029828ca6a531950379804600a87b377f858f1236e27e9824050510643730fb78125904ea156968aa30050ec3bc04623d9b76750453064031f16b0afc2fba285400c6632025a98281c253ce11b78baabc9a03bbbfd3c946782074f97aacc24b813a23c21664d4647b3cd64313ef84db8a3333d63b19be7b4d87162e8a02080124d2c4612e2f215492b1f24799b6263853c676ec6b956d663c220f35d1a3210598b854e0455f53ab7722ab8c156958354317ff60565c60838f699630c243f82b7caca4ea16b87aa0063f009ab90f73c4da453a781476aa0432c0565b29516a5b90eb0d39abeb9a12c3653f35cac1e0c259df74959123e06ad7ca6b41856877132429c6ed432ccb195aa6fda7b1d2180b81a280ca2a66c5937ab11544742c494df894e20f943fc14393778d2db601ea34e945f384ef748001d00201539ad7e74775a0775cf3745a3d959fec7fdf51cb842aa1ffce68b22b948bb28",
+              "id": 51,
+              "length": 1263
+            },
+            {
+              "comparable_data": "000c0000096c6f63616c686f7374",
+              "comparable_id": 0,
+              "data_hex": "000c0000096c6f63616c686f7374",
+              "id": 0,
+              "length": 14
+            },
+            {
+              "comparable_data": "0003026832",
+              "comparable_id": 17613,
+              "data_hex": "0003026832",
+              "id": 17613,
+              "length": 5
+            },
+            {
+              "comparable_data": "00",
+              "comparable_id": 65281,
+              "data_hex": "00",
+              "id": 65281,
+              "length": 1
+            },
+            {
+              "comparable_data": "000a0a0a11ec001d00170018",
+              "comparable_id": 10,
+              "data_hex": "000aaaaa11ec001d00170018",
+              "id": 10,
+              "length": 12
+            },
+            {
+              "comparable_data": "020002",
+              "comparable_id": 27,
+              "data_hex": "020002",
+              "id": 27,
+              "length": 3
+            },
+            {
+              "comparable_data": "",
+              "comparable_id": 35,
+              "data_hex": "",
+              "id": 35,
+              "length": 0
+            },
+            {
+              "comparable_data": "0100000000",
+              "comparable_id": 5,
+              "data_hex": "0100000000",
+              "id": 5,
+              "length": 5
+            },
+            {
+              "comparable_data": "",
+              "comparable_id": 23,
+              "data_hex": "",
+              "id": 23,
+              "length": 0
+            },
+            {
+              "comparable_data": "060a0a03040303",
+              "comparable_id": 43,
+              "data_hex": "06caca03040303",
+              "id": 43,
+              "length": 7
+            },
+            {
+              "comparable_data": "001004030804040105030805050108060601",
+              "comparable_id": 13,
+              "data_hex": "001004030804040105030805050108060601",
+              "id": 13,
+              "length": 18
+            },
+            {
+              "comparable_data": "",
+              "comparable_id": 18,
+              "data_hex": "",
+              "id": 18,
+              "length": 0
+            },
+            {
+              "comparable_data": "0100",
+              "comparable_id": 11,
+              "data_hex": "0100",
+              "id": 11,
+              "length": 2
+            },
+            {
+              "comparable_data": "fixed[0000010001],config_id=random[1],enc=random[32],payload=random[144|176|208|240]",
+              "comparable_id": 65037,
+              "data_hex": "0000010001b700207de93e236a524b2b06133b210049340850ab53358e29f38f34d4c5544d5c925e00f05d8c14df9f14a06a34254a0c5a6b7d1393f4b7790a68424efefd5f84598a5795baf84d6428bd7cef2e4fd2b84e19c54f838f7922b81a61b307556900fc42f7adb168d1bb6e6b9e78b2998bbf9cdf0e764ce12b1826166416a9a452cbe55e6d9cdcbc43ec3c7d19ce5dd5d14b2c63428e68d37f95fee15a90c65c9b8704dc5cda9bdd5fc37e9340dcea53daa5efd8a714581c1430fef6b4c7100b5451048c8f7c36e87a26380f082a59b0c6d8bdc34bf7978a3c20f3b30e0725534d5a4d5402b0943d159185b7ad78035bb383cd65f2cb0462fb2490ddddd591b2809f4b69ea4b2b590761ae58fe4d2f7f79f9af47056a",
+              "id": 65037,
+              "length": 282
+            },
+            {
+              "comparable_data": "000c02683208687474702f312e31",
+              "comparable_id": 16,
+              "data_hex": "000c02683208687474702f312e31",
+              "id": 16,
+              "length": 14
+            },
+            {
+              "comparable_data": "0101",
+              "comparable_id": 45,
+              "data_hex": "0101",
+              "id": 45,
+              "length": 2
+            },
+            {
+              "comparable_data": "0000",
+              "comparable_id": 51764,
+              "data_hex": "0000",
+              "id": 51764,
+              "length": 2
+            },
+            {
+              "comparable_data": "00",
+              "comparable_id": 2570,
+              "data_hex": "00",
+              "id": 43690,
+              "length": 1
+            }
+          ],
+          "legacy_version": 771,
+          "random_hex": "5411df2e93d66364f3a37e402c72936e9f8904f6b2716ec59ae63339747b9006",
+          "record_hex": "16030107180100071403035411df2e93d66364f3a37e402c72936e9f8904f6b2716ec59ae63339747b900620f15d78c1f684a54813996954354816772b754ee54a598ff2fdd24de1ee07086c00206a6a130113021303c02bc02fc02cc030cca9cca8c013c014009c009d002f0035010006abbaba0000003304ef04edaaaa00010011ec04c0f3fbc4916b97b57c9296ab172be6170ee5731ef596019b01ed32215755650cdc1aa2688bc8b2bcc7f7818b189d9de20deb33922d837f5ef0ae96f498879b816c3c14475a684227ab0b12c11c9b763044b17d9c535a3495c278cf6fd1b70f782946b01550e40faa9775acb1bc7b611cecfc4264556d5326afd0bba480535a1b3729e16596fb9b6d9352bcd3aa355e278d94d57d0d6888214260800c6b5e76159c222930c11f0228214465a118a141349c6b3af18bdd14387e4687a177021e558444d79e7eac41555c3926937e75505c9253b3b86990fc7a9a8bd826beb8052f096ad22a6cc37407b32254d9e1cf0b529feca9ccf079ae92659e7d7130cc879796395ad8316b54f7bc8e706c4f288523b72cf725489165bd1f5b26d9ecc7f2372950374688a6645932414b286facf33482e1a9ab895a49822df5b31c5ab2be06a49be0aac23ecaa6e3c37431e33d106592294608699c5730731872940ee28338ccf76c319640f6c73349f401f58aac7f7569eb98bf524a30e3274150509ec6d9c682362ce1a8209c65c3e80c8239091ca42b78ace731654125b1c7aaa38546e67a04f125075e0b2f46ec7f0f3b05f0684770f400360aa012783a1681605d352034a0538fc241af69477ed2ac84a0ba0fe64ae72c1b0fdb1d74a610d1124b1856cf96f677a576a75e0341019c21b0082ee68349ada0a19ba6ad2734332d80bd768185fd347e99c1ab8901cb5950b207426aef00c8d2c296b0e135c0a49caf11374c90a8c5b1605a5861322182ffcace1b2b57deb372492087e7bb5ea63852ea6cb70e15254116b31d7bca2014a95d7c779be780abcc06afb8333b7b2a16584ade19a5a3947886da0b0486b6fd717c4be27b4120c99e3218d252905f02aa709c5208020c09cb906e91bcfe493ac17b755812a96e199ae223a25af012d9ea025b2bb3fc6a9dbcd3cbbf062c5bca5830f71b72650d79f203aa7130bdc8c3332a696df3147306b815327d1f12628bf9b7dcab0f115c2526a04d58c45aac905817e8b0c11b846cf1b058643ae896c47fe569d3ccb2fe6053e1a102a345b0d1ec795b0776ac00c38335280e594edc74aedb6473edc72f42c376479a756e450af6b215f4cca22a925eef8a6a94eb9d22fcc0c31ca2fadab8ccdb767d0b5808b1467046a89b32b07c0c0cbbf5bba205a7351315cd11c2440b9a338bbc8d69a5e4593032a37d01b6b9ad927f4fdcc6639439d031837fa42476361caec19aaa9c1f05323bf8179d04a9a377846b7f046c029828ca6a531950379804600a87b377f858f1236e27e9824050510643730fb78125904ea156968aa30050ec3bc04623d9b76750453064031f16b0afc2fba285400c6632025a98281c253ce11b78baabc9a03bbbfd3c946782074f97aacc24b813a23c21664d4647b3cd64313ef84db8a3333d63b19be7b4d87162e8a02080124d2c4612e2f215492b1f24799b6263853c676ec6b956d663c220f35d1a3210598b854e0455f53ab7722ab8c156958354317ff60565c60838f699630c243f82b7caca4ea16b87aa0063f009ab90f73c4da453a781476aa0432c0565b29516a5b90eb0d39abeb9a12c3653f35cac1e0c259df74959123e06ad7ca6b41856877132429c6ed432ccb195aa6fda7b1d2180b81a280ca2a66c5937ab11544742c494df894e20f943fc14393778d2db601ea34e945f384ef748001d00201539ad7e74775a0775cf3745a3d959fec7fdf51cb842aa1ffce68b22b948bb280000000e000c0000096c6f63616c686f737444cd00050003026832ff01000100000a000c000aaaaa11ec001d00170018001b00030200020023000000050005010000000000170000002b000706caca03040303000d001200100403080404010503080505010806060100120000000b00020100fe0d011a0000010001b700207de93e236a524b2b06133b210049340850ab53358e29f38f34d4c5544d5c925e00f05d8c14df9f14a06a34254a0c5a6b7d1393f4b7790a68424efefd5f84598a5795baf84d6428bd7cef2e4fd2b84e19c54f838f7922b81a61b307556900fc42f7adb168d1bb6e6b9e78b2998bbf9cdf0e764ce12b1826166416a9a452cbe55e6d9cdcbc43ec3c7d19ce5dd5d14b2c63428e68d37f95fee15a90c65c9b8704dc5cda9bdd5fc37e9340dcea53daa5efd8a714581c1430fef6b4c7100b5451048c8f7c36e87a26380f082a59b0c6d8bdc34bf7978a3c20f3b30e0725534d5a4d5402b0943d159185b7ad78035bb383cd65f2cb0462fb2490ddddd591b2809f4b69ea4b2b590761ae58fe4d2f7f79f9af47056a0010000e000c02683208687474702f312e31002d00020101ca3400020000aaaa000100",
+          "record_sha256": "c6bf1f549b7feadc436dd03e0cb9cbebf8fdec745d2f39e9bfe6a929c4d92f95",
+          "record_version": 769,
+          "session_id_hex": "f15d78c1f684a54813996954354816772b754ee54a598ff2fdd24de1ee07086c"
+        },
+        "preface_hex": "",
+        "sni": "",
+        "terminal_error": "",
+        "tls_version": 0
+      }
+    ],
+    "event": "report"
+  },
+  "peer_header_hold_ns": 0,
+  "peer_request_observed_elapsed_ns": 0,
+  "ready": {
+    "certificate_der_hex": "3082017e30820123a003020102020102300a06082a8648ce3d040302302c312a3028060355040313214f776e65642046414e424f58206e617469766520636f6e747261637420726f6f74301e170d3230303130313030303030305a170d3231303130313030303030305a3025312330210603550403131a4f776e6564206e6174697665206c6f6f706261636b20706565723059301306072a8648ce3d020106082a8648ce3d030107034200049cfe0195802f5a9ef9a09f2d68a33e8df9aa60c1a09f9d25f2f9295a410abc8beb250db273202b93cf09fd57d3f582517776a8e6e0a7e0fb720cfdadc6c372f6a33d303b300e0603551d0f0101ff04040302078030130603551d25040c300a06082b0601050507030130140603551d11040d300b82096c6f63616c686f7374300a06082a8648ce3d0403020349003046022100d3e3a5072698a04f3235a7378ad59712fcb936cc06ef58a9966f66d762875f46022100d43060e9b00141561e94c292c595aa767aa3c0c1495c3724fbae225ff900eac1",
+    "endpoint": "localhost:40957",
+    "event": "ready",
+    "trust_subjects": [
+      "302c312a3028060355040313214f776e65642046414e424f58206e617469766520636f6e747261637420726f6f74"
+    ]
+  },
+  "responses": []
+}

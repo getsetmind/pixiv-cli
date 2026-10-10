@@ -1,0 +1,486 @@
+{
+  "schema_version": 1,
+  "as_of_utc": "2026-10-10T07:42:06.316623+00:00",
+  "status": "Unchanged required full Rust script terminal GREEN against frozen final source; approved six native owned scenarios passed again during full gates; scoped SDK, certificate and idle-lifecycle reviews recorded.",
+  "source_provenance_does_not_assert_runtime_success": true,
+  "only_approved_scenarios": [
+    "headers_sequential_idle",
+    "response_header_stall",
+    "caller_deadline",
+    "untrusted_certificate",
+    "invalid_hostname",
+    "expired_certificate"
+  ],
+  "observed_from_parent_report": "The final third run passed all six owned native cases, 32.14 seconds overall. Sequential/idle 0.13 seconds; active header stall/physical cancellation 31.22 seconds; caller deadline 0.31 seconds; three certificate cases 0.01 seconds each. Dependencies remained stable. First-run absent-field projection insertion and second-run nil-slice []/null mismatch were repaired only in test/helper code, without changing native dependency source or the sealed Go fixture.",
+  "pending_bounded_validation": [
+    "Parent final all-artifact manifest and authorized publication integration; no additional runtime/compilation gate is inferred from that documentation step."
+  ],
+  "outside_verified_scope": [
+    "HTTP/1 transport/fingerprint equivalence",
+    "TLS resumption/PSK and HelloRetryRequest",
+    "Fragmented ClientHello records or full server-flight byte equivalence",
+    "Native Windows, macOS or other architecture compile/runtime/platform trust",
+    "Native no-follow redirect scenario",
+    "Concurrent Read/Close ownership/API comparison",
+    "Historical default-off deflate frame-reader/HEADERS EOS/nonzero Content-Length/exact initial HEADERS EOS compatibility gates have not been recreated by this series",
+    "Supplemental multiplex/upload operation stopped after a safety flag: unavailable evidence, no retry",
+    "Unfinished HEAD/upload boundaries: unavailable evidence, no probe execution",
+    "Private Go Session/public SDK policy equivalence: cases replay exact Go-observed inputs through the genuine Rust native RawTransport boundary",
+    "Exact Go concrete error type names or wording: raw Go and Rust chains retained separately; Rust genuine X509 classifications and typed sources checked",
+    "Complete root Rust CLI/native release dependency/license bundle, including the newly added dependency closure; the existing Go ugoira-only licensebundle gate does not cover it"
+  ],
+  "runtime_report_source": "Read-only hash, JSON and summary inspection of parent-run third focused evidence, final full-script log/exit/seconds, pre-run freeze, six final native witnesses and persisted scoped review reports. This worker executed no Cargo, Go, native code, network operation or probe.",
+  "exact_command_reported_by_executor": "source /tmp/quantus-toolchain-env.txt; source /tmp/pixiv-rust-validation-env.sh; source /tmp/pixiv-fanbox-native-build-env.sh; export PIXIV_NATIVE_GO=/workspace/scratch/cd334a12dde3/go-toolchain/go/bin/go PIXIV_NATIVE_WITNESS_DIR=/tmp/pixiv-fanbox-native-third-witness; cargo test -p pixiv-sdk --test fanbox_native --locked --offline > /tmp/pixiv-fanbox-native-third-focused.log 2>&1; result=$?; echo $result > /tmp/pixiv-fanbox-native-third-focused.exit",
+  "meaningful_test_count": {
+    "owned_native_scenarios": 6,
+    "meaningful_parent_test": 1,
+    "meaningful_tests_total": 7,
+    "no_environment_scaffold_return_excluded": 1
+  },
+  "full_gates_passed": true,
+  "post_run_source_snapshot_at_utc": "2026-10-10T07:23:47.820981+00:00",
+  "focused_run_records": [
+    {
+      "run": "first",
+      "observed_exit_code": 101,
+      "status": "RED preserved; harness/schema mismatch, not success"
+    },
+    {
+      "run": "second",
+      "observed_exit_code": 101,
+      "status": "RED preserved; harness/schema mismatch, not success"
+    },
+    {
+      "run": "third",
+      "observed_exit_code": 0,
+      "status": "GREEN"
+    }
+  ],
+  "cases": [
+    {
+      "name": "headers_sequential_idle",
+      "elapsed_ns": 119308745,
+      "peer_request_observed_elapsed_ns": 0,
+      "peer_header_hold_ns": 0,
+      "completed_idle_liveness_checks": 2,
+      "native_certificate_failure": null,
+      "boundary_mapping": "Exact Go-observed Session request inputs are sent through the genuine public Rust native raw boundary. This establishes native transport wire/lifecycle evidence, not private Session or public SDK policy equivalence.",
+      "error_mapping": "Rust typed native verification errors preserve actual X509 class and native source. Go concrete type names and diagnostic wording are retained unchanged in the sealed fixture and are not claimed Rust-compatible."
+    },
+    {
+      "name": "response_header_stall",
+      "elapsed_ns": 31210191684,
+      "peer_request_observed_elapsed_ns": 7085275,
+      "peer_header_hold_ns": 31200954201,
+      "completed_idle_liveness_checks": 0,
+      "native_certificate_failure": null,
+      "boundary_mapping": "Exact Go-observed Session request inputs are sent through the genuine public Rust native raw boundary. This establishes native transport wire/lifecycle evidence, not private Session or public SDK policy equivalence.",
+      "error_mapping": "Rust typed native verification errors preserve actual X509 class and native source. Go concrete type names and diagnostic wording are retained unchanged in the sealed fixture and are not claimed Rust-compatible."
+    },
+    {
+      "name": "caller_deadline",
+      "elapsed_ns": 303342103,
+      "peer_request_observed_elapsed_ns": 5112582,
+      "peer_header_hold_ns": 0,
+      "completed_idle_liveness_checks": 0,
+      "native_certificate_failure": null,
+      "boundary_mapping": "Exact Go-observed Session request inputs are sent through the genuine public Rust native raw boundary. This establishes native transport wire/lifecycle evidence, not private Session or public SDK policy equivalence.",
+      "error_mapping": "Rust typed native verification errors preserve actual X509 class and native source. Go concrete type names and diagnostic wording are retained unchanged in the sealed fixture and are not claimed Rust-compatible."
+    },
+    {
+      "name": "untrusted_certificate",
+      "elapsed_ns": 4570666,
+      "peer_request_observed_elapsed_ns": 0,
+      "peer_header_hold_ns": 0,
+      "completed_idle_liveness_checks": 0,
+      "native_certificate_failure": {
+        "certificate_der_hex": "308201773082011da003020102020102300a06082a8648ce3d0403023026312430220603550403131b4f776e656420756e74727573746564206e617469766520726f6f74301e170d3230303130313030303030305a170d3335303130313030303030305a3025312330210603550403131a4f776e6564206e6174697665206c6f6f706261636b20706565723059301306072a8648ce3d020106082a8648ce3d030107034200041c206d7d3db4ec1bf69621737cab1aba7824a23e5ab4bd4244a88942e92182aec9775b5c4577d3a5f5334403f9bae5f92c793b77499e4e19f84f324f6d3775d6a33d303b300e0603551d0f0101ff04040302078030130603551d25040c300a06082b0601050507030130140603551d11040d300b82096c6f63616c686f7374300a06082a8648ce3d040302034800304502203eb96dec790f229184da382c51e310f397b2b353306e4be8afe6752672b253a3022100a20aaf185c7c4562f2d5b2859c5cc42702f261024ce53850c20e68e4ec836de2",
+        "kind": "UnknownAuthority",
+        "original_native_verify_code": 20,
+        "original_native_verify_message": "unable to get local issuer certificate"
+      },
+      "boundary_mapping": "Exact Go-observed Session request inputs are sent through the genuine public Rust native raw boundary. This establishes native transport wire/lifecycle evidence, not private Session or public SDK policy equivalence.",
+      "error_mapping": "Rust typed native verification errors preserve actual X509 class and native source. Go concrete type names and diagnostic wording are retained unchanged in the sealed fixture and are not claimed Rust-compatible."
+    },
+    {
+      "name": "invalid_hostname",
+      "elapsed_ns": 5163562,
+      "peer_request_observed_elapsed_ns": 0,
+      "peer_header_hold_ns": 0,
+      "completed_idle_liveness_checks": 0,
+      "native_certificate_failure": {
+        "certificate_der_hex": "308201883082012da003020102020102300a06082a8648ce3d040302302c312a3028060355040313214f776e65642046414e424f58206e617469766520636f6e747261637420726f6f74301e170d3230303130313030303030305a170d3335303130313030303030305a3025312330210603550403131a4f776e6564206e6174697665206c6f6f706261636b20706565723059301306072a8648ce3d020106082a8648ce3d03010703420004d6d1d937ddb3798cffc1019801a2105d1bac746b11f030af35b4543bf1f9667bf5b708fba6efb9460d57113136ad1b2ab09ab516ad0e4b0ba85ec7b23b43d0d4a3473045300e0603551d0f0101ff04040302078030130603551d25040c300a06082b06010505070301301e0603551d1104173015821377726f6e672d6f776e65642e696e76616c6964300a06082a8648ce3d0403020349003046022100c5476c9a7556c806a7299130ac47f6e7fd7df2bce0bcd2dd43058c455ee4908b022100b5a91dbecca52407abb43d6cd8ec838ade21b418fa4ea31f8f7cab020cf0c471",
+        "kind": "HostnameMismatch",
+        "original_native_verify_code": 62,
+        "original_native_verify_message": "Hostname mismatch"
+      },
+      "boundary_mapping": "Exact Go-observed Session request inputs are sent through the genuine public Rust native raw boundary. This establishes native transport wire/lifecycle evidence, not private Session or public SDK policy equivalence.",
+      "error_mapping": "Rust typed native verification errors preserve actual X509 class and native source. Go concrete type names and diagnostic wording are retained unchanged in the sealed fixture and are not claimed Rust-compatible."
+    },
+    {
+      "name": "expired_certificate",
+      "elapsed_ns": 4854774,
+      "peer_request_observed_elapsed_ns": 0,
+      "peer_header_hold_ns": 0,
+      "completed_idle_liveness_checks": 0,
+      "native_certificate_failure": {
+        "certificate_der_hex": "3082017c30820123a003020102020102300a06082a8648ce3d040302302c312a3028060355040313214f776e65642046414e424f58206e617469766520636f6e747261637420726f6f74301e170d3230303130313030303030305a170d3231303130313030303030305a3025312330210603550403131a4f776e6564206e6174697665206c6f6f706261636b20706565723059301306072a8648ce3d020106082a8648ce3d030107034200045aba992069281ce9ecc7e4b607c111f244805529590b7c50488c22af73f91a511bfe3b3bae16e80e009814cca6581af78dd2925a3a99cfb75e31ddf5e5577f1ba33d303b300e0603551d0f0101ff04040302078030130603551d25040c300a06082b0601050507030130140603551d11040d300b82096c6f63616c686f7374300a06082a8648ce3d040302034700304402201f8428ab465db7ed115e9fd434404f211ba83d830b5e124ad6b59664f1b1f463022044f32dceb7f923aa767a16801fa71f5f8fd1beabde25da9744cbac79b0e13024",
+        "kind": "Expired",
+        "original_native_verify_code": 10,
+        "original_native_verify_message": "certificate has expired"
+      },
+      "boundary_mapping": "Exact Go-observed Session request inputs are sent through the genuine public Rust native raw boundary. This establishes native transport wire/lifecycle evidence, not private Session or public SDK policy equivalence.",
+      "error_mapping": "Rust typed native verification errors preserve actual X509 class and native source. Go concrete type names and diagnostic wording are retained unchanged in the sealed fixture and are not claimed Rust-compatible."
+    }
+  ],
+  "preserved_runtime_records": [
+    {
+      "path": "docs/migration/provenance/fanbox-native-source-records/runtime/first-focused.log",
+      "bytes": 15482,
+      "sha256": "bab63f288ef4b35eb575e44f769aee2f5ebf65d1806065557f7d379a45e42340",
+      "original_artifact": "/tmp/pixiv-fanbox-native-first-focused.log"
+    },
+    {
+      "path": "docs/migration/provenance/fanbox-native-source-records/runtime/first-focused.exit",
+      "bytes": 4,
+      "sha256": "39b8dc3fc8b44765c8e6f1adee04c5b465e555ab791cc42d0d9e810d5b64297c",
+      "original_artifact": "/tmp/pixiv-fanbox-native-first-focused.exit"
+    },
+    {
+      "path": "docs/migration/provenance/fanbox-native-source-records/runtime/second-focused.log",
+      "bytes": 9954,
+      "sha256": "e5f1bba4ed93cee50683a13550381fa71036e7afbd206db2471f050f53085ee2",
+      "original_artifact": "/tmp/pixiv-fanbox-native-second-focused.log"
+    },
+    {
+      "path": "docs/migration/provenance/fanbox-native-source-records/runtime/second-focused.exit",
+      "bytes": 4,
+      "sha256": "39b8dc3fc8b44765c8e6f1adee04c5b465e555ab791cc42d0d9e810d5b64297c",
+      "original_artifact": "/tmp/pixiv-fanbox-native-second-focused.exit"
+    },
+    {
+      "path": "docs/migration/provenance/fanbox-native-source-records/runtime/third-focused.log",
+      "bytes": 4438,
+      "sha256": "5b4a4fa2b03c2531b2934dc14e24e130fb3b4e4a0f011e7f2c00ef8ac6712648",
+      "original_artifact": "/tmp/pixiv-fanbox-native-third-focused.log"
+    },
+    {
+      "path": "docs/migration/provenance/fanbox-native-source-records/runtime/third-focused.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "original_artifact": "/tmp/pixiv-fanbox-native-third-focused.exit"
+    },
+    {
+      "path": "docs/migration/provenance/fanbox-native-source-records/runtime/third-witness/headers_sequential_idle.json",
+      "bytes": 33284,
+      "sha256": "d7f446bfcc83ff2c530b8d12712077236b07f8f5bac627f4bd1317febcdce22f",
+      "original_artifact": "/tmp/pixiv-fanbox-native-third-witness/headers_sequential_idle/rust-observation.json"
+    },
+    {
+      "path": "docs/migration/provenance/fanbox-native-source-records/runtime/third-witness/response_header_stall.json",
+      "bytes": 16127,
+      "sha256": "19c2e8042a9fa52f27c1314d5bf5fa55e9cb400ed6d5aeb746e77fecf8a6b9ef",
+      "original_artifact": "/tmp/pixiv-fanbox-native-third-witness/response_header_stall/rust-observation.json"
+    },
+    {
+      "path": "docs/migration/provenance/fanbox-native-source-records/runtime/third-witness/caller_deadline.json",
+      "bytes": 15737,
+      "sha256": "cb16c2eef524e318af4412da1d611084463061090a218c4c929c860fec201d78",
+      "original_artifact": "/tmp/pixiv-fanbox-native-third-witness/caller_deadline/rust-observation.json"
+    },
+    {
+      "path": "docs/migration/provenance/fanbox-native-source-records/runtime/third-witness/untrusted_certificate.json",
+      "bytes": 15034,
+      "sha256": "a6f3ab5a7fa169c80328203521055e48ab0c2544888b09a10659e286d45c61a8",
+      "original_artifact": "/tmp/pixiv-fanbox-native-third-witness/untrusted_certificate/rust-observation.json"
+    },
+    {
+      "path": "docs/migration/provenance/fanbox-native-source-records/runtime/third-witness/invalid_hostname.json",
+      "bytes": 15057,
+      "sha256": "96fbd219ffa6d35e1ee30d9f589d7f881504cbdc97a9a8d0989fdfe5b8011c36",
+      "original_artifact": "/tmp/pixiv-fanbox-native-third-witness/invalid_hostname/rust-observation.json"
+    },
+    {
+      "path": "docs/migration/provenance/fanbox-native-source-records/runtime/third-witness/expired_certificate.json",
+      "bytes": 15143,
+      "sha256": "66a51c7055b2fcc2bfc0a658811b0cfbb1a768a6e48cbb032b87e6db845c9233",
+      "original_artifact": "/tmp/pixiv-fanbox-native-third-witness/expired_certificate/rust-observation.json"
+    }
+  ],
+  "owned_peer_binary_read_only_record": {
+    "path": "/tmp/pixiv-fanbox-native-third-witness/owned-native-peer",
+    "bytes": 9555608,
+    "sha256": "4cc367eeb94c5bead0942af4c781c8754485bf31fee2277c090572a3714729f1"
+  },
+  "post_run_source_snapshots": [
+    {
+      "path": "crates/pixiv-sdk/src/fanbox/native.rs",
+      "bytes": 8226,
+      "sha256": "22bac9a4d1e7b2988228da5c2f3f7969a75407f3aa28657668341a9d34df58b2"
+    },
+    {
+      "path": "crates/pixiv-sdk/src/fanbox/profile.rs",
+      "bytes": 4067,
+      "sha256": "ba4fad8edaa90f2dfc5d0c1e04679f8218c6570ec797ba0cae7f3ead58724295"
+    },
+    {
+      "path": "crates/pixiv-sdk/src/fanbox/transport.rs",
+      "bytes": 2949,
+      "sha256": "af3d80e6ffbc017a96fcbf326206d7b4ad5d6a47333b92d36b5b756d92b51f89"
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/fanbox_native.rs",
+      "bytes": 20154,
+      "sha256": "820de4cb5905b60298dcdc482f9c0bd93bec111348929a23b7445480d612e44e"
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/helpers/fanbox_native_peer.go",
+      "bytes": 17141,
+      "sha256": "a329d46166d450a9ae9959713c4d80fb0ac5bdadec50c5c25a7ede0a3fda8d76"
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/fixtures/fanbox-native-profile.json",
+      "bytes": 164861,
+      "sha256": "df753a715efd28c016a2532fe544e992b00a1fe5ce58b756d807c13b9522dd62"
+    }
+  ],
+  "toolchain_environment_read_only_records": [
+    {
+      "path": "/tmp/quantus-toolchain-env.txt",
+      "bytes": 867,
+      "sha256": "8134ecf516ad2127e04f96a198500da34104dde9107cdae71ab4f5eda80c218e"
+    },
+    {
+      "path": "/tmp/pixiv-rust-validation-env.sh",
+      "bytes": 1078,
+      "sha256": "2dd5f9db8a8359c310ad8a2366d17d95da9341146579bfabc9a7f94dad07d159"
+    },
+    {
+      "path": "/tmp/pixiv-fanbox-native-build-env.sh",
+      "bytes": 168,
+      "sha256": "fa2134c87740f5a737348bb8ebe118fe6c5c05b856f24cc96203aeb214e7d284"
+    }
+  ],
+  "source_checkout_integrity": "Parent integrated exact -text .gitattributes rules for this source family, the patch series and source records, with a genuine RED then GREEN SDK git-attribute contract test. This worker inspected the resulting attributes read-only; Windows checkout/build was not executed.",
+  "focused_at_run_source_manifest": "Unavailable for this focused run. Current hashes below are explicitly post-run snapshots; dependency sources were reported stable by their owners. The test-only unused import was removed after the focused run. Final aggregate gates must capture their own at-run source manifest.",
+  "at_run_source_manifest": "The focused third run had no at-run source freeze and its current hashes remain explicitly post-run. The final aggregate run has a preserved 8,672-file pre-run source snapshot, independently checked after its terminal zero exit; see final_required_gates.",
+  "final_required_gates": {
+    "required_entrypoint": "scripts/check-rust.ps1",
+    "required_script_record": {
+      "path": "scripts/check-rust.ps1",
+      "bytes": 1774,
+      "sha256": "a5cc6a8c5265061d8e25fa67f364b5f9253ba93fcbcd904e5ca768c3e77fb7f6"
+    },
+    "required_script_unchanged_from_snapshot": true,
+    "observed_exit_code": 0,
+    "elapsed_seconds": 419,
+    "optimized_release_elapsed": "1m 48s",
+    "stages": [
+      "Formatter",
+      "Strict workspace/all-target Clippy",
+      "Workspace tests",
+      "Optimized production release build"
+    ],
+    "summary_counts": {
+      "summaries": 282,
+      "raw_passes": 689,
+      "failed": 0,
+      "unchanged_ignored": 11,
+      "Running_lines": 270,
+      "doc_test_lines": 5,
+      "child_summaries": 7,
+      "meaningful_passes": 687,
+      "excluded_no_assertion_scaffolds": {
+        "existing_terminal_prompt_child": 1,
+        "new_native_no_environment_scaffold": 1
+      }
+    },
+    "preserved_records": [
+      {
+        "path": "docs/migration/provenance/fanbox-native-source-records/runtime/full-gates/full-gates.log",
+        "bytes": 1485924,
+        "sha256": "3886b27438fa95f86e4dce5012f5dbd51fa9af8f15cc45a497a439c75b794506",
+        "original_artifact": "/tmp/pixiv-fanbox-sdk-native-final-full-gates.log"
+      },
+      {
+        "path": "docs/migration/provenance/fanbox-native-source-records/runtime/full-gates/full-gates.exit",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+        "original_artifact": "/tmp/pixiv-fanbox-sdk-native-final-full-gates.exit"
+      },
+      {
+        "path": "docs/migration/provenance/fanbox-native-source-records/runtime/full-gates/full-gates.seconds",
+        "bytes": 4,
+        "sha256": "f497f18670edafef25de408fd94e53557484ae9b47a206bc9bb5c0f33aa018e7",
+        "original_artifact": "/tmp/pixiv-fanbox-sdk-native-final-full-gates.seconds"
+      },
+      {
+        "path": "docs/migration/provenance/fanbox-native-source-records/runtime/full-gates/pre-run-source-snapshot.json",
+        "bytes": 1208915,
+        "sha256": "2eb870f09a96ca796771ba3692cd463c87ac310ab25f5becc216c4484d7a4d52",
+        "original_artifact": "/tmp/pixiv-fanbox-sdk-full-gate-source-snapshot.json"
+      },
+      {
+        "path": "docs/migration/provenance/fanbox-native-source-records/runtime/full-gates/native-witness/headers_sequential_idle.json",
+        "bytes": 33411,
+        "sha256": "66a63e46ab5095a89963934d80b58ce91580e9c6c6e6b22c4f30f5a8a6c7b86b",
+        "original_artifact": "/tmp/pixiv-fanbox-sdk-fullgate-native-witness/headers_sequential_idle/rust-observation.json"
+      },
+      {
+        "path": "docs/migration/provenance/fanbox-native-source-records/runtime/full-gates/native-witness/response_header_stall.json",
+        "bytes": 16130,
+        "sha256": "957a18d8a483f250bb890dbd4579c81323d265b39400e045974d01196a17f1df",
+        "original_artifact": "/tmp/pixiv-fanbox-sdk-fullgate-native-witness/response_header_stall/rust-observation.json"
+      },
+      {
+        "path": "docs/migration/provenance/fanbox-native-source-records/runtime/full-gates/native-witness/caller_deadline.json",
+        "bytes": 15735,
+        "sha256": "35ed9ce92792764a3ccda461705de3e59c1b5dbb8d72db2b963e63527bd3b327",
+        "original_artifact": "/tmp/pixiv-fanbox-sdk-fullgate-native-witness/caller_deadline/rust-observation.json"
+      },
+      {
+        "path": "docs/migration/provenance/fanbox-native-source-records/runtime/full-gates/native-witness/untrusted_certificate.json",
+        "bytes": 15035,
+        "sha256": "44edd724a48e6ff79e0654a74de9ab31fb086359379f46f1fb9c9532eed1da22",
+        "original_artifact": "/tmp/pixiv-fanbox-sdk-fullgate-native-witness/untrusted_certificate/rust-observation.json"
+      },
+      {
+        "path": "docs/migration/provenance/fanbox-native-source-records/runtime/full-gates/native-witness/invalid_hostname.json",
+        "bytes": 15180,
+        "sha256": "99849ddde4c300d14fc8d46e15f39daa44c162379570452566c19f63d5acda4b",
+        "original_artifact": "/tmp/pixiv-fanbox-sdk-fullgate-native-witness/invalid_hostname/rust-observation.json"
+      },
+      {
+        "path": "docs/migration/provenance/fanbox-native-source-records/runtime/full-gates/native-witness/expired_certificate.json",
+        "bytes": 15151,
+        "sha256": "6518b74d4f991eb355f15943aa3a667540dab2ec984c3777cc5a9b740313adcb",
+        "original_artifact": "/tmp/pixiv-fanbox-sdk-fullgate-native-witness/expired_certificate/rust-observation.json"
+      }
+    ],
+    "post_gate_snapshot_verification": {
+      "snapshot_created_utc": "2026-10-10T07:31:23.520988+00:00",
+      "recorded_files": 8672,
+      "current_matching_files": 8665,
+      "current_document_only_differences": [
+        "docs/migration/provenance/fanbox-identity-tokenizer-go-gates.json",
+        "docs/migration/provenance/fanbox-native-source-reconstruction.json",
+        "docs/migration/provenance/fanbox-native-source-records/records-manifest.json",
+        "docs/migration/provenance/fanbox-native-source-records/runtime-scope.json",
+        "docs/migration/contracts.md",
+        "docs/migration/ledger.json",
+        "docs/migration/remaining-features.md"
+      ],
+      "missing_files": [],
+      "all_recorded_non_document_source_test_Cargo_attributes_and_gate_script_bytes_match": true,
+      "statement": "The pre-run source snapshot was checked after terminal completion. Only the listed migration/provenance documents had changed; all recorded code, tests, imported sources, Cargo metadata, attributes and required gate script match. Subsequent result-record documentation updates are intentionally outside tested-source behavior.",
+      "registry_family_files_covered_by_pre_run_Git_exclude_standard_snapshot": 1757,
+      "registry_family_files_omitted_by_pre_run_Git_exclude_standard_snapshot": [
+        {
+          "path": "third_party/rust/fanbox/http2-0.5.20/Cargo.lock",
+          "bytes": 21106,
+          "sha256": "e83111b42bc7844b3f4669a0e55a5cf21548a6cce0bf093766f6930bd2f5a247"
+        }
+      ],
+      "ignored_file_staging_boundary": "The official http2-0.5.20/Cargo.lock is ignored by an upstream ignore pattern and omitted from the parent Git exclude-standard pre-run snapshot. It remains byte-identical to the official archive, is included in the complete 1,758-file pristine/patched inventories and independent reconstructions, and is not a root workspace build input. Parent publication must force-stage this one exact file; its omission does not change source provenance or confer proof that it was staged.",
+      "checked_after_result_refresh_at_utc": "2026-10-10T07:43:04.218908+00:00"
+    },
+    "six_owned_native_cases_from_full_gate": [
+      {
+        "name": "headers_sequential_idle",
+        "elapsed_ns": 117210361,
+        "peer_request_observed_elapsed_ns": 0,
+        "peer_header_hold_ns": 0,
+        "completed_idle_liveness_checks": 2,
+        "native_certificate_failure": null,
+        "boundary_mapping": "Exact Go-observed Session request inputs are sent through the genuine public Rust native raw boundary. This establishes native transport wire/lifecycle evidence, not private Session or public SDK policy equivalence.",
+        "error_mapping": "Rust typed native verification errors preserve actual X509 class and native source. Go concrete type names and diagnostic wording are retained unchanged in the sealed fixture and are not claimed Rust-compatible."
+      },
+      {
+        "name": "response_header_stall",
+        "elapsed_ns": 31208025421,
+        "peer_request_observed_elapsed_ns": 5162623,
+        "peer_header_hold_ns": 31200850658,
+        "completed_idle_liveness_checks": 0,
+        "native_certificate_failure": null,
+        "boundary_mapping": "Exact Go-observed Session request inputs are sent through the genuine public Rust native raw boundary. This establishes native transport wire/lifecycle evidence, not private Session or public SDK policy equivalence.",
+        "error_mapping": "Rust typed native verification errors preserve actual X509 class and native source. Go concrete type names and diagnostic wording are retained unchanged in the sealed fixture and are not claimed Rust-compatible."
+      },
+      {
+        "name": "caller_deadline",
+        "elapsed_ns": 302848247,
+        "peer_request_observed_elapsed_ns": 4905725,
+        "peer_header_hold_ns": 0,
+        "completed_idle_liveness_checks": 0,
+        "native_certificate_failure": null,
+        "boundary_mapping": "Exact Go-observed Session request inputs are sent through the genuine public Rust native raw boundary. This establishes native transport wire/lifecycle evidence, not private Session or public SDK policy equivalence.",
+        "error_mapping": "Rust typed native verification errors preserve actual X509 class and native source. Go concrete type names and diagnostic wording are retained unchanged in the sealed fixture and are not claimed Rust-compatible."
+      },
+      {
+        "name": "untrusted_certificate",
+        "elapsed_ns": 4458545,
+        "peer_request_observed_elapsed_ns": 0,
+        "peer_header_hold_ns": 0,
+        "completed_idle_liveness_checks": 0,
+        "native_certificate_failure": {
+          "certificate_der_hex": "308201773082011da003020102020102300a06082a8648ce3d0403023026312430220603550403131b4f776e656420756e74727573746564206e617469766520726f6f74301e170d3230303130313030303030305a170d3335303130313030303030305a3025312330210603550403131a4f776e6564206e6174697665206c6f6f706261636b20706565723059301306072a8648ce3d020106082a8648ce3d03010703420004344968009d2dce96cf2d80c5e0300c0cc1350d4a1388e04861b2f71e84ecf08f8172222441674c351423f9d95294fe13072cb4188b9ea30e14ed3bfe4c0277a3a33d303b300e0603551d0f0101ff04040302078030130603551d25040c300a06082b0601050507030130140603551d11040d300b82096c6f63616c686f7374300a06082a8648ce3d040302034800304502203333520939d055f44188aeb94263c8e716b0ad456681705590e0360d5ee42a4e022100ce37dcdc997ab849ec0e6dfd85756407d8ff83c834ce9734c9fb14d1c55bcc67",
+          "kind": "UnknownAuthority",
+          "original_native_verify_code": 20,
+          "original_native_verify_message": "unable to get local issuer certificate"
+        },
+        "boundary_mapping": "Exact Go-observed Session request inputs are sent through the genuine public Rust native raw boundary. This establishes native transport wire/lifecycle evidence, not private Session or public SDK policy equivalence.",
+        "error_mapping": "Rust typed native verification errors preserve actual X509 class and native source. Go concrete type names and diagnostic wording are retained unchanged in the sealed fixture and are not claimed Rust-compatible."
+      },
+      {
+        "name": "invalid_hostname",
+        "elapsed_ns": 4859250,
+        "peer_request_observed_elapsed_ns": 0,
+        "peer_header_hold_ns": 0,
+        "completed_idle_liveness_checks": 0,
+        "native_certificate_failure": {
+          "certificate_der_hex": "308201873082012da003020102020102300a06082a8648ce3d040302302c312a3028060355040313214f776e65642046414e424f58206e617469766520636f6e747261637420726f6f74301e170d3230303130313030303030305a170d3335303130313030303030305a3025312330210603550403131a4f776e6564206e6174697665206c6f6f706261636b20706565723059301306072a8648ce3d020106082a8648ce3d030107034200043e5f62d266efd653e5991ab430bba0105c5f9d3883805601699c63bb425a45c19c37d658d6db8b8d57be67c31d05224ddb7300b1839eae8607aba5906e4874cba3473045300e0603551d0f0101ff04040302078030130603551d25040c300a06082b06010505070301301e0603551d1104173015821377726f6e672d6f776e65642e696e76616c6964300a06082a8648ce3d040302034800304502206e056f224273c475a4ae92e318fb548e97769bdbf9fdcdb9c0deb89dbc913da9022100d8dcc793ee53536de692c3d81e9186de5bc8744500cf07a38b34300524184915",
+          "kind": "HostnameMismatch",
+          "original_native_verify_code": 62,
+          "original_native_verify_message": "Hostname mismatch"
+        },
+        "boundary_mapping": "Exact Go-observed Session request inputs are sent through the genuine public Rust native raw boundary. This establishes native transport wire/lifecycle evidence, not private Session or public SDK policy equivalence.",
+        "error_mapping": "Rust typed native verification errors preserve actual X509 class and native source. Go concrete type names and diagnostic wording are retained unchanged in the sealed fixture and are not claimed Rust-compatible."
+      },
+      {
+        "name": "expired_certificate",
+        "elapsed_ns": 4387681,
+        "peer_request_observed_elapsed_ns": 0,
+        "peer_header_hold_ns": 0,
+        "completed_idle_liveness_checks": 0,
+        "native_certificate_failure": {
+          "certificate_der_hex": "3082017e30820123a003020102020102300a06082a8648ce3d040302302c312a3028060355040313214f776e65642046414e424f58206e617469766520636f6e747261637420726f6f74301e170d3230303130313030303030305a170d3231303130313030303030305a3025312330210603550403131a4f776e6564206e6174697665206c6f6f706261636b20706565723059301306072a8648ce3d020106082a8648ce3d030107034200049cfe0195802f5a9ef9a09f2d68a33e8df9aa60c1a09f9d25f2f9295a410abc8beb250db273202b93cf09fd57d3f582517776a8e6e0a7e0fb720cfdadc6c372f6a33d303b300e0603551d0f0101ff04040302078030130603551d25040c300a06082b0601050507030130140603551d11040d300b82096c6f63616c686f7374300a06082a8648ce3d0403020349003046022100d3e3a5072698a04f3235a7378ad59712fcb936cc06ef58a9966f66d762875f46022100d43060e9b00141561e94c292c595aa767aa3c0c1495c3724fbae225ff900eac1",
+          "kind": "Expired",
+          "original_native_verify_code": 10,
+          "original_native_verify_message": "certificate has expired"
+        },
+        "boundary_mapping": "Exact Go-observed Session request inputs are sent through the genuine public Rust native raw boundary. This establishes native transport wire/lifecycle evidence, not private Session or public SDK policy equivalence.",
+        "error_mapping": "Rust typed native verification errors preserve actual X509 class and native source. Go concrete type names and diagnostic wording are retained unchanged in the sealed fixture and are not claimed Rust-compatible."
+      }
+    ],
+    "scope": "Actual required unchanged full Rust script on Linux x86_64; read-only record verification by this worker. No new native scenarios were added, no tests/expected values/ignored flags or gate script were changed. Full compatibility/replacement or cross-platform validation is not implied."
+  },
+  "final_review_records": [
+    {
+      "path": "docs/migration/provenance/fanbox-sdk-final-integration-review.md",
+      "bytes": 20364,
+      "sha256": "41229025a7b85974e4c1b1e93e47ac0645c15aadf521270446bbd02b6e999430",
+      "scope": "Scoped source approval after bounded tokenizer, Unicode field-fold and decimal-port corrections; full script was pending when report was written and is independently terminal GREEN here."
+    },
+    {
+      "path": "docs/migration/provenance/fanbox-native-certificate-final-review.md",
+      "bytes": 11544,
+      "sha256": "d55b7c6bff4b8aa891aceebb932da0d0e71695e489c88b034a5ec0b450d64c83",
+      "scope": "Source approval renewed for actual current production hashes within the six already authorized owned synthetic scenarios; full terminal gate is a separate result."
+    },
+    {
+      "path": "docs/migration/provenance/fanbox-native-idle-lifecycle-review.md",
+      "bytes": 11813,
+      "sha256": "ab7337dc68cc88333617c483445aef0daed072b875e5ae9e63894c8424e721b8",
+      "scope": "Existing scoped idle-lifecycle source approval; referenced source family remains byte-identical to the sealed package snapshot."
+    }
+  ]
+}

@@ -10,6 +10,7 @@ pub mod diagnostics;
 pub mod dto;
 pub mod environment_proxy;
 pub mod error;
+pub mod fanbox;
 pub mod models;
 mod mutation;
 mod novel;

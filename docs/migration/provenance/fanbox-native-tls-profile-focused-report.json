@@ -1,0 +1,436 @@
+{
+  "scope": "The already approved six FANBOX native scenarios only, through the genuine Rust NativeTransport raw boundary against child-owned loopback Go TLS1.3/H2 peers.",
+  "focused_gate": {
+    "log": {
+      "path": "/tmp/pixiv-fanbox-native-third-focused.log",
+      "sha256": "5b4a4fa2b03c2531b2934dc14e24e130fb3b4e4a0f011e7f2c00ef8ac6712648",
+      "bytes": 4438
+    },
+    "exit": "0",
+    "reported_top_level_passes": 2,
+    "meaningful_native_contract_driver": 1,
+    "excluded_no_mode_child_entry_scaffold": 1,
+    "actual_owned_child_scenario_passes": 6
+  },
+  "owned_final_sources": [
+    {
+      "path": "third_party/rust/fanbox/btls-0.5.6/src/ssl/mod.rs",
+      "sha256": "db8631b5207a35579bae384ce2089b7630935416a5fb9e80909d2c6d926cc466",
+      "bytes": 169256
+    },
+    {
+      "path": "third_party/rust/fanbox/wreq-6.0.0-rc.31/src/tls.rs",
+      "sha256": "21489a2d7db5295741a798d1626ca7be9ea4e1ad5ff111103fda8d5f29dfabf8",
+      "bytes": 22955
+    },
+    {
+      "path": "third_party/rust/fanbox/wreq-6.0.0-rc.31/src/tls/conn.rs",
+      "sha256": "4ed66d840d045789733856b8985a8a7b95fff4e0f3f543a0ea93fcf192277cd5",
+      "bytes": 20982
+    },
+    {
+      "path": "third_party/rust/fanbox/wreq-6.0.0-rc.31/src/tls/conn/service.rs",
+      "sha256": "69ef152b341e0b669fa03defb234746328abcf4e0a25d229fac808cff42a4ef9",
+      "bytes": 4775
+    },
+    {
+      "path": "crates/pixiv-sdk/src/fanbox/native.rs",
+      "sha256": "22bac9a4d1e7b2988228da5c2f3f7969a75407f3aa28657668341a9d34df58b2",
+      "bytes": 8226
+    },
+    {
+      "path": "crates/pixiv-sdk/src/fanbox/profile.rs",
+      "sha256": "ba4fad8edaa90f2dfc5d0c1e04679f8218c6570ec797ba0cae7f3ead58724295",
+      "bytes": 4067
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/fanbox_native.rs",
+      "sha256": "820de4cb5905b60298dcdc482f9c0bd93bec111348929a23b7445480d612e44e",
+      "bytes": 20154
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/helpers/fanbox_native_peer.go",
+      "sha256": "a329d46166d450a9ae9959713c4d80fb0ac5bdadec50c5c25a7ede0a3fda8d76",
+      "bytes": 17141
+    }
+  ],
+  "sealed_go_sources": [
+    {
+      "path": "internal/services/fanbox/protocol/migration_native_profile_test.go",
+      "sha256": "50e22883ecdcde2fc673acc4d8d7ab5633d06056e348c41c50b716e6b685dd7e",
+      "bytes": 46819
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/fixtures/fanbox-native-profile.json",
+      "sha256": "df753a715efd28c016a2532fe544e992b00a1fe5ce58b756d807c13b9522dd62",
+      "bytes": 164861
+    }
+  ],
+  "post_focused_source_change": "Removed unused ExternalError test import and ran official Rust1.93.0 rustfmt on only the three owned SDK Rust files. No production semantics changed after the GREEN focused run; full gates must rerun on final source.",
+  "profile_evidence": "All seven actual ClientHello captures exactly match the sealed Go comparable cipher/order/fixed extension/profile data under its explicit GREASE/randomness policy. Four negotiated TLS1.3/H2 connections match all observed SETTINGS order/values, window increment, HEADERS order/priority/flags/sensitivity, stream reuse, SETTINGS ACK multiplicity and physical EOF. No GOAWAY is present.",
+  "certificate_evidence": "Unknown-authority, wrong-host and expired failures preserve genuine original native X509 classifications and matching actual owned peer certificate DER, with actual bad_certificate alerts and no H2 negotiation. Actual Rust native error chains are recorded separately; Go concrete type names and diagnostic wording are not claimed compatible.",
+  "aggregate_actual_wire_counts": {
+    "SETTINGS": 8,
+    "WINDOW_UPDATE": 4,
+    "HEADERS": 5,
+    "TLS_CLIENT_HELLO": 7,
+    "TLS_H2_CONNECTION": 4,
+    "RST_STREAM": 2
+  },
+  "cases": [
+    {
+      "name": "headers_sequential_idle",
+      "witness": {
+        "path": "/tmp/pixiv-fanbox-native-third-witness/headers_sequential_idle/rust-observation.json",
+        "sha256": "d7f446bfcc83ff2c530b8d12712077236b07f8f5bac627f4bd1317febcdce22f",
+        "bytes": 33284
+      },
+      "connections": 2,
+      "raw_frame_count": 9,
+      "raw_frame_types": {
+        "SETTINGS": 4,
+        "WINDOW_UPDATE": 2,
+        "HEADERS": 3
+      },
+      "raw_headers_streams": [
+        1,
+        3,
+        1
+      ],
+      "raw_cancel_resets": [],
+      "raw_goaway_count": 0,
+      "responses": [
+        {
+          "ok": true
+        },
+        {
+          "ok": true
+        },
+        {
+          "ok": true
+        }
+      ],
+      "elapsed_ns": 119308745,
+      "peer_request_observed_elapsed_ns": 0,
+      "peer_header_hold_ns": 0,
+      "completed_idle_liveness_checks": 2,
+      "hellos": [
+        {
+          "record_sha256": "11c1c63438569616a4fd4ca3eb36d006f2a349b2d052a3efd51a953514c84ecd",
+          "record_bytes": 1757,
+          "extension_count": 19,
+          "ech_payload_bytes": 176,
+          "alpn": "h2",
+          "tls_version": 772,
+          "cipher_suite": 4865,
+          "did_resume": false,
+          "sni": "localhost",
+          "terminal_error": "EOF",
+          "handshake_error": ""
+        },
+        {
+          "record_sha256": "b2d83c080b356c479e6c2b2f06a4e335c29dfc6a3a63fe29c59429221385f2af",
+          "record_bytes": 1757,
+          "extension_count": 19,
+          "ech_payload_bytes": 176,
+          "alpn": "h2",
+          "tls_version": 772,
+          "cipher_suite": 4865,
+          "did_resume": false,
+          "sni": "localhost",
+          "terminal_error": "EOF",
+          "handshake_error": ""
+        }
+      ],
+      "certificate_failure": null,
+      "exact_sealed_connection_projection_match": true,
+      "boundary_mapping": "Exact Go-observed Session request inputs are sent through the genuine public Rust native raw boundary. This establishes native transport wire/lifecycle evidence, not private Session or public SDK policy equivalence."
+    },
+    {
+      "name": "response_header_stall",
+      "witness": {
+        "path": "/tmp/pixiv-fanbox-native-third-witness/response_header_stall/rust-observation.json",
+        "sha256": "19c2e8042a9fa52f27c1314d5bf5fa55e9cb400ed6d5aeb746e77fecf8a6b9ef",
+        "bytes": 16127
+      },
+      "connections": 1,
+      "raw_frame_count": 5,
+      "raw_frame_types": {
+        "SETTINGS": 2,
+        "WINDOW_UPDATE": 1,
+        "HEADERS": 1,
+        "RST_STREAM": 1
+      },
+      "raw_headers_streams": [
+        1
+      ],
+      "raw_cancel_resets": [
+        {
+          "stream": 1,
+          "code": 8
+        }
+      ],
+      "raw_goaway_count": 0,
+      "responses": [],
+      "elapsed_ns": 31210191684,
+      "peer_request_observed_elapsed_ns": 7085275,
+      "peer_header_hold_ns": 31200954201,
+      "completed_idle_liveness_checks": 0,
+      "hellos": [
+        {
+          "record_sha256": "576859c76664d1c3a71980f1bd6e058dbf563d998d7c1d34130bf0ec6cc80e30",
+          "record_bytes": 1821,
+          "extension_count": 19,
+          "ech_payload_bytes": 240,
+          "alpn": "h2",
+          "tls_version": 772,
+          "cipher_suite": 4865,
+          "did_resume": false,
+          "sni": "localhost",
+          "terminal_error": "EOF",
+          "handshake_error": ""
+        }
+      ],
+      "certificate_failure": null,
+      "exact_sealed_connection_projection_match": true,
+      "boundary_mapping": "Exact Go-observed Session request inputs are sent through the genuine public Rust native raw boundary. This establishes native transport wire/lifecycle evidence, not private Session or public SDK policy equivalence."
+    },
+    {
+      "name": "caller_deadline",
+      "witness": {
+        "path": "/tmp/pixiv-fanbox-native-third-witness/caller_deadline/rust-observation.json",
+        "sha256": "cb16c2eef524e318af4412da1d611084463061090a218c4c929c860fec201d78",
+        "bytes": 15737
+      },
+      "connections": 1,
+      "raw_frame_count": 5,
+      "raw_frame_types": {
+        "SETTINGS": 2,
+        "WINDOW_UPDATE": 1,
+        "HEADERS": 1,
+        "RST_STREAM": 1
+      },
+      "raw_headers_streams": [
+        1
+      ],
+      "raw_cancel_resets": [
+        {
+          "stream": 1,
+          "code": 8
+        }
+      ],
+      "raw_goaway_count": 0,
+      "responses": [],
+      "elapsed_ns": 303342103,
+      "peer_request_observed_elapsed_ns": 5112582,
+      "peer_header_hold_ns": 0,
+      "completed_idle_liveness_checks": 0,
+      "hellos": [
+        {
+          "record_sha256": "b86f0d4b3d4492bc8bfb7fd92b18393d71ee28a865c87e3f68d9cec97bfde436",
+          "record_bytes": 1725,
+          "extension_count": 19,
+          "ech_payload_bytes": 144,
+          "alpn": "h2",
+          "tls_version": 772,
+          "cipher_suite": 4865,
+          "did_resume": false,
+          "sni": "localhost",
+          "terminal_error": "EOF",
+          "handshake_error": ""
+        }
+      ],
+      "certificate_failure": null,
+      "exact_sealed_connection_projection_match": true,
+      "boundary_mapping": "Exact Go-observed Session request inputs are sent through the genuine public Rust native raw boundary. This establishes native transport wire/lifecycle evidence, not private Session or public SDK policy equivalence."
+    },
+    {
+      "name": "untrusted_certificate",
+      "witness": {
+        "path": "/tmp/pixiv-fanbox-native-third-witness/untrusted_certificate/rust-observation.json",
+        "sha256": "a6f3ab5a7fa169c80328203521055e48ab0c2544888b09a10659e286d45c61a8",
+        "bytes": 15034
+      },
+      "connections": 1,
+      "raw_frame_count": 0,
+      "raw_frame_types": {},
+      "raw_headers_streams": [],
+      "raw_cancel_resets": [],
+      "raw_goaway_count": 0,
+      "responses": [],
+      "elapsed_ns": 4570666,
+      "peer_request_observed_elapsed_ns": 0,
+      "peer_header_hold_ns": 0,
+      "completed_idle_liveness_checks": 0,
+      "hellos": [
+        {
+          "record_sha256": "ae373b51602a85f90e998e0237fe6bb89c49f778abb8d91a21418147ef751162",
+          "record_bytes": 1789,
+          "extension_count": 19,
+          "ech_payload_bytes": 208,
+          "alpn": "",
+          "tls_version": 0,
+          "cipher_suite": 0,
+          "did_resume": false,
+          "sni": "",
+          "terminal_error": "",
+          "handshake_error": "remote error: tls: bad certificate"
+        }
+      ],
+      "certificate_failure": {
+        "kind": "UnknownAuthority",
+        "original_native_verify_code": 20,
+        "original_native_verify_message": "unable to get local issuer certificate",
+        "certificate_der_sha256": "8705db9c948b6812242bf19cdaa888a14b4902ebb6c550f8d6eb957207653f11",
+        "certificate_der_bytes": 379,
+        "actual_der_matches_owned_peer": true,
+        "actual_peer_alert": "remote error: tls: bad certificate",
+        "recognized_error_chain": [
+          "wreq::Error",
+          null,
+          "wreq::tls::CertificateVerificationError",
+          "btls::ssl::Error",
+          "btls::error::ErrorStack"
+        ],
+        "native_error_messages": [
+          "error sending request for uri (https://localhost:40671/owned-native): client error (Connect)",
+          "client error (Connect)",
+          "certificate verification failed: unable to get local issuer certificate",
+          "[CERTIFICATE_VERIFY_FAILED]",
+          "[CERTIFICATE_VERIFY_FAILED]"
+        ]
+      },
+      "exact_sealed_connection_projection_match": true,
+      "boundary_mapping": "Exact Go-observed Session request inputs are sent through the genuine public Rust native raw boundary. This establishes native transport wire/lifecycle evidence, not private Session or public SDK policy equivalence."
+    },
+    {
+      "name": "invalid_hostname",
+      "witness": {
+        "path": "/tmp/pixiv-fanbox-native-third-witness/invalid_hostname/rust-observation.json",
+        "sha256": "96fbd219ffa6d35e1ee30d9f589d7f881504cbdc97a9a8d0989fdfe5b8011c36",
+        "bytes": 15057
+      },
+      "connections": 1,
+      "raw_frame_count": 0,
+      "raw_frame_types": {},
+      "raw_headers_streams": [],
+      "raw_cancel_resets": [],
+      "raw_goaway_count": 0,
+      "responses": [],
+      "elapsed_ns": 5163562,
+      "peer_request_observed_elapsed_ns": 0,
+      "peer_header_hold_ns": 0,
+      "completed_idle_liveness_checks": 0,
+      "hellos": [
+        {
+          "record_sha256": "baddb50d83ad597cf9b8d3a3dfc8e1267af0b245510d205f23b467de3ce0be7f",
+          "record_bytes": 1789,
+          "extension_count": 19,
+          "ech_payload_bytes": 208,
+          "alpn": "",
+          "tls_version": 0,
+          "cipher_suite": 0,
+          "did_resume": false,
+          "sni": "",
+          "terminal_error": "",
+          "handshake_error": "remote error: tls: bad certificate"
+        }
+      ],
+      "certificate_failure": {
+        "kind": "HostnameMismatch",
+        "original_native_verify_code": 62,
+        "original_native_verify_message": "Hostname mismatch",
+        "certificate_der_sha256": "0ed1b426ecd048608ebf886eb5744b7e6359a60cd3186a9a935f39144d849ca0",
+        "certificate_der_bytes": 396,
+        "actual_der_matches_owned_peer": true,
+        "actual_peer_alert": "remote error: tls: bad certificate",
+        "recognized_error_chain": [
+          "wreq::Error",
+          null,
+          "wreq::tls::CertificateVerificationError",
+          "btls::ssl::Error",
+          "btls::error::ErrorStack"
+        ],
+        "native_error_messages": [
+          "error sending request for uri (https://localhost:45915/owned-native): client error (Connect)",
+          "client error (Connect)",
+          "certificate verification failed: Hostname mismatch",
+          "[CERTIFICATE_VERIFY_FAILED]",
+          "[CERTIFICATE_VERIFY_FAILED]"
+        ]
+      },
+      "exact_sealed_connection_projection_match": true,
+      "boundary_mapping": "Exact Go-observed Session request inputs are sent through the genuine public Rust native raw boundary. This establishes native transport wire/lifecycle evidence, not private Session or public SDK policy equivalence."
+    },
+    {
+      "name": "expired_certificate",
+      "witness": {
+        "path": "/tmp/pixiv-fanbox-native-third-witness/expired_certificate/rust-observation.json",
+        "sha256": "66a51c7055b2fcc2bfc0a658811b0cfbb1a768a6e48cbb032b87e6db845c9233",
+        "bytes": 15143
+      },
+      "connections": 1,
+      "raw_frame_count": 0,
+      "raw_frame_types": {},
+      "raw_headers_streams": [],
+      "raw_cancel_resets": [],
+      "raw_goaway_count": 0,
+      "responses": [],
+      "elapsed_ns": 4854774,
+      "peer_request_observed_elapsed_ns": 0,
+      "peer_header_hold_ns": 0,
+      "completed_idle_liveness_checks": 0,
+      "hellos": [
+        {
+          "record_sha256": "00380f225fd62f97677d39564b0e5b52b7ed7bc1c046360844ffdce8a166f223",
+          "record_bytes": 1821,
+          "extension_count": 19,
+          "ech_payload_bytes": 240,
+          "alpn": "",
+          "tls_version": 0,
+          "cipher_suite": 0,
+          "did_resume": false,
+          "sni": "",
+          "terminal_error": "",
+          "handshake_error": "remote error: tls: bad certificate"
+        }
+      ],
+      "certificate_failure": {
+        "kind": "Expired",
+        "original_native_verify_code": 10,
+        "original_native_verify_message": "certificate has expired",
+        "certificate_der_sha256": "35d531d8d31858a8fc4aaa1a838a900d31fc3b2618210cac06d541297c4dea87",
+        "certificate_der_bytes": 384,
+        "actual_der_matches_owned_peer": true,
+        "actual_peer_alert": "remote error: tls: bad certificate",
+        "recognized_error_chain": [
+          "wreq::Error",
+          null,
+          "wreq::tls::CertificateVerificationError",
+          "btls::ssl::Error",
+          "btls::error::ErrorStack"
+        ],
+        "native_error_messages": [
+          "error sending request for uri (https://localhost:36765/owned-native): client error (Connect)",
+          "client error (Connect)",
+          "certificate verification failed: certificate has expired",
+          "[CERTIFICATE_VERIFY_FAILED]",
+          "[CERTIFICATE_VERIFY_FAILED]"
+        ]
+      },
+      "exact_sealed_connection_projection_match": true,
+      "boundary_mapping": "Exact Go-observed Session request inputs are sent through the genuine public Rust native raw boundary. This establishes native transport wire/lifecycle evidence, not private Session or public SDK policy equivalence."
+    }
+  ],
+  "limitations": [
+    "Linux/amd64 owned synthetic TLS1.3/H2 peers only. No real FANBOX, account, media, external host, user computer or OS trust change.",
+    "Exact captured Go Session request inputs are replayed through the public Rust raw native boundary. These six rows do not establish private Session or public SDK policy equivalence.",
+    "The ordinary child-entry scaffold returns without a mode and is excluded from meaningful assertions; the six actual child scenario runs carry the proof.",
+    "Go concrete error type names, raw chain strings and display wording remain losslessly sealed in the original fixture and are not copied or claimed Rust-compatible.",
+    "TLS1.2 negotiation, PSK/resumption, HRR, HTTP1, HTTP3, proxy runtime, other platforms/trust stores, and concurrency are not established.",
+    "No supplemental multiplex, unfinished HEAD/upload, body-close cancellation, concurrent Read/Close, compressed-response, legacy-deflate, or unfinished request-body scenario was executed.",
+    "Real Brotli certificate compression is implemented; these uncompressed owned certificate peers establish advertisement, not runtime compressed-certificate parity.",
+    "The 31.2-second post-HEADERS witness proves bounded survival beyond30 seconds, not an infinite wait. GREASE distribution and all ECH lengths are not statistically established.",
+    "Parent owns final complete Rust/Go gates, dependency/patch manifests, native-source preservation audit and publication. This report does not replace those checks."
+  ]
+}
