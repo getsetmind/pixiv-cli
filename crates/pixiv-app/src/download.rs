@@ -3,16 +3,23 @@ mod native_encoder;
 mod ugoira;
 mod zip_directory;
 pub use native_encoder::NativeAnimationEncoder;
+mod source_expansion;
 mod static_artwork;
 mod static_filename;
 
 use crate::{
-    auth_bundle::go_quote, diagnostics::Event, lifecycle::Context, scheduler::SchedulerError,
+    auth_bundle::go_quote,
+    diagnostics::Event,
+    lifecycle::{Context, ContextError},
+    scheduler::SchedulerError,
 };
 use pixiv_sdk::{
-    Client,
+    Client, Error, Reason,
+    cursor::Page,
+    error::{Cause as SdkCause, TransportKind},
     models::{Artwork, UgoiraFrame, UgoiraMetadata},
     oauth::LoginUrl,
+    pixiv::{UserArtworkBookmarksRequest, UserArtworksRequest},
     reference::{
         REFERENCE_KIND_ARTWORK, REFERENCE_KIND_USER, REFERENCE_KIND_USER_BOOKMARKS, parse_url,
     },
@@ -112,7 +119,23 @@ pub type SaveFuture<'a> =
     Pin<Box<dyn Future<Output = Result<SavedResource, SchedulerError>> + Send + 'a>>;
 pub type ArtworkFuture<'a> =
     Pin<Box<dyn Future<Output = Result<Artwork, SchedulerError>> + Send + 'a>>;
+pub type ArtworkPageFuture<'a> =
+    Pin<Box<dyn Future<Output = Result<Page<Artwork>, SchedulerError>> + Send + 'a>>;
 pub trait DownloadSaveClient: Send + Sync {
+    fn user_artworks(
+        &self,
+        _context: Context,
+        _request: UserArtworksRequest,
+    ) -> Option<ArtworkPageFuture<'_>> {
+        None
+    }
+    fn user_artwork_bookmarks(
+        &self,
+        _context: Context,
+        _request: UserArtworkBookmarksRequest,
+    ) -> Option<ArtworkPageFuture<'_>> {
+        None
+    }
     fn artwork(&self, _context: Context, _id: i64) -> Option<ArtworkFuture<'_>> {
         None
     }
@@ -135,6 +158,32 @@ impl NativeDownloadSaveClient {
     }
 }
 impl DownloadSaveClient for NativeDownloadSaveClient {
+    fn user_artworks(
+        &self,
+        context: Context,
+        request: UserArtworksRequest,
+    ) -> Option<ArtworkPageFuture<'_>> {
+        Some(Box::pin(async move {
+            tokio::select! {
+                biased;
+                result = self.client.user_artworks(request) => result.map_err(Into::into),
+                error = context.cancelled() => Err(list_context_error("UserArtworks", error)),
+            }
+        }))
+    }
+    fn user_artwork_bookmarks(
+        &self,
+        context: Context,
+        request: UserArtworkBookmarksRequest,
+    ) -> Option<ArtworkPageFuture<'_>> {
+        Some(Box::pin(async move {
+            tokio::select! {
+                biased;
+                result = self.client.user_artwork_bookmarks(request) => result.map_err(Into::into),
+                error = context.cancelled() => Err(list_context_error("UserArtworkBookmarks", error)),
+            }
+        }))
+    }
     fn ugoira_metadata(&self, context: Context, id: i64) -> Option<UgoiraMetadataFuture<'_>> {
         Some(Box::pin(async move {
             tokio::select! {
@@ -171,6 +220,16 @@ impl DownloadSaveClient for NativeDownloadSaveClient {
             }
         })
     }
+}
+
+fn list_context_error(operation: &str, error: ContextError) -> SchedulerError {
+    Error::new(Reason::UpstreamUnavailable, operation)
+        .with_transport(TransportKind::Http)
+        .with_cause(SdkCause::TransportFailure(Box::new(match error {
+            ContextError::Canceled => SdkCause::Canceled,
+            ContextError::DeadlineExceeded => SdkCause::DeadlineExceeded,
+        })))
+        .into()
 }
 
 const REDACTED_SOURCE: &str = "[redacted source]";
@@ -262,9 +321,34 @@ async fn execute_download_sources(
                     artwork_ids.insert(reference.id);
                     continue;
                 }
-                REFERENCE_KIND_USER | REFERENCE_KIND_USER_BOOKMARKS => {
-                    attempt.error = Some(message("user artwork expansion is not yet supported"));
-                    return attempt;
+                REFERENCE_KIND_USER => {
+                    if let Err(error) = source_expansion::collect_user_artworks(
+                        context,
+                        client,
+                        &reference,
+                        &mut artwork_ids,
+                        &mut attempt.report,
+                    )
+                    .await
+                    {
+                        attempt.error = Some(error);
+                        return attempt;
+                    }
+                    continue;
+                }
+                REFERENCE_KIND_USER_BOOKMARKS => {
+                    if let Err(error) = source_expansion::collect_user_bookmarks(
+                        context,
+                        client,
+                        &reference,
+                        &mut artwork_ids,
+                    )
+                    .await
+                    {
+                        attempt.error = Some(error);
+                        return attempt;
+                    }
+                    continue;
                 }
                 _ => {
                     attempt.error = Some(message("download source is invalid"));

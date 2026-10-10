@@ -263,11 +263,39 @@ pub async fn saved_download_with_defaults<T: Transport + 'static>(
     proxy: Option<&str>,
     factory: Arc<SaveClientFactory<T>>,
 ) -> CallToolResult<DownloadOutput> {
+    saved_download_with_account(
+        execution,
+        context,
+        defaults,
+        input,
+        &crate::runtime::Account {
+            user_id: 0,
+            https_proxy_override: proxy.map(str::to_owned),
+        },
+        factory,
+    )
+    .await
+}
+pub async fn saved_download_with_account<T: Transport + 'static>(
+    execution: &Execution<T>,
+    context: &Context,
+    defaults: &DownloadDefaults,
+    input: DownloadInput,
+    account: &crate::runtime::Account,
+    factory: Arc<SaveClientFactory<T>>,
+) -> CallToolResult<DownloadOutput> {
     let plan = match plan(input, defaults) {
         Ok(plan) => plan,
         Err(error) => return empty_error(error),
     };
-    let lease = match execution.open_client(context, 0, proxy).await {
+    let lease = match execution
+        .open_client(
+            context,
+            account.user_id,
+            account.https_proxy_override.as_deref(),
+        )
+        .await
+    {
         Ok(lease) => DownloadLease(lease),
         Err(error) => {
             return finish(DownloadAttempt {

@@ -1676,7 +1676,9 @@
         "crates/pixiv-app/src/download/file_replace.rs",
         "crates/pixiv-cli/src/record_input.rs",
         "crates/pixiv-cli/src/record_input/json.rs",
-        "crates/pixiv-cli/src/lib.rs"
+        "crates/pixiv-cli/src/lib.rs",
+        "crates/pixiv-app/src/download/source_expansion.rs",
+        "crates/pixiv-sdk/src/pixiv.rs"
       ],
       "tests": [
         "internal/media/downloader/migration_direct_sources_test.go",
@@ -1710,11 +1712,19 @@
         "crates/pixiv-cli/tests/download_record_codec.rs",
         "crates/pixiv-cli/tests/download_records.rs",
         "crates/pixiv-cli/tests/download_record_startup.rs",
-        "internal/cli/pipeline/migration_download_record_cancel_test.go"
+        "internal/cli/pipeline/migration_download_record_cancel_test.go",
+        "internal/media/downloader/migration_source_expansion_test.go",
+        "internal/media/downloader/migration_source_native_cancellation_test.go",
+        "crates/pixiv-app/tests/download_source_expansion.rs",
+        "internal/cli/commands/pixiv/download/migration_source_expansion_test.go",
+        "crates/pixiv-cli/tests/download_source_expansion.rs",
+        "sdk/pixiv/migration_pacing_test.go",
+        "crates/pixiv-sdk/tests/pacing.rs",
+        "crates/pixiv-sdk/tests/retry_after.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "direct URL/opaque refとstatic artwork PID/artwork URLを保存済みExecution・SDK metadata/ref saveへ接続する。全5quality/pages/filename・directory templates/MIME publication/partial commitを対象比較する。user/bookmark展開・randomは残るworkflowで、recordの後続対象比較は別記する。",
+        "direct URL/opaque refとstatic artwork PID/artwork URLを保存済みExecution・SDK metadata/ref saveへ接続する。全5quality/pages/filename・directory templates/MIME publication/partial commitを対象比較する。user/bookmark展開の後続対象比較は新節に記録し、MCP randomは別の残るworkflowとして保持する。",
         "Go fixtureはapp26行、CLI63行、root27行。rootの実Linux子プロセス比較は安全な23行に限定し、native hooks/read-error4行を実行しない。",
         "全URL grammar/非UTF8、native IO/OS、全writer/cancel/race/TTY/public SDK lifecycleは未検証。Go productionにpersisted resume/job schemaやdownload progress callback注入はなく、Rustに新契約として追加しない。",
         "CLI text/JSONとpublication前後4組を実Execution/SDK/account poolで比較し、Output(BrokenPipe)をcallbackからroot終了0へ保持する。",
@@ -1723,9 +1733,12 @@
         "static Go fixture app82/CLI40、actual root preflight8行。CLIはgenuine saved SQLite pool/SDK metadata/resource/ref destination/output/file/stateで比較する。native Rust binary8行はaccounts/network無しのpreflightであり、成功したnative binary media取得へ数えない。NDJSON root error policyの実差分をGo-firstで修正する。",
         "Go ManagerのID昇順・page_countとpage vector不整合による同名overwriteを保持する。runtime worker boundはGo GOMAXPROCSとRust available_parallelismで同一制御ではない。leading-dot suffix/publicationはGo-first追加5行で固定する。任意Go ArtworkKind string custom producerはpermanent Go-only契約を残し、Rust closed enumとのrepresentation差分をpendingに保持する。native filesystem wording/非UTF8/path/platform・全publication IOは未検証。",
         "ugoira GIF/APNG/ZIP/rawをGo-first app70・CLI67・MCP41・native Linux26・rawZIP73行で対象比較する。source path/native coreと32 checked vendor patchesを再利用し、元root lock276 identities・vendor1633 checksumsを保持/確認する。resolved encoder21 dependency version置換とparallel miniz_oxide0.9.1追加は元Go artifactと異なりprovenanceへ明記する。全platform/image/nativecancel/FFI injected lifecycleのverifiedではない。",
-        "CLI/MCP private hook/event/per-attempt manager fieldsを直接同一視しない。public rawZIP success frame_report、failure class/quarantine/cleanupを比較するがprivate failure reportactual/undeclaredはGo-only。user/bookmark全visual kind・random、public Record/SDKHTTP2/Accept/ownership等はpendingで、recordの後続対象比較は別記する。",
+        "CLI/MCP private hook/event/per-attempt manager fieldsを直接同一視しない。public rawZIP success frame_report、failure class/quarantine/cleanupを比較するがprivate failure reportactual/undeclaredはGo-only。user/bookmark全visual kindの後続対象比較は新節に記録する。random、public Record/SDKHTTP2/Accept/ownership等はpendingで、recordの後続対象比較は別記する。",
         "ugoira最終fullscriptは終了0・296秒、meaningful594/raw595passed・ignored11、optimized release58.65秒。Formatter/Clippyの先行failureを残し、dependency-onlyformatmetadataとequivalent let-chainをreviewした後に全stageをfresh実行する。全Go production/source identityとtested snapshotを保持し、operation全体のverifiedにはしない。",
-        "record streamをGo-first codec168・saved59（元58 unchanged+EOF1）・root59・read-cancel2行で対象比較する。Rustはpublic rejection77、actual private source parser217+raw identity217、saved全59、same-Execution2、safe native preflight14/public startup composition39/fatal presentation-only4を区別する。Go private callback/port/reader/OAuth body/close schedulesを同一視しない。fullscript終了0・305秒、255 targets/meaningful605/raw606passed・ignored11、release34.13秒。全Go5packages/vetと独立reviewが成功し、CLI recordの限定scopeを接続するがdownload全体のverifiedではない。"
+        "record streamをGo-first codec168・saved59（元58 unchanged+EOF1）・root59・read-cancel2行で対象比較する。Rustはpublic rejection77、actual private source parser217+raw identity217、saved全59、same-Execution2、safe native preflight14/public startup composition39/fatal presentation-only4を区別する。Go private callback/port/reader/OAuth body/close schedulesを同一視しない。fullscript終了0・305秒、255 targets/meaningful605/raw606passed・ignored11、release34.13秒。全Go5packages/vetと独立reviewが成功し、CLI recordの限定scopeを接続するがdownload全体のverifiedではない。",
+        "user/homeとpublic bookmark URLの全page/all-visual-kind展開をGo-first app52/CLI41/MCP21＋stdio取消再利用2で対象比較する。positive global ID dedup/detail refetch/全展開先行・user partial failure対bookmark fatal・実parent Contextの非対称・CLI whole-attempt replay/skip markerを保持する。MCPはsingle leaseのまま公開runtime Accountをsource-compatibleに追加し、explicit42/default43を比較する。他tool account-aware embedding、private Go manager discovery/factory、全media並行時系列は未比較。",
+        "実SDK list取消Go4と実Native owned localhost pending CONNECT4でcancel/deadline typed transport原因を比較する。元bare Context runtime red4を保持しnew adapterだけ修正する。SDK Client zero/expired pacingの次fetch欠落をunchanged CLI fixture redで修正するがHTTP RequestPacing非zero expired timer await・TLS/body/ready-result race・公開SDK lifecycle等は残る。test-owned caller affinity/元native blocking affinityで実GIF/APNG bytesを保ち、runtime worker controlsを公開同一APIとはしない。",
+        "user/bookmark checkpointのunchanged fullscript終了0・284秒、258 summaries/meaningful613/raw614passed・0failed・既存ignored11、optimized release46.05秒。先行helper Clippy failure終了1・11秒を保持しequivalent let-chain後全stageをfresh実行する。Go full関連4packages/vet＋SDK pacing3tests/vet＋migration validator/vetと独立reviewを実施し、673 entriesのstatus/verified_platformsは変更しない。"
       ]
     },
     {
@@ -3336,7 +3349,11 @@
         "crates/pixiv-app/src/download/ugoira.rs",
         "crates/pixiv-app/src/download/native_encoder.rs",
         "crates/pixiv-app/src/download/zip_directory.rs",
-        "crates/pixiv-app/src/download/file_replace.rs"
+        "crates/pixiv-app/src/download/file_replace.rs",
+        "crates/pixiv-app/src/download/source_expansion.rs",
+        "crates/pixiv-sdk/src/pixiv.rs",
+        "crates/pixiv-mcp/src/runtime.rs",
+        "crates/pixiv-mcp/src/lib.rs"
       ],
       "tests": [
         "internal/mcpserver/pixiv/tools/download/migration_direct_test.go",
@@ -3355,19 +3372,27 @@
         "crates/pixiv-app/tests/ugoira_encoder.rs",
         "crates/pixiv-app/tests/ugoira_zip_directory.rs",
         "internal/mcpserver/pixiv/tools/download/migration_ugoira_workflow_test.go",
-        "crates/pixiv-mcp/tests/download_ugoira.rs"
+        "crates/pixiv-mcp/tests/download_ugoira.rs",
+        "internal/media/downloader/migration_source_expansion_test.go",
+        "internal/media/downloader/migration_source_native_cancellation_test.go",
+        "crates/pixiv-app/tests/download_source_expansion.rs",
+        "internal/mcpserver/pixiv/tools/download/migration_source_expansion_test.go",
+        "crates/pixiv-mcp/tests/download_source_expansion.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "全schemaとdirect local_path25行に加えstatic artwork PID/artwork URL29行をgenuine saved default lease・SDK・stdioへ接続する。path/filename/directory defaultsはreal RuntimeConfigから同じproduction conversionを経由する。user/bookmark展開・random recommendationは残るworkflowである。",
+        "全schemaとdirect local_path25行に加えstatic artwork PID/artwork URL29行をgenuine saved default lease・SDK・stdioへ接続する。path/filename/directory defaultsはreal RuntimeConfigから同じproduction conversionを経由する。user/bookmark展開の後続対象比較は新節に記録し、random recommendationは残るworkflowである。",
         "downloadのnotifications/cancelledはcooperative Context取消で通常JSON-RPC結果とpublished prefixを保持する。既存Transport-only serve APIはresource executorを持たず明示errorを返す。",
         "全disconnect/cancel/並行schedule・URL/JSON/native IO/public SDK lifecycleは未検証。",
         "Go single-default lease3行を追加固定し、Rustはaccount selectionとretryable open failureの2行を実SDK/stateで比較する。deferred close callback errorの第3行はsource-driven契約に留め、native close-error実行へ数えない。",
         "static metadata unknown wire kindはpublic KindUnknownとしてstaticを保存し、UTC dayを跨ぐdate namingも比較する。notifications/cancelledはpage1 published/page2 live atomic tempのowned stdio schedule1件をGo-firstで比較する。全cancel/disconnect/signal/EOF scheduleのverifiedではない。Go-only lease callback/internal countersをRust adapter Dropと同一視しない。",
         "Go ManagerのID昇順・page_countとpage vector不整合による同名overwriteを保持する。runtime worker boundはGo GOMAXPROCSとRust available_parallelismで同一制御ではない。leading-dot suffix/publicationはGo-first追加5行で固定する。任意Go ArtworkKind string custom producerはpermanent Go-only契約を残し、Rust closed enumとのrepresentation差分をpendingに保持する。native filesystem wording/非UTF8/path/platform・全publication IOは未検証。",
         "ugoira GIF/APNG/ZIP/rawをGo-first app70・CLI67・MCP41・native Linux26・rawZIP73行で対象比較する。source path/native coreと32 checked vendor patchesを再利用し、元root lock276 identities・vendor1633 checksumsを保持/確認する。resolved encoder21 dependency version置換とparallel miniz_oxide0.9.1追加は元Go artifactと異なりprovenanceへ明記する。全platform/image/nativecancel/FFI injected lifecycleのverifiedではない。",
-        "CLI/MCP private hook/event/per-attempt manager fieldsを直接同一視しない。public rawZIP success frame_report、failure class/quarantine/cleanupを比較するがprivate failure reportactual/undeclaredはGo-only。user/bookmark全visual kind・random、public Record/SDKHTTP2/Accept/ownership等はpendingである。CLI recordの後続対象比較をMCP recordstream機能へ読み替えない。",
-        "ugoira最終fullscriptは終了0・296秒、meaningful594/raw595passed・ignored11、optimized release58.65秒。Formatter/Clippyの先行failureを残し、dependency-onlyformatmetadataとequivalent let-chainをreviewした後に全stageをfresh実行する。全Go production/source identityとtested snapshotを保持し、operation全体のverifiedにはしない。"
+        "CLI/MCP private hook/event/per-attempt manager fieldsを直接同一視しない。public rawZIP success frame_report、failure class/quarantine/cleanupを比較するがprivate failure reportactual/undeclaredはGo-only。user/bookmark全visual kindの後続対象比較は新節に記録する。random、public Record/SDKHTTP2/Accept/ownership等はpendingである。CLI recordの後続対象比較をMCP recordstream機能へ読み替えない。",
+        "ugoira最終fullscriptは終了0・296秒、meaningful594/raw595passed・ignored11、optimized release58.65秒。Formatter/Clippyの先行failureを残し、dependency-onlyformatmetadataとequivalent let-chainをreviewした後に全stageをfresh実行する。全Go production/source identityとtested snapshotを保持し、operation全体のverifiedにはしない。",
+        "user/homeとpublic bookmark URLの全page/all-visual-kind展開をGo-first app52/CLI41/MCP21＋stdio取消再利用2で対象比較する。positive global ID dedup/detail refetch/全展開先行・user partial failure対bookmark fatal・実parent Contextの非対称・CLI whole-attempt replay/skip markerを保持する。MCPはsingle leaseのまま公開runtime Accountをsource-compatibleに追加し、explicit42/default43を比較する。他tool account-aware embedding、private Go manager discovery/factory、全media並行時系列は未比較。",
+        "実SDK list取消Go4と実Native owned localhost pending CONNECT4でcancel/deadline typed transport原因を比較する。元bare Context runtime red4を保持しnew adapterだけ修正する。SDK Client zero/expired pacingの次fetch欠落をunchanged CLI fixture redで修正するがHTTP RequestPacing非zero expired timer await・TLS/body/ready-result race・公開SDK lifecycle等は残る。test-owned caller affinity/元native blocking affinityで実GIF/APNG bytesを保ち、runtime worker controlsを公開同一APIとはしない。",
+        "user/bookmark checkpointのunchanged fullscript終了0・284秒、258 summaries/meaningful613/raw614passed・0failed・既存ignored11、optimized release46.05秒。先行helper Clippy failure終了1・11秒を保持しequivalent let-chain後全stageをfresh実行する。Go full関連4packages/vet＋SDK pacing3tests/vet＋migration validator/vetと独立reviewを実施し、673 entriesのstatus/verified_platformsは変更しない。"
       ]
     },
     {

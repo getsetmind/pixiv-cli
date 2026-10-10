@@ -1,0 +1,95 @@
+{
+  "reference": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "source_sha256": {
+    "internal/services/pixiv/protocol/failure.go": "974f40cb48806c84e166c325b44f6cea0923f9d3f054c70b4a758d48678ea0b3",
+    "sdk/pixiv/errors.go": "9a1830393129ca195ef4d57c0bda17f219f0f750c7293abf5520aa888bfe81a8",
+    "sdk/pixiv/ops_artwork.go": "f8aa00684b84463c6ba82b18db87d4c2e403a0dcaa048f3c3282f6555fd7445c",
+    "sdk/pixiv/pixiv.go": "daefb42f9f90359f5ce3d326d18df7afe8c10615750d88fef049cce78224d317"
+  },
+  "evidence": "Actual frozen Go public SDK UserArtworks/UserArtworkBookmarks with injected HTTPClient RoundTripper and real Context cancel/deadline. The SDK constructs requests and classifies original transport errors; no copied classifier or production changes. Separate four-case fixture leaves Go52 bytes unchanged. Rust uses genuine NativeDownloadSaveClient/HttpTransport against an owned blocked localhost CONNECT proxy; no external upstream/TLS/body/media requests.",
+  "deferred": [
+    "Pending localhost CONNECT cancellation is a bounded actual native adapter proof; upstream TLS/body/ready-result races and general SDK public Context/lifecycle ownership remain separate."
+  ],
+  "cases": [
+    {
+      "operation": "UserArtworks",
+      "mode": "cancel",
+      "expected": {
+        "method": "GET",
+        "url": "https://app-api.pixiv.net/v1/user/illusts?type=illust\u0026user_id=7",
+        "message": "pixiv:UserArtworks: upstream_unavailable: pixiv upstream transport failed",
+        "product": "pixiv",
+        "operation": "UserArtworks",
+        "reason": "upstream_unavailable",
+        "transport": "http",
+        "http_status": 0,
+        "retry_safe": false,
+        "retry_has_after": false,
+        "cause_message": "pixiv upstream transport failed",
+        "canceled": true,
+        "deadline": false,
+        "parent_error": "context canceled"
+      }
+    },
+    {
+      "operation": "UserArtworks",
+      "mode": "deadline",
+      "expected": {
+        "method": "GET",
+        "url": "https://app-api.pixiv.net/v1/user/illusts?type=illust\u0026user_id=7",
+        "message": "pixiv:UserArtworks: upstream_unavailable: pixiv upstream transport failed",
+        "product": "pixiv",
+        "operation": "UserArtworks",
+        "reason": "upstream_unavailable",
+        "transport": "http",
+        "http_status": 0,
+        "retry_safe": false,
+        "retry_has_after": false,
+        "cause_message": "pixiv upstream transport failed",
+        "canceled": false,
+        "deadline": true,
+        "parent_error": "context deadline exceeded"
+      }
+    },
+    {
+      "operation": "UserArtworkBookmarks",
+      "mode": "cancel",
+      "expected": {
+        "method": "GET",
+        "url": "https://app-api.pixiv.net/v1/user/bookmarks/illust?restrict=public\u0026user_id=7",
+        "message": "pixiv:UserArtworkBookmarks: upstream_unavailable: pixiv upstream transport failed",
+        "product": "pixiv",
+        "operation": "UserArtworkBookmarks",
+        "reason": "upstream_unavailable",
+        "transport": "http",
+        "http_status": 0,
+        "retry_safe": false,
+        "retry_has_after": false,
+        "cause_message": "pixiv upstream transport failed",
+        "canceled": true,
+        "deadline": false,
+        "parent_error": "context canceled"
+      }
+    },
+    {
+      "operation": "UserArtworkBookmarks",
+      "mode": "deadline",
+      "expected": {
+        "method": "GET",
+        "url": "https://app-api.pixiv.net/v1/user/bookmarks/illust?restrict=public\u0026user_id=7",
+        "message": "pixiv:UserArtworkBookmarks: upstream_unavailable: pixiv upstream transport failed",
+        "product": "pixiv",
+        "operation": "UserArtworkBookmarks",
+        "reason": "upstream_unavailable",
+        "transport": "http",
+        "http_status": 0,
+        "retry_safe": false,
+        "retry_has_after": false,
+        "cause_message": "pixiv upstream transport failed",
+        "canceled": false,
+        "deadline": true,
+        "parent_error": "context deadline exceeded"
+      }
+    }
+  ]
+}

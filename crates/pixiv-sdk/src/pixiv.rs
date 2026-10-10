@@ -189,7 +189,10 @@ impl<T: Transport> Client<T> {
     async fn pace(&self) {
         let mut last = self.last_request.lock().await;
         if let Some(previous) = *last {
-            tokio::time::sleep_until(previous + self.interval).await;
+            let due = previous + self.interval;
+            if due > Instant::now() {
+                tokio::time::sleep_until(due).await;
+            }
         }
         *last = Some(Instant::now());
         drop(last);

@@ -1579,18 +1579,21 @@ async fn execute(
             std::sync::Arc::new(std::sync::Mutex::new(database)),
         ));
         let download_execution = execution.clone();
-        let download_proxy = proxy.map(str::to_owned);
+        let download_account = pixiv_mcp::runtime::Account {
+            user_id: 0,
+            https_proxy_override: proxy.map(str::to_owned),
+        };
         let download = move |context, input| -> pixiv_mcp::download::DownloadFuture {
             let execution = download_execution.clone();
             let defaults = download_defaults.clone();
-            let proxy = download_proxy.clone();
+            let account = download_account.clone();
             Box::pin(async move {
-                pixiv_mcp::download::saved_download_with_defaults(
+                pixiv_mcp::download::saved_download_with_account(
                     &execution,
                     &context,
                     &defaults,
                     input,
-                    proxy.as_deref(),
+                    &account,
                     std::sync::Arc::new(|client| {
                         std::sync::Arc::new(pixiv_app::download::NativeDownloadSaveClient::new(
                             client,

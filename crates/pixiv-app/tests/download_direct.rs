@@ -199,7 +199,7 @@ async fn frozen_go_direct_source_contract() {
 }
 
 #[tokio::test]
-async fn save_only_client_artwork_capability_and_user_expansion_remain_explicitly_deferred() {
+async fn save_only_clients_keep_explicit_artwork_and_list_capability_failures() {
     for source in [
         "42",
         "https://www.pixiv.net/artworks/42",
@@ -219,14 +219,14 @@ async fn save_only_client_artwork_capability_and_user_expansion_remain_explicitl
             ..Default::default()
         };
         let attempt = download_sources(&Context::new(), &client, &[source.into()], &request).await;
-        assert!(
-            attempt
-                .error
-                .unwrap()
-                .to_string()
-                .contains("not yet supported"),
-            "{source}"
-        );
+        let expected = if source.ends_with("/bookmarks/artworks") {
+            "download client does not support user artwork bookmark listing"
+        } else if source.contains("/users/") {
+            "download client does not support user artwork listing"
+        } else {
+            "artwork download is not yet supported"
+        };
+        assert_eq!(attempt.error.unwrap().to_string(), expected, "{source}");
         assert!(attempt.report.failures.is_empty(), "{source}");
         assert!(attempt.report.items.is_empty(), "{source}");
         assert!(!attempt.report.committed, "{source}");

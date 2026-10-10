@@ -1848,3 +1848,32 @@ Go最終recoveryはpipeline/download/bookmark/migration-ledger/rootの5 full pac
 独立reviewはfrozen source guards、genuine Go callsとpublic/private boundaries、raw/line helper regression、typed warning joins/replay、EOF/取消順、native child RAII、元saved58全JSON SHA復元、元codec168/startup59 fixture bytes、追加Linux inventory/provenance、source/test snapshot不変を確認してscoped approvalした。Rust media adapter releaseをGo client-close/under-lease countersと同一視しない。fresh CLI followupの同config/DB再利用とsame-Execution lifecycle proofを分け、OAuth refreshのTransport取消をGo owned response-body取消と同等なstreaming IO証拠へ数えない。
 
 元Go production/go.mod/go.sum、published Cargo dependencies/native core/vendor/staticlib/format metadata/fullscriptは変更0。user/bookmark全visual kind・全page展開、MCP random、public Record全体とSDK Context/ownership/idle-close/HTTP2/Accept、全native IO/他platform、signal restoration/Windows repeated cleanupの既存未完了範囲を保持し、operation statusはin_progressのままとする。
+
+## user/home・public bookmark URL download の展開（2026-10-10）
+
+固定Goからapp52行、保存済みCLI41行、MCP21行と実Go stdio取消・再利用2scheduleを先に採取した。元の各fixtureとmedia/native assetを変更せず、Rustの公開command・保存済みExecution・実SDK・stdio・原子的なresource保存・native encoderを比較する。fixtureは各crateの`tests/fixtures/download_source_expansion.json`に置く。
+
+| 対象 | 行数 | SHA256 |
+| --- | ---: | --- |
+| app | 52 | `467ba1b1851fa3256fa486bd6869874e07faaffe7f831fed444b3181065bc59b` |
+| CLI | 41 | `cc5acf1f06e473810fa8d35656c27f21d98afa404b04a41ab7648d595b0d0aab` |
+| MCP | 21 + stdio 2 | `f78f257872f61de00c2c2b1ec717343d461c5917363bedd943ffd8561fb0ad9a` |
+| actual SDK list取消 | 4 | `e03070c0f8e361294a8b30ebfc636b954d4dcdc6f2935d92c9afb4379c5d4209` |
+
+user/homeはillustration・manga・ugoiraの順に全pageを取得し、正のIDだけを全source共通で重複排除する。empty pageのnext cursorと繰り返しcursorも既存pagination契約に従う。全sourceの展開を終え、実ManagerがID昇順にdetailを再取得して保存する。注入Managerへのdiscovery順requestはprivate Go-only観測として区別し、listのtitle/author/kindをmedia metadataとして使わない。後続pageで失敗したuserの取得済みIDと元のtyped causeを保持し、kind/source処理を続ける。bookmarkのlist失敗はqueued PID/user/ref/direct URLを含むmedia保存全体を開始前に中止する。
+
+取消の扱いはuserとbookmarkで異なる。userはkind開始前とlist traversal失敗後に実parent Contextを確認する。bookmarkは元のSDK errorを返し、先行user failureも保持する。traversal全体をcancel-first selectで包まず、成功した取消済みpageのIDとnext fetchを維持する。取消済みの空terminal bookmarkが成功する観測も保持する。CLI text/JSON fail-fastはpublication前にcallbackが返すtyped retry-safe causeでaccount poolのwhole-attempt replayを判定する。対象の純粋なlist-rate rowsは最初から再実行され、JSON/NDJSON skip markerではfreeze/replayしない。report errorで先頭の非rate failureが後続rate failureを隠す観測も維持する。
+
+MCPは一つの保存済みclient leaseを使い、pool replayへ変更しない。公開Go `runtime.Account`に対応するRust `runtime::Account`とaccount-aware saved downloadを追加し、旧二つのsaved APIはuser0/proxyを委譲する。実CLI MCP compositionも同じAccountでuser0と既存proxy設定を渡し、入力schemaやCLI account flagを追加しない。explicit42でdefault43を変更せず選択するfixtureを比較する。Go public alias/constructorを含む`internal/mcpserver/pixiv/pixiv.go`の固定SHAは`4b622163abf1bbe2471281d6b742baa8f42d77e66f7df9b6d8b951f5e91e34b6`。他のMCP toolのaccount-aware embedding対応は別の残る対象である。
+
+元Rustのruntime redはapp51/52差分、CLI275差分とbounded cancellation failure、実MCP saved stdioの未対応errorとして保持する。source展開後にも旧user0 APIがBearer43を送る独立account redを保持する。成功pageの取消済みEOFで次のoffset30 requestが欠けるCLI redは、SDK `Client::pace`のexpired/zero timer awaitが原因だった。固定Goはremaining waitが正のときだけ待つため、Rustもdueが現在時刻より後のときだけsleepし、timestampと正の待機を維持する。HTTP側`RequestPacing::wait`の非zero intervalで既に期限が過ぎたtimer awaitは、この修正とは別の具体差分として残る。
+
+new Native list adapterの取消原因も実行で比較する。追加Go4は実SDK両list operationとHTTPClient RoundTripperを使い、実Contextのcancel/deadlineからHTTP `UpstreamUnavailable→TransportFailure(ContextCause)`とoperation/messageを取得する。Rustは実`Client<HttpTransport>`/`NativeDownloadSaveClient`をowned localhost proxyへ接続し、CONNECTを受信後に応答せず取消する。元のbare Context armは4行すべてでtyped message/causeが異なるruntime redとなり、元SDK operation・HTTP transport・no detailを保持する取消errorへ修正した。proxyはtunnel/TLS/body/mediaを処理せず、外部upstreamへ接続しない。これはpending CONNECTの証拠であり、TLS/body/ready-result raceや公開SDK Context/lifecycle全体の比較ではない。
+
+appのprivate Go manager factory/discovery順は直接のRust公開APIと同一視しない。CLIはGoのGOMAXPROCS1に対応する単一media worker観測をtest-owned caller affinityで固定し、native encoder/SDK blocking IOは元のaffinityを保持して実行する。blocking workerを先に作成しkeep-aliveをbounded testより長く保つ。encoder出力を正規化せず、元のGIF/APNG bytesを比較する。MCP request順はOAuthと全list prefixの厳密比較、および並行media suffixのmultiset比較に分け、全mediaの時系列一致を主張しない。
+
+focused比較ではapp52＋native4、CLI41＋同じExecution取消・再利用6schedule、MCP21＋stdio2scheduleが成功した。Go source guardsはapp12、CLI21、MCP24、追加SDK4の各mapを固定refとworktree双方で確認する。Go production・go.mod/go.sum、既存native core/vendor・lock・format metadata・fullscriptを変更しない。public open-string ArtworkKind、全native IO/他platform、SDK HTTP2/Accept/ownership/idle-close、signal handler restoration、Windows repeated cleanup等の既存負債は残る。persisted resume/job stateや新しいdownload progress emissionは固定Goにないので追加しない。MCP random recommendationは次の独立workflowであり、download全体をverifiedへ変更しない。
+
+最終のunchanged fullscriptは終了0・284秒で成功した。Formatter、strict workspace/all-target Clippy、全workspace tests、本番releaseを実行し、252 Running＋5 Doc-tests target blockと1追加child summary、258 summaries、meaningful613/raw614 passed、0 failed、既存ignored11、optimized release46.05秒を記録する。既存terminal promptのno-env child scaffold1をmeaningfulから除外し、新しいignoredは追加しない。先行fullscriptのClippy failure（新app test helperのnested if、終了1・11秒）はlogへ保持し、expectation/source動作を変えないlet-chain修正後に全stageをfresh実行した。
+
+証拠logは`/tmp/pixiv-source-expansion-final-full-gates.log`、失敗logは`/tmp/pixiv-source-expansion-full-gates.log`。focused full Go4packages/vetは`/tmp/pixiv-source-expansion-final-go-complete.log`、既存SDK pacing3tests/vetは`/tmp/pixiv-source-expansion-sdk-go.log`、full migration validator/vetは`/tmp/pixiv-source-expansion-doc-validation.log`。Go capture/replay/race/gofmt、source identity、独立scoped reviewも対象を区別して記録する。全Go production/module・native/vendor/dependencies/scriptが元snapshotのままであること、673 ledger entriesのstatus/verified_platformsが変わらないことを確認する。公開download全体のverifiedへは変更しない。

@@ -88,3 +88,13 @@ codec168行、saved58行にEOF success/cancel追加1行、root59行をGo-first�
 user/homeとpublic bookmark URLの全visual kind・全page展開、MCP random recommendationが次の接続scopeである。公開Record全体、OAuth streaming body/SDK Context・client ownership・idle close、HTTP2/Accept、全native IO/他platform、signal restorationとWindows repeated cleanup等の既存負債を保持する。
 
 Linux CLI登録inventoryはrecord checkpointで実Go Cobraから追加採取し、元Windows snapshotとbyte一致した。snapshot不在の既存failureは証拠logへ保持するが、現在の不足とは扱わない。native全動作・全flag/help/TTY/OS hookと他platformの未検証は残る。
+
+## user/bookmark download の対象比較
+
+Go-first app52・保存済みCLI41・MCP21と実stdio取消・再利用2scheduleを全page/all-visual-kindの共有downloadへ接続する。userの取得済みprefixとkind/source別failure、bookmarkのqueued全media abort、positive global ID dedup/detail refetch、既存cursor guard、CLI account poolのwhole-attempt replay/skip markerを固定Goどおり保持する。MCP configured account42/default43は追加の公開Account compositionで比較し、旧saved APIとCLI user0/proxy動作を維持する。他MCP toolのaccount-aware embeddingは残る。
+
+取消は実parent Contextと元SDK causeを区別する。追加actual SDK4行とactual Native localhost pending CONNECT4行を先に固定し、cancel/deadlineのtyped transport原因を比較する。外部upstream/TLS/body/mediaを使わず、全ready-result raceやSDK公開Context/lifecycleの成功へ外挿しない。CLIの成功した取消済みpage→next fetchはzero/expired SDK Client timer awaitの実redから修正する。HTTP側RequestPacingの非zero expired timer awaitは別の具体差分として保持する。
+
+private Go manager discovery/factory・close countersとRust公開API/Dropは同一視しない。CLI単一media workerはtest-owned caller affinity、native encoder/SDK blocking IOは元のaffinityで比較する。MCPは厳密なOAuth/list prefixと並行media suffix multisetを区別する。全URL grammar/非UTF8/並行schedule/native IO/他platform、public Record・SDKHTTP2/Accept/ownership/idle-close・signal restoration・Windows repeated cleanupは未完了のままである。MCP random recommendationのfirst-page shuffle→truncate→downloadが次のworkflowとなる。download全体のverifiedや、新しいpersisted resume/job/progress契約とは扱わない。
+
+このscopeの最終unchanged fullscriptは終了0・284秒、258 summaries/meaningful613/raw614passed・0failed・既存ignored11、release46.05秒で成功した。先行Clippy helper failureを保持し、equivalent let-chain修正後に全stageをfresh実行する。Go full関連4packages/vet＋既存SDK pacing3tests/vet＋migration validator/vetが成功した。独立reviewとfrozen manifestの対象はこの接続scopeに限定し、全migration完了へ読み替えない。
