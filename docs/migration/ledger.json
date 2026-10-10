@@ -2526,15 +2526,30 @@
     },
     {
       "id": "cli:pixiv ugoira",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv ugoira"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-cli/src/ugoira.rs",
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/lib.rs"
+      ],
+      "tests": [
+        "internal/cli/commands/pixiv/ugoira/migration_owner_test.go",
+        "internal/cli/migration_ugoira_workflow_test.go",
+        "internal/cli/migration_ugoira_startup_test.go",
+        "crates/pixiv-cli/tests/ugoira_owner.rs",
+        "crates/pixiv-cli/tests/ugoira_workflow.rs",
+        "crates/pixiv-cli/tests/ugoira_startup.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Go-first owner97/workflow74/startup52を保存済みmetadata CLIへ接続。Rust owner90（raw parser10/help2は境界別）、workflow70＋body取消後reuse8、startup45 exact＋help-state2を比較。Go-only owner port/model7、CloseClient failure4、debug/startup hook5とhelp bytesは未比較。全OS/全入力のverifiedではない。",
+        "出力はcallback(false)のlease内。両SDK readのHTTP typed取消、poolのdetail→metadata全再実行、retryable writer SDK causeとshort nil writeを保持。既存Usage(String)のtyped wrapper source、SDK公開Context/lifecycle/HTTP2/Accept、native startup/他platform等の共通負債を保持。",
+        "unchanged fullscript終了0・253秒、262 Running＋5 Doc-tests、268 summaries、meaningful637/raw638passed・failed0・既存ignored11、release34.83秒。related Go test/vetと各fixture capture/replay/race/gofmtを実行。比較範囲とGo-only/native/shared未完了境界はcontractsに記録。"
+      ]
     },
     {
       "id": "cli:pixiv update",

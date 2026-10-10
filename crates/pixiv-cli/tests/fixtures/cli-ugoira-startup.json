@@ -1,0 +1,1396 @@
+{
+  "reference": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "sources": {
+    "internal/cli/commands/lifecycle.go": "d81bfb1a664832ec707dba371a102da56baa05f3aa079905dad48de309e38080",
+    "internal/cli/commands/pixiv/ugoira/ugoira.go": "c4439b144e472b56d39421e465c4ffdc5d3e4b8cfc976a1cc2e5ae54b69e1320",
+    "internal/cli/commands/update/automatic_check.go": "20db84c6bedf70d53a39103f5c69607399da838dbfcf397dc5b57d5798bb350f",
+    "internal/cli/composition.go": "61606c01971156607d6e632cbf417a63c8e7f02b4c673172ee3db9392dc0f9fc",
+    "internal/cli/diagnostics/diagnostics.go": "88b5c5f4a4ca3b13bef00bdebf1d9d787e6e32f1fe90f3d6abb3a30d2d9516d9",
+    "internal/cli/execution.go": "627d8d8ccd6e7c35508abe0daab3209d3daf34dbf1927ab6f9f70145b623c864",
+    "internal/cli/root.go": "afbb8c2d7a90ccbe3ce124e9e2ee68ec463b9d020ba161d0d1cb270d1e1e7b1e",
+    "internal/config/settings/config.go": "591900e2f5648642a6296eb1306cbf0b2fa25d8f5c06f4d61d6625d5340d73b3",
+    "internal/config/settings/defaults.go": "3dbfbf1f18510bd296c30bba74468732150ee0249f6f3744289cf22f870b0753",
+    "internal/config/settings/paths.go": "f81e702c53e232fa5cbf7f910aec0a60f343547d1f5bcdbdcc21b3efdd3c6b31",
+    "internal/config/settings/schema.go": "ff41a9f3cda2c29ef1474784440e82600ba56f65883e21d35fcb31483b04ab7e",
+    "internal/config/settings/snapshot.go": "137a245260ccf8be8e26210fa4c91edecf342a8a6d69d72c77dd11fec4843609",
+    "internal/config/settings/store.go": "c5b418cd50e17dce27d4e0f5f499e4d293e0527e07d335e80da9a5fe2711feec",
+    "internal/config/settings/values.go": "35738fb8fdfdbc1d2cf27e541547325d3bae633b12fc2a28b58b1785177f1788"
+  },
+  "gaps": [
+    "Cobra help bytes are frozen here; Rust subprocess help comparisons cover startup state, not Clap/Cobra byte parity.",
+    "Synthetic native startup hooks and clock-normalized debug diagnostic identity are Go-only in this command fixture; Rust root integration remains separate evidence.",
+    "No-account subprocesses do not establish successful HTTPS, live accounts, native registration, browser launch, update checks, or other platform execution."
+  ],
+  "rows": [
+    {
+      "name": "missing",
+      "comparison": "exact",
+      "args": [
+        "ugoira"
+      ],
+      "input": "",
+      "before": null,
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 2,
+      "stdout": "",
+      "stderr": "error: ugoira requires one artwork ID or URL\n",
+      "calls": [],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": false,
+      "database": false,
+      "after": ""
+    },
+    {
+      "name": "missing-piped-artwork",
+      "comparison": "exact",
+      "args": [
+        "ugoira"
+      ],
+      "input": "42\n",
+      "before": null,
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 2,
+      "stdout": "",
+      "stderr": "error: ugoira requires one artwork ID or URL\n",
+      "calls": [],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": false,
+      "database": false,
+      "after": ""
+    },
+    {
+      "name": "missing-piped-record",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "--json"
+      ],
+      "input": "{\"artwork_id\":42}\n",
+      "before": null,
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 2,
+      "stdout": "",
+      "stderr": "error: ugoira requires one artwork ID or URL\n",
+      "calls": [],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": false,
+      "database": false,
+      "after": ""
+    },
+    {
+      "name": "extra",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42",
+        "43"
+      ],
+      "input": "",
+      "before": null,
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 2,
+      "stdout": "",
+      "stderr": "error: ugoira requires one artwork ID or URL\n",
+      "calls": [],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": false,
+      "database": false,
+      "after": ""
+    },
+    {
+      "name": "unknown-long",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42",
+        "--unknown"
+      ],
+      "input": "",
+      "before": null,
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--unknown'\n",
+      "calls": [],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": false,
+      "database": false,
+      "after": ""
+    },
+    {
+      "name": "unknown-short",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42",
+        "-x"
+      ],
+      "input": "",
+      "before": null,
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '-x'\n",
+      "calls": [],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": false,
+      "database": false,
+      "after": ""
+    },
+    {
+      "name": "ndjson-rejected",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42",
+        "--ndjson"
+      ],
+      "input": "",
+      "before": null,
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--ndjson'\n",
+      "calls": [],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": false,
+      "database": false,
+      "after": ""
+    },
+    {
+      "name": "missing-before-malformed",
+      "comparison": "exact",
+      "args": [
+        "ugoira"
+      ],
+      "input": "",
+      "before": "[unfinished\n",
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 2,
+      "stdout": "",
+      "stderr": "error: ugoira requires one artwork ID or URL\n",
+      "calls": [],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": false,
+      "after": "[unfinished\n"
+    },
+    {
+      "name": "extra-before-malformed",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42",
+        "43"
+      ],
+      "input": "",
+      "before": "[unfinished\n",
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 2,
+      "stdout": "",
+      "stderr": "error: ugoira requires one artwork ID or URL\n",
+      "calls": [],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": false,
+      "after": "[unfinished\n"
+    },
+    {
+      "name": "unknown-before-malformed",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42",
+        "--unknown"
+      ],
+      "input": "",
+      "before": "[unfinished\n",
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--unknown'\n",
+      "calls": [],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": false,
+      "after": "[unfinished\n"
+    },
+    {
+      "name": "help",
+      "comparison": "startup-state",
+      "args": [
+        "ugoira",
+        "--help"
+      ],
+      "input": "",
+      "before": null,
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 0,
+      "stdout": "Show ugoira animation metadata\n\nUsage:\n  pixiv ugoira ID_OR_URL [flags]\n\nFlags:\n  -h, --help           help for ugoira\n  -j, --json           print JSON\n      --no-proxy       clear the configured proxy for this command\n      --proxy string   proxy URL (http, https, socks5, or socks5h) for this command\n",
+      "stderr": "",
+      "calls": [],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": false,
+      "database": false,
+      "after": ""
+    },
+    {
+      "name": "help-before-malformed",
+      "comparison": "startup-state",
+      "args": [
+        "ugoira",
+        "--help"
+      ],
+      "input": "",
+      "before": "[unfinished\n",
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 0,
+      "stdout": "Show ugoira animation metadata\n\nUsage:\n  pixiv ugoira ID_OR_URL [flags]\n\nFlags:\n  -h, --help           help for ugoira\n  -j, --json           print JSON\n      --no-proxy       clear the configured proxy for this command\n      --proxy string   proxy URL (http, https, socks5, or socks5h) for this command\n",
+      "stderr": "",
+      "calls": [],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": false,
+      "after": "[unfinished\n"
+    },
+    {
+      "name": "no-account",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42"
+      ],
+      "input": "",
+      "before": null,
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": true,
+      "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n"
+    },
+    {
+      "name": "no-account-json",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42",
+        "--json"
+      ],
+      "input": "",
+      "before": null,
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:auth: unauthorized: no pixiv account is authenticated\"}}\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": true,
+      "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n"
+    },
+    {
+      "name": "no-account-json-false-presence",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42",
+        "--json=false"
+      ],
+      "input": "",
+      "before": null,
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:auth: unauthorized: no pixiv account is authenticated\"}}\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": true,
+      "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n"
+    },
+    {
+      "name": "no-account-short-json",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42",
+        "-j"
+      ],
+      "input": "",
+      "before": null,
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:auth: unauthorized: no pixiv account is authenticated\"}}\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": true,
+      "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n"
+    },
+    {
+      "name": "source-before-account",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "0"
+      ],
+      "input": "",
+      "before": null,
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 2,
+      "stdout": "",
+      "stderr": "error: pixiv:ugoira: invalid_argument: argument must be an artwork ID or a Pixiv artwork URL\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": false,
+      "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n"
+    },
+    {
+      "name": "source-before-json-envelope",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "0",
+        "--json=false"
+      ],
+      "input": "",
+      "before": null,
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 2,
+      "stdout": "",
+      "stderr": "error: pixiv:ugoira: invalid_argument: argument must be an artwork ID or a Pixiv artwork URL\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": false,
+      "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n"
+    },
+    {
+      "name": "source-before-invalid-proxy",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "0",
+        "--proxy=invalid"
+      ],
+      "input": "",
+      "before": null,
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 2,
+      "stdout": "",
+      "stderr": "error: pixiv:ugoira: invalid_argument: argument must be an artwork ID or a Pixiv artwork URL\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": false,
+      "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n"
+    },
+    {
+      "name": "proxy-conflict-before-source",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "0",
+        "--proxy=",
+        "--no-proxy=false",
+        "--json=false"
+      ],
+      "input": "",
+      "before": null,
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"use either --proxy or --no-proxy, not both\"}}\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": false,
+      "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n"
+    },
+    {
+      "name": "proxy-conflict",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42",
+        "--proxy=",
+        "--no-proxy"
+      ],
+      "input": "",
+      "before": null,
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "error: use either --proxy or --no-proxy, not both\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": false,
+      "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n"
+    },
+    {
+      "name": "proxy-conflict-false-presence",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42",
+        "--proxy=",
+        "--no-proxy=false"
+      ],
+      "input": "",
+      "before": null,
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "error: use either --proxy or --no-proxy, not both\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": false,
+      "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n"
+    },
+    {
+      "name": "invalid-proxy",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42",
+        "--proxy=invalid",
+        "--json"
+      ],
+      "input": "",
+      "before": null,
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration\"}}\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": true,
+      "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n"
+    },
+    {
+      "name": "empty-proxy",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42",
+        "--proxy="
+      ],
+      "input": "",
+      "before": null,
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": true,
+      "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n"
+    },
+    {
+      "name": "no-proxy",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42",
+        "--no-proxy"
+      ],
+      "input": "",
+      "before": null,
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": true,
+      "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n"
+    },
+    {
+      "name": "no-proxy-false",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42",
+        "--no-proxy=false"
+      ],
+      "input": "",
+      "before": null,
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": true,
+      "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n"
+    },
+    {
+      "name": "custom-config-preserved",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42"
+      ],
+      "input": "",
+      "before": "# mine\r\n[unknown]\r\nkeep = true\r\n",
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": true,
+      "after": "# mine\r\n[unknown]\r\nkeep = true\r\n"
+    },
+    {
+      "name": "malformed-config",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42",
+        "--json"
+      ],
+      "input": "",
+      "before": "[unfinished\n",
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"toml: expected character ]\"}}\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": false,
+      "after": "[unfinished\n"
+    },
+    {
+      "name": "config-before-source",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "0",
+        "--json"
+      ],
+      "input": "",
+      "before": "[unfinished\n",
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"toml: expected character ]\"}}\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": false,
+      "after": "[unfinished\n"
+    },
+    {
+      "name": "config-before-proxy-conflict",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42",
+        "--proxy=",
+        "--no-proxy=false",
+        "--json=false"
+      ],
+      "input": "",
+      "before": "[unfinished\n",
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"toml: expected character ]\"}}\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": false,
+      "after": "[unfinished\n"
+    },
+    {
+      "name": "configured-json-plain-stderr",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42"
+      ],
+      "input": "",
+      "before": "[output]\njson = true\n",
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": true,
+      "after": "[output]\njson = true\n"
+    },
+    {
+      "name": "configured-json-explicit-false-envelope",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42",
+        "--json=false"
+      ],
+      "input": "",
+      "before": "[output]\njson = true\n",
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:auth: unauthorized: no pixiv account is authenticated\"}}\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": true,
+      "after": "[output]\njson = true\n"
+    },
+    {
+      "name": "configured-proxy",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42"
+      ],
+      "input": "",
+      "before": "[pixiv.network]\nproxy_url = 'invalid'\n",
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "error: proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": true,
+      "after": "[pixiv.network]\nproxy_url = 'invalid'\n"
+    },
+    {
+      "name": "configured-proxy-clear",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42",
+        "--no-proxy"
+      ],
+      "input": "",
+      "before": "[pixiv.network]\nproxy_url = 'invalid'\n",
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": true,
+      "after": "[pixiv.network]\nproxy_url = 'invalid'\n"
+    },
+    {
+      "name": "configured-proxy-false",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42",
+        "--no-proxy=false"
+      ],
+      "input": "",
+      "before": "[pixiv.network]\nproxy_url = 'invalid'\n",
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "error: proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": true,
+      "after": "[pixiv.network]\nproxy_url = 'invalid'\n"
+    },
+    {
+      "name": "configured-proxy-empty",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42",
+        "--proxy="
+      ],
+      "input": "",
+      "before": "[pixiv.network]\nproxy_url = 'invalid'\n",
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": true,
+      "after": "[pixiv.network]\nproxy_url = 'invalid'\n"
+    },
+    {
+      "name": "global-proxy",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42"
+      ],
+      "input": "",
+      "before": "[network]\nhttps_proxy = 'invalid'\n",
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "error: proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": true,
+      "after": "[network]\nhttps_proxy = 'invalid'\n"
+    },
+    {
+      "name": "global-proxy-clear",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42",
+        "--no-proxy"
+      ],
+      "input": "",
+      "before": "[network]\nhttps_proxy = 'invalid'\n",
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": true,
+      "after": "[network]\nhttps_proxy = 'invalid'\n"
+    },
+    {
+      "name": "env-proxy",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42"
+      ],
+      "input": "",
+      "before": null,
+      "env": {
+        "HTTPS_PROXY": "invalid"
+      },
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "error: proxy URL must use http, https, socks5, or socks5h: invalid proxy configuration\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": true,
+      "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n"
+    },
+    {
+      "name": "env-proxy-clear",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42",
+        "--no-proxy"
+      ],
+      "input": "",
+      "before": null,
+      "env": {
+        "HTTPS_PROXY": "invalid"
+      },
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": true,
+      "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n"
+    },
+    {
+      "name": "env-proxy-lower-empty-wins",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42"
+      ],
+      "input": "",
+      "before": null,
+      "env": {
+        "HTTPS_PROXY": "invalid",
+        "https_proxy": ""
+      },
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": true,
+      "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n"
+    },
+    {
+      "name": "configured-negative-interval",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42"
+      ],
+      "input": "",
+      "before": "[network]\nrequest_interval = '-1s'\n",
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "error: request_interval must not be negative\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": false,
+      "after": "[network]\nrequest_interval = '-1s'\n"
+    },
+    {
+      "name": "env-negative-interval",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "0",
+        "--json"
+      ],
+      "input": "",
+      "before": null,
+      "env": {
+        "PIXIV_REQUEST_INTERVAL": "-1s"
+      },
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"request_interval must not be negative\"}}\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": false,
+      "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n"
+    },
+    {
+      "name": "env-invalid-interval",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42",
+        "--json=false"
+      ],
+      "input": "",
+      "before": null,
+      "env": {
+        "PIXIV_REQUEST_INTERVAL": "later"
+      },
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "{\"error\":{\"code\":\"command_failed\",\"message\":\"request_interval: time: invalid duration \\\"later\\\"\"}}\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": false,
+      "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n"
+    },
+    {
+      "name": "env-interval-overrides-config",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42"
+      ],
+      "input": "",
+      "before": "[network]\nrequest_interval = '-1s'\n",
+      "env": {
+        "PIXIV_REQUEST_INTERVAL": "0s"
+      },
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": true,
+      "after": "[network]\nrequest_interval = '-1s'\n"
+    },
+    {
+      "name": "undeclared-json-env-does-not-select-machine",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42"
+      ],
+      "input": "",
+      "before": null,
+      "env": {
+        "PIXIV_OUTPUT_JSON": "true"
+      },
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": true,
+      "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n"
+    },
+    {
+      "name": "explicit-source-ignores-piped-input",
+      "comparison": "exact",
+      "args": [
+        "ugoira",
+        "42"
+      ],
+      "input": "bad source\n",
+      "before": null,
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": true,
+      "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n"
+    },
+    {
+      "name": "debug-json-root-identity",
+      "comparison": "go-only",
+      "args": [
+        "ugoira",
+        "42",
+        "--json"
+      ],
+      "input": "",
+      "before": "[logging]\nlevel = 'debug'\nformat = 'json'\n",
+      "env": {},
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "{\"time\":\"\u003cTIME\u003e\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"started\",\"operation\":\"pixiv ugoira\"}\n{\"time\":\"\u003cTIME\u003e\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"failed\",\"operation\":\"pixiv ugoira\",\"reason\":\"command failed\"}\n{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:auth: unauthorized: no pixiv account is authenticated\"}}\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": true,
+      "after": "[logging]\nlevel = 'debug'\nformat = 'json'\n"
+    },
+    {
+      "name": "env-debug-overrides-config",
+      "comparison": "go-only",
+      "args": [
+        "ugoira",
+        "42"
+      ],
+      "input": "",
+      "before": "[logging]\nlevel = 'info'\nformat = 'json'\n",
+      "env": {
+        "PIXIV_LOG_LEVEL": "debug"
+      },
+      "supported": false,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "{\"time\":\"\u003cTIME\u003e\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"started\",\"operation\":\"pixiv ugoira\"}\n{\"time\":\"\u003cTIME\u003e\",\"level\":\"DEBUG\",\"module\":\"Pixiv CLI\",\"kind\":\"failed\",\"operation\":\"pixiv ugoira\",\"reason\":\"command failed\"}\nerror: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+      "calls": [
+        "cleanup",
+        "supported"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": true,
+      "after": "[logging]\nlevel = 'info'\nformat = 'json'\n"
+    },
+    {
+      "name": "cleanup-failure",
+      "comparison": "go-only",
+      "args": [
+        "ugoira",
+        "42",
+        "--json"
+      ],
+      "input": "",
+      "before": null,
+      "env": {},
+      "supported": false,
+      "cleanup_error": "synthetic cleanup failure",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "clean pending update: synthetic cleanup failure\n",
+      "calls": [
+        "cleanup"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": false,
+      "database": false,
+      "after": ""
+    },
+    {
+      "name": "startup-handler-warning",
+      "comparison": "go-only",
+      "args": [
+        "ugoira",
+        "42",
+        "--json=false"
+      ],
+      "input": "",
+      "before": null,
+      "env": {},
+      "supported": true,
+      "cleanup_error": "",
+      "ensure_error": "private synthetic handler failure /private/path",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "warning: persistent pixiv:// callback handler was not initialized\n{\"error\":{\"code\":\"unauthorized\",\"message\":\"pixiv:auth: unauthorized: no pixiv account is authenticated\"}}\n",
+      "calls": [
+        "cleanup",
+        "supported",
+        "ensure"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": true,
+      "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n"
+    },
+    {
+      "name": "startup-handler-success",
+      "comparison": "go-only",
+      "args": [
+        "ugoira",
+        "42"
+      ],
+      "input": "",
+      "before": null,
+      "env": {},
+      "supported": true,
+      "cleanup_error": "",
+      "ensure_error": "",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "error: pixiv:auth: unauthorized: no pixiv account is authenticated\n",
+      "calls": [
+        "cleanup",
+        "supported",
+        "ensure"
+      ],
+      "stdin_reads": 0,
+      "network_calls": 0,
+      "config": true,
+      "database": true,
+      "after": "# pixiv-cli configuration\n# Use \"pixiv config set KEY VALUE\" to change a setting.\n\n[download]\npath = \"./downloads\"\nfilename_template = \"{author} - {title}_{id}\"\n\n[output]\njson = false\n\n[login]\nopen_browser = true\nuse_after_login = false\n\n[update]\ncheck_enabled = true\n\n[logging]\nlevel = \"info\"\nformat = \"text\"\n\n[reverse_search]\nprovider = \"saucenao\"\npixiv_only = true\n"
+    }
+  ]
+}

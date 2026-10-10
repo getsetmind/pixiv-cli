@@ -3,7 +3,7 @@ use pixiv_cli_rs::search::{SearchInput, SearchOptions};
 use pixiv_cli_rs::{
     CommandError, DetailOutput, detail_artwork_id, finish_command, saved_artwork_detail,
 };
-use pixiv_sdk::{Client, Error, Reason, reference::artwork_id};
+use pixiv_sdk::{Error, Reason};
 use std::io::{self, IsTerminal, Write};
 
 #[derive(Parser)]
@@ -291,10 +291,12 @@ enum Command {
         #[command(flatten)]
         connection: ProxyOptions,
     },
+    #[command(args_override_self = true, about = "Show ugoira animation metadata")]
     Ugoira {
-        source: String,
-        #[arg(long)]
-        json: bool,
+        #[command(flatten)]
+        options: pixiv_cli_rs::ugoira::UgoiraOptions,
+        #[command(flatten)]
+        connection: ProxyOptions,
     },
 }
 
@@ -336,6 +338,7 @@ async fn main() {
         return;
     }
     let matches = Arguments::command()
+        .mut_subcommand("ugoira", pixiv_cli_rs::ugoira::configure_command)
         .mut_subcommand("mypixiv", |command| {
             command
                 .mut_subcommand("users", pixiv_cli_rs::timeline::configure_command)
@@ -363,7 +366,9 @@ async fn main() {
                 std::env::args().nth(1).as_deref(),
                 Some("bookmark" | "follow" | "user")
             );
-            let command_error = if matches!(
+            let command_error = if std::env::args().nth(1).as_deref() == Some("ugoira") {
+                pixiv_cli_rs::ugoira::argument_error(&error)
+            } else if matches!(
                 std::env::args().nth(1).as_deref(),
                 Some("timeline" | "mypixiv")
             ) {
@@ -489,7 +494,7 @@ async fn main() {
         | Command::Follow { .. }
         | Command::User { .. } => false,
         Command::Detail { json, ndjson, .. } => *json || *ndjson,
-        Command::Ugoira { json, .. } => *json,
+        Command::Ugoira { options, .. } => options.json.is_some(),
         Command::Search { input, .. } => input.machine_output(),
         Command::Recommended { options, .. } => options.json.is_some() || options.ndjson,
         Command::Ranking { options, .. } => options.json.is_some() || options.ndjson,
@@ -595,6 +600,9 @@ async fn execute(
     root_context: &pixiv_app::lifecycle::Context,
     ndjson_output: &mut bool,
 ) -> Result<(), CommandError> {
+    if let Command::Ugoira { options, .. } = &args.command {
+        options.validate_arguments()?;
+    }
     if let Command::Comment {
         options, command, ..
     } = &mut args.command
@@ -753,6 +761,7 @@ async fn execute(
             | Command::Bookmark { .. }
             | Command::Follow { .. }
             | Command::User { .. }
+            | Command::Ugoira { .. }
     ) {
         let directory = pixiv_app::callback_handler::app_data_directory()
             .map_err(|error| CommandError::MessageText(error.to_string()))?;
@@ -770,6 +779,37 @@ async fn execute(
     };
 
     match &mut args.command {
+        Command::Ugoira {
+            options,
+            connection,
+        } => {
+            let (directory, config) = account_config.expect("ugoira startup was resolved");
+            let proxy = connection.override_value()?;
+            let id = options
+                .artwork_id()
+                .map_err(|error| CommandError::Usage(error.to_string()))?;
+            let database = pixiv_app::database::Database::open(&directory)
+                .map_err(|error| CommandError::State(Box::new(error)))?;
+            let configured_json = config
+                .current()
+                .and_then(|snapshot| snapshot.runtime())
+                .map_err(pixiv_app::scheduler::SchedulerError::from)?
+                .output_json;
+            let json = options.output_json(configured_json);
+            let execution = pixiv_app::execution::Execution::http(
+                config,
+                std::sync::Arc::new(std::sync::Mutex::new(database)),
+            );
+            return pixiv_cli_rs::ugoira::saved_ugoira(
+                &execution,
+                root_context,
+                id,
+                proxy,
+                json,
+                io::stdout(),
+            )
+            .await;
+        }
         Command::User {
             command:
                 UserCommand::Detail {
@@ -1643,57 +1683,27 @@ async fn execute(
         .await?;
         return Ok(());
     }
-    let token = std::env::var("PIXIV_ACCESS_TOKEN").unwrap_or_default();
-    let proxy = std::env::var("https_proxy")
-        .or_else(|_| std::env::var("HTTPS_PROXY"))
-        .ok();
-    let client = Client::new(&token, proxy.as_deref())?;
     match args.command {
-        Command::Auth => unreachable!("auth uses local execution"),
-        Command::Config => unreachable!("config uses its own local execution"),
-        Command::Timeline { .. } => unreachable!("timeline uses saved account execution"),
-        Command::Download => unreachable!("download uses dedicated saved resource execution"),
-        Command::Mypixiv { .. } => unreachable!("mypixiv uses saved account execution"),
-        Command::Novel { .. } => unreachable!("novel commands were resolved"),
-        Command::Comment { .. } => unreachable!("comment command was handled"),
-        Command::Mcp { .. } => unreachable!("MCP uses saved account execution"),
-        Command::Bookmark { .. } | Command::Follow { .. } | Command::User { .. } => {
-            unreachable!("mutations use saved account execution")
-        }
-        Command::Detail { .. } => unreachable!("detail uses saved account execution"),
-        Command::Search { .. } => unreachable!("search uses saved account execution"),
-        Command::Recommended { .. } => unreachable!("recommended uses saved account execution"),
-        Command::Ranking { .. } => unreachable!("ranking uses saved account execution"),
-        Command::Series { .. } => unreachable!("series uses saved account execution"),
-        Command::Ugoira { source, json } => {
-            let metadata = client.ugoira_metadata(artwork_id(&source)?).await?;
-            if json {
-                output(
-                    &serde_json::to_string_pretty(&pixiv_sdk::dto::UgoiraMetadataDto::from(
-                        &metadata,
-                    ))
-                    .map_err(|_| local())?,
-                )?;
-            } else {
-                output(&format!("frames: {}", metadata.frames.len()))?;
-                for frame in metadata.frames {
-                    output(&format!(
-                        "{} {}ms",
-                        frame.filename, frame.delay_milliseconds
-                    ))?;
-                }
-            }
+        Command::Auth
+        | Command::Config
+        | Command::Download
+        | Command::Comment { .. }
+        | Command::Mypixiv { .. }
+        | Command::Timeline { .. }
+        | Command::Bookmark { .. }
+        | Command::Follow { .. }
+        | Command::User { .. }
+        | Command::Novel { .. }
+        | Command::Mcp { .. }
+        | Command::Detail { .. }
+        | Command::Search { .. }
+        | Command::Ranking { .. }
+        | Command::Series { .. }
+        | Command::Recommended { .. }
+        | Command::Ugoira { .. } => {
+            unreachable!("commands use saved-account or local execution")
         }
     }
-    Ok(())
-}
-
-fn local() -> Error {
-    Error::new(Reason::LocalStateError, "output")
-}
-
-fn output(value: &str) -> Result<(), CommandError> {
-    writeln!(io::stdout().lock(), "{value}").map_err(CommandError::from)
 }
 
 fn execute_config(root_context: &pixiv_app::lifecycle::Context) -> Result<(), CommandError> {

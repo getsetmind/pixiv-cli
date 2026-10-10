@@ -25,6 +25,7 @@ pub mod startup;
 pub mod terminal_prompt;
 pub mod timeline;
 pub mod trending;
+pub mod ugoira;
 pub mod user_relationships;
 pub mod user_search;
 pub mod user_works;

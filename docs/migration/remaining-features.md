@@ -107,3 +107,11 @@ Go-first options77（別Go-private18）・genuine direct batch27・saved49とown
 Go physical peer/idle-close対Rust future/owner Drop、getrandom entropy failure対Go global math/rand、全encoding/SQLite/OS stat/ready-result/並行native schedulesは別の未完了境界である。SDK公開Context/HTTP2/Accept/ownership・HTTP expired-positive RequestPacing、signal restoration、Windows repeated cleanup、全native IO/他platformと他MCP account-aware embeddingを引き続き残す。最終fullgate/review証拠はcontractsへ追記し、download全体をverifiedに変更しない。
 
 このrandom scopeの最終unchanged fullscriptは終了0・235秒、259 Running＋5 Doc-tests、265 summaries、meaningful631/raw632 passed・failed0・既存ignored11、release45.30秒で成功した。元hangは原因未確定として保持しtest-owned complete PID handshakeを追加し、stale catalog failure後に全stageをfresh実行した。次はstandalone `pixiv ugoira` の保存済みmetadata CLI、その後FANBOX・辞典・reverse search・updateと残る互換境界を接続する。
+
+## standalone ugoira metadata CLI の対象比較
+
+Go-first owner97・saved workflow74・root startup52を保存済みmetadata CLIへ接続する。Rustはowner90（options/source78、parser拒否10、help surface2、うち実SDK/output60）・saved70＋同じExecutionのbody取消後reuse8・startup45 exact＋help-state2を比較する。callback(false)のlease内出力、detail→kind→metadata、全attempt replay、retryable writer cause、original-first、全frame/signed timing、short nil write、JSON/proxy presenceとstartup順を保持する。元legacy env-token metadata-only入口は固定Goの保存済みcommandに置き換える。
+
+Go-only owner port/model7・CloseClient failure4・debug/startup hook5、raw parser/help bytes、Usage wrapper typed source、全ready-result/HTTP/native/他platformは未完了である。body比較はofficial requestを記録したtest-owned loopback HTTP routeであり、外部HTTPS成功へ外挿しない。SDK公開Context/HTTP2/Accept/ownership/idle-close・HTTP expired-positive pacing・signal restoration・Windows repeated cleanup等の既存負債も残る。台帳のugoiraだけをpending→in_progressとし、verified_platformsを増やさない。次の独立sliceはanonymous辞典article/searchのCLI、その後FANBOX・reverse search・updateと残る互換境界である。
+
+このscopeの最終unchanged fullscriptは終了0・253秒、262 Running＋5 Doc-tests、268 summaries、meaningful637/raw638 passed・failed0・既存ignored11、optimized release34.83秒で成功した。related Go owner全test/internal CLI ugoira比較/vet、3fixtureのcapture/replay/race/gofmtと独立reviewを対象として記録する。先行targeted Clippy helper failureは保持し、同等のlet-chainへ修正後に全stageを実行する。全Go production/module434・native/vendor/Cargo/script4834 pathsが元bytesのままであり、全migration完了とは扱わない。
