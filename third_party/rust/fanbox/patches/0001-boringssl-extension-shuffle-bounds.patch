@@ -1,0 +1,13 @@
+diff --git a/btls-sys-0.5.6/patches/boringssl.patch b/btls-sys-0.5.6/patches/boringssl.patch
+index 6dc324face483013f1597d94411f8c67f1a86df8..be778e76b3e0d3fa63cfefa9df9a6c1e20658018 100644
+--- a/btls-sys-0.5.6/patches/boringssl.patch
++++ b/btls-sys-0.5.6/patches/boringssl.patch
+@@ -543,7 +543,7 @@
+ +            return false;
+ +        }
+ +        for (size_t i = kNumExtensions - 1; i > offset; i--) {
+-+            size_t swap_idx = offset + (seeds[i - offset] % (i - offset));
+++            size_t swap_idx = offset + (seeds[i - offset - 1] % (i - offset + 1));
+ +            std::swap(permutation[i], permutation[swap_idx]);
+ +        }
+ +        OPENSSL_free(seeds);

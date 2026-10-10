@@ -1,0 +1,311 @@
+diff --git a/http2-0.5.20/src/client.rs b/http2-0.5.20/src/client.rs
+index 40f727984ea064e1bbc5004f1dd2ca8255be51ca..c5ba4b1e3a04b8efb9e586bc3e3eda86f97ecca0 100644
+--- a/http2-0.5.20/src/client.rs
++++ b/http2-0.5.20/src/client.rs
+@@ -360,6 +360,8 @@
+     priorities: Option<Priorities>,
+ }
+ 
++pub use crate::proto::{Admission, IdleClose, IdleCloseHandle};
++
+ #[derive(Debug)]
+ pub(crate) struct Peer;
+ 
+@@ -369,6 +371,11 @@
+ where
+     B: Buf,
+ {
++    /// Returns control for atomic idle retirement and queued request admission.
++    pub fn idle_close_handle(&self) -> IdleCloseHandle {
++        self.inner.idle_close_handle()
++    }
++
+     /// Returns `Ready` when the connection can initialize a new HTTP/2
+     /// stream.
+     ///
+diff --git a/http2-0.5.20/src/proto/connection.rs b/http2-0.5.20/src/proto/connection.rs
+index 89ec584ae610570941abce3ffa604db731dba860..61c3c52c2326f81222aeb668ae0c9952d045a00f 100644
+--- a/http2-0.5.20/src/proto/connection.rs
++++ b/http2-0.5.20/src/proto/connection.rs
+@@ -93,6 +93,8 @@
+ enum State {
+     /// Currently open in a sane state
+     Open,
++
++    IdleClosing,
+ 
+     /// The codec must be flushed
+     Closing(Reason, Initiator),
+@@ -249,7 +251,9 @@
+     pub fn maybe_close_connection_if_no_streams(&mut self) {
+         // If we poll() and realize that there are no streams or references
+         // then we can close the connection by transitioning to GOAWAY
+-        if !self.inner.streams.has_streams_or_other_references() {
++        if !self.inner.streams.idle_close_requested()
++            && !self.inner.streams.has_streams_or_other_references()
++        {
+             self.inner.as_dyn().go_away_now(Reason::NO_ERROR);
+         }
+     }
+@@ -281,6 +285,9 @@
+         let _span2 = tracing::trace_span!("poll");
+ 
+         loop {
++            if matches!(self.inner.state, State::Open) && self.inner.streams.idle_close_requested() {
++                self.inner.state = State::IdleClosing;
++            }
+             tracing::trace!(connection.state = ?self.inner.state);
+             // TODO: probably clean up this glob of code
+             match self.inner.state {
+@@ -295,6 +302,10 @@
+                             // This will also handle flushing `self.codec`
+                             ready!(self.inner.streams.poll_complete(cx, &mut self.codec))?;
+ 
++                            if self.inner.streams.idle_close_requested() {
++                                continue;
++                            }
++
+                             if (self.inner.error.is_some()
+                                 || self.inner.go_away.should_close_on_idle())
+                                 && !self.inner.streams.has_streams()
+@@ -308,6 +319,20 @@
+                     };
+ 
+                     self.inner.as_dyn().handle_poll2_result(result)?
++                }
++                State::IdleClosing => {
++                    if let Err(err) = ready!(self.inner.streams.poll_complete(cx, &mut self.codec)) {
++                        let err = Error::from(err);
++                        self.inner.streams.finish_idle_close(Err(err.clone()));
++                        return Poll::Ready(Err(err));
++                    }
++                    if let Err(err) = ready!(self.codec.shutdown(cx)) {
++                        let err = Error::from(err);
++                        self.inner.streams.finish_idle_close(Err(err.clone()));
++                        return Poll::Ready(Err(err));
++                    }
++                    self.inner.streams.finish_idle_close(Ok(()));
++                    self.inner.state = State::Closed(Reason::NO_ERROR, Initiator::User);
+                 }
+                 State::Closing(reason, initiator) => {
+                     tracing::trace!("connection closing after flush");
+@@ -644,6 +669,11 @@
+     B: Buf,
+ {
+     fn drop(&mut self) {
++        self.inner.streams.finish_idle_close(Err(io::Error::new(
++            io::ErrorKind::BrokenPipe,
++            "connection driver ended before idle IO shutdown",
++        )
++        .into()));
+         // Ignore errors as this indicates that the mutex is poisoned.
+         let _ = self.inner.streams.recv_eof(true);
+     }
+diff --git a/http2-0.5.20/src/proto/mod.rs b/http2-0.5.20/src/proto/mod.rs
+index 730fec998cf64e79b15732ea8ac1c517ab279af4..e3a1f52c48fcd3425d3b574921fa6a229bfe4f32 100644
+--- a/http2-0.5.20/src/proto/mod.rs
++++ b/http2-0.5.20/src/proto/mod.rs
+@@ -11,6 +11,7 @@
+ pub(crate) use self::peer::{Dyn as DynPeer, Peer};
+ pub(crate) use self::ping_pong::UserPings;
+ pub(crate) use self::streams::{DynStreams, OpaqueStreamRef, StreamRef, Streams};
++pub use self::streams::{Admission, IdleClose, IdleCloseHandle};
+ pub(crate) use self::streams::{Open, PollReset, Prioritized};
+ 
+ use crate::codec::Codec;
+diff --git a/http2-0.5.20/src/proto/streams/mod.rs b/http2-0.5.20/src/proto/streams/mod.rs
+index 4de742f021cb9a97efbcb2c60f0e365ece84833e..af66045fff4fc1f641742f8d7e33d643886b94b1 100644
+--- a/http2-0.5.20/src/proto/streams/mod.rs
++++ b/http2-0.5.20/src/proto/streams/mod.rs
+@@ -15,6 +15,7 @@
+ pub(crate) use self::recv::Open;
+ pub(crate) use self::send::PollReset;
+ pub(crate) use self::streams::{DynStreams, OpaqueStreamRef, StreamRef, Streams};
++pub use self::streams::{Admission, IdleClose, IdleCloseHandle};
+ 
+ use self::buffer::Buffer;
+ use self::counts::Counts;
+diff --git a/http2-0.5.20/src/proto/streams/streams.rs b/http2-0.5.20/src/proto/streams/streams.rs
+index 4f4b69eb5a695812bc61f5b5bc075982dbff99f2..7aef4e480166442b4385b2ec0808765a14b8b455 100644
+--- a/http2-0.5.20/src/proto/streams/streams.rs
++++ b/http2-0.5.20/src/proto/streams/streams.rs
+@@ -1,5 +1,7 @@
+ use std::{
+     fmt, io,
++    future::Future,
++    pin::Pin,
+     sync::Arc,
+     task::{Context, Poll, Waker},
+ };
+@@ -89,6 +91,11 @@
+     /// The number of stream refs to this shared state.
+     refs: usize,
+ 
++    pending_admissions: usize,
++    idle_retired: bool,
++    idle_shutdown: Option<Result<(), proto::Error>>,
++    idle_waiters: Vec<Waker>,
++
+     /// Headers stream dependency
+     headers_stream_dependency: Option<StreamDependency>,
+ 
+@@ -118,6 +125,98 @@
+ #[derive(Debug)]
+ struct SendBuffer<B> {
+     inner: Mutex<Buffer<Frame<B>>>,
++}
++
++/// A connection control handle that does not keep the request sender alive.
++#[derive(Clone, Debug)]
++pub struct IdleCloseHandle {
++    inner: Arc<Mutex<Inner>>,
++}
++
++/// A reservation retained until a queued request reaches stream creation.
++#[derive(Clone, Debug)]
++pub struct Admission {
++    _inner: Arc<AdmissionRef>,
++}
++
++#[derive(Debug)]
++struct AdmissionRef {
++    inner: Arc<Mutex<Inner>>,
++}
++
++/// Resolves after an idle-retired connection has flushed and shut down its IO.
++#[derive(Debug)]
++pub struct IdleClose {
++    inner: Arc<Mutex<Inner>>,
++}
++
++impl IdleCloseHandle {
++    /// Reserves admission before a request enters an asynchronous dispatch queue.
++    pub fn try_admit(&self) -> Option<Admission> {
++        let mut me = self.inner.lock();
++        if me.idle_retired || me.actions.conn_error.is_some() {
++            return None;
++        }
++        me.pending_admissions += 1;
++        Some(Admission {
++            _inner: Arc::new(AdmissionRef {
++                inner: self.inner.clone(),
++            }),
++        })
++    }
++
++    /// Retires only a connection with no admitted requests or open streams.
++    ///
++    /// `None` leaves a busy connection unchanged. Dropping the returned future
++    /// does not cancel retirement. The connection driver must remain polled.
++    pub fn close_if_idle(&self) -> Option<IdleClose> {
++        let mut me = self.inner.lock();
++        if !me.idle_retired {
++            if me.pending_admissions != 0 || me.actions.conn_error.is_some() {
++                return None;
++            }
++            let mut busy = false;
++            me.store.for_each(|stream| busy |= !stream.state.is_closed());
++            if busy {
++                return None;
++            }
++            me.idle_retired = true;
++        }
++        let task = me.actions.task.take();
++        drop(me);
++        if let Some(task) = task {
++            task.wake();
++        }
++        Some(IdleClose {
++            inner: self.inner.clone(),
++        })
++    }
++
++    /// Reports whether request admission has been closed by idle retirement.
++    pub fn is_retired(&self) -> bool {
++        self.inner.lock().idle_retired
++    }
++}
++
++impl Drop for AdmissionRef {
++    fn drop(&mut self) {
++        self.inner.lock().pending_admissions -= 1;
++    }
++}
++
++impl Future for IdleClose {
++    type Output = Result<(), crate::Error>;
++
++    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
++        let mut me = self.inner.lock();
++        if let Some(result) = &me.idle_shutdown {
++            return Poll::Ready(result.clone().map_err(Into::into));
++        }
++        if !me.idle_waiters.iter().any(|waiter| waiter.will_wake(cx.waker())) {
++            me.idle_waiters.push(cx.waker().clone());
++        }
++        Poll::Pending
++    }
+ }
+ 
+ // ===== impl Streams =====
+@@ -261,6 +360,9 @@
+         let mut send_buffer = self.send_buffer.inner.lock();
+         let send_buffer = &mut *send_buffer;
+ 
++        if me.idle_retired {
++            return Err(proto::Error::user_go_away(Reason::NO_ERROR).into());
++        }
+         me.actions.ensure_no_conn_error()?;
+         me.actions.send.ensure_next_stream_id()?;
+ 
+@@ -454,6 +556,10 @@
+             },
+             store: Store::new(),
+             refs: 1,
++            pending_admissions: 0,
++            idle_retired: false,
++            idle_shutdown: None,
++            idle_waiters: Vec::new(),
+             headers_stream_dependency: config.headers_stream_dependency,
+             headers_pseudo_order: config.headers_pseudo_order,
+             priorities: config.priorities,
+@@ -1041,6 +1147,9 @@
+         let mut me = self.inner.lock();
+         let me = &mut *me;
+ 
++        if me.idle_retired {
++            return Poll::Ready(Err(Reason::NO_ERROR.into()));
++        }
+         me.actions.ensure_no_conn_error()?;
+         me.actions.send.ensure_next_stream_id()?;
+ 
+@@ -1060,6 +1169,29 @@
+ where
+     P: Peer,
+ {
++    pub fn idle_close_handle(&self) -> IdleCloseHandle {
++        IdleCloseHandle {
++            inner: self.inner.clone(),
++        }
++    }
++
++    pub fn idle_close_requested(&self) -> bool {
++        self.inner.lock().idle_retired
++    }
++
++    pub fn finish_idle_close(&self, result: Result<(), proto::Error>) {
++        let mut me = self.inner.lock();
++        if !me.idle_retired || me.idle_shutdown.is_some() {
++            return;
++        }
++        me.idle_shutdown = Some(result);
++        let waiters = std::mem::take(&mut me.idle_waiters);
++        drop(me);
++        for waiter in waiters {
++            waiter.wake();
++        }
++    }
++
+     pub fn as_dyn(&self) -> DynStreams<'_, B> {
+         let Self {
+             inner,

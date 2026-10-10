@@ -1,0 +1,157 @@
+diff --git a/wreq-proto-0.2.5/src/conn/http2.rs b/wreq-proto-0.2.5/src/conn/http2.rs
+index 44794aee2c9b1d1761176d1dd84f5a11b51e9764..3f9363f424523d7c17cad886e9f87ccad8ae949b 100644
+--- a/wreq-proto-0.2.5/src/conn/http2.rs
++++ b/wreq-proto-0.2.5/src/conn/http2.rs
+@@ -27,6 +27,7 @@
+ /// The sender side of an established connection.
+ pub struct SendRequest<B> {
+     dispatch: dispatch::UnboundedSender<Request<B>, Response<Incoming>>,
++    idle: http2::client::IdleCloseHandle,
+ }
+ 
+ impl<B> Clone for SendRequest<B> {
+@@ -34,6 +35,7 @@
+     fn clone(&self) -> SendRequest<B> {
+         SendRequest {
+             dispatch: self.dispatch.clone(),
++            idle: self.idle.clone(),
+         }
+     }
+ }
+@@ -98,13 +100,26 @@
+     /// may still fail because the connection was closed in the meantime.
+     #[inline]
+     pub fn is_ready(&self) -> bool {
+-        self.dispatch.is_ready()
++        !self.idle.is_retired() && self.dispatch.is_ready()
++    }
++
++    /// Atomically retires only a connection without queued or active requests.
++    ///
++    /// Completion witnesses actual IO shutdown. A busy result does not arrange
++    /// a later close, and dropping the future does not cancel retirement.
++    pub fn close_if_idle(&self) -> Option<http2::client::IdleClose> {
++        self.idle.close_if_idle()
++    }
++
++    /// Reports whether this connection was retired by an idle-only close.
++    pub fn is_idle_retired(&self) -> bool {
++        self.idle.is_retired()
+     }
+ 
+     /// Checks if the connection side has been closed.
+     #[inline]
+     pub fn is_closed(&self) -> bool {
+-        self.dispatch.is_closed()
++        self.idle.is_retired() || self.dispatch.is_closed()
+     }
+ }
+ 
+@@ -122,18 +137,30 @@
+     /// connection, the message will be returned as part of this error.
+     pub fn try_send_request(
+         &mut self,
+-        req: Request<B>,
++        mut req: Request<B>,
+     ) -> impl Future<Output = Result<Response<Incoming>, TrySendError<Request<B>>>> {
+-        let sent = self.dispatch.try_send(req);
++        let sent = match self.idle.try_admit() {
++            Some(admission) => {
++                req.extensions_mut().insert(admission);
++                self.dispatch.try_send(req)
++            }
++            None => Err(req),
++        };
+         async move {
+             match sent {
+                 Ok(rx) => match rx.await {
+                     Ok(Ok(res)) => Ok(res),
+-                    Ok(Err(err)) => Err(err),
++                    Ok(Err(mut err)) => {
++                        if let Some(req) = err.message.as_mut() {
++                            req.extensions_mut().remove::<http2::client::Admission>();
++                        }
++                        Err(err)
++                    }
+                     // this is definite bug if it happens, but it shouldn't happen!
+                     Err(_) => panic!("dispatch dropped without returning error"),
+                 },
+-                Err(req) => {
++                Err(mut req) => {
++                    req.extensions_mut().remove::<http2::client::Admission>();
+                     debug!("connection was not ready");
+                     let error = Error::new_canceled().with("connection was not ready");
+                     Err(TrySendError {
+@@ -275,12 +302,13 @@
+         );
+ 
+         let (tx, rx) = dispatch::channel();
+-        let h2 =
++        let (h2, idle) =
+             proto::http2::client::handshake(io, rx, builder, ping_config, self.exec, self.timer)
+                 .await?;
+         Ok((
+             SendRequest {
+                 dispatch: tx.unbound(),
++                idle,
+             },
+             Connection {
+                 inner: (PhantomData, h2),
+diff --git a/wreq-proto-0.2.5/src/proto/http2/client.rs b/wreq-proto-0.2.5/src/proto/http2/client.rs
+index ebaee45f05e9db3d1dc2881bbc32ca09e78d8948..822ec258aec3ff05a1bc2647f26b62cec043aefd 100644
+--- a/wreq-proto-0.2.5/src/proto/http2/client.rs
++++ b/wreq-proto-0.2.5/src/proto/http2/client.rs
+@@ -59,7 +59,7 @@
+     ping_config: ping::Config,
+     mut exec: E,
+     timer: Time,
+-) -> Result<ClientTask<B, E, T>>
++) -> Result<(ClientTask<B, E, T>, http2::client::IdleCloseHandle)>
+ where
+     T: AsyncRead + AsyncWrite + Unpin,
+     B: Body + 'static,
+@@ -71,6 +71,7 @@
+         .handshake::<_, SendBuf<B::Data>>(io)
+         .await
+         .map_err(Error::new_h2)?;
++    let idle = h2_tx.idle_close_handle();
+ 
+     // An mpsc channel is used entirely to detect when the
+     // 'Client' has been dropped. This is to get around a bug
+@@ -97,7 +98,7 @@
+         task: ConnTask::new(conn, conn_drop_rx, cancel_tx),
+     });
+ 
+-    Ok(ClientTask {
++    Ok((ClientTask {
+         ping,
+         conn_drop_ref,
+         conn_eof,
+@@ -106,7 +107,7 @@
+         req_rx,
+         fut_ctx: None,
+         marker: PhantomData,
+-    })
++    }, idle))
+ }
+ 
+ pin_project! {
+@@ -579,7 +580,8 @@
+             }
+ 
+             match self.req_rx.poll_recv(cx) {
+-                Poll::Ready(Some((req, cb))) => {
++                Poll::Ready(Some((mut req, cb))) => {
++                    let admission = req.extensions_mut().remove::<http2::client::Admission>();
+                     // Check that future hasn't been canceled already
+                     if cb.is_canceled() {
+                         trace!("request callback is canceled");
+@@ -625,6 +627,8 @@
+                             continue;
+                         }
+                     };
++
++                    drop(admission);
+ 
+                     let f = FutCtx {
+                         is_connect,

@@ -1,0 +1,274 @@
+diff --git a/wreq-6.0.0-rc.31/src/tls.rs b/wreq-6.0.0-rc.31/src/tls.rs
+index 4f0869eb771b826b3ad1274d2d8e8aa5c1823293..42263851b0aca38311cab1882fc2620fbf88bc46 100644
+--- a/wreq-6.0.0-rc.31/src/tls.rs
++++ b/wreq-6.0.0-rc.31/src/tls.rs
+@@ -9,12 +9,94 @@
+ pub mod session;
+ pub mod trust;
+ 
+-use std::borrow::Cow;
++use std::{borrow::Cow, fmt, sync::Arc};
++
++use btls::{error::ErrorStack, x509::X509VerifyError};
+ 
+ /// Re-exports of TLS-related types from `btls` for public use.
+ pub use btls::ssl::{ExtensionType, KeyShare};
+ use bytes::{BufMut, Bytes, BytesMut};
+ use compress::CertificateCompressor;
++
++/// Alert policy for a certificate rejected by native verification.
++#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
++pub enum CertificateFailureAlert {
++    /// Preserve the native alert corresponding to the verification failure.
++    #[default]
++    Native,
++    /// Emit bad_certificate after rejecting the certificate; retain the original cause.
++    BadCertificate,
++}
++
++/// Classification of a genuine native certificate verification failure.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub enum CertificateFailureKind {
++    /// The certificate chain cannot be linked to an accepted trust anchor.
++    UnknownAuthority,
++    /// The certificate does not cover the requested DNS name or IP address.
++    HostnameMismatch,
++    /// The certificate's validity period has ended.
++    Expired,
++    /// The certificate's validity period has not begun.
++    NotYetValid,
++    /// Another certificate or internal native verification failure occurred.
++    Other,
++}
++
++/// Certificate verification cause retained before TLS alert translation.
++#[derive(Debug)]
++pub struct CertificateVerificationError {
++    result: X509VerifyError,
++    certificate: Option<Vec<u8>>,
++    internal_error: Option<Arc<ErrorStack>>,
++    source: btls::ssl::Error,
++}
++
++impl CertificateVerificationError {
++    pub(crate) fn new(
++        result: X509VerifyError,
++        certificate: Option<Vec<u8>>,
++        internal_error: Option<Arc<ErrorStack>>,
++        source: btls::ssl::Error,
++    ) -> Self {
++        Self { result, certificate, internal_error, source }
++    }
++
++    /// Returns the original native verification class.
++    pub fn kind(&self) -> CertificateFailureKind {
++        match self.result {
++            X509VerifyError::UNABLE_TO_GET_ISSUER_CERT
++            | X509VerifyError::DEPTH_ZERO_SELF_SIGNED_CERT
++            | X509VerifyError::SELF_SIGNED_CERT_IN_CHAIN
++            | X509VerifyError::UNABLE_TO_GET_ISSUER_CERT_LOCALLY
++            | X509VerifyError::UNABLE_TO_VERIFY_LEAF_SIGNATURE => CertificateFailureKind::UnknownAuthority,
++            X509VerifyError::HOSTNAME_MISMATCH
++            | X509VerifyError::IP_ADDRESS_MISMATCH => CertificateFailureKind::HostnameMismatch,
++            X509VerifyError::CERT_HAS_EXPIRED => CertificateFailureKind::Expired,
++            X509VerifyError::CERT_NOT_YET_VALID => CertificateFailureKind::NotYetValid,
++            _ => CertificateFailureKind::Other,
++        }
++    }
++
++    /// Returns the original native verification result, not an alert-driving replacement.
++    pub fn verification_result(&self) -> X509VerifyError { self.result }
++
++    /// Returns the actual certificate associated with the native verification failure.
++    pub fn certificate_der(&self) -> Option<&[u8]> { self.certificate.as_deref() }
++
++    /// Returns an internal verifier error, when native verification could not complete.
++    pub fn internal_verification_error(&self) -> Option<&ErrorStack> { self.internal_error.as_deref() }
++}
++
++impl fmt::Display for CertificateVerificationError {
++    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
++        write!(formatter, "certificate verification failed: {}", self.result)
++    }
++}
++
++impl std::error::Error for CertificateVerificationError {
++    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> { Some(&self.source) }
++}
+ 
+ /// Http extension carrying extra TLS layer information.
+ /// Made available to clients on responses when `tls_info` is set.
+@@ -280,6 +362,13 @@
+     /// **Default:** `None`
+     pub extension_permutation: Option<Cow<'static, [ExtensionType]>>,
+ 
++    /// Length-prefixed trust-anchor IDs requested in ClientHello without changing trust.
++    /// An empty list emits the extension; `None` omits it.
++    pub requested_trust_anchors: Option<Cow<'static, [u8]>>,
++
++    /// Certificate rejection alert policy. Native verification remains enabled.
++    pub certificate_failure_alert: CertificateFailureAlert,
++
+     /// Overrides AES hardware acceleration.
+     ///
+     /// **Default:** `None`
+@@ -488,6 +577,21 @@
+         T: Into<Cow<'static, [ExtensionType]>>,
+     {
+         self.config.extension_permutation = Some(permutation.into());
++        self
++    }
++
++    /// Sets the requested trust-anchor IDs without changing certificate trust.
++    pub fn requested_trust_anchors<T>(mut self, ids: T) -> Self
++    where
++        T: Into<Cow<'static, [u8]>>,
++    {
++        self.config.requested_trust_anchors = Some(ids.into());
++        self
++    }
++
++    /// Sets the alert for rejected certificates while preserving verification decisions.
++    pub fn certificate_failure_alert(mut self, policy: CertificateFailureAlert) -> Self {
++        self.config.certificate_failure_alert = policy;
+         self
+     }
+ 
+@@ -571,6 +675,8 @@
+             sigalgs_list: None,
+             certificate_compressors: None,
+             extension_permutation: None,
++            requested_trust_anchors: None,
++            certificate_failure_alert: CertificateFailureAlert::Native,
+             aes_hw_override: None,
+             preserve_tls13_cipher_list: None,
+             random_aes_hw_override: false,
+diff --git a/wreq-6.0.0-rc.31/src/tls/conn.rs b/wreq-6.0.0-rc.31/src/tls/conn.rs
+index 372df8a94315820d2654b7ed05b38b6f89fc69c6..129b0c563c1e43351d48edab780a0f05e8b6dc87 100644
+--- a/wreq-6.0.0-rc.31/src/tls/conn.rs
++++ b/wreq-6.0.0-rc.31/src/tls/conn.rs
+@@ -18,6 +18,7 @@
+     error::ErrorStack,
+     ex_data::Index,
+     ssl::{Ssl, SslConnector, SslMethod, SslOptions, SslSessionCacheMode},
++    x509::{X509StoreContext, X509VerifyError},
+ };
+ use ext::SslConnectorBuilderExt;
+ use http::{Uri, Version};
+@@ -29,7 +30,7 @@
+     Error,
+     conn::{Connected, Connection, descriptor::ConnectionDescriptor},
+     tls::{
+-        AlpnProtocol, AlpsProtocol, KeyShare, TlsOptions, TlsVersion,
++        AlpnProtocol, AlpsProtocol, CertificateFailureAlert, KeyShare, TlsOptions, TlsVersion,
+         keylog::KeyLog,
+         session::{Key, LruTlsSessionCache, TlsSession, TlsSessionCache},
+         trust::{CertStore, Identity},
+@@ -38,6 +39,19 @@
+ 
+ fn key_index() -> Result<Index<Ssl, Key>, ErrorStack> {
+     static IDX: LazyLock<Result<Index<Ssl, Key>, ErrorStack>> = LazyLock::new(Ssl::new_ex_index);
++    IDX.clone()
++}
++
++#[derive(Clone)]
++pub(super) struct VerificationRecord {
++    pub(super) result: X509VerifyError,
++    pub(super) certificate: Option<Vec<u8>>,
++    pub(super) internal_error: Option<Arc<ErrorStack>>,
++}
++
++pub(super) fn verification_index() -> Result<Index<Ssl, VerificationRecord>, ErrorStack> {
++    static IDX: LazyLock<Result<Index<Ssl, VerificationRecord>, ErrorStack>> =
++        LazyLock::new(Ssl::new_ex_index);
+     IDX.clone()
+ }
+ 
+@@ -338,6 +352,49 @@
+             .set_cert_verification(self.cert_verification)
+             .set_cert_compressors(opts.certificate_compressors.as_deref())?;
+ 
++        if let Some(ref ids) = opts.requested_trust_anchors {
++            connector.set_requested_trust_anchors(ids).map_err(Error::tls)?;
++        }
++
++        if opts.certificate_failure_alert == CertificateFailureAlert::BadCertificate {
++            let index = verification_index().map_err(Error::tls)?;
++            let ssl_index = X509StoreContext::ssl_idx().map_err(Error::tls)?;
++            connector.set_cert_verify_callback(move |context| {
++                // The native context already carries its store, SSL-server purpose,
++                // hostname and time parameters. Never replace those verification inputs.
++                let checked = context.verify_cert();
++                let original = context.verify_result();
++                if matches!(checked, Ok(true)) && original.is_ok() {
++                    return true;
++                }
++                let internal_error = checked.err().map(Arc::new);
++                let result = original.err().unwrap_or(X509VerifyError::UNSPECIFIED);
++                let certificate = context.current_cert().and_then(|cert| cert.to_der().ok());
++                let Some(ssl) = context.ex_data_mut(ssl_index) else {
++                    context.set_error(Err(X509VerifyError::UNSPECIFIED));
++                    return false;
++                };
++                if ssl.try_set_ex_data(index, VerificationRecord {
++                    result,
++                    certificate,
++                    internal_error: internal_error.clone(),
++                }).is_err() {
++                    context.set_error(Err(X509VerifyError::UNSPECIFIED));
++                    return false;
++                }
++                let internal_failure = internal_error.is_some() || original.is_ok()
++                    || matches!(result, X509VerifyError::UNSPECIFIED | X509VerifyError::OUT_OF_MEM
++                        | X509VerifyError::INVALID_CALL | X509VerifyError::STORE_LOOKUP);
++                let alert_result = if internal_failure {
++                    result
++                } else {
++                    X509VerifyError::CERT_REJECTED
++                };
++                context.set_error(Err(alert_result));
++                false
++            });
++        }
++
+         // Set minimum TLS version
+         set_option_inner_try!(min_tls_version, connector, set_min_proto_version);
+ 
+diff --git a/wreq-6.0.0-rc.31/src/tls/conn/service.rs b/wreq-6.0.0-rc.31/src/tls/conn/service.rs
+index c6de4d7c4b8c7cd3ba905d22e34ebf7affa7bb3a..9a83394b629526c6259d5c01e7d8b9175a1e62bf 100644
+--- a/wreq-6.0.0-rc.31/src/tls/conn/service.rs
++++ b/wreq-6.0.0-rc.31/src/tls/conn/service.rs
+@@ -10,10 +10,11 @@
+ use tokio_btls::SslStream;
+ use tower::{BoxError, Service};
+ 
+-use super::{EstablishedConn, HttpsConnector, MaybeHttpsStream};
++use super::{EstablishedConn, HttpsConnector, MaybeHttpsStream, verification_index};
+ use crate::{
+     conn::{Connection, descriptor::ConnectionDescriptor},
+     ext::UriExt,
++    tls::CertificateVerificationError,
+ };
+ 
+ type BoxFuture<T, E> = Pin<Box<dyn Future<Output = Result<T, E>> + Send>>;
+@@ -23,7 +24,19 @@
+     T: AsyncRead + AsyncWrite + Unpin,
+ {
+     let mut stream = SslStream::new(ssl, conn)?;
+-    Pin::new(&mut stream).connect().await?;
++    if let Err(source) = Pin::new(&mut stream).connect().await {
++        let saved = verification_index().ok().and_then(|index| stream.ssl().ex_data(index)).cloned();
++        if let Some(saved) = saved {
++            return Err(Box::new(CertificateVerificationError::new(
++                saved.result, saved.certificate, saved.internal_error, source,
++            )));
++        }
++        if let Err(result) = stream.ssl().verify_result() {
++            let certificate = stream.ssl().peer_certificate().and_then(|cert| cert.to_der().ok());
++            return Err(Box::new(CertificateVerificationError::new(result, certificate, None, source)));
++        }
++        return Err(Box::new(source));
++    }
+     Ok(MaybeHttpsStream::Https(stream))
+ }
+ 

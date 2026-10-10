@@ -1,0 +1,28 @@
+diff --git a/btls-0.5.6/src/ssl/mod.rs b/btls-0.5.6/src/ssl/mod.rs
+index 0eb31cf8650740f18f4a3f4295352f6db5b0be94..3437b2ddceb5a88ed496282d85c2dfd87639f98a 100644
+--- a/btls-0.5.6/src/ssl/mod.rs
++++ b/btls-0.5.6/src/ssl/mod.rs
+@@ -3691,6 +3691,23 @@
+         }
+     }
+ 
++    /// Sets extra data, retaining ownership only after native storage succeeds.
++    #[corresponds(SSL_set_ex_data)]
++    pub fn try_set_ex_data<T>(&mut self, index: Index<Ssl, T>, data: T) -> Result<(), ErrorStack> {
++        if let Some(old) = self.ex_data_mut(index) {
++            *old = data;
++            return Ok(());
++        }
++        unsafe {
++            let data = Box::into_raw(Box::new(data));
++            let result = cvt(ffi::SSL_set_ex_data(self.as_ptr(), index.as_raw(), data.cast()));
++            if result.is_err() {
++                drop(Box::from_raw(data));
++            }
++            result.map(|_| ())
++        }
++    }
++
+     /// Sets or overwrites the extra data at the specified index.
+     ///
+     /// This can be used to provide data to callbacks registered with the context. Use the

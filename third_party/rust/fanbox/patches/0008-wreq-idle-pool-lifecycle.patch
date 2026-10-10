@@ -1,0 +1,329 @@
+diff --git a/wreq-6.0.0-rc.31/src/client.rs b/wreq-6.0.0-rc.31/src/client.rs
+index 737e846a1d11980db08d0bb655f7d881a487e625..662504d0222abd6cd107ecf552ecf53c78029f6a 100644
+--- a/wreq-6.0.0-rc.31/src/client.rs
++++ b/wreq-6.0.0-rc.31/src/client.rs
+@@ -15,6 +15,7 @@
+     borrow::Cow,
+     collections::HashMap,
+     convert::TryInto,
++    future::Future,
+     net::{IpAddr, Ipv4Addr, Ipv6Addr, SocketAddr},
+     num::NonZeroUsize,
+     sync::Arc,
+@@ -149,7 +150,7 @@
+ ///
+ /// [`Rc`]: std::rc::Rc
+ #[derive(Clone)]
+-pub struct Client(Arc<Either<ClientService, BoxedClientService>>);
++pub struct Client(Arc<Either<ClientService, BoxedClientService>>, layer::client::CloseIdle);
+ 
+ /// A [`ClientBuilder`] can be used to create a [`Client`] with custom configuration.
+ #[must_use]
+@@ -409,6 +410,18 @@
+         WebSocketRequestBuilder::new(self.request(Method::GET, uri))
+     }
+ 
++    /// Retires currently idle connections and waits for physical IO shutdown.
++    ///
++    /// The idle decision happens when this method is called. Busy connections
++    /// remain usable and are not scheduled for later closure. Dropping the
++    /// returned future does not cancel retirement. Clones share this pool.
++    pub fn close_idle_connections(
++        &self,
++    ) -> impl Future<Output = crate::Result<()>> + Send + 'static {
++        let close = (self.1)();
++        async move { close.await.map_err(Error::request) }
++    }
++
+     /// Executes a `Request`.
+     ///
+     /// A `Request` can be built manually with `Request::new()` or obtained
+@@ -582,6 +595,8 @@
+                 .build(connector)
+         };
+ 
++        let close_idle = service.close_idle_connections_handle();
++
+         // Configured client service with layers
+         let client = {
+             let service = ServiceBuilder::new()
+@@ -635,7 +650,7 @@
+             }
+         };
+ 
+-        Ok(Client(Arc::new(client)))
++        Ok(Client(Arc::new(client), close_idle))
+     }
+ 
+     // Runtime options
+diff --git a/wreq-6.0.0-rc.31/src/client/layer/client.rs b/wreq-6.0.0-rc.31/src/client/layer/client.rs
+index f0ce2b3a95c353598efd0b150e2011fb5874b121..86cff3f07f96ad131cf81c13ff1547011ead9aec 100644
+--- a/wreq-6.0.0-rc.31/src/client/layer/client.rs
++++ b/wreq-6.0.0-rc.31/src/client/layer/client.rs
+@@ -8,6 +8,7 @@
+     fmt,
+     future::Future,
+     num::NonZeroUsize,
++    sync::Arc,
+     task::{self, Poll},
+     time::Duration,
+ };
+@@ -34,7 +35,6 @@
+ use {
+     crate::cookie::{CookieStore, Cookies},
+     http::header::COOKIE,
+-    std::sync::Arc,
+ };
+ 
+ use self::lazy::{Started as Lazy, lazy};
+@@ -105,6 +105,7 @@
+         error: Error,
+         req: Request<B>,
+         connection_reused: bool,
++        idle_retired: bool,
+     },
+     Nope(Error),
+ }
+@@ -125,6 +126,11 @@
+         }
+     };
+ }
++
++pub(crate) type CloseIdle =
++    Arc<dyn Fn() -> BoxFuture<'static, Result<(), BoxError>> + Send + Sync>;
++
++type H1Close = tokio::sync::watch::Receiver<Option<Result<(), Arc<wreq_proto::Error>>>>;
+ 
+ #[derive(Clone)]
+ struct RequestAuthority {
+@@ -152,6 +158,11 @@
+     B::Data: Send,
+     B::Error: Into<BoxError>,
+ {
++    pub(crate) fn close_idle_connections_handle(&self) -> CloseIdle {
++        let pool = self.pool.clone();
++        Arc::new(move || pool.close_idle_connections())
++    }
++
+     fn request(
+         &self,
+         mut req: Request<B>,
+@@ -229,10 +240,9 @@
+                     mut req,
+                     error,
+                     connection_reused,
++                    idle_retired,
+                 }) => {
+-                    if !self.config.retry_canceled_requests || !connection_reused {
+-                        // if client disabled, don't retry
+-                        // a fresh connection means we definitely can't retry
++                    if !self.config.retry_canceled_requests || (!connection_reused && !idle_retired) {
+                         return Err(error);
+                     }
+ 
+@@ -351,6 +361,7 @@
+                 return if let Some(req) = err.take_message() {
+                     Err(TrySendError::Retryable {
+                         connection_reused: pooled.is_reused(),
++                        idle_retired: pooled.is_idle_retired(),
+                         error: Error::new(ErrorKind::Canceled, err.into_error())
+                             .with_connect_info(pooled.conn_info.clone()),
+                         req,
+@@ -575,7 +586,7 @@
+                         let is_h2 = is_ver_h2 || connected.is_negotiated_h2();
+ 
+                         Either::Left(Box::pin(async move {
+-                            let tx = if is_h2 {
++                            let (tx, close) = if is_h2 {
+                                {
+                                     let (mut tx, conn) =
+                                         h2_builder.handshake(io).await.map_err(Error::tx)?;
+@@ -591,7 +602,7 @@
+                                     // Wait for 'conn' to ready up before we
+                                     // declare this tx as usable
+                                     tx.ready().await.map_err(Error::tx)?;
+-                                    PoolTx::Http2(tx)
++                                    (PoolTx::Http2(tx), None)
+                                 }
+                             } else {
+                                  {
+@@ -611,11 +622,17 @@
+                                     // err_tx sends errors from the connection task, and err_rx receives them
+                                     // to correlate connection failures with request readiness errors.
+                                     let (err_tx, err_rx) = tokio::sync::oneshot::channel();
++                                    let (close_tx, close_rx) = tokio::sync::watch::channel(None);
+                                     // Spawn the connection task in the background using the executor.
+                                     // The task manages the HTTP/1.1 connection, including upgrades (e.g., WebSocket).
+                                     // Errors are sent via err_tx to ensure they can be checked if the sender (tx) fails.
+                                     executor.execute(
+                                         conn.with_upgrades()
++                                                .map(move |result| {
++                                                    let result = result.map_err(Arc::new);
++                                                    let _ = close_tx.send(Some(result.clone()));
++                                                    result
++                                                })
+                                                 .map_err(|e| {
+                                                 // Log the connection error at debug level for diagnostic purposes.
+                                                 debug!("client connection error: {:?}", e);
+@@ -645,7 +662,7 @@
+                                             // This prevents waiting for errors that won’t occur in a successful case.
+                                             drop(err_rx);
+                                             // Wrap the sender in PoolTx::Http1 for use in the connection pool.
+-                                            PoolTx::Http1(tx)
++                                            (PoolTx::Http1(tx), Some(close_rx))
+                                         }
+                                         // If the sender fails with a closed channel error, check for a specific connection error.
+                                         // This distinguishes between a vague ChannelClosed error and an actual connection failure.
+@@ -688,6 +705,7 @@
+                                 PoolClient {
+                                     conn_info: connected,
+                                     tx,
++                                    close,
+                                 },
+                             ))
+                         }))
+@@ -770,6 +788,7 @@
+ struct PoolClient<B> {
+     conn_info: Connected,
+     tx: PoolTx<B>,
++    close: Option<H1Close>,
+ }
+ 
+ enum PoolTx<B> {
+@@ -798,6 +817,14 @@
+         match self.tx {
+             PoolTx::Http1(_) => false,
+             PoolTx::Http2(_) => true,
++        }
++    }
++
++    #[inline]
++    fn is_idle_retired(&self) -> bool {
++        match &self.tx {
++            PoolTx::Http1(_) => false,
++            PoolTx::Http2(tx) => tx.is_idle_retired(),
+         }
+     }
+ 
+@@ -846,16 +873,19 @@
+             PoolTx::Http1(tx) => pool::Reservation::Unique(PoolClient {
+                 conn_info: self.conn_info,
+                 tx: PoolTx::Http1(tx),
++                close: self.close,
+             }),
+ 
+             PoolTx::Http2(tx) => {
+                 let b = PoolClient {
+                     conn_info: self.conn_info.clone(),
+                     tx: PoolTx::Http2(tx.clone()),
++                    close: self.close.clone(),
+                 };
+                 let a = PoolClient {
+                     conn_info: self.conn_info,
+                     tx: PoolTx::Http2(tx),
++                    close: self.close,
+                 };
+                 pool::Reservation::Shared(a, b)
+             }
+@@ -865,6 +895,32 @@
+     #[inline]
+     fn can_share(&self) -> bool {
+         self.is_http2()
++    }
++
++    fn close_idle(&mut self) -> Option<BoxFuture<'static, Result<(), BoxError>>> {
++        match &self.tx {
++            PoolTx::Http2(tx) => tx.close_if_idle().map(|close| {
++                Box::pin(async move { close.await.map_err(Into::into) })
++                    as BoxFuture<'static, Result<(), BoxError>>
++            }),
++            PoolTx::Http1(_) => {
++                let mut close = self.close.clone()?;
++                Some(Box::pin(async move {
++                    loop {
++                        let result = close.borrow().clone();
++                        if let Some(result) = result {
++                            return result.map_err(Into::into);
++                        }
++                        close.changed().await.map_err(|_| {
++                            std::io::Error::new(
++                                std::io::ErrorKind::BrokenPipe,
++                                "connection driver ended before idle IO shutdown",
++                            )
++                        })?;
++                    }
++                }))
++            }
++        }
+     }
+ }
+ 
+@@ -1100,7 +1156,7 @@
+     }
+ 
+     #[inline]
+-    fn tx(src: wreq_proto::Error) -> Self {
++    fn tx<E: Into<BoxError>>(src: E) -> Self {
+         Self::new(ErrorKind::SendRequest, src)
+     }
+ 
+diff --git a/wreq-6.0.0-rc.31/src/client/layer/client/pool.rs b/wreq-6.0.0-rc.31/src/client/layer/client/pool.rs
+index 1ac617401dfb0d5c87320f385ebf48581a9c4f60..6878fa6bb754b66f21fd121b64793def3c4c48bb 100644
+--- a/wreq-6.0.0-rc.31/src/client/layer/client/pool.rs
++++ b/wreq-6.0.0-rc.31/src/client/layer/client/pool.rs
+@@ -13,7 +13,9 @@
+     time::{Duration, Instant},
+ };
+ 
++use futures_util::future::{BoxFuture, join_all};
+ use lru::LruCache;
++use tower::BoxError;
+ use tokio::sync::oneshot;
+ use wreq_proto::rt::{Executor as _, Timer as _};
+ 
+@@ -39,6 +41,9 @@
+     /// Allows for HTTP/2 to return a shared reservation.
+     fn reserve(self) -> Reservation<Self>;
+     fn can_share(&self) -> bool;
++    fn close_idle(&mut self) -> Option<BoxFuture<'static, Result<(), BoxError>>> {
++        None
++    }
+ }
+ 
+ pub trait Key: Eq + Hash + Clone + Debug + Unpin + Send + 'static {}
+@@ -143,6 +148,35 @@
+ }
+ 
+ impl<T: Poolable, K: Key> Pool<T, K> {
++    pub fn close_idle_connections(&self) -> BoxFuture<'static, Result<(), BoxError>> {
++        let mut pending = Vec::new();
++        if let Some(enabled) = &self.inner {
++            let mut inner = enabled.lock();
++            let mut empty = Vec::new();
++            for (key, entries) in inner.idle.iter_mut() {
++                entries.retain_mut(|entry| match entry.value.close_idle() {
++                    Some(close) => {
++                        pending.push(close);
++                        false
++                    }
++                    None => true,
++                });
++                if entries.is_empty() {
++                    empty.push(key.clone());
++                }
++            }
++            for key in empty {
++                inner.idle.pop(&key);
++            }
++        }
++        Box::pin(async move {
++            for result in join_all(pending).await {
++                result?;
++            }
++            Ok(())
++        })
++    }
++
+     /// Returns a `Checkout` which is a future that resolves if an idle
+     /// connection becomes available.
+     pub fn checkout(&self, key: K) -> Checkout<T, K> {

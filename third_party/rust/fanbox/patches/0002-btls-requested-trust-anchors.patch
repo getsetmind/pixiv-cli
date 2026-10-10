@@ -1,0 +1,27 @@
+diff --git a/btls-0.5.6/src/ssl/mod.rs b/btls-0.5.6/src/ssl/mod.rs
+index d3b10bfc1267a9a77f61cc14dbcadc008b40478d..0eb31cf8650740f18f4a3f4295352f6db5b0be94 100644
+--- a/btls-0.5.6/src/ssl/mod.rs
++++ b/btls-0.5.6/src/ssl/mod.rs
+@@ -2067,6 +2067,22 @@
+         }
+     }
+ 
++    /// Requests the supplied length-prefixed trust-anchor IDs in ClientHello.
++    ///
++    /// An empty slice still sends the extension. This does not change certificate
++    /// verification or install trust anchors.
++    #[corresponds(SSL_CTX_set1_requested_trust_anchors)]
++    pub fn set_requested_trust_anchors(&mut self, ids: &[u8]) -> Result<(), ErrorStack> {
++        unsafe {
++            cvt(ffi::SSL_CTX_set1_requested_trust_anchors(
++                self.as_ptr(),
++                ids.as_ptr(),
++                ids.len(),
++            ))
++            .map(|_| ())
++        }
++    }
++
+     /// Configures whether ClientHello extensions should be permuted.
+     #[corresponds(SSL_CTX_set_permute_extensions)]
+     pub fn set_permute_extensions(&mut self, enabled: bool) {

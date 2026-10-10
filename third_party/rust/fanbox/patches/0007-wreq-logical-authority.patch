@@ -1,0 +1,111 @@
+diff --git a/wreq-6.0.0-rc.31/src/client/layer/client.rs b/wreq-6.0.0-rc.31/src/client/layer/client.rs
+index 8b0004868a492f3d2de22a7cb06b60ae66aa3cdd..f0ce2b3a95c353598efd0b150e2011fb5874b121 100644
+--- a/wreq-6.0.0-rc.31/src/client/layer/client.rs
++++ b/wreq-6.0.0-rc.31/src/client/layer/client.rs
+@@ -90,6 +90,7 @@
+     UserUnsupportedRequestMethod,
+     UserUnsupportedVersion,
+     UserAbsoluteUriRequired,
++    UserInvalidAuthority,
+     SendRequest,
+ }
+ 
+@@ -123,6 +124,12 @@
+             connect_info: None,
+         }
+     };
++}
++
++#[derive(Clone)]
++struct RequestAuthority {
++    authority: Authority,
++    host: HeaderValue,
+ }
+ 
+ // ===== impl HttpClient =====
+@@ -172,6 +179,14 @@
+             }
+         };
+ 
++        if req.headers().contains_key(HOST) {
++            let authority = match logical_authority(req.headers()) {
++                Ok(authority) => authority,
++                Err(err) => return Box::pin(future::err(e!(UserInvalidAuthority, err).into())),
++            };
++            req.extensions_mut().insert(authority);
++        }
++
+         let mut this = self.clone();
+ 
+         // Extract per-request options from the request extensions and apply them to the client.
+@@ -255,6 +270,14 @@
+                 ));
+             }
+ 
++            let logical_host = req
++                .extensions()
++                .get::<RequestAuthority>()
++                .map(|authority| authority.host.clone());
++            if let Some(host) = logical_host {
++                req.headers_mut().entry(HOST).or_insert(host);
++            }
++
+             if self.config.set_host {
+                 req.headers_mut()
+                     .entry(HOST)
+@@ -309,6 +332,17 @@
+                     Cookies::Empty => (),
+                 }
+             }
++        }
++
++        if pooled.is_http2() {
++            if let Some(authority) = req.extensions().get::<RequestAuthority>() {
++                let mut parts = req.uri().clone().into_parts();
++                parts.authority = Some(authority.authority.clone());
++                *req.uri_mut() = Uri::from_parts(parts).map_err(|err| {
++                    TrySendError::Nope(e!(UserInvalidAuthority, err))
++                })?;
++            }
++            req.headers_mut().remove(HOST);
+         }
+ 
+         let mut res = match pooled.try_send_request(req).await {
+@@ -701,6 +735,37 @@
+     }
+ }
+ 
++fn logical_authority(headers: &http::HeaderMap) -> Result<RequestAuthority, BoxError> {
++    let mut hosts = headers.get_all(HOST).iter();
++    let host = hosts.next().ok_or("missing Host authority")?;
++    if hosts.next().is_some() {
++        return Err("multiple Host authorities".into());
++    }
++    let text = host.to_str()?;
++    let authority = text.parse::<Authority>()?;
++    if text.contains('@') || authority.host().is_empty() {
++        return Err("invalid Host authority".into());
++    }
++    let port = if text.starts_with('[') {
++        let end = text.find(']').ok_or("invalid IPv6 Host authority")?;
++        text[1..end].parse::<std::net::Ipv6Addr>()?;
++        text.get(end + 1..).filter(|suffix| !suffix.is_empty())
++    } else {
++        text.find(':').map(|start| &text[start..])
++    };
++    if let Some(port) = port {
++        let port = port.strip_prefix(':').ok_or("invalid Host port")?;
++        if port.is_empty() || !port.bytes().all(|byte| byte.is_ascii_digit()) {
++            return Err("invalid Host port".into());
++        }
++        port.parse::<u16>()?;
++    }
++    Ok(RequestAuthority {
++        authority,
++        host: host.clone(),
++    })
++}
++
+ /// A pooled HTTP connection that can send requests
+ struct PoolClient<B> {
+     conn_info: Connected,
