@@ -2980,9 +2980,21 @@
         "key": "pixiv update"
       },
       "rust_sources": [],
-      "tests": [],
+      "tests": [
+        "internal/cli/migration_update_connected_test.go#TestMigrationUpdaterCLIConnectedFrozen",
+        "internal/update/migration_coordinator_connected_test.go#TestMigrationUpdaterCoordinatorConnectedContracts",
+        "internal/update/release/migration_connected_test.go#TestMigrationUpdaterReleaseCacheConnected",
+        "internal/update/source/migration_connected_test.go#TestMigrationUpdaterSourceSelection",
+        "internal/update/installer/migration_connected_test.go#TestMigrationUpdaterSignedInstallFrozenContracts",
+        "internal/update/installer/migration_connected_windows_source_test.go#TestMigrationUpdaterWindowsReplacementSourceDriven",
+        "internal/update/installer/migration_owned_preflight_test.go#TestMigrationUpdaterOwnedPreflightFrozenContracts"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Go-first updater contracts only; Rust public update/global automatic checker/signed installer remain unimplemented and this row stays pending. Actual root170 is158 behavioral/12 Go-only; coordinator305 is296/nine; release/cache160 is153 public/six private/one Go nil; source200 is167/33; signed Install199/detector34/cache13, Windows source-driven26 and owned Linux preflight41 retain their separate boundaries. Preserve exact default dev/current root-version output and preflight pixiv TAG newline, all source/channel routing and unlimited canonical v-SemVer/cache/source/trust/archive/replacement/automatic lifecycle contracts. See docs/migration/updater-contracts.md.",
+        "Native Go-install source provenance (debug.ReadBuildInfo mapping), arbitrary parser/raw-byte/URL/checksum/archive/version grammar, physical transport/proxy/redirect/source timing, syscall/cache/replacement/future-drop/concurrent schedules and all native OS/arch remain unverified. Linux source-driven Windows replacement26 is not native Windows ABI/runtime or ACL evidence. Signed Install199 uses a public checker mock; separate native Linux preflight41 (16 concrete checker/25 default installer) executes only a visible owned Go helper and preserves started-process signal-killed classification separately from caller Context. Actual root sealed capture/replays use ordinary owners and synthetic external ports; private policy/nil factories, dynamic Go error layout/context object identity and native install provenance are not Rust runtime evidence. Started native child cancellation retains signal-killed error membership separately from caller context. Earlier wrong-scope TOML public-probe attempts failed DNS/network without response/accounts and remain discarded history; final fail-closed capture is synthetic.",
+        "Existing SDK Context/client ownership/idle-close, Accept: */*, relay HTTP/2, pacing, signal restoration, destructive repeated Windows association cleanup and native/platform/distribution/license debts remain. Full six-platform release packaging/licensing/install scripts/signing/publication/handler/PATH are distinct required work; frozen install.sh/install.cmd do not verify checksums.json Ed25519. No denied supplemental native probe retry, feature removal, empty success or Go fallback."
+      ]
     },
     {
       "id": "cli:pixiv user",

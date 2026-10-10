@@ -1,0 +1,1093 @@
+//go:build linux && amd64
+
+package cli
+
+import (
+	"bytes"
+	"context"
+	"crypto/sha256"
+	"encoding/json"
+	"errors"
+	"flag"
+	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"path/filepath"
+	"runtime"
+	"strings"
+	"syscall"
+	"testing"
+	"time"
+
+	requirements "github.com/FlanChanXwO/pixiv-cli/internal/cli/commands"
+	pixivdeps "github.com/FlanChanXwO/pixiv-cli/internal/cli/commands/pixiv"
+	authcommands "github.com/FlanChanXwO/pixiv-cli/internal/cli/commands/pixiv/auth"
+	updatecommands "github.com/FlanChanXwO/pixiv-cli/internal/cli/commands/update"
+	settings "github.com/FlanChanXwO/pixiv-cli/internal/config/settings"
+	fanboxapp "github.com/FlanChanXwO/pixiv-cli/internal/services/fanbox"
+	fanboxaccount "github.com/FlanChanXwO/pixiv-cli/internal/services/fanbox/account"
+	pixivapp "github.com/FlanChanXwO/pixiv-cli/internal/services/pixiv"
+	pixivaccount "github.com/FlanChanXwO/pixiv-cli/internal/services/pixiv/account"
+	pixivpool "github.com/FlanChanXwO/pixiv-cli/internal/services/pixiv/pool"
+	"github.com/FlanChanXwO/pixiv-cli/internal/services/reversesearch"
+	reverseassembly "github.com/FlanChanXwO/pixiv-cli/internal/services/reversesearch/assembly"
+	"github.com/FlanChanXwO/pixiv-cli/internal/shared/buildinfo"
+	"github.com/FlanChanXwO/pixiv-cli/internal/shared/lifecycle"
+	"github.com/FlanChanXwO/pixiv-cli/internal/storage/database"
+	"github.com/FlanChanXwO/pixiv-cli/internal/update"
+	fanboxsdk "github.com/FlanChanXwO/pixiv-cli/sdk/fanbox"
+	"github.com/FlanChanXwO/pixiv-cli/sdk/pixiv"
+	"github.com/spf13/pflag"
+)
+
+var captureUpdaterCLI = flag.Bool("migration-capture-updater-cli", false, "capture frozen updater root and automatic lifecycle contracts")
+
+const updaterCLIReference = "4b4426487ef18bed276706daec385e0d0a6979f9"
+const updaterCLIBase = "0e5f42273f69067bf2e06a130c926c4d58557fb4"
+const updaterCLICurrent = "v1.2.3"
+const updaterCLIConfig = "[network]\nhttps_proxy='http://owned-global.invalid:8080'\n[pixiv.auth]\ndefault_user_id=42\n[fanbox.auth]\ndefault_user_id=42\n[update]\ncheck_enabled=true\n"
+
+type updaterCLIInput struct {
+	Boundary        string               `json:"boundary"`
+	Args            []string             `json:"args"`
+	Stdin           string               `json:"stdin"`
+	Version         string               `json:"version"`
+	Config          *string              `json:"config_before"`
+	CacheBefore     *string              `json:"cache_before"`
+	Environment     map[string]string    `json:"environment"`
+	Seed            bool                 `json:"seed_accounts"`
+	Source          update.InstallSource `json:"source"`
+	Release         string               `json:"release_tag"`
+	Prerelease      bool                 `json:"release_prerelease"`
+	Failure         string               `json:"failure,omitempty"`
+	RuntimeErrorNth int                  `json:"runtime_error_nth,omitempty"`
+	Writer          string               `json:"stdout_writer,omitempty"`
+	ErrorWriter     string               `json:"stderr_writer,omitempty"`
+	Relay           bool                 `json:"relay_supported,omitempty"`
+	CloseError      bool                 `json:"close_error,omitempty"`
+	Cancel          bool                 `json:"canceled,omitempty"`
+}
+type updaterCLIWrite struct {
+	Length int    `json:"length"`
+	N      int    `json:"n"`
+	Error  string `json:"error"`
+}
+type updaterCLIFlag struct {
+	Name         string `json:"name"`
+	Type         string `json:"type"`
+	Default      string `json:"default"`
+	Value        string `json:"value"`
+	Changed      bool   `json:"changed"`
+	Shorthand    string `json:"shorthand"`
+	NoOptDefault string `json:"no_opt_default"`
+	Usage        string `json:"usage"`
+}
+type updaterCLIRequest struct {
+	Method      string              `json:"method"`
+	URL         string              `json:"url"`
+	Headers     http.Header         `json:"headers"`
+	Form        map[string][]string `json:"form,omitempty"`
+	HasDeadline bool                `json:"has_deadline"`
+	Canceled    bool                `json:"canceled"`
+}
+type updaterCLIObservation struct {
+	Exit             int                    `json:"exit"`
+	Stdout           string                 `json:"stdout"`
+	Stderr           string                 `json:"stderr"`
+	Trace            []string               `json:"trace"`
+	OutputWrites     []updaterCLIWrite      `json:"output_writes"`
+	ErrorWrites      []updaterCLIWrite      `json:"error_writes"`
+	StdinReads       int                    `json:"stdin_reads"`
+	StdinBytes       int                    `json:"stdin_bytes"`
+	Target           string                 `json:"target"`
+	ParserError      string                 `json:"parser_error"`
+	Flags            []updaterCLIFlag       `json:"flags"`
+	Lifecycle        requirements.Execution `json:"lifecycle"`
+	RuntimeCalls     int                    `json:"runtime_calls"`
+	UpdateProxies    []string               `json:"update_proxies"`
+	AutomaticProxies []string               `json:"automatic_proxies"`
+	Detections       []buildinfo.Info       `json:"detections"`
+	Requests         []updaterCLIRequest    `json:"requests"`
+	Commands         []update.Command       `json:"commands"`
+	Installs         []update.Release       `json:"installs"`
+	AccountFactories int                    `json:"account_factories"`
+	SDKFactories     int                    `json:"sdk_factories"`
+	FanboxFactories  int                    `json:"fanbox_factories"`
+	DatabaseBefore   bool                   `json:"database_before"`
+	DatabaseAfter    bool                   `json:"database_after"`
+	ConfigAfter      *string                `json:"config_after"`
+	Cache            *string                `json:"cache_after"`
+	Accounts         []map[string]any       `json:"accounts_after"`
+	Files            map[string]string      `json:"owned_files"`
+}
+type updaterCLICase struct {
+	EvidenceClass       string                `json:"evidence_class"`
+	RepresentationScope string                `json:"representation_scope,omitempty"`
+	Name                string                `json:"name"`
+	Input               updaterCLIInput       `json:"input"`
+	Observation         updaterCLIObservation `json:"observation"`
+}
+type updaterCLIFixture struct {
+	Schema                 int               `json:"schema_version"`
+	Reference              string            `json:"frozen_go"`
+	Base                   string            `json:"base_sha"`
+	Toolchain              string            `json:"toolchain"`
+	Environment            string            `json:"environment"`
+	Sources                map[string]string `json:"source_sha256"`
+	ProtectedProduction    int               `json:"protected_production_count"`
+	ProtectedFixtures      int               `json:"protected_fixture_count"`
+	PreservationProduction map[string]string `json:"protected_production_sha256"`
+	PreservationFixtures   map[string]string `json:"protected_fixture_sha256"`
+	Limitations            []string          `json:"limitations"`
+	Cases                  []updaterCLICase  `json:"cases"`
+}
+
+type updaterCLIWriter struct {
+	mode, name string
+	buf        bytes.Buffer
+	writes     []updaterCLIWrite
+	obs        *updaterCLIObservation
+}
+
+func (w *updaterCLIWriter) Write(p []byte) (int, error) {
+	n := len(p)
+	var err error
+	switch w.mode {
+	case "error":
+		n = 0
+		err = errors.New("owned writer failure")
+	case "epipe":
+		n = 0
+		err = syscall.EPIPE
+	case "short":
+		n = 0
+	case "partial-error":
+		n = len(p) / 2
+		err = errors.New("owned writer failure")
+	case "diagnostic-error":
+		if bytes.HasPrefix(p, []byte("[")) {
+			n = 0
+			err = errors.New("owned diagnostic writer failure")
+		}
+	}
+	if n > 0 {
+		w.buf.Write(p[:n])
+	}
+	message := ""
+	if err != nil {
+		message = err.Error()
+	}
+	w.writes = append(w.writes, updaterCLIWrite{len(p), n, message})
+	w.obs.Trace = append(w.obs.Trace, w.name+".write")
+	return n, err
+}
+
+type updaterCLIReader struct {
+	reader *strings.Reader
+	obs    *updaterCLIObservation
+}
+
+func (r *updaterCLIReader) Read(p []byte) (int, error) {
+	r.obs.StdinReads++
+	n, e := r.reader.Read(p)
+	r.obs.StdinBytes += n
+	return n, e
+}
+
+type updaterCLITransport func(*http.Request) (*http.Response, error)
+
+func (t updaterCLITransport) RoundTrip(r *http.Request) (*http.Response, error) { return t(r) }
+
+type updaterCLICommands struct{ obs *updaterCLIObservation }
+
+func (r updaterCLICommands) Run(_ context.Context, c update.Command) error {
+	r.obs.Trace = append(r.obs.Trace, "update.command")
+	r.obs.Commands = append(r.obs.Commands, c)
+	return nil
+}
+
+type updaterCLIInstaller struct{ obs *updaterCLIObservation }
+
+func (r updaterCLIInstaller) Install(_ context.Context, rel update.Release) error {
+	r.obs.Trace = append(r.obs.Trace, "update.install")
+	r.obs.Installs = append(r.obs.Installs, rel)
+	return nil
+}
+
+type updaterCLIFailedChecker struct{}
+
+func (updaterCLIFailedChecker) Check(context.Context, update.ReleaseCheckOptions) (update.ReleaseCheckResult, error) {
+	return update.ReleaseCheckResult{}, errors.New("owned release checker failure")
+}
+
+type updaterCLIAuthPort struct {
+	*pixivaccount.Service
+	transport http.RoundTripper
+	obs       *updaterCLIObservation
+}
+
+func (p updaterCLIAuthPort) ImportAccountWith(ctx context.Context, token string, setDefault bool, options pixiv.Options) (pixivaccount.AccountSummary, error) {
+	p.obs.Trace = append(p.obs.Trace, "auth.import.sdk")
+	options.HTTPClient = &http.Client{Transport: p.transport}
+	return p.Service.ImportAccountWith(ctx, token, setDefault, options)
+}
+
+type updaterCLIProvider struct{ obs *updaterCLIObservation }
+
+func (p updaterCLIProvider) Preflight(context.Context) error {
+	p.obs.Trace = append(p.obs.Trace, "reverse.preflight")
+	return nil
+}
+func (p updaterCLIProvider) Search(_ context.Context, s *reversesearch.Snapshot) (reversesearch.ProviderResponse, error) {
+	p.obs.Trace = append(p.obs.Trace, "reverse.search")
+	r, e := s.Open()
+	if e != nil {
+		return reversesearch.ProviderResponse{}, e
+	}
+	body, e := io.ReadAll(r)
+	e = errors.Join(e, r.Close())
+	if string(body) != "owned updater image\n" {
+		return reversesearch.ProviderResponse{}, errors.New("owned reverse payload mismatch")
+	}
+	return reversesearch.ProviderResponse{Matches: []reversesearch.Match{}}, e
+}
+func (p updaterCLIProvider) Close() error {
+	p.obs.Trace = append(p.obs.Trace, "reverse.close")
+	return nil
+}
+
+func updaterCLISetup(t *testing.T, input updaterCLIInput) {
+	t.Helper()
+	if len(input.Args) > 0 && input.Args[0] == "download" {
+		ownedPath := "/tmp/pixiv-updater-cli-owned-download-contract"
+		if err := os.Mkdir(ownedPath, 0700); err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() {
+			if err := os.RemoveAll(ownedPath); err != nil {
+				t.Error(err)
+			}
+		})
+		t.Chdir(ownedPath)
+	} else {
+		t.Chdir(t.TempDir())
+	}
+	for _, entry := range os.Environ() {
+		key, _, _ := strings.Cut(entry, "=")
+		if strings.HasPrefix(key, "PIXIV_") || strings.HasPrefix(key, "FANBOX_") || strings.HasPrefix(key, "SAUCENAO_") || strings.Contains(strings.ToLower(key), "proxy") {
+			t.Setenv(key, "")
+			if e := os.Unsetenv(key); e != nil {
+				t.Fatal(e)
+			}
+		}
+	}
+	for _, key := range []string{"OUTPUT_JSON", "REQUEST_INTERVAL", "LOG_LEVEL", "LOG_FORMAT", "DOWNLOAD_PATH", "FILENAME_TEMPLATE", "DIRECTORY_TEMPLATE", "UPDATE_CHECK_ENABLED", "DEFAULT_USER_ID"} {
+		t.Setenv(key, "")
+		if e := os.Unsetenv(key); e != nil {
+			t.Fatal(e)
+		}
+	}
+	home := "."
+	if input.Seed {
+		var err error
+		home, err = os.Getwd()
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+	for key, value := range map[string]string{"HOME": home, "USERPROFILE": home, "TZ": "UTC", "PIXIV_REQUEST_INTERVAL": "0", "XDG_CONFIG_HOME": "xdg-config", "XDG_CACHE_HOME": "xdg-cache"} {
+		t.Setenv(key, value)
+	}
+	for key, value := range input.Environment {
+		t.Setenv(key, value)
+	}
+	if e := os.MkdirAll(".pixiv-cli", 0700); e != nil {
+		t.Fatal(e)
+	}
+	if input.Config != nil {
+		if e := os.WriteFile(".pixiv-cli/config.toml", []byte(*input.Config), 0600); e != nil {
+			t.Fatal(e)
+		}
+	}
+	if input.CacheBefore != nil {
+		if err := os.MkdirAll(".pixiv-cli/cache", 0700); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(".pixiv-cli/cache/github-releases.json", []byte(*input.CacheBefore), 0600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if input.Failure == "ensure-config" {
+		if err := os.Remove(".pixiv-cli/config.toml"); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.Mkdir(".pixiv-cli/config.toml", 0700); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if input.Seed {
+		absolute, e := filepath.Abs(".pixiv-cli")
+		if e != nil {
+			t.Fatal(e)
+		}
+		db, e := database.Open(absolute)
+		if e != nil {
+			t.Fatal(e)
+		}
+		if e = db.SavePixivCredential(context.Background(), pixivaccount.New(42, "owned account", []byte("synthetic-refresh-42"))); e != nil {
+			t.Fatal(e)
+		}
+		if _, e = db.DB().Exec(`INSERT INTO fanbox_account(user_id,sort_order,display_name,creator_id,session_id,credential_revision,validated_at,created_at,updated_at) VALUES(42,1,'owned FANBOX','owned-creator',?,1,10,11,22)`, []byte("synthetic-session-42")); e != nil {
+			t.Fatal(e)
+		}
+		if e = db.Close(); e != nil {
+			t.Fatal(e)
+		}
+	}
+	if e := os.WriteFile("image.png", []byte("owned updater image\n"), 0600); e != nil {
+		t.Fatal(e)
+	}
+}
+func updaterCLIFlags(input updaterCLIInput) (string, string, []updaterCLIFlag, requirements.Execution) {
+	root := (app{in: strings.NewReader(input.Stdin), out: io.Discard, errOut: io.Discard}).newRootCommand()
+	target, args, e := root.Find(input.Args)
+	if e != nil {
+		return "", e.Error(), []updaterCLIFlag{}, requirements.Execution{}
+	}
+	target.InitDefaultHelpFlag()
+	root.InitDefaultVersionFlag()
+	e = target.ParseFlags(args)
+	message := ""
+	if e != nil {
+		message = e.Error()
+	}
+	flags := []updaterCLIFlag{}
+	target.Flags().VisitAll(func(f *pflag.Flag) {
+		flags = append(flags, updaterCLIFlag{f.Name, f.Value.Type(), f.DefValue, f.Value.String(), f.Changed, f.Shorthand, f.NoOptDefVal, f.Usage})
+	})
+	return target.CommandPath(), message, flags, requirements.For(target)
+}
+func updaterCLIState(t *testing.T, o *updaterCLIObservation) {
+	t.Helper()
+	read := func(path string) *string {
+		b, e := os.ReadFile(path)
+		if os.IsNotExist(e) {
+			return nil
+		}
+		if e != nil {
+			if info, statErr := os.Stat(path); statErr == nil && info.IsDir() {
+				value := "<owned directory>"
+				return &value
+			}
+			t.Fatal(e)
+		}
+		s := string(b)
+		return &s
+	}
+	o.ConfigAfter = read(".pixiv-cli/config.toml")
+	o.Cache = read(".pixiv-cli/cache/github-releases.json")
+	_, e := os.Stat(".pixiv-cli/pixiv-cli.db")
+	o.DatabaseAfter = e == nil
+	if o.DatabaseAfter {
+		absolute, e := filepath.Abs(".pixiv-cli")
+		if e != nil {
+			t.Fatal(e)
+		}
+		db, e := database.Open(absolute)
+		if e != nil {
+			t.Fatal(e)
+		}
+		accounts, e := db.ListPixiv(context.Background())
+		if e != nil {
+			t.Fatal(e)
+		}
+		for _, a := range accounts {
+			o.Accounts = append(o.Accounts, map[string]any{"user_id": a.UserID, "revision": a.CredentialRevision, "username": a.Username, "refresh": string(a.RefreshTokenCopy())})
+		}
+		if e = db.Close(); e != nil {
+			t.Fatal(e)
+		}
+	}
+	for _, dir := range []string{"downloads"} {
+		if _, e := os.Stat(dir); os.IsNotExist(e) {
+			continue
+		}
+		e = filepath.WalkDir(dir, func(path string, d os.DirEntry, e error) error {
+			if e != nil {
+				return e
+			}
+			if d.IsDir() {
+				return nil
+			}
+			b, e := os.ReadFile(path)
+			if e == nil {
+				o.Files[path] = fmt.Sprintf("%x", sha256.Sum256(b))
+			}
+			return e
+		})
+		if e != nil {
+			t.Fatal(e)
+		}
+	}
+}
+func updaterCLIObserve(t *testing.T, input updaterCLIInput) updaterCLIObservation {
+	t.Helper()
+	updaterCLISetup(t, input)
+	o := updaterCLIObservation{Trace: []string{}, OutputWrites: []updaterCLIWrite{}, ErrorWrites: []updaterCLIWrite{}, UpdateProxies: []string{}, AutomaticProxies: []string{}, Detections: []buildinfo.Info{}, Requests: []updaterCLIRequest{}, Commands: []update.Command{}, Installs: []update.Release{}, Accounts: []map[string]any{}, Files: map[string]string{}}
+	_, e := os.Stat(".pixiv-cli/pixiv-cli.db")
+	o.DatabaseBefore = e == nil
+	oldMCPReverse, oldStdio := newCLIMCPReverseSearch, runMCPStdio
+	oldVersion := buildinfo.Version
+	buildinfo.Version = input.Version
+	oldCleanup, oldSupported, oldRelay := cleanupPendingWindowsUpdate, automaticPersistentHandlerSupported, ensureURLSchemeRelay
+	oldRuntime, oldUpdate, oldAutomatic := loadCLIRuntimeConfig, newUpdateCommandCoordinator, newCLIAutomaticUpdateChecker
+	oldAccounts, oldSDK, oldFanboxAccount, oldFanbox, oldReverse := newCLIAccountServices, newCLIPixivSDKPorts, newCLIFanboxAccountService, newCLIFanboxService, newCLIReverseSearch
+	t.Cleanup(func() {
+		newCLIMCPReverseSearch, runMCPStdio = oldMCPReverse, oldStdio
+		buildinfo.Version = oldVersion
+		cleanupPendingWindowsUpdate, automaticPersistentHandlerSupported, ensureURLSchemeRelay = oldCleanup, oldSupported, oldRelay
+		loadCLIRuntimeConfig, newUpdateCommandCoordinator, newCLIAutomaticUpdateChecker = oldRuntime, oldUpdate, oldAutomatic
+		newCLIAccountServices, newCLIPixivSDKPorts, newCLIFanboxAccountService, newCLIFanboxService, newCLIReverseSearch = oldAccounts, oldSDK, oldFanboxAccount, oldFanbox, oldReverse
+	})
+	o.Target, o.ParserError, o.Flags, o.Lifecycle = updaterCLIFlags(input)
+	cleanupPendingWindowsUpdate = func() error {
+		o.Trace = append(o.Trace, "startup.cleanup")
+		if input.Failure == "startup" {
+			return errors.New("owned startup failure")
+		}
+		return nil
+	}
+	automaticPersistentHandlerSupported = func() bool { o.Trace = append(o.Trace, "startup.supported"); return input.Relay }
+	ensureURLSchemeRelay = func(context.Context) error {
+		o.Trace = append(o.Trace, "startup.relay")
+		return errors.New("owned relay failure")
+	}
+	loadCLIRuntimeConfig = func() (settings.RuntimeConfig, error) {
+		o.RuntimeCalls++
+		_, e := os.Stat(".pixiv-cli/config.toml")
+		o.Trace = append(o.Trace, fmt.Sprintf("runtime.load/config_exists=%v", e == nil))
+		if o.RuntimeCalls == input.RuntimeErrorNth {
+			return settings.RuntimeConfig{}, errors.New("owned runtime failure")
+		}
+		return defaultCLIRuntimeConfig()
+	}
+	detector := update.SourceDetectorFunc(func(info buildinfo.Info) (update.InstallSource, error) {
+		o.Trace = append(o.Trace, "update.detect")
+		o.Detections = append(o.Detections, info)
+		if input.Failure == "detector" {
+			return "", errors.New("owned detector failure")
+		}
+		if info.IsDevelopment() {
+			return update.InstallSourceDevelopment, nil
+		}
+		return input.Source, nil
+	})
+	releaseChecker := func() update.ReleaseChecker {
+		if input.Failure == "checker" {
+			return updaterCLIFailedChecker{}
+		}
+		client, e := update.NewGitHubReleaseClient(update.ReleaseClientOptions{HTTPClient: &http.Client{Transport: updaterCLITransport(func(r *http.Request) (*http.Response, error) {
+			_, deadline := r.Context().Deadline()
+			o.Trace = append(o.Trace, "update.http")
+			o.Requests = append(o.Requests, updaterCLIRequest{Method: r.Method, URL: r.URL.String(), Headers: r.Header.Clone(), HasDeadline: deadline, Canceled: r.Context().Err() != nil})
+			if r.URL.String() != "https://api.github.com/repos/FlanChanXwO/pixiv-cli/releases" || r.Method != "GET" {
+				return nil, errors.New("owned updater transport destination mismatch")
+			}
+			if input.Failure == "http" {
+				return nil, errors.New("owned HTTP failure")
+			}
+			body := "[]"
+			if input.Release != "" {
+				b, e := json.Marshal([]any{map[string]any{"tag_name": input.Release, "prerelease": input.Prerelease, "draft": false, "assets": []any{}}})
+				if e != nil {
+					return nil, e
+				}
+				body = string(b)
+			}
+			return &http.Response{StatusCode: 200, Header: http.Header{"Content-Type": {"application/json"}, "Etag": {"owned-etag"}}, Body: io.NopCloser(strings.NewReader(body)), Request: r}, nil
+		})}, Now: func() time.Time { return time.Date(2026, 10, 10, 12, 0, 0, 0, time.UTC) }})
+		if e != nil {
+			t.Fatal(e)
+		}
+		return client
+	}
+	newUpdateCommandCoordinator = func(proxy string, out, errOut io.Writer) (*update.UpdateCoordinator, error) {
+		o.Trace = append(o.Trace, "update.factory")
+		o.UpdateProxies = append(o.UpdateProxies, proxy)
+		if input.Failure == "nil-factory" {
+			return nil, nil
+		}
+		if input.Failure == "factory" {
+			return nil, errors.New("owned coordinator factory failure")
+		}
+		if input.Failure == "production-factory" {
+			coordinator, err := oldUpdate(proxy, out, errOut)
+			if err == nil && !buildinfo.Current().IsDevelopment() {
+				t.Fatal("negative production coordinator constructor unexpectedly succeeded")
+			}
+			return coordinator, err
+		}
+		return update.NewUpdateCoordinator(update.UpdateCoordinatorOptions{SourceDetector: detector, ReleaseChecker: releaseChecker(), CommandRunner: updaterCLICommands{&o}, ReleaseInstaller: updaterCLIInstaller{&o}})
+	}
+	newCLIAutomaticUpdateChecker = func(proxy string) (*update.AutomaticUpdateChecker, error) {
+		o.Trace = append(o.Trace, "automatic.factory")
+		o.AutomaticProxies = append(o.AutomaticProxies, proxy)
+		if input.Failure == "automatic-nil-factory" {
+			return nil, nil
+		}
+		if input.Failure == "automatic-factory" {
+			return nil, errors.New("owned automatic factory failure")
+		}
+		if input.Failure == "automatic-production-factory" {
+			checker, err := oldAutomatic(proxy)
+			if err == nil {
+				t.Fatal("negative production automatic constructor unexpectedly succeeded")
+			}
+			return checker, err
+		}
+		return update.NewAutomaticUpdateChecker(update.AutomaticUpdateCheckerOptions{SourceDetector: detector, ReleaseChecker: releaseChecker()})
+	}
+	openDB := func(a app) (*database.DB, error) {
+		o.Trace = append(o.Trace, "database.open")
+		db, e := openCLIAuthDatabase()
+		if e != nil {
+			return nil, e
+		}
+		a.closeState.add(func() error {
+			o.Trace = append(o.Trace, "database.close")
+			e := db.Close()
+			if input.CloseError {
+				return errors.Join(e, errors.New("owned database close failure"))
+			}
+			return e
+		})
+		return db, nil
+	}
+	var sdkTransport http.RoundTripper
+	newCLIAccountServices = func(a app) (authcommands.AccountService, pixivaccount.LoginService, error) {
+		o.AccountFactories++
+		o.Trace = append(o.Trace, "account.factory")
+		db, e := openDB(a)
+		if e != nil {
+			return authcommands.AccountService{}, pixivaccount.LoginService{}, e
+		}
+		s := pixivaccount.NewService(db, settings.DefaultStore())
+		return authcommands.AccountService{Pixiv: updaterCLIAuthPort{s, sdkTransport, &o}, LoadRuntime: a.runtimeConfig}, pixivaccount.LoginService{Pixiv: s}, nil
+	}
+	sdkTransport = updaterCLITransport(func(r *http.Request) (*http.Response, error) {
+		o.Trace = append(o.Trace, "sdk.http")
+		_, deadline := r.Context().Deadline()
+		q := updaterCLIRequest{Method: r.Method, URL: r.URL.String(), Headers: r.Header.Clone(), HasDeadline: deadline, Canceled: r.Context().Err() != nil}
+		body := ""
+		switch r.URL.Host {
+		case "oauth.secure.pixiv.net":
+			if e := r.ParseForm(); e != nil {
+				return nil, e
+			}
+			q.Form = r.Form
+			body = `{"access_token":"synthetic-access-42","refresh_token":"synthetic-rotated-42","expires_in":3600,"user":{"id":42,"name":"owned account"}}`
+		case "app-api.pixiv.net":
+			switch r.URL.Path {
+			case "/v1/illust/detail":
+				body = `{"illust":{"id":42,"type":"illust","title":"owned artwork","create_date":"2024-01-02T00:00:00Z","user":{"id":7,"name":"owned author"},"page_count":1,"meta_single_page":{"original_image_url":"https://i.pximg.net/img-original/img/2024/01/02/00/00/00/42_p0.png"},"image_urls":{"large":"https://i.pximg.net/img-master/img/2024/01/02/00/00/00/42_p0_master1200.jpg"}}}`
+			case "/v1/search/illust":
+				body = `{"illusts":[],"next_url":null}`
+			default:
+				return nil, errors.New("owned SDK path mismatch")
+			}
+		case "i.pximg.net":
+			body = "owned static image bytes\n"
+		case "api.fanbox.cc":
+			if r.URL.Path != "/post.info" {
+				return nil, errors.New("owned FANBOX path mismatch")
+			}
+			body = `{"body":{"post":{"id":"123","title":"owned post","publishedDatetime":"2024-01-02T03:04:05Z","creatorId":"owned-creator","feeRequired":0,"body":{"text":"owned post body"}}}}`
+		default:
+			return nil, errors.New("owned SDK host mismatch")
+		}
+		o.Requests = append(o.Requests, q)
+		contentType := "application/json"
+		if r.URL.Host == "i.pximg.net" {
+			contentType = "image/png"
+		}
+		return &http.Response{StatusCode: 200, Header: http.Header{"Content-Type": {contentType}}, Body: io.NopCloser(strings.NewReader(body)), Request: r}, nil
+	})
+	newCLIPixivSDKPorts = func(a app) (pixivSDKPorts, error) {
+		o.SDKFactories++
+		o.Trace = append(o.Trace, "sdk.factory")
+		db, e := openDB(a)
+		if e != nil {
+			return pixivSDKPorts{}, e
+		}
+		facade := pixivapp.New(pixivapp.Dependencies{Accounts: pixivaccount.NewService(db, settings.DefaultStore()), Gate: pixivpool.NewGate(), LoadPoolConfig: func() (pixivapp.PoolConfig, error) {
+			r, e := a.runtimeConfig()
+			return pixivapp.PoolConfig{Enabled: r.AccountPool.Enabled, Strategy: string(r.AccountPool.Strategy)}, e
+		}, Pool: func(c pixivapp.PoolConfig) (pixivapp.PoolExecutor, error) {
+			return pixivpool.Scheduler{Config: settings.AccountPoolConfig{Enabled: c.Enabled, Strategy: settings.AccountPoolStrategy(c.Strategy)}, State: db, Now: time.Now}, nil
+		}, CloseClient: func(c *pixiv.Client) error {
+			o.Trace = append(o.Trace, "sdk.lease.close")
+			c.CloseIdleConnections()
+			return nil
+		}})
+		options := func(request pixivdeps.Request) (pixiv.Options, error) {
+			v, e := pixivOptionsFromRequest(request, a.runtimeConfig)
+			if e != nil {
+				return v, e
+			}
+			v.HTTPClient = &http.Client{Transport: sdkTransport}
+			return v, nil
+		}
+		return pixivSDKPorts{execute: func(ctx context.Context, r pixivdeps.Request, f func(context.Context, *pixiv.Client) (bool, error)) error {
+			v, e := options(r)
+			if e != nil {
+				return e
+			}
+			return facade.Use(ctx, pixivapp.Request{UserID: r.UserID, Options: v}, f)
+		}, openLease: func(ctx context.Context, r pixivdeps.Request) (*lifecycle.Lease[*pixiv.Client], error) {
+			v, e := options(r)
+			if e != nil {
+				return nil, e
+			}
+			return facade.Open(ctx, pixivapp.Request{UserID: r.UserID, Options: v})
+		}, jsonOut: func(v *bool) (bool, error) {
+			if v != nil {
+				return *v, nil
+			}
+			r, e := a.runtimeConfig()
+			return r.OutputJSON, e
+		}}, nil
+	}
+	newCLIFanboxAccountService = func(a app) (*fanboxaccount.Service, error) {
+		o.FanboxFactories++
+		o.Trace = append(o.Trace, "fanbox.account.factory")
+		db, e := openDB(a)
+		if e != nil {
+			return nil, e
+		}
+		s := fanboxaccount.NewService(db, settings.DefaultStore())
+		s.LoadOptionsFunc = func() (fanboxsdk.Options, error) {
+			v, e := fanboxOptionsFromRuntime(a.runtimeConfig)
+			v.HTTPClient = &http.Client{Transport: sdkTransport}
+			return v, e
+		}
+		return s, nil
+	}
+	newCLIFanboxService = func(a app) (*fanboxapp.Facade, error) {
+		s, e := newCLIFanboxAccountService(a)
+		if e != nil {
+			return nil, e
+		}
+		return fanboxapp.NewFacadeWithCloseClient(s, func(c *fanboxsdk.Client) error {
+			o.Trace = append(o.Trace, "fanbox.lease.close")
+			c.CloseIdleConnections()
+			return nil
+		}), nil
+	}
+	newCLIReverseSearch = func(reverseassembly.Options) (reversesearch.Searcher, error) {
+		o.Trace = append(o.Trace, "reverse.factory")
+		return reversesearch.NewFacade(reversesearch.Dependencies{Sources: reversesearch.NewSourceLoader(reversesearch.SourceLoaderOptions{}), Payloads: reversesearch.NewAggregator(reversesearch.AggregatorDependencies{SauceNAO: updaterCLIProvider{&o}})}), nil
+	}
+	newCLIMCPReverseSearch = newCLIReverseSearch
+	out := &updaterCLIWriter{mode: input.Writer, name: "stdout", obs: &o, writes: []updaterCLIWrite{}}
+	errOut := &updaterCLIWriter{mode: input.ErrorWriter, name: "stderr", obs: &o, writes: []updaterCLIWrite{}}
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	if input.Cancel {
+		cancel()
+	}
+	var stdioReader, stdioWriter, stdioOutputReader *os.File
+	oldIn, oldOut := os.Stdin, os.Stdout
+	if o.Target == "pixiv mcp" || o.Target == "pixiv fanbox mcp" {
+		var e error
+		var inputPeer *os.File
+		stdioReader, inputPeer, e = os.Pipe()
+		if e != nil {
+			t.Fatal(e)
+		}
+		if _, e = inputPeer.Write([]byte(input.Stdin)); e != nil {
+			t.Fatal(e)
+		}
+		if e = inputPeer.Close(); e != nil {
+			t.Fatal(e)
+		}
+		stdioOutputReader, stdioWriter, e = os.Pipe()
+		if e != nil {
+			t.Fatal(e)
+		}
+		os.Stdin, os.Stdout = stdioReader, stdioWriter
+		defer func() {
+			os.Stdin, os.Stdout = oldIn, oldOut
+			stdioReader.Close()
+			stdioWriter.Close()
+			stdioOutputReader.Close()
+		}()
+	}
+	if input.Boundary == "root-private-automatic-policy" {
+		a := app{out: out, errOut: errOut, in: strings.NewReader(input.Stdin)}
+		root := a.newRootCommand()
+		cmd, args, e := root.Find(input.Args)
+		if e != nil {
+			t.Fatal(e)
+		}
+		cmd.InitDefaultHelpFlag()
+		if e = cmd.ParseFlags(args); e != nil {
+			t.Fatal(e)
+		}
+		cmd.SetContext(ctx)
+		updatecommands.RunAutomaticCheck(cmd, a)
+		o.Exit = 0
+	} else {
+		o.Exit = RunContext(ctx, append([]string{"pixiv"}, input.Args...), &updaterCLIReader{strings.NewReader(input.Stdin), &o}, out, errOut)
+	}
+	if stdioWriter != nil {
+		os.Stdin, os.Stdout = oldIn, oldOut
+		stdioWriter.Close()
+		payload, e := io.ReadAll(stdioOutputReader)
+		if e != nil {
+			t.Fatal(e)
+		}
+		if len(payload) > 0 {
+			out.buf.Write(payload)
+		}
+	}
+	o.Stdout, o.Stderr = out.buf.String(), errOut.buf.String()
+	o.OutputWrites, o.ErrorWrites = out.writes, errOut.writes
+	updaterCLIState(t, &o)
+	if strings.HasPrefix(o.Target, "pixiv update") && (o.AccountFactories != 0 || o.SDKFactories != 0 || o.FanboxFactories != 0 || (o.DatabaseAfter && !o.DatabaseBefore)) {
+		t.Fatalf("update opened authenticated resources: %+v", o)
+	}
+	if input.Boundary == "root-private-automatic-policy" && (o.AccountFactories != 0 || o.SDKFactories != 0 || o.FanboxFactories != 0) {
+		t.Fatal("private automatic policy constructed leaf dependencies")
+	}
+	return o
+}
+
+func updaterCLIRows() []updaterCLICase {
+	rows := []updaterCLICase{}
+	text := func(s string) *string { return &s }
+	add := func(name string, args ...string) *updaterCLIInput {
+		rows = append(rows, updaterCLICase{Name: name, Input: updaterCLIInput{Boundary: "actual-root-RunContext", Args: args, Version: updaterCLICurrent, Config: text(updaterCLIConfig), Environment: map[string]string{}, Source: update.InstallSourceRelease, Release: "v1.3.0"}})
+		return &rows[len(rows)-1].Input
+	}
+	add("version/release", "--version")
+	add("version/dev", "--version").Version = "dev"
+	add("version/empty", "--version").Version = ""
+	add("version/prerelease-build", "--version").Version = "v1.4.0-beta.2+owned"
+	add("version/duplicate-last-false", "--version", "--version=false")
+	add("version/duplicate-last-true", "--version=false", "--version")
+	add("root/help")
+	add("root/help-flag", "--help")
+	add("update/help", "update", "--help")
+	add("update/help-false", "update", "--help=false", "--check")
+	add("update/help-with-unknown", "update", "--help", "--unknown")
+	for _, args := range [][]string{{"update", "one"}, {"update", "one", "two"}, {"update", "--no-proxy"}, {"update", "-j"}, {"update", "--unknown"}, {"update", "--proxy"}, {"update", "--check=bad"}, {"update", "--json=bad"}, {"update", "--prerelease=bad"}, {"update", "--json", "--unknown"}, {"update", "--unknown", "--json"}, {"update", "--json=false", "--json=bad"}, {"update", "--check", "false"}, {"update", "--", "--check"}, {"update", "--check", "--proxy=one", "--proxy=two"}} {
+		add("parse/"+strings.Join(args[1:], " "), args...)
+	}
+	add("update/json-requires-check", "update", "--json")
+	add("update/json-requires-check-false", "update", "--json", "--check=false")
+	add("update/json-false-allows-install", "update", "--json=false")
+	add("update/check-human", "update", "--check")
+	add("update/check-json", "update", "--check", "--json")
+	add("update/no-candidate-human", "update", "--check").Release = ""
+	add("update/no-candidate-json", "update", "--check", "--json").Release = ""
+	add("update/prerelease", "update", "--check", "--prerelease").Prerelease = true
+	for _, args := range [][]string{{"update", "--check", "--check=false"}, {"update", "--check=false", "--check"}, {"update", "--check", "--json", "--json=false"}, {"update", "--check", "--json=false", "--json"}, {"update", "--check", "--prerelease", "--prerelease=false"}, {"update", "--check", "--prerelease=false", "--prerelease"}} {
+		add("duplicate/"+strings.Join(args[1:], " "), args...)
+	}
+	add("update/runtime-json-default-ignored", "update", "--check").Config = text(updaterCLIConfig + "[output]\njson=true\n")
+	add("update/runtime-json-false-ignored", "update", "--check", "--json=false").Config = text(updaterCLIConfig + "[output]\njson=true\n")
+	add("update/runtime-json-explicit", "update", "--check", "--json").Config = text(updaterCLIConfig + "[output]\njson=false\n")
+	add("update/proxy-default", "update", "--check")
+	add("update/proxy-explicit-empty", "update", "--check", "--proxy=")
+	add("update/proxy-explicit", "update", "--check", "--proxy=socks5h://owned-command.invalid:1080")
+	add("update/proxy-environment", "update", "--check").Environment["HTTPS_PROXY"] = "http://owned-environment.invalid:8081"
+	add("update/proxy-production-invalid", "update", "--check", "--proxy=ftp://owned.invalid").Failure = "production-factory"
+	for _, proxy := range []string{"", "http://owned.invalid:8080", "https://owned.invalid:8080", "socks5://owned.invalid:1080", "socks5h://owned.invalid:1080"} {
+		input := add("update/production-constructor-development/"+proxy, "update", "--check", "--proxy="+proxy)
+		input.Version = "dev"
+		input.Failure = "production-factory"
+	}
+	add("update/ignored-stdin", "update", "--check").Stdin = "owned unexpected input\n"
+	for _, version := range []string{"dev", "", "1.2.3", "v1.2", "v01.2.3", "v1.2.3+owned"} {
+		add("update/current-version/"+version, "update", "--check").Version = version
+	}
+	for _, failure := range []string{"startup", "factory", "nil-factory", "detector", "checker", "http", "ensure-config"} {
+		add("update/failure-human/"+failure, "update", "--check").Failure = failure
+		add("update/failure-json/"+failure, "update", "--check", "--json").Failure = failure
+		add("update/failure-json-false/"+failure, "update", "--check", "--json=false").Failure = failure
+	}
+	add("update/config-missing", "update", "--check").Config = nil
+	add("update/config-malformed", "update", "--check", "--json").Config = text("[unfinished\n")
+	add("update/runtime-command-failure", "update", "--check", "--json").RuntimeErrorNth = 2
+	add("update/runtime-diagnostics-failure", "update", "--check", "--json").RuntimeErrorNth = 1
+	add("update/relay-warning", "update", "--check").Relay = true
+	for _, mode := range []string{"error", "epipe", "short", "partial-error"} {
+		add("update/writer-human/"+mode, "update", "--check").Writer = mode
+		add("update/writer-json/"+mode, "update", "--check", "--json").Writer = mode
+	}
+	row := add("update/diagnostic-writer-failure", "update", "--check", "--json")
+	row.Environment["PIXIV_LOG_LEVEL"] = "debug"
+	row.ErrorWriter = "diagnostic-error"
+	for _, machine := range []bool{false, true} {
+		args := []string{"update", "--check"}
+		if machine {
+			args = append(args, "--json")
+		}
+		input := add(fmt.Sprintf("update/diagnostic-and-command-failure/%v", machine), args...)
+		input.Environment["PIXIV_LOG_LEVEL"] = "debug"
+		input.ErrorWriter = "diagnostic-error"
+		input.Failure = "checker"
+	}
+	for _, source := range []update.InstallSource{update.InstallSourceHomebrewStable, update.InstallSourceHomebrewBeta, update.InstallSourceGoInstall, update.InstallSourceRelease} {
+		add("update/source/"+string(source), "update", "--check").Source = source
+	}
+	for _, args := range [][]string{{"config", "get", "request_interval"}, {"config", "path"}, {"config", "set", "request_interval", "0"}, {"config", "unset", "https_proxy"}, {"auth", "list", "--json"}, {"fanbox", "auth", "list", "--json"}, {"detail", "42", "--json"}, {"search", "owned", "--json"}, {"fanbox", "post", "123", "--json"}, {"search", "image.png", "--json", "--provider=saucenao"}, {"download", "42", "--json", "--output=downloads"}} {
+		input := add("automatic/eligible/"+strings.Join(args, " "), args...)
+		input.Seed = !strings.HasPrefix(args[0], "config") && !(args[0] == "search" && args[1] == "image.png")
+	}
+	input := add("automatic/eligible/auth-token-import-stdin", "auth", "import", "--json")
+	input.Seed = true
+	input.Stdin = "synthetic-refresh-42\n"
+	add("automatic/eligible/auth-token-import-argument", "auth", "import", "synthetic-refresh-42", "--json").Seed = true
+	for _, version := range []string{"dev", "v1.2.3"} {
+		add("automatic/version/"+version, "config", "get", "request_interval").Version = version
+	}
+	for _, tag := range []string{"", "v1.2.3", "v1.1.9", "v1.3.0", "v1.3.0-beta.1"} {
+		input := add("automatic/candidate/"+tag, "config", "get", "request_interval")
+		input.Release = tag
+		input.Prerelease = strings.Contains(tag, "beta")
+	}
+	for _, args := range [][]string{{"config"}, {"auth"}, {"fanbox"}, {"fanbox", "auth"}, {"timeline"}, {"config", "get", "--help"}, {"auth", "list", "--help=false"}, {"auth", "export", "42"}, {"auth", "import", "--json"}, {"mcp"}, {"fanbox", "mcp"}, {"auth", "_callback", "--help"}, {"update", "--check"}} {
+		input := add("automatic/excluded/"+strings.Join(args, " "), args...)
+		input.Seed = true
+		if len(args) > 1 && args[0] == "auth" && args[1] == "import" {
+			input.Stdin = `{"schema":"pixiv-cli.auth-export","version":1,"default_user_id":42,"accounts":[{"user_id":42,"username":"restored","refresh_token":"synthetic-restored"}]}`
+		}
+		if args[0] == "mcp" || (len(args) > 1 && args[0] == "fanbox" && args[1] == "mcp") {
+			input.Stdin = ""
+		}
+	}
+	add("automatic/config-disabled", "config", "get", "request_interval").Config = text(strings.ReplaceAll(updaterCLIConfig, "check_enabled=true", "check_enabled=false"))
+	add("automatic/runtime-warning", "config", "get", "request_interval").RuntimeErrorNth = 1
+	add("automatic/nil-factory-warning", "config", "get", "request_interval").Failure = "automatic-nil-factory"
+	add("automatic/factory-warning", "config", "get", "request_interval").Failure = "automatic-factory"
+	add("automatic/check-warning", "config", "get", "request_interval").Failure = "checker"
+	add("automatic/detector-warning", "config", "get", "request_interval").Failure = "detector"
+	add("automatic/invalid-proxy-warning", "config", "get", "request_interval").Config = text(strings.ReplaceAll(updaterCLIConfig, "http://owned-global.invalid:8080", "ftp://owned.invalid"))
+	rows[len(rows)-1].Input.Failure = "automatic-production-factory"
+	for _, args := range [][]string{{"fanbox", "auth", "list", "--json", "--proxy="}, {"fanbox", "auth", "list", "--json", "--proxy=http://owned-command.invalid"}, {"fanbox", "auth", "list", "--json", "--no-proxy=false"}, {"fanbox", "auth", "list", "--json", "--no-proxy"}, {"fanbox", "auth", "list", "--json", "--proxy=x", "--no-proxy=false"}} {
+		input := add("automatic/proxy/"+strings.Join(args[4:], " "), args...)
+		input.Seed = true
+	}
+	add("automatic/throttled-newer", "config", "get", "request_interval").CacheBefore = text(`{"schema_version":2,"checked_at":"2026-10-10T11:00:00Z","releases":[{"tag_name":"v1.3.0","draft":false,"prerelease":false,"assets":[]}]}`)
+	add("automatic/future-throttled-newer", "config", "get", "request_interval").CacheBefore = text(`{"schema_version":2,"checked_at":"2026-10-11T12:00:00Z","releases":[{"tag_name":"v1.3.0","draft":false,"prerelease":false,"assets":[]}]}`)
+	add("automatic/invalid-cache-warning", "config", "get", "request_interval").CacheBefore = text("owned invalid cache")
+	add("automatic/canceled-warning", "config", "get", "request_interval").Cancel = true
+	add("update/canceled-json", "update", "--check", "--json").Cancel = true
+	for _, mode := range []string{"error", "epipe", "short"} {
+		input := add("update/error-envelope-writer/"+mode, "update", "--check", "--json")
+		input.ErrorWriter = mode
+		input.Failure = "checker"
+	}
+	for _, mode := range []string{"error", "epipe", "short"} {
+		input := add("automatic/notice-writer/"+mode, "config", "get", "request_interval")
+		input.ErrorWriter = mode
+		input = add("automatic/warning-writer/"+mode, "config", "get", "request_interval")
+		input.ErrorWriter = mode
+		input.Failure = "checker"
+	}
+	add("automatic/close-after-notice", "auth", "list", "--json").Seed = true
+	add("automatic/close-failure-after-notice", "auth", "list", "--json").Seed = true
+	rows[len(rows)-1].Input.CloseError = true
+	for _, args := range [][]string{{"detail", "42", "--proxy=x", "--no-proxy=false"}, {"detail", "42", "--help=false"}, {"auth", "export", "42"}, {"mcp"}, {"fanbox", "mcp"}, {"auth", "_callback", "owned"}, {"update", "--check"}, {"auth"}} {
+		input := add("private-automatic-policy/"+strings.Join(args, " "), args...)
+		input.Boundary = "root-private-automatic-policy"
+	}
+	return rows
+}
+
+func updaterCLIAssert(t *testing.T, row updaterCLICase) {
+	t.Helper()
+	o := row.Observation
+	if row.Name == "update/proxy-default" && (len(o.UpdateProxies) != 1 || o.UpdateProxies[0] != "http://owned-global.invalid:8080") {
+		t.Fatalf("configured runtime proxy was not observed: %+v", o)
+	}
+	if strings.HasPrefix(row.Name, "parse/") && o.Exit != 0 {
+		for _, v := range o.Trace {
+			if strings.HasPrefix(v, "startup.") || strings.HasPrefix(v, "runtime.") || v == "update.factory" {
+				t.Fatalf("argument parsing touched startup: %+v", o)
+			}
+		}
+	}
+	if row.Name == "update/check-human" || row.Name == "update/runtime-json-default-ignored" || row.Name == "update/runtime-json-false-ignored" {
+		want := "source: release\ncurrent version: v1.2.3\nlatest version: v1.3.0\nupdate available: yes\n"
+		if o.Exit != 0 || o.Stdout != want || o.Stderr != "" {
+			t.Fatalf("exact human status changed: %+v", o)
+		}
+	}
+	if row.Name == "update/no-candidate-json" && (!strings.Contains(o.Stdout, `"latest_version": null`) || !strings.Contains(o.Stdout, `"update_available": false`)) {
+		t.Fatalf("nil candidate JSON changed: %+v", o)
+	}
+	if strings.HasPrefix(row.Name, "version/") && row.Name != "version/empty" && row.Name != "version/duplicate-last-false" {
+		if o.Exit != 0 || o.Stderr != "" || o.Stdout != "pixiv "+row.Input.Version+"\n" {
+			t.Fatalf("version exact stdout changed: %+v", o)
+		}
+	}
+	if strings.HasPrefix(row.Name, "update/") && strings.Contains(row.Name, "check-") && row.Input.Failure == "" && row.Input.RuntimeErrorNth == 0 && row.Input.Writer == "" && row.Input.ErrorWriter == "" && row.Name != "update/json-requires-check" && row.Name != "update/json-requires-check-false" {
+		if o.Exit != 0 {
+			t.Fatalf("expected check success: %+v", o)
+		}
+	}
+	if strings.Contains(row.Name, "ignored-stdin") && o.StdinReads != 0 {
+		t.Fatal("update consumed stdin")
+	}
+	if strings.HasPrefix(row.Name, "automatic/eligible/") {
+		if o.Exit != 0 || len(o.AutomaticProxies) != 1 || !strings.Contains(o.Stderr, "update available: v1.2.3 -> v1.3.0\nrun: pixiv update\n") {
+			t.Fatalf("eligible genuine root success failed to check: %+v", o)
+		}
+	}
+	if strings.HasPrefix(row.Name, "automatic/excluded/") || strings.HasPrefix(row.Name, "private-automatic-policy/") {
+		if len(o.AutomaticProxies) != 0 {
+			t.Fatalf("excluded command created checker: %+v", o)
+		}
+	}
+	if row.Name == "update/diagnostic-writer-failure" && (o.Exit != 1 || !strings.Contains(o.Stderr, "write diagnostics: owned diagnostic writer failure")) {
+		t.Fatalf("diagnostic writer failure was not observed: %+v", o)
+	}
+	if strings.HasPrefix(row.Name, "automatic/throttled-") || strings.HasPrefix(row.Name, "automatic/future-throttled-") {
+		if o.Exit != 0 || len(o.AutomaticProxies) != 1 || len(o.Detections) != 0 || len(o.Requests) != 0 || o.Stderr != "" {
+			t.Fatalf("throttled root hook performed work or notice: %+v", o)
+		}
+	}
+	if strings.HasPrefix(row.Name, "automatic/notice-writer/") || strings.HasPrefix(row.Name, "automatic/warning-writer/") {
+		if o.Exit != 0 {
+			t.Fatalf("automatic sink changed successful exit: %+v", o)
+		}
+	}
+	if row.Name == "automatic/proxy/--no-proxy=false" {
+		if len(o.AutomaticProxies) != 1 || o.AutomaticProxies[0] != "" {
+			t.Fatalf("Changed no-proxy=false did not clear automatic proxy: %+v", o)
+		}
+	}
+	if row.Name == "automatic/close-after-notice" || row.Name == "automatic/close-failure-after-notice" {
+		index := func(v string) int {
+			for i, s := range o.Trace {
+				if s == v {
+					return i
+				}
+			}
+			return -1
+		}
+		if index("automatic.factory") < 0 || index("database.close") <= index("automatic.factory") {
+			t.Fatalf("automatic checking did not precede resource close: %+v", o)
+		}
+	}
+}
+func updaterCLISources(t *testing.T, repo string) (map[string]string, int, int, map[string]string, map[string]string) {
+	t.Helper()
+	b, e := os.ReadFile(filepath.Join(repo, "docs", "migration", "provenance", "updater-contracts-baseline.json"))
+	if e != nil {
+		t.Fatal(e)
+	}
+	var baseline struct {
+		Base            string            `json:"base_sha"`
+		Frozen          string            `json:"frozen_go"`
+		ProductionCount int               `json:"production_count"`
+		Production      map[string]string `json:"production"`
+		FixtureCount    int               `json:"fixture_count"`
+		Fixtures        map[string]string `json:"fixtures"`
+	}
+	if e = json.Unmarshal(b, &baseline); e != nil {
+		t.Fatal(e)
+	}
+	if baseline.Base != updaterCLIBase || baseline.Frozen != updaterCLIReference || baseline.ProductionCount != 434 || baseline.FixtureCount != 110 || len(baseline.Production) != 434 || len(baseline.Fixtures) != 110 {
+		t.Fatal("unexpected updater preservation inventory")
+	}
+	manifest := map[string]string{}
+	for _, entries := range []map[string]string{baseline.Production, baseline.Fixtures} {
+		for path, want := range entries {
+			b, e := os.ReadFile(filepath.Join(repo, path))
+			if e != nil {
+				t.Fatal(e)
+			}
+			actual := fmt.Sprintf("%x", sha256.Sum256(b))
+			if actual != want {
+				t.Fatalf("protected bytes changed: %s", path)
+			}
+		}
+	}
+	for _, path := range []string{"go.mod", "go.sum", "internal/cli/root.go", "internal/cli/execution.go", "internal/cli/composition.go", "internal/cli/commands/lifecycle.go", "internal/cli/commands/update/update_cmd.go", "internal/cli/commands/update/automatic_check.go", "internal/cli/commands/update/production.go", "internal/cli/commands/update/update.go", "internal/shared/buildinfo/buildinfo.go", "internal/update/coordinator.go", "internal/update/automatic_check.go", "internal/update/reexports.go", "internal/cli/migration_update_connected_test.go", "docs/migration/provenance/updater-contracts-baseline.json"} {
+		b, e := os.ReadFile(filepath.Join(repo, path))
+		if e != nil {
+			t.Fatal(e)
+		}
+		manifest[path] = fmt.Sprintf("%x", sha256.Sum256(b))
+	}
+	return manifest, baseline.ProductionCount, baseline.FixtureCount, baseline.Production, baseline.Fixtures
+}
+func TestMigrationUpdaterCLIConnectedFrozen(t *testing.T) {
+	if buildinfo.Version != "dev" || !buildinfo.Current().IsDevelopment() {
+		t.Fatal("default Go build metadata changed")
+	}
+	repo, e := filepath.Abs(filepath.Join("..", ".."))
+	if e != nil {
+		t.Fatal(e)
+	}
+	sources, production, fixtures, preservedProduction, preservedFixtures := updaterCLISources(t, repo)
+	f := updaterCLIFixture{Schema: 1, Reference: updaterCLIReference, Base: updaterCLIBase, Toolchain: runtime.Version(), Environment: "linux/amd64; UTC; owned temporary current directory and relative home; actual RunContext root/Cobra/startup/config/exit; owned SQLite and SDK transports; actual GitHub checker/file cache with synthetic official endpoint transport", Sources: sources, ProtectedProduction: production, ProtectedFixtures: fixtures, PreservationProduction: preservedProduction, PreservationFixtures: preservedFixtures, Cases: updaterCLIRows(), Limitations: []string{
+		"All actual-root-RunContext cases use the production root and its execution lifecycle. Existing constructor seams replace external side effects; update source detection and process/installer ports are synthetic. Production-constructor-development rows use the real coordinator/transport/source detector and stop at the dev rejection before source system reads or HTTP. Final capture/replays make no external HTTP requests, brew/go install, downloaded executable execution, browser, settings, registration, or real account action. An earlier discarded setup used the wrong TOML proxy scope and caused blocked DNS/network attempts in the intended invalid production automatic constructor row; no response was obtained. Correct scope and strict negative-constructor barriers now prevent that route from reaching HTTP.",
+		"Eligible config/auth/Pixiv/FANBOX/reverse/download paths run real command owners and services. Pixiv/FANBOX use owned SQLite, real account services/Facade/public SDK and in-memory HTTP transports. Reverse uses a real owned file/source snapshot/Facade/Aggregator with synthetic provider. MCP EOF uses the actual root/server/native SDK StdioTransport with owned OS pipes replacing stdin/stdout for the duration. It establishes successful EOF exclusion, not full MCP operation parity; interface reader counters do not count native stdio reads.",
+		"root-private-automatic-policy rows invoke the exported automatic hook on an actual root-selected command without executing its business leaf. They establish Go-only hook exclusion/conflicting Changed-flag policy. Owner validation prevents a successful conflicting proxy/no-proxy root leaf; these are not end-to-end successes.",
+		"Flags are independently observed by actual Cobra Find/ParseFlags on a fresh production root; exact root stdout/stderr and exit come from RunContext. The fixture captures boolean Changed and duplicate last-value behavior without inferring them from help.",
+		"Default Version is dev, while an explicitly empty build Version disables Cobra's built-in version flag. Version stdout remains exact for future signed preflight; no prefix/newline normalization is applied.",
+		"Writer observations retain observable stdout/stderr and write lengths/results. Diagnostic-error rows reject dynamic-clock diagnostic writes; attempted time-bearing diagnostic bytes are not recorded or normalized. Diagnostic writer errors affect the final exit; automatic warning/notice writer failures do not.",
+		"The download row reserves /tmp/pixiv-updater-cli-owned-download-contract with exclusive mkdir and cleanup, preserving its exact absolute output path without normalization. Relative owned HOME makes config path stdout deterministic without rewriting it; SQLite-backed rows use an absolute owned home because the native database URI needs an absolute path. Cache time is an injected production clock. Database creation and selected credential revisions are captured; incidental SQLite timestamps are not a migration expectation.",
+		"Protected inventory is the unchanged 434 frozen Go production/module files and all 110 published crate fixtures. Their full SHA maps are embedded for replay without an external temporary baseline. Go runtime native debug.ReadBuildInfo routing remains separate from synthetic source ports. Native platform runtime/ABI/distribution/trust/archive/preflight/replacement are separate gates.",
+	}}
+	for i := range f.Cases {
+		row := &f.Cases[i]
+		row.EvidenceClass = "behavioral"
+		if row.Input.Boundary == "root-private-automatic-policy" {
+			row.EvidenceClass = "go-only"
+			row.RepresentationScope = "Exported Go automatic hook invoked on a root-selected command without its business leaf; private policy witness, not a complete root success"
+		}
+		if row.Input.Failure == "nil-factory" || row.Input.Failure == "automatic-nil-factory" {
+			row.EvidenceClass = "go-only"
+			row.RepresentationScope = "Injected Go constructor returns a nil concrete coordinator/checker pointer with nil error; Go nil receiver behavior is representation-only"
+		}
+		t.Run(row.Name, func(t *testing.T) { row.Observation = updaterCLIObserve(t, row.Input); updaterCLIAssert(t, *row) })
+	}
+	if t.Failed() {
+		return
+	}
+	finalSources, _, _, _, _ := updaterCLISources(t, repo)
+	if fmt.Sprint(finalSources) != fmt.Sprint(sources) {
+		t.Fatal("source anchors changed during capture")
+	}
+	data, e := json.MarshalIndent(f, "", "  ")
+	if e != nil {
+		t.Fatal(e)
+	}
+	data = append(data, '\n')
+	path := filepath.Join(repo, "crates", "pixiv-cli", "tests", "fixtures", "updater-cli-owner.json")
+	if *captureUpdaterCLI {
+		if e = os.WriteFile(path, data, 0644); e != nil {
+			t.Fatal(e)
+		}
+		return
+	}
+	want, e := os.ReadFile(path)
+	if e != nil {
+		t.Fatal(e)
+	}
+	if !bytes.Equal(data, want) {
+		if e = os.WriteFile("/tmp/updater-cli-replay-actual.json", data, 0600); e != nil {
+			t.Fatal(e)
+		}
+		t.Fatal("connected updater CLI differs from frozen Go reference")
+	}
+}
+
+var _ io.Writer = (*updaterCLIWriter)(nil)
+var _ io.Reader = (*updaterCLIReader)(nil)

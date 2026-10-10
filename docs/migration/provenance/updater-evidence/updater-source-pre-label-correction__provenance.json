@@ -1,0 +1,112 @@
+{
+  "created_utc": "2026-10-10T16:12:49.540843+00:00",
+  "base_sha": "0e5f42273f69067bf2e06a130c926c4d58557fb4",
+  "frozen_go": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "go_version": "go1.27.1",
+  "environment": "linux/amd64",
+  "owned_files": {
+    "internal/update/source/migration_connected_test.go": {
+      "sha256": "898198b5b22aac2a11c29951dee36823cd2feee2219acb4090d39c4d4d4c4b74",
+      "bytes": 44118
+    },
+    "crates/pixiv-cli/tests/fixtures/updater-source-selection.json": {
+      "sha256": "b175290c5c4acd1ecd9b11b91881e0ad357427acc562f2e58e95e8d7d63bcfe1",
+      "bytes": 313881
+    }
+  },
+  "sources": {
+    "go.mod": "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c",
+    "go.sum": "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e",
+    "internal/update/source/github.go": "1fd8c8abd4e0855298475ce7455ab775bc4eec6c3fda07a59b76fbb8780c617d",
+    "internal/update/source/migration_connected_test.go": "898198b5b22aac2a11c29951dee36823cd2feee2219acb4090d39c4d4d4c4b74",
+    "internal/update/source/release_source_selector.go": "cbfb9bedcd32b391a52ce6a038710e45320dfbd2edf70c746ad72d22b8ad21f0",
+    "internal/update/source/release_sources.go": "5450d686f836da97e264872e80ba4178bcec7a4217fd8a9eaa85abfccf144bc8",
+    "internal/update/source/release_sources.txt": "e694ddf4ca91dcf649fc599d5d54bf0f67f67340d8fca10ec2314b345f2b4588",
+    "internal/update/source/source.go": "3d0912a3937d6cfa6f871c380b60922e60898ca23f88e3b722179c4f1ba64aa5",
+    "internal/update/source/source_test.go": "d7a8377d5ef2287b2ccef963b3dd15494d90e00fb316452391b4c842ed2f3f89"
+  },
+  "row_count": 200,
+  "go_only_rows": 31,
+  "operations": {
+    "parse": 35,
+    "default_sources": 1,
+    "transform": 58,
+    "embedded_transform": 5,
+    "template_parse": 8,
+    "template_apply": 6,
+    "ordered_single": 40,
+    "probe_private": 6,
+    "ordered_redirect": 5,
+    "ordered_race": 6,
+    "ordered_all_failure": 2,
+    "ordered_parent_cancel": 1,
+    "ordered_boundary": 11,
+    "check_context": 4,
+    "first_source_behavior": 1,
+    "first_source": 1,
+    "constructors": 1,
+    "ordered_constructor_copy": 2,
+    "candidates": 3,
+    "place_first": 4
+  },
+  "source_coverage": {
+    "statements_percent": 99.3,
+    "not_executed": "DefaultReleaseSources panic for invalid embedded bytes; the frozen embedded list is valid and no production/global mutation was added to reach it"
+  },
+  "protected_baseline": {
+    "path": "/tmp/updater-preservation-baseline.json",
+    "sha256": "d36a8ee61c519b74211b7def61a2425e6126278d8ea13d8b24e40392b3f03edd",
+    "production_paths": 434,
+    "prior_fixtures": 110,
+    "mismatch_count": 0
+  },
+  "validation": {
+    "capture": "PIXIV_CAPTURE_UPDATER_SOURCE=1 go test ./internal/update/source -run ^TestMigrationUpdaterSourceSelection$ -count=1 -v",
+    "normal_replay": "go test ./internal/update/source -run ^TestMigrationUpdaterSourceSelection$ -count=3 -v",
+    "related": "go test ./internal/update/source -count=1",
+    "vet": "go vet ./internal/update/source",
+    "gofmt": "gofmt -l internal/update/source/migration_connected_test.go returned empty",
+    "race": "go test -race ./internal/update/source -run ^TestMigrationUpdaterSourceSelection$ -count=20",
+    "coverage": "go test ./internal/update/source -run ^TestMigrationUpdaterSourceSelection$ -count=1 -coverprofile=/tmp/updater-source-cover.out"
+  },
+  "logs": {
+    "/tmp/updater-source-capture.log": {
+      "sha256": "e24a6b29587b10397d36edef7ed26b97352488d6fd9a1eef62c671865132ffae",
+      "bytes": 7778
+    },
+    "/tmp/updater-source-replay3.log": {
+      "sha256": "963b3a4767d7863072168bb99641dc03fd725fe0922e509a50c7a8a708f4a9bf",
+      "bytes": 23212
+    },
+    "/tmp/updater-source-related.log": {
+      "sha256": "68bfb2a5e28d46190c049f6030497a81559fb52f9bd4d2a4fb17c05d7296051f",
+      "bytes": 68
+    },
+    "/tmp/updater-source-vet.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "/tmp/updater-source-gofmt.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "/tmp/updater-source-race20.log": {
+      "sha256": "e87ab06f11451bf821402c2869fc7a950d9e49541d1a26fccdc3c186a2652f13",
+      "bytes": 68
+    },
+    "/tmp/updater-source-cover.log": {
+      "sha256": "9444c926762aeb19ba57a801ff782eb4e50bb038cd5ff8f5ea869e0f60738060",
+      "bytes": 98
+    },
+    "/tmp/updater-source-cover-function.log": {
+      "sha256": "31c1dc18bb9e93c00c90a8eec10c29c728d939aa2f83bfb9ae3c93c10d6fe347",
+      "bytes": 1644
+    },
+    "/tmp/updater-source-cover.out": {
+      "sha256": "7a54f3fb0e4685423bcce9f5d9ecb43ede1fe492ad7984f59591a3c46e119655",
+      "bytes": 10414
+    }
+  },
+  "prior_witness_failure": "Counting Error() calls failed under race scheduling. Replaced with actual probe goroutine-exit witness before final capture; final20-race replay passes. Failed earlier log /tmp/updater-source-race3.log is historical, not final proof. Failed subtests now block capture.",
+  "scope": "Actual frozen source parser/transform/probe/selection and standard injected http.Client; all transport synthetic. No Go production/module/Rust/oldfixture edits, Cargo, external requests/accounts/media/uploads/native settings or denied supplemental native probes. API download winner-only and signed installer per-asset fallback/no-verification-fallback are separate owner fixtures."
+}

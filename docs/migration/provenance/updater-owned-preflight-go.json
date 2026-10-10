@@ -1,0 +1,127 @@
+{
+  "created_utc": "2026-10-10T16:27:08.386651+00:00",
+  "base_sha": "0e5f42273f69067bf2e06a130c926c4d58557fb4",
+  "frozen_go": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "toolchain": "official Go1.27.1 linux/amd64 from /tmp/quantus-toolchain-env.txt; GOPROXY=off GOSUMDB=off; no Cargo",
+  "owned_files": {
+    "internal/update/installer/migration_owned_preflight_test.go": {
+      "sha256": "a18a273b475555bcfdceada1799f0b97f3d42fe0712ba8dd0dad0c733e50c6d9",
+      "bytes": 30437
+    },
+    "crates/pixiv-cli/tests/fixtures/updater-owned-preflight.json": {
+      "sha256": "1067306305f87db0e483b4659d1a4f503f2ffd89bb463cde69027bc6debfb65c",
+      "bytes": 89276
+    }
+  },
+  "sources_sha256": {
+    "go.mod": "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c",
+    "go.sum": "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e",
+    "internal/storage/file/replace/replace_nonwindows.go": "06d2793913c2c2e7e4cdccaaccef39b16663ea62c573575d6bde0f85d04eadf9",
+    "internal/storage/file/replace/replace_recovery.go": "53e1d52b2cdad910f32d6c065d1841dca9dd33ad42351af68e670b4f24ed9309",
+    "internal/storage/file/replace/replacement_error.go": "e6346582f605366188f60861dad1025133117de02847ccfc844704ef3d39270d",
+    "internal/update/installer/release_installer.go": "22d49ff1816ebf363ee4d01be3aa826a7a7dc955c985b692da64e3e5b935af87",
+    "internal/update/release/release_client.go": "9de30775c343d211ea62a61f29cb9c02f33c59f71c42613620e61001f8eac8d0",
+    "internal/update/release/version_policy.go": "988c885c7c078f0e2c3d748869a55586db0fcd3ce3fcce8db377a860fdbc219a",
+    "internal/update/source/github.go": "1fd8c8abd4e0855298475ce7455ab775bc4eec6c3fda07a59b76fbb8780c617d",
+    "internal/update/source/release_source_selector.go": "cbfb9bedcd32b391a52ce6a038710e45320dfbd2edf70c746ad72d22b8ad21f0"
+  },
+  "helper": {
+    "source_sha256": "418aa1286ece666a7d68c82d9c32247f143a4e27165e1835276efbfea99c0d29",
+    "module": "module example.invalid/pixiv-updater-owned-preflight\n\ngo 1.27.1\n",
+    "module_sha256": "a216c8b9f2a34298974d9771dbd76f1713a812d4c04eb32d913776b54acc3531",
+    "go_version": "go1.27.1",
+    "goos": "linux",
+    "goarch": "amd64",
+    "compiler_sha256": "30969f97169d7f43fe6a085873d75613adc21e30818a8c61d95bd27275df4624",
+    "exec_stdlib_sha256": "3ec96eeef97a375aa5e39663961f8adf3177db9449dacd3c407fd258bc9a2498",
+    "build_arguments": [
+      "build",
+      "-trimpath",
+      "-buildvcs=false",
+      "-ldflags=-buildid=",
+      "-o",
+      "OWNED_MODULE/helper",
+      "."
+    ],
+    "build_environment": [
+      "CGO_ENABLED=0",
+      "GOOS=linux",
+      "GOARCH=amd64",
+      "GOENV=off",
+      "GOWORK=off",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOTOOLCHAIN=local",
+      "GOAMD64=v1",
+      "GOEXPERIMENT=",
+      "GOFLAGS="
+    ],
+    "binary_length": 4261940,
+    "binary_sha256": "694392c9b43b0d1a09f78bd3d98fd86bb405306eb2668d6534ebea35408d3146",
+    "independent_build_equal": true
+  },
+  "case_count": 41,
+  "checks": {
+    "capture": "PASS",
+    "replay3": "PASS",
+    "connected": "PASS",
+    "vet": "PASS",
+    "preservation": "PASS",
+    "gofmt": "PASS",
+    "git_diff_check": "PASS",
+    "frozen_source_hashes": "PASS"
+  },
+  "commands": {
+    "capture": "GOPROXY=off GOSUMDB=off go test ./internal/update/installer -run '^TestMigrationUpdaterOwnedPreflightFrozenContracts$' -count=1 -v -migration-updater-owned-preflight -timeout=120s",
+    "replay3": "GOPROXY=off GOSUMDB=off go test ./internal/update/installer -run '^TestMigrationUpdaterOwnedPreflightFrozenContracts$' -count=3 -v -timeout=120s",
+    "connected": "GOPROXY=off GOSUMDB=off go test ./internal/update/installer -run '^TestMigrationUpdater(OwnedPreflight|SignedInstall)FrozenContracts$' -count=1 -v -timeout=120s",
+    "vet": "GOPROXY=off GOSUMDB=off go vet ./internal/update/installer",
+    "gofmt": "gofmt -w internal/update/installer/migration_owned_preflight_test.go; gofmt -l internal/update/installer/migration_owned_preflight_test.go"
+  },
+  "logs": {
+    "/tmp/updater-owned-preflight-capture.log": {
+      "sha256": "9d5123f4de5731687884b22fa9ae5dd609c2fc63ab1db3152f86f8d46f4582fc",
+      "bytes": 5595
+    },
+    "/tmp/updater-owned-preflight-replay3.log": {
+      "sha256": "4b1a3bb57efa8b7e816c892b83a082c6f218a52315648fdd0d151a770bebc238",
+      "bytes": 16632
+    },
+    "/tmp/updater-owned-preflight-connected.log": {
+      "sha256": "313d1521cd00045dfae521b7ed153861686a1cecdeedd7626827d8ec04eeca25",
+      "bytes": 5808
+    },
+    "/tmp/updater-owned-preflight-vet.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "/tmp/updater-owned-preflight-gofmt.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "/tmp/updater-owned-preflight-preservation.log": {
+      "sha256": "4030002bb78f894836acd1c727d93120b4ed4efcfc0b15c738a24b72b5c3e9a4",
+      "bytes": 342
+    }
+  },
+  "preservation": {
+    "existing_production_go_checked": 434,
+    "existing_fixtures_checked": 110,
+    "baseline_sha256": "d36a8ee61c519b74211b7def61a2425e6126278d8ea13d8b24e40392b3f03edd",
+    "mismatches": [],
+    "other_worker_files": {
+      "internal/update/installer/migration_connected_test.go": "e92adaf5d8fd5ca26380a76f8c08c3a7764918f4f997f7c9a7a0b27774658314",
+      "crates/pixiv-cli/tests/fixtures/updater-signed-install.json": "cb45a22b512db8fc6c80af65bd703f9d2e53f22fec0acdc0a5931985d2691a83"
+    }
+  },
+  "boundaries": [
+    "No executable/archive bytes are embedded in this fixture. The visible helper source, module, compiler SHA, stdlib exec SHA, flags/environment and native helper hash permit rebuilding. Hash is specific to official Go1.27.1 Linux/amd64 with CGO disabled; other compiler/platform bytes are not claimed identical.",
+    "The production checker passes only --version and inherits its process environment. No environment/PATH/settings/registry/browser change or real target/program is executed. The helper locates controls only beside its owned candidate parent directory.",
+    "Only owned temporary root paths and random updater workdir basenames are replaced in diagnostics. Process IDs are neither recorded nor normalized. Native Windows/Darwin process diagnostics and six-platform runtime remain unverified.",
+    "The Go checker has no intrinsic timeout/output limit. Finite 64KiB stdout and 192KiB stderr witnesses prove these bytes are drained; caller cancellation/deadline bounds owned blocking cases. They do not claim arbitrary output grammar, bounded production allocation or inherited-pipe/grandchild behavior.",
+    "Large error/stderr observations store exact byte length and SHA256 plus prefix/suffix; short diagnostics store exact text. Inputs and visible source reproduce omitted large middles; this does not equate different diagnostic bytes.",
+    "Volatile duration and heartbeat counters remain in test logs, outside exact fixture. Cancellation waits for a live owned heartbeat; after Output returns, the ExitError ProcessState and quiet owned markers witness child kill/wait. No process-ID equivalence claim is made.",
+    "Public successful install uses genuine verified archive extraction, staging and native Unix atomic rename. Only an owned disposable target is replaced; no post-success target launch or automatic restart occurs. Signature/checksum/archive errors and process failures preserve it and leave no updater temporary material.",
+    "Synthetic signing seed belongs only to this visible test; no production private key/account/credential is read. Canonical official asset URLs are intercepted in-memory, with no network download or external executable."
+  ]
+}
