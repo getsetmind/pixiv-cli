@@ -12,6 +12,8 @@ pub mod config_commands;
 pub mod dictionary;
 pub mod download;
 pub mod fanbox;
+pub mod fanbox_auth;
+pub mod fanbox_browser;
 pub mod fanbox_mcp;
 pub mod interrupt;
 mod json_spool;
@@ -148,6 +150,17 @@ impl CommandError {
     }
 }
 
+pub fn finish_with_cleanup(
+    result: Result<(), CommandError>,
+    cleanup: Result<(), CommandError>,
+) -> Result<(), CommandError> {
+    match (result, cleanup) {
+        (Ok(()), Ok(())) => Ok(()),
+        (Err(error), Ok(())) | (Ok(()), Err(error)) => Err(error),
+        (Err(error), Err(cleanup)) => Err(CommandError::Joined(vec![error, cleanup])),
+    }
+}
+
 pub fn finish_command<W: Write>(
     result: Result<(), CommandError>,
     ndjson_output: bool,
@@ -158,14 +171,14 @@ pub fn finish_command<W: Write>(
         return 0;
     };
     if let CommandError::Startup(message) = &error {
-        let _ = writeln!(diagnostics, "{message}");
+        let _ = diagnostics.write(format!("{message}\n").as_bytes());
         return 1;
     }
     if matches!(error, CommandError::Pipeline) {
         return 1;
     }
     if matches!(error, CommandError::Usage(_)) {
-        let _ = writeln!(diagnostics, "error: {error}");
+        let _ = diagnostics.write(format!("error: {error}\n").as_bytes());
         return 2;
     }
     if ndjson_output && error.is_broken_pipe() {
@@ -181,11 +194,14 @@ pub fn finish_command<W: Write>(
             body["retry_after_seconds"] = seconds.into();
         }
         let envelope = go_json_escape(serde_json::json!({"error": body}).to_string());
-        if writeln!(diagnostics, "{envelope}").is_ok() {
+        if diagnostics
+            .write(format!("{envelope}\n").as_bytes())
+            .is_ok()
+        {
             return 1;
         }
     }
-    let _ = writeln!(diagnostics, "error: {error}");
+    let _ = diagnostics.write(format!("error: {error}\n").as_bytes());
     1
 }
 

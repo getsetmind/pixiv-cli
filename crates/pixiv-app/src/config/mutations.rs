@@ -1,6 +1,4 @@
-use super::{
-    ConfigError, Kind, SPECS, Scalar, SettingValue, Snapshot, Spec, Store, document, private_file,
-};
+use super::{ConfigError, Kind, SPECS, Scalar, SettingValue, Snapshot, Spec, Store, document};
 use std::collections::BTreeMap;
 
 pub struct ConfigMutationResult {
@@ -121,6 +119,22 @@ fn parse_input(spec: &Spec, raw: &str) -> Result<toml_edit::Value, ConfigError> 
 }
 
 impl Store {
+    pub fn set_fanbox_default_user_id(&self, user_id: i64) -> Result<(), ConfigError> {
+        if user_id <= 0 {
+            return Err(ConfigError::Invalid(
+                "config: default_user_id must be positive".into(),
+            ));
+        }
+        self.mutate_path(
+            "fanbox.auth.default_user_id",
+            Some(toml_edit::Value::from(user_id)),
+        )
+    }
+
+    pub fn clear_fanbox_default_user_id(&self) -> Result<(), ConfigError> {
+        self.mutate_path("fanbox.auth.default_user_id", None)
+    }
+
     pub fn set_pixiv_default_user_id(&self, user_id: i64) -> Result<(), ConfigError> {
         if user_id <= 0 {
             return Err(ConfigError::Invalid(
@@ -187,12 +201,22 @@ impl Store {
     }
 
     fn mutate_path(&self, path: &str, value: Option<toml_edit::Value>) -> Result<(), ConfigError> {
-        let body = match std::fs::read_to_string(&self.path) {
+        let files = self.file_store()?;
+        let file_path = files.path()?;
+        let bytes = match files.read_file(&file_path) {
             Ok(body) => body,
-            Err(error) if error.kind() == std::io::ErrorKind::NotFound => String::new(),
-            Err(error) => return Err(ConfigError::Io(error)),
+            Err(ConfigError::Io(error)) if error.kind() == std::io::ErrorKind::NotFound => {
+                Vec::new()
+            }
+            Err(error) => return Err(error),
         };
+        let body = String::from_utf8(bytes).map_err(|_| {
+            ConfigError::Io(std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "stream did not contain valid UTF-8",
+            ))
+        })?;
         let body = document::mutate(&body, path, value)?;
-        private_file::write(&self.path, body.as_bytes())
+        files.write_private_file(&file_path, body.as_bytes())
     }
 }

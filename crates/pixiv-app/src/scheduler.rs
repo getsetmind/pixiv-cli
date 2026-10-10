@@ -26,6 +26,7 @@ pub enum SchedulerError {
     Sdk(Box<Error>),
     Pool(PoolError),
     Account(AccountError),
+    Fanbox(crate::database::FanboxAccountError),
     Config(ConfigError),
     Proxy(crate::connection::ProxyError),
     Joined(Vec<SchedulerError>),
@@ -45,6 +46,7 @@ impl fmt::Display for SchedulerError {
             Self::Sdk(error) | Self::Exhausted(Some(error)) => fmt::Display::fmt(error, f),
             Self::Pool(error) => fmt::Display::fmt(error, f),
             Self::Account(error) => fmt::Display::fmt(error, f),
+            Self::Fanbox(error) => fmt::Display::fmt(error, f),
             Self::Config(error) => fmt::Display::fmt(error, f),
             Self::Proxy(error) => fmt::Display::fmt(error, f),
             Self::Shared(error) => fmt::Display::fmt(error, f),
@@ -71,6 +73,7 @@ impl StdError for SchedulerError {
             Self::Sdk(error) | Self::Exhausted(Some(error)) => Some(error.as_ref()),
             Self::Pool(error) => Some(error),
             Self::Account(error) => Some(error),
+            Self::Fanbox(error) => Some(error),
             Self::Config(error) => Some(error),
             Self::Proxy(error) => Some(error),
             Self::Shared(error) => Some(error.as_ref()),
@@ -436,5 +439,14 @@ fn map_selection(
             .with_detail("account_pool_state_error")
             .with_cause(error.into_cause())
             .into(),
+    }
+}
+
+impl From<crate::database::FanboxAccountError> for SchedulerError {
+    fn from(error: crate::database::FanboxAccountError) -> Self {
+        match error {
+            crate::database::FanboxAccountError::Context(context) => context.into(),
+            other => Self::Fanbox(other),
+        }
     }
 }

@@ -90,6 +90,23 @@ struct TracedRepository {
     trace: Arc<Mutex<Vec<String>>>,
 }
 impl Repository for TracedRepository {
+    fn save_credential(&self, _: &Context, _: &Account) -> Result<(), SchedulerError> {
+        panic!("read-only contract attempted credential save")
+    }
+    fn rotate_session(
+        &self,
+        _: &Context,
+        _: i64,
+        _: i64,
+        _: &[u8],
+        _: i64,
+    ) -> Result<(), SchedulerError> {
+        panic!("read-only contract attempted session rotation")
+    }
+    fn remove(&self, _: &Context, _: i64) -> Result<(), SchedulerError> {
+        panic!("read-only contract attempted account removal")
+    }
+
     fn list(&self, context: &Context) -> Result<Vec<Account>, SchedulerError> {
         self.trace
             .lock()
@@ -110,6 +127,13 @@ struct TracedDefaults {
     trace: Arc<Mutex<Vec<String>>>,
 }
 impl DefaultStore for TracedDefaults {
+    fn set(&self, _: i64) -> Result<(), SchedulerError> {
+        panic!("read-only contract attempted default mutation")
+    }
+    fn clear(&self) -> Result<(), SchedulerError> {
+        panic!("read-only contract attempted default clear")
+    }
+
     fn read(&self) -> Result<Option<i64>, SchedulerError> {
         self.trace.lock().unwrap().push("defaults.read".into());
         self.store.read_fanbox_default_user_id().map_err(Into::into)
@@ -1103,6 +1127,23 @@ impl ReadPorts {
     }
 }
 impl Repository for ReadPorts {
+    fn save_credential(&self, _: &Context, _: &Account) -> Result<(), SchedulerError> {
+        panic!("read-only contract attempted credential save")
+    }
+    fn rotate_session(
+        &self,
+        _: &Context,
+        _: i64,
+        _: i64,
+        _: &[u8],
+        _: i64,
+    ) -> Result<(), SchedulerError> {
+        panic!("read-only contract attempted session rotation")
+    }
+    fn remove(&self, _: &Context, _: i64) -> Result<(), SchedulerError> {
+        panic!("read-only contract attempted account removal")
+    }
+
     fn list(&self, context: &Context) -> Result<Vec<Account>, SchedulerError> {
         self.before("list", Some(context))?;
         self.database.list(context)
@@ -1113,6 +1154,13 @@ impl Repository for ReadPorts {
     }
 }
 impl DefaultStore for ReadPorts {
+    fn set(&self, _: i64) -> Result<(), SchedulerError> {
+        panic!("read-only contract attempted default mutation")
+    }
+    fn clear(&self) -> Result<(), SchedulerError> {
+        panic!("read-only contract attempted default clear")
+    }
+
     fn read(&self) -> Result<Option<i64>, SchedulerError> {
         self.before("default_read", None)?;
         self.store.read_fanbox_default_user_id().map_err(Into::into)

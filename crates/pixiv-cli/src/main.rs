@@ -1765,19 +1765,58 @@ fn fanbox_service(
     )))
 }
 
+struct SystemFanboxAuthUpdateHooks;
+impl pixiv_cli_rs::fanbox_auth::AutomaticUpdateHooks for SystemFanboxAuthUpdateHooks {
+    fn runtime(&self) -> Result<pixiv_cli_rs::fanbox_auth::UpdateRuntime, CommandError> {
+        let directory = pixiv_app::callback_handler::app_data_directory()
+            .map_err(|error| CommandError::MessageText(error.to_string()))?;
+        let store = pixiv_app::config::Store::new(directory.join("config.toml"));
+        let runtime = store
+            .current()
+            .and_then(|snapshot| snapshot.runtime())
+            .map_err(pixiv_app::scheduler::SchedulerError::from)?;
+        Ok(pixiv_cli_rs::fanbox_auth::UpdateRuntime {
+            enabled: runtime.update_check_enabled,
+            https_proxy: runtime.https_proxy,
+        })
+    }
+
+    fn check(&self, _: &pixiv_app::lifecycle::Context, _: &str) -> Result<(), CommandError> {
+        Err(CommandError::Message(
+            "automatic update checker is not implemented",
+        ))
+    }
+}
+
+fn close_fanbox_auth_database(
+    database: std::sync::Arc<std::sync::Mutex<pixiv_app::database::Database>>,
+) -> Result<(), CommandError> {
+    let database = std::sync::Arc::try_unwrap(database).map_err(|_| {
+        CommandError::Message("FANBOX account service retained the database after execution")
+    })?;
+    let database = database
+        .into_inner()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    database
+        .close()
+        .map_err(|error| CommandError::State(Box::new(error)))
+}
+
 async fn execute_fanbox(
     root_context: &pixiv_app::lifecycle::Context,
     args: &[String],
 ) -> (Result<(), CommandError>, bool, bool) {
-    use pixiv_cli_rs::{fanbox, fanbox_mcp};
+    use pixiv_cli_rs::{fanbox, fanbox_auth, fanbox_mcp};
     let mut ndjson = false;
     let mut machine = false;
     let result = async {
-        if let Some(help) = fanbox::help_route(args)? {
+        let route = fanbox::command_route(args);
+        if route.path.get(1).is_none_or(|part| part != "auth")
+            && let Some(help) = fanbox::help_route(args)?
+        {
             io::stdout().write_all(help.as_bytes())?;
             return Ok(());
         }
-        let route = fanbox::command_route(args);
         match route
             .path
             .iter()
@@ -1836,9 +1875,70 @@ async fn execute_fanbox(
                     .await
             }
             ["fanbox"] => Err(CommandError::Message("usage: pixiv fanbox <command>")),
-            ["fanbox", "auth", ..] => Err(CommandError::Message(
-                "FANBOX authentication commands are pending Rust migration",
-            )),
+            ["fanbox", "auth", ..] => {
+                let requested = fanbox_auth::AuthCommand::parse(args)?;
+                machine = requested.machine_requested();
+                let command = fanbox_auth::prepare_root(
+                    root_context,
+                    args,
+                    &mut io::stdin().lock(),
+                    io::stdin().is_terminal(),
+                    &pixiv_cli_rs::startup::SystemStartupHooks::system(),
+                    &mut io::stderr(),
+                )?;
+                let mut prompts = pixiv_cli_rs::terminal_prompt::TerminalPrompts::new(
+                    io::stdin(),
+                    io::stdout(),
+                    io::stderr(),
+                );
+                let browser = pixiv_cli_rs::fanbox_browser::SystemBrowserProvider::system();
+                let mut owned_database = None;
+                let mut result = command
+                    .execute(
+                        root_context,
+                        fanbox_auth::Data {
+                            service_factory: || {
+                                let directory = pixiv_app::callback_handler::app_data_directory()
+                                    .map_err(|error| {
+                                    CommandError::MessageText(error.to_string())
+                                })?;
+                                let database = pixiv_app::database::Database::open(&directory)
+                                    .map_err(|error| CommandError::State(Box::new(error)))?;
+                                let database = std::sync::Arc::new(std::sync::Mutex::new(database));
+                                owned_database = Some(database.clone());
+                                let store = std::sync::Arc::new(pixiv_app::config::Store::new(
+                                    directory.join("config.toml"),
+                                ));
+                                Ok(Some(std::sync::Arc::new(
+                                    pixiv_app::fanbox_account_service::AccountService::from_store(
+                                        database, store,
+                                    ),
+                                )))
+                            },
+                            reader: &mut io::stdin().lock(),
+                            writer: &mut io::stdout().lock(),
+                            prompts: &mut prompts,
+                            browser: &browser,
+                        },
+                    )
+                    .await;
+                if result.is_ok() {
+                    let release = option_env!("PIXIV_BUILD_VERSION").unwrap_or("dev") != "dev";
+                    command.post_success(
+                        root_context,
+                        release,
+                        &SystemFanboxAuthUpdateHooks,
+                        &mut io::stderr(),
+                    );
+                }
+                if let Some(database) = owned_database {
+                    result = pixiv_cli_rs::finish_with_cleanup(
+                        result,
+                        close_fanbox_auth_database(database),
+                    );
+                }
+                result
+            }
             ["fanbox", "download"] => Err(CommandError::Message(
                 "FANBOX download commands are pending Rust migration",
             )),

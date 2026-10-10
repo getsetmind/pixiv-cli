@@ -55,16 +55,18 @@ impl Client {
         Self::open_with(credentials, Options::default())
     }
     pub fn open_with(credentials: SessionCredentials, options: Options) -> Result<Self> {
-        Session::new(
-            format!("FANBOXSESSID={}", credentials.fanbox_sessid),
-            options,
-        )
-        .map(|session| Self {
-            session,
-            resources: Mutex::new(std::collections::HashMap::new()),
-            user_id: tokio::sync::Mutex::new(0),
-        })
-        .map_err(|failure| failure.classify("Open"))
+        Self::open_session_bytes_with(credentials.fanbox_sessid.as_bytes(), options)
+    }
+    pub fn open_session_bytes_with(session_value: &[u8], options: Options) -> Result<Self> {
+        let mut cookie = b"FANBOXSESSID=".to_vec();
+        cookie.extend_from_slice(session_value);
+        Session::new_bytes(&cookie, options)
+            .map(|session| Self {
+                session,
+                resources: Mutex::new(std::collections::HashMap::new()),
+                user_id: tokio::sync::Mutex::new(0),
+            })
+            .map_err(|failure| failure.classify("Open"))
     }
     pub async fn current_user(
         &self,
@@ -95,7 +97,7 @@ struct Session {
     solver: Option<solver::Solver>,
 }
 impl Session {
-    fn new(cookie: String, options: Options) -> std::result::Result<Self, Failure> {
+    fn new_bytes(cookie: &[u8], options: Options) -> std::result::Result<Self, Failure> {
         let user_agent = options::validate_user_agent(&options.user_agent)?;
         let proxy_url = options::validate_proxy_url(&options.proxy_url)?;
         let solver_options = options::normalize_solver(options.flare_solverr)?;
@@ -108,7 +110,10 @@ impl Session {
                 )
             })?),
         };
-        let cookie = options::normalize_cookie(&cookie)?;
+        let cookie = match std::str::from_utf8(cookie) {
+            Ok(cookie) => options::normalize_cookie(cookie)?,
+            Err(_) => options::normalize_cookie_bytes(cookie)?,
+        };
         Ok(Self {
             transport,
             proxy_url,

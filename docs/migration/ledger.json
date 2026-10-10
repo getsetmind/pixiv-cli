@@ -1803,19 +1803,41 @@
         "crates/pixiv-cli/src/main.rs",
         "crates/pixiv-cli/src/fanbox.rs",
         "crates/pixiv-app/src/fanbox_account_service.rs",
-        "crates/pixiv-app/src/fanbox_facade.rs"
+        "crates/pixiv-app/src/fanbox_facade.rs",
+        "crates/pixiv-cli/src/fanbox_auth.rs",
+        "crates/pixiv-cli/src/fanbox/help.rs",
+        "crates/pixiv-cli/src/lib.rs",
+        "crates/pixiv-app/src/fanbox_account.rs",
+        "crates/pixiv-app/src/database/fanbox.rs",
+        "crates/pixiv-app/src/config.rs",
+        "crates/pixiv-app/src/config/files.rs",
+        "crates/pixiv-app/src/config/mutations.rs",
+        "crates/pixiv-cli/src/fanbox_browser.rs"
       ],
       "tests": [
         "internal/cli/migration_fanbox_help_routing_test.go",
         "crates/pixiv-cli/tests/fixtures/fanbox-help-routing.json",
         "internal/cli/migration_fanbox_content_reads_test.go",
         "crates/pixiv-cli/tests/fanbox_saved_content_reads.rs",
-        "crates/pixiv-cli/tests/fanbox_binary_reads.rs"
+        "crates/pixiv-cli/tests/fanbox_binary_reads.rs",
+        "internal/cli/migration_fanbox_auth_test.go",
+        "crates/pixiv-cli/tests/fixtures/fanbox-auth.json",
+        "crates/pixiv-cli/tests/fanbox_auth.rs",
+        "internal/storage/database/migration_fanbox_saved_accounts_test.go",
+        "internal/services/fanbox/account/migration_saved_accounts_test.go",
+        "crates/pixiv-app/tests/fixtures/fanbox-saved-accounts.json",
+        "crates/pixiv-app/tests/fanbox_repository_mutations.rs",
+        "crates/pixiv-app/tests/fanbox_auth_service.rs",
+        "crates/pixiv-app/tests/fanbox_saved_reads.rs",
+        "crates/pixiv-cli/tests/fanbox_browser.rs",
+        "sdk/fanbox/migration_opaque_credentials_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-opaque-credentials.json",
+        "crates/pixiv-sdk/tests/fanbox_opaque_credentials.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first help/parser routing only: 22 actual Run invocations in owned Linux children. Proxy values equal command names and Cobra help/terminator scanning are captured exactly; Rust routing/CLI owner, auth/browser/MCP work and non-Linux execution remain pending.",
-        "Connected saved-session read slice: see fanbox-connected-reads.md for exact Go rows, normal dependency boundaries, driver/parser/decoder differences and unproved native/concurrent behavior. No platform or whole FANBOX feature is promoted to verified."
+        "FANBOX download/save/replay, native browser extraction and the global automatic update checker remain unimplemented. Native compressed-wire/HEAD/Range/concurrent decode, arbitrary abort-body cleanup, complete public SDK lifecycle/Accept behavior and HTTP/2 relay remain unfinished; existing pacing/signal/Windows repeated-cleanup/distribution debts are unchanged.",
+        "Concrete malformed parser/SQLite Scan text, nil-slice ownership and arbitrary invalid-UTF8 String inputs remain separately unmapped. Unrestricted service/trim/saved byte schedules remain unverified beyond the bounded comparisons; custom String-only session factory cannot represent arbitrary Go byte strings. Physical Go seccomp fields are not Rust evidence. Unrestricted parser/TTY/IO/SQLite concurrency and non-Linux/platform verification remain open; no verified platform is added."
       ]
     },
     {
@@ -1825,14 +1847,40 @@
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv fanbox auth"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/fanbox_auth.rs",
+        "crates/pixiv-cli/src/fanbox/help.rs",
+        "crates/pixiv-cli/src/lib.rs",
+        "crates/pixiv-app/src/fanbox_account_service.rs",
+        "crates/pixiv-app/src/fanbox_account.rs",
+        "crates/pixiv-app/src/database/fanbox.rs",
+        "crates/pixiv-app/src/config.rs",
+        "crates/pixiv-app/src/config/files.rs",
+        "crates/pixiv-app/src/config/mutations.rs",
+        "crates/pixiv-cli/src/fanbox_browser.rs"
+      ],
       "tests": [
         "internal/cli/migration_fanbox_help_routing_test.go",
-        "crates/pixiv-cli/tests/fixtures/fanbox-help-routing.json"
+        "crates/pixiv-cli/tests/fixtures/fanbox-help-routing.json",
+        "internal/cli/migration_fanbox_auth_test.go",
+        "crates/pixiv-cli/tests/fixtures/fanbox-auth.json",
+        "crates/pixiv-cli/tests/fanbox_auth.rs",
+        "internal/storage/database/migration_fanbox_saved_accounts_test.go",
+        "internal/services/fanbox/account/migration_saved_accounts_test.go",
+        "crates/pixiv-app/tests/fixtures/fanbox-saved-accounts.json",
+        "crates/pixiv-app/tests/fanbox_repository_mutations.rs",
+        "crates/pixiv-app/tests/fanbox_auth_service.rs",
+        "crates/pixiv-app/tests/fanbox_saved_reads.rs",
+        "crates/pixiv-cli/tests/fanbox_browser.rs",
+        "sdk/fanbox/migration_opaque_credentials_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-opaque-credentials.json",
+        "crates/pixiv-sdk/tests/fanbox_opaque_credentials.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first help/parser routing only: 22 actual Run invocations in owned Linux children. Proxy values equal command names and Cobra help/terminator scanning are captured exactly; Rust routing/CLI owner, auth/browser/MCP work and non-Linux execution remain pending."
+        "Native Chrome/Edge/Firefox/Safari extraction and the global automatic updater are still explicit unimplemented paths. Profile/cookie/close adapter and post-success policy evidence does not complete those capabilities.",
+        "Go nil-context/factory panic, malformed parser/SQLite Scan/nil-slice fields and arbitrary byte-string factory correspondence remain explicit gaps. Unrestricted saved byte-reopening schedules and complete SDK/native/platform/lifecycle and distribution behavior remain open beyond the bounded direct-byte comparison. Unrestricted parser/TTY/IO/SQLite concurrency and non-Linux/platform verification remain open; no verified platform is added."
       ]
     },
     {
@@ -1842,39 +1890,111 @@
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv fanbox auth import"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/fanbox_auth.rs",
+        "crates/pixiv-cli/src/fanbox/help.rs",
+        "crates/pixiv-cli/src/lib.rs",
+        "crates/pixiv-app/src/fanbox_account_service.rs",
+        "crates/pixiv-app/src/fanbox_account.rs",
+        "crates/pixiv-app/src/database/fanbox.rs",
+        "crates/pixiv-app/src/config.rs",
+        "crates/pixiv-app/src/config/files.rs",
+        "crates/pixiv-app/src/config/mutations.rs",
+        "crates/pixiv-cli/src/fanbox_browser.rs"
+      ],
       "tests": [
         "internal/cli/migration_fanbox_help_routing_test.go",
-        "crates/pixiv-cli/tests/fixtures/fanbox-help-routing.json"
+        "crates/pixiv-cli/tests/fixtures/fanbox-help-routing.json",
+        "internal/cli/migration_fanbox_auth_test.go",
+        "crates/pixiv-cli/tests/fixtures/fanbox-auth.json",
+        "crates/pixiv-cli/tests/fanbox_auth.rs",
+        "internal/storage/database/migration_fanbox_saved_accounts_test.go",
+        "internal/services/fanbox/account/migration_saved_accounts_test.go",
+        "crates/pixiv-app/tests/fixtures/fanbox-saved-accounts.json",
+        "crates/pixiv-app/tests/fanbox_repository_mutations.rs",
+        "crates/pixiv-app/tests/fanbox_auth_service.rs",
+        "crates/pixiv-app/tests/fanbox_saved_reads.rs",
+        "crates/pixiv-cli/tests/fanbox_browser.rs",
+        "sdk/fanbox/migration_opaque_credentials_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-opaque-credentials.json",
+        "crates/pixiv-sdk/tests/fanbox_opaque_credentials.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first help/parser routing only: 22 actual Run invocations in owned Linux children. Proxy values equal command names and Cobra help/terminator scanning are captured exactly; Rust routing/CLI owner, auth/browser/MCP work and non-Linux execution remain pending."
+        "Go nil verification context has no non-null Rust API input; nil-success session factory panics in Go and returns an explicit missing-client error in Rust. Custom SessionOpener(&str) cannot reproduce arbitrary Go byte-string factories; Unrestricted service/trim/saved byte schedules remain unverified beyond the bounded comparisons.",
+        "Native browser extraction, successful authenticated native binary import, arbitrary credential/parser/transport/cancel/TTY/native-platform schedules and complete SDK lifecycle remain unverified or unimplemented. Unrestricted parser/TTY/IO/SQLite concurrency and non-Linux/platform verification remain open; no verified platform is added."
       ]
     },
     {
       "id": "cli:pixiv fanbox auth list",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv fanbox auth list"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/fanbox_auth.rs",
+        "crates/pixiv-cli/src/fanbox/help.rs",
+        "crates/pixiv-cli/src/lib.rs",
+        "crates/pixiv-app/src/fanbox_account_service.rs",
+        "crates/pixiv-app/src/fanbox_account.rs",
+        "crates/pixiv-app/src/database/fanbox.rs",
+        "crates/pixiv-app/src/config.rs",
+        "crates/pixiv-app/src/config/files.rs",
+        "crates/pixiv-app/src/config/mutations.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_fanbox_auth_test.go",
+        "crates/pixiv-cli/tests/fixtures/fanbox-auth.json",
+        "crates/pixiv-cli/tests/fanbox_auth.rs",
+        "internal/storage/database/migration_fanbox_saved_accounts_test.go",
+        "internal/services/fanbox/account/migration_saved_accounts_test.go",
+        "crates/pixiv-app/tests/fixtures/fanbox-saved-accounts.json",
+        "crates/pixiv-app/tests/fanbox_repository_mutations.rs",
+        "crates/pixiv-app/tests/fanbox_auth_service.rs",
+        "crates/pixiv-app/tests/fanbox_saved_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Concrete malformed SQLite Scan/driver diagnostics, Go nil-list/session distinctions and arbitrary invalid-UTF8 String fields are not byte-exact Rust counterparts. Whole parser/TTY/SQLite/OS behavior and native platforms remain unverified. Unrestricted parser/TTY/IO/SQLite concurrency and non-Linux/platform verification remain open; no verified platform is added."
+      ]
     },
     {
       "id": "cli:pixiv fanbox auth remove",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv fanbox auth remove"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/fanbox_auth.rs",
+        "crates/pixiv-cli/src/fanbox/help.rs",
+        "crates/pixiv-cli/src/lib.rs",
+        "crates/pixiv-app/src/fanbox_account_service.rs",
+        "crates/pixiv-app/src/fanbox_account.rs",
+        "crates/pixiv-app/src/database/fanbox.rs",
+        "crates/pixiv-app/src/config.rs",
+        "crates/pixiv-app/src/config/files.rs",
+        "crates/pixiv-app/src/config/mutations.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_fanbox_auth_test.go",
+        "crates/pixiv-cli/tests/fixtures/fanbox-auth.json",
+        "crates/pixiv-cli/tests/fanbox_auth.rs",
+        "internal/storage/database/migration_fanbox_saved_accounts_test.go",
+        "internal/services/fanbox/account/migration_saved_accounts_test.go",
+        "crates/pixiv-app/tests/fixtures/fanbox-saved-accounts.json",
+        "crates/pixiv-app/tests/fanbox_repository_mutations.rs",
+        "crates/pixiv-app/tests/fanbox_auth_service.rs",
+        "crates/pixiv-app/tests/fanbox_saved_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Go nil Service/repository/context panic shapes and concrete malformed parser/SQLite Scan diagnostics remain separately unmapped. Full confirmation/TTY/cancel/SQLite/IO/concurrent/native-platform schedules remain unverified. Unrestricted parser/TTY/IO/SQLite concurrency and non-Linux/platform verification remain open; no verified platform is added."
+      ]
     },
     {
       "id": "cli:pixiv fanbox auth status",
@@ -1883,27 +2003,70 @@
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv fanbox auth status"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/fanbox_auth.rs",
+        "crates/pixiv-cli/src/fanbox/help.rs",
+        "crates/pixiv-cli/src/lib.rs",
+        "crates/pixiv-app/src/fanbox_account_service.rs",
+        "crates/pixiv-app/src/fanbox_account.rs",
+        "crates/pixiv-app/src/database/fanbox.rs",
+        "crates/pixiv-app/src/config.rs",
+        "crates/pixiv-app/src/config/files.rs",
+        "crates/pixiv-app/src/config/mutations.rs"
+      ],
       "tests": [
         "internal/cli/migration_fanbox_help_routing_test.go",
-        "crates/pixiv-cli/tests/fixtures/fanbox-help-routing.json"
+        "crates/pixiv-cli/tests/fixtures/fanbox-help-routing.json",
+        "internal/cli/migration_fanbox_auth_test.go",
+        "crates/pixiv-cli/tests/fixtures/fanbox-auth.json",
+        "crates/pixiv-cli/tests/fanbox_auth.rs",
+        "internal/storage/database/migration_fanbox_saved_accounts_test.go",
+        "internal/services/fanbox/account/migration_saved_accounts_test.go",
+        "crates/pixiv-app/tests/fixtures/fanbox-saved-accounts.json",
+        "crates/pixiv-app/tests/fanbox_repository_mutations.rs",
+        "crates/pixiv-app/tests/fanbox_auth_service.rs",
+        "crates/pixiv-app/tests/fanbox_saved_reads.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Go-first help/parser routing only: 22 actual Run invocations in owned Linux children. Proxy values equal command names and Cobra help/terminator scanning are captured exactly; Rust routing/CLI owner, auth/browser/MCP work and non-Linux execution remain pending."
+        "Go nil Service/repository/context and concrete malformed parser/SQLite Scan/nil-slice/invalid-UTF8 String shapes remain separately unmapped. Full ready-result/cancel/SQLite/OS/native-platform behavior is unverified. Unrestricted parser/TTY/IO/SQLite concurrency and non-Linux/platform verification remain open; no verified platform is added."
       ]
     },
     {
       "id": "cli:pixiv fanbox auth use",
-      "status": "pending",
+      "status": "in_progress",
       "reference": {
         "snapshot": "reference/cli.windows-amd64.json",
         "key": "pixiv fanbox auth use"
       },
-      "rust_sources": [],
-      "tests": [],
+      "rust_sources": [
+        "crates/pixiv-cli/src/main.rs",
+        "crates/pixiv-cli/src/fanbox_auth.rs",
+        "crates/pixiv-cli/src/fanbox/help.rs",
+        "crates/pixiv-cli/src/lib.rs",
+        "crates/pixiv-app/src/fanbox_account_service.rs",
+        "crates/pixiv-app/src/fanbox_account.rs",
+        "crates/pixiv-app/src/database/fanbox.rs",
+        "crates/pixiv-app/src/config.rs",
+        "crates/pixiv-app/src/config/files.rs",
+        "crates/pixiv-app/src/config/mutations.rs"
+      ],
+      "tests": [
+        "internal/cli/migration_fanbox_auth_test.go",
+        "crates/pixiv-cli/tests/fixtures/fanbox-auth.json",
+        "crates/pixiv-cli/tests/fanbox_auth.rs",
+        "internal/storage/database/migration_fanbox_saved_accounts_test.go",
+        "internal/services/fanbox/account/migration_saved_accounts_test.go",
+        "crates/pixiv-app/tests/fixtures/fanbox-saved-accounts.json",
+        "crates/pixiv-app/tests/fanbox_repository_mutations.rs",
+        "crates/pixiv-app/tests/fanbox_auth_service.rs",
+        "crates/pixiv-app/tests/fanbox_saved_reads.rs"
+      ],
       "verified_platforms": [],
-      "differences": []
+      "differences": [
+        "Go nil Service/repository/context panic shapes and malformed TOML parser messages are not Rust parity assertions. Whole UID/flag/TTY/config/private-write/SQLite/OS/concurrent/native-platform behavior remains unverified. Unrestricted parser/TTY/IO/SQLite concurrency and non-Linux/platform verification remain open; no verified platform is added."
+      ]
     },
     {
       "id": "cli:pixiv fanbox creators",
@@ -7987,7 +8150,10 @@
         "snapshot": "reference/sdk.json",
         "key": "sdk/fanbox:Open"
       },
-      "rust_sources": [],
+      "rust_sources": [
+        "crates/pixiv-sdk/src/fanbox/mod.rs",
+        "crates/pixiv-sdk/src/fanbox/options.rs"
+      ],
       "tests": [
         "sdk/fanbox/migration_identity_protocol_test.go",
         "crates/pixiv-sdk/tests/fixtures/fanbox-identity-protocol.json",
@@ -7996,12 +8162,16 @@
         "sdk/fanbox/migration_context_ownership_test.go",
         "crates/pixiv-sdk/tests/fixtures/fanbox-solver.json",
         "crates/pixiv-sdk/tests/fixtures/fanbox-native-profile.json",
-        "crates/pixiv-sdk/tests/fixtures/fanbox-context-ownership.json"
+        "crates/pixiv-sdk/tests/fixtures/fanbox-context-ownership.json",
+        "sdk/fanbox/migration_opaque_credentials_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-opaque-credentials.json",
+        "crates/pixiv-sdk/tests/fanbox_opaque_credentials.rs",
+        "crates/pixiv-sdk/tests/fanbox_identity.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Restored Go-first contract only: 309 rows across 20 bounded identity/options/protocol families captured from frozen Go with injected owned HTTP boundaries. FANBOX Rust implementation, native fingerprint/media behavior, resources/content and platform parity remain pending; no verified platform added.",
-        "Fresh Go-first solver124/context41/native6 observations are frozen. Native six owned scenarios verify the actual Go factory only; no Rust FANBOX native/solver/identity implementation or platform equivalence is claimed. Supplemental multiplex/HEAD/upload remains denied and was not retried. Repaired native evidence replaces the preliminary seal without changing production Go."
+        "Go typed-nil HTTP-client/Transport shapes, concrete interface/pointer identity and nil context do not all have Rust API counterparts. The explicitly injected constructor supplement does not establish successful nil-HTTPClient native initialization or whole public/native lifecycle and platform equivalence; no verified platform is added.",
+        "Arbitrary cookie/option/parser grammar, native transport initialization failures, unrestricted concurrency and whole SDK lifecycle remain unverified. Unrestricted AccountService byte trim/import and saved-reopening schedules remain unverified beyond the bounded comparisons; custom String-only session factories cannot represent arbitrary Go byte strings. Exact bounded evidence is in fanbox-auth.md and provenance/fanbox-opaque-credentials-go.json."
       ]
     },
     {
@@ -8050,15 +8220,15 @@
         "crates/pixiv-sdk/tests/fixtures/fanbox-identity-json-bytes.json",
         "crates/pixiv-sdk/tests/fixtures/fanbox-solver-json-dates.json",
         "sdk/fanbox/migration_solver_stream_completion_test.go",
-        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-stream-completion.json"
+        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-stream-completion.json",
+        "sdk/fanbox/migration_opaque_credentials_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-opaque-credentials.json",
+        "crates/pixiv-sdk/tests/fanbox_opaque_credentials.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Restored Go-first contract only: 309 rows across 20 bounded identity/options/protocol families captured from frozen Go with injected owned HTTP boundaries. FANBOX Rust implementation, native fingerprint/media behavior, resources/content and platform parity remain pending; no verified platform added.",
-        "Fresh Go-first solver124/context41/native6 observations are frozen. Native six owned scenarios verify the actual Go factory only; no Rust FANBOX native/solver/identity implementation or platform equivalence is claimed. Supplemental multiplex/HEAD/upload remains denied and was not retried. Repaired native evidence replaces the preliminary seal without changing production Go.",
-        "2026-10-10 public SDK identity/options/solver implementation: 156 representable public rows, actual public HTML67, SDK context8 and public solver93 map frozen Go. Private Session is not exported; no public test-only solver control transport. Raw native six-scenario comparison uses the request captured at Go Session boundary, not complete Session/application equivalence. Native/body decompression, resource/content, saved CLI/MCP, arbitrary Go type/nil cases and unrestricted native/platform behavior remain unfinished; no verified platform added. Current checkpoint aggregate gates and review are recorded separately.",
-        "Independent review added separate actual Go14 tokenizer/identity fold/decimal-port and Go7 solver fold regressions. Genuine Rust runtime RED precedes callback-aligned duplicate recovery, Go ASCII-schema SimpleFold and preserved decimal authority fixes. Original309/public67/public93/core124/redirect3 input/observation expectations remain unchanged. Lone-surrogate replacement, JSON depth10000 and solver date grammar remain concrete next-slice gaps; native6 remains a bounded Linux raw factory comparison, not full Session/platform verification.",
-        "Fresh Go-first public identity47/solver79 exact-byte rows cover surrogate replacement, invalid UTF-8, nesting10000, selected literal-NUL metadata and the two actual solver expiry layouts. Genuine Rust semantic RED precedes focused GREEN. First-root normalization excludes ignored later bytes. Scalar-root streaming timing and unrestricted grammar remain open; private nanoseconds/offset fields are source-derived rather than public capture assertions. Final aggregate gate/review evidence is recorded separately; no verified platform added."
+        "Go typed-nil HTTP-client/Transport shapes, concrete interface/pointer identity and nil context do not all have Rust API counterparts. The explicitly injected constructor supplement does not establish successful nil-HTTPClient native initialization or whole public/native lifecycle and platform equivalence; no verified platform is added.",
+        "Arbitrary cookie/option/parser grammar, native transport initialization failures, unrestricted concurrency and whole SDK lifecycle remain unverified. Unrestricted AccountService byte trim/import and saved-reopening schedules remain unverified beyond the bounded comparisons; custom String-only session factories cannot represent arbitrary Go byte strings. Exact bounded evidence is in fanbox-auth.md and provenance/fanbox-opaque-credentials-go.json."
       ]
     },
     {
@@ -8800,14 +8970,15 @@
         "crates/pixiv-sdk/tests/fixtures/fanbox-identity-json-bytes.json",
         "crates/pixiv-sdk/tests/fixtures/fanbox-solver-json-dates.json",
         "sdk/fanbox/migration_solver_stream_completion_test.go",
-        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-stream-completion.json"
+        "crates/pixiv-sdk/tests/fixtures/fanbox-solver-stream-completion.json",
+        "sdk/fanbox/migration_opaque_credentials_test.go",
+        "crates/pixiv-sdk/tests/fixtures/fanbox-opaque-credentials.json",
+        "crates/pixiv-sdk/tests/fanbox_opaque_credentials.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "Restored Go-first contract only: 309 rows across 20 bounded identity/options/protocol families captured from frozen Go with injected owned HTTP boundaries. FANBOX Rust implementation, native fingerprint/media behavior, resources/content and platform parity remain pending; no verified platform added.",
-        "2026-10-10 public SDK identity/options/solver implementation: 156 representable public rows, actual public HTML67, SDK context8 and public solver93 map frozen Go. Private Session is not exported; no public test-only solver control transport. Raw native six-scenario comparison uses the request captured at Go Session boundary, not complete Session/application equivalence. Native/body decompression, resource/content, saved CLI/MCP, arbitrary Go type/nil cases and unrestricted native/platform behavior remain unfinished; no verified platform added. Current checkpoint aggregate gates and review are recorded separately.",
-        "Independent review added separate actual Go14 tokenizer/identity fold/decimal-port and Go7 solver fold regressions. Genuine Rust runtime RED precedes callback-aligned duplicate recovery, Go ASCII-schema SimpleFold and preserved decimal authority fixes. Original309/public67/public93/core124/redirect3 input/observation expectations remain unchanged. Lone-surrogate replacement, JSON depth10000 and solver date grammar remain concrete next-slice gaps; native6 remains a bounded Linux raw factory comparison, not full Session/platform verification.",
-        "Fresh Go-first public identity47/solver79 exact-byte rows cover surrogate replacement, invalid UTF-8, nesting10000, selected literal-NUL metadata and the two actual solver expiry layouts. Genuine Rust semantic RED precedes focused GREEN. First-root normalization excludes ignored later bytes. Scalar-root streaming timing and unrestricted grammar remain open; private nanoseconds/offset fields are source-derived rather than public capture assertions. Final aggregate gate/review evidence is recorded separately; no verified platform added."
+        "Go typed-nil HTTP-client/Transport shapes, concrete interface/pointer identity and nil context do not all have Rust API counterparts. The explicitly injected constructor supplement does not establish successful nil-HTTPClient native initialization or whole public/native lifecycle and platform equivalence; no verified platform is added.",
+        "Arbitrary cookie/option/parser grammar, native transport initialization failures, unrestricted concurrency and whole SDK lifecycle remain unverified. Unrestricted AccountService byte trim/import and saved-reopening schedules remain unverified beyond the bounded comparisons; custom String-only session factories cannot represent arbitrary Go byte strings. Exact bounded evidence is in fanbox-auth.md and provenance/fanbox-opaque-credentials-go.json."
       ]
     },
     {

@@ -232,7 +232,7 @@ impl ReadCommand {
         })
     }
 }
-fn parse_bool(value: &str, flag: &str) -> Result<bool, CommandError> {
+pub(crate) fn parse_bool(value: &str, flag: &str) -> Result<bool, CommandError> {
     match value {
         "1" | "t" | "T" | "TRUE" | "true" | "True" => Ok(true),
         "0" | "f" | "F" | "FALSE" | "false" | "False" => Ok(false),

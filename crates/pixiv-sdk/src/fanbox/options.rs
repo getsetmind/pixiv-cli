@@ -147,26 +147,35 @@ pub(crate) fn normalize_solver(
     Ok(Some(options))
 }
 pub(crate) fn normalize_cookie(header: &str) -> std::result::Result<String, Failure> {
+    normalize_cookie_bytes(header.as_bytes())
+}
+pub(crate) fn normalize_cookie_bytes(header: &[u8]) -> std::result::Result<String, Failure> {
     let fail = |message| Failure::new(Reason::CredentialsExpired, message);
-    if header.trim().is_empty() {
+    if trim_cookie_space(header).is_empty() {
         return Err(fail("FANBOX cookie header is required"));
     }
-    if header.contains(['\r', '\n']) {
+    if header.iter().any(|byte| matches!(byte, b'\r' | b'\n')) {
         return Err(fail("FANBOX cookie header must not contain line breaks"));
     }
     let mut seen = std::collections::BTreeSet::new();
     let mut pairs = vec![];
-    for pair in header.split(';') {
-        let (name, value) = pair.trim().split_once('=').unwrap_or(("", ""));
-        let (name, value) = (name.trim(), value.trim());
+    for pair in header.split(|byte| *byte == b';') {
+        let pair = trim_cookie_space(pair);
+        let (name, value) = pair
+            .iter()
+            .position(|byte| *byte == b'=')
+            .map_or((&b""[..], &b""[..]), |index| {
+                (&pair[..index], &pair[index + 1..])
+            });
+        let (name, value) = (trim_cookie_space(name), trim_cookie_space(value));
         if name.is_empty()
             || !name
-                .bytes()
-                .all(|byte| byte.is_ascii_alphanumeric() || b"!#$%&'*+-.^_`|~".contains(&byte))
+                .iter()
+                .all(|byte| byte.is_ascii_alphanumeric() || b"!#$%&'*+-.^_`|~".contains(byte))
             || value.is_empty()
             || !value
-                .bytes()
-                .all(|byte| (0x21..=0x7e).contains(&byte) && !b"\",;\\".contains(&byte))
+                .iter()
+                .all(|byte| (0x21..=0x7e).contains(byte) && !b"\",;\\".contains(byte))
         {
             return Err(fail(
                 "FANBOX cookie header contains a malformed cookie pair",
@@ -175,10 +184,40 @@ pub(crate) fn normalize_cookie(header: &str) -> std::result::Result<String, Fail
         if !seen.insert(name) {
             return Err(fail("FANBOX cookie header contains duplicate cookie names"));
         }
+        let name = std::str::from_utf8(name)
+            .map_err(|_| fail("FANBOX cookie header contains a malformed cookie pair"))?;
+        let value = std::str::from_utf8(value)
+            .map_err(|_| fail("FANBOX cookie header contains a malformed cookie pair"))?;
         pairs.push(format!("{name}={value}"));
     }
-    if !seen.contains("FANBOXSESSID") {
+    if !seen.contains(&b"FANBOXSESSID"[..]) {
         return Err(fail("FANBOX cookie header must contain FANBOXSESSID"));
     }
     Ok(pairs.join("; "))
+}
+fn trim_cookie_space(mut bytes: &[u8]) -> &[u8] {
+    while let Some(length) = edge_space(bytes, true) {
+        bytes = &bytes[length..];
+    }
+    while let Some(length) = edge_space(bytes, false) {
+        bytes = &bytes[..bytes.len() - length];
+    }
+    bytes
+}
+fn edge_space(bytes: &[u8], front: bool) -> Option<usize> {
+    for length in 1..=bytes.len().min(4) {
+        let edge = if front {
+            &bytes[..length]
+        } else {
+            &bytes[bytes.len() - length..]
+        };
+        if let Ok(value) = std::str::from_utf8(edge) {
+            return value
+                .chars()
+                .next()
+                .filter(|value| value.is_whitespace())
+                .map(|_| length);
+        }
+    }
+    None
 }

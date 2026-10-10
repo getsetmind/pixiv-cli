@@ -56,9 +56,21 @@ impl fmt::Debug for Account {
 }
 
 pub trait Repository: Send + Sync {
+    fn save_credential(&self, context: &Context, account: &Account) -> Result<(), SchedulerError>;
+    fn rotate_session(
+        &self,
+        context: &Context,
+        user_id: i64,
+        expected_revision: i64,
+        session: &[u8],
+        validated_at: i64,
+    ) -> Result<(), SchedulerError>;
+    fn remove(&self, context: &Context, user_id: i64) -> Result<(), SchedulerError>;
     fn list(&self, context: &Context) -> Result<Vec<Account>, SchedulerError>;
     fn get(&self, context: &Context, user_id: i64) -> Result<Account, SchedulerError>;
 }
 pub trait DefaultStore: Send + Sync {
+    fn set(&self, user_id: i64) -> Result<(), SchedulerError>;
+    fn clear(&self) -> Result<(), SchedulerError>;
     fn read(&self) -> Result<Option<i64>, SchedulerError>;
 }

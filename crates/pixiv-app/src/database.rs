@@ -94,6 +94,10 @@ impl Database {
         &self.path
     }
 
+    pub fn close(self) -> Result<(), rusqlite::Error> {
+        self.connection.close().map_err(|(_, error)| error)
+    }
+
     fn initialize(&mut self) -> Result<(), Error> {
         let id: i64 = self
             .connection

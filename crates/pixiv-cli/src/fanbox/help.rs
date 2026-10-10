@@ -43,8 +43,13 @@ fn no_value(flag: &str, path: &[String]) -> bool {
             | "import"
             | "list"
             | "status"
+            | "use"
+            | "remove"
             | "download"
-    ) && matches!(flag, "--json" | "--ndjson" | "--default")
+    ) && matches!(
+        flag,
+        "--json" | "--ndjson" | "--default" | "--auto" | "--yes"
+    )
 }
 pub fn command_route(args: &[String]) -> Route {
     let mut path = vec![];
@@ -115,7 +120,14 @@ pub fn help_route(args: &[String]) -> Result<Option<String>, CommandError> {
             .map_or((token.as_str(), None), |(flag, value)| (flag, Some(value)));
         let boolean = matches!(
             flag,
-            "--help" | "-h" | "--no-proxy" | "--json" | "--ndjson" | "--default"
+            "--help"
+                | "-h"
+                | "--no-proxy"
+                | "--json"
+                | "--ndjson"
+                | "--default"
+                | "--auto"
+                | "--yes"
         );
         let valid = matches!(flag, "--help" | "-h" | "--proxy" | "--no-proxy")
             || flags(leaf)
@@ -181,6 +193,8 @@ fn flags(leaf: &str) -> Vec<Flag> {
             | "import"
             | "list"
             | "status"
+            | "use"
+            | "remove"
             | "download"
     ) {
         flags.push(Flag {
@@ -210,6 +224,22 @@ fn flags(leaf: &str) -> Vec<Flag> {
             short: false,
             kind: "string",
             description: "creator list kind: supporting or following (default \"supporting\")",
+        });
+    }
+    if leaf == "use" {
+        flags.push(Flag {
+            name: "auto",
+            short: false,
+            kind: "",
+            description: "clear the explicit default and use the first stored account",
+        });
+    }
+    if leaf == "remove" {
+        flags.push(Flag {
+            name: "yes",
+            short: false,
+            kind: "",
+            description: "skip confirmation in interactive terminals",
         });
     }
     if leaf == "import" {
@@ -290,7 +320,8 @@ fn render(path: &[String]) -> String {
         "posts" => " SOURCE",
         "tags" => " CREATOR",
         "status" => " [UID]",
-        "remove" | "use" => " UID",
+        "remove" => " UID",
+        "use" => " [UID]",
         _ => "",
     };
     let mut result = format!(

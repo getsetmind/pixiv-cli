@@ -1,7 +1,7 @@
 use super::ConfigError;
 use std::{fs, io, path::Path};
 
-pub(super) fn ensure(path: &Path) -> Result<(), ConfigError> {
+pub(super) fn ensure_with_body(path: &Path, body: &[u8]) -> Result<(), ConfigError> {
     super::private_file::ensure_directory(super::private_file::directory(path))?;
     let mut options = fs::OpenOptions::new();
     options.write(true).create_new(true);
@@ -21,7 +21,7 @@ pub(super) fn ensure(path: &Path) -> Result<(), ConfigError> {
             use std::os::unix::fs::PermissionsExt;
             file.set_permissions(fs::Permissions::from_mode(0o600))?;
         }
-        super::private_file::write_body(&mut file, include_bytes!("default.toml"))?;
+        super::private_file::write_body(&mut file, body)?;
         file.sync_all()
     })();
     let closed = super::private_file::close(file);

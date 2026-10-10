@@ -1,3 +1,5 @@
+mod files;
+pub use files::{ConfigFiles, SystemConfigFiles};
 mod document;
 mod duration;
 mod initialization;
@@ -177,11 +179,36 @@ pub struct RuntimeConfig {
 #[derive(Clone)]
 pub struct Store {
     path: PathBuf,
+    files: Option<std::sync::Arc<dyn ConfigFiles>>,
 }
 
 impl Store {
     pub fn new(path: impl Into<PathBuf>) -> Self {
-        Self { path: path.into() }
+        let path = path.into();
+        Self {
+            files: Some(std::sync::Arc::new(SystemConfigFiles::new(path.clone()))),
+            path,
+        }
+    }
+
+    pub fn with_files(
+        path: impl Into<PathBuf>,
+        files: Option<std::sync::Arc<dyn ConfigFiles>>,
+    ) -> Self {
+        Self {
+            path: path.into(),
+            files,
+        }
+    }
+
+    fn file_store(&self) -> Result<&dyn ConfigFiles, ConfigError> {
+        self.files
+            .as_deref()
+            .ok_or_else(|| ConfigError::Invalid("config file store is not configured".into()))
+    }
+
+    pub fn resolved_path(&self) -> Result<PathBuf, ConfigError> {
+        self.file_store()?.path()
     }
 
     pub fn path(&self) -> &Path {
@@ -189,7 +216,9 @@ impl Store {
     }
 
     pub fn ensure_defaults(&self) -> Result<(), ConfigError> {
-        initialization::ensure(&self.path)
+        let files = self.file_store()?;
+        let path = files.path()?;
+        files.ensure_private_file(&path, include_bytes!("config/default.toml"))
     }
 
     pub fn current(&self) -> Result<Snapshot, ConfigError> {
@@ -205,10 +234,14 @@ impl Store {
         &self,
         environment: impl IntoIterator<Item = (String, String)>,
     ) -> Result<Snapshot, ConfigError> {
-        let body = match std::fs::read(&self.path) {
+        let files = self.file_store()?;
+        let path = files.path()?;
+        let body = match files.read_file(&path) {
             Ok(body) => body,
-            Err(error) if error.kind() == std::io::ErrorKind::NotFound => Vec::new(),
-            Err(error) => return Err(ConfigError::Io(error)),
+            Err(ConfigError::Io(error)) if error.kind() == std::io::ErrorKind::NotFound => {
+                Vec::new()
+            }
+            Err(error) => return Err(error),
         };
         let text = std::str::from_utf8(&body)
             .map_err(|_| ConfigError::Invalid("toml: invalid UTF-8".into()))?;

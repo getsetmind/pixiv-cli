@@ -226,6 +226,23 @@ struct TracedRepository {
     harness: Arc<Harness>,
 }
 impl Repository for TracedRepository {
+    fn save_credential(&self, _: &Context, _: &SavedAccount) -> Result<(), SchedulerError> {
+        panic!("read-only contract attempted credential save")
+    }
+    fn rotate_session(
+        &self,
+        _: &Context,
+        _: i64,
+        _: i64,
+        _: &[u8],
+        _: i64,
+    ) -> Result<(), SchedulerError> {
+        panic!("read-only contract attempted session rotation")
+    }
+    fn remove(&self, _: &Context, _: i64) -> Result<(), SchedulerError> {
+        panic!("read-only contract attempted account removal")
+    }
+
     fn list(&self, context: &Context) -> Result<Vec<SavedAccount>, SchedulerError> {
         self.harness.trace("repository.list");
         self.database.list(context)
@@ -240,6 +257,13 @@ struct TracedDefaults {
     harness: Arc<Harness>,
 }
 impl DefaultStore for TracedDefaults {
+    fn set(&self, _: i64) -> Result<(), SchedulerError> {
+        panic!("read-only contract attempted default mutation")
+    }
+    fn clear(&self) -> Result<(), SchedulerError> {
+        panic!("read-only contract attempted default clear")
+    }
+
     fn read(&self) -> Result<Option<i64>, SchedulerError> {
         self.harness.trace("defaults.read");
         self.store.read_fanbox_default_user_id().map_err(Into::into)
