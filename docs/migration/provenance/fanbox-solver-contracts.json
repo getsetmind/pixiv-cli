@@ -1,0 +1,375 @@
+{
+  "scope": "Go-only actual FANBOX solver core workflow recovery; no production, Rust, native/vendor, module, Cargo or API changes",
+  "base_commit": "b3f01c9944d3317d10d48543f529af6bb1dea2f2",
+  "frozen_go": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "cwd": "/workspace/scratch/cd334a12dde3/pixiv-cli-rs",
+  "owned_files_sha256": {
+    "internal/services/fanbox/protocol/migration_solver_test.go": "c9a27c01aafbf271dc7a6b33cab8959a7b8e721b9b3d0edc6d41941d7aae1f56",
+    "crates/pixiv-sdk/tests/fixtures/fanbox-solver.json": "45ed3d463ce1159290dbb6686490e754e30d4540a108754571a926b8bba6f382"
+  },
+  "toolchain": {
+    "go_version": "go1.27.1",
+    "go_env": [
+      "/workspace/scratch/cd334a12dde3/go-toolchain/go",
+      "/workspace/scratch/cd334a12dde3/go-path",
+      "/workspace/scratch/cd334a12dde3/go-path/pkg/mod",
+      "/workspace/scratch/cd334a12dde3/go-cache",
+      "local"
+    ],
+    "sources_sha256": {
+      "/tmp/quantus-toolchain-env.txt": "8134ecf516ad2127e04f96a198500da34104dde9107cdae71ab4f5eda80c218e",
+      "/tmp/pixiv-rust-validation-env.sh": "2dd5f9db8a8359c310ad8a2366d17d95da9341146579bfabc9a7f94dad07d159"
+    },
+    "all_commands_prefix": "source /tmp/pixiv-rust-validation-env.sh; export GOPROXY=off GOSUMDB=off; set -o pipefail",
+    "pipeline_exit": "PIPESTATUS[0], never tee status"
+  },
+  "execution_timezone": {
+    "local_location": "Local",
+    "tz_environment": "",
+    "unix_epoch_offset_seconds": 32400,
+    "unix_epoch_zone": "JST"
+  },
+  "source_sha256": {
+    "go.mod": "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c",
+    "go.sum": "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e",
+    "internal/services/fanbox/protocol/cookie.go": "692013694d29e4fe67cee7641c4dcdafe73158bea107666c194e6305d33b45a9",
+    "internal/services/fanbox/protocol/protocol.go": "c153337aa61756f5d5ea36ec32ca272e68da8a1604c1d4a4e4d6bcb2c957fdd3",
+    "internal/services/fanbox/protocol/solver.go": "e55464b091fa6720b7134a9487684c6c0969f9b4921384ea0e091d634782fcea",
+    "internal/shared/diagnostics/diagnostics.go": "aecd4045f50f6bcf4cd20f316d680cbfb28e657f919ce1c0700dfdad8d5ddc76"
+  },
+  "go_stdlib_sha256": {
+    "context/context.go": "971f00ffa375b79d3f65e6da33cca3a493cc3fce091c589233abfb4283e29b7d",
+    "encoding/json/decode.go": "1632161a34c8286722716a48ba0b5e0c3d117a2e017e79ace676403808a16e6e",
+    "net/http/client.go": "ced3428a85206de8de79c10de38d34951e0b9823c0ccb68ff51329d048a1f7b9",
+    "net/http/request.go": "c3257079994b4e4f74f01cef72508919983ba31f91fcf599d348e9d52cec1540",
+    "net/http/response.go": "0b32a0b4ee51e00e3410764f3b2ffe1163dccb9cad548b097f47db85893a2f44",
+    "time/time.go": "7d992810b162f65e02cea4d60fd0d90af59b3cafa2c8926ca08083d5c73451dc"
+  },
+  "official_dependencies": [
+    {
+      "module": "github.com/bogdanfinn/fhttp",
+      "sum": "h1:LiQyHOY3i0QoxxNB7nq27/nGNNbtPj0fuBPozhR7Ws4=",
+      "version": "v0.6.8",
+      "zip_sha256": "51f74cb0f96633810038f94773bdbf0356c98a23d9de9eada3008521ae97f3cb"
+    },
+    {
+      "module": "github.com/bogdanfinn/tls-client",
+      "sum": "h1:KiFAlED55DJ8Fcocn+/1nX6PrDFcttIHAf/GDkV6KN8=",
+      "version": "v1.15.1",
+      "zip_sha256": "01aa0c1f09bc29397b97090a9fb03677ce22491f8a1cdd0a0dc7cdbce16cf031"
+    },
+    {
+      "module": "github.com/bogdanfinn/utls",
+      "sum": "h1:OuJ497cc7F3yKNVHRsYPQdGggmk5x6+V5ZlrCR7fOLU=",
+      "version": "v1.7.7-barnius",
+      "zip_sha256": "6e21ca668a463b41d3a4f92449e69872dbb0056b1d41b14b760e1237894203ef"
+    },
+    {
+      "module": "golang.org/x/net",
+      "sum": "h1:zyQRTTrjc33Lhh0fBgT/H3oZq9WuvRR5gPC70xpDiQU=",
+      "version": "v0.48.0",
+      "zip_sha256": "cf5206797e66bbe72fc13542d53a57d069a563cebb6d045c07a870eb4fd888c9"
+    }
+  ],
+  "inventory": {
+    "rows": 124,
+    "families": {
+      "cache_lifecycle": 5,
+      "cache_wait": 4,
+      "challenge_replay": 24,
+      "control_request": 27,
+      "expiry": 22,
+      "go_only_nil_receiver": 1,
+      "go_only_waiter_identity": 4,
+      "shared_waiters": 6,
+      "solution_validation": 31
+    },
+    "rows_reaching_transports": 58,
+    "actual_requests": {
+      "native": 41,
+      "control": 52
+    },
+    "observation_rows_are_not_top_level_tests": true,
+    "historical_solver113_not_used": true
+  },
+  "checks": {
+    "capture-development-1": {
+      "command": "go test ./internal/services/fanbox/protocol -run '^TestMigrationFanboxSolverCoreWorkflowFrozenGo$' -count=1 -v -args -migration-capture-fanbox-solver",
+      "exit": 1,
+      "log": "/tmp/fanbox-solver-recovery/capture-development-1.log",
+      "log_sha256": "37b69f3b59f9147091b9240c70801b573f0463a70c80cb644d1fa76b70fecb70",
+      "log_bytes": 262,
+      "raw_top_level_passes": 0,
+      "raw_top_level_failures": 0,
+      "final_snapshot": false,
+      "note": "The first Go test setup failure is preserved by its original tee log. Preliminary gofmt ran before that pipeline: its additional parser diagnostics were visible in the tool transcript, not this log; no formatter pass is claimed."
+    },
+    "capture-development-2": {
+      "command": "gofmt -w internal/services/fanbox/protocol/migration_solver_test.go && go test ./internal/services/fanbox/protocol -run '^TestMigrationFanboxSolverCoreWorkflowFrozenGo$' -count=1 -v -args -migration-capture-fanbox-solver",
+      "exit": 2,
+      "log": "/tmp/fanbox-solver-recovery/capture-development-2.log",
+      "log_sha256": "a9386134fa1c8f718b953541319f312ce1ac754fe36e69e7fe66b8e761640291",
+      "log_bytes": 769,
+      "raw_top_level_passes": 0,
+      "raw_top_level_failures": 0,
+      "final_snapshot": false,
+      "note": "Original unabridged tee captures formatter syntax failure; Go test was not run."
+    },
+    "capture-development-3": {
+      "command": "gofmt -w internal/services/fanbox/protocol/migration_solver_test.go && go test ./internal/services/fanbox/protocol -run '^TestMigrationFanboxSolverCoreWorkflowFrozenGo$' -count=1 -v -args -migration-capture-fanbox-solver",
+      "exit": 0,
+      "log": "/tmp/fanbox-solver-recovery/capture-development-3.log",
+      "log_sha256": "69703d85ff50133326c8cc109e9e6077372f6afb255d08d8d6c6b0d362f3a5a8",
+      "log_bytes": 9923,
+      "raw_top_level_passes": 1,
+      "raw_top_level_failures": 0,
+      "final_snapshot": false
+    },
+    "capture-development-4": {
+      "command": "gofmt -w internal/services/fanbox/protocol/migration_solver_test.go && go test ./internal/services/fanbox/protocol -run '^TestMigrationFanboxSolverCoreWorkflowFrozenGo$' -count=1 -v -args -migration-capture-fanbox-solver",
+      "exit": 0,
+      "log": "/tmp/fanbox-solver-recovery/capture-development-4.log",
+      "log_sha256": "ea94bcf11b8b0098be448265814d6d91a0c7e31654762615ca305012fa2c1d7e",
+      "log_bytes": 9923,
+      "raw_top_level_passes": 1,
+      "raw_top_level_failures": 0,
+      "final_snapshot": false
+    },
+    "capture-final": {
+      "command": "gofmt -w internal/services/fanbox/protocol/migration_solver_test.go && go test ./internal/services/fanbox/protocol -run '^TestMigrationFanboxSolverCoreWorkflowFrozenGo$' -count=1 -v -args -migration-capture-fanbox-solver",
+      "exit": 0,
+      "log": "/tmp/fanbox-solver-recovery/capture-final.log",
+      "log_sha256": "2c5a28b2199b22952869c0d36030071edeb43bb4ccb6b7568269248af85f7f7a",
+      "log_bytes": 9923,
+      "raw_top_level_passes": 1,
+      "raw_top_level_failures": 0,
+      "final_snapshot": false
+    },
+    "capture-sealed": {
+      "command": "gofmt -w internal/services/fanbox/protocol/migration_solver_test.go && go test ./internal/services/fanbox/protocol -run '^TestMigrationFanboxSolverCoreWorkflowFrozenGo$' -count=1 -v -args -migration-capture-fanbox-solver",
+      "exit": 0,
+      "log": "/tmp/fanbox-solver-recovery/capture-sealed.log",
+      "log_sha256": "7945b8523b118c4abbc3647ea9fda6d69eeaa496fda2d41097a1caab0babf742",
+      "log_bytes": 9923,
+      "raw_top_level_passes": 1,
+      "raw_top_level_failures": 0,
+      "final_snapshot": false
+    },
+    "replay-development-1": {
+      "command": "go test ./internal/services/fanbox/protocol -run '^TestMigrationFanboxSolverCoreWorkflowFrozenGo$' -count=20",
+      "exit": 0,
+      "log": "/tmp/fanbox-solver-recovery/replay-development-1.log",
+      "log_sha256": "5a846ec813f2d4787fae97daf6be33c4c78bfe393fd0fcf2a0b402dccee323e6",
+      "log_bytes": 79,
+      "raw_top_level_passes": 0,
+      "raw_top_level_failures": 0,
+      "final_snapshot": false
+    },
+    "replay-final": {
+      "command": "go test ./internal/services/fanbox/protocol -run '^TestMigrationFanboxSolverCoreWorkflowFrozenGo$' -count=20 -v",
+      "exit": 0,
+      "log": "/tmp/fanbox-solver-recovery/replay-final.log",
+      "log_sha256": "0e0587f4c81bf95d3f0747c0799d1f2580ab489fdb4eb37eeddb566214c347cc",
+      "log_bytes": 196864,
+      "raw_top_level_passes": 20,
+      "raw_top_level_failures": 0,
+      "final_snapshot": false
+    },
+    "replay-sealed": {
+      "command": "go test ./internal/services/fanbox/protocol -run '^TestMigrationFanboxSolverCoreWorkflowFrozenGo$' -count=20 -v",
+      "exit": 0,
+      "log": "/tmp/fanbox-solver-recovery/replay-sealed.log",
+      "log_sha256": "c3329ac9550fe63e8ecf0374c3e7ee255d00bd110716bdc9679dd177f78d454e",
+      "log_bytes": 196864,
+      "raw_top_level_passes": 20,
+      "raw_top_level_failures": 0,
+      "final_snapshot": false
+    },
+    "race-final": {
+      "command": "go test -race ./internal/services/fanbox/protocol -run '^TestMigrationFanboxSolverCoreWorkflowFrozenGo$' -count=10 -v",
+      "exit": 0,
+      "log": "/tmp/fanbox-solver-recovery/race-final.log",
+      "log_sha256": "74c3ce747abb7d1ba68f29e8525fad54c7a079be3725200da770591cd75f239e",
+      "log_bytes": 98475,
+      "raw_top_level_passes": 10,
+      "raw_top_level_failures": 0,
+      "final_snapshot": false
+    },
+    "race-sealed": {
+      "command": "go test -race ./internal/services/fanbox/protocol -run '^TestMigrationFanboxSolverCoreWorkflowFrozenGo$' -count=10 -v",
+      "exit": 0,
+      "log": "/tmp/fanbox-solver-recovery/race-sealed.log",
+      "log_sha256": "93e29683eeb4dcd87c5aae40e561c5f66a7ee1338317f74de29a96c6db677d2b",
+      "log_bytes": 98475,
+      "raw_top_level_passes": 10,
+      "raw_top_level_failures": 0,
+      "final_snapshot": false
+    },
+    "gofmt-final": {
+      "command": "files=$(gofmt -l internal/services/fanbox/protocol/migration_solver_test.go); printf '%s' \"$files\"; test -z \"$files\"",
+      "exit": 0,
+      "log": "/tmp/fanbox-solver-recovery/gofmt-final.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "raw_top_level_passes": 0,
+      "raw_top_level_failures": 0,
+      "final_snapshot": false
+    },
+    "gofmt-sealed": {
+      "command": "files=$(gofmt -l internal/services/fanbox/protocol/migration_solver_test.go); printf '%s' \"$files\"; test -z \"$files\"",
+      "exit": 0,
+      "log": "/tmp/fanbox-solver-recovery/gofmt-sealed.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "raw_top_level_passes": 0,
+      "raw_top_level_failures": 0,
+      "final_snapshot": false
+    },
+    "capture-sealed-v2": {
+      "command": "gofmt -w internal/services/fanbox/protocol/migration_solver_test.go && go test ./internal/services/fanbox/protocol -run '^TestMigrationFanboxSolverCoreWorkflowFrozenGo$' -count=1 -v -args -migration-capture-fanbox-solver",
+      "exit": 0,
+      "log": "/tmp/fanbox-solver-recovery/capture-sealed-v2.log",
+      "log_sha256": "a49b461c111eeabb07830149941cc092247e85b5b35730a1e090654456a9c6da",
+      "log_bytes": 10113,
+      "raw_top_level_passes": 1,
+      "raw_top_level_failures": 0,
+      "final_snapshot": true
+    },
+    "replay-sealed-v2": {
+      "command": "go test ./internal/services/fanbox/protocol -run '^TestMigrationFanboxSolverCoreWorkflowFrozenGo$' -count=20 -v",
+      "exit": 0,
+      "log": "/tmp/fanbox-solver-recovery/replay-sealed-v2.log",
+      "log_sha256": "9219b50d94b007d007b294bfef69e211cfb6a703353007a2cd09ce02b1d1fb51",
+      "log_bytes": 200664,
+      "raw_top_level_passes": 20,
+      "raw_top_level_failures": 0,
+      "final_snapshot": true
+    },
+    "race-sealed-v2": {
+      "command": "go test -race ./internal/services/fanbox/protocol -run '^TestMigrationFanboxSolverCoreWorkflowFrozenGo$' -count=10 -v",
+      "exit": 0,
+      "log": "/tmp/fanbox-solver-recovery/race-sealed-v2.log",
+      "log_sha256": "6b8fb46b1fce713198e2334440e757f3dea5024784bf5158e837abc415c39e72",
+      "log_bytes": 100375,
+      "raw_top_level_passes": 10,
+      "raw_top_level_failures": 0,
+      "final_snapshot": true
+    },
+    "gofmt-sealed-v2": {
+      "command": "files=$(gofmt -l internal/services/fanbox/protocol/migration_solver_test.go); printf '%s' \"$files\"; test -z \"$files\"",
+      "exit": 0,
+      "log": "/tmp/fanbox-solver-recovery/gofmt-sealed-v2.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "raw_top_level_passes": 0,
+      "raw_top_level_failures": 0,
+      "final_snapshot": true
+    }
+  },
+  "joint_complete_package_related_race_vet": {
+    "status": "passed",
+    "owner": "context ownership worker",
+    "checks": {
+      "related": {
+        "command": "go test ./sdk ./sdk/fanbox ./internal/services/fanbox/protocol ./internal/shared/diagnostics ./internal/shared/lifecycle -count=1 -json -timeout=5m",
+        "exit": 0,
+        "log": "/tmp/fanbox-shared-go-recovery/related.log",
+        "log_sha256": "6994059d7b86544a77c9807a7a87593f6a39004d2ce80aa67ec3affe44e8b545",
+        "log_bytes": 513158,
+        "command_file_sha256": "e06b226a908b5b5337a69811d530bf22e03159996d38eaebfb373e0d95786b19",
+        "test_event_totals": {
+          "pass": 472,
+          "skip": 1
+        },
+        "top_level_test_totals": {
+          "pass": 98,
+          "skip": 1
+        },
+        "package_totals": {
+          "pass": 5
+        },
+        "skipped_tests": [
+          {
+            "package": "github.com/FlanChanXwO/pixiv-cli/internal/services/fanbox/protocol",
+            "test": "TestMigrationFanboxNativeProfileChild"
+          }
+        ],
+        "elapsed_seconds": 33,
+        "frozen_files_check_exit": 0
+      },
+      "race": {
+        "command": "go test -race ./sdk ./sdk/fanbox ./internal/services/fanbox/protocol ./internal/shared/diagnostics ./internal/shared/lifecycle -count=1 -json -timeout=5m",
+        "exit": 0,
+        "log": "/tmp/fanbox-shared-go-recovery/race.log",
+        "log_sha256": "0572dfb502636534864906f681e140a435e0b42c711b832220a6d110003d3b50",
+        "log_bytes": 513204,
+        "command_file_sha256": "c9ec58a73663822e5299365d910ca3353b132a65ef2eb76c95cdffe569dcafff",
+        "test_event_totals": {
+          "pass": 472,
+          "skip": 1
+        },
+        "top_level_test_totals": {
+          "pass": 98,
+          "skip": 1
+        },
+        "package_totals": {
+          "pass": 5
+        },
+        "skipped_tests": [
+          {
+            "package": "github.com/FlanChanXwO/pixiv-cli/internal/services/fanbox/protocol",
+            "test": "TestMigrationFanboxNativeProfileChild"
+          }
+        ],
+        "elapsed_seconds": 41,
+        "frozen_files_check_exit": 0
+      },
+      "vet": {
+        "command": "go vet ./sdk ./sdk/fanbox ./internal/services/fanbox/protocol ./internal/shared/diagnostics ./internal/shared/lifecycle",
+        "exit": 0,
+        "log": "/tmp/fanbox-shared-go-recovery/vet.log",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "log_bytes": 0,
+        "command_file_sha256": "ecf26446b94b7a815106fb6fc0432164881fecbdc8d827e05800b12f6e2fdaa8",
+        "frozen_files_check_exit": 0
+      },
+      "gofmt": {
+        "command": "gofmt -l sdk/fanbox/migration_context_ownership_test.go internal/services/fanbox/protocol/migration_solver_test.go internal/services/fanbox/protocol/migration_native_profile_test.go",
+        "exit": 0,
+        "log": "/tmp/fanbox-shared-go-recovery/gofmt.log",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "log_bytes": 0,
+        "command_file_sha256": "1eac67a6f0fafdfa5784e7c56a3ab5a736b6f175bf70e03f3fe341b99cdbabad"
+      }
+    },
+    "owner_seal_check_exit": 0,
+    "frozen_before_sha256": "80f33b7159e81c12050ced3d641e33027d1fc9407962d3f36a12f6c6328a80a5",
+    "frozen_after_sha256": "80f33b7159e81c12050ced3d641e33027d1fc9407962d3f36a12f6c6328a80a5",
+    "before_after_bytes_equal": true,
+    "runner": "/tmp/fanbox-shared-go-recovery/run-gates.sh",
+    "runner_sha256": "9e7ae0f0c7af8c2e6ed365a1d878ffc3ba8312f449715cb9020ef00e64d9ec9d"
+  },
+  "reused_contracts": [
+    "fanbox-identity-protocol.json: constructors/options/identity/public SDK mapping and protocol boundaries",
+    "fanbox-solver-redirect.json: three actual Client.Do malformed Location/no-follow body ownership rows"
+  ],
+  "limitations": [
+    "No real network, account, browser, native TLS/HTTP2, media delivery, OS registration or host trust is exercised",
+    "Injected owned transport proves logical request/body ownership; physical native stream cancellation, concurrent native Read/Close and remaining fingerprint/decompression/lifecycle debts stay separate",
+    "Default uninjected control transport Proxy:nil is source-guarded, not network-executed; control and native injected clients prove independent request and proxy/cookie data scope",
+    "Nil caller context panic remains a Go-only unexecuted boundary; no public Rust test API or normalization is introduced",
+    "This fresh inventory does not reuse lost fixture bytes or historical solver113 count, and is not Rust parity or platform verification"
+  ],
+  "stopped_supplemental_h2_multiplex_upload_probe": "denial preserved; no retry or alternate route",
+  "notable_actual_source_observations": [
+    "actual standard Client.Do supplies an empty zero-length nil Body but rejects nil Response and nonzero-length nil Body; solver maps the latter to unavailable, not malformed response",
+    "expiry takes precedence over expires unless absent or exact null; whitespace-surrounded null does not trigger that fallback",
+    "solver decoder accepts complete first JSON despite trailing garbage/second JSON or same-read error; deferred Close failure is ignored",
+    "direct solver transport canceled/deadline errors map to unavailable unless the caller context itself has failed",
+    "native replay starts at original URL, with exact method/allowlisted headers and cookie restriction on redirected/creator/CDN requests",
+    "shared solve retains first caller values/scope but detaches its deadline and individual cancellation; secondary scope does not replace it",
+    "all waiter cancellation suppresses failure diagnostic and cache; ignoring cancellation may still emit completion but cannot cache",
+    "late completion of replaced call does not clear/cache over active replacement; private fields and explicit pointer equality are retained",
+    "Go successful waiters remain counted in the completed detached call; active pointer is cleared and returned state is a value copy"
+  ]
+}

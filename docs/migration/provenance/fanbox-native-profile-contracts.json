@@ -1,0 +1,590 @@
+{
+  "status": "Final repaired Go-only native contract sealed. Focused capture/unchanged replay/race/gofmt and replacement shared complete related/race/vet/gofmt/source guards passed; no Rust native parity claim.",
+  "reference": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "sources": [
+    {
+      "path": "/workspace/scratch/cd334a12dde3/pixiv-cli-rs/internal/services/fanbox/protocol/migration_native_profile_test.go",
+      "bytes": 46819,
+      "sha256": "50e22883ecdcde2fc673acc4d8d7ab5633d06056e348c41c50b716e6b685dd7e"
+    },
+    {
+      "path": "/workspace/scratch/cd334a12dde3/pixiv-cli-rs/crates/pixiv-sdk/tests/fixtures/fanbox-native-profile.json",
+      "bytes": 164861,
+      "sha256": "df753a715efd28c016a2532fe544e992b00a1fe5ce58b756d807c13b9522dd62"
+    }
+  ],
+  "superseded_pre_review_manifest": {
+    "path": "/tmp/fanbox-native-profile-recovery/manifest.json",
+    "bytes": 38654,
+    "sha256": "eacbea7005fbc6d0a9c7306f4a981226e1b4c693a923c7f6a890cc592c999521"
+  },
+  "proof_repairs": [
+    "Stall timer was anchored before request goroutine launch.",
+    "Initial client SETTINGS ACK obligation was not flushed.",
+    "Completed idle closure lacked a live-before-close/EOF reason proof.",
+    "Sequential-case elapsed time was not recorded.",
+    "Raw-frame validator did not independently verify each consumed byte span."
+  ],
+  "capture": {
+    "command": {
+      "path": "/tmp/fanbox-native-profile-final/capture.command",
+      "bytes": 142,
+      "sha256": "30ca181e832f1f5cad668bfff15f336ade6a48ec20f2a2d8cd08686a67a5ea45"
+    },
+    "log": {
+      "path": "/tmp/fanbox-native-profile-final/capture.log",
+      "bytes": 3383,
+      "sha256": "ce75218bba30638e569e2d67c609cf4095c2df3bf9a4a10b931253556d0ac9e2"
+    },
+    "exit": {
+      "path": "/tmp/fanbox-native-profile-final/capture.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    "source.sha256": {
+      "path": "/tmp/fanbox-native-profile-final/capture.source.sha256",
+      "bytes": 133,
+      "sha256": "27ce06f72a28cefb9d7979c647294a416c5ad25c28599ff129764b262529d1a9"
+    }
+  },
+  "capture_exit": 0,
+  "gap_policy": [
+    "Linux/amd64 owned synthetic peer proof only; no real FANBOX/media/account, user computer, OS trust change, external network or Rust runtime equivalence.",
+    "Session adapter changes only request URL host to owned localhost:port and preserves original api.fanbox.cc authority, path, query, method and headers. TLS SNI/certificate target is localhost, not FANBOX. Session uses an explicit injected client containing the genuine factory transport; default factory TLS/HTTP2 options are unchanged.",
+    "TLS1.2 negotiation, resumption/PSK, HRR, HTTP1 fallback, proxy runtime, HTTP3, other platforms/trust stores and concurrency remain untested. Absence of PSK in fresh TLS1.3 captures does not certify resumption.",
+    "Stopped supplemental HTTP2 multiplex/unfinished HEAD/upload probe is not executed, reconstructed or used as evidence. This slice uses sequential completed GETs and one stalled response-header GET only.",
+    "No body-close cancellation, concurrent Read/Close, compression, legacy deflate, HEADERS END_STREAM/nonzero length or unfinished request-body contract is claimed.",
+    "A pending response-header GET is held for at least 31.2 seconds after the peer observes its complete GET HEADERS, proving survival beyond the dependency's default 30-second total timeout in this run; it does not prove an infinite wait. Explicit caller cancellation/deadline and idle-only cleanup are observed separately. Completed idle connections are checked live for 50ms before each explicit cleanup; physical closure must end in peer EOF.",
+    "Fixed extension ordering is checked across this bounded sample. GREASE randomness/distribution and every ECH length are not statistically verified; source provenance alone is never runtime equivalence."
+  ],
+  "source_guards": {
+    "production": [
+      {
+        "path": "internal/services/fanbox/protocol/protocol.go",
+        "sha256": "c153337aa61756f5d5ea36ec32ca272e68da8a1604c1d4a4e4d6bcb2c957fdd3"
+      },
+      {
+        "path": "internal/services/fanbox/protocol/cookie.go",
+        "sha256": "692013694d29e4fe67cee7641c4dcdafe73158bea107666c194e6305d33b45a9"
+      },
+      {
+        "path": "internal/services/fanbox/protocol/solver.go",
+        "sha256": "e55464b091fa6720b7134a9487684c6c0969f9b4921384ea0e091d634782fcea"
+      },
+      {
+        "path": "go.mod",
+        "sha256": "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c"
+      },
+      {
+        "path": "go.sum",
+        "sha256": "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e"
+      }
+    ],
+    "dependencies": [
+      {
+        "path": "github.com/bogdanfinn/fhttp@v0.6.8",
+        "sha256": "d430be56baa9727bf6517cd918f3f3081426aaa3e0cfb63a25ac83e39bc406a0",
+        "files": 169
+      },
+      {
+        "path": "github.com/bogdanfinn/tls-client@v1.15.1",
+        "sha256": "1e4f80908c65ce4e1b1de0453a9c4d41124a1cebbb53ac4f17227e8cae80887a",
+        "files": 53
+      },
+      {
+        "path": "github.com/bogdanfinn/utls@v1.7.7-barnius",
+        "sha256": "d1cc088b2e51ea0985db3b47379d7f243336b9a65f902eb787068807de037986",
+        "files": 311
+      },
+      {
+        "path": "golang.org/x/net@v0.48.0",
+        "sha256": "45f7f6d536c2ef2ca8bddc2caa79a84fbd8b011058ed5b33c5f83a8f8ac901a4",
+        "files": 826
+      }
+    ],
+    "toolchain": [
+      {
+        "path": "crypto/x509/root.go",
+        "sha256": "bcad6caaa9c0780b87b0509e112600996514184abe1e304bf468e200cacb6223"
+      },
+      {
+        "path": "crypto/x509/root_unix.go",
+        "sha256": "7e4b6024e648ca2cc2359049eeca3780388c02debdfd9db66144f7ebe06cf5ac"
+      },
+      {
+        "path": "crypto/x509/verify.go",
+        "sha256": "8b3d059f20a75ac8a103d97b473fbe90e01d40654c4548c50d9b0937f54f3c8f"
+      },
+      {
+        "path": "crypto/tls/handshake_server_tls13.go",
+        "sha256": "6cb325a7623c3bfe60e066b08fed2cc64e6b6cff85ad8f6467c038968d3a7fe6"
+      },
+      {
+        "path": "net/http/client.go",
+        "sha256": "ced3428a85206de8de79c10de38d34951e0b9823c0ccb68ff51329d048a1f7b9"
+      }
+    ]
+  },
+  "review_state": "Specialist read-only audit identified five proof issues, all repaired; broader independent reviewer audited repaired source/raw witness cleanly and is sealing its final artifact using these gate manifests.",
+  "case_counts": {
+    "scenarios": 6,
+    "client_hellos": 7,
+    "get_streams": 5,
+    "completed_responses": 3,
+    "certificate_failures": 3
+  },
+  "cases": [
+    {
+      "name": "headers_sequential_idle",
+      "elapsed_ns": 106992851,
+      "peer_request_observed_elapsed_ns": 0,
+      "peer_header_hold_ns": 0,
+      "completed_idle_liveness_checks": 2,
+      "alive_after_idle_close": false,
+      "alive_after_thirty_seconds": false,
+      "idle_close_observed": true,
+      "canceled": false,
+      "deadline": false,
+      "unknown_authority": false,
+      "hostname": false,
+      "expired": false
+    },
+    {
+      "name": "response_header_stall",
+      "elapsed_ns": 31230999327,
+      "peer_request_observed_elapsed_ns": 3086236,
+      "peer_header_hold_ns": 31227619861,
+      "completed_idle_liveness_checks": 0,
+      "alive_after_idle_close": true,
+      "alive_after_thirty_seconds": true,
+      "idle_close_observed": false,
+      "canceled": true,
+      "deadline": false,
+      "unknown_authority": false,
+      "hostname": false,
+      "expired": false
+    },
+    {
+      "name": "caller_deadline",
+      "elapsed_ns": 301203667,
+      "peer_request_observed_elapsed_ns": 5786263,
+      "peer_header_hold_ns": 0,
+      "completed_idle_liveness_checks": 0,
+      "alive_after_idle_close": true,
+      "alive_after_thirty_seconds": false,
+      "idle_close_observed": false,
+      "canceled": false,
+      "deadline": true,
+      "unknown_authority": false,
+      "hostname": false,
+      "expired": false
+    },
+    {
+      "name": "untrusted_certificate",
+      "elapsed_ns": 2657379,
+      "peer_request_observed_elapsed_ns": 0,
+      "peer_header_hold_ns": 0,
+      "completed_idle_liveness_checks": 0,
+      "alive_after_idle_close": false,
+      "alive_after_thirty_seconds": false,
+      "idle_close_observed": false,
+      "canceled": false,
+      "deadline": false,
+      "unknown_authority": true,
+      "hostname": false,
+      "expired": false
+    },
+    {
+      "name": "invalid_hostname",
+      "elapsed_ns": 2401864,
+      "peer_request_observed_elapsed_ns": 0,
+      "peer_header_hold_ns": 0,
+      "completed_idle_liveness_checks": 0,
+      "alive_after_idle_close": false,
+      "alive_after_thirty_seconds": false,
+      "idle_close_observed": false,
+      "canceled": false,
+      "deadline": false,
+      "unknown_authority": false,
+      "hostname": true,
+      "expired": false
+    },
+    {
+      "name": "expired_certificate",
+      "elapsed_ns": 2612311,
+      "peer_request_observed_elapsed_ns": 0,
+      "peer_header_hold_ns": 0,
+      "completed_idle_liveness_checks": 0,
+      "alive_after_idle_close": false,
+      "alive_after_thirty_seconds": false,
+      "idle_close_observed": false,
+      "canceled": false,
+      "deadline": false,
+      "unknown_authority": false,
+      "hostname": false,
+      "expired": true
+    }
+  ],
+  "created_at_utc": "2026-10-10T06:19:46.504656+00:00",
+  "focused_checks": {
+    "capture": {
+      "command": {
+        "path": "/tmp/fanbox-native-profile-final/capture.command",
+        "bytes": 142,
+        "sha256": "30ca181e832f1f5cad668bfff15f336ade6a48ec20f2a2d8cd08686a67a5ea45"
+      },
+      "log": {
+        "path": "/tmp/fanbox-native-profile-final/capture.log",
+        "bytes": 3383,
+        "sha256": "ce75218bba30638e569e2d67c609cf4095c2df3bf9a4a10b931253556d0ac9e2"
+      },
+      "exit": {
+        "path": "/tmp/fanbox-native-profile-final/capture.exit",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "observed_exit": 0,
+      "exact_go_or_format_command": "go test ./internal/services/fanbox/protocol -run ^TestMigrationFanboxNativeProfile$ -count=1 -v -args -migration-update-fanbox-native-profile"
+    },
+    "replay": {
+      "command": {
+        "path": "/tmp/fanbox-native-profile-final/replay.command",
+        "bytes": 96,
+        "sha256": "5d3b104c72dd602a0da9f65a7101943ea3b855b9e6e3acc726eda58a0391282a"
+      },
+      "log": {
+        "path": "/tmp/fanbox-native-profile-final/replay.log",
+        "bytes": 3383,
+        "sha256": "ea95db33d38a8227c81973103887eeb8d74db9a004b523e12b55d4142e22aab3"
+      },
+      "exit": {
+        "path": "/tmp/fanbox-native-profile-final/replay.exit",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "observed_exit": 0,
+      "exact_go_or_format_command": "go test ./internal/services/fanbox/protocol -run ^TestMigrationFanboxNativeProfile$ -count=1 -v"
+    },
+    "race": {
+      "command": {
+        "path": "/tmp/fanbox-native-profile-final/race.command",
+        "bytes": 102,
+        "sha256": "197f7e57ef9261b7760bff9fe611970113008c4036cc9b88a28ea723e2080e21"
+      },
+      "log": {
+        "path": "/tmp/fanbox-native-profile-final/race.log",
+        "bytes": 3383,
+        "sha256": "b09e83d156ad4f4dd75ef53e48473ef3ccf1b508b8daed90b2b60cc3d80bca37"
+      },
+      "exit": {
+        "path": "/tmp/fanbox-native-profile-final/race.exit",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "observed_exit": 0,
+      "exact_go_or_format_command": "go test -race ./internal/services/fanbox/protocol -run ^TestMigrationFanboxNativeProfile$ -count=1 -v"
+    },
+    "gofmt": {
+      "command": {
+        "path": "/tmp/fanbox-native-profile-final/gofmt.command",
+        "bytes": 135,
+        "sha256": "999a7a0d953e4f944942a63b957066625523b7fef4a70a41de7fc046b1613b7c"
+      },
+      "log": {
+        "path": "/tmp/fanbox-native-profile-final/gofmt.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit": {
+        "path": "/tmp/fanbox-native-profile-final/gofmt.exit",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "observed_exit": 0,
+      "exact_go_or_format_command": "formatted=$(gofmt -l internal/services/fanbox/protocol/migration_native_profile_test.go); printf %s \"$formatted\"; test -z \"$formatted\""
+    }
+  },
+  "go_mod_verify_unchanged_dependencies": {
+    "log": {
+      "path": "/tmp/fanbox-native-profile-recovery/mod-verify.log",
+      "bytes": 21,
+      "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd"
+    },
+    "exit": {
+      "path": "/tmp/fanbox-native-profile-recovery/mod-verify.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    "observed_exit": 0
+  },
+  "joint_final_manifest": {
+    "path": "/tmp/fanbox-shared-go-final/manifest.json",
+    "bytes": 15582,
+    "sha256": "25961e4d21475f8d684db475b277744fc5ab2ebc97d35c6611278a3b1a409725"
+  },
+  "joint_final_phases": {
+    "related": {
+      "command": {
+        "path": "/tmp/fanbox-shared-go-final/related.command",
+        "bytes": 149,
+        "sha256": "e06b226a908b5b5337a69811d530bf22e03159996d38eaebfb373e0d95786b19"
+      },
+      "log": {
+        "path": "/tmp/fanbox-shared-go-final/related.log",
+        "bytes": 513186,
+        "sha256": "7f09907a28b0fcbe3059c82c546b0c02ed70719b3e81e26afc4fef1795707782"
+      },
+      "exit": {
+        "path": "/tmp/fanbox-shared-go-final/related.exit",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "observed_exit": 0,
+      "exact_go_or_format_command": "go test ./sdk ./sdk/fanbox ./internal/services/fanbox/protocol ./internal/shared/diagnostics ./internal/shared/lifecycle -count=1 -json -timeout=5m"
+    },
+    "race": {
+      "command": {
+        "path": "/tmp/fanbox-shared-go-final/race.command",
+        "bytes": 155,
+        "sha256": "c9ec58a73663822e5299365d910ca3353b132a65ef2eb76c95cdffe569dcafff"
+      },
+      "log": {
+        "path": "/tmp/fanbox-shared-go-final/race.log",
+        "bytes": 513178,
+        "sha256": "994c50f37e3761a09de8102d030e90d203bdf93e050b100c6d9a144c24b26391"
+      },
+      "exit": {
+        "path": "/tmp/fanbox-shared-go-final/race.exit",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "observed_exit": 0,
+      "exact_go_or_format_command": "go test -race ./sdk ./sdk/fanbox ./internal/services/fanbox/protocol ./internal/shared/diagnostics ./internal/shared/lifecycle -count=1 -json -timeout=5m"
+    },
+    "vet": {
+      "command": {
+        "path": "/tmp/fanbox-shared-go-final/vet.command",
+        "bytes": 121,
+        "sha256": "ecf26446b94b7a815106fb6fc0432164881fecbdc8d827e05800b12f6e2fdaa8"
+      },
+      "log": {
+        "path": "/tmp/fanbox-shared-go-final/vet.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit": {
+        "path": "/tmp/fanbox-shared-go-final/vet.exit",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "observed_exit": 0,
+      "exact_go_or_format_command": "go vet ./sdk ./sdk/fanbox ./internal/services/fanbox/protocol ./internal/shared/diagnostics ./internal/shared/lifecycle"
+    },
+    "gofmt": {
+      "command": {
+        "path": "/tmp/fanbox-shared-go-final/gofmt.command",
+        "bytes": 182,
+        "sha256": "1eac67a6f0fafdfa5784e7c56a3ab5a736b6f175bf70e03f3fe341b99cdbabad"
+      },
+      "log": {
+        "path": "/tmp/fanbox-shared-go-final/gofmt.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit": {
+        "path": "/tmp/fanbox-shared-go-final/gofmt.exit",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "observed_exit": 0,
+      "exact_go_or_format_command": "gofmt -l sdk/fanbox/migration_context_ownership_test.go internal/services/fanbox/protocol/migration_solver_test.go internal/services/fanbox/protocol/migration_native_profile_test.go"
+    }
+  },
+  "joint_final_summary": {
+    "packages": 5,
+    "normal_top_level_passes": 98,
+    "race_top_level_passes": 98,
+    "normal_raw_named_pass_events": 472,
+    "race_raw_named_pass_events": 472,
+    "explicit_helper_skips": 1,
+    "native_real_children_per_parent_run": 6,
+    "source_and_fixture_freeze_unchanged": true,
+    "production_Go_module_paths_matching_frozen_reference": 434,
+    "original_joint_artifacts_preserved": 36
+  },
+  "replay_policy": [
+    "Comparable fields are exact observations, not source labels: complete extension order and fixed extension data, cipher order, key-share group/length, ECH fixed fields and allowed dynamic payload lengths, decrypted HTTP2 SETTINGS order/values, window, HEADERS priority/flags/ordered fields, certificate classifications, sequential reuse and physical idle closure.",
+    "Go-only observations retain complete raw ClientHello records, all random/GREASE/key-share/ECH bytes and selected lengths, all decoded fields and decrypted frame bytes, exact raw error chains and elapsed time. They are not expected to equal a later random run.",
+    "Only actual GREASE codepoints are canonicalized to 0x0a0a; their positions and fixed extension payload bytes remain exact. Random/session/key-share key bytes are compared by exact required length, not value. ECH config/key/payload randomness and its four source-defined possible lengths are named explicitly.",
+    "Direct-factory authority and certificate-failure outer URL replace only this run's owned localhost port in comparable fields; raw fields/errors remain lossless. Expired-certificate comparison replaces only the parsed current-time token, retaining all other diagnostic text and typed x509 reason.",
+    "SETTINGS ACK arrival relative to a later sequential request is scheduling-dependent. All raw frames are retained; ACK multiplicity and initial SETTINGS/window/HEADERS remain checked. The peer sends SETTINGS only after receiving the first complete GET HEADERS."
+  ],
+  "native_outcomes": {
+    "hello_count": 7,
+    "raw_client_h2_frame_slots": 19,
+    "settings_order_values": [
+      [
+        1,
+        65536
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        4,
+        6291456
+      ],
+      [
+        6,
+        262144
+      ]
+    ],
+    "connection_window_update_increment": 15663105,
+    "pseudo_header_order": [
+      ":method",
+      ":authority",
+      ":scheme",
+      ":path"
+    ],
+    "authenticated_regular_header_order": [
+      "accept",
+      "cookie",
+      "origin",
+      "referer",
+      "user-agent",
+      "accept-encoding"
+    ],
+    "default_user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:148.0) Gecko/20100101 Firefox/148.0",
+    "accept_encoding": "gzip, deflate, br",
+    "HEADERS_flags": 37,
+    "HEADERS_priority": {
+      "exclusive": true,
+      "stream_dependency": 0,
+      "encoded_weight": 255,
+      "semantic_weight": 256
+    },
+    "certificate_rejections": [
+      "untrusted issuer",
+      "invalid hostname",
+      "expired certificate"
+    ],
+    "caller_reset_codes": [
+      8,
+      8
+    ],
+    "completed_idle_liveness_checks": 2,
+    "accepted_peer_terminal_error": "EOF",
+    "post_headers_stall_ns": 31227619861
+  },
+  "preserved_additional_gaps": [
+    "Owned observer captures each initial Go ClientHello in a single complete TLS record; fragmented ClientHello records/server-flight byte equality are outside this slice.",
+    "No native no-follow redirect scenario is in this bounded slice.",
+    "A finite50ms idle liveness window and observed close-after-call establish bounded runtime behavior; they do not prove indefinite idle survival."
+  ],
+  "source_artifacts_after_all_checks": [
+    {
+      "path": "/workspace/scratch/cd334a12dde3/pixiv-cli-rs/internal/services/fanbox/protocol/migration_native_profile_test.go",
+      "bytes": 46819,
+      "sha256": "50e22883ecdcde2fc673acc4d8d7ab5633d06056e348c41c50b716e6b685dd7e"
+    },
+    {
+      "path": "/workspace/scratch/cd334a12dde3/pixiv-cli-rs/crates/pixiv-sdk/tests/fixtures/fanbox-native-profile.json",
+      "bytes": 164861,
+      "sha256": "df753a715efd28c016a2532fe544e992b00a1fe5ce58b756d807c13b9522dd62"
+    }
+  ],
+  "toolchain_environment": {
+    "path": "/tmp/quantus-toolchain-env.txt",
+    "bytes": 867,
+    "sha256": "8134ecf516ad2127e04f96a198500da34104dde9107cdae71ab4f5eda80c218e"
+  },
+  "rust_validation_environment": {
+    "path": "/tmp/pixiv-rust-validation-env.sh",
+    "bytes": 1078,
+    "sha256": "2dd5f9db8a8359c310ad8a2366d17d95da9341146579bfabc9a7f94dad07d159"
+  },
+  "cargo_invocations": 0,
+  "artifacts": [
+    {
+      "path": "/tmp/fanbox-native-profile-final/capture.command",
+      "bytes": 142,
+      "sha256": "30ca181e832f1f5cad668bfff15f336ade6a48ec20f2a2d8cd08686a67a5ea45"
+    },
+    {
+      "path": "/tmp/fanbox-native-profile-final/capture.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/tmp/fanbox-native-profile-final/capture.log",
+      "bytes": 3383,
+      "sha256": "ce75218bba30638e569e2d67c609cf4095c2df3bf9a4a10b931253556d0ac9e2"
+    },
+    {
+      "path": "/tmp/fanbox-native-profile-final/capture.source.sha256",
+      "bytes": 133,
+      "sha256": "27ce06f72a28cefb9d7979c647294a416c5ad25c28599ff129764b262529d1a9"
+    },
+    {
+      "path": "/tmp/fanbox-native-profile-final/gofmt.command",
+      "bytes": 135,
+      "sha256": "999a7a0d953e4f944942a63b957066625523b7fef4a70a41de7fc046b1613b7c"
+    },
+    {
+      "path": "/tmp/fanbox-native-profile-final/gofmt.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/tmp/fanbox-native-profile-final/gofmt.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/fanbox-native-profile-final/race.command",
+      "bytes": 102,
+      "sha256": "197f7e57ef9261b7760bff9fe611970113008c4036cc9b88a28ea723e2080e21"
+    },
+    {
+      "path": "/tmp/fanbox-native-profile-final/race.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/tmp/fanbox-native-profile-final/race.log",
+      "bytes": 3383,
+      "sha256": "b09e83d156ad4f4dd75ef53e48473ef3ccf1b508b8daed90b2b60cc3d80bca37"
+    },
+    {
+      "path": "/tmp/fanbox-native-profile-final/race.source-fixture.sha256",
+      "bytes": 258,
+      "sha256": "aa34db417c5ad08eb36efbb72808ee6c2045064229c88ec08eb632addc1852e8"
+    },
+    {
+      "path": "/tmp/fanbox-native-profile-final/replay.command",
+      "bytes": 96,
+      "sha256": "5d3b104c72dd602a0da9f65a7101943ea3b855b9e6e3acc726eda58a0391282a"
+    },
+    {
+      "path": "/tmp/fanbox-native-profile-final/replay.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/tmp/fanbox-native-profile-final/replay.log",
+      "bytes": 3383,
+      "sha256": "ea95db33d38a8227c81973103887eeb8d74db9a004b523e12b55d4142e22aab3"
+    },
+    {
+      "path": "/tmp/fanbox-native-profile-final/replay.source-fixture.sha256",
+      "bytes": 258,
+      "sha256": "aa34db417c5ad08eb36efbb72808ee6c2045064229c88ec08eb632addc1852e8"
+    },
+    {
+      "path": "/tmp/fanbox-native-profile-final/sealed.sha256",
+      "bytes": 258,
+      "sha256": "aa34db417c5ad08eb36efbb72808ee6c2045064229c88ec08eb632addc1852e8"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+   Compiling pixiv-sdk v0.1.0 (/workspace/scratch/cd334a12dde3/pixiv-cli-rs/crates/pixiv-sdk)
+    Finished `test` profile [unoptimized] target(s) in 3.23s
+     Running tests/context_ownership.rs (target/debug/deps/context_ownership-a89c4ae7c1180194)
+
+running 4 tests
+test paused_deadline_keeps_parent_cancellation_that_precedes_timer_delivery ... ok
+test paused_earlier_child_deadline_preserves_later_parent_ownership ... FAILED
+test paused_deadline_notification_records_error_and_notifies_children ... FAILED
+test paused_inherited_deadline_notifies_the_owning_parent_and_siblings ... FAILED
+
+failures:
+
+---- paused_earlier_child_deadline_preserves_later_parent_ownership stdout ----
+
+thread 'paused_earlier_child_deadline_preserves_later_parent_ownership' (71) panicked at crates/pixiv-sdk/tests/context_ownership.rs:485:5:
+assertion `left == right` failed
+  left: Canceled
+ right: DeadlineExceeded
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- paused_deadline_notification_records_error_and_notifies_children stdout ----
+
+thread 'paused_deadline_notification_records_error_and_notifies_children' (70) panicked at crates/pixiv-sdk/tests/context_ownership.rs:468:5:
+assertion `left == right` failed
+  left: Canceled
+ right: DeadlineExceeded
+
+---- paused_inherited_deadline_notifies_the_owning_parent_and_siblings stdout ----
+
+thread 'paused_inherited_deadline_notifies_the_owning_parent_and_siblings' (72) panicked at crates/pixiv-sdk/tests/context_ownership.rs:506:5:
+assertion `left == right` failed
+  left: Canceled
+ right: DeadlineExceeded
+
+
+failures:
+    paused_deadline_notification_records_error_and_notifies_children
+    paused_earlier_child_deadline_preserves_later_parent_ownership
+    paused_inherited_deadline_notifies_the_owning_parent_and_siblings
+
+test result: FAILED. 1 passed; 3 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p pixiv-sdk --test context_ownership`

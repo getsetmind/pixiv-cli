@@ -1,0 +1,5927 @@
+{
+  "reference": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "go_version": "go1.27.1",
+  "sources": [
+    {
+      "path": "go.mod",
+      "sha256": "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c"
+    },
+    {
+      "path": "go.sum",
+      "sha256": "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e"
+    },
+    {
+      "path": "sdk/fanbox/dto.go",
+      "sha256": "860f6d3f18d083526681cf86112dbbdb7faa382e1f9cac3e35b543f56c2df505"
+    },
+    {
+      "path": "sdk/fanbox/models.go",
+      "sha256": "1dd3928aa6752c51f114c678eef3b0a2b4784a275ec80fcdbbd61006407e4623"
+    },
+    {
+      "path": "internal/services/fanbox/protocol/cookie.go",
+      "sha256": "692013694d29e4fe67cee7641c4dcdafe73158bea107666c194e6305d33b45a9"
+    },
+    {
+      "path": "sdk/fanbox/fanbox.go",
+      "sha256": "2208576144b94b89efd57b6f054ee018268812d52d556fd0758e2ee322577542"
+    },
+    {
+      "path": "sdk/fanbox/ops.go",
+      "sha256": "868b3b68de07d7638af5f9dd3ab1be8f0c9751f222c05c7776cde092052a7c8d"
+    },
+    {
+      "path": "sdk/fanbox/errors.go",
+      "sha256": "523577a066e3d53ce9eced8c7afbe29f422a75ce6aca58bc3b5b6fbf8da59909"
+    },
+    {
+      "path": "sdk/error.go",
+      "sha256": "d8e48078c464f18a26cdcf32828e423dd948f17061269b222f82e08a8cee0041"
+    },
+    {
+      "path": "internal/services/fanbox/protocol/protocol.go",
+      "sha256": "c153337aa61756f5d5ea36ec32ca272e68da8a1604c1d4a4e4d6bcb2c957fdd3"
+    },
+    {
+      "path": "internal/services/fanbox/protocol/identity.go",
+      "sha256": "10ba481b43e3ec7d0bdaa2defbbd629c4b5bb2aa169c5bff99c8e756de8143d9"
+    },
+    {
+      "path": "internal/shared/diagnostics/diagnostics.go",
+      "sha256": "aecd4045f50f6bcf4cd20f316d680cbfb28e657f919ce1c0700dfdad8d5ddc76"
+    },
+    {
+      "path": "internal/shared/lifecycle/lifecycle.go",
+      "sha256": "2c5524fc40cc2202ba06934e01369824909ad2bd7f0f43478ceab9e344298384"
+    },
+    {
+      "path": "internal/shared/lifecycle/lease.go",
+      "sha256": "9715a8f3592aa0269b6f85b1a52751f2e0f2947e34fb133836fb1ef07172b381"
+    },
+    {
+      "path": "internal/shared/lifecycle/attempt.go",
+      "sha256": "5f329d3433b77b30a33570f8425d9742e4ac1fb09012aee2a628f6f14578d614"
+    }
+  ],
+  "standard_sources": [
+    {
+      "path": "src/context/context.go",
+      "sha256": "971f00ffa375b79d3f65e6da33cca3a493cc3fce091c589233abfb4283e29b7d"
+    },
+    {
+      "path": "src/net/http/client.go",
+      "sha256": "ced3428a85206de8de79c10de38d34951e0b9823c0ccb68ff51329d048a1f7b9"
+    },
+    {
+      "path": "src/net/http/request.go",
+      "sha256": "c3257079994b4e4f74f01cef72508919983ba31f91fcf599d348e9d52cec1540"
+    }
+  ],
+  "evidence": "Actual standard context.Context APIs, typed opt-in diagnostics, lifecycle.Run with owned leases, and actual fanbox.Client.CurrentUser through a no-network owned standard RoundTripper. Transport cancellation returns the request context's actual Err after its actual Done channel closes. Frozen production files and official Go 1.27.1 standard source hashes are guarded before every capture/replay. Observations are compared byte-for-byte without normalization.",
+  "limitations": [
+    "Go has standard context.Context; there is no sdk/context.go API. This fixture cannot establish parity for the lost Rust SDK context bridge.",
+    "Go-only arbitrary comparable key types, interface and value identity, context concrete type, exact error-tree types, panic text and fixed absolute deadline timestamps are explicitly named; no Rust representation or API identity is assumed.",
+    "The real timer case compares the exact deadline relative to its construction origin, with this expression declared in its input. Absolute runtime timestamp and scheduling latency are not compared; fixed past/future cases retain exact absolute timestamps. Every wait is bounded at two seconds.",
+    "Synthetic CurrentUser response parses only a control identity and ownership outcome; identity/DTO/header/redirect/options cases already published elsewhere are not re-inventoried here.",
+    "Injected transports can ignore cancellation and still return success. This source outcome must not be replaced by an unconditional context precheck or cancellation race.",
+    "No live account, socket, browser, native transport, native cancellation, Rust implementation/build or non-Linux runtime is exercised. Context causes beyond standard Canceled/DeadlineExceeded, custom Context implementations and unrestricted concurrent schedules are outside this bounded slice."
+  ],
+  "cases": [
+    {
+      "name": "standard/background",
+      "input": {
+        "operation": "background"
+      },
+      "observation": {
+        "go_only_repeated_root_interface_equal": true,
+        "go_only_string": "context.Background",
+        "state": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": true,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "context.backgroundCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": false,
+          "value": null
+        }
+      }
+    },
+    {
+      "name": "standard/todo",
+      "input": {
+        "operation": "todo"
+      },
+      "observation": {
+        "go_only_repeated_root_interface_equal": true,
+        "go_only_string": "context.TODO",
+        "state": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": true,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "context.todoCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": false,
+          "value": null
+        }
+      }
+    },
+    {
+      "name": "standard/typed_values_and_shadowing",
+      "input": {
+        "go_only_comparable_keys": [
+          "defined string type",
+          "distinct defined string type",
+          "struct with equal comparable fields",
+          "distinct nonzero-sized pointers"
+        ],
+        "operation": "WithValue",
+        "values": [
+          "owned-parent",
+          "owned-child",
+          "owned-distinct-key-type",
+          "owned-struct-value",
+          {
+            "Number": 13
+          },
+          null
+        ]
+      },
+      "observation": {
+        "child_state": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": true,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": false,
+          "value": "owned-child"
+        },
+        "distinct_key_value": "owned-distinct-key-type",
+        "distinct_pointer_key_value": null,
+        "equal_struct_key_value": "owned-struct-value",
+        "go_only_child_interface_differs": true,
+        "go_only_pointer_key_same_value_identity": true,
+        "nil_shadow_state": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": true,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": false,
+          "value": null
+        },
+        "parent_state": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": true,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": false,
+          "value": "owned-parent"
+        },
+        "parent_unaffected_value": "owned-parent"
+      }
+    },
+    {
+      "name": "standard/WithValue_nil_parent",
+      "input": {
+        "operation": "WithValue_nil_parent"
+      },
+      "observation": {
+        "go_only_panic": "cannot create context from nil parent"
+      }
+    },
+    {
+      "name": "standard/WithValue_nil_key",
+      "input": {
+        "operation": "WithValue_nil_key"
+      },
+      "observation": {
+        "go_only_panic": "nil key"
+      }
+    },
+    {
+      "name": "standard/WithValue_uncomparable_key",
+      "input": {
+        "operation": "WithValue_uncomparable_key"
+      },
+      "observation": {
+        "go_only_panic": "key is not comparable"
+      }
+    },
+    {
+      "name": "standard/WithCancel_nil_parent",
+      "input": {
+        "operation": "WithCancel_nil_parent"
+      },
+      "observation": {
+        "go_only_panic": "cannot create context from nil parent"
+      }
+    },
+    {
+      "name": "standard/WithDeadline_nil_parent",
+      "input": {
+        "operation": "WithDeadline_nil_parent"
+      },
+      "observation": {
+        "go_only_panic": "cannot create context from nil parent"
+      }
+    },
+    {
+      "name": "standard/WithoutCancel_nil_parent",
+      "input": {
+        "operation": "WithoutCancel_nil_parent"
+      },
+      "observation": {
+        "go_only_panic": "cannot create context from nil parent"
+      }
+    },
+    {
+      "name": "standard/cancellation/child_first",
+      "input": {
+        "operation": "WithCancel",
+        "order": "child_first",
+        "repeat_cancel": true
+      },
+      "observation": {
+        "after_both": {
+          "child": {
+            "cause": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          },
+          "parent": {
+            "cause": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          },
+          "sibling": {
+            "cause": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          }
+        },
+        "after_first": {
+          "child": {
+            "cause": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          },
+          "parent": {
+            "cause": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "done_closed": false,
+            "done_nil": false,
+            "error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          },
+          "sibling": {
+            "cause": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "done_closed": false,
+            "done_nil": false,
+            "error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          }
+        },
+        "before": {
+          "child": {
+            "cause": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "done_closed": false,
+            "done_nil": false,
+            "error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          },
+          "go_only_child_done_distinct": true,
+          "parent": {
+            "cause": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "done_closed": false,
+            "done_nil": false,
+            "error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          },
+          "sibling": {
+            "cause": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "done_closed": false,
+            "done_nil": false,
+            "error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          }
+        }
+      }
+    },
+    {
+      "name": "standard/cancellation/parent_first",
+      "input": {
+        "operation": "WithCancel",
+        "order": "parent_first",
+        "repeat_cancel": true
+      },
+      "observation": {
+        "after_both": {
+          "child": {
+            "cause": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          },
+          "parent": {
+            "cause": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          },
+          "sibling": {
+            "cause": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          }
+        },
+        "after_first": {
+          "child": {
+            "cause": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          },
+          "parent": {
+            "cause": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          },
+          "sibling": {
+            "cause": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          }
+        },
+        "before": {
+          "child": {
+            "cause": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "done_closed": false,
+            "done_nil": false,
+            "error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          },
+          "go_only_child_done_distinct": true,
+          "parent": {
+            "cause": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "done_closed": false,
+            "done_nil": false,
+            "error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          },
+          "sibling": {
+            "cause": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "done_closed": false,
+            "done_nil": false,
+            "error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          }
+        }
+      }
+    },
+    {
+      "name": "standard/deadline/expired_parent_later_child",
+      "input": {
+        "child_requested_deadline": "2099-01-01T00:00:00.123456789Z",
+        "operation": "WithDeadline",
+        "parent_deadline": "1970-01-01T00:00:01.123456789Z",
+        "scenario": "expired_parent_later_child"
+      },
+      "observation": {
+        "after_cleanup": {
+          "child": {
+            "cause": {
+              "canceled": false,
+              "deadline_exceeded": true,
+              "go_only_error_tree": [
+                {
+                  "message": "context deadline exceeded",
+                  "type": "context.deadlineExceededError"
+                }
+              ],
+              "message": "context deadline exceeded",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": false,
+              "deadline_exceeded": true,
+              "go_only_error_tree": [
+                {
+                  "message": "context deadline exceeded",
+                  "type": "context.deadlineExceededError"
+                }
+              ],
+              "message": "context deadline exceeded",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "go_only_deadline_rfc3339_nano": "1970-01-01T00:00:01.123456789Z",
+            "go_only_deadline_unix_nano": 1123456789,
+            "has_deadline": true,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          },
+          "parent": {
+            "cause": {
+              "canceled": false,
+              "deadline_exceeded": true,
+              "go_only_error_tree": [
+                {
+                  "message": "context deadline exceeded",
+                  "type": "context.deadlineExceededError"
+                }
+              ],
+              "message": "context deadline exceeded",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": false,
+              "deadline_exceeded": true,
+              "go_only_error_tree": [
+                {
+                  "message": "context deadline exceeded",
+                  "type": "context.deadlineExceededError"
+                }
+              ],
+              "message": "context deadline exceeded",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.timerCtx",
+            "go_only_deadline_rfc3339_nano": "1970-01-01T00:00:01.123456789Z",
+            "go_only_deadline_unix_nano": 1123456789,
+            "has_deadline": true,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          }
+        },
+        "before_cleanup": {
+          "child": {
+            "cause": {
+              "canceled": false,
+              "deadline_exceeded": true,
+              "go_only_error_tree": [
+                {
+                  "message": "context deadline exceeded",
+                  "type": "context.deadlineExceededError"
+                }
+              ],
+              "message": "context deadline exceeded",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": false,
+              "deadline_exceeded": true,
+              "go_only_error_tree": [
+                {
+                  "message": "context deadline exceeded",
+                  "type": "context.deadlineExceededError"
+                }
+              ],
+              "message": "context deadline exceeded",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "go_only_deadline_rfc3339_nano": "1970-01-01T00:00:01.123456789Z",
+            "go_only_deadline_unix_nano": 1123456789,
+            "has_deadline": true,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          },
+          "parent": {
+            "cause": {
+              "canceled": false,
+              "deadline_exceeded": true,
+              "go_only_error_tree": [
+                {
+                  "message": "context deadline exceeded",
+                  "type": "context.deadlineExceededError"
+                }
+              ],
+              "message": "context deadline exceeded",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": false,
+              "deadline_exceeded": true,
+              "go_only_error_tree": [
+                {
+                  "message": "context deadline exceeded",
+                  "type": "context.deadlineExceededError"
+                }
+              ],
+              "message": "context deadline exceeded",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.timerCtx",
+            "go_only_deadline_rfc3339_nano": "1970-01-01T00:00:01.123456789Z",
+            "go_only_deadline_unix_nano": 1123456789,
+            "has_deadline": true,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          }
+        }
+      }
+    },
+    {
+      "name": "standard/deadline/expired_child_live_parent",
+      "input": {
+        "child_requested_deadline": "1970-01-01T00:00:01.123456789Z",
+        "operation": "WithDeadline",
+        "parent_deadline": "none",
+        "scenario": "expired_child_live_parent"
+      },
+      "observation": {
+        "after_cleanup": {
+          "child": {
+            "cause": {
+              "canceled": false,
+              "deadline_exceeded": true,
+              "go_only_error_tree": [
+                {
+                  "message": "context deadline exceeded",
+                  "type": "context.deadlineExceededError"
+                }
+              ],
+              "message": "context deadline exceeded",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": false,
+              "deadline_exceeded": true,
+              "go_only_error_tree": [
+                {
+                  "message": "context deadline exceeded",
+                  "type": "context.deadlineExceededError"
+                }
+              ],
+              "message": "context deadline exceeded",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.timerCtx",
+            "go_only_deadline_rfc3339_nano": "1970-01-01T00:00:01.123456789Z",
+            "go_only_deadline_unix_nano": 1123456789,
+            "has_deadline": true,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          },
+          "parent": {
+            "cause": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          }
+        },
+        "before_cleanup": {
+          "child": {
+            "cause": {
+              "canceled": false,
+              "deadline_exceeded": true,
+              "go_only_error_tree": [
+                {
+                  "message": "context deadline exceeded",
+                  "type": "context.deadlineExceededError"
+                }
+              ],
+              "message": "context deadline exceeded",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": false,
+              "deadline_exceeded": true,
+              "go_only_error_tree": [
+                {
+                  "message": "context deadline exceeded",
+                  "type": "context.deadlineExceededError"
+                }
+              ],
+              "message": "context deadline exceeded",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.timerCtx",
+            "go_only_deadline_rfc3339_nano": "1970-01-01T00:00:01.123456789Z",
+            "go_only_deadline_unix_nano": 1123456789,
+            "has_deadline": true,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          },
+          "parent": {
+            "cause": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "done_closed": false,
+            "done_nil": false,
+            "error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          }
+        }
+      }
+    },
+    {
+      "name": "standard/deadline/earlier_parent_later_child",
+      "input": {
+        "child_requested_deadline": "2099-01-01T01:00:00.123456789Z",
+        "operation": "WithDeadline",
+        "parent_deadline": "2099-01-01T00:00:00.123456789Z",
+        "scenario": "earlier_parent_later_child"
+      },
+      "observation": {
+        "after_cleanup": {
+          "child": {
+            "cause": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "go_only_deadline_rfc3339_nano": "2099-01-01T00:00:00.123456789Z",
+            "go_only_deadline_unix_nano": 4070908800123456789,
+            "has_deadline": true,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          },
+          "parent": {
+            "cause": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.timerCtx",
+            "go_only_deadline_rfc3339_nano": "2099-01-01T00:00:00.123456789Z",
+            "go_only_deadline_unix_nano": 4070908800123456789,
+            "has_deadline": true,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          }
+        },
+        "before_cleanup": {
+          "child": {
+            "cause": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "done_closed": false,
+            "done_nil": false,
+            "error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "go_only_deadline_rfc3339_nano": "2099-01-01T00:00:00.123456789Z",
+            "go_only_deadline_unix_nano": 4070908800123456789,
+            "has_deadline": true,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          },
+          "parent": {
+            "cause": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "done_closed": false,
+            "done_nil": false,
+            "error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.timerCtx",
+            "go_only_deadline_rfc3339_nano": "2099-01-01T00:00:00.123456789Z",
+            "go_only_deadline_unix_nano": 4070908800123456789,
+            "has_deadline": true,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          }
+        }
+      }
+    },
+    {
+      "name": "standard/deadline/later_parent_earlier_child",
+      "input": {
+        "child_requested_deadline": "2099-01-01T00:00:00.123456789Z",
+        "operation": "WithDeadline",
+        "parent_deadline": "2099-01-01T01:00:00.123456789Z",
+        "scenario": "later_parent_earlier_child"
+      },
+      "observation": {
+        "after_cleanup": {
+          "child": {
+            "cause": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.timerCtx",
+            "go_only_deadline_rfc3339_nano": "2099-01-01T00:00:00.123456789Z",
+            "go_only_deadline_unix_nano": 4070908800123456789,
+            "has_deadline": true,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          },
+          "parent": {
+            "cause": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.timerCtx",
+            "go_only_deadline_rfc3339_nano": "2099-01-01T01:00:00.123456789Z",
+            "go_only_deadline_unix_nano": 4070912400123456789,
+            "has_deadline": true,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          }
+        },
+        "before_cleanup": {
+          "child": {
+            "cause": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "done_closed": false,
+            "done_nil": false,
+            "error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.timerCtx",
+            "go_only_deadline_rfc3339_nano": "2099-01-01T00:00:00.123456789Z",
+            "go_only_deadline_unix_nano": 4070908800123456789,
+            "has_deadline": true,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          },
+          "parent": {
+            "cause": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "done_closed": false,
+            "done_nil": false,
+            "error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.timerCtx",
+            "go_only_deadline_rfc3339_nano": "2099-01-01T01:00:00.123456789Z",
+            "go_only_deadline_unix_nano": 4070912400123456789,
+            "has_deadline": true,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          }
+        }
+      }
+    },
+    {
+      "name": "standard/deadline/cancel_before_future_deadline",
+      "input": {
+        "child_requested_deadline": "2099-01-01T00:00:00.123456789Z",
+        "operation": "WithDeadline",
+        "parent_deadline": "none",
+        "scenario": "cancel_before_future_deadline"
+      },
+      "observation": {
+        "after_cleanup": {
+          "child": {
+            "cause": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.timerCtx",
+            "go_only_deadline_rfc3339_nano": "2099-01-01T00:00:00.123456789Z",
+            "go_only_deadline_unix_nano": 4070908800123456789,
+            "has_deadline": true,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          },
+          "parent": {
+            "cause": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          }
+        },
+        "before_cleanup": {
+          "child": {
+            "cause": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "done_closed": false,
+            "done_nil": false,
+            "error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.timerCtx",
+            "go_only_deadline_rfc3339_nano": "2099-01-01T00:00:00.123456789Z",
+            "go_only_deadline_unix_nano": 4070908800123456789,
+            "has_deadline": true,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          },
+          "parent": {
+            "cause": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "done_closed": false,
+            "done_nil": false,
+            "error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          }
+        }
+      }
+    },
+    {
+      "name": "standard/deadline/cancel_before_expired_child",
+      "input": {
+        "child_requested_deadline": "1970-01-01T00:00:01.123456789Z",
+        "operation": "WithDeadline",
+        "parent_deadline": "none",
+        "scenario": "cancel_before_expired_child"
+      },
+      "observation": {
+        "after_cleanup": {
+          "child": {
+            "cause": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.timerCtx",
+            "go_only_deadline_rfc3339_nano": "1970-01-01T00:00:01.123456789Z",
+            "go_only_deadline_unix_nano": 1123456789,
+            "has_deadline": true,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          },
+          "parent": {
+            "cause": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          }
+        },
+        "before_cleanup": {
+          "child": {
+            "cause": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.timerCtx",
+            "go_only_deadline_rfc3339_nano": "1970-01-01T00:00:01.123456789Z",
+            "go_only_deadline_unix_nano": 1123456789,
+            "has_deadline": true,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          },
+          "parent": {
+            "cause": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": false,
+            "value": "owned-parent"
+          }
+        }
+      }
+    },
+    {
+      "name": "standard/deadline/real_timer_channel",
+      "input": {
+        "deadline_expression": "construction_origin + interval_ns",
+        "go_only_absolute_runtime_timestamp": "intentionally not compared; explicit relative construction expression is compared exactly",
+        "interval_ns": 10000000,
+        "observation_phase": "after actual Done channel closes",
+        "operation": "WithDeadline"
+      },
+      "observation": {
+        "cause": {
+          "canceled": false,
+          "deadline_exceeded": true,
+          "go_only_error_tree": [
+            {
+              "message": "context deadline exceeded",
+              "type": "context.deadlineExceededError"
+            }
+          ],
+          "message": "context deadline exceeded",
+          "reason": ""
+        },
+        "done_closed": true,
+        "done_nil": false,
+        "error": {
+          "canceled": false,
+          "deadline_exceeded": true,
+          "go_only_error_tree": [
+            {
+              "message": "context deadline exceeded",
+              "type": "context.deadlineExceededError"
+            }
+          ],
+          "message": "context deadline exceeded",
+          "reason": ""
+        },
+        "go_only_deadline_minus_construction_origin_ns": 10000000,
+        "has_deadline": true,
+        "value": "owned-parent"
+      }
+    },
+    {
+      "name": "diagnostics/absent",
+      "input": {
+        "child_module": "FANBOX FlareSolverr",
+        "child_request_id": 42,
+        "event": {
+          "Module": "",
+          "Kind": "account",
+          "Operation": "owned operation",
+          "Resource": "user 42",
+          "Route": "owned-route",
+          "Target": "owned.file",
+          "Proxy": "synthetic proxy",
+          "UserAgent": "owned-agent",
+          "Reason": "account frozen",
+          "Status": 429,
+          "Count": 3,
+          "RequestID": 999,
+          "Duration": 123456789
+        },
+        "mode": "absent",
+        "operation": "typed diagnostic scope ownership",
+        "parent_module": "FANBOX MCP server",
+        "parent_request_id": 41
+      },
+      "observation": {
+        "before": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": true,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": false,
+          "value": "owned-parent"
+        },
+        "child": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": true,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": false,
+          "value": "owned-parent"
+        },
+        "events": [],
+        "go_only_absent_child_same_interface": true,
+        "input_event_after_emit": {
+          "Module": "",
+          "Kind": "account",
+          "Operation": "owned operation",
+          "Resource": "user 42",
+          "Route": "owned-route",
+          "Target": "owned.file",
+          "Proxy": "synthetic proxy",
+          "UserAgent": "owned-agent",
+          "Reason": "account frozen",
+          "Status": 429,
+          "Count": 3,
+          "RequestID": 999,
+          "Duration": 123456789
+        },
+        "scope_lookup_present": false
+      }
+    },
+    {
+      "name": "diagnostics/nil_context_absent",
+      "input": {
+        "child_module": "FANBOX FlareSolverr",
+        "child_request_id": 42,
+        "event": {
+          "Module": "",
+          "Kind": "account",
+          "Operation": "owned operation",
+          "Resource": "user 42",
+          "Route": "owned-route",
+          "Target": "owned.file",
+          "Proxy": "synthetic proxy",
+          "UserAgent": "owned-agent",
+          "Reason": "account frozen",
+          "Status": 429,
+          "Count": 3,
+          "RequestID": 999,
+          "Duration": 123456789
+        },
+        "mode": "nil_context_absent",
+        "operation": "typed diagnostic scope ownership",
+        "parent_module": "FANBOX MCP server",
+        "parent_request_id": 41
+      },
+      "observation": {
+        "before": {
+          "nil_context": true
+        },
+        "child": {
+          "nil_context": true
+        },
+        "events": [],
+        "go_only_absent_child_same_interface": true,
+        "input_event_after_emit": {
+          "Module": "",
+          "Kind": "account",
+          "Operation": "owned operation",
+          "Resource": "user 42",
+          "Route": "owned-route",
+          "Target": "owned.file",
+          "Proxy": "synthetic proxy",
+          "UserAgent": "owned-agent",
+          "Reason": "account frozen",
+          "Status": 429,
+          "Count": 3,
+          "RequestID": 999,
+          "Duration": 123456789
+        },
+        "scope_lookup_present": false
+      }
+    },
+    {
+      "name": "diagnostics/nil_context_scoped",
+      "input": {
+        "child_module": "FANBOX FlareSolverr",
+        "child_request_id": 42,
+        "event": {
+          "Module": "",
+          "Kind": "account",
+          "Operation": "owned operation",
+          "Resource": "user 42",
+          "Route": "owned-route",
+          "Target": "owned.file",
+          "Proxy": "synthetic proxy",
+          "UserAgent": "owned-agent",
+          "Reason": "account frozen",
+          "Status": 429,
+          "Count": 3,
+          "RequestID": 999,
+          "Duration": 123456789
+        },
+        "mode": "nil_context_scoped",
+        "operation": "typed diagnostic scope ownership",
+        "parent_module": "FANBOX MCP server",
+        "parent_request_id": 41
+      },
+      "observation": {
+        "before": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": true,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": null
+        },
+        "child": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": true,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": null
+        },
+        "events": [
+          {
+            "Module": "FANBOX MCP server",
+            "Kind": "account",
+            "Operation": "owned operation",
+            "Resource": "user 42",
+            "Route": "owned-route",
+            "Target": "owned.file",
+            "Proxy": "synthetic proxy",
+            "UserAgent": "owned-agent",
+            "Reason": "account frozen",
+            "Status": 429,
+            "Count": 3,
+            "RequestID": 41,
+            "Duration": 123456789
+          },
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "account",
+            "Operation": "owned operation",
+            "Resource": "user 42",
+            "Route": "owned-route",
+            "Target": "owned.file",
+            "Proxy": "synthetic proxy",
+            "UserAgent": "owned-agent",
+            "Reason": "account frozen",
+            "Status": 429,
+            "Count": 3,
+            "RequestID": 42,
+            "Duration": 123456789
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "account",
+            "Operation": "owned operation",
+            "Resource": "user 42",
+            "Route": "owned-route",
+            "Target": "owned.file",
+            "Proxy": "synthetic proxy",
+            "UserAgent": "owned-agent",
+            "Reason": "account frozen",
+            "Status": 429,
+            "Count": 3,
+            "RequestID": 42,
+            "Duration": 123456789
+          },
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "account",
+            "Operation": "owned operation",
+            "Resource": "user 42",
+            "Route": "owned-route",
+            "Target": "owned.file",
+            "Proxy": "synthetic proxy",
+            "UserAgent": "owned-agent",
+            "Reason": "account frozen",
+            "Status": 429,
+            "Count": 3,
+            "RequestID": 42,
+            "Duration": 123456789
+          }
+        ],
+        "go_only_absent_child_same_interface": false,
+        "input_event_after_emit": {
+          "Module": "",
+          "Kind": "account",
+          "Operation": "owned operation",
+          "Resource": "user 42",
+          "Route": "owned-route",
+          "Target": "owned.file",
+          "Proxy": "synthetic proxy",
+          "UserAgent": "owned-agent",
+          "Reason": "account frozen",
+          "Status": 429,
+          "Count": 3,
+          "RequestID": 999,
+          "Duration": 123456789
+        },
+        "scope_lookup_present": true
+      }
+    },
+    {
+      "name": "diagnostics/nil_sink",
+      "input": {
+        "child_module": "FANBOX FlareSolverr",
+        "child_request_id": 42,
+        "event": {
+          "Module": "",
+          "Kind": "account",
+          "Operation": "owned operation",
+          "Resource": "user 42",
+          "Route": "owned-route",
+          "Target": "owned.file",
+          "Proxy": "synthetic proxy",
+          "UserAgent": "owned-agent",
+          "Reason": "account frozen",
+          "Status": 429,
+          "Count": 3,
+          "RequestID": 999,
+          "Duration": 123456789
+        },
+        "mode": "nil_sink",
+        "operation": "typed diagnostic scope ownership",
+        "parent_module": "FANBOX MCP server",
+        "parent_request_id": 41
+      },
+      "observation": {
+        "before": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": true,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-parent"
+        },
+        "child": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": true,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-parent"
+        },
+        "events": [],
+        "go_only_absent_child_same_interface": false,
+        "input_event_after_emit": {
+          "Module": "",
+          "Kind": "account",
+          "Operation": "owned operation",
+          "Resource": "user 42",
+          "Route": "owned-route",
+          "Target": "owned.file",
+          "Proxy": "synthetic proxy",
+          "UserAgent": "owned-agent",
+          "Reason": "account frozen",
+          "Status": 429,
+          "Count": 3,
+          "RequestID": 999,
+          "Duration": 123456789
+        },
+        "scope_lookup_present": true
+      }
+    },
+    {
+      "name": "diagnostics/nil_sink_func",
+      "input": {
+        "child_module": "FANBOX FlareSolverr",
+        "child_request_id": 42,
+        "event": {
+          "Module": "",
+          "Kind": "account",
+          "Operation": "owned operation",
+          "Resource": "user 42",
+          "Route": "owned-route",
+          "Target": "owned.file",
+          "Proxy": "synthetic proxy",
+          "UserAgent": "owned-agent",
+          "Reason": "account frozen",
+          "Status": 429,
+          "Count": 3,
+          "RequestID": 999,
+          "Duration": 123456789
+        },
+        "mode": "nil_sink_func",
+        "operation": "typed diagnostic scope ownership",
+        "parent_module": "FANBOX MCP server",
+        "parent_request_id": 41
+      },
+      "observation": {
+        "before": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": true,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-parent"
+        },
+        "child": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": true,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-parent"
+        },
+        "events": [],
+        "go_only_absent_child_same_interface": false,
+        "input_event_after_emit": {
+          "Module": "",
+          "Kind": "account",
+          "Operation": "owned operation",
+          "Resource": "user 42",
+          "Route": "owned-route",
+          "Target": "owned.file",
+          "Proxy": "synthetic proxy",
+          "UserAgent": "owned-agent",
+          "Reason": "account frozen",
+          "Status": 429,
+          "Count": 3,
+          "RequestID": 999,
+          "Duration": 123456789
+        },
+        "scope_lookup_present": true
+      }
+    },
+    {
+      "name": "diagnostics/zero_scope_direct",
+      "input": {
+        "child_module": "FANBOX FlareSolverr",
+        "child_request_id": 42,
+        "event": {
+          "Module": "",
+          "Kind": "account",
+          "Operation": "owned operation",
+          "Resource": "user 42",
+          "Route": "owned-route",
+          "Target": "owned.file",
+          "Proxy": "synthetic proxy",
+          "UserAgent": "owned-agent",
+          "Reason": "account frozen",
+          "Status": 429,
+          "Count": 3,
+          "RequestID": 999,
+          "Duration": 123456789
+        },
+        "mode": "zero_scope_direct",
+        "operation": "typed diagnostic scope ownership",
+        "parent_module": "FANBOX MCP server",
+        "parent_request_id": 41
+      },
+      "observation": {
+        "before": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": true,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": false,
+          "value": "owned-parent"
+        },
+        "child": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": true,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": false,
+          "value": "owned-parent"
+        },
+        "events": [],
+        "go_only_absent_child_same_interface": true,
+        "input_event_after_emit": {
+          "Module": "",
+          "Kind": "account",
+          "Operation": "owned operation",
+          "Resource": "user 42",
+          "Route": "owned-route",
+          "Target": "owned.file",
+          "Proxy": "synthetic proxy",
+          "UserAgent": "owned-agent",
+          "Reason": "account frozen",
+          "Status": 429,
+          "Count": 3,
+          "RequestID": 999,
+          "Duration": 123456789
+        },
+        "scope_lookup_present": false
+      }
+    },
+    {
+      "name": "diagnostics/parent_child_detached",
+      "input": {
+        "child_module": "FANBOX FlareSolverr",
+        "child_request_id": 42,
+        "event": {
+          "Module": "",
+          "Kind": "account",
+          "Operation": "owned operation",
+          "Resource": "user 42",
+          "Route": "owned-route",
+          "Target": "owned.file",
+          "Proxy": "synthetic proxy",
+          "UserAgent": "owned-agent",
+          "Reason": "account frozen",
+          "Status": 429,
+          "Count": 3,
+          "RequestID": 999,
+          "Duration": 123456789
+        },
+        "mode": "parent_child_detached",
+        "operation": "typed diagnostic scope ownership",
+        "parent_module": "FANBOX MCP server",
+        "parent_request_id": 41
+      },
+      "observation": {
+        "after_independent_cancel": {
+          "detached": {
+            "cause": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "done_closed": false,
+            "done_nil": true,
+            "error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "go_only_context_type": "context.withoutCancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": true,
+            "value": "owned-parent"
+          },
+          "independent": {
+            "cause": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": true,
+            "value": "owned-parent"
+          },
+          "parent": {
+            "cause": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.timerCtx",
+            "go_only_deadline_rfc3339_nano": "2099-01-01T00:00:00.123456789Z",
+            "go_only_deadline_unix_nano": 4070908800123456789,
+            "has_deadline": true,
+            "nil_context": false,
+            "scope_present": true,
+            "value": "owned-parent"
+          }
+        },
+        "after_parent_cancel": {
+          "detached": {
+            "cause": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "done_closed": false,
+            "done_nil": true,
+            "error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "go_only_context_type": "context.withoutCancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": true,
+            "value": "owned-parent"
+          },
+          "independent": {
+            "cause": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "done_closed": false,
+            "done_nil": false,
+            "error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": true,
+            "value": "owned-parent"
+          },
+          "parent": {
+            "cause": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.timerCtx",
+            "go_only_deadline_rfc3339_nano": "2099-01-01T00:00:00.123456789Z",
+            "go_only_deadline_unix_nano": 4070908800123456789,
+            "has_deadline": true,
+            "nil_context": false,
+            "scope_present": true,
+            "value": "owned-parent"
+          }
+        },
+        "before": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": true,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-parent"
+        },
+        "child": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": true,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-parent"
+        },
+        "events": [
+          {
+            "Module": "FANBOX MCP server",
+            "Kind": "account",
+            "Operation": "owned operation",
+            "Resource": "user 42",
+            "Route": "owned-route",
+            "Target": "owned.file",
+            "Proxy": "synthetic proxy",
+            "UserAgent": "owned-agent",
+            "Reason": "account frozen",
+            "Status": 429,
+            "Count": 3,
+            "RequestID": 41,
+            "Duration": 123456789
+          },
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "account",
+            "Operation": "owned operation",
+            "Resource": "user 42",
+            "Route": "owned-route",
+            "Target": "owned.file",
+            "Proxy": "synthetic proxy",
+            "UserAgent": "owned-agent",
+            "Reason": "account frozen",
+            "Status": 429,
+            "Count": 3,
+            "RequestID": 42,
+            "Duration": 123456789
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "account",
+            "Operation": "owned operation",
+            "Resource": "user 42",
+            "Route": "owned-route",
+            "Target": "owned.file",
+            "Proxy": "synthetic proxy",
+            "UserAgent": "owned-agent",
+            "Reason": "account frozen",
+            "Status": 429,
+            "Count": 3,
+            "RequestID": 42,
+            "Duration": 123456789
+          },
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "account",
+            "Operation": "owned operation",
+            "Resource": "user 42",
+            "Route": "owned-route",
+            "Target": "owned.file",
+            "Proxy": "synthetic proxy",
+            "UserAgent": "owned-agent",
+            "Reason": "account frozen",
+            "Status": 429,
+            "Count": 3,
+            "RequestID": 42,
+            "Duration": 123456789
+          },
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "account",
+            "Operation": "owned operation",
+            "Resource": "user 42",
+            "Route": "owned-route",
+            "Target": "owned.file",
+            "Proxy": "synthetic proxy",
+            "UserAgent": "owned-agent",
+            "Reason": "account frozen",
+            "Status": 429,
+            "Count": 3,
+            "RequestID": 42,
+            "Duration": 123456789
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "account",
+            "Operation": "owned operation",
+            "Resource": "user 42",
+            "Route": "owned-route",
+            "Target": "owned.file",
+            "Proxy": "synthetic proxy",
+            "UserAgent": "owned-agent",
+            "Reason": "account frozen",
+            "Status": 429,
+            "Count": 3,
+            "RequestID": 42,
+            "Duration": 123456789
+          },
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "account",
+            "Operation": "owned operation",
+            "Resource": "user 42",
+            "Route": "owned-route",
+            "Target": "owned.file",
+            "Proxy": "synthetic proxy",
+            "UserAgent": "owned-agent",
+            "Reason": "account frozen",
+            "Status": 429,
+            "Count": 3,
+            "RequestID": 42,
+            "Duration": 123456789
+          }
+        ],
+        "go_only_absent_child_same_interface": false,
+        "input_event_after_emit": {
+          "Module": "",
+          "Kind": "account",
+          "Operation": "owned operation",
+          "Resource": "user 42",
+          "Route": "owned-route",
+          "Target": "owned.file",
+          "Proxy": "synthetic proxy",
+          "UserAgent": "owned-agent",
+          "Reason": "account frozen",
+          "Status": 429,
+          "Count": 3,
+          "RequestID": 999,
+          "Duration": 123456789
+        },
+        "scope_lookup_present": true
+      }
+    },
+    {
+      "name": "diagnostics/parent_child_detached_expired",
+      "input": {
+        "child_module": "FANBOX FlareSolverr",
+        "child_request_id": 42,
+        "event": {
+          "Module": "",
+          "Kind": "account",
+          "Operation": "owned operation",
+          "Resource": "user 42",
+          "Route": "owned-route",
+          "Target": "owned.file",
+          "Proxy": "synthetic proxy",
+          "UserAgent": "owned-agent",
+          "Reason": "account frozen",
+          "Status": 429,
+          "Count": 3,
+          "RequestID": 999,
+          "Duration": 123456789
+        },
+        "mode": "parent_child_detached_expired",
+        "operation": "typed diagnostic scope ownership",
+        "parent_module": "FANBOX MCP server",
+        "parent_request_id": 41
+      },
+      "observation": {
+        "after_independent_cancel": {
+          "detached": {
+            "cause": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "done_closed": false,
+            "done_nil": true,
+            "error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "go_only_context_type": "context.withoutCancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": true,
+            "value": "owned-parent"
+          },
+          "independent": {
+            "cause": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": true,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [
+                {
+                  "message": "context canceled",
+                  "type": "*errors.errorString"
+                }
+              ],
+              "message": "context canceled",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": true,
+            "value": "owned-parent"
+          },
+          "parent": {
+            "cause": {
+              "canceled": false,
+              "deadline_exceeded": true,
+              "go_only_error_tree": [
+                {
+                  "message": "context deadline exceeded",
+                  "type": "context.deadlineExceededError"
+                }
+              ],
+              "message": "context deadline exceeded",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": false,
+              "deadline_exceeded": true,
+              "go_only_error_tree": [
+                {
+                  "message": "context deadline exceeded",
+                  "type": "context.deadlineExceededError"
+                }
+              ],
+              "message": "context deadline exceeded",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.timerCtx",
+            "go_only_deadline_rfc3339_nano": "1970-01-01T00:00:01.123456789Z",
+            "go_only_deadline_unix_nano": 1123456789,
+            "has_deadline": true,
+            "nil_context": false,
+            "scope_present": true,
+            "value": "owned-parent"
+          }
+        },
+        "after_parent_cancel": {
+          "detached": {
+            "cause": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "done_closed": false,
+            "done_nil": true,
+            "error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "go_only_context_type": "context.withoutCancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": true,
+            "value": "owned-parent"
+          },
+          "independent": {
+            "cause": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "done_closed": false,
+            "done_nil": false,
+            "error": {
+              "canceled": false,
+              "deadline_exceeded": false,
+              "go_only_error_tree": [],
+              "message": "",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.cancelCtx",
+            "has_deadline": false,
+            "nil_context": false,
+            "scope_present": true,
+            "value": "owned-parent"
+          },
+          "parent": {
+            "cause": {
+              "canceled": false,
+              "deadline_exceeded": true,
+              "go_only_error_tree": [
+                {
+                  "message": "context deadline exceeded",
+                  "type": "context.deadlineExceededError"
+                }
+              ],
+              "message": "context deadline exceeded",
+              "reason": ""
+            },
+            "done_closed": true,
+            "done_nil": false,
+            "error": {
+              "canceled": false,
+              "deadline_exceeded": true,
+              "go_only_error_tree": [
+                {
+                  "message": "context deadline exceeded",
+                  "type": "context.deadlineExceededError"
+                }
+              ],
+              "message": "context deadline exceeded",
+              "reason": ""
+            },
+            "go_only_context_type": "*context.timerCtx",
+            "go_only_deadline_rfc3339_nano": "1970-01-01T00:00:01.123456789Z",
+            "go_only_deadline_unix_nano": 1123456789,
+            "has_deadline": true,
+            "nil_context": false,
+            "scope_present": true,
+            "value": "owned-parent"
+          }
+        },
+        "before": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": true,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-parent"
+        },
+        "child": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": true,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-parent"
+        },
+        "events": [
+          {
+            "Module": "FANBOX MCP server",
+            "Kind": "account",
+            "Operation": "owned operation",
+            "Resource": "user 42",
+            "Route": "owned-route",
+            "Target": "owned.file",
+            "Proxy": "synthetic proxy",
+            "UserAgent": "owned-agent",
+            "Reason": "account frozen",
+            "Status": 429,
+            "Count": 3,
+            "RequestID": 41,
+            "Duration": 123456789
+          },
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "account",
+            "Operation": "owned operation",
+            "Resource": "user 42",
+            "Route": "owned-route",
+            "Target": "owned.file",
+            "Proxy": "synthetic proxy",
+            "UserAgent": "owned-agent",
+            "Reason": "account frozen",
+            "Status": 429,
+            "Count": 3,
+            "RequestID": 42,
+            "Duration": 123456789
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "account",
+            "Operation": "owned operation",
+            "Resource": "user 42",
+            "Route": "owned-route",
+            "Target": "owned.file",
+            "Proxy": "synthetic proxy",
+            "UserAgent": "owned-agent",
+            "Reason": "account frozen",
+            "Status": 429,
+            "Count": 3,
+            "RequestID": 42,
+            "Duration": 123456789
+          },
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "account",
+            "Operation": "owned operation",
+            "Resource": "user 42",
+            "Route": "owned-route",
+            "Target": "owned.file",
+            "Proxy": "synthetic proxy",
+            "UserAgent": "owned-agent",
+            "Reason": "account frozen",
+            "Status": 429,
+            "Count": 3,
+            "RequestID": 42,
+            "Duration": 123456789
+          },
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "account",
+            "Operation": "owned operation",
+            "Resource": "user 42",
+            "Route": "owned-route",
+            "Target": "owned.file",
+            "Proxy": "synthetic proxy",
+            "UserAgent": "owned-agent",
+            "Reason": "account frozen",
+            "Status": 429,
+            "Count": 3,
+            "RequestID": 42,
+            "Duration": 123456789
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "account",
+            "Operation": "owned operation",
+            "Resource": "user 42",
+            "Route": "owned-route",
+            "Target": "owned.file",
+            "Proxy": "synthetic proxy",
+            "UserAgent": "owned-agent",
+            "Reason": "account frozen",
+            "Status": 429,
+            "Count": 3,
+            "RequestID": 42,
+            "Duration": 123456789
+          },
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "account",
+            "Operation": "owned operation",
+            "Resource": "user 42",
+            "Route": "owned-route",
+            "Target": "owned.file",
+            "Proxy": "synthetic proxy",
+            "UserAgent": "owned-agent",
+            "Reason": "account frozen",
+            "Status": 429,
+            "Count": 3,
+            "RequestID": 42,
+            "Duration": 123456789
+          }
+        ],
+        "go_only_absent_child_same_interface": false,
+        "input_event_after_emit": {
+          "Module": "",
+          "Kind": "account",
+          "Operation": "owned operation",
+          "Resource": "user 42",
+          "Route": "owned-route",
+          "Target": "owned.file",
+          "Proxy": "synthetic proxy",
+          "UserAgent": "owned-agent",
+          "Reason": "account frozen",
+          "Status": 429,
+          "Count": 3,
+          "RequestID": 999,
+          "Duration": 123456789
+        },
+        "scope_lookup_present": true
+      }
+    },
+    {
+      "name": "sdk_current_user/scoped_ignoring",
+      "input": {
+        "child_scope_request_id": 42,
+        "mode": "scoped_ignoring",
+        "operation": "fanbox.Client.CurrentUser",
+        "parent_scope_request_id": 41,
+        "parent_value": "owned-sdk-value",
+        "response_body": "\u003cmeta name=\"metadata\" content='{\"context\":{\"user\":{\"userId\":42,\"name\":\"owned user\"}}}'\u003e",
+        "response_status": 200,
+        "transport_behavior": "return owned response without inspecting cancellation",
+        "user_agent": "owned-context-agent"
+      },
+      "observation": {
+        "after": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-sdk-value"
+        },
+        "before": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-sdk-value"
+        },
+        "dto": {
+          "user_id": 42,
+          "display_name": "owned user",
+          "creator_id": "",
+          "creator_status": "",
+          "is_creator": false
+        },
+        "error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "go_only_error_tree": [],
+          "message": "",
+          "reason": ""
+        },
+        "events": [
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "started",
+            "Operation": "owned transport entered",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 42,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "network_request",
+            "Operation": "retrieving",
+            "Resource": "/",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "owned-context-agent",
+            "Reason": "",
+            "Status": 200,
+            "Count": 0,
+            "RequestID": 42,
+            "Duration": 0
+          }
+        ],
+        "parent_after": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.cancelCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": false,
+          "value": "owned-sdk-value"
+        },
+        "requests": [
+          {
+            "go_only_same_context_interface": true,
+            "go_only_same_done_channel": true,
+            "method": "GET",
+            "state": {
+              "cause": {
+                "canceled": false,
+                "deadline_exceeded": false,
+                "go_only_error_tree": [],
+                "message": "",
+                "reason": ""
+              },
+              "done_closed": false,
+              "done_nil": false,
+              "error": {
+                "canceled": false,
+                "deadline_exceeded": false,
+                "go_only_error_tree": [],
+                "message": "",
+                "reason": ""
+              },
+              "go_only_context_type": "*context.valueCtx",
+              "has_deadline": false,
+              "nil_context": false,
+              "scope_present": true,
+              "value": "owned-sdk-value"
+            },
+            "url": "https://www.fanbox.cc/"
+          }
+        ],
+        "response_body_close_calls": 1,
+        "response_bytes_read": 87,
+        "trace": [
+          "transport.enter",
+          "transport.response",
+          "body.close",
+          "sdk.return"
+        ]
+      }
+    },
+    {
+      "name": "sdk_current_user/scoped_precanceled_ignoring",
+      "input": {
+        "child_scope_request_id": 42,
+        "mode": "scoped_precanceled_ignoring",
+        "operation": "fanbox.Client.CurrentUser",
+        "parent_scope_request_id": 41,
+        "parent_value": "owned-sdk-value",
+        "response_body": "\u003cmeta name=\"metadata\" content='{\"context\":{\"user\":{\"userId\":42,\"name\":\"owned user\"}}}'\u003e",
+        "response_status": 200,
+        "transport_behavior": "return owned response without inspecting cancellation",
+        "user_agent": "owned-context-agent"
+      },
+      "observation": {
+        "after": {
+          "cause": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "done_closed": true,
+          "done_nil": false,
+          "error": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-sdk-value"
+        },
+        "before": {
+          "cause": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "done_closed": true,
+          "done_nil": false,
+          "error": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-sdk-value"
+        },
+        "dto": {
+          "user_id": 42,
+          "display_name": "owned user",
+          "creator_id": "",
+          "creator_status": "",
+          "is_creator": false
+        },
+        "error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "go_only_error_tree": [],
+          "message": "",
+          "reason": ""
+        },
+        "events": [
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "started",
+            "Operation": "owned transport entered",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 42,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "network_request",
+            "Operation": "retrieving",
+            "Resource": "/",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "owned-context-agent",
+            "Reason": "",
+            "Status": 200,
+            "Count": 0,
+            "RequestID": 42,
+            "Duration": 0
+          }
+        ],
+        "parent_after": {
+          "cause": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "done_closed": true,
+          "done_nil": false,
+          "error": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.cancelCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": false,
+          "value": "owned-sdk-value"
+        },
+        "requests": [
+          {
+            "go_only_same_context_interface": true,
+            "go_only_same_done_channel": true,
+            "method": "GET",
+            "state": {
+              "cause": {
+                "canceled": true,
+                "deadline_exceeded": false,
+                "go_only_error_tree": [
+                  {
+                    "message": "context canceled",
+                    "type": "*errors.errorString"
+                  }
+                ],
+                "message": "context canceled",
+                "reason": ""
+              },
+              "done_closed": true,
+              "done_nil": false,
+              "error": {
+                "canceled": true,
+                "deadline_exceeded": false,
+                "go_only_error_tree": [
+                  {
+                    "message": "context canceled",
+                    "type": "*errors.errorString"
+                  }
+                ],
+                "message": "context canceled",
+                "reason": ""
+              },
+              "go_only_context_type": "*context.valueCtx",
+              "has_deadline": false,
+              "nil_context": false,
+              "scope_present": true,
+              "value": "owned-sdk-value"
+            },
+            "url": "https://www.fanbox.cc/"
+          }
+        ],
+        "response_body_close_calls": 1,
+        "response_bytes_read": 87,
+        "trace": [
+          "transport.enter",
+          "transport.response",
+          "body.close",
+          "sdk.return"
+        ]
+      }
+    },
+    {
+      "name": "sdk_current_user/scoped_precanceled_observing",
+      "input": {
+        "child_scope_request_id": 42,
+        "mode": "scoped_precanceled_observing",
+        "operation": "fanbox.Client.CurrentUser",
+        "parent_scope_request_id": 41,
+        "parent_value": "owned-sdk-value",
+        "response_body": "\u003cmeta name=\"metadata\" content='{\"context\":{\"user\":{\"userId\":42,\"name\":\"owned user\"}}}'\u003e",
+        "response_status": 200,
+        "transport_behavior": "wait on actual request.Context.Done then return actual request.Context.Err",
+        "user_agent": "owned-context-agent"
+      },
+      "observation": {
+        "after": {
+          "cause": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "done_closed": true,
+          "done_nil": false,
+          "error": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-sdk-value"
+        },
+        "before": {
+          "cause": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "done_closed": true,
+          "done_nil": false,
+          "error": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-sdk-value"
+        },
+        "dto": {
+          "user_id": 0,
+          "display_name": "",
+          "creator_id": "",
+          "creator_status": "",
+          "is_creator": false
+        },
+        "error": {
+          "canceled": true,
+          "deadline_exceeded": false,
+          "go_only_error_tree": [
+            {
+              "message": "fanbox:CurrentUser: upstream_error: context canceled",
+              "type": "*sdk.Error"
+            },
+            {
+              "message": "context canceled",
+              "type": "*errors.errorString"
+            }
+          ],
+          "message": "fanbox:CurrentUser: upstream_error: context canceled",
+          "reason": "upstream_error",
+          "sdk": {
+            "detail": "",
+            "go_only_reason_sentinel_matches": true,
+            "http_status": 0,
+            "operation": "CurrentUser",
+            "product": "fanbox",
+            "reason": "upstream_error",
+            "retry_has_after": false,
+            "retry_safe": false,
+            "transport": ""
+          }
+        },
+        "events": [
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "started",
+            "Operation": "owned transport entered",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 42,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "failed",
+            "Operation": "network request",
+            "Resource": "",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 42,
+            "Duration": 0
+          }
+        ],
+        "parent_after": {
+          "cause": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "done_closed": true,
+          "done_nil": false,
+          "error": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.cancelCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": false,
+          "value": "owned-sdk-value"
+        },
+        "requests": [
+          {
+            "go_only_same_context_interface": true,
+            "go_only_same_done_channel": true,
+            "method": "GET",
+            "state": {
+              "cause": {
+                "canceled": true,
+                "deadline_exceeded": false,
+                "go_only_error_tree": [
+                  {
+                    "message": "context canceled",
+                    "type": "*errors.errorString"
+                  }
+                ],
+                "message": "context canceled",
+                "reason": ""
+              },
+              "done_closed": true,
+              "done_nil": false,
+              "error": {
+                "canceled": true,
+                "deadline_exceeded": false,
+                "go_only_error_tree": [
+                  {
+                    "message": "context canceled",
+                    "type": "*errors.errorString"
+                  }
+                ],
+                "message": "context canceled",
+                "reason": ""
+              },
+              "go_only_context_type": "*context.valueCtx",
+              "has_deadline": false,
+              "nil_context": false,
+              "scope_present": true,
+              "value": "owned-sdk-value"
+            },
+            "url": "https://www.fanbox.cc/"
+          }
+        ],
+        "response_body_close_calls": 0,
+        "response_bytes_read": 0,
+        "trace": [
+          "transport.enter",
+          "transport.context_done",
+          "sdk.return"
+        ]
+      }
+    },
+    {
+      "name": "sdk_current_user/scoped_parent_cancel_during_observing",
+      "input": {
+        "child_scope_request_id": 42,
+        "mode": "scoped_parent_cancel_during_observing",
+        "operation": "fanbox.Client.CurrentUser",
+        "parent_scope_request_id": 41,
+        "parent_value": "owned-sdk-value",
+        "response_body": "\u003cmeta name=\"metadata\" content='{\"context\":{\"user\":{\"userId\":42,\"name\":\"owned user\"}}}'\u003e",
+        "response_status": 200,
+        "transport_behavior": "wait on actual request.Context.Done then return actual request.Context.Err",
+        "user_agent": "owned-context-agent"
+      },
+      "observation": {
+        "after": {
+          "cause": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "done_closed": true,
+          "done_nil": false,
+          "error": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-sdk-value"
+        },
+        "before": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-sdk-value"
+        },
+        "dto": {
+          "user_id": 0,
+          "display_name": "",
+          "creator_id": "",
+          "creator_status": "",
+          "is_creator": false
+        },
+        "error": {
+          "canceled": true,
+          "deadline_exceeded": false,
+          "go_only_error_tree": [
+            {
+              "message": "fanbox:CurrentUser: upstream_error: context canceled",
+              "type": "*sdk.Error"
+            },
+            {
+              "message": "context canceled",
+              "type": "*errors.errorString"
+            }
+          ],
+          "message": "fanbox:CurrentUser: upstream_error: context canceled",
+          "reason": "upstream_error",
+          "sdk": {
+            "detail": "",
+            "go_only_reason_sentinel_matches": true,
+            "http_status": 0,
+            "operation": "CurrentUser",
+            "product": "fanbox",
+            "reason": "upstream_error",
+            "retry_has_after": false,
+            "retry_safe": false,
+            "transport": ""
+          }
+        },
+        "events": [
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "started",
+            "Operation": "owned transport entered",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 42,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "failed",
+            "Operation": "network request",
+            "Resource": "",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 42,
+            "Duration": 0
+          }
+        ],
+        "parent_after": {
+          "cause": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "done_closed": true,
+          "done_nil": false,
+          "error": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.cancelCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": false,
+          "value": "owned-sdk-value"
+        },
+        "requests": [
+          {
+            "go_only_same_context_interface": true,
+            "go_only_same_done_channel": true,
+            "method": "GET",
+            "state": {
+              "cause": {
+                "canceled": false,
+                "deadline_exceeded": false,
+                "go_only_error_tree": [],
+                "message": "",
+                "reason": ""
+              },
+              "done_closed": false,
+              "done_nil": false,
+              "error": {
+                "canceled": false,
+                "deadline_exceeded": false,
+                "go_only_error_tree": [],
+                "message": "",
+                "reason": ""
+              },
+              "go_only_context_type": "*context.valueCtx",
+              "has_deadline": false,
+              "nil_context": false,
+              "scope_present": true,
+              "value": "owned-sdk-value"
+            },
+            "url": "https://www.fanbox.cc/"
+          }
+        ],
+        "response_body_close_calls": 0,
+        "response_bytes_read": 0,
+        "trace": [
+          "transport.enter",
+          "transport.context_done",
+          "sdk.return"
+        ]
+      }
+    },
+    {
+      "name": "sdk_current_user/scoped_expired_observing",
+      "input": {
+        "child_scope_request_id": 42,
+        "mode": "scoped_expired_observing",
+        "operation": "fanbox.Client.CurrentUser",
+        "parent_scope_request_id": 41,
+        "parent_value": "owned-sdk-value",
+        "response_body": "\u003cmeta name=\"metadata\" content='{\"context\":{\"user\":{\"userId\":42,\"name\":\"owned user\"}}}'\u003e",
+        "response_status": 200,
+        "transport_behavior": "wait on actual request.Context.Done then return actual request.Context.Err",
+        "user_agent": "owned-context-agent"
+      },
+      "observation": {
+        "after": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": true,
+            "go_only_error_tree": [
+              {
+                "message": "context deadline exceeded",
+                "type": "context.deadlineExceededError"
+              }
+            ],
+            "message": "context deadline exceeded",
+            "reason": ""
+          },
+          "done_closed": true,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": true,
+            "go_only_error_tree": [
+              {
+                "message": "context deadline exceeded",
+                "type": "context.deadlineExceededError"
+              }
+            ],
+            "message": "context deadline exceeded",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.timerCtx",
+          "go_only_deadline_rfc3339_nano": "1970-01-01T00:00:01.123456789Z",
+          "go_only_deadline_unix_nano": 1123456789,
+          "has_deadline": true,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-sdk-value"
+        },
+        "before": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": true,
+            "go_only_error_tree": [
+              {
+                "message": "context deadline exceeded",
+                "type": "context.deadlineExceededError"
+              }
+            ],
+            "message": "context deadline exceeded",
+            "reason": ""
+          },
+          "done_closed": true,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": true,
+            "go_only_error_tree": [
+              {
+                "message": "context deadline exceeded",
+                "type": "context.deadlineExceededError"
+              }
+            ],
+            "message": "context deadline exceeded",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.timerCtx",
+          "go_only_deadline_rfc3339_nano": "1970-01-01T00:00:01.123456789Z",
+          "go_only_deadline_unix_nano": 1123456789,
+          "has_deadline": true,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-sdk-value"
+        },
+        "dto": {
+          "user_id": 0,
+          "display_name": "",
+          "creator_id": "",
+          "creator_status": "",
+          "is_creator": false
+        },
+        "error": {
+          "canceled": false,
+          "deadline_exceeded": true,
+          "go_only_error_tree": [
+            {
+              "message": "fanbox:CurrentUser: upstream_error: context deadline exceeded",
+              "type": "*sdk.Error"
+            },
+            {
+              "message": "context deadline exceeded",
+              "type": "context.deadlineExceededError"
+            }
+          ],
+          "message": "fanbox:CurrentUser: upstream_error: context deadline exceeded",
+          "reason": "upstream_error",
+          "sdk": {
+            "detail": "",
+            "go_only_reason_sentinel_matches": true,
+            "http_status": 0,
+            "operation": "CurrentUser",
+            "product": "fanbox",
+            "reason": "upstream_error",
+            "retry_has_after": false,
+            "retry_safe": false,
+            "transport": ""
+          }
+        },
+        "events": [
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "started",
+            "Operation": "owned transport entered",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 42,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "failed",
+            "Operation": "network request",
+            "Resource": "",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 42,
+            "Duration": 0
+          }
+        ],
+        "parent_after": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.cancelCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": false,
+          "value": "owned-sdk-value"
+        },
+        "requests": [
+          {
+            "go_only_same_context_interface": true,
+            "go_only_same_done_channel": true,
+            "method": "GET",
+            "state": {
+              "cause": {
+                "canceled": false,
+                "deadline_exceeded": true,
+                "go_only_error_tree": [
+                  {
+                    "message": "context deadline exceeded",
+                    "type": "context.deadlineExceededError"
+                  }
+                ],
+                "message": "context deadline exceeded",
+                "reason": ""
+              },
+              "done_closed": true,
+              "done_nil": false,
+              "error": {
+                "canceled": false,
+                "deadline_exceeded": true,
+                "go_only_error_tree": [
+                  {
+                    "message": "context deadline exceeded",
+                    "type": "context.deadlineExceededError"
+                  }
+                ],
+                "message": "context deadline exceeded",
+                "reason": ""
+              },
+              "go_only_context_type": "*context.timerCtx",
+              "go_only_deadline_rfc3339_nano": "1970-01-01T00:00:01.123456789Z",
+              "go_only_deadline_unix_nano": 1123456789,
+              "has_deadline": true,
+              "nil_context": false,
+              "scope_present": true,
+              "value": "owned-sdk-value"
+            },
+            "url": "https://www.fanbox.cc/"
+          }
+        ],
+        "response_body_close_calls": 0,
+        "response_bytes_read": 0,
+        "trace": [
+          "transport.enter",
+          "transport.context_done",
+          "sdk.return"
+        ]
+      }
+    },
+    {
+      "name": "sdk_current_user/detached_canceled_parent_ignoring",
+      "input": {
+        "child_scope_request_id": 42,
+        "mode": "detached_canceled_parent_ignoring",
+        "operation": "fanbox.Client.CurrentUser",
+        "parent_scope_request_id": 41,
+        "parent_value": "owned-sdk-value",
+        "response_body": "\u003cmeta name=\"metadata\" content='{\"context\":{\"user\":{\"userId\":42,\"name\":\"owned user\"}}}'\u003e",
+        "response_status": 200,
+        "transport_behavior": "return owned response without inspecting cancellation",
+        "user_agent": "owned-context-agent"
+      },
+      "observation": {
+        "after": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.cancelCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-sdk-value"
+        },
+        "before": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.cancelCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-sdk-value"
+        },
+        "dto": {
+          "user_id": 42,
+          "display_name": "owned user",
+          "creator_id": "",
+          "creator_status": "",
+          "is_creator": false
+        },
+        "error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "go_only_error_tree": [],
+          "message": "",
+          "reason": ""
+        },
+        "events": [
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "started",
+            "Operation": "owned transport entered",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 42,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "network_request",
+            "Operation": "retrieving",
+            "Resource": "/",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "owned-context-agent",
+            "Reason": "",
+            "Status": 200,
+            "Count": 0,
+            "RequestID": 42,
+            "Duration": 0
+          }
+        ],
+        "parent_after": {
+          "cause": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "done_closed": true,
+          "done_nil": false,
+          "error": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.cancelCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": false,
+          "value": "owned-sdk-value"
+        },
+        "requests": [
+          {
+            "go_only_same_context_interface": true,
+            "go_only_same_done_channel": true,
+            "method": "GET",
+            "state": {
+              "cause": {
+                "canceled": false,
+                "deadline_exceeded": false,
+                "go_only_error_tree": [],
+                "message": "",
+                "reason": ""
+              },
+              "done_closed": false,
+              "done_nil": false,
+              "error": {
+                "canceled": false,
+                "deadline_exceeded": false,
+                "go_only_error_tree": [],
+                "message": "",
+                "reason": ""
+              },
+              "go_only_context_type": "*context.cancelCtx",
+              "has_deadline": false,
+              "nil_context": false,
+              "scope_present": true,
+              "value": "owned-sdk-value"
+            },
+            "url": "https://www.fanbox.cc/"
+          }
+        ],
+        "response_body_close_calls": 1,
+        "response_bytes_read": 87,
+        "trace": [
+          "transport.enter",
+          "transport.response",
+          "body.close",
+          "sdk.return"
+        ]
+      }
+    },
+    {
+      "name": "sdk_current_user/detached_independent_cancel_during_observing",
+      "input": {
+        "child_scope_request_id": 42,
+        "mode": "detached_independent_cancel_during_observing",
+        "operation": "fanbox.Client.CurrentUser",
+        "parent_scope_request_id": 41,
+        "parent_value": "owned-sdk-value",
+        "response_body": "\u003cmeta name=\"metadata\" content='{\"context\":{\"user\":{\"userId\":42,\"name\":\"owned user\"}}}'\u003e",
+        "response_status": 200,
+        "transport_behavior": "wait on actual request.Context.Done then return actual request.Context.Err",
+        "user_agent": "owned-context-agent"
+      },
+      "observation": {
+        "after": {
+          "cause": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "done_closed": true,
+          "done_nil": false,
+          "error": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.cancelCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-sdk-value"
+        },
+        "before": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.cancelCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-sdk-value"
+        },
+        "dto": {
+          "user_id": 0,
+          "display_name": "",
+          "creator_id": "",
+          "creator_status": "",
+          "is_creator": false
+        },
+        "error": {
+          "canceled": true,
+          "deadline_exceeded": false,
+          "go_only_error_tree": [
+            {
+              "message": "fanbox:CurrentUser: upstream_error: context canceled",
+              "type": "*sdk.Error"
+            },
+            {
+              "message": "context canceled",
+              "type": "*errors.errorString"
+            }
+          ],
+          "message": "fanbox:CurrentUser: upstream_error: context canceled",
+          "reason": "upstream_error",
+          "sdk": {
+            "detail": "",
+            "go_only_reason_sentinel_matches": true,
+            "http_status": 0,
+            "operation": "CurrentUser",
+            "product": "fanbox",
+            "reason": "upstream_error",
+            "retry_has_after": false,
+            "retry_safe": false,
+            "transport": ""
+          }
+        },
+        "events": [
+          {
+            "Module": "FANBOX FlareSolverr",
+            "Kind": "started",
+            "Operation": "owned transport entered",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 42,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX network",
+            "Kind": "failed",
+            "Operation": "network request",
+            "Resource": "",
+            "Route": "native transport",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 42,
+            "Duration": 0
+          }
+        ],
+        "parent_after": {
+          "cause": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "done_closed": true,
+          "done_nil": false,
+          "error": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.cancelCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": false,
+          "value": "owned-sdk-value"
+        },
+        "requests": [
+          {
+            "go_only_same_context_interface": true,
+            "go_only_same_done_channel": true,
+            "method": "GET",
+            "state": {
+              "cause": {
+                "canceled": false,
+                "deadline_exceeded": false,
+                "go_only_error_tree": [],
+                "message": "",
+                "reason": ""
+              },
+              "done_closed": false,
+              "done_nil": false,
+              "error": {
+                "canceled": false,
+                "deadline_exceeded": false,
+                "go_only_error_tree": [],
+                "message": "",
+                "reason": ""
+              },
+              "go_only_context_type": "*context.cancelCtx",
+              "has_deadline": false,
+              "nil_context": false,
+              "scope_present": true,
+              "value": "owned-sdk-value"
+            },
+            "url": "https://www.fanbox.cc/"
+          }
+        ],
+        "response_body_close_calls": 0,
+        "response_bytes_read": 0,
+        "trace": [
+          "transport.enter",
+          "transport.context_done",
+          "sdk.return"
+        ]
+      }
+    },
+    {
+      "name": "sdk_current_user/absent_scope_ignoring",
+      "input": {
+        "child_scope_request_id": 42,
+        "mode": "absent_scope_ignoring",
+        "operation": "fanbox.Client.CurrentUser",
+        "parent_scope_request_id": 41,
+        "parent_value": "owned-sdk-value",
+        "response_body": "\u003cmeta name=\"metadata\" content='{\"context\":{\"user\":{\"userId\":42,\"name\":\"owned user\"}}}'\u003e",
+        "response_status": 200,
+        "transport_behavior": "return owned response without inspecting cancellation",
+        "user_agent": "owned-context-agent"
+      },
+      "observation": {
+        "after": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.cancelCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": false,
+          "value": "owned-sdk-value"
+        },
+        "before": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.cancelCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": false,
+          "value": "owned-sdk-value"
+        },
+        "dto": {
+          "user_id": 42,
+          "display_name": "owned user",
+          "creator_id": "",
+          "creator_status": "",
+          "is_creator": false
+        },
+        "error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "go_only_error_tree": [],
+          "message": "",
+          "reason": ""
+        },
+        "events": [],
+        "parent_after": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.cancelCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": false,
+          "value": "owned-sdk-value"
+        },
+        "requests": [
+          {
+            "go_only_same_context_interface": true,
+            "go_only_same_done_channel": true,
+            "method": "GET",
+            "state": {
+              "cause": {
+                "canceled": false,
+                "deadline_exceeded": false,
+                "go_only_error_tree": [],
+                "message": "",
+                "reason": ""
+              },
+              "done_closed": false,
+              "done_nil": false,
+              "error": {
+                "canceled": false,
+                "deadline_exceeded": false,
+                "go_only_error_tree": [],
+                "message": "",
+                "reason": ""
+              },
+              "go_only_context_type": "*context.cancelCtx",
+              "has_deadline": false,
+              "nil_context": false,
+              "scope_present": false,
+              "value": "owned-sdk-value"
+            },
+            "url": "https://www.fanbox.cc/"
+          }
+        ],
+        "response_body_close_calls": 1,
+        "response_bytes_read": 87,
+        "trace": [
+          "transport.enter",
+          "transport.response",
+          "body.close",
+          "sdk.return"
+        ]
+      }
+    },
+    {
+      "name": "sdk_current_user/nil_context",
+      "input": {
+        "child_scope_request_id": 42,
+        "mode": "nil_context",
+        "operation": "fanbox.Client.CurrentUser",
+        "parent_scope_request_id": 41,
+        "parent_value": "owned-sdk-value",
+        "response_body": "\u003cmeta name=\"metadata\" content='{\"context\":{\"user\":{\"userId\":42,\"name\":\"owned user\"}}}'\u003e",
+        "response_status": 200,
+        "transport_behavior": "return owned response without inspecting cancellation",
+        "user_agent": "owned-context-agent"
+      },
+      "observation": {
+        "after": {
+          "nil_context": true
+        },
+        "before": {
+          "nil_context": true
+        },
+        "dto": {
+          "user_id": 0,
+          "display_name": "",
+          "creator_id": "",
+          "creator_status": "",
+          "is_creator": false
+        },
+        "error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "go_only_error_tree": [
+            {
+              "message": "fanbox:CurrentUser: upstream_error: build FANBOX request",
+              "type": "*sdk.Error"
+            },
+            {
+              "message": "build FANBOX request",
+              "type": "*errors.errorString"
+            }
+          ],
+          "message": "fanbox:CurrentUser: upstream_error: build FANBOX request",
+          "reason": "upstream_error",
+          "sdk": {
+            "detail": "",
+            "go_only_reason_sentinel_matches": true,
+            "http_status": 0,
+            "operation": "CurrentUser",
+            "product": "fanbox",
+            "reason": "upstream_error",
+            "retry_has_after": false,
+            "retry_safe": false,
+            "transport": ""
+          }
+        },
+        "events": [],
+        "parent_after": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.cancelCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": false,
+          "value": "owned-sdk-value"
+        },
+        "requests": [],
+        "response_body_close_calls": 0,
+        "response_bytes_read": 0,
+        "trace": [
+          "sdk.return"
+        ]
+      }
+    },
+    {
+      "name": "lifecycle/success",
+      "input": {
+        "mode": "success",
+        "operation": "lifecycle.Run",
+        "parent_value": "owned-lifecycle-value",
+        "scope_request_id": 71,
+        "value": 37
+      },
+      "observation": {
+        "before": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-lifecycle-value"
+        },
+        "child_after_return": {
+          "cause": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "done_closed": true,
+          "done_nil": false,
+          "error": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.cancelCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-lifecycle-value"
+        },
+        "close_calls_after_repeat": 1,
+        "close_state": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.cancelCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-lifecycle-value"
+        },
+        "error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "go_only_error_tree": [],
+          "message": "",
+          "reason": ""
+        },
+        "events": [
+          {
+            "Module": "FANBOX MCP server",
+            "Kind": "started",
+            "Operation": "owned lifecycle open",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX MCP server",
+            "Kind": "account",
+            "Operation": "owned lifecycle use",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 37,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX MCP server",
+            "Kind": "completed",
+            "Operation": "owned lifecycle close",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          }
+        ],
+        "go_only_child_differs_from_parent": true,
+        "go_only_open_use_same_context_interface": true,
+        "go_only_panic": "",
+        "parent_after": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-lifecycle-value"
+        },
+        "repeated_close_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "go_only_error_tree": [],
+          "message": "",
+          "reason": ""
+        },
+        "trace": [
+          "open",
+          "use",
+          "close",
+          "run.return"
+        ],
+        "use_state": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.cancelCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-lifecycle-value"
+        }
+      }
+    },
+    {
+      "name": "lifecycle/parent_cancel_during_use",
+      "input": {
+        "mode": "parent_cancel_during_use",
+        "operation": "lifecycle.Run",
+        "parent_value": "owned-lifecycle-value",
+        "scope_request_id": 71,
+        "value": 37
+      },
+      "observation": {
+        "before": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-lifecycle-value"
+        },
+        "child_after_return": {
+          "cause": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "done_closed": true,
+          "done_nil": false,
+          "error": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.cancelCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-lifecycle-value"
+        },
+        "close_calls_after_repeat": 1,
+        "close_state": {
+          "cause": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "done_closed": true,
+          "done_nil": false,
+          "error": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.cancelCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-lifecycle-value"
+        },
+        "error": {
+          "canceled": true,
+          "deadline_exceeded": false,
+          "go_only_error_tree": [
+            {
+              "message": "context canceled",
+              "type": "*errors.errorString"
+            }
+          ],
+          "message": "context canceled",
+          "reason": ""
+        },
+        "events": [
+          {
+            "Module": "FANBOX MCP server",
+            "Kind": "started",
+            "Operation": "owned lifecycle open",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX MCP server",
+            "Kind": "account",
+            "Operation": "owned lifecycle use",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 37,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX MCP server",
+            "Kind": "completed",
+            "Operation": "owned lifecycle close",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          }
+        ],
+        "go_only_child_differs_from_parent": true,
+        "go_only_open_use_same_context_interface": true,
+        "go_only_panic": "",
+        "parent_after": {
+          "cause": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "done_closed": true,
+          "done_nil": false,
+          "error": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-lifecycle-value"
+        },
+        "repeated_close_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "go_only_error_tree": [],
+          "message": "",
+          "reason": ""
+        },
+        "trace": [
+          "open",
+          "use",
+          "close",
+          "run.return"
+        ],
+        "use_state": {
+          "cause": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "done_closed": true,
+          "done_nil": false,
+          "error": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.cancelCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-lifecycle-value"
+        }
+      }
+    },
+    {
+      "name": "lifecycle/already_expired_parent",
+      "input": {
+        "mode": "already_expired_parent",
+        "operation": "lifecycle.Run",
+        "parent_value": "owned-lifecycle-value",
+        "scope_request_id": 71,
+        "value": 37
+      },
+      "observation": {
+        "before": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": true,
+            "go_only_error_tree": [
+              {
+                "message": "context deadline exceeded",
+                "type": "context.deadlineExceededError"
+              }
+            ],
+            "message": "context deadline exceeded",
+            "reason": ""
+          },
+          "done_closed": true,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": true,
+            "go_only_error_tree": [
+              {
+                "message": "context deadline exceeded",
+                "type": "context.deadlineExceededError"
+              }
+            ],
+            "message": "context deadline exceeded",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.timerCtx",
+          "go_only_deadline_rfc3339_nano": "1970-01-01T00:00:01.123456789Z",
+          "go_only_deadline_unix_nano": 1123456789,
+          "has_deadline": true,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-lifecycle-value"
+        },
+        "child_after_return": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": true,
+            "go_only_error_tree": [
+              {
+                "message": "context deadline exceeded",
+                "type": "context.deadlineExceededError"
+              }
+            ],
+            "message": "context deadline exceeded",
+            "reason": ""
+          },
+          "done_closed": true,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": true,
+            "go_only_error_tree": [
+              {
+                "message": "context deadline exceeded",
+                "type": "context.deadlineExceededError"
+              }
+            ],
+            "message": "context deadline exceeded",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.cancelCtx",
+          "go_only_deadline_rfc3339_nano": "1970-01-01T00:00:01.123456789Z",
+          "go_only_deadline_unix_nano": 1123456789,
+          "has_deadline": true,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-lifecycle-value"
+        },
+        "close_calls_after_repeat": 1,
+        "close_state": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": true,
+            "go_only_error_tree": [
+              {
+                "message": "context deadline exceeded",
+                "type": "context.deadlineExceededError"
+              }
+            ],
+            "message": "context deadline exceeded",
+            "reason": ""
+          },
+          "done_closed": true,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": true,
+            "go_only_error_tree": [
+              {
+                "message": "context deadline exceeded",
+                "type": "context.deadlineExceededError"
+              }
+            ],
+            "message": "context deadline exceeded",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.cancelCtx",
+          "go_only_deadline_rfc3339_nano": "1970-01-01T00:00:01.123456789Z",
+          "go_only_deadline_unix_nano": 1123456789,
+          "has_deadline": true,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-lifecycle-value"
+        },
+        "error": {
+          "canceled": false,
+          "deadline_exceeded": true,
+          "go_only_error_tree": [
+            {
+              "message": "context deadline exceeded",
+              "type": "context.deadlineExceededError"
+            }
+          ],
+          "message": "context deadline exceeded",
+          "reason": ""
+        },
+        "events": [
+          {
+            "Module": "FANBOX MCP server",
+            "Kind": "started",
+            "Operation": "owned lifecycle open",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX MCP server",
+            "Kind": "account",
+            "Operation": "owned lifecycle use",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 37,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX MCP server",
+            "Kind": "completed",
+            "Operation": "owned lifecycle close",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          }
+        ],
+        "go_only_child_differs_from_parent": true,
+        "go_only_open_use_same_context_interface": true,
+        "go_only_panic": "",
+        "parent_after": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": true,
+            "go_only_error_tree": [
+              {
+                "message": "context deadline exceeded",
+                "type": "context.deadlineExceededError"
+              }
+            ],
+            "message": "context deadline exceeded",
+            "reason": ""
+          },
+          "done_closed": true,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": true,
+            "go_only_error_tree": [
+              {
+                "message": "context deadline exceeded",
+                "type": "context.deadlineExceededError"
+              }
+            ],
+            "message": "context deadline exceeded",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.timerCtx",
+          "go_only_deadline_rfc3339_nano": "1970-01-01T00:00:01.123456789Z",
+          "go_only_deadline_unix_nano": 1123456789,
+          "has_deadline": true,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-lifecycle-value"
+        },
+        "repeated_close_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "go_only_error_tree": [],
+          "message": "",
+          "reason": ""
+        },
+        "trace": [
+          "open",
+          "use",
+          "close",
+          "run.return"
+        ],
+        "use_state": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": true,
+            "go_only_error_tree": [
+              {
+                "message": "context deadline exceeded",
+                "type": "context.deadlineExceededError"
+              }
+            ],
+            "message": "context deadline exceeded",
+            "reason": ""
+          },
+          "done_closed": true,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": true,
+            "go_only_error_tree": [
+              {
+                "message": "context deadline exceeded",
+                "type": "context.deadlineExceededError"
+              }
+            ],
+            "message": "context deadline exceeded",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.cancelCtx",
+          "go_only_deadline_rfc3339_nano": "1970-01-01T00:00:01.123456789Z",
+          "go_only_deadline_unix_nano": 1123456789,
+          "has_deadline": true,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-lifecycle-value"
+        }
+      }
+    },
+    {
+      "name": "lifecycle/use_failure_close_failure",
+      "input": {
+        "mode": "use_failure_close_failure",
+        "operation": "lifecycle.Run",
+        "parent_value": "owned-lifecycle-value",
+        "scope_request_id": 71,
+        "value": 37
+      },
+      "observation": {
+        "before": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-lifecycle-value"
+        },
+        "child_after_return": {
+          "cause": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "done_closed": true,
+          "done_nil": false,
+          "error": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.cancelCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-lifecycle-value"
+        },
+        "close_calls_after_repeat": 1,
+        "close_state": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.cancelCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-lifecycle-value"
+        },
+        "error": {
+          "canceled": true,
+          "deadline_exceeded": false,
+          "go_only_error_tree": [
+            {
+              "message": "owned use failure: context canceled\nowned close failure",
+              "type": "*errors.joinError"
+            },
+            {
+              "message": "owned use failure: context canceled",
+              "type": "*fmt.wrapError"
+            },
+            {
+              "message": "context canceled",
+              "type": "*errors.errorString"
+            },
+            {
+              "message": "owned close failure",
+              "type": "*errors.errorString"
+            }
+          ],
+          "message": "owned use failure: context canceled\nowned close failure",
+          "reason": ""
+        },
+        "events": [
+          {
+            "Module": "FANBOX MCP server",
+            "Kind": "started",
+            "Operation": "owned lifecycle open",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX MCP server",
+            "Kind": "account",
+            "Operation": "owned lifecycle use",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 37,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX MCP server",
+            "Kind": "completed",
+            "Operation": "owned lifecycle close",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          }
+        ],
+        "go_only_child_differs_from_parent": true,
+        "go_only_open_use_same_context_interface": true,
+        "go_only_panic": "",
+        "parent_after": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-lifecycle-value"
+        },
+        "repeated_close_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "go_only_error_tree": [
+            {
+              "message": "owned close failure",
+              "type": "*errors.errorString"
+            }
+          ],
+          "message": "owned close failure",
+          "reason": ""
+        },
+        "trace": [
+          "open",
+          "use",
+          "close",
+          "run.return"
+        ],
+        "use_state": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.cancelCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-lifecycle-value"
+        }
+      }
+    },
+    {
+      "name": "lifecycle/use_panic",
+      "input": {
+        "mode": "use_panic",
+        "operation": "lifecycle.Run",
+        "parent_value": "owned-lifecycle-value",
+        "scope_request_id": 71,
+        "value": 37
+      },
+      "observation": {
+        "before": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-lifecycle-value"
+        },
+        "child_after_return": {
+          "cause": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "done_closed": true,
+          "done_nil": false,
+          "error": {
+            "canceled": true,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [
+              {
+                "message": "context canceled",
+                "type": "*errors.errorString"
+              }
+            ],
+            "message": "context canceled",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.cancelCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-lifecycle-value"
+        },
+        "close_calls_after_repeat": 1,
+        "close_state": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.cancelCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-lifecycle-value"
+        },
+        "error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "go_only_error_tree": [],
+          "message": "",
+          "reason": ""
+        },
+        "events": [
+          {
+            "Module": "FANBOX MCP server",
+            "Kind": "started",
+            "Operation": "owned lifecycle open",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX MCP server",
+            "Kind": "account",
+            "Operation": "owned lifecycle use",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 37,
+            "RequestID": 71,
+            "Duration": 0
+          },
+          {
+            "Module": "FANBOX MCP server",
+            "Kind": "completed",
+            "Operation": "owned lifecycle close",
+            "Resource": "",
+            "Route": "",
+            "Target": "",
+            "Proxy": "",
+            "UserAgent": "",
+            "Reason": "",
+            "Status": 0,
+            "Count": 0,
+            "RequestID": 71,
+            "Duration": 0
+          }
+        ],
+        "go_only_child_differs_from_parent": true,
+        "go_only_open_use_same_context_interface": true,
+        "go_only_panic": "owned lifecycle panic",
+        "parent_after": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.valueCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-lifecycle-value"
+        },
+        "repeated_close_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "go_only_error_tree": [],
+          "message": "",
+          "reason": ""
+        },
+        "trace": [
+          "open",
+          "use",
+          "close",
+          "run.return"
+        ],
+        "use_state": {
+          "cause": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "done_closed": false,
+          "done_nil": false,
+          "error": {
+            "canceled": false,
+            "deadline_exceeded": false,
+            "go_only_error_tree": [],
+            "message": "",
+            "reason": ""
+          },
+          "go_only_context_type": "*context.cancelCtx",
+          "has_deadline": false,
+          "nil_context": false,
+          "scope_present": true,
+          "value": "owned-lifecycle-value"
+        }
+      }
+    },
+    {
+      "name": "lifecycle/nil_context",
+      "input": {
+        "mode": "nil_context",
+        "operation": "lifecycle.Run",
+        "parent_value": "owned-lifecycle-value",
+        "scope_request_id": 71,
+        "value": 37
+      },
+      "observation": {
+        "before": {
+          "nil_context": true
+        },
+        "child_after_return": {
+          "nil_context": true
+        },
+        "close_calls_after_repeat": 0,
+        "close_state": null,
+        "error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "go_only_error_tree": [
+            {
+              "message": "lifecycle: context is nil",
+              "type": "*errors.errorString"
+            }
+          ],
+          "message": "lifecycle: context is nil",
+          "reason": ""
+        },
+        "events": [],
+        "go_only_child_differs_from_parent": false,
+        "go_only_open_use_same_context_interface": true,
+        "go_only_panic": "",
+        "parent_after": {
+          "nil_context": true
+        },
+        "repeated_close_error": {
+          "canceled": false,
+          "deadline_exceeded": false,
+          "go_only_error_tree": [],
+          "message": "",
+          "reason": ""
+        },
+        "trace": [
+          "run.return"
+        ],
+        "use_state": null
+      }
+    }
+  ]
+}

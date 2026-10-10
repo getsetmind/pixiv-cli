@@ -1,0 +1,3492 @@
+{
+  "reference": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "go_version": "go1.27.1",
+  "platform": "linux/amd64",
+  "sources": [
+    {
+      "path": "internal/services/fanbox/protocol/protocol.go",
+      "sha256": "c153337aa61756f5d5ea36ec32ca272e68da8a1604c1d4a4e4d6bcb2c957fdd3"
+    },
+    {
+      "path": "internal/services/fanbox/protocol/cookie.go",
+      "sha256": "692013694d29e4fe67cee7641c4dcdafe73158bea107666c194e6305d33b45a9"
+    },
+    {
+      "path": "internal/services/fanbox/protocol/solver.go",
+      "sha256": "e55464b091fa6720b7134a9487684c6c0969f9b4921384ea0e091d634782fcea"
+    },
+    {
+      "path": "go.mod",
+      "sha256": "81990f7489f40c325163dc9614fe482b60aec6be2460fddfcb6b09b2c666e13c"
+    },
+    {
+      "path": "go.sum",
+      "sha256": "22b07d0a3de3d9b37e71cc72baebfcd281fe7c95166821f715c215121bbdf64e"
+    }
+  ],
+  "dependencies": [
+    {
+      "path": "github.com/bogdanfinn/fhttp@v0.6.8",
+      "sha256": "d430be56baa9727bf6517cd918f3f3081426aaa3e0cfb63a25ac83e39bc406a0",
+      "files": 169
+    },
+    {
+      "path": "github.com/bogdanfinn/tls-client@v1.15.1",
+      "sha256": "1e4f80908c65ce4e1b1de0453a9c4d41124a1cebbb53ac4f17227e8cae80887a",
+      "files": 53
+    },
+    {
+      "path": "github.com/bogdanfinn/utls@v1.7.7-barnius",
+      "sha256": "d1cc088b2e51ea0985db3b47379d7f243336b9a65f902eb787068807de037986",
+      "files": 311
+    },
+    {
+      "path": "golang.org/x/net@v0.48.0",
+      "sha256": "45f7f6d536c2ef2ca8bddc2caa79a84fbd8b011058ed5b33c5f83a8f8ac901a4",
+      "files": 826
+    }
+  ],
+  "toolchain_sources": [
+    {
+      "path": "crypto/x509/root.go",
+      "sha256": "bcad6caaa9c0780b87b0509e112600996514184abe1e304bf468e200cacb6223"
+    },
+    {
+      "path": "crypto/x509/root_unix.go",
+      "sha256": "7e4b6024e648ca2cc2359049eeca3780388c02debdfd9db66144f7ebe06cf5ac"
+    },
+    {
+      "path": "crypto/x509/verify.go",
+      "sha256": "8b3d059f20a75ac8a103d97b473fbe90e01d40654c4548c50d9b0937f54f3c8f"
+    },
+    {
+      "path": "crypto/tls/handshake_server_tls13.go",
+      "sha256": "6cb325a7623c3bfe60e066b08fed2cc64e6b6cff85ad8f6467c038968d3a7fe6"
+    },
+    {
+      "path": "net/http/client.go",
+      "sha256": "ced3428a85206de8de79c10de38d34951e0b9823c0ccb68ff51329d048a1f7b9"
+    }
+  ],
+  "evidence": "Fresh execution of unchanged newBrowserTransport and its tls-client/fhttp/uTLS boundaries against owned TLS1.3/H2 peers. Session headers use the actual NewSessionWithOptions/GetJSON path with only a declared loopback URL adapter. No copied profile or production TLS configuration changes. Each peer and trust environment exists only inside a bounded owned child.",
+  "replay_policy": [
+    "Comparable fields are exact observations, not source labels: complete extension order and fixed extension data, cipher order, key-share group/length, ECH fixed fields and allowed dynamic payload lengths, decrypted HTTP2 SETTINGS order/values, window, HEADERS priority/flags/ordered fields, certificate classifications, sequential reuse and physical idle closure.",
+    "Go-only observations retain complete raw ClientHello records, all random/GREASE/key-share/ECH bytes and selected lengths, all decoded fields and decrypted frame bytes, exact raw error chains and elapsed time. They are not expected to equal a later random run.",
+    "Only actual GREASE codepoints are canonicalized to 0x0a0a; their positions and fixed extension payload bytes remain exact. Random/session/key-share key bytes are compared by exact required length, not value. ECH config/key/payload randomness and its four source-defined possible lengths are named explicitly.",
+    "Direct-factory authority and certificate-failure outer URL replace only this run's owned localhost port in comparable fields; raw fields/errors remain lossless. Expired-certificate comparison replaces only the parsed current-time token, retaining all other diagnostic text and typed x509 reason.",
+    "SETTINGS ACK arrival relative to a later sequential request is scheduling-dependent. All raw frames are retained; ACK multiplicity and initial SETTINGS/window/HEADERS remain checked. The peer sends SETTINGS only after receiving the first complete GET HEADERS."
+  ],
+  "limitations": [
+    "Linux/amd64 owned synthetic peer proof only; no real FANBOX/media/account, user computer, OS trust change, external network or Rust runtime equivalence.",
+    "Session adapter changes only request URL host to owned localhost:port and preserves original api.fanbox.cc authority, path, query, method and headers. TLS SNI/certificate target is localhost, not FANBOX. Session uses an explicit injected client containing the genuine factory transport; default factory TLS/HTTP2 options are unchanged.",
+    "TLS1.2 negotiation, resumption/PSK, HRR, HTTP1 fallback, proxy runtime, HTTP3, other platforms/trust stores and concurrency remain untested. Absence of PSK in fresh TLS1.3 captures does not certify resumption.",
+    "Stopped supplemental HTTP2 multiplex/unfinished HEAD/upload probe is not executed, reconstructed or used as evidence. This slice uses sequential completed GETs and one stalled response-header GET only.",
+    "No body-close cancellation, concurrent Read/Close, compression, legacy deflate, HEADERS END_STREAM/nonzero length or unfinished request-body contract is claimed.",
+    "A pending response-header GET is held for at least 31.2 seconds after the peer observes its complete GET HEADERS, proving survival beyond the dependency's default 30-second total timeout in this run; it does not prove an infinite wait. Explicit caller cancellation/deadline and idle-only cleanup are observed separately. Completed idle connections are checked live for 50ms before each explicit cleanup; physical closure must end in peer EOF.",
+    "Fixed extension ordering is checked across this bounded sample. GREASE randomness/distribution and every ECH length are not statistically verified; source provenance alone is never runtime equivalence."
+  ],
+  "cases": [
+    {
+      "name": "headers_sequential_idle",
+      "comparable": {
+        "alive_after_idle_close": false,
+        "alive_after_thirty_seconds": false,
+        "canceled": false,
+        "completed_idle_liveness_checks": 2,
+        "connections": [
+          {
+            "alpn": "h2",
+            "cipher_suite": 4865,
+            "did_resume": false,
+            "frames": [
+              {
+                "flags": 0,
+                "settings": [
+                  [
+                    1,
+                    65536
+                  ],
+                  [
+                    2,
+                    0
+                  ],
+                  [
+                    4,
+                    6291456
+                  ],
+                  [
+                    6,
+                    262144
+                  ]
+                ],
+                "stream": 0,
+                "type": "SETTINGS"
+              },
+              {
+                "flags": 0,
+                "stream": 0,
+                "type": "WINDOW_UPDATE",
+                "window": 15663105
+              },
+              {
+                "fields": [
+                  {
+                    "Name": ":method",
+                    "Sensitive": false,
+                    "Value": "GET"
+                  },
+                  {
+                    "Name": ":authority",
+                    "Sensitive": false,
+                    "Value": "api.fanbox.cc"
+                  },
+                  {
+                    "Name": ":scheme",
+                    "Sensitive": false,
+                    "Value": "https"
+                  },
+                  {
+                    "Name": ":path",
+                    "Sensitive": false,
+                    "Value": "/native/first?owned=1"
+                  },
+                  {
+                    "Name": "accept",
+                    "Sensitive": false,
+                    "Value": "application/json, text/plain, */*"
+                  },
+                  {
+                    "Name": "cookie",
+                    "Sensitive": false,
+                    "Value": "FANBOXSESSID=owned-native-session"
+                  },
+                  {
+                    "Name": "origin",
+                    "Sensitive": false,
+                    "Value": "https://www.fanbox.cc"
+                  },
+                  {
+                    "Name": "referer",
+                    "Sensitive": false,
+                    "Value": "https://www.fanbox.cc/"
+                  },
+                  {
+                    "Name": "user-agent",
+                    "Sensitive": false,
+                    "Value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:148.0) Gecko/20100101 Firefox/148.0"
+                  },
+                  {
+                    "Name": "accept-encoding",
+                    "Sensitive": false,
+                    "Value": "gzip, deflate, br"
+                  }
+                ],
+                "flags": 37,
+                "priority": {
+                  "Exclusive": true,
+                  "StreamDep": 0,
+                  "Weight": 255
+                },
+                "stream": 1,
+                "type": "HEADERS"
+              },
+              {
+                "fields": [
+                  {
+                    "Name": ":method",
+                    "Sensitive": false,
+                    "Value": "GET"
+                  },
+                  {
+                    "Name": ":authority",
+                    "Sensitive": false,
+                    "Value": "api.fanbox.cc"
+                  },
+                  {
+                    "Name": ":scheme",
+                    "Sensitive": false,
+                    "Value": "https"
+                  },
+                  {
+                    "Name": ":path",
+                    "Sensitive": false,
+                    "Value": "/native/second?owned=1"
+                  },
+                  {
+                    "Name": "accept",
+                    "Sensitive": false,
+                    "Value": "application/json, text/plain, */*"
+                  },
+                  {
+                    "Name": "cookie",
+                    "Sensitive": false,
+                    "Value": "FANBOXSESSID=owned-native-session"
+                  },
+                  {
+                    "Name": "origin",
+                    "Sensitive": false,
+                    "Value": "https://www.fanbox.cc"
+                  },
+                  {
+                    "Name": "referer",
+                    "Sensitive": false,
+                    "Value": "https://www.fanbox.cc/"
+                  },
+                  {
+                    "Name": "user-agent",
+                    "Sensitive": false,
+                    "Value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:148.0) Gecko/20100101 Firefox/148.0"
+                  },
+                  {
+                    "Name": "accept-encoding",
+                    "Sensitive": false,
+                    "Value": "gzip, deflate, br"
+                  }
+                ],
+                "flags": 37,
+                "priority": {
+                  "Exclusive": true,
+                  "StreamDep": 0,
+                  "Weight": 255
+                },
+                "stream": 3,
+                "type": "HEADERS"
+              }
+            ],
+            "handshake_error": "",
+            "hello": {
+              "cipher_suites": [
+                2570,
+                4865,
+                4866,
+                4867,
+                49195,
+                49199,
+                49196,
+                49200,
+                52393,
+                52392,
+                49171,
+                49172,
+                156,
+                157,
+                47,
+                53
+              ],
+              "compression_hex": "00",
+              "extensions": [
+                {
+                  "data_hex": "",
+                  "id": 2570,
+                  "length": 0
+                },
+                {
+                  "data_hex": "0a0a:fixed[00],11ec:random[1216],001d:random[32]",
+                  "id": 51,
+                  "length": 1263
+                },
+                {
+                  "data_hex": "000c0000096c6f63616c686f7374",
+                  "id": 0,
+                  "length": 14
+                },
+                {
+                  "data_hex": "0003026832",
+                  "id": 17613,
+                  "length": 5
+                },
+                {
+                  "data_hex": "00",
+                  "id": 65281,
+                  "length": 1
+                },
+                {
+                  "data_hex": "000a0a0a11ec001d00170018",
+                  "id": 10,
+                  "length": 12
+                },
+                {
+                  "data_hex": "020002",
+                  "id": 27,
+                  "length": 3
+                },
+                {
+                  "data_hex": "",
+                  "id": 35,
+                  "length": 0
+                },
+                {
+                  "data_hex": "0100000000",
+                  "id": 5,
+                  "length": 5
+                },
+                {
+                  "data_hex": "",
+                  "id": 23,
+                  "length": 0
+                },
+                {
+                  "data_hex": "060a0a03040303",
+                  "id": 43,
+                  "length": 7
+                },
+                {
+                  "data_hex": "001004030804040105030805050108060601",
+                  "id": 13,
+                  "length": 18
+                },
+                {
+                  "data_hex": "",
+                  "id": 18,
+                  "length": 0
+                },
+                {
+                  "data_hex": "0100",
+                  "id": 11,
+                  "length": 2
+                },
+                {
+                  "data_hex": "fixed[0000010001],config_id=random[1],enc=random[32],payload=random[144|176|208|240]",
+                  "id": 65037,
+                  "length": "variable:186|218|250|282"
+                },
+                {
+                  "data_hex": "000c02683208687474702f312e31",
+                  "id": 16,
+                  "length": 14
+                },
+                {
+                  "data_hex": "0101",
+                  "id": 45,
+                  "length": 2
+                },
+                {
+                  "data_hex": "0000",
+                  "id": 51764,
+                  "length": 2
+                },
+                {
+                  "data_hex": "00",
+                  "id": 2570,
+                  "length": 1
+                }
+              ],
+              "legacy_version": 771,
+              "random_hex": "random[32]",
+              "record_version": 769,
+              "session_id_hex": "random[32]"
+            },
+            "preface_hex": "505249202a20485454502f322e300d0a0d0a534d0d0a0d0a",
+            "settings_ack_count": 1,
+            "sni": "localhost",
+            "terminal_error": "EOF",
+            "tls_version": 772
+          },
+          {
+            "alpn": "h2",
+            "cipher_suite": 4865,
+            "did_resume": false,
+            "frames": [
+              {
+                "flags": 0,
+                "settings": [
+                  [
+                    1,
+                    65536
+                  ],
+                  [
+                    2,
+                    0
+                  ],
+                  [
+                    4,
+                    6291456
+                  ],
+                  [
+                    6,
+                    262144
+                  ]
+                ],
+                "stream": 0,
+                "type": "SETTINGS"
+              },
+              {
+                "flags": 0,
+                "stream": 0,
+                "type": "WINDOW_UPDATE",
+                "window": 15663105
+              },
+              {
+                "fields": [
+                  {
+                    "Name": ":method",
+                    "Sensitive": false,
+                    "Value": "GET"
+                  },
+                  {
+                    "Name": ":authority",
+                    "Sensitive": false,
+                    "Value": "api.fanbox.cc"
+                  },
+                  {
+                    "Name": ":scheme",
+                    "Sensitive": false,
+                    "Value": "https"
+                  },
+                  {
+                    "Name": ":path",
+                    "Sensitive": false,
+                    "Value": "/native/third?owned=1"
+                  },
+                  {
+                    "Name": "accept",
+                    "Sensitive": false,
+                    "Value": "application/json, text/plain, */*"
+                  },
+                  {
+                    "Name": "cookie",
+                    "Sensitive": false,
+                    "Value": "FANBOXSESSID=owned-native-session"
+                  },
+                  {
+                    "Name": "origin",
+                    "Sensitive": false,
+                    "Value": "https://www.fanbox.cc"
+                  },
+                  {
+                    "Name": "referer",
+                    "Sensitive": false,
+                    "Value": "https://www.fanbox.cc/"
+                  },
+                  {
+                    "Name": "user-agent",
+                    "Sensitive": false,
+                    "Value": "Owned Native UA/1"
+                  },
+                  {
+                    "Name": "accept-encoding",
+                    "Sensitive": false,
+                    "Value": "gzip, deflate, br"
+                  }
+                ],
+                "flags": 37,
+                "priority": {
+                  "Exclusive": true,
+                  "StreamDep": 0,
+                  "Weight": 255
+                },
+                "stream": 1,
+                "type": "HEADERS"
+              }
+            ],
+            "handshake_error": "",
+            "hello": {
+              "cipher_suites": [
+                2570,
+                4865,
+                4866,
+                4867,
+                49195,
+                49199,
+                49196,
+                49200,
+                52393,
+                52392,
+                49171,
+                49172,
+                156,
+                157,
+                47,
+                53
+              ],
+              "compression_hex": "00",
+              "extensions": [
+                {
+                  "data_hex": "",
+                  "id": 2570,
+                  "length": 0
+                },
+                {
+                  "data_hex": "0a0a:fixed[00],11ec:random[1216],001d:random[32]",
+                  "id": 51,
+                  "length": 1263
+                },
+                {
+                  "data_hex": "000c0000096c6f63616c686f7374",
+                  "id": 0,
+                  "length": 14
+                },
+                {
+                  "data_hex": "0003026832",
+                  "id": 17613,
+                  "length": 5
+                },
+                {
+                  "data_hex": "00",
+                  "id": 65281,
+                  "length": 1
+                },
+                {
+                  "data_hex": "000a0a0a11ec001d00170018",
+                  "id": 10,
+                  "length": 12
+                },
+                {
+                  "data_hex": "020002",
+                  "id": 27,
+                  "length": 3
+                },
+                {
+                  "data_hex": "",
+                  "id": 35,
+                  "length": 0
+                },
+                {
+                  "data_hex": "0100000000",
+                  "id": 5,
+                  "length": 5
+                },
+                {
+                  "data_hex": "",
+                  "id": 23,
+                  "length": 0
+                },
+                {
+                  "data_hex": "060a0a03040303",
+                  "id": 43,
+                  "length": 7
+                },
+                {
+                  "data_hex": "001004030804040105030805050108060601",
+                  "id": 13,
+                  "length": 18
+                },
+                {
+                  "data_hex": "",
+                  "id": 18,
+                  "length": 0
+                },
+                {
+                  "data_hex": "0100",
+                  "id": 11,
+                  "length": 2
+                },
+                {
+                  "data_hex": "fixed[0000010001],config_id=random[1],enc=random[32],payload=random[144|176|208|240]",
+                  "id": 65037,
+                  "length": "variable:186|218|250|282"
+                },
+                {
+                  "data_hex": "000c02683208687474702f312e31",
+                  "id": 16,
+                  "length": 14
+                },
+                {
+                  "data_hex": "0101",
+                  "id": 45,
+                  "length": 2
+                },
+                {
+                  "data_hex": "0000",
+                  "id": 51764,
+                  "length": 2
+                },
+                {
+                  "data_hex": "00",
+                  "id": 2570,
+                  "length": 1
+                }
+              ],
+              "legacy_version": 771,
+              "random_hex": "random[32]",
+              "record_version": 769,
+              "session_id_hex": "random[32]"
+            },
+            "preface_hex": "505249202a20485454502f322e300d0a0d0a534d0d0a0d0a",
+            "settings_ack_count": 1,
+            "sni": "localhost",
+            "terminal_error": "EOF",
+            "tls_version": 772
+          }
+        ],
+        "deadline": false,
+        "errors": [],
+        "expired": false,
+        "hostname": false,
+        "idle_close_observed": true,
+        "name": "headers_sequential_idle",
+        "response_json": [
+          {
+            "ok": true
+          },
+          {
+            "ok": true
+          },
+          {
+            "ok": true
+          }
+        ],
+        "trust_subjects": [
+          "302c312a3028060355040313214f776e65642046414e424f58206e617469766520636f6e747261637420726f6f74"
+        ],
+        "unknown_authority": false
+      },
+      "go_only_observation": {
+        "name": "headers_sequential_idle",
+        "connections": [
+          {
+            "hello": {
+              "record_hex": "16030106b8010006b403037adc9bfa70c3d1950b8577e9ac1e9b34e7cfdf3da9f4ed3024d32dac69769792202c49c3be6ac708c0c297b5815209e2c0c2b8977c19b5c246e843b1fbadd71f0a00206a6a130113021303c02bc02fc02cc030cca9cca8c013c014009c009d002f00350100064b6a6a0000003304ef04ed0a0a00010011ec04c00f029dc990b4a86774cc34094e044e98c0b56cd5a0fac58c923506b3ea6409062d0637842c577a4cd798f83538fb58973beb758262649b545500023cb5c07261d42939eb05ce3564e3a15a0bf656f7a26b0b8bc00a021c408b23c34c6e06c9bc7d90425b81519dc11316e7c06fc2c0efe4b006f6608345c806d377ab558c4e421883eab5044a8c1209a835886e2cc631bc386f37758879c5422d14c4739284bcc4b06107c8c25370b61b90ab28515ee5b1b055848c8933777168fab75dcecca673d069bc8745d21c1997c82bf1c6a99bfa3fa4d3aef36b16c708701b037923881ff5d3839c96740de78c2e953df077582bbb798a9c3137f30386bc242eb41430b441b90a24d2b97d19537dab46219b9571c3b43c10f09fa99772535890f987a97c2cb1a4305dc6e314a4d179af34c6fdb40d08b23aff6712647371cc974b83b309ca09aa21c96e1c6b4048977508557559d99e1fda353833cd128b054b61bf2c8639c7d66331221aeeab7703e10ed52998722c93b1093903228d31403ff2f92f0755474e6491bfc65a462587325350d7e2224837be884859011304f7e5654548bffd5869252ccef3222bb077ae41968d86f7b258a488f28aab3076b7c3f954782357d8489831e91e19fb7fe6d305de7a6dd5d8c40b436c6b180efa362572cc5c3f229e9387a1c92c6cd7b3583115c8cfa8376526a1c6244d88561a01a321a9d407d5e1bc199604287a1b0665bfd48a11359ac1c5ab1729301538f53a177acfce1243b185a8d534bb4a699c0aa5a49071064cc9b02fa1996870489199276b60a77c939253159559e758e88870e1b3b683e765c3f91ae9267d8e1167bc21575c21be6e55028de01186e20e9599152a60c2f7022175e7544338a196e5ab50e3879e272aac7c7a2331c249d287bde47c81353490a2812ec69c49f6b1eef25cb055a15af7c3a6779fa904b54881232dc6ae5e85b244e5b0906b0f9455265919196d37bd40956f50eb08b4c42428d07cd91779244393e2a122ca0a8bf17458c9d002d6d83a8cb4c627d58d7d17143ac79bc2331a1976567aa49c012920601103f2010cbfcc8879731a652704f8e88c35ac66d17a2414300ace066dbc922048159c93c86ca40c57c545baf2c7a637b7c1ce61200ca92c364888e1ab7b713029e6a84e7d747cfefbb846b15cd07aa88809029c14ace6200792656b645284df3a714362cc12d61aa1d46f43c6437a111587cb0b2cf54d4f437ac847baf892bfc61c477dab786665ad8e7ab8af4386d82bb888183639a14cefe594e51cb44342adc157a59ca24c7b5c9e7d3c0a0188c5b9b6588453aa1fc59b03024c484c2ef089a439d04910ba2d1203089ed49ff483bd8fd9cc2c68cec182a33a3ba346b30894dc0ec01458af23b8ff64b00e5003d8522a4ceb442af298821325617368b172b09500afa360b4184cb2a96c5ec3a83cb7213d0e8b36a604cc20f65e2591532ba54bccd71ae67324dbe4c0ee8488f168c6ca13384a61919797b33dd53a59484aa7d0a310cbbc25bab4557626d418749b294bc152c5af0514a6d76cc54630ec09648100b41b45b1ade07ac0a27694f78dbe900a9cd536e668979f2912da001a5959625633a8fd9b093cb6d1c7cc60a292d76e24e6ca3199f72bfb9766d2ec6cf50b35a9ae8d636f74d905b5ce6a9beb60d3edf27e6048a547a078a99651901058089a42c055001d0020bda4c6e23489df79d912bd6d30607e4fd09c2851bd4ea7c6d406ad6f6badc7690000000e000c0000096c6f63616c686f737444cd00050003026832ff01000100000a000c000a0a0a11ec001d00170018001b00030200020023000000050005010000000000170000002b0007060a0a03040303000d001200100403080404010503080505010806060100120000000b00020100fe0d00ba00000100011a0020f056b6659276cc6fecae37ff66585096c63801317ef028e287c7a3b013346e360090199e3ab99280fd576f7e8bd361f404daff65e9eb07157d0b58f01c80f1ce998859e87c71c79ba8e33ed4304c3ab01f41aad86a28c87bafe375a514f2e6ca5575a29a477658ea83ed82f0c7e5e41dd01897649db2648b9f2a82a7eaa1ca0c9d6e86a4933148853e3ef06b21d0148aac5ae590a9ffcacf3c3eb65ad6190ed13d45c68f64ddc073f6e88aee8b2c96d00c0a0010000e000c02683208687474702f312e31002d00020101ca34000200007a7a000100",
+              "record_sha256": "1860463539a4f4f6c70e24bc57f9fe34e52b058cf404656ebaadda28eff2a40c",
+              "record_version": 769,
+              "legacy_version": 771,
+              "random_hex": "7adc9bfa70c3d1950b8577e9ac1e9b34e7cfdf3da9f4ed3024d32dac69769792",
+              "session_id_hex": "2c49c3be6ac708c0c297b5815209e2c0c2b8977c19b5c246e843b1fbadd71f0a",
+              "cipher_suites": [
+                27242,
+                4865,
+                4866,
+                4867,
+                49195,
+                49199,
+                49196,
+                49200,
+                52393,
+                52392,
+                49171,
+                49172,
+                156,
+                157,
+                47,
+                53
+              ],
+              "compression_hex": "00",
+              "extensions": [
+                {
+                  "id": 27242,
+                  "length": 0,
+                  "data_hex": "",
+                  "comparable_id": 2570,
+                  "comparable_data": ""
+                },
+                {
+                  "id": 51,
+                  "length": 1263,
+                  "data_hex": "04ed0a0a00010011ec04c00f029dc990b4a86774cc34094e044e98c0b56cd5a0fac58c923506b3ea6409062d0637842c577a4cd798f83538fb58973beb758262649b545500023cb5c07261d42939eb05ce3564e3a15a0bf656f7a26b0b8bc00a021c408b23c34c6e06c9bc7d90425b81519dc11316e7c06fc2c0efe4b006f6608345c806d377ab558c4e421883eab5044a8c1209a835886e2cc631bc386f37758879c5422d14c4739284bcc4b06107c8c25370b61b90ab28515ee5b1b055848c8933777168fab75dcecca673d069bc8745d21c1997c82bf1c6a99bfa3fa4d3aef36b16c708701b037923881ff5d3839c96740de78c2e953df077582bbb798a9c3137f30386bc242eb41430b441b90a24d2b97d19537dab46219b9571c3b43c10f09fa99772535890f987a97c2cb1a4305dc6e314a4d179af34c6fdb40d08b23aff6712647371cc974b83b309ca09aa21c96e1c6b4048977508557559d99e1fda353833cd128b054b61bf2c8639c7d66331221aeeab7703e10ed52998722c93b1093903228d31403ff2f92f0755474e6491bfc65a462587325350d7e2224837be884859011304f7e5654548bffd5869252ccef3222bb077ae41968d86f7b258a488f28aab3076b7c3f954782357d8489831e91e19fb7fe6d305de7a6dd5d8c40b436c6b180efa362572cc5c3f229e9387a1c92c6cd7b3583115c8cfa8376526a1c6244d88561a01a321a9d407d5e1bc199604287a1b0665bfd48a11359ac1c5ab1729301538f53a177acfce1243b185a8d534bb4a699c0aa5a49071064cc9b02fa1996870489199276b60a77c939253159559e758e88870e1b3b683e765c3f91ae9267d8e1167bc21575c21be6e55028de01186e20e9599152a60c2f7022175e7544338a196e5ab50e3879e272aac7c7a2331c249d287bde47c81353490a2812ec69c49f6b1eef25cb055a15af7c3a6779fa904b54881232dc6ae5e85b244e5b0906b0f9455265919196d37bd40956f50eb08b4c42428d07cd91779244393e2a122ca0a8bf17458c9d002d6d83a8cb4c627d58d7d17143ac79bc2331a1976567aa49c012920601103f2010cbfcc8879731a652704f8e88c35ac66d17a2414300ace066dbc922048159c93c86ca40c57c545baf2c7a637b7c1ce61200ca92c364888e1ab7b713029e6a84e7d747cfefbb846b15cd07aa88809029c14ace6200792656b645284df3a714362cc12d61aa1d46f43c6437a111587cb0b2cf54d4f437ac847baf892bfc61c477dab786665ad8e7ab8af4386d82bb888183639a14cefe594e51cb44342adc157a59ca24c7b5c9e7d3c0a0188c5b9b6588453aa1fc59b03024c484c2ef089a439d04910ba2d1203089ed49ff483bd8fd9cc2c68cec182a33a3ba346b30894dc0ec01458af23b8ff64b00e5003d8522a4ceb442af298821325617368b172b09500afa360b4184cb2a96c5ec3a83cb7213d0e8b36a604cc20f65e2591532ba54bccd71ae67324dbe4c0ee8488f168c6ca13384a61919797b33dd53a59484aa7d0a310cbbc25bab4557626d418749b294bc152c5af0514a6d76cc54630ec09648100b41b45b1ade07ac0a27694f78dbe900a9cd536e668979f2912da001a5959625633a8fd9b093cb6d1c7cc60a292d76e24e6ca3199f72bfb9766d2ec6cf50b35a9ae8d636f74d905b5ce6a9beb60d3edf27e6048a547a078a99651901058089a42c055001d0020bda4c6e23489df79d912bd6d30607e4fd09c2851bd4ea7c6d406ad6f6badc769",
+                  "comparable_id": 51,
+                  "comparable_data": "0a0a:fixed[00],11ec:random[1216],001d:random[32]"
+                },
+                {
+                  "id": 0,
+                  "length": 14,
+                  "data_hex": "000c0000096c6f63616c686f7374",
+                  "comparable_id": 0,
+                  "comparable_data": "000c0000096c6f63616c686f7374"
+                },
+                {
+                  "id": 17613,
+                  "length": 5,
+                  "data_hex": "0003026832",
+                  "comparable_id": 17613,
+                  "comparable_data": "0003026832"
+                },
+                {
+                  "id": 65281,
+                  "length": 1,
+                  "data_hex": "00",
+                  "comparable_id": 65281,
+                  "comparable_data": "00"
+                },
+                {
+                  "id": 10,
+                  "length": 12,
+                  "data_hex": "000a0a0a11ec001d00170018",
+                  "comparable_id": 10,
+                  "comparable_data": "000a0a0a11ec001d00170018"
+                },
+                {
+                  "id": 27,
+                  "length": 3,
+                  "data_hex": "020002",
+                  "comparable_id": 27,
+                  "comparable_data": "020002"
+                },
+                {
+                  "id": 35,
+                  "length": 0,
+                  "data_hex": "",
+                  "comparable_id": 35,
+                  "comparable_data": ""
+                },
+                {
+                  "id": 5,
+                  "length": 5,
+                  "data_hex": "0100000000",
+                  "comparable_id": 5,
+                  "comparable_data": "0100000000"
+                },
+                {
+                  "id": 23,
+                  "length": 0,
+                  "data_hex": "",
+                  "comparable_id": 23,
+                  "comparable_data": ""
+                },
+                {
+                  "id": 43,
+                  "length": 7,
+                  "data_hex": "060a0a03040303",
+                  "comparable_id": 43,
+                  "comparable_data": "060a0a03040303"
+                },
+                {
+                  "id": 13,
+                  "length": 18,
+                  "data_hex": "001004030804040105030805050108060601",
+                  "comparable_id": 13,
+                  "comparable_data": "001004030804040105030805050108060601"
+                },
+                {
+                  "id": 18,
+                  "length": 0,
+                  "data_hex": "",
+                  "comparable_id": 18,
+                  "comparable_data": ""
+                },
+                {
+                  "id": 11,
+                  "length": 2,
+                  "data_hex": "0100",
+                  "comparable_id": 11,
+                  "comparable_data": "0100"
+                },
+                {
+                  "id": 65037,
+                  "length": 186,
+                  "data_hex": "00000100011a0020f056b6659276cc6fecae37ff66585096c63801317ef028e287c7a3b013346e360090199e3ab99280fd576f7e8bd361f404daff65e9eb07157d0b58f01c80f1ce998859e87c71c79ba8e33ed4304c3ab01f41aad86a28c87bafe375a514f2e6ca5575a29a477658ea83ed82f0c7e5e41dd01897649db2648b9f2a82a7eaa1ca0c9d6e86a4933148853e3ef06b21d0148aac5ae590a9ffcacf3c3eb65ad6190ed13d45c68f64ddc073f6e88aee8b2c96d00c0a",
+                  "comparable_id": 65037,
+                  "comparable_data": "fixed[0000010001],config_id=random[1],enc=random[32],payload=random[144|176|208|240]"
+                },
+                {
+                  "id": 16,
+                  "length": 14,
+                  "data_hex": "000c02683208687474702f312e31",
+                  "comparable_id": 16,
+                  "comparable_data": "000c02683208687474702f312e31"
+                },
+                {
+                  "id": 45,
+                  "length": 2,
+                  "data_hex": "0101",
+                  "comparable_id": 45,
+                  "comparable_data": "0101"
+                },
+                {
+                  "id": 51764,
+                  "length": 2,
+                  "data_hex": "0000",
+                  "comparable_id": 51764,
+                  "comparable_data": "0000"
+                },
+                {
+                  "id": 31354,
+                  "length": 1,
+                  "data_hex": "00",
+                  "comparable_id": 2570,
+                  "comparable_data": "00"
+                }
+              ]
+            },
+            "tls_version": 772,
+            "cipher_suite": 4865,
+            "alpn": "h2",
+            "sni": "localhost",
+            "did_resume": false,
+            "handshake_error": "",
+            "preface_hex": "505249202a20485454502f322e300d0a0d0a534d0d0a0d0a",
+            "frames": [
+              {
+                "type": "SETTINGS",
+                "flags": 0,
+                "stream": 0,
+                "raw_hex": "000018040000000000000100010000000200000000000400600000000600040000",
+                "settings": [
+                  [
+                    1,
+                    65536
+                  ],
+                  [
+                    2,
+                    0
+                  ],
+                  [
+                    4,
+                    6291456
+                  ],
+                  [
+                    6,
+                    262144
+                  ]
+                ]
+              },
+              {
+                "type": "WINDOW_UPDATE",
+                "flags": 0,
+                "stream": 0,
+                "raw_hex": "00000408000000000000ef0001",
+                "window": 15663105
+              },
+              {
+                "type": "HEADERS",
+                "flags": 37,
+                "stream": 1,
+                "raw_hex": "0000d501250000000180000000ff82418a1d665e51d519fcae427f87459062a1a4ddcac4a6b109ff0fe2a2c9007f53991d75d0620d263d4c7441eafa5125f2962ba066abe94f963e7f6099c30e9bbabf3760ddbb25f80fe2a2c8b54349bb9564150831ea40853d8698d57f909d29ad171863c78f0bca3aa33f95c84f73919d29ad171863c78f0bca3aa33f95c8463f7abed07f66a281b0dae053fad0321aa49d13fda992a49685340c8a6adca7e28102e16fed4b3bdc0b4f2e0fed4c452753b02004000802a61358594fe580b4f2e0508d9bd9abfa5242cb40d25fa523b3",
+                "fields": [
+                  {
+                    "Name": ":method",
+                    "Value": "GET",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": ":authority",
+                    "Value": "api.fanbox.cc",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": ":scheme",
+                    "Value": "https",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": ":path",
+                    "Value": "/native/first?owned=1",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": "accept",
+                    "Value": "application/json, text/plain, */*",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": "cookie",
+                    "Value": "FANBOXSESSID=owned-native-session",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": "origin",
+                    "Value": "https://www.fanbox.cc",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": "referer",
+                    "Value": "https://www.fanbox.cc/",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": "user-agent",
+                    "Value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:148.0) Gecko/20100101 Firefox/148.0",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": "accept-encoding",
+                    "Value": "gzip, deflate, br",
+                    "Sensitive": false
+                  }
+                ],
+                "priority": {
+                  "StreamDep": 0,
+                  "Exclusive": true,
+                  "Weight": 255
+                }
+              },
+              {
+                "type": "SETTINGS",
+                "flags": 1,
+                "stream": 0,
+                "raw_hex": "000000040100000000"
+              },
+              {
+                "type": "HEADERS",
+                "flags": 37,
+                "stream": 3,
+                "raw_hex": "00002001250000000380000000ff82c587459062a1a4ddcac20a43d527f87f15164803c4c3c2c1c0bf",
+                "fields": [
+                  {
+                    "Name": ":method",
+                    "Value": "GET",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": ":authority",
+                    "Value": "api.fanbox.cc",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": ":scheme",
+                    "Value": "https",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": ":path",
+                    "Value": "/native/second?owned=1",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": "accept",
+                    "Value": "application/json, text/plain, */*",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": "cookie",
+                    "Value": "FANBOXSESSID=owned-native-session",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": "origin",
+                    "Value": "https://www.fanbox.cc",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": "referer",
+                    "Value": "https://www.fanbox.cc/",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": "user-agent",
+                    "Value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:148.0) Gecko/20100101 Firefox/148.0",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": "accept-encoding",
+                    "Value": "gzip, deflate, br",
+                    "Sensitive": false
+                  }
+                ],
+                "priority": {
+                  "StreamDep": 0,
+                  "Exclusive": true,
+                  "Weight": 255
+                }
+              }
+            ],
+            "terminal_error": "EOF"
+          },
+          {
+            "hello": {
+              "record_hex": "160301071801000714030334213788ddcd8a984ccc4646666e4bd207f63b9f33a04edf533dc2c60ca5f0d92032fb2692a2a709fa0c249bc0830670031ef0cd246ad19f9848d7e2515162f50a00204a4a130113021303c02bc02fc02cc030cca9cca8c013c014009c009d002f0035010006ab0a0a0000003304ef04edbaba00010011ec04c055762a9cb8ca8035b154839e2ef94cad513410f965baa2b5cc13344d2543b4300622b8c0b4d1c9194412098a9c7256479071344475cbecb4558e8c6c2434201f325119245b3f07a6d27743e5faa043490a592540ea36a64ed1cbe4171783d8714d098411eb9bb7a363bd31c17776c978cb01479098f0e90b50f60b3ad9907bbc921f744779e2cb58a8237d329847c2297eb6562d84c84e95477775b25a46381a88a87a88034090003dd27169a2b525d567e913b1e8c7675e242b8e776711d919344cb32e279d076ccce0c09cd2c660317127164383464b7b1d631ee1173fdaeb5fce99677547533cfb69815c5098414aaea39e6048a9bd220ea460871ddccf87fbb138d57c0ee33d1299978ae3578e46830b1b473176c6d6eaaf2b04a546451bc80c199619ccbc905d98169ed19459d0288b3f88a2b3155cfa19b6e5d107443c3bf2e4a60f292028463dabb9cf15cc882334b9fc4a3fe4a8c910e09c8241acc996684424357aa61415f88a7550cc1409747028c867a6364f32460db02856800637463528880b954b4c4f4357cc671a5c433365016683db64f70937fc422685abb48801cad649b99718b74047ba01f1a34ec2a09623c271e5b2b57431c84a08befac55e08932b807ee315aacf581ffec33d3c057814c639b4011bb724af7b52100de45fb71707b3ec440a94a830a5987b8655ad97231c1b319e2673b9d1b1e1e2111512304c40ca6fe5c6de4a1059ca5d716b33e7327b77a5cca0b403836582abb9c11971645bcab917b47a87a0c0ad89589f678e99664aae0cb384b8812f39bbaf422fe90539f707289171bf9250433dd97be075c377f22a5ec07f60413a2286795c711f0eaa6f0c31b7ff5648b7b009cf522ea3e23407f32b7e920c9587a3e247c4c49bbbadfc4e86e673ee53968a323707720b0b78ad4e072819bbc28620a27db9a6b89b93939a8e5adc8415a478dd102fa36b520cc6c322d79af1e26cca37a83be20c2e3956195b1bd859a5b1fbb1f828b3997b7024e67efaa15539fcc30b56ce87c81c65c892c46460d9799d400987203620b0db0c36a7c58b333431e8719b9171806567233328d68c89e2b99ba1bc53f577c6b3bb0239c586168621acb9af86c3680c35093d868d4ce5ba3ba0ae54817b82932974168c8e6357a82c26a6d24e3423751a23a86e85abc1f170119703a9c5846d9241c958bdb3a27baa9162c8a08a648961a9824a5c642f881ca9526b07aaa7384ed553f8001558389cd2f80cbd383de8166a09ec8ca8c827d135ab07da605b8156fd311c64704d3f4ac4ee430caee09813578e147a6f657bac292b9f75a93f59744659f059c692ba946c4ca8989782c3274c00c9ffc77cc983c282793642f1cef12583e6997b4840bffa043cb65351558c582d3088080a31ab337027f94fb5a917d4b68b68090610dccca9e4caa05abd50dcaee000b679fa975785485a64654148a5a4c053bc21c4c725a030d2122579365cb986ec11559e671a6dec85439aaac7209e50368c93c301a5c7b0ea6209ddd35c26a266d8b19a86c15a915a5c073334216a0d8d2a0215e91840374f4a2cce00813cf5700328c162e6a8bfc9b7228a8b6c67646563d01ee3d1c750f429f662b973347f194ab23987bd27a80cf1b9eb8bda44996bf4a3954e33eca25b0942e7926ad6da6d011a902ec1068865b534665c8c4ef301d18366434263001d0020d8eab4d8eb085fa7c179e87a426486f604726e1f22bb47a9af00aafe7120a2470000000e000c0000096c6f63616c686f737444cd00050003026832ff01000100000a000c000ababa11ec001d00170018001b00030200020023000000050005010000000000170000002b0007061a1a03040303000d001200100403080404010503080505010806060100120000000b00020100fe0d011a0000010001020020ad087376e906ce943c66ab8a4a29949c7f0feb3e11d0651ae4238f534e911c2c00f021e5716fa4b507893c8ad449af7e149b42ef643b2953aa8c948b719f8a6d01cfbb9c0c4e6a42513cba12d159b703c8d12ae0bf25b626475fd32a310d5899666846726be8670a2cc785aae5d5200bbe779da42ed3848f0ec5b667dfaf711c53ed9fe18c110b3c9c8bfc9a05e29fd51d2adce50fafe999e9050c23ca641d7f752c2dd349b8c404e4b20c71cb1820887adf0ea97ec3ffa73badf4d2c9dafa626f8b0e6c2e10fd0ec41e2bdf1421282f923ecd7c656b957a0cfe70c1e8d82be7854cb434bb49639fba43537fd6d6936de515d878026563679efef5d926b62f2ce6ff7c58009aed1f370e9f4ec09179fb6c1e0010000e000c02683208687474702f312e31002d00020101ca34000200005a5a000100",
+              "record_sha256": "ef7140a4185588a1a60634e5b4ec8e5c9c4da586fc64c91123f931e7feef3f67",
+              "record_version": 769,
+              "legacy_version": 771,
+              "random_hex": "34213788ddcd8a984ccc4646666e4bd207f63b9f33a04edf533dc2c60ca5f0d9",
+              "session_id_hex": "32fb2692a2a709fa0c249bc0830670031ef0cd246ad19f9848d7e2515162f50a",
+              "cipher_suites": [
+                19018,
+                4865,
+                4866,
+                4867,
+                49195,
+                49199,
+                49196,
+                49200,
+                52393,
+                52392,
+                49171,
+                49172,
+                156,
+                157,
+                47,
+                53
+              ],
+              "compression_hex": "00",
+              "extensions": [
+                {
+                  "id": 2570,
+                  "length": 0,
+                  "data_hex": "",
+                  "comparable_id": 2570,
+                  "comparable_data": ""
+                },
+                {
+                  "id": 51,
+                  "length": 1263,
+                  "data_hex": "04edbaba00010011ec04c055762a9cb8ca8035b154839e2ef94cad513410f965baa2b5cc13344d2543b4300622b8c0b4d1c9194412098a9c7256479071344475cbecb4558e8c6c2434201f325119245b3f07a6d27743e5faa043490a592540ea36a64ed1cbe4171783d8714d098411eb9bb7a363bd31c17776c978cb01479098f0e90b50f60b3ad9907bbc921f744779e2cb58a8237d329847c2297eb6562d84c84e95477775b25a46381a88a87a88034090003dd27169a2b525d567e913b1e8c7675e242b8e776711d919344cb32e279d076ccce0c09cd2c660317127164383464b7b1d631ee1173fdaeb5fce99677547533cfb69815c5098414aaea39e6048a9bd220ea460871ddccf87fbb138d57c0ee33d1299978ae3578e46830b1b473176c6d6eaaf2b04a546451bc80c199619ccbc905d98169ed19459d0288b3f88a2b3155cfa19b6e5d107443c3bf2e4a60f292028463dabb9cf15cc882334b9fc4a3fe4a8c910e09c8241acc996684424357aa61415f88a7550cc1409747028c867a6364f32460db02856800637463528880b954b4c4f4357cc671a5c433365016683db64f70937fc422685abb48801cad649b99718b74047ba01f1a34ec2a09623c271e5b2b57431c84a08befac55e08932b807ee315aacf581ffec33d3c057814c639b4011bb724af7b52100de45fb71707b3ec440a94a830a5987b8655ad97231c1b319e2673b9d1b1e1e2111512304c40ca6fe5c6de4a1059ca5d716b33e7327b77a5cca0b403836582abb9c11971645bcab917b47a87a0c0ad89589f678e99664aae0cb384b8812f39bbaf422fe90539f707289171bf9250433dd97be075c377f22a5ec07f60413a2286795c711f0eaa6f0c31b7ff5648b7b009cf522ea3e23407f32b7e920c9587a3e247c4c49bbbadfc4e86e673ee53968a323707720b0b78ad4e072819bbc28620a27db9a6b89b93939a8e5adc8415a478dd102fa36b520cc6c322d79af1e26cca37a83be20c2e3956195b1bd859a5b1fbb1f828b3997b7024e67efaa15539fcc30b56ce87c81c65c892c46460d9799d400987203620b0db0c36a7c58b333431e8719b9171806567233328d68c89e2b99ba1bc53f577c6b3bb0239c586168621acb9af86c3680c35093d868d4ce5ba3ba0ae54817b82932974168c8e6357a82c26a6d24e3423751a23a86e85abc1f170119703a9c5846d9241c958bdb3a27baa9162c8a08a648961a9824a5c642f881ca9526b07aaa7384ed553f8001558389cd2f80cbd383de8166a09ec8ca8c827d135ab07da605b8156fd311c64704d3f4ac4ee430caee09813578e147a6f657bac292b9f75a93f59744659f059c692ba946c4ca8989782c3274c00c9ffc77cc983c282793642f1cef12583e6997b4840bffa043cb65351558c582d3088080a31ab337027f94fb5a917d4b68b68090610dccca9e4caa05abd50dcaee000b679fa975785485a64654148a5a4c053bc21c4c725a030d2122579365cb986ec11559e671a6dec85439aaac7209e50368c93c301a5c7b0ea6209ddd35c26a266d8b19a86c15a915a5c073334216a0d8d2a0215e91840374f4a2cce00813cf5700328c162e6a8bfc9b7228a8b6c67646563d01ee3d1c750f429f662b973347f194ab23987bd27a80cf1b9eb8bda44996bf4a3954e33eca25b0942e7926ad6da6d011a902ec1068865b534665c8c4ef301d18366434263001d0020d8eab4d8eb085fa7c179e87a426486f604726e1f22bb47a9af00aafe7120a247",
+                  "comparable_id": 51,
+                  "comparable_data": "0a0a:fixed[00],11ec:random[1216],001d:random[32]"
+                },
+                {
+                  "id": 0,
+                  "length": 14,
+                  "data_hex": "000c0000096c6f63616c686f7374",
+                  "comparable_id": 0,
+                  "comparable_data": "000c0000096c6f63616c686f7374"
+                },
+                {
+                  "id": 17613,
+                  "length": 5,
+                  "data_hex": "0003026832",
+                  "comparable_id": 17613,
+                  "comparable_data": "0003026832"
+                },
+                {
+                  "id": 65281,
+                  "length": 1,
+                  "data_hex": "00",
+                  "comparable_id": 65281,
+                  "comparable_data": "00"
+                },
+                {
+                  "id": 10,
+                  "length": 12,
+                  "data_hex": "000ababa11ec001d00170018",
+                  "comparable_id": 10,
+                  "comparable_data": "000a0a0a11ec001d00170018"
+                },
+                {
+                  "id": 27,
+                  "length": 3,
+                  "data_hex": "020002",
+                  "comparable_id": 27,
+                  "comparable_data": "020002"
+                },
+                {
+                  "id": 35,
+                  "length": 0,
+                  "data_hex": "",
+                  "comparable_id": 35,
+                  "comparable_data": ""
+                },
+                {
+                  "id": 5,
+                  "length": 5,
+                  "data_hex": "0100000000",
+                  "comparable_id": 5,
+                  "comparable_data": "0100000000"
+                },
+                {
+                  "id": 23,
+                  "length": 0,
+                  "data_hex": "",
+                  "comparable_id": 23,
+                  "comparable_data": ""
+                },
+                {
+                  "id": 43,
+                  "length": 7,
+                  "data_hex": "061a1a03040303",
+                  "comparable_id": 43,
+                  "comparable_data": "060a0a03040303"
+                },
+                {
+                  "id": 13,
+                  "length": 18,
+                  "data_hex": "001004030804040105030805050108060601",
+                  "comparable_id": 13,
+                  "comparable_data": "001004030804040105030805050108060601"
+                },
+                {
+                  "id": 18,
+                  "length": 0,
+                  "data_hex": "",
+                  "comparable_id": 18,
+                  "comparable_data": ""
+                },
+                {
+                  "id": 11,
+                  "length": 2,
+                  "data_hex": "0100",
+                  "comparable_id": 11,
+                  "comparable_data": "0100"
+                },
+                {
+                  "id": 65037,
+                  "length": 282,
+                  "data_hex": "0000010001020020ad087376e906ce943c66ab8a4a29949c7f0feb3e11d0651ae4238f534e911c2c00f021e5716fa4b507893c8ad449af7e149b42ef643b2953aa8c948b719f8a6d01cfbb9c0c4e6a42513cba12d159b703c8d12ae0bf25b626475fd32a310d5899666846726be8670a2cc785aae5d5200bbe779da42ed3848f0ec5b667dfaf711c53ed9fe18c110b3c9c8bfc9a05e29fd51d2adce50fafe999e9050c23ca641d7f752c2dd349b8c404e4b20c71cb1820887adf0ea97ec3ffa73badf4d2c9dafa626f8b0e6c2e10fd0ec41e2bdf1421282f923ecd7c656b957a0cfe70c1e8d82be7854cb434bb49639fba43537fd6d6936de515d878026563679efef5d926b62f2ce6ff7c58009aed1f370e9f4ec09179fb6c1e",
+                  "comparable_id": 65037,
+                  "comparable_data": "fixed[0000010001],config_id=random[1],enc=random[32],payload=random[144|176|208|240]"
+                },
+                {
+                  "id": 16,
+                  "length": 14,
+                  "data_hex": "000c02683208687474702f312e31",
+                  "comparable_id": 16,
+                  "comparable_data": "000c02683208687474702f312e31"
+                },
+                {
+                  "id": 45,
+                  "length": 2,
+                  "data_hex": "0101",
+                  "comparable_id": 45,
+                  "comparable_data": "0101"
+                },
+                {
+                  "id": 51764,
+                  "length": 2,
+                  "data_hex": "0000",
+                  "comparable_id": 51764,
+                  "comparable_data": "0000"
+                },
+                {
+                  "id": 23130,
+                  "length": 1,
+                  "data_hex": "00",
+                  "comparable_id": 2570,
+                  "comparable_data": "00"
+                }
+              ]
+            },
+            "tls_version": 772,
+            "cipher_suite": 4865,
+            "alpn": "h2",
+            "sni": "localhost",
+            "did_resume": false,
+            "handshake_error": "",
+            "preface_hex": "505249202a20485454502f322e300d0a0d0a534d0d0a0d0a",
+            "frames": [
+              {
+                "type": "SETTINGS",
+                "flags": 0,
+                "stream": 0,
+                "raw_hex": "000018040000000000000100010000000200000000000400600000000600040000",
+                "settings": [
+                  [
+                    1,
+                    65536
+                  ],
+                  [
+                    2,
+                    0
+                  ],
+                  [
+                    4,
+                    6291456
+                  ],
+                  [
+                    6,
+                    262144
+                  ]
+                ]
+              },
+              {
+                "type": "WINDOW_UPDATE",
+                "flags": 0,
+                "stream": 0,
+                "raw_hex": "00000408000000000000ef0001",
+                "window": 15663105
+              },
+              {
+                "type": "HEADERS",
+                "flags": 37,
+                "stream": 1,
+                "raw_hex": "0000a401250000000180000000ff82418a1d665e51d519fcae427f87459062a1a4ddcac26735927f87f15164803f53991d75d0620d263d4c7441eafa5125f2962ba066abe94f963e7f6099c30e9bbabf3760ddbb25f80fe2a2c8b54349bb9564150831ea40853d8698d57f909d29ad171863c78f0bca3aa33f95c84f73919d29ad171863c78f0bca3aa33f95c8463f7a8dd5e2a2c8a691a4ddcaa708580f508d9bd9abfa5242cb40d25fa523b3",
+                "fields": [
+                  {
+                    "Name": ":method",
+                    "Value": "GET",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": ":authority",
+                    "Value": "api.fanbox.cc",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": ":scheme",
+                    "Value": "https",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": ":path",
+                    "Value": "/native/third?owned=1",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": "accept",
+                    "Value": "application/json, text/plain, */*",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": "cookie",
+                    "Value": "FANBOXSESSID=owned-native-session",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": "origin",
+                    "Value": "https://www.fanbox.cc",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": "referer",
+                    "Value": "https://www.fanbox.cc/",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": "user-agent",
+                    "Value": "Owned Native UA/1",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": "accept-encoding",
+                    "Value": "gzip, deflate, br",
+                    "Sensitive": false
+                  }
+                ],
+                "priority": {
+                  "StreamDep": 0,
+                  "Exclusive": true,
+                  "Weight": 255
+                }
+              },
+              {
+                "type": "SETTINGS",
+                "flags": 1,
+                "stream": 0,
+                "raw_hex": "000000040100000000"
+              }
+            ],
+            "terminal_error": "EOF"
+          }
+        ],
+        "response_json": [
+          {
+            "ok": true
+          },
+          {
+            "ok": true
+          },
+          {
+            "ok": true
+          }
+        ],
+        "errors": [],
+        "canceled": false,
+        "deadline": false,
+        "unknown_authority": false,
+        "hostname": false,
+        "expired": false,
+        "alive_after_idle_close": false,
+        "alive_after_thirty_seconds": false,
+        "idle_close_observed": true,
+        "completed_idle_liveness_checks": 2,
+        "elapsed_ns": 106992851,
+        "peer_request_observed_elapsed_ns": 0,
+        "peer_header_hold_ns": 0,
+        "endpoint": "localhost:36319",
+        "certificate_der_hex": "3082017e30820123a003020102020102300a06082a8648ce3d040302302c312a3028060355040313214f776e65642046414e424f58206e617469766520636f6e747261637420726f6f74301e170d3230303130313030303030305a170d3335303130313030303030305a3025312330210603550403131a4f776e6564206e6174697665206c6f6f706261636b20706565723059301306072a8648ce3d020106082a8648ce3d03010703420004d0528990c3e6d5fa26ea2c8a40c04a6556e883eaff55f68cac06e5216db4ec4e17f9d7cfd8ca28a68a27288f5c36bc7e883fb098585f44eb0fa776d212b015d5a33d303b300e0603551d0f0101ff04040302078030130603551d25040c300a06082b0601050507030130140603551d11040d300b82096c6f63616c686f7374300a06082a8648ce3d0403020349003046022100959b8288a7e01ecead64f50b810bf9afa87fc582452c07f4b3ee30eab28d57e3022100fec2bcac9f4179fe976918246dace1f477f5731626e1874dcc44fc7701b2f6d1",
+        "trust_subjects": [
+          "302c312a3028060355040313214f776e65642046414e424f58206e617469766520636f6e747261637420726f6f74"
+        ]
+      }
+    },
+    {
+      "name": "response_header_stall",
+      "comparable": {
+        "alive_after_idle_close": true,
+        "alive_after_thirty_seconds": true,
+        "canceled": true,
+        "completed_idle_liveness_checks": 0,
+        "connections": [
+          {
+            "alpn": "h2",
+            "cipher_suite": 4865,
+            "did_resume": false,
+            "frames": [
+              {
+                "flags": 0,
+                "settings": [
+                  [
+                    1,
+                    65536
+                  ],
+                  [
+                    2,
+                    0
+                  ],
+                  [
+                    4,
+                    6291456
+                  ],
+                  [
+                    6,
+                    262144
+                  ]
+                ],
+                "stream": 0,
+                "type": "SETTINGS"
+              },
+              {
+                "flags": 0,
+                "stream": 0,
+                "type": "WINDOW_UPDATE",
+                "window": 15663105
+              },
+              {
+                "fields": [
+                  {
+                    "Name": ":method",
+                    "Sensitive": false,
+                    "Value": "GET"
+                  },
+                  {
+                    "Name": ":authority",
+                    "Sensitive": false,
+                    "Value": "localhost:\u003cowned-port\u003e"
+                  },
+                  {
+                    "Name": ":scheme",
+                    "Sensitive": false,
+                    "Value": "https"
+                  },
+                  {
+                    "Name": ":path",
+                    "Sensitive": false,
+                    "Value": "/owned-native"
+                  },
+                  {
+                    "Name": "accept-encoding",
+                    "Sensitive": false,
+                    "Value": "gzip, deflate, br"
+                  },
+                  {
+                    "Name": "user-agent",
+                    "Sensitive": false,
+                    "Value": "Go-http-client/2.0"
+                  }
+                ],
+                "flags": 37,
+                "priority": {
+                  "Exclusive": true,
+                  "StreamDep": 0,
+                  "Weight": 255
+                },
+                "stream": 1,
+                "type": "HEADERS"
+              },
+              {
+                "flags": 0,
+                "reset": 8,
+                "stream": 1,
+                "type": "RST_STREAM"
+              }
+            ],
+            "handshake_error": "",
+            "hello": {
+              "cipher_suites": [
+                2570,
+                4865,
+                4866,
+                4867,
+                49195,
+                49199,
+                49196,
+                49200,
+                52393,
+                52392,
+                49171,
+                49172,
+                156,
+                157,
+                47,
+                53
+              ],
+              "compression_hex": "00",
+              "extensions": [
+                {
+                  "data_hex": "",
+                  "id": 2570,
+                  "length": 0
+                },
+                {
+                  "data_hex": "0a0a:fixed[00],11ec:random[1216],001d:random[32]",
+                  "id": 51,
+                  "length": 1263
+                },
+                {
+                  "data_hex": "000c0000096c6f63616c686f7374",
+                  "id": 0,
+                  "length": 14
+                },
+                {
+                  "data_hex": "0003026832",
+                  "id": 17613,
+                  "length": 5
+                },
+                {
+                  "data_hex": "00",
+                  "id": 65281,
+                  "length": 1
+                },
+                {
+                  "data_hex": "000a0a0a11ec001d00170018",
+                  "id": 10,
+                  "length": 12
+                },
+                {
+                  "data_hex": "020002",
+                  "id": 27,
+                  "length": 3
+                },
+                {
+                  "data_hex": "",
+                  "id": 35,
+                  "length": 0
+                },
+                {
+                  "data_hex": "0100000000",
+                  "id": 5,
+                  "length": 5
+                },
+                {
+                  "data_hex": "",
+                  "id": 23,
+                  "length": 0
+                },
+                {
+                  "data_hex": "060a0a03040303",
+                  "id": 43,
+                  "length": 7
+                },
+                {
+                  "data_hex": "001004030804040105030805050108060601",
+                  "id": 13,
+                  "length": 18
+                },
+                {
+                  "data_hex": "",
+                  "id": 18,
+                  "length": 0
+                },
+                {
+                  "data_hex": "0100",
+                  "id": 11,
+                  "length": 2
+                },
+                {
+                  "data_hex": "fixed[0000010001],config_id=random[1],enc=random[32],payload=random[144|176|208|240]",
+                  "id": 65037,
+                  "length": "variable:186|218|250|282"
+                },
+                {
+                  "data_hex": "000c02683208687474702f312e31",
+                  "id": 16,
+                  "length": 14
+                },
+                {
+                  "data_hex": "0101",
+                  "id": 45,
+                  "length": 2
+                },
+                {
+                  "data_hex": "0000",
+                  "id": 51764,
+                  "length": 2
+                },
+                {
+                  "data_hex": "00",
+                  "id": 2570,
+                  "length": 1
+                }
+              ],
+              "legacy_version": 771,
+              "random_hex": "random[32]",
+              "record_version": 769,
+              "session_id_hex": "random[32]"
+            },
+            "preface_hex": "505249202a20485454502f322e300d0a0d0a534d0d0a0d0a",
+            "settings_ack_count": 1,
+            "sni": "localhost",
+            "terminal_error": "EOF",
+            "tls_version": 772
+          }
+        ],
+        "deadline": false,
+        "errors": [
+          {
+            "message": "Get \"https://localhost:\u003cowned-port\u003e/owned-native\": context canceled",
+            "type": "*url.Error"
+          },
+          {
+            "message": "context canceled",
+            "type": "*errors.errorString"
+          }
+        ],
+        "expired": false,
+        "hostname": false,
+        "idle_close_observed": false,
+        "name": "response_header_stall",
+        "response_json": [],
+        "trust_subjects": [
+          "302c312a3028060355040313214f776e65642046414e424f58206e617469766520636f6e747261637420726f6f74"
+        ],
+        "unknown_authority": false
+      },
+      "go_only_observation": {
+        "name": "response_header_stall",
+        "connections": [
+          {
+            "hello": {
+              "record_hex": "16030106f8010006f403033e23dbb53f437ddd2a41d75533c6432692c8d56c3aec08493849a52ae9fc9a2520501928f55a65f069a32461a3a8dcaa28a8a6373de559c51441a09e8845c36c2a00209a9a130113021303c02bc02fc02cc030cca9cca8c013c014009c009d002f00350100068b9a9a0000003304ef04ed2a2a00010011ec04c02c35534801ab67a84a982c2c15c273585c6be0d664e5d081797c45855532d4453a58798360daaa0b27a9f2c82e8df982b077177c4739309782947398336267e9758860c24b9ee1b4d2f87c107103cbe8512ca180a8e97138622b877aa99cb225b63226c1695efd19c0acba0cf1f452fca39bbfe652404b5b8798824df6aaf8d5ad3d283b61fb5ca05b0f2023ce849b75bc42637d14a2a113c0683a5dfff0a94a55754208249a965e472151fff1819ab96fc3c58879176262019f5f56cbb258a7237a81347413ee39bee8d854bac34421d88bd7b72732c9470de948f0c95453618a1dac39d18015ca976e216c3b9007c78a5795ef927ebd692c0a706b2dec9f3211c771ec2675e109a5d29b2873181c56aaa4723f60a2b941ba4044eb718fbb4bb996921c86431bdc68efe6100a065d1a391e8e729cffdc14aaa45d84524e37d9c4e144955824408102a49d4a1fea0866fe5a766a89ca3f0a5b46fc135914aefe3743b4255f92f018f53101a0415977ba07deb9af87a37a950ca336ba2c205b429e1415e4a711518b63bf0bbf09d887ac89c57d6c685f9c923ec087b31206483146c5a34558f405c7688249d5164222aba2e910c9c90fd5c15bed02bac8b400ffc957da8925bdc56ec442a1002413b5392c8505331a3418d053ab48641b9d87134020910e6b8457f57c8f44bf00a114618cb839ba11aaf36ddb594a1d30c04b3cb0a90c7f13325d605a9075b31083922688375cd3e296cb4813ecf550cc1cce6e1b1ab6d00981a93eb1ba1bd08b168f62908f6530a6819610695f905902e178487691ba6ab77b541a369f4a2df6b6ce109094ba71032835a004fc06dd421cbfa299ddcb747487bcc155cf10e25c8a02685898b894c435deb50ace5c307bc27674772488674c40cc62f89a78dadba3d3581799ba504b591853356922c339d3c1b7088ca35db96664983e3ac7084f28a5d1c1036d51a542c60be61a0c3ee04ec9109af2d058766941c411cbaae6c21e914bf6e812cfcac0f191cd600720f7781b0d140695f4ce8a3c472c56b8143130f64bb42221086212912066baa868c33be8b1b9150a26ca9d84e4be801426aca28bd1e3918b100a4523ac7bf249a5fa4dcc699ebb03c5b7251e29f0b2cb5b9fda6429f2247dde1463b69628956945b3fa48769617c1dc2eca5163e101bf76a62ceff333a27a65c0145b385518889615b6096169e4c7a1f42f31466810710934205dd554359b51812991bdba0c3bba27a12ad47884887871aa2d59ea61ea55ca3cb4445506aef1482440b047adcb467283b124b4ce9b20908c96a24f94c891b55ee8c1a70b434f01c746f87c71135a888de41c12519b3e68a16b2b58d2f17d4b252fa80335800348cef62108496422a1a37521901754a543146cc93837ba3411f282a9896606d467b496e627a502a14af13dd1111b4a7b03b59a8d8a74122a511836f89399998968ec0d3b31793dea112942350635b88b10c287f7bfadb6905a85279c7c728042cdc12660cdc3000bb78c8ca2372d549815275e2c73c77b1943b1d48ff88025bbd57b9e5ac69320ad6e12c04ac18a2da407beba9b979a1bc0dc4f146c9c60e04ae7ebbc514c519d848f5ae290b0a6d293a74b450e4dd37835ac00f6887a794d27b8d9c9757c0abd69cab3a3587d7b8364737982fcd362997c826de918b45256210a0b665e9cfd92d7b02d7428001d0020dbdb58bc5b12fa926c714bb3768b1a107df9444ffa26461d388900f0d8af724c0000000e000c0000096c6f63616c686f737444cd00050003026832ff01000100000a000c000a2a2a11ec001d00170018001b00030200020023000000050005010000000000170000002b0007063a3a03040303000d001200100403080404010503080505010806060100120000000b00020100fe0d00fa0000010001c00020813fc30332b99fcd9997fa2260191bef8ca913ca44bc56a28738fbfb7188b95800d0fa37577e4e77e6a8b05b3217b4654855adcd2a5c2c4b01ebbdcf94e9bb0a6b637c8f6bb34195187c3545191b270d86dae4d0ba1c0a871fa2745d3ba11f8d6776fdc783c432045a2c97734b7ce470980b33bc017ab6a86e6d91d3ab2f7b26e0832d818212ca1bd14e36f97999b2815be0b782edb19473860939344870d92fad827f968a2de27ca89423b40120678629d2f7759cdcc99e102fda6bd02681d6f82d95c6cde4500336dbc42a8d32886499e60a95a5a58fc116f725b4c7bef726dab1f8fcbca2b8268dbd9291712ac31044b10010000e000c02683208687474702f312e31002d00020101ca3400020000fafa000100",
+              "record_sha256": "b54bcf63f34ed1eb2b24a944ea2d2975d0b9207bc9e9c80fbff321b448954054",
+              "record_version": 769,
+              "legacy_version": 771,
+              "random_hex": "3e23dbb53f437ddd2a41d75533c6432692c8d56c3aec08493849a52ae9fc9a25",
+              "session_id_hex": "501928f55a65f069a32461a3a8dcaa28a8a6373de559c51441a09e8845c36c2a",
+              "cipher_suites": [
+                39578,
+                4865,
+                4866,
+                4867,
+                49195,
+                49199,
+                49196,
+                49200,
+                52393,
+                52392,
+                49171,
+                49172,
+                156,
+                157,
+                47,
+                53
+              ],
+              "compression_hex": "00",
+              "extensions": [
+                {
+                  "id": 39578,
+                  "length": 0,
+                  "data_hex": "",
+                  "comparable_id": 2570,
+                  "comparable_data": ""
+                },
+                {
+                  "id": 51,
+                  "length": 1263,
+                  "data_hex": "04ed2a2a00010011ec04c02c35534801ab67a84a982c2c15c273585c6be0d664e5d081797c45855532d4453a58798360daaa0b27a9f2c82e8df982b077177c4739309782947398336267e9758860c24b9ee1b4d2f87c107103cbe8512ca180a8e97138622b877aa99cb225b63226c1695efd19c0acba0cf1f452fca39bbfe652404b5b8798824df6aaf8d5ad3d283b61fb5ca05b0f2023ce849b75bc42637d14a2a113c0683a5dfff0a94a55754208249a965e472151fff1819ab96fc3c58879176262019f5f56cbb258a7237a81347413ee39bee8d854bac34421d88bd7b72732c9470de948f0c95453618a1dac39d18015ca976e216c3b9007c78a5795ef927ebd692c0a706b2dec9f3211c771ec2675e109a5d29b2873181c56aaa4723f60a2b941ba4044eb718fbb4bb996921c86431bdc68efe6100a065d1a391e8e729cffdc14aaa45d84524e37d9c4e144955824408102a49d4a1fea0866fe5a766a89ca3f0a5b46fc135914aefe3743b4255f92f018f53101a0415977ba07deb9af87a37a950ca336ba2c205b429e1415e4a711518b63bf0bbf09d887ac89c57d6c685f9c923ec087b31206483146c5a34558f405c7688249d5164222aba2e910c9c90fd5c15bed02bac8b400ffc957da8925bdc56ec442a1002413b5392c8505331a3418d053ab48641b9d87134020910e6b8457f57c8f44bf00a114618cb839ba11aaf36ddb594a1d30c04b3cb0a90c7f13325d605a9075b31083922688375cd3e296cb4813ecf550cc1cce6e1b1ab6d00981a93eb1ba1bd08b168f62908f6530a6819610695f905902e178487691ba6ab77b541a369f4a2df6b6ce109094ba71032835a004fc06dd421cbfa299ddcb747487bcc155cf10e25c8a02685898b894c435deb50ace5c307bc27674772488674c40cc62f89a78dadba3d3581799ba504b591853356922c339d3c1b7088ca35db96664983e3ac7084f28a5d1c1036d51a542c60be61a0c3ee04ec9109af2d058766941c411cbaae6c21e914bf6e812cfcac0f191cd600720f7781b0d140695f4ce8a3c472c56b8143130f64bb42221086212912066baa868c33be8b1b9150a26ca9d84e4be801426aca28bd1e3918b100a4523ac7bf249a5fa4dcc699ebb03c5b7251e29f0b2cb5b9fda6429f2247dde1463b69628956945b3fa48769617c1dc2eca5163e101bf76a62ceff333a27a65c0145b385518889615b6096169e4c7a1f42f31466810710934205dd554359b51812991bdba0c3bba27a12ad47884887871aa2d59ea61ea55ca3cb4445506aef1482440b047adcb467283b124b4ce9b20908c96a24f94c891b55ee8c1a70b434f01c746f87c71135a888de41c12519b3e68a16b2b58d2f17d4b252fa80335800348cef62108496422a1a37521901754a543146cc93837ba3411f282a9896606d467b496e627a502a14af13dd1111b4a7b03b59a8d8a74122a511836f89399998968ec0d3b31793dea112942350635b88b10c287f7bfadb6905a85279c7c728042cdc12660cdc3000bb78c8ca2372d549815275e2c73c77b1943b1d48ff88025bbd57b9e5ac69320ad6e12c04ac18a2da407beba9b979a1bc0dc4f146c9c60e04ae7ebbc514c519d848f5ae290b0a6d293a74b450e4dd37835ac00f6887a794d27b8d9c9757c0abd69cab3a3587d7b8364737982fcd362997c826de918b45256210a0b665e9cfd92d7b02d7428001d0020dbdb58bc5b12fa926c714bb3768b1a107df9444ffa26461d388900f0d8af724c",
+                  "comparable_id": 51,
+                  "comparable_data": "0a0a:fixed[00],11ec:random[1216],001d:random[32]"
+                },
+                {
+                  "id": 0,
+                  "length": 14,
+                  "data_hex": "000c0000096c6f63616c686f7374",
+                  "comparable_id": 0,
+                  "comparable_data": "000c0000096c6f63616c686f7374"
+                },
+                {
+                  "id": 17613,
+                  "length": 5,
+                  "data_hex": "0003026832",
+                  "comparable_id": 17613,
+                  "comparable_data": "0003026832"
+                },
+                {
+                  "id": 65281,
+                  "length": 1,
+                  "data_hex": "00",
+                  "comparable_id": 65281,
+                  "comparable_data": "00"
+                },
+                {
+                  "id": 10,
+                  "length": 12,
+                  "data_hex": "000a2a2a11ec001d00170018",
+                  "comparable_id": 10,
+                  "comparable_data": "000a0a0a11ec001d00170018"
+                },
+                {
+                  "id": 27,
+                  "length": 3,
+                  "data_hex": "020002",
+                  "comparable_id": 27,
+                  "comparable_data": "020002"
+                },
+                {
+                  "id": 35,
+                  "length": 0,
+                  "data_hex": "",
+                  "comparable_id": 35,
+                  "comparable_data": ""
+                },
+                {
+                  "id": 5,
+                  "length": 5,
+                  "data_hex": "0100000000",
+                  "comparable_id": 5,
+                  "comparable_data": "0100000000"
+                },
+                {
+                  "id": 23,
+                  "length": 0,
+                  "data_hex": "",
+                  "comparable_id": 23,
+                  "comparable_data": ""
+                },
+                {
+                  "id": 43,
+                  "length": 7,
+                  "data_hex": "063a3a03040303",
+                  "comparable_id": 43,
+                  "comparable_data": "060a0a03040303"
+                },
+                {
+                  "id": 13,
+                  "length": 18,
+                  "data_hex": "001004030804040105030805050108060601",
+                  "comparable_id": 13,
+                  "comparable_data": "001004030804040105030805050108060601"
+                },
+                {
+                  "id": 18,
+                  "length": 0,
+                  "data_hex": "",
+                  "comparable_id": 18,
+                  "comparable_data": ""
+                },
+                {
+                  "id": 11,
+                  "length": 2,
+                  "data_hex": "0100",
+                  "comparable_id": 11,
+                  "comparable_data": "0100"
+                },
+                {
+                  "id": 65037,
+                  "length": 250,
+                  "data_hex": "0000010001c00020813fc30332b99fcd9997fa2260191bef8ca913ca44bc56a28738fbfb7188b95800d0fa37577e4e77e6a8b05b3217b4654855adcd2a5c2c4b01ebbdcf94e9bb0a6b637c8f6bb34195187c3545191b270d86dae4d0ba1c0a871fa2745d3ba11f8d6776fdc783c432045a2c97734b7ce470980b33bc017ab6a86e6d91d3ab2f7b26e0832d818212ca1bd14e36f97999b2815be0b782edb19473860939344870d92fad827f968a2de27ca89423b40120678629d2f7759cdcc99e102fda6bd02681d6f82d95c6cde4500336dbc42a8d32886499e60a95a5a58fc116f725b4c7bef726dab1f8fcbca2b8268dbd9291712ac31044b1",
+                  "comparable_id": 65037,
+                  "comparable_data": "fixed[0000010001],config_id=random[1],enc=random[32],payload=random[144|176|208|240]"
+                },
+                {
+                  "id": 16,
+                  "length": 14,
+                  "data_hex": "000c02683208687474702f312e31",
+                  "comparable_id": 16,
+                  "comparable_data": "000c02683208687474702f312e31"
+                },
+                {
+                  "id": 45,
+                  "length": 2,
+                  "data_hex": "0101",
+                  "comparable_id": 45,
+                  "comparable_data": "0101"
+                },
+                {
+                  "id": 51764,
+                  "length": 2,
+                  "data_hex": "0000",
+                  "comparable_id": 51764,
+                  "comparable_data": "0000"
+                },
+                {
+                  "id": 64250,
+                  "length": 1,
+                  "data_hex": "00",
+                  "comparable_id": 2570,
+                  "comparable_data": "00"
+                }
+              ]
+            },
+            "tls_version": 772,
+            "cipher_suite": 4865,
+            "alpn": "h2",
+            "sni": "localhost",
+            "did_resume": false,
+            "handshake_error": "",
+            "preface_hex": "505249202a20485454502f322e300d0a0d0a534d0d0a0d0a",
+            "frames": [
+              {
+                "type": "SETTINGS",
+                "flags": 0,
+                "stream": 0,
+                "raw_hex": "000018040000000000000100010000000200000000000400600000000600040000",
+                "settings": [
+                  [
+                    1,
+                    65536
+                  ],
+                  [
+                    2,
+                    0
+                  ],
+                  [
+                    4,
+                    6291456
+                  ],
+                  [
+                    6,
+                    262144
+                  ]
+                ]
+              },
+              {
+                "type": "WINDOW_UPDATE",
+                "flags": 0,
+                "stream": 0,
+                "raw_hex": "00000408000000000000ef0001",
+                "window": 15663105
+              },
+              {
+                "type": "HEADERS",
+                "flags": 37,
+                "stream": 1,
+                "raw_hex": "00003e01250000000180000000ff82418ba0e41d139d09b8cb626ddf87458a60fe2a2c8b54349bb97f508d9bd9abfa5242cb40d25fa523b37a8dc475a74a6b589418b525812e0f",
+                "fields": [
+                  {
+                    "Name": ":method",
+                    "Value": "GET",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": ":authority",
+                    "Value": "localhost:35257",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": ":scheme",
+                    "Value": "https",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": ":path",
+                    "Value": "/owned-native",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": "accept-encoding",
+                    "Value": "gzip, deflate, br",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": "user-agent",
+                    "Value": "Go-http-client/2.0",
+                    "Sensitive": false
+                  }
+                ],
+                "priority": {
+                  "StreamDep": 0,
+                  "Exclusive": true,
+                  "Weight": 255
+                }
+              },
+              {
+                "type": "SETTINGS",
+                "flags": 1,
+                "stream": 0,
+                "raw_hex": "000000040100000000"
+              },
+              {
+                "type": "RST_STREAM",
+                "flags": 0,
+                "stream": 1,
+                "raw_hex": "00000403000000000100000008",
+                "reset": 8
+              }
+            ],
+            "terminal_error": "EOF"
+          }
+        ],
+        "response_json": [],
+        "errors": [
+          {
+            "type": "*url.Error",
+            "message": "Get \"https://localhost:35257/owned-native\": context canceled"
+          },
+          {
+            "type": "*errors.errorString",
+            "message": "context canceled"
+          }
+        ],
+        "canceled": true,
+        "deadline": false,
+        "unknown_authority": false,
+        "hostname": false,
+        "expired": false,
+        "alive_after_idle_close": true,
+        "alive_after_thirty_seconds": true,
+        "idle_close_observed": false,
+        "completed_idle_liveness_checks": 0,
+        "elapsed_ns": 31230999327,
+        "peer_request_observed_elapsed_ns": 3086236,
+        "peer_header_hold_ns": 31227619861,
+        "endpoint": "localhost:35257",
+        "certificate_der_hex": "3082017d30820123a003020102020102300a06082a8648ce3d040302302c312a3028060355040313214f776e65642046414e424f58206e617469766520636f6e747261637420726f6f74301e170d3230303130313030303030305a170d3335303130313030303030305a3025312330210603550403131a4f776e6564206e6174697665206c6f6f706261636b20706565723059301306072a8648ce3d020106082a8648ce3d030107034200044e49d272bc71f054c873d4ed0ce863277a28727d8c3377bf3b9693c19d03bcbab7194c57cd26cb57fc14f72c26e528b873a40707383e0d96154c2b1280f55bf5a33d303b300e0603551d0f0101ff04040302078030130603551d25040c300a06082b0601050507030130140603551d11040d300b82096c6f63616c686f7374300a06082a8648ce3d0403020348003045022100f0443b44f431ab9293116fb0b41204410d293fe7bc3387ee7314c9249ecc139c02200cfd2e2b001d09c016d6f999648fa9f3d80dcde2377217ee26534ff4b8b52316",
+        "trust_subjects": [
+          "302c312a3028060355040313214f776e65642046414e424f58206e617469766520636f6e747261637420726f6f74"
+        ]
+      }
+    },
+    {
+      "name": "caller_deadline",
+      "comparable": {
+        "alive_after_idle_close": true,
+        "alive_after_thirty_seconds": false,
+        "canceled": false,
+        "completed_idle_liveness_checks": 0,
+        "connections": [
+          {
+            "alpn": "h2",
+            "cipher_suite": 4865,
+            "did_resume": false,
+            "frames": [
+              {
+                "flags": 0,
+                "settings": [
+                  [
+                    1,
+                    65536
+                  ],
+                  [
+                    2,
+                    0
+                  ],
+                  [
+                    4,
+                    6291456
+                  ],
+                  [
+                    6,
+                    262144
+                  ]
+                ],
+                "stream": 0,
+                "type": "SETTINGS"
+              },
+              {
+                "flags": 0,
+                "stream": 0,
+                "type": "WINDOW_UPDATE",
+                "window": 15663105
+              },
+              {
+                "fields": [
+                  {
+                    "Name": ":method",
+                    "Sensitive": false,
+                    "Value": "GET"
+                  },
+                  {
+                    "Name": ":authority",
+                    "Sensitive": false,
+                    "Value": "localhost:\u003cowned-port\u003e"
+                  },
+                  {
+                    "Name": ":scheme",
+                    "Sensitive": false,
+                    "Value": "https"
+                  },
+                  {
+                    "Name": ":path",
+                    "Sensitive": false,
+                    "Value": "/owned-native"
+                  },
+                  {
+                    "Name": "accept-encoding",
+                    "Sensitive": false,
+                    "Value": "gzip, deflate, br"
+                  },
+                  {
+                    "Name": "user-agent",
+                    "Sensitive": false,
+                    "Value": "Go-http-client/2.0"
+                  }
+                ],
+                "flags": 37,
+                "priority": {
+                  "Exclusive": true,
+                  "StreamDep": 0,
+                  "Weight": 255
+                },
+                "stream": 1,
+                "type": "HEADERS"
+              },
+              {
+                "flags": 0,
+                "reset": 8,
+                "stream": 1,
+                "type": "RST_STREAM"
+              }
+            ],
+            "handshake_error": "",
+            "hello": {
+              "cipher_suites": [
+                2570,
+                4865,
+                4866,
+                4867,
+                49195,
+                49199,
+                49196,
+                49200,
+                52393,
+                52392,
+                49171,
+                49172,
+                156,
+                157,
+                47,
+                53
+              ],
+              "compression_hex": "00",
+              "extensions": [
+                {
+                  "data_hex": "",
+                  "id": 2570,
+                  "length": 0
+                },
+                {
+                  "data_hex": "0a0a:fixed[00],11ec:random[1216],001d:random[32]",
+                  "id": 51,
+                  "length": 1263
+                },
+                {
+                  "data_hex": "000c0000096c6f63616c686f7374",
+                  "id": 0,
+                  "length": 14
+                },
+                {
+                  "data_hex": "0003026832",
+                  "id": 17613,
+                  "length": 5
+                },
+                {
+                  "data_hex": "00",
+                  "id": 65281,
+                  "length": 1
+                },
+                {
+                  "data_hex": "000a0a0a11ec001d00170018",
+                  "id": 10,
+                  "length": 12
+                },
+                {
+                  "data_hex": "020002",
+                  "id": 27,
+                  "length": 3
+                },
+                {
+                  "data_hex": "",
+                  "id": 35,
+                  "length": 0
+                },
+                {
+                  "data_hex": "0100000000",
+                  "id": 5,
+                  "length": 5
+                },
+                {
+                  "data_hex": "",
+                  "id": 23,
+                  "length": 0
+                },
+                {
+                  "data_hex": "060a0a03040303",
+                  "id": 43,
+                  "length": 7
+                },
+                {
+                  "data_hex": "001004030804040105030805050108060601",
+                  "id": 13,
+                  "length": 18
+                },
+                {
+                  "data_hex": "",
+                  "id": 18,
+                  "length": 0
+                },
+                {
+                  "data_hex": "0100",
+                  "id": 11,
+                  "length": 2
+                },
+                {
+                  "data_hex": "fixed[0000010001],config_id=random[1],enc=random[32],payload=random[144|176|208|240]",
+                  "id": 65037,
+                  "length": "variable:186|218|250|282"
+                },
+                {
+                  "data_hex": "000c02683208687474702f312e31",
+                  "id": 16,
+                  "length": 14
+                },
+                {
+                  "data_hex": "0101",
+                  "id": 45,
+                  "length": 2
+                },
+                {
+                  "data_hex": "0000",
+                  "id": 51764,
+                  "length": 2
+                },
+                {
+                  "data_hex": "00",
+                  "id": 2570,
+                  "length": 1
+                }
+              ],
+              "legacy_version": 771,
+              "random_hex": "random[32]",
+              "record_version": 769,
+              "session_id_hex": "random[32]"
+            },
+            "preface_hex": "505249202a20485454502f322e300d0a0d0a534d0d0a0d0a",
+            "settings_ack_count": 1,
+            "sni": "localhost",
+            "terminal_error": "EOF",
+            "tls_version": 772
+          }
+        ],
+        "deadline": true,
+        "errors": [
+          {
+            "message": "Get \"https://localhost:\u003cowned-port\u003e/owned-native\": context deadline exceeded",
+            "type": "*url.Error"
+          },
+          {
+            "message": "context deadline exceeded",
+            "type": "context.deadlineExceededError"
+          }
+        ],
+        "expired": false,
+        "hostname": false,
+        "idle_close_observed": false,
+        "name": "caller_deadline",
+        "response_json": [],
+        "trust_subjects": [
+          "302c312a3028060355040313214f776e65642046414e424f58206e617469766520636f6e747261637420726f6f74"
+        ],
+        "unknown_authority": false
+      },
+      "go_only_observation": {
+        "name": "caller_deadline",
+        "connections": [
+          {
+            "hello": {
+              "record_hex": "16030106d8010006d40303f49d58856ec4dec4a1daaf49024ccbc72816f0417727ebfba3736a01b898efbc20d27c842fd05d068418f229c2d28625f02ed053d8708d42c78d90f3a94f984ad900201a1a130113021303c02bc02fc02cc030cca9cca8c013c014009c009d002f00350100066b1a1a0000003304ef04ed7a7a00010011ec04c0ba44762f46cadfd71dee48c96393654ee53917c4560091a28aa20a7d21775f5976814aa820f7be3015817d59b19289981ee12618563c9c6a3ddc11c9f0d89c2d85716977461a002c0fac3f00353259f9c4f557997126aea7a80105893c8dcc4d5d3cbbede7b7e9c969f6465dd4c74164509d38a26372a3b9f294998da993362030d633547b00bc8b9092ccc924d3472138814e4c9b33213a5853724b134abab305207757887e289a92794f9c069a649759c615a80205c2d07c9754ca1f1e67c2796c56807b38b18025f2ebbb098714566707162960431804dd026eeab116958a031c3c35f699a76b69482eb1a2f8690495b76e5b5acc4df9a89d7146f3012600b02c58416badc2c3d4d1bb59c9320ab2bd8aa82d85f264a5d9c58c61211595411ee67e7f368f016294eff9a2cd6211c3060e4ad21f9ad41f1cd29076349361d758427b5e52c93d06a77cc1d4baf5e5b682d4b2598a71722c9389bc474a0c7386c86d158cbee7e21989247a3d0c05b793a513a030c556891fa3089b372b3f7307aa959bf6817dde6896e5453382491b59d60c99b448fa986fb69200a3201de4938a7ac07012c47561e1b9e240ac31b5059d30213115c07abc4f44b9a0670198b9fc5a7bf517e840ae1f3706983c638612188e90792884c8c2b76e98f09248216883248771e56bf902446493cecc7ab8a9a69c2e3288c840caca963a2287c68af790521314ea25bac027658af469a7783366c505e8b31eb026573536c81869920682511ee40fe0432d42a7054c80464256c286eb7bc7298a3f029155ec8fc4a09f1e12890326462614214e0acd4251ba1a6c7c85109d4233515585271823b3ea747e8aa9712d819c310b764e2bab35c9b75f681347640eae787af761c37bd681d85403e3e7078e143b4b1344efc15c1d13342b775f558a249c2397adfbbaa306bb45b901cedb61eea88de75550f3b6c8bb26a790a442cf1754c311ce4208174875b4a5a77bc48837e8b51e1a923debb67032d5502052370df769388179d6c35d96fc966907145c3cb731309a0215bca9c159af842fb74a70181c6b54d2bdf5631d4bc21d51863de7600c3df46e93285eadea93d73684e79c13ead7696ff20d758c67f0d03b45081c1af72539a035fa0434e9eb885d03ad3cb3ab8ffb2baff2b895fb3cc5d47dab667e56eb73f3154e078606f6444036d9ca9f02976e5a29f5aa97862909cb01064f99526e8c35b9fc9e0ee91bedb523e95843555132db0aa02e4037f16c7dea66902991266d50387509ac1d15aaa7d268b764185c355920b7a41ba9c91a4c2cc6fb95fb579b34671fc0ca91da15183d276d6275950d8853003aaccb5a8bacda11100357d317b5e11322683c445b503783f7292999be520a0739e5b0205c37b6880b92518d09e47a6ab2299b72af85a216a10c9aff722143aacb488592b11355d02a926d45273762460b31a9f7c63fefe1797918382f75c35f167d62b9b6c9c246859c92f271c0ac099626da6870859447c1230c8394997585ff52767188383fa120fb3ac9c6d67d9a35115ebcb9efa77aad3a0c5009cc0053878a554ea7d97bca631315c55a71d4670d3432e2667163e601b51318c1572fba47cd474eff1763e68b7f42e5208af08ed42330fccb345845a671d91f1a584698da2086ceeb8d60c9f391c4dc6c3b141de2cd157dbe32a1aa3789f2a87bf6e0895a78001d00206ce65bd7a119a7222ab1ee5fe083214496986c7f0e362cd7cf3beae0151091540000000e000c0000096c6f63616c686f737444cd00050003026832ff01000100000a000c000a7a7a11ec001d00170018001b00030200020023000000050005010000000000170000002b000706fafa03040303000d001200100403080404010503080505010806060100120000000b00020100fe0d00da00000100014f00203727d2ab3197f007deadd8a37e508ea6bed9b487ad035a977272068801696f5c00b0c207c0aed1e784b2a68d8b237fd8e21cd5e3ec43cc114b6442707dbc00888153b1f141b1d15b4604822021519079410b778f3e97496edf954e4f28dac4c4c8b89e4fd60342d79dd27ce46d477add644d19ae5b091d0723a6db9f094624da763f86484f33c7de198bf7978a503efece48f8a4b483468660ea135df8ac2cc59030df70bf299065638f4c923ec8da61f5cc051ba440e2b80b463d32a8cd1a2073f9975956fd8933cc0beb175cc7e545c9a70010000e000c02683208687474702f312e31002d00020101ca34000200004a4a000100",
+              "record_sha256": "ce7dae20f87a9af580eff34b0665229dc270efdea99c3ba61a1441c659140a72",
+              "record_version": 769,
+              "legacy_version": 771,
+              "random_hex": "f49d58856ec4dec4a1daaf49024ccbc72816f0417727ebfba3736a01b898efbc",
+              "session_id_hex": "d27c842fd05d068418f229c2d28625f02ed053d8708d42c78d90f3a94f984ad9",
+              "cipher_suites": [
+                6682,
+                4865,
+                4866,
+                4867,
+                49195,
+                49199,
+                49196,
+                49200,
+                52393,
+                52392,
+                49171,
+                49172,
+                156,
+                157,
+                47,
+                53
+              ],
+              "compression_hex": "00",
+              "extensions": [
+                {
+                  "id": 6682,
+                  "length": 0,
+                  "data_hex": "",
+                  "comparable_id": 2570,
+                  "comparable_data": ""
+                },
+                {
+                  "id": 51,
+                  "length": 1263,
+                  "data_hex": "04ed7a7a00010011ec04c0ba44762f46cadfd71dee48c96393654ee53917c4560091a28aa20a7d21775f5976814aa820f7be3015817d59b19289981ee12618563c9c6a3ddc11c9f0d89c2d85716977461a002c0fac3f00353259f9c4f557997126aea7a80105893c8dcc4d5d3cbbede7b7e9c969f6465dd4c74164509d38a26372a3b9f294998da993362030d633547b00bc8b9092ccc924d3472138814e4c9b33213a5853724b134abab305207757887e289a92794f9c069a649759c615a80205c2d07c9754ca1f1e67c2796c56807b38b18025f2ebbb098714566707162960431804dd026eeab116958a031c3c35f699a76b69482eb1a2f8690495b76e5b5acc4df9a89d7146f3012600b02c58416badc2c3d4d1bb59c9320ab2bd8aa82d85f264a5d9c58c61211595411ee67e7f368f016294eff9a2cd6211c3060e4ad21f9ad41f1cd29076349361d758427b5e52c93d06a77cc1d4baf5e5b682d4b2598a71722c9389bc474a0c7386c86d158cbee7e21989247a3d0c05b793a513a030c556891fa3089b372b3f7307aa959bf6817dde6896e5453382491b59d60c99b448fa986fb69200a3201de4938a7ac07012c47561e1b9e240ac31b5059d30213115c07abc4f44b9a0670198b9fc5a7bf517e840ae1f3706983c638612188e90792884c8c2b76e98f09248216883248771e56bf902446493cecc7ab8a9a69c2e3288c840caca963a2287c68af790521314ea25bac027658af469a7783366c505e8b31eb026573536c81869920682511ee40fe0432d42a7054c80464256c286eb7bc7298a3f029155ec8fc4a09f1e12890326462614214e0acd4251ba1a6c7c85109d4233515585271823b3ea747e8aa9712d819c310b764e2bab35c9b75f681347640eae787af761c37bd681d85403e3e7078e143b4b1344efc15c1d13342b775f558a249c2397adfbbaa306bb45b901cedb61eea88de75550f3b6c8bb26a790a442cf1754c311ce4208174875b4a5a77bc48837e8b51e1a923debb67032d5502052370df769388179d6c35d96fc966907145c3cb731309a0215bca9c159af842fb74a70181c6b54d2bdf5631d4bc21d51863de7600c3df46e93285eadea93d73684e79c13ead7696ff20d758c67f0d03b45081c1af72539a035fa0434e9eb885d03ad3cb3ab8ffb2baff2b895fb3cc5d47dab667e56eb73f3154e078606f6444036d9ca9f02976e5a29f5aa97862909cb01064f99526e8c35b9fc9e0ee91bedb523e95843555132db0aa02e4037f16c7dea66902991266d50387509ac1d15aaa7d268b764185c355920b7a41ba9c91a4c2cc6fb95fb579b34671fc0ca91da15183d276d6275950d8853003aaccb5a8bacda11100357d317b5e11322683c445b503783f7292999be520a0739e5b0205c37b6880b92518d09e47a6ab2299b72af85a216a10c9aff722143aacb488592b11355d02a926d45273762460b31a9f7c63fefe1797918382f75c35f167d62b9b6c9c246859c92f271c0ac099626da6870859447c1230c8394997585ff52767188383fa120fb3ac9c6d67d9a35115ebcb9efa77aad3a0c5009cc0053878a554ea7d97bca631315c55a71d4670d3432e2667163e601b51318c1572fba47cd474eff1763e68b7f42e5208af08ed42330fccb345845a671d91f1a584698da2086ceeb8d60c9f391c4dc6c3b141de2cd157dbe32a1aa3789f2a87bf6e0895a78001d00206ce65bd7a119a7222ab1ee5fe083214496986c7f0e362cd7cf3beae015109154",
+                  "comparable_id": 51,
+                  "comparable_data": "0a0a:fixed[00],11ec:random[1216],001d:random[32]"
+                },
+                {
+                  "id": 0,
+                  "length": 14,
+                  "data_hex": "000c0000096c6f63616c686f7374",
+                  "comparable_id": 0,
+                  "comparable_data": "000c0000096c6f63616c686f7374"
+                },
+                {
+                  "id": 17613,
+                  "length": 5,
+                  "data_hex": "0003026832",
+                  "comparable_id": 17613,
+                  "comparable_data": "0003026832"
+                },
+                {
+                  "id": 65281,
+                  "length": 1,
+                  "data_hex": "00",
+                  "comparable_id": 65281,
+                  "comparable_data": "00"
+                },
+                {
+                  "id": 10,
+                  "length": 12,
+                  "data_hex": "000a7a7a11ec001d00170018",
+                  "comparable_id": 10,
+                  "comparable_data": "000a0a0a11ec001d00170018"
+                },
+                {
+                  "id": 27,
+                  "length": 3,
+                  "data_hex": "020002",
+                  "comparable_id": 27,
+                  "comparable_data": "020002"
+                },
+                {
+                  "id": 35,
+                  "length": 0,
+                  "data_hex": "",
+                  "comparable_id": 35,
+                  "comparable_data": ""
+                },
+                {
+                  "id": 5,
+                  "length": 5,
+                  "data_hex": "0100000000",
+                  "comparable_id": 5,
+                  "comparable_data": "0100000000"
+                },
+                {
+                  "id": 23,
+                  "length": 0,
+                  "data_hex": "",
+                  "comparable_id": 23,
+                  "comparable_data": ""
+                },
+                {
+                  "id": 43,
+                  "length": 7,
+                  "data_hex": "06fafa03040303",
+                  "comparable_id": 43,
+                  "comparable_data": "060a0a03040303"
+                },
+                {
+                  "id": 13,
+                  "length": 18,
+                  "data_hex": "001004030804040105030805050108060601",
+                  "comparable_id": 13,
+                  "comparable_data": "001004030804040105030805050108060601"
+                },
+                {
+                  "id": 18,
+                  "length": 0,
+                  "data_hex": "",
+                  "comparable_id": 18,
+                  "comparable_data": ""
+                },
+                {
+                  "id": 11,
+                  "length": 2,
+                  "data_hex": "0100",
+                  "comparable_id": 11,
+                  "comparable_data": "0100"
+                },
+                {
+                  "id": 65037,
+                  "length": 218,
+                  "data_hex": "00000100014f00203727d2ab3197f007deadd8a37e508ea6bed9b487ad035a977272068801696f5c00b0c207c0aed1e784b2a68d8b237fd8e21cd5e3ec43cc114b6442707dbc00888153b1f141b1d15b4604822021519079410b778f3e97496edf954e4f28dac4c4c8b89e4fd60342d79dd27ce46d477add644d19ae5b091d0723a6db9f094624da763f86484f33c7de198bf7978a503efece48f8a4b483468660ea135df8ac2cc59030df70bf299065638f4c923ec8da61f5cc051ba440e2b80b463d32a8cd1a2073f9975956fd8933cc0beb175cc7e545c9a7",
+                  "comparable_id": 65037,
+                  "comparable_data": "fixed[0000010001],config_id=random[1],enc=random[32],payload=random[144|176|208|240]"
+                },
+                {
+                  "id": 16,
+                  "length": 14,
+                  "data_hex": "000c02683208687474702f312e31",
+                  "comparable_id": 16,
+                  "comparable_data": "000c02683208687474702f312e31"
+                },
+                {
+                  "id": 45,
+                  "length": 2,
+                  "data_hex": "0101",
+                  "comparable_id": 45,
+                  "comparable_data": "0101"
+                },
+                {
+                  "id": 51764,
+                  "length": 2,
+                  "data_hex": "0000",
+                  "comparable_id": 51764,
+                  "comparable_data": "0000"
+                },
+                {
+                  "id": 19018,
+                  "length": 1,
+                  "data_hex": "00",
+                  "comparable_id": 2570,
+                  "comparable_data": "00"
+                }
+              ]
+            },
+            "tls_version": 772,
+            "cipher_suite": 4865,
+            "alpn": "h2",
+            "sni": "localhost",
+            "did_resume": false,
+            "handshake_error": "",
+            "preface_hex": "505249202a20485454502f322e300d0a0d0a534d0d0a0d0a",
+            "frames": [
+              {
+                "type": "SETTINGS",
+                "flags": 0,
+                "stream": 0,
+                "raw_hex": "000018040000000000000100010000000200000000000400600000000600040000",
+                "settings": [
+                  [
+                    1,
+                    65536
+                  ],
+                  [
+                    2,
+                    0
+                  ],
+                  [
+                    4,
+                    6291456
+                  ],
+                  [
+                    6,
+                    262144
+                  ]
+                ]
+              },
+              {
+                "type": "WINDOW_UPDATE",
+                "flags": 0,
+                "stream": 0,
+                "raw_hex": "00000408000000000000ef0001",
+                "window": 15663105
+              },
+              {
+                "type": "HEADERS",
+                "flags": 37,
+                "stream": 1,
+                "raw_hex": "00003e01250000000180000000ff82418ba0e41d139d09b8d000e3ff87458a60fe2a2c8b54349bb97f508d9bd9abfa5242cb40d25fa523b37a8dc475a74a6b589418b525812e0f",
+                "fields": [
+                  {
+                    "Name": ":method",
+                    "Value": "GET",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": ":authority",
+                    "Value": "localhost:40069",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": ":scheme",
+                    "Value": "https",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": ":path",
+                    "Value": "/owned-native",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": "accept-encoding",
+                    "Value": "gzip, deflate, br",
+                    "Sensitive": false
+                  },
+                  {
+                    "Name": "user-agent",
+                    "Value": "Go-http-client/2.0",
+                    "Sensitive": false
+                  }
+                ],
+                "priority": {
+                  "StreamDep": 0,
+                  "Exclusive": true,
+                  "Weight": 255
+                }
+              },
+              {
+                "type": "SETTINGS",
+                "flags": 1,
+                "stream": 0,
+                "raw_hex": "000000040100000000"
+              },
+              {
+                "type": "RST_STREAM",
+                "flags": 0,
+                "stream": 1,
+                "raw_hex": "00000403000000000100000008",
+                "reset": 8
+              }
+            ],
+            "terminal_error": "EOF"
+          }
+        ],
+        "response_json": [],
+        "errors": [
+          {
+            "type": "*url.Error",
+            "message": "Get \"https://localhost:40069/owned-native\": context deadline exceeded"
+          },
+          {
+            "type": "context.deadlineExceededError",
+            "message": "context deadline exceeded"
+          }
+        ],
+        "canceled": false,
+        "deadline": true,
+        "unknown_authority": false,
+        "hostname": false,
+        "expired": false,
+        "alive_after_idle_close": true,
+        "alive_after_thirty_seconds": false,
+        "idle_close_observed": false,
+        "completed_idle_liveness_checks": 0,
+        "elapsed_ns": 301203667,
+        "peer_request_observed_elapsed_ns": 5786263,
+        "peer_header_hold_ns": 0,
+        "endpoint": "localhost:40069",
+        "certificate_der_hex": "3082017d30820123a003020102020102300a06082a8648ce3d040302302c312a3028060355040313214f776e65642046414e424f58206e617469766520636f6e747261637420726f6f74301e170d3230303130313030303030305a170d3335303130313030303030305a3025312330210603550403131a4f776e6564206e6174697665206c6f6f706261636b20706565723059301306072a8648ce3d020106082a8648ce3d030107034200045fc6ec9fb706d9c3fc02b6ee29ecb0a9d7e3d0255ce8c7eaa8f637c188e8f070e7464dc7ca61e039b1e665a84e5e9847d84a654e1b2f67d659c692ba2f80aadea33d303b300e0603551d0f0101ff04040302078030130603551d25040c300a06082b0601050507030130140603551d11040d300b82096c6f63616c686f7374300a06082a8648ce3d0403020348003045022100aef23c036d2640b32561c03ea9ac9523c562d4f054b3b128e9489ae083ec5fd002204c12a7b6fdce21fcdea53689234b8025019c1bea37240f64bddc27d6e6d69d7b",
+        "trust_subjects": [
+          "302c312a3028060355040313214f776e65642046414e424f58206e617469766520636f6e747261637420726f6f74"
+        ]
+      }
+    },
+    {
+      "name": "untrusted_certificate",
+      "comparable": {
+        "alive_after_idle_close": false,
+        "alive_after_thirty_seconds": false,
+        "canceled": false,
+        "completed_idle_liveness_checks": 0,
+        "connections": [
+          {
+            "alpn": "",
+            "cipher_suite": 0,
+            "did_resume": false,
+            "frames": null,
+            "handshake_error": "remote error: tls: bad certificate",
+            "hello": {
+              "cipher_suites": [
+                2570,
+                4865,
+                4866,
+                4867,
+                49195,
+                49199,
+                49196,
+                49200,
+                52393,
+                52392,
+                49171,
+                49172,
+                156,
+                157,
+                47,
+                53
+              ],
+              "compression_hex": "00",
+              "extensions": [
+                {
+                  "data_hex": "",
+                  "id": 2570,
+                  "length": 0
+                },
+                {
+                  "data_hex": "0a0a:fixed[00],11ec:random[1216],001d:random[32]",
+                  "id": 51,
+                  "length": 1263
+                },
+                {
+                  "data_hex": "000c0000096c6f63616c686f7374",
+                  "id": 0,
+                  "length": 14
+                },
+                {
+                  "data_hex": "0003026832",
+                  "id": 17613,
+                  "length": 5
+                },
+                {
+                  "data_hex": "00",
+                  "id": 65281,
+                  "length": 1
+                },
+                {
+                  "data_hex": "000a0a0a11ec001d00170018",
+                  "id": 10,
+                  "length": 12
+                },
+                {
+                  "data_hex": "020002",
+                  "id": 27,
+                  "length": 3
+                },
+                {
+                  "data_hex": "",
+                  "id": 35,
+                  "length": 0
+                },
+                {
+                  "data_hex": "0100000000",
+                  "id": 5,
+                  "length": 5
+                },
+                {
+                  "data_hex": "",
+                  "id": 23,
+                  "length": 0
+                },
+                {
+                  "data_hex": "060a0a03040303",
+                  "id": 43,
+                  "length": 7
+                },
+                {
+                  "data_hex": "001004030804040105030805050108060601",
+                  "id": 13,
+                  "length": 18
+                },
+                {
+                  "data_hex": "",
+                  "id": 18,
+                  "length": 0
+                },
+                {
+                  "data_hex": "0100",
+                  "id": 11,
+                  "length": 2
+                },
+                {
+                  "data_hex": "fixed[0000010001],config_id=random[1],enc=random[32],payload=random[144|176|208|240]",
+                  "id": 65037,
+                  "length": "variable:186|218|250|282"
+                },
+                {
+                  "data_hex": "000c02683208687474702f312e31",
+                  "id": 16,
+                  "length": 14
+                },
+                {
+                  "data_hex": "0101",
+                  "id": 45,
+                  "length": 2
+                },
+                {
+                  "data_hex": "0000",
+                  "id": 51764,
+                  "length": 2
+                },
+                {
+                  "data_hex": "00",
+                  "id": 2570,
+                  "length": 1
+                }
+              ],
+              "legacy_version": 771,
+              "random_hex": "random[32]",
+              "record_version": 769,
+              "session_id_hex": "random[32]"
+            },
+            "preface_hex": "",
+            "settings_ack_count": 0,
+            "sni": "",
+            "terminal_error": "",
+            "tls_version": 0
+          }
+        ],
+        "deadline": false,
+        "errors": [
+          {
+            "message": "Get \"https://localhost:\u003cowned-port\u003e/owned-native\": tls: failed to verify certificate: x509: certificate signed by unknown authority",
+            "type": "*url.Error"
+          },
+          {
+            "message": "tls: failed to verify certificate: x509: certificate signed by unknown authority",
+            "type": "*tls.CertificateVerificationError"
+          },
+          {
+            "message": "x509: certificate signed by unknown authority",
+            "type": "x509.UnknownAuthorityError"
+          }
+        ],
+        "expired": false,
+        "hostname": false,
+        "idle_close_observed": false,
+        "name": "untrusted_certificate",
+        "response_json": [],
+        "trust_subjects": [
+          "302c312a3028060355040313214f776e65642046414e424f58206e617469766520636f6e747261637420726f6f74"
+        ],
+        "unknown_authority": true
+      },
+      "go_only_observation": {
+        "name": "untrusted_certificate",
+        "connections": [
+          {
+            "hello": {
+              "record_hex": "16030106f8010006f4030366aebd5f92ea6fd402e963e2bc905fd0829db20245df2d26626c30318c83ffa72067e0e895860a2c8decb7b6f993fcd2dd1b5e95d96e18337595ca03b73e624a6500203a3a130113021303c02bc02fc02cc030cca9cca8c013c014009c009d002f00350100068b2a2a0000003304ef04ed5a5a00010011ec04c000c94e7ecc9dd64c6676a53b63c29916217aa1b81e35f79d998b2e1b2a375bea6829037b356790ea711605066a5da91b9e3b7dbcd717fca4c178d4052525b0117345d998185c7845bff5820133cec6e34fb6e29346c26a6dda4decb6618dda1c4e4c13ee2568318c4393f841afc9c41421374ca8a117d894758732bda47b1299660518206f0232a3189327d911403a9dfd225fe52966ca1b112cc300e3809008f44ce90bb84e936238c5a8b505bbd1f935683062a0b5c8b1f1c21130267e2309863930738316e22732c9ac80f2dbbef44a9cac78b212bb0f4c0a8e06b18c946c045348b0d30953b1f917e9900307e580abd3085813743b83377e96a93ad66d75051745d3b96a022b1b25613653b587120175839bf5637e75538bc2273b3157b2c82a755fb9b489a1c194a4a2cf0671c505bd6e260b01e80924197316872c67bc2e6b0141b5c90dc85a51f9c49b54971997335542e6ceb6d8ab73aa9606d0a9384aa04f483d820c42177658be755cf1215926692f2bd6ae9ac32f9422147afc8d2afca0cea15f181c1163f0505ec707f582ceabec00ad1211e1624d41368e1b951ebe166262d4330abcc882263417c2bb24a3405e7560b97c5c8e09497881c6f07613ae3aa7746a4376170aac87b8daaa535be6b70cb291b892731382bcf18018437a9c1c2a346dc9b44f8964813778ac4b5175057cfdc77b496b472b20a59473367dd39c8b0a23b79a36ae2c5d617b07f1e65f66676939277a270a74adf6ad21810003813963e66d162c7b59bb06f909bcf3954705d3194a8800df100ec9170f22091a146243c8f231d25187885482bba3ade1023022f15d22fc9756c539739c50339569d2e26227361edfc71d0f431d55d75df0423e643b8fdc98196798a04025b078c39d657b2f2ae435bdf1a4b46ac613015af05935bc4a96371b574812c1891cb02420991fdb04e4614425d3b9ab653974672ae7128d8c7a14064a6271370111d606b7d828d4f56ffa55aa03540eab12923070ad91f2ce85d1c86d71babf85633c9ba6c99805fd271100320766701f4923471551a09062456ddaaf44793218933c53e05649ab31e8a6aa626a57fdeab4a0405ee3f712eac59d25d1b0b2a885f3763fbbf9463ed09a494539f2934fc311cd57d09302a58ff774008ae936457c9eb6648f78e33ce1234457a6b9d937746034776ad1c19acc1b0fc5380cd5ad52759a326ab39bc4c64ae90411a3441f418301735dce22b53de42676721b1ecb20df6933f9d45e3a0a469a433e4d846d0113642d1b5b6d821be93040e3874a49d5bb67143a29966b4784c4ff8ab8b8bc2f53b834c9bb206530a74c4cbbbe957f2c103b9fe044177b97349bb29911c04ada17ecd671ca814adebb61ac867b8a0cb52df6c779da3a4f51a700405e1855532c28277f4a56192c509eb8ca410927ff94a637a4bac8e2482d3228611b1b8701067d15c369f86888ac5fca77122d786841a015caa5a2fd795eafc78e8b8ab02308bb5c739910564c84eca6ccba26ae94550cc58ae7e117fc3728c2a500081552ba27a9d5f513d6a75a1b7b35efa2ba8ce1845aa26e35a0863937676287ac335117dc663d5fa1ca0bcb71b7603348697facd26f91fb3577ce3950af93cf1011397567b2d538ac4e657d7d53044975f766cd5ff505f027fca84bdc9cee1270fa7031ab4aeb4ade09ea55943be06567a346001d0020b95811cc5eb251fc62c5d9cebd465459f09b6ddeb3a1e701b39f08e54228ba270000000e000c0000096c6f63616c686f737444cd00050003026832ff01000100000a000c000a5a5a11ec001d00170018001b00030200020023000000050005010000000000170000002b000706fafa03040303000d001200100403080404010503080505010806060100120000000b00020100fe0d00fa0000010001ba0020a6a77b56746e7b7623e560cefe076097b33c4664dc7bf99467e8a9d23eeada3500d0c67693f1eb8862bd787e4b591d96e0f87b8dea5d3841ac9fbea05fa0a40e0ecc05377bb8bc09782c534abb77156a5c614ee5714cea60308e55f9558762b472345f2935851ffe1aa51a27aaba48df0bdf85c6e5b4ab9952b156074d0f0b6bf47d86b925fdf18c486f822401d07fc056f4b8d525f0c3182f7201724b14160548244381574078559da32129922812cfbf4bfc6d13a8fdfdeed00c9ddc54261231c1c39892b17ecb1737a71dfc4a6f06726eaef6dce3bd46d0bc181feecd6d0e63bf9da93421d51d686738b4170c2ab2a2410010000e000c02683208687474702f312e31002d00020101ca34000200003a3a000100",
+              "record_sha256": "7da335918c0cd4301cc3d6b619e279e4ceeec91d7628521dacc52863b9c840e9",
+              "record_version": 769,
+              "legacy_version": 771,
+              "random_hex": "66aebd5f92ea6fd402e963e2bc905fd0829db20245df2d26626c30318c83ffa7",
+              "session_id_hex": "67e0e895860a2c8decb7b6f993fcd2dd1b5e95d96e18337595ca03b73e624a65",
+              "cipher_suites": [
+                14906,
+                4865,
+                4866,
+                4867,
+                49195,
+                49199,
+                49196,
+                49200,
+                52393,
+                52392,
+                49171,
+                49172,
+                156,
+                157,
+                47,
+                53
+              ],
+              "compression_hex": "00",
+              "extensions": [
+                {
+                  "id": 10794,
+                  "length": 0,
+                  "data_hex": "",
+                  "comparable_id": 2570,
+                  "comparable_data": ""
+                },
+                {
+                  "id": 51,
+                  "length": 1263,
+                  "data_hex": "04ed5a5a00010011ec04c000c94e7ecc9dd64c6676a53b63c29916217aa1b81e35f79d998b2e1b2a375bea6829037b356790ea711605066a5da91b9e3b7dbcd717fca4c178d4052525b0117345d998185c7845bff5820133cec6e34fb6e29346c26a6dda4decb6618dda1c4e4c13ee2568318c4393f841afc9c41421374ca8a117d894758732bda47b1299660518206f0232a3189327d911403a9dfd225fe52966ca1b112cc300e3809008f44ce90bb84e936238c5a8b505bbd1f935683062a0b5c8b1f1c21130267e2309863930738316e22732c9ac80f2dbbef44a9cac78b212bb0f4c0a8e06b18c946c045348b0d30953b1f917e9900307e580abd3085813743b83377e96a93ad66d75051745d3b96a022b1b25613653b587120175839bf5637e75538bc2273b3157b2c82a755fb9b489a1c194a4a2cf0671c505bd6e260b01e80924197316872c67bc2e6b0141b5c90dc85a51f9c49b54971997335542e6ceb6d8ab73aa9606d0a9384aa04f483d820c42177658be755cf1215926692f2bd6ae9ac32f9422147afc8d2afca0cea15f181c1163f0505ec707f582ceabec00ad1211e1624d41368e1b951ebe166262d4330abcc882263417c2bb24a3405e7560b97c5c8e09497881c6f07613ae3aa7746a4376170aac87b8daaa535be6b70cb291b892731382bcf18018437a9c1c2a346dc9b44f8964813778ac4b5175057cfdc77b496b472b20a59473367dd39c8b0a23b79a36ae2c5d617b07f1e65f66676939277a270a74adf6ad21810003813963e66d162c7b59bb06f909bcf3954705d3194a8800df100ec9170f22091a146243c8f231d25187885482bba3ade1023022f15d22fc9756c539739c50339569d2e26227361edfc71d0f431d55d75df0423e643b8fdc98196798a04025b078c39d657b2f2ae435bdf1a4b46ac613015af05935bc4a96371b574812c1891cb02420991fdb04e4614425d3b9ab653974672ae7128d8c7a14064a6271370111d606b7d828d4f56ffa55aa03540eab12923070ad91f2ce85d1c86d71babf85633c9ba6c99805fd271100320766701f4923471551a09062456ddaaf44793218933c53e05649ab31e8a6aa626a57fdeab4a0405ee3f712eac59d25d1b0b2a885f3763fbbf9463ed09a494539f2934fc311cd57d09302a58ff774008ae936457c9eb6648f78e33ce1234457a6b9d937746034776ad1c19acc1b0fc5380cd5ad52759a326ab39bc4c64ae90411a3441f418301735dce22b53de42676721b1ecb20df6933f9d45e3a0a469a433e4d846d0113642d1b5b6d821be93040e3874a49d5bb67143a29966b4784c4ff8ab8b8bc2f53b834c9bb206530a74c4cbbbe957f2c103b9fe044177b97349bb29911c04ada17ecd671ca814adebb61ac867b8a0cb52df6c779da3a4f51a700405e1855532c28277f4a56192c509eb8ca410927ff94a637a4bac8e2482d3228611b1b8701067d15c369f86888ac5fca77122d786841a015caa5a2fd795eafc78e8b8ab02308bb5c739910564c84eca6ccba26ae94550cc58ae7e117fc3728c2a500081552ba27a9d5f513d6a75a1b7b35efa2ba8ce1845aa26e35a0863937676287ac335117dc663d5fa1ca0bcb71b7603348697facd26f91fb3577ce3950af93cf1011397567b2d538ac4e657d7d53044975f766cd5ff505f027fca84bdc9cee1270fa7031ab4aeb4ade09ea55943be06567a346001d0020b95811cc5eb251fc62c5d9cebd465459f09b6ddeb3a1e701b39f08e54228ba27",
+                  "comparable_id": 51,
+                  "comparable_data": "0a0a:fixed[00],11ec:random[1216],001d:random[32]"
+                },
+                {
+                  "id": 0,
+                  "length": 14,
+                  "data_hex": "000c0000096c6f63616c686f7374",
+                  "comparable_id": 0,
+                  "comparable_data": "000c0000096c6f63616c686f7374"
+                },
+                {
+                  "id": 17613,
+                  "length": 5,
+                  "data_hex": "0003026832",
+                  "comparable_id": 17613,
+                  "comparable_data": "0003026832"
+                },
+                {
+                  "id": 65281,
+                  "length": 1,
+                  "data_hex": "00",
+                  "comparable_id": 65281,
+                  "comparable_data": "00"
+                },
+                {
+                  "id": 10,
+                  "length": 12,
+                  "data_hex": "000a5a5a11ec001d00170018",
+                  "comparable_id": 10,
+                  "comparable_data": "000a0a0a11ec001d00170018"
+                },
+                {
+                  "id": 27,
+                  "length": 3,
+                  "data_hex": "020002",
+                  "comparable_id": 27,
+                  "comparable_data": "020002"
+                },
+                {
+                  "id": 35,
+                  "length": 0,
+                  "data_hex": "",
+                  "comparable_id": 35,
+                  "comparable_data": ""
+                },
+                {
+                  "id": 5,
+                  "length": 5,
+                  "data_hex": "0100000000",
+                  "comparable_id": 5,
+                  "comparable_data": "0100000000"
+                },
+                {
+                  "id": 23,
+                  "length": 0,
+                  "data_hex": "",
+                  "comparable_id": 23,
+                  "comparable_data": ""
+                },
+                {
+                  "id": 43,
+                  "length": 7,
+                  "data_hex": "06fafa03040303",
+                  "comparable_id": 43,
+                  "comparable_data": "060a0a03040303"
+                },
+                {
+                  "id": 13,
+                  "length": 18,
+                  "data_hex": "001004030804040105030805050108060601",
+                  "comparable_id": 13,
+                  "comparable_data": "001004030804040105030805050108060601"
+                },
+                {
+                  "id": 18,
+                  "length": 0,
+                  "data_hex": "",
+                  "comparable_id": 18,
+                  "comparable_data": ""
+                },
+                {
+                  "id": 11,
+                  "length": 2,
+                  "data_hex": "0100",
+                  "comparable_id": 11,
+                  "comparable_data": "0100"
+                },
+                {
+                  "id": 65037,
+                  "length": 250,
+                  "data_hex": "0000010001ba0020a6a77b56746e7b7623e560cefe076097b33c4664dc7bf99467e8a9d23eeada3500d0c67693f1eb8862bd787e4b591d96e0f87b8dea5d3841ac9fbea05fa0a40e0ecc05377bb8bc09782c534abb77156a5c614ee5714cea60308e55f9558762b472345f2935851ffe1aa51a27aaba48df0bdf85c6e5b4ab9952b156074d0f0b6bf47d86b925fdf18c486f822401d07fc056f4b8d525f0c3182f7201724b14160548244381574078559da32129922812cfbf4bfc6d13a8fdfdeed00c9ddc54261231c1c39892b17ecb1737a71dfc4a6f06726eaef6dce3bd46d0bc181feecd6d0e63bf9da93421d51d686738b4170c2ab2a241",
+                  "comparable_id": 65037,
+                  "comparable_data": "fixed[0000010001],config_id=random[1],enc=random[32],payload=random[144|176|208|240]"
+                },
+                {
+                  "id": 16,
+                  "length": 14,
+                  "data_hex": "000c02683208687474702f312e31",
+                  "comparable_id": 16,
+                  "comparable_data": "000c02683208687474702f312e31"
+                },
+                {
+                  "id": 45,
+                  "length": 2,
+                  "data_hex": "0101",
+                  "comparable_id": 45,
+                  "comparable_data": "0101"
+                },
+                {
+                  "id": 51764,
+                  "length": 2,
+                  "data_hex": "0000",
+                  "comparable_id": 51764,
+                  "comparable_data": "0000"
+                },
+                {
+                  "id": 14906,
+                  "length": 1,
+                  "data_hex": "00",
+                  "comparable_id": 2570,
+                  "comparable_data": "00"
+                }
+              ]
+            },
+            "tls_version": 0,
+            "cipher_suite": 0,
+            "alpn": "",
+            "sni": "",
+            "did_resume": false,
+            "handshake_error": "remote error: tls: bad certificate",
+            "preface_hex": "",
+            "frames": [],
+            "terminal_error": ""
+          }
+        ],
+        "response_json": [],
+        "errors": [
+          {
+            "type": "*url.Error",
+            "message": "Get \"https://localhost:38399/owned-native\": tls: failed to verify certificate: x509: certificate signed by unknown authority"
+          },
+          {
+            "type": "*tls.CertificateVerificationError",
+            "message": "tls: failed to verify certificate: x509: certificate signed by unknown authority"
+          },
+          {
+            "type": "x509.UnknownAuthorityError",
+            "message": "x509: certificate signed by unknown authority"
+          }
+        ],
+        "canceled": false,
+        "deadline": false,
+        "unknown_authority": true,
+        "hostname": false,
+        "expired": false,
+        "alive_after_idle_close": false,
+        "alive_after_thirty_seconds": false,
+        "idle_close_observed": false,
+        "completed_idle_liveness_checks": 0,
+        "elapsed_ns": 2657379,
+        "peer_request_observed_elapsed_ns": 0,
+        "peer_header_hold_ns": 0,
+        "endpoint": "localhost:38399",
+        "certificate_der_hex": "308201773082011da003020102020102300a06082a8648ce3d0403023026312430220603550403131b4f776e656420756e74727573746564206e617469766520726f6f74301e170d3230303130313030303030305a170d3335303130313030303030305a3025312330210603550403131a4f776e6564206e6174697665206c6f6f706261636b20706565723059301306072a8648ce3d020106082a8648ce3d030107034200046b9a67e6469c7be5c874da6a25c73dc900a83e8b30886c6f087ccba81e8652e07465e6fdcc31e4718a8cfb311d3cd1f86eff893eff7344bddbd80fdc9cd71717a33d303b300e0603551d0f0101ff04040302078030130603551d25040c300a06082b0601050507030130140603551d11040d300b82096c6f63616c686f7374300a06082a8648ce3d04030203480030450221009c7e574942dc7b3917d8a4038610f9a1ca8a084e152dc914ac4770d289ce8aaa02200776e2275b08fd910d02afaaf5f3e5a8952c3d42753b5877f1988514953a0154",
+        "trust_subjects": [
+          "302c312a3028060355040313214f776e65642046414e424f58206e617469766520636f6e747261637420726f6f74"
+        ]
+      }
+    },
+    {
+      "name": "invalid_hostname",
+      "comparable": {
+        "alive_after_idle_close": false,
+        "alive_after_thirty_seconds": false,
+        "canceled": false,
+        "completed_idle_liveness_checks": 0,
+        "connections": [
+          {
+            "alpn": "",
+            "cipher_suite": 0,
+            "did_resume": false,
+            "frames": null,
+            "handshake_error": "remote error: tls: bad certificate",
+            "hello": {
+              "cipher_suites": [
+                2570,
+                4865,
+                4866,
+                4867,
+                49195,
+                49199,
+                49196,
+                49200,
+                52393,
+                52392,
+                49171,
+                49172,
+                156,
+                157,
+                47,
+                53
+              ],
+              "compression_hex": "00",
+              "extensions": [
+                {
+                  "data_hex": "",
+                  "id": 2570,
+                  "length": 0
+                },
+                {
+                  "data_hex": "0a0a:fixed[00],11ec:random[1216],001d:random[32]",
+                  "id": 51,
+                  "length": 1263
+                },
+                {
+                  "data_hex": "000c0000096c6f63616c686f7374",
+                  "id": 0,
+                  "length": 14
+                },
+                {
+                  "data_hex": "0003026832",
+                  "id": 17613,
+                  "length": 5
+                },
+                {
+                  "data_hex": "00",
+                  "id": 65281,
+                  "length": 1
+                },
+                {
+                  "data_hex": "000a0a0a11ec001d00170018",
+                  "id": 10,
+                  "length": 12
+                },
+                {
+                  "data_hex": "020002",
+                  "id": 27,
+                  "length": 3
+                },
+                {
+                  "data_hex": "",
+                  "id": 35,
+                  "length": 0
+                },
+                {
+                  "data_hex": "0100000000",
+                  "id": 5,
+                  "length": 5
+                },
+                {
+                  "data_hex": "",
+                  "id": 23,
+                  "length": 0
+                },
+                {
+                  "data_hex": "060a0a03040303",
+                  "id": 43,
+                  "length": 7
+                },
+                {
+                  "data_hex": "001004030804040105030805050108060601",
+                  "id": 13,
+                  "length": 18
+                },
+                {
+                  "data_hex": "",
+                  "id": 18,
+                  "length": 0
+                },
+                {
+                  "data_hex": "0100",
+                  "id": 11,
+                  "length": 2
+                },
+                {
+                  "data_hex": "fixed[0000010001],config_id=random[1],enc=random[32],payload=random[144|176|208|240]",
+                  "id": 65037,
+                  "length": "variable:186|218|250|282"
+                },
+                {
+                  "data_hex": "000c02683208687474702f312e31",
+                  "id": 16,
+                  "length": 14
+                },
+                {
+                  "data_hex": "0101",
+                  "id": 45,
+                  "length": 2
+                },
+                {
+                  "data_hex": "0000",
+                  "id": 51764,
+                  "length": 2
+                },
+                {
+                  "data_hex": "00",
+                  "id": 2570,
+                  "length": 1
+                }
+              ],
+              "legacy_version": 771,
+              "random_hex": "random[32]",
+              "record_version": 769,
+              "session_id_hex": "random[32]"
+            },
+            "preface_hex": "",
+            "settings_ack_count": 0,
+            "sni": "",
+            "terminal_error": "",
+            "tls_version": 0
+          }
+        ],
+        "deadline": false,
+        "errors": [
+          {
+            "message": "Get \"https://localhost:\u003cowned-port\u003e/owned-native\": tls: failed to verify certificate: x509: certificate is valid for wrong-owned.invalid, not localhost",
+            "type": "*url.Error"
+          },
+          {
+            "message": "tls: failed to verify certificate: x509: certificate is valid for wrong-owned.invalid, not localhost",
+            "type": "*tls.CertificateVerificationError"
+          },
+          {
+            "message": "x509: certificate is valid for wrong-owned.invalid, not localhost",
+            "type": "x509.HostnameError"
+          }
+        ],
+        "expired": false,
+        "hostname": true,
+        "idle_close_observed": false,
+        "name": "invalid_hostname",
+        "response_json": [],
+        "trust_subjects": [
+          "302c312a3028060355040313214f776e65642046414e424f58206e617469766520636f6e747261637420726f6f74"
+        ],
+        "unknown_authority": false
+      },
+      "go_only_observation": {
+        "name": "invalid_hostname",
+        "connections": [
+          {
+            "hello": {
+              "record_hex": "16030106f8010006f40303bf99b8cfba48debdd16ab0f4beb06523bad9a5dfe0f88903b03b91a445150b7420f26b7da3ab28e5b892baa5914877ea3c3d647608f4064ce77cf3a0aa4fafe79a00200a0a130113021303c02bc02fc02cc030cca9cca8c013c014009c009d002f00350100068bfafa0000003304ef04edaaaa00010011ec04c042a5a105181369948ce33b7fedd1c8753cafac265bafb907332caa427b2487a13cfe3037be4586c8a6b37ee77440e34fc72c4fa0b82167b32f3e5b42740a4310955bdaea1a56b73777d15dfd6009c7677da55cb779843b787b65ca81b2d2834865ebae0d2a9bb11b9423049f5ed67b6e81c218fa8203da054584ce531685ce2b099ed2cb78a289f24c7b0a5476fdd54ccf023faa0c8319ca3baa43113fa8cecd2335f82bb72cb0bf7682729eb72790f7c4f3432eef7542775949e4a37436f6280da6049163ba550071ad0c15b2c8bcd06815ef01770b092edb777b568412f26203ca711fdd936d2cf8977d1102e5333f12494d9207292b512611f11336025a19e195c415bca808586e215b55c5a764274f2bea1c68824b42882a8d00ca237bcda0fa72adbaaf906a802b3b33c575c2e8725fdfcca7e884b6a70630864016e1271718066fb5f09594282bcea09386477bdeb96fdb6c1832a2cf0cd270c74b18240c216aaacbb4e55e5e9903e0d930cd3c23adcc444e00644d459f803647fdb80343566c34ca29d6c022aef20f19a02264177b00ed91657b46bb7a4194889fedbbbeef752ed8b4293e122c4cc171483553143127632c77df16517030c913b57d0521831783028ca71e51532bba27ce7ceb658e75a7bba46a5ab8a596259525fb2e01056b4260a266917758a9630ec93fb5a438f158513ad95db276b6e1048b00e82dca939940a41caa278f3f21535ebabd5af349563c9954100d82d0a9e5ac06632086c3f890ca6a1867a6b856560172059571991d9301741cea0c53245419873981b4aa52ba82bd05b18b546b7db9a2858a0f9f252e1b01a417b0b83f703283f34d37dabdbe700bb639cfcb758d5be4a0023398cfa9c624f689e7c4194b2b92eeb19fd8897492c0281bd5601a19699b39b2537ca9fb59a77183838fa531a24387ea53965df49505655b881a03ecbb541ccb3b0c06a4202b9bf1161aa326ca6b43167a68c5d6a113d482195207a1cb010d4701b56829256898a6608592d76ac50f745ece974bcabcc33515b9580aba30606f4fa08f9f152f675a1e713bce7a00a66409bedb3298af454abe9a052d571267865182c3aac72644ded8a9b253bdcd376a87f72b23a500f6f06efe996edf5a2c27a390ba50581fd2735911a5dff09a51f392e57c76d1871e9497c00f06c8a823add89a2979a81c6adc89d8c9699d9a2b0ba77c80e8c4ffbbb1a24a0a98342307d97a91b5328af7523a72c36b3101370a40ac215eb386a433eb240a2a7d15d799db229bcfb7917fbb17d4eb94f0bac877214655387f6319ca1763af071cbeb6022f36bc745b4c05005c59d84a4d5ccb0375933a717b3bbba5b29da9661fa50b19aaa2ca890929b628f940aaa9b74fce3569f0f09c65944f04dc1a3460710445521ba4593e514be4c0ae9ac9086c0cb634866453e018a48966f486581b9b3b24d05dac7a9eee031244f86541aa5f6528a8e4e88753577751504046752f39750581811a0d71bbe8066b86083fa475798fd9313be183dca6a7c8093398698c8b1b7a2fa2aa75b3b94305864dacc6985922ff029a92f6c952794d036513ea136f28b85494685c43f9a9622a19c7c273981c475166089773cef8303d19c7e4eea2b5ff57f57f567262002c60e5f2d68e9d087b490d5b2cb4ade72196779c4b649bb917010de5ea568756f7de80384e45448269001d00207ddf12b9367c4880d845429328ca6312f5320aaf8f8a3a6b2511a197428a92120000000e000c0000096c6f63616c686f737444cd00050003026832ff01000100000a000c000aaaaa11ec001d00170018001b00030200020023000000050005010000000000170000002b0007069a9a03040303000d001200100403080404010503080505010806060100120000000b00020100fe0d00fa0000010001070020078fdb8a439227809343419274270c163dda1912ff433b9305fa6d494ba00e1400d007560bc8ea633ff3fb6cdd359706b22a24da2c07eade1d105c10e4ff78ff02061ea92821e05ee9578a4cacf8ad39c0f4cc3ed57d1fbb1146d0727ba12a1c51c2062b29ff2342318665fb5351107e176b6d47bb59f43847503bb0c851c9bed6b9a0824432def051349924207ef221a2bbbbc9ac4c367a7a94bdfd51b70bea2f1555adf5da5e68c609e6d965d89dae041a8056383f17e402ba77d6c71365938a73e42f6aa38131f4dd1aa221a06bf17e50c8dcd16aff16c7f8c0e31715dae6c0bde4a19bb7f74fcf66e0a102fa2157e7750010000e000c02683208687474702f312e31002d00020101ca3400020000dada000100",
+              "record_sha256": "ce63d200f712ba7d18e8f259007694486a962bc40a9e5d7a57c5783c1c33f362",
+              "record_version": 769,
+              "legacy_version": 771,
+              "random_hex": "bf99b8cfba48debdd16ab0f4beb06523bad9a5dfe0f88903b03b91a445150b74",
+              "session_id_hex": "f26b7da3ab28e5b892baa5914877ea3c3d647608f4064ce77cf3a0aa4fafe79a",
+              "cipher_suites": [
+                2570,
+                4865,
+                4866,
+                4867,
+                49195,
+                49199,
+                49196,
+                49200,
+                52393,
+                52392,
+                49171,
+                49172,
+                156,
+                157,
+                47,
+                53
+              ],
+              "compression_hex": "00",
+              "extensions": [
+                {
+                  "id": 64250,
+                  "length": 0,
+                  "data_hex": "",
+                  "comparable_id": 2570,
+                  "comparable_data": ""
+                },
+                {
+                  "id": 51,
+                  "length": 1263,
+                  "data_hex": "04edaaaa00010011ec04c042a5a105181369948ce33b7fedd1c8753cafac265bafb907332caa427b2487a13cfe3037be4586c8a6b37ee77440e34fc72c4fa0b82167b32f3e5b42740a4310955bdaea1a56b73777d15dfd6009c7677da55cb779843b787b65ca81b2d2834865ebae0d2a9bb11b9423049f5ed67b6e81c218fa8203da054584ce531685ce2b099ed2cb78a289f24c7b0a5476fdd54ccf023faa0c8319ca3baa43113fa8cecd2335f82bb72cb0bf7682729eb72790f7c4f3432eef7542775949e4a37436f6280da6049163ba550071ad0c15b2c8bcd06815ef01770b092edb777b568412f26203ca711fdd936d2cf8977d1102e5333f12494d9207292b512611f11336025a19e195c415bca808586e215b55c5a764274f2bea1c68824b42882a8d00ca237bcda0fa72adbaaf906a802b3b33c575c2e8725fdfcca7e884b6a70630864016e1271718066fb5f09594282bcea09386477bdeb96fdb6c1832a2cf0cd270c74b18240c216aaacbb4e55e5e9903e0d930cd3c23adcc444e00644d459f803647fdb80343566c34ca29d6c022aef20f19a02264177b00ed91657b46bb7a4194889fedbbbeef752ed8b4293e122c4cc171483553143127632c77df16517030c913b57d0521831783028ca71e51532bba27ce7ceb658e75a7bba46a5ab8a596259525fb2e01056b4260a266917758a9630ec93fb5a438f158513ad95db276b6e1048b00e82dca939940a41caa278f3f21535ebabd5af349563c9954100d82d0a9e5ac06632086c3f890ca6a1867a6b856560172059571991d9301741cea0c53245419873981b4aa52ba82bd05b18b546b7db9a2858a0f9f252e1b01a417b0b83f703283f34d37dabdbe700bb639cfcb758d5be4a0023398cfa9c624f689e7c4194b2b92eeb19fd8897492c0281bd5601a19699b39b2537ca9fb59a77183838fa531a24387ea53965df49505655b881a03ecbb541ccb3b0c06a4202b9bf1161aa326ca6b43167a68c5d6a113d482195207a1cb010d4701b56829256898a6608592d76ac50f745ece974bcabcc33515b9580aba30606f4fa08f9f152f675a1e713bce7a00a66409bedb3298af454abe9a052d571267865182c3aac72644ded8a9b253bdcd376a87f72b23a500f6f06efe996edf5a2c27a390ba50581fd2735911a5dff09a51f392e57c76d1871e9497c00f06c8a823add89a2979a81c6adc89d8c9699d9a2b0ba77c80e8c4ffbbb1a24a0a98342307d97a91b5328af7523a72c36b3101370a40ac215eb386a433eb240a2a7d15d799db229bcfb7917fbb17d4eb94f0bac877214655387f6319ca1763af071cbeb6022f36bc745b4c05005c59d84a4d5ccb0375933a717b3bbba5b29da9661fa50b19aaa2ca890929b628f940aaa9b74fce3569f0f09c65944f04dc1a3460710445521ba4593e514be4c0ae9ac9086c0cb634866453e018a48966f486581b9b3b24d05dac7a9eee031244f86541aa5f6528a8e4e88753577751504046752f39750581811a0d71bbe8066b86083fa475798fd9313be183dca6a7c8093398698c8b1b7a2fa2aa75b3b94305864dacc6985922ff029a92f6c952794d036513ea136f28b85494685c43f9a9622a19c7c273981c475166089773cef8303d19c7e4eea2b5ff57f57f567262002c60e5f2d68e9d087b490d5b2cb4ade72196779c4b649bb917010de5ea568756f7de80384e45448269001d00207ddf12b9367c4880d845429328ca6312f5320aaf8f8a3a6b2511a197428a9212",
+                  "comparable_id": 51,
+                  "comparable_data": "0a0a:fixed[00],11ec:random[1216],001d:random[32]"
+                },
+                {
+                  "id": 0,
+                  "length": 14,
+                  "data_hex": "000c0000096c6f63616c686f7374",
+                  "comparable_id": 0,
+                  "comparable_data": "000c0000096c6f63616c686f7374"
+                },
+                {
+                  "id": 17613,
+                  "length": 5,
+                  "data_hex": "0003026832",
+                  "comparable_id": 17613,
+                  "comparable_data": "0003026832"
+                },
+                {
+                  "id": 65281,
+                  "length": 1,
+                  "data_hex": "00",
+                  "comparable_id": 65281,
+                  "comparable_data": "00"
+                },
+                {
+                  "id": 10,
+                  "length": 12,
+                  "data_hex": "000aaaaa11ec001d00170018",
+                  "comparable_id": 10,
+                  "comparable_data": "000a0a0a11ec001d00170018"
+                },
+                {
+                  "id": 27,
+                  "length": 3,
+                  "data_hex": "020002",
+                  "comparable_id": 27,
+                  "comparable_data": "020002"
+                },
+                {
+                  "id": 35,
+                  "length": 0,
+                  "data_hex": "",
+                  "comparable_id": 35,
+                  "comparable_data": ""
+                },
+                {
+                  "id": 5,
+                  "length": 5,
+                  "data_hex": "0100000000",
+                  "comparable_id": 5,
+                  "comparable_data": "0100000000"
+                },
+                {
+                  "id": 23,
+                  "length": 0,
+                  "data_hex": "",
+                  "comparable_id": 23,
+                  "comparable_data": ""
+                },
+                {
+                  "id": 43,
+                  "length": 7,
+                  "data_hex": "069a9a03040303",
+                  "comparable_id": 43,
+                  "comparable_data": "060a0a03040303"
+                },
+                {
+                  "id": 13,
+                  "length": 18,
+                  "data_hex": "001004030804040105030805050108060601",
+                  "comparable_id": 13,
+                  "comparable_data": "001004030804040105030805050108060601"
+                },
+                {
+                  "id": 18,
+                  "length": 0,
+                  "data_hex": "",
+                  "comparable_id": 18,
+                  "comparable_data": ""
+                },
+                {
+                  "id": 11,
+                  "length": 2,
+                  "data_hex": "0100",
+                  "comparable_id": 11,
+                  "comparable_data": "0100"
+                },
+                {
+                  "id": 65037,
+                  "length": 250,
+                  "data_hex": "0000010001070020078fdb8a439227809343419274270c163dda1912ff433b9305fa6d494ba00e1400d007560bc8ea633ff3fb6cdd359706b22a24da2c07eade1d105c10e4ff78ff02061ea92821e05ee9578a4cacf8ad39c0f4cc3ed57d1fbb1146d0727ba12a1c51c2062b29ff2342318665fb5351107e176b6d47bb59f43847503bb0c851c9bed6b9a0824432def051349924207ef221a2bbbbc9ac4c367a7a94bdfd51b70bea2f1555adf5da5e68c609e6d965d89dae041a8056383f17e402ba77d6c71365938a73e42f6aa38131f4dd1aa221a06bf17e50c8dcd16aff16c7f8c0e31715dae6c0bde4a19bb7f74fcf66e0a102fa2157e775",
+                  "comparable_id": 65037,
+                  "comparable_data": "fixed[0000010001],config_id=random[1],enc=random[32],payload=random[144|176|208|240]"
+                },
+                {
+                  "id": 16,
+                  "length": 14,
+                  "data_hex": "000c02683208687474702f312e31",
+                  "comparable_id": 16,
+                  "comparable_data": "000c02683208687474702f312e31"
+                },
+                {
+                  "id": 45,
+                  "length": 2,
+                  "data_hex": "0101",
+                  "comparable_id": 45,
+                  "comparable_data": "0101"
+                },
+                {
+                  "id": 51764,
+                  "length": 2,
+                  "data_hex": "0000",
+                  "comparable_id": 51764,
+                  "comparable_data": "0000"
+                },
+                {
+                  "id": 56026,
+                  "length": 1,
+                  "data_hex": "00",
+                  "comparable_id": 2570,
+                  "comparable_data": "00"
+                }
+              ]
+            },
+            "tls_version": 0,
+            "cipher_suite": 0,
+            "alpn": "",
+            "sni": "",
+            "did_resume": false,
+            "handshake_error": "remote error: tls: bad certificate",
+            "preface_hex": "",
+            "frames": [],
+            "terminal_error": ""
+          }
+        ],
+        "response_json": [],
+        "errors": [
+          {
+            "type": "*url.Error",
+            "message": "Get \"https://localhost:36759/owned-native\": tls: failed to verify certificate: x509: certificate is valid for wrong-owned.invalid, not localhost"
+          },
+          {
+            "type": "*tls.CertificateVerificationError",
+            "message": "tls: failed to verify certificate: x509: certificate is valid for wrong-owned.invalid, not localhost"
+          },
+          {
+            "type": "x509.HostnameError",
+            "message": "x509: certificate is valid for wrong-owned.invalid, not localhost"
+          }
+        ],
+        "canceled": false,
+        "deadline": false,
+        "unknown_authority": false,
+        "hostname": true,
+        "expired": false,
+        "alive_after_idle_close": false,
+        "alive_after_thirty_seconds": false,
+        "idle_close_observed": false,
+        "completed_idle_liveness_checks": 0,
+        "elapsed_ns": 2401864,
+        "peer_request_observed_elapsed_ns": 0,
+        "peer_header_hold_ns": 0,
+        "endpoint": "localhost:36759",
+        "certificate_der_hex": "308201863082012da003020102020102300a06082a8648ce3d040302302c312a3028060355040313214f776e65642046414e424f58206e617469766520636f6e747261637420726f6f74301e170d3230303130313030303030305a170d3335303130313030303030305a3025312330210603550403131a4f776e6564206e6174697665206c6f6f706261636b20706565723059301306072a8648ce3d020106082a8648ce3d030107034200046b20428c0f6dcd9654e4ebe073c835ad6853ed5222a2fd5d677ca5757b01ddd40b399cdc03081e841d3da55ae3f6288d250ea5a9c7833f366e188b7dff4a1b87a3473045300e0603551d0f0101ff04040302078030130603551d25040c300a06082b06010505070301301e0603551d1104173015821377726f6e672d6f776e65642e696e76616c6964300a06082a8648ce3d0403020347003044022053e3513e1c91359661a76e48a7e0893f5fcfa6f94befb9b3918b6ae07943f9ba02201e8fa5fb1bbd7ae33cfc11d830dac7bffb4e9899ccf1f33ba4846398aed154e9",
+        "trust_subjects": [
+          "302c312a3028060355040313214f776e65642046414e424f58206e617469766520636f6e747261637420726f6f74"
+        ]
+      }
+    },
+    {
+      "name": "expired_certificate",
+      "comparable": {
+        "alive_after_idle_close": false,
+        "alive_after_thirty_seconds": false,
+        "canceled": false,
+        "completed_idle_liveness_checks": 0,
+        "connections": [
+          {
+            "alpn": "",
+            "cipher_suite": 0,
+            "did_resume": false,
+            "frames": null,
+            "handshake_error": "remote error: tls: bad certificate",
+            "hello": {
+              "cipher_suites": [
+                2570,
+                4865,
+                4866,
+                4867,
+                49195,
+                49199,
+                49196,
+                49200,
+                52393,
+                52392,
+                49171,
+                49172,
+                156,
+                157,
+                47,
+                53
+              ],
+              "compression_hex": "00",
+              "extensions": [
+                {
+                  "data_hex": "",
+                  "id": 2570,
+                  "length": 0
+                },
+                {
+                  "data_hex": "0a0a:fixed[00],11ec:random[1216],001d:random[32]",
+                  "id": 51,
+                  "length": 1263
+                },
+                {
+                  "data_hex": "000c0000096c6f63616c686f7374",
+                  "id": 0,
+                  "length": 14
+                },
+                {
+                  "data_hex": "0003026832",
+                  "id": 17613,
+                  "length": 5
+                },
+                {
+                  "data_hex": "00",
+                  "id": 65281,
+                  "length": 1
+                },
+                {
+                  "data_hex": "000a0a0a11ec001d00170018",
+                  "id": 10,
+                  "length": 12
+                },
+                {
+                  "data_hex": "020002",
+                  "id": 27,
+                  "length": 3
+                },
+                {
+                  "data_hex": "",
+                  "id": 35,
+                  "length": 0
+                },
+                {
+                  "data_hex": "0100000000",
+                  "id": 5,
+                  "length": 5
+                },
+                {
+                  "data_hex": "",
+                  "id": 23,
+                  "length": 0
+                },
+                {
+                  "data_hex": "060a0a03040303",
+                  "id": 43,
+                  "length": 7
+                },
+                {
+                  "data_hex": "001004030804040105030805050108060601",
+                  "id": 13,
+                  "length": 18
+                },
+                {
+                  "data_hex": "",
+                  "id": 18,
+                  "length": 0
+                },
+                {
+                  "data_hex": "0100",
+                  "id": 11,
+                  "length": 2
+                },
+                {
+                  "data_hex": "fixed[0000010001],config_id=random[1],enc=random[32],payload=random[144|176|208|240]",
+                  "id": 65037,
+                  "length": "variable:186|218|250|282"
+                },
+                {
+                  "data_hex": "000c02683208687474702f312e31",
+                  "id": 16,
+                  "length": 14
+                },
+                {
+                  "data_hex": "0101",
+                  "id": 45,
+                  "length": 2
+                },
+                {
+                  "data_hex": "0000",
+                  "id": 51764,
+                  "length": 2
+                },
+                {
+                  "data_hex": "00",
+                  "id": 2570,
+                  "length": 1
+                }
+              ],
+              "legacy_version": 771,
+              "random_hex": "random[32]",
+              "record_version": 769,
+              "session_id_hex": "random[32]"
+            },
+            "preface_hex": "",
+            "settings_ack_count": 0,
+            "sni": "",
+            "terminal_error": "",
+            "tls_version": 0
+          }
+        ],
+        "deadline": false,
+        "errors": [
+          {
+            "message": "Get \"https://localhost:\u003cowned-port\u003e/owned-native\": tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time \u003ccurrent-time\u003e is after 2021-01-01T00:00:00Z",
+            "type": "*url.Error"
+          },
+          {
+            "message": "tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time \u003ccurrent-time\u003e is after 2021-01-01T00:00:00Z",
+            "type": "*tls.CertificateVerificationError"
+          },
+          {
+            "message": "x509: certificate has expired or is not yet valid: current time \u003ccurrent-time\u003e is after 2021-01-01T00:00:00Z",
+            "type": "x509.CertificateInvalidError"
+          }
+        ],
+        "expired": true,
+        "hostname": false,
+        "idle_close_observed": false,
+        "name": "expired_certificate",
+        "response_json": [],
+        "trust_subjects": [
+          "302c312a3028060355040313214f776e65642046414e424f58206e617469766520636f6e747261637420726f6f74"
+        ],
+        "unknown_authority": false
+      },
+      "go_only_observation": {
+        "name": "expired_certificate",
+        "connections": [
+          {
+            "hello": {
+              "record_hex": "16030106d8010006d40303e97b616667d21ac09d1da0d1964877a9c4bee387eeff45358c87a8a6a8ecc94c20d6d4f2d865dbd13fe4dcbfb6b6acba62da25820d131e41ab26993d6e07f032a700207a7a130113021303c02bc02fc02cc030cca9cca8c013c014009c009d002f00350100066baaaa0000003304ef04ed4a4a00010011ec04c0e5b789a27277f0834f96b7807f509b6bd8b231e38b2bb076f0b63a55a44bef3429050ca697fbbf9dbaa08e4a307b7c25a06b851f7c1472403fa206ca1f556767f86f724531f64c79e2f2a0bdc7a9a0fb35a9f0cc53205167ccbe9e3b312ec6c87c063264e5ce6eb38d11c38a7ecb187ad5b11bbcbcd705aa9a6294836410b0da4cb6f19187d440a6e309faa917172668a5fa1f4a320970eb20a257c7f7396237109e56972361551082150e793ba32c02c9f02cbd29c407e180a79a4a879fb119f15615e6c59cad08345564bd933ba2f11468d24b69097433682bb2dffab7e22547d020b6301ab5523a1af890797384087086cce692116ce586bba51b8d185084f69f1a9c230492b2f1a98f7cdb8d8a8bc02f6452d0042f6be765729b00e959ceb71017ed101e703192ae424f4fe99da796b40b38bb933ba5a8d8c0f9a69d5b5a0f8a564b49e676b42a4f583975e10baab4448076781847f96e2f1b2be9073231ea1d172b6128bc2f90f9040bfcb7041c6164600f5b45789798a925e460182cb08105cd4ff1a1eb119927023d7d763c9d57567b1b4c7db55e47a9a562a353d3bab62665ca81928e39716d31202e4b60a3049b0569a27df3207dbab4abdd571f37ec4b56fc6e219a69de789cfd44525fcb273135130e3443f93804d9d7209611947f147af9e458baf70ccbd9131e3947737cbcc81b3591a061a8c2acd5120cccf4a530f1cc01246c45ba653ccbb0e22209ad1c8612ec5b5fe33663d5324c43532be26a1c5096721525622a93a3a7a001d01c479a18cb1b990167282260ca6f9220d405a8d96637043129573338f442530a784a19ca8926d321183c9993f6c60878cd7dd0324712a02eec1f71064930e8c5637c9f6189bbaed90c3b2357bbb3154d7c318edc412841573cb852762a723040b44b17484e95a06002113973809b9a10bc532e53d1421fecaeae6a62d791acca172de2a2961fd1a52d236703f1782d624c15217d3a4787ece6a3a8d9b525373f6df0c938a565795c717991b8e831730762a5aef6833f86c0c6067e50349f2de1bf4144a5650c8518a88d9719192c874c7a648bdc1394c019ba2a292bb5d8770225bfeac478a0e3400a6500cdf7479fc4948e3112ad7c25fe3904986241907716a34704a2642baf7348b4c01ffbb1270726a5f799a8de6849d3d65918f55007d84ae71c6cd38a010299a6e507c7fda5a412484c02a9b054639c581c4cbfb96f96b148dc407cbbe66f4e618225a290ba6b5194e600bf413ca72387d2b18246f02871778f388c24cf244705ebadcc744dd9fc9d86025b9be17db5abbe72e70de0fc79710b63c5eac67f7a11fe122e9425934fa8135e83c303b488fdb3a1b5e37992a917bb0231cb121e4e528d7fc54bdbd47bac9738044886ca6c9c89528ce02745e9b34d3edb05bfa58fc87340c0c0759ef4a28210111be39487a4618d508011558c5d7ac0474503f8151ab2dc5863331196b8807e2219309731808aa607cb5b157c1ec50126e0a278e531b7c3ebb6cbb67982a50e488389c98b8fd6c73ddd198287975d04b09c6be78e45c26348930d6f79a10207bfcb031f5276b41d828bb8600af8d17a43d92bce44c591d9cd9ac73327586483fee0198895f9249de8720c233e21c1deb79d2132247a761fd3140e9cd24921ec020e6b323e4b4c83e647d3d0ccc47fe447f248701f83cf1cf7b6b522001d0020654f777a45b0fc49321637bfc81e1d3cae5337b148a4415947788ada1b7d43770000000e000c0000096c6f63616c686f737444cd00050003026832ff01000100000a000c000a4a4a11ec001d00170018001b00030200020023000000050005010000000000170000002b0007060a0a03040303000d001200100403080404010503080505010806060100120000000b00020100fe0d00da00000100012100202c47bd4b7b6efa33b244dc2cc5262c94a9d7f526798cd5db18885e4127d1184600b0d18a24b1d1edd19c82df1150cd1674d33ab78c2f30232a4ce994b01904c83a0942dd519027b6be81a4d57c19938462d03e2bb3d42e4a5498522bfd646cd9900647ae98fae6ae8f1f8cbb6b84a1f070ae868dcddf9438611e2eb538eb5e9b33ccab4fb4c068b222157ece580ebb62481f93f999b1a4435d88f58e5361b1e1f7ece951e6fb529e755c7b1a198d2f354c7eac2745232eb67c812e2effdf3dfb4fb12cd3d2cd79c5b0cdd9fa4723b808b3540010000e000c02683208687474702f312e31002d00020101ca34000200002a2a000100",
+              "record_sha256": "2d8c4eeebba58f6c1fb9065638d0dcd8588fb0df23fd45ffbbd6bdd5afa45516",
+              "record_version": 769,
+              "legacy_version": 771,
+              "random_hex": "e97b616667d21ac09d1da0d1964877a9c4bee387eeff45358c87a8a6a8ecc94c",
+              "session_id_hex": "d6d4f2d865dbd13fe4dcbfb6b6acba62da25820d131e41ab26993d6e07f032a7",
+              "cipher_suites": [
+                31354,
+                4865,
+                4866,
+                4867,
+                49195,
+                49199,
+                49196,
+                49200,
+                52393,
+                52392,
+                49171,
+                49172,
+                156,
+                157,
+                47,
+                53
+              ],
+              "compression_hex": "00",
+              "extensions": [
+                {
+                  "id": 43690,
+                  "length": 0,
+                  "data_hex": "",
+                  "comparable_id": 2570,
+                  "comparable_data": ""
+                },
+                {
+                  "id": 51,
+                  "length": 1263,
+                  "data_hex": "04ed4a4a00010011ec04c0e5b789a27277f0834f96b7807f509b6bd8b231e38b2bb076f0b63a55a44bef3429050ca697fbbf9dbaa08e4a307b7c25a06b851f7c1472403fa206ca1f556767f86f724531f64c79e2f2a0bdc7a9a0fb35a9f0cc53205167ccbe9e3b312ec6c87c063264e5ce6eb38d11c38a7ecb187ad5b11bbcbcd705aa9a6294836410b0da4cb6f19187d440a6e309faa917172668a5fa1f4a320970eb20a257c7f7396237109e56972361551082150e793ba32c02c9f02cbd29c407e180a79a4a879fb119f15615e6c59cad08345564bd933ba2f11468d24b69097433682bb2dffab7e22547d020b6301ab5523a1af890797384087086cce692116ce586bba51b8d185084f69f1a9c230492b2f1a98f7cdb8d8a8bc02f6452d0042f6be765729b00e959ceb71017ed101e703192ae424f4fe99da796b40b38bb933ba5a8d8c0f9a69d5b5a0f8a564b49e676b42a4f583975e10baab4448076781847f96e2f1b2be9073231ea1d172b6128bc2f90f9040bfcb7041c6164600f5b45789798a925e460182cb08105cd4ff1a1eb119927023d7d763c9d57567b1b4c7db55e47a9a562a353d3bab62665ca81928e39716d31202e4b60a3049b0569a27df3207dbab4abdd571f37ec4b56fc6e219a69de789cfd44525fcb273135130e3443f93804d9d7209611947f147af9e458baf70ccbd9131e3947737cbcc81b3591a061a8c2acd5120cccf4a530f1cc01246c45ba653ccbb0e22209ad1c8612ec5b5fe33663d5324c43532be26a1c5096721525622a93a3a7a001d01c479a18cb1b990167282260ca6f9220d405a8d96637043129573338f442530a784a19ca8926d321183c9993f6c60878cd7dd0324712a02eec1f71064930e8c5637c9f6189bbaed90c3b2357bbb3154d7c318edc412841573cb852762a723040b44b17484e95a06002113973809b9a10bc532e53d1421fecaeae6a62d791acca172de2a2961fd1a52d236703f1782d624c15217d3a4787ece6a3a8d9b525373f6df0c938a565795c717991b8e831730762a5aef6833f86c0c6067e50349f2de1bf4144a5650c8518a88d9719192c874c7a648bdc1394c019ba2a292bb5d8770225bfeac478a0e3400a6500cdf7479fc4948e3112ad7c25fe3904986241907716a34704a2642baf7348b4c01ffbb1270726a5f799a8de6849d3d65918f55007d84ae71c6cd38a010299a6e507c7fda5a412484c02a9b054639c581c4cbfb96f96b148dc407cbbe66f4e618225a290ba6b5194e600bf413ca72387d2b18246f02871778f388c24cf244705ebadcc744dd9fc9d86025b9be17db5abbe72e70de0fc79710b63c5eac67f7a11fe122e9425934fa8135e83c303b488fdb3a1b5e37992a917bb0231cb121e4e528d7fc54bdbd47bac9738044886ca6c9c89528ce02745e9b34d3edb05bfa58fc87340c0c0759ef4a28210111be39487a4618d508011558c5d7ac0474503f8151ab2dc5863331196b8807e2219309731808aa607cb5b157c1ec50126e0a278e531b7c3ebb6cbb67982a50e488389c98b8fd6c73ddd198287975d04b09c6be78e45c26348930d6f79a10207bfcb031f5276b41d828bb8600af8d17a43d92bce44c591d9cd9ac73327586483fee0198895f9249de8720c233e21c1deb79d2132247a761fd3140e9cd24921ec020e6b323e4b4c83e647d3d0ccc47fe447f248701f83cf1cf7b6b522001d0020654f777a45b0fc49321637bfc81e1d3cae5337b148a4415947788ada1b7d4377",
+                  "comparable_id": 51,
+                  "comparable_data": "0a0a:fixed[00],11ec:random[1216],001d:random[32]"
+                },
+                {
+                  "id": 0,
+                  "length": 14,
+                  "data_hex": "000c0000096c6f63616c686f7374",
+                  "comparable_id": 0,
+                  "comparable_data": "000c0000096c6f63616c686f7374"
+                },
+                {
+                  "id": 17613,
+                  "length": 5,
+                  "data_hex": "0003026832",
+                  "comparable_id": 17613,
+                  "comparable_data": "0003026832"
+                },
+                {
+                  "id": 65281,
+                  "length": 1,
+                  "data_hex": "00",
+                  "comparable_id": 65281,
+                  "comparable_data": "00"
+                },
+                {
+                  "id": 10,
+                  "length": 12,
+                  "data_hex": "000a4a4a11ec001d00170018",
+                  "comparable_id": 10,
+                  "comparable_data": "000a0a0a11ec001d00170018"
+                },
+                {
+                  "id": 27,
+                  "length": 3,
+                  "data_hex": "020002",
+                  "comparable_id": 27,
+                  "comparable_data": "020002"
+                },
+                {
+                  "id": 35,
+                  "length": 0,
+                  "data_hex": "",
+                  "comparable_id": 35,
+                  "comparable_data": ""
+                },
+                {
+                  "id": 5,
+                  "length": 5,
+                  "data_hex": "0100000000",
+                  "comparable_id": 5,
+                  "comparable_data": "0100000000"
+                },
+                {
+                  "id": 23,
+                  "length": 0,
+                  "data_hex": "",
+                  "comparable_id": 23,
+                  "comparable_data": ""
+                },
+                {
+                  "id": 43,
+                  "length": 7,
+                  "data_hex": "060a0a03040303",
+                  "comparable_id": 43,
+                  "comparable_data": "060a0a03040303"
+                },
+                {
+                  "id": 13,
+                  "length": 18,
+                  "data_hex": "001004030804040105030805050108060601",
+                  "comparable_id": 13,
+                  "comparable_data": "001004030804040105030805050108060601"
+                },
+                {
+                  "id": 18,
+                  "length": 0,
+                  "data_hex": "",
+                  "comparable_id": 18,
+                  "comparable_data": ""
+                },
+                {
+                  "id": 11,
+                  "length": 2,
+                  "data_hex": "0100",
+                  "comparable_id": 11,
+                  "comparable_data": "0100"
+                },
+                {
+                  "id": 65037,
+                  "length": 218,
+                  "data_hex": "00000100012100202c47bd4b7b6efa33b244dc2cc5262c94a9d7f526798cd5db18885e4127d1184600b0d18a24b1d1edd19c82df1150cd1674d33ab78c2f30232a4ce994b01904c83a0942dd519027b6be81a4d57c19938462d03e2bb3d42e4a5498522bfd646cd9900647ae98fae6ae8f1f8cbb6b84a1f070ae868dcddf9438611e2eb538eb5e9b33ccab4fb4c068b222157ece580ebb62481f93f999b1a4435d88f58e5361b1e1f7ece951e6fb529e755c7b1a198d2f354c7eac2745232eb67c812e2effdf3dfb4fb12cd3d2cd79c5b0cdd9fa4723b808b354",
+                  "comparable_id": 65037,
+                  "comparable_data": "fixed[0000010001],config_id=random[1],enc=random[32],payload=random[144|176|208|240]"
+                },
+                {
+                  "id": 16,
+                  "length": 14,
+                  "data_hex": "000c02683208687474702f312e31",
+                  "comparable_id": 16,
+                  "comparable_data": "000c02683208687474702f312e31"
+                },
+                {
+                  "id": 45,
+                  "length": 2,
+                  "data_hex": "0101",
+                  "comparable_id": 45,
+                  "comparable_data": "0101"
+                },
+                {
+                  "id": 51764,
+                  "length": 2,
+                  "data_hex": "0000",
+                  "comparable_id": 51764,
+                  "comparable_data": "0000"
+                },
+                {
+                  "id": 10794,
+                  "length": 1,
+                  "data_hex": "00",
+                  "comparable_id": 2570,
+                  "comparable_data": "00"
+                }
+              ]
+            },
+            "tls_version": 0,
+            "cipher_suite": 0,
+            "alpn": "",
+            "sni": "",
+            "did_resume": false,
+            "handshake_error": "remote error: tls: bad certificate",
+            "preface_hex": "",
+            "frames": [],
+            "terminal_error": ""
+          }
+        ],
+        "response_json": [],
+        "errors": [
+          {
+            "type": "*url.Error",
+            "message": "Get \"https://localhost:42977/owned-native\": tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2026-10-10T15:13:45+09:00 is after 2021-01-01T00:00:00Z"
+          },
+          {
+            "type": "*tls.CertificateVerificationError",
+            "message": "tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2026-10-10T15:13:45+09:00 is after 2021-01-01T00:00:00Z"
+          },
+          {
+            "type": "x509.CertificateInvalidError",
+            "message": "x509: certificate has expired or is not yet valid: current time 2026-10-10T15:13:45+09:00 is after 2021-01-01T00:00:00Z"
+          }
+        ],
+        "canceled": false,
+        "deadline": false,
+        "unknown_authority": false,
+        "hostname": false,
+        "expired": true,
+        "alive_after_idle_close": false,
+        "alive_after_thirty_seconds": false,
+        "idle_close_observed": false,
+        "completed_idle_liveness_checks": 0,
+        "elapsed_ns": 2612311,
+        "peer_request_observed_elapsed_ns": 0,
+        "peer_header_hold_ns": 0,
+        "endpoint": "localhost:42977",
+        "certificate_der_hex": "3082017c30820123a003020102020102300a06082a8648ce3d040302302c312a3028060355040313214f776e65642046414e424f58206e617469766520636f6e747261637420726f6f74301e170d3230303130313030303030305a170d3231303130313030303030305a3025312330210603550403131a4f776e6564206e6174697665206c6f6f706261636b20706565723059301306072a8648ce3d020106082a8648ce3d030107034200049739299ceaa8c31ba760b76741a9c4fe41c038281acfb62a3e9ab3bfeacb35b35e79fd0a7ea6e97925296033b502c96cc32d100048eac6cc5b4d8de778c2358da33d303b300e0603551d0f0101ff04040302078030130603551d25040c300a06082b0601050507030130140603551d11040d300b82096c6f63616c686f7374300a06082a8648ce3d0403020347003044022021f963621e53b6c7289c979885d72ebb0b9824088dcb27ce1dcf90c11edad8780220445eb667f0589509d87f6275ab505f355c21d17ae9eeb3e74d14edea7f6644ba",
+        "trust_subjects": [
+          "302c312a3028060355040313214f776e65642046414e424f58206e617469766520636f6e747261637420726f6f74"
+        ]
+      }
+    }
+  ]
+}

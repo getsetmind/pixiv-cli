@@ -1,0 +1,393 @@
+{
+  "recorded_at_utc": "2026-10-10T06:18:33.432415+00:00",
+  "supersedes_joint_native_pair": {
+    "manifest": "/tmp/fanbox-shared-go-recovery/manifest.json",
+    "manifest_sha256": "cd2dee5ce51605a375a8a80801994217577c586ae0a8415bb146c3238f4cc545",
+    "reason": "Native proof repairs changed only the sealed native source/fixture. Fresh gates use the repaired pair; all preliminary successful evidence remains preserved unchanged."
+  },
+  "original_evidence_preserved_exit": 0,
+  "all_go_production_precheck_exit": 0,
+  "reference": "4b4426487ef18bed276706daec385e0d0a6979f9",
+  "published_base": "b3f01c9944d3317d10d48543f529af6bb1dea2f2",
+  "environment_source": "/tmp/quantus-toolchain-env.txt",
+  "go_version": "go1.27.1",
+  "working_directory": "/workspace/scratch/cd334a12dde3/pixiv-cli-rs",
+  "package_scope": [
+    "./sdk",
+    "./sdk/fanbox",
+    "./internal/services/fanbox/protocol",
+    "./internal/shared/diagnostics",
+    "./internal/shared/lifecycle"
+  ],
+  "frozen_files": [
+    {
+      "path": "sdk/fanbox/migration_context_ownership_test.go",
+      "sha256": "c885b2e415d1595bd4b9c363578b29d8bcfe9d2c5d5ccd1dae9acb4da7da0f72",
+      "size": 29018
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/fixtures/fanbox-context-ownership.json",
+      "sha256": "6c0d721eeb35314058c8f928114a9ea2c6bf76e92d468502fc543fd7651cc705",
+      "size": 183768
+    },
+    {
+      "path": "internal/services/fanbox/protocol/migration_solver_test.go",
+      "sha256": "c9a27c01aafbf271dc7a6b33cab8959a7b8e721b9b3d0edc6d41941d7aae1f56",
+      "size": 46504
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/fixtures/fanbox-solver.json",
+      "sha256": "45ed3d463ce1159290dbb6686490e754e30d4540a108754571a926b8bba6f382",
+      "size": 771775
+    },
+    {
+      "path": "internal/services/fanbox/protocol/migration_native_profile_test.go",
+      "sha256": "50e22883ecdcde2fc673acc4d8d7ab5633d06056e348c41c50b716e6b685dd7e",
+      "size": 46819
+    },
+    {
+      "path": "crates/pixiv-sdk/tests/fixtures/fanbox-native-profile.json",
+      "sha256": "df753a715efd28c016a2532fe544e992b00a1fe5ce58b756d807c13b9522dd62",
+      "size": 164861
+    }
+  ],
+  "before_after_hash_files_equal": true,
+  "all_owner_seals_checked_before_launch": true,
+  "phase_file_checks": {
+    "related": 0,
+    "race": 0,
+    "vet": 0
+  },
+  "all_go_production_paths_unchanged_after_gates": 434,
+  "all_go_production_postcheck_exit": 0,
+  "phases": {
+    "related": {
+      "command": "go test ./sdk ./sdk/fanbox ./internal/services/fanbox/protocol ./internal/shared/diagnostics ./internal/shared/lifecycle -count=1 -json -timeout=5m",
+      "exit": 0,
+      "log": "/tmp/fanbox-shared-go-final/related.log",
+      "log_sha256": "7f09907a28b0fcbe3059c82c546b0c02ed70719b3e81e26afc4fef1795707782",
+      "started_at_utc": "2026-10-10T06:16:55Z",
+      "finished_at_utc": "2026-10-10T06:17:27Z",
+      "elapsed_wall_seconds": 32,
+      "passed_top_level_tests": 98,
+      "passed_top_level_by_package": {
+        "github.com/FlanChanXwO/pixiv-cli/sdk": 41,
+        "github.com/FlanChanXwO/pixiv-cli/sdk/fanbox": 27,
+        "github.com/FlanChanXwO/pixiv-cli/internal/shared/lifecycle": 7,
+        "github.com/FlanChanXwO/pixiv-cli/internal/shared/diagnostics": 3,
+        "github.com/FlanChanXwO/pixiv-cli/internal/services/fanbox/protocol": 20
+      },
+      "raw_named_test_pass_events_including_subtests": 472,
+      "skipped_tests": [
+        {
+          "package": "github.com/FlanChanXwO/pixiv-cli/internal/services/fanbox/protocol",
+          "test": "TestMigrationFanboxNativeProfileChild"
+        }
+      ],
+      "failures": [],
+      "packages": [
+        {
+          "package": "github.com/FlanChanXwO/pixiv-cli/sdk",
+          "result": "pass",
+          "elapsed_seconds": 0.013
+        },
+        {
+          "package": "github.com/FlanChanXwO/pixiv-cli/internal/shared/lifecycle",
+          "result": "pass",
+          "elapsed_seconds": 0.003
+        },
+        {
+          "package": "github.com/FlanChanXwO/pixiv-cli/internal/shared/diagnostics",
+          "result": "pass",
+          "elapsed_seconds": 0.005
+        },
+        {
+          "package": "github.com/FlanChanXwO/pixiv-cli/sdk/fanbox",
+          "result": "pass",
+          "elapsed_seconds": 0.217
+        },
+        {
+          "package": "github.com/FlanChanXwO/pixiv-cli/internal/services/fanbox/protocol",
+          "result": "pass",
+          "elapsed_seconds": 31.941
+        }
+      ]
+    },
+    "race": {
+      "command": "go test -race ./sdk ./sdk/fanbox ./internal/services/fanbox/protocol ./internal/shared/diagnostics ./internal/shared/lifecycle -count=1 -json -timeout=5m",
+      "exit": 0,
+      "log": "/tmp/fanbox-shared-go-final/race.log",
+      "log_sha256": "994c50f37e3761a09de8102d030e90d203bdf93e050b100c6d9a144c24b26391",
+      "started_at_utc": "2026-10-10T06:17:27Z",
+      "finished_at_utc": "2026-10-10T06:18:08Z",
+      "elapsed_wall_seconds": 41,
+      "passed_top_level_tests": 98,
+      "passed_top_level_by_package": {
+        "github.com/FlanChanXwO/pixiv-cli/sdk": 41,
+        "github.com/FlanChanXwO/pixiv-cli/internal/shared/diagnostics": 3,
+        "github.com/FlanChanXwO/pixiv-cli/internal/shared/lifecycle": 7,
+        "github.com/FlanChanXwO/pixiv-cli/sdk/fanbox": 27,
+        "github.com/FlanChanXwO/pixiv-cli/internal/services/fanbox/protocol": 20
+      },
+      "raw_named_test_pass_events_including_subtests": 472,
+      "skipped_tests": [
+        {
+          "package": "github.com/FlanChanXwO/pixiv-cli/internal/services/fanbox/protocol",
+          "test": "TestMigrationFanboxNativeProfileChild"
+        }
+      ],
+      "failures": [],
+      "packages": [
+        {
+          "package": "github.com/FlanChanXwO/pixiv-cli/sdk",
+          "result": "pass",
+          "elapsed_seconds": 1.104
+        },
+        {
+          "package": "github.com/FlanChanXwO/pixiv-cli/internal/shared/diagnostics",
+          "result": "pass",
+          "elapsed_seconds": 1.013
+        },
+        {
+          "package": "github.com/FlanChanXwO/pixiv-cli/internal/shared/lifecycle",
+          "result": "pass",
+          "elapsed_seconds": 1.016
+        },
+        {
+          "package": "github.com/FlanChanXwO/pixiv-cli/sdk/fanbox",
+          "result": "pass",
+          "elapsed_seconds": 2.399
+        },
+        {
+          "package": "github.com/FlanChanXwO/pixiv-cli/internal/services/fanbox/protocol",
+          "result": "pass",
+          "elapsed_seconds": 40.199
+        }
+      ]
+    },
+    "vet": {
+      "command": "go vet ./sdk ./sdk/fanbox ./internal/services/fanbox/protocol ./internal/shared/diagnostics ./internal/shared/lifecycle",
+      "exit": 0,
+      "log": "/tmp/fanbox-shared-go-final/vet.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "started_at_utc": "2026-10-10T06:18:08Z",
+      "finished_at_utc": "2026-10-10T06:18:09Z",
+      "elapsed_wall_seconds": 1
+    },
+    "gofmt": {
+      "command": "gofmt -l sdk/fanbox/migration_context_ownership_test.go internal/services/fanbox/protocol/migration_solver_test.go internal/services/fanbox/protocol/migration_native_profile_test.go",
+      "exit": 0,
+      "log": "/tmp/fanbox-shared-go-final/gofmt.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "evidence_scope": "One coordinated complete package normal/race/vet/gofmt sweep reused by the context, solver and native owners, after their exact final seals. Only the existing approved six bounded native single-GET/profile/certificate/sequential-idle scenarios execute; no supplemental probes were added.",
+  "skip_explanation": "The no-mode native subprocess helper is skipped as a standalone parent-package test. The actual native main contract invokes six bounded owned helper children; its named parent/scenario passes and original outputs are preserved. Standalone helper skip is not counted as evidence for native cases.",
+  "limitations": [
+    "Go-first source observations and synthetic controlled runtime evidence only; no Rust implementation or parity gate is represented.",
+    "No live account, external-site request, browser, OS trust/security change, multiplex/unfinished HEAD/upload probe, or previously denied action was performed by this joint sweep.",
+    "Raw test/subtest event counts are audit metadata, not feature completion percentages."
+  ],
+  "original_evidence_files": [
+    {
+      "path": "/tmp/fanbox-shared-go-final/all-go-production-postcheck.exit",
+      "size": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/all-go-production-postcheck.log",
+      "size": 87,
+      "sha256": "2a33020cf95fc7f73bae640e19db4d7ebf9cc25f8614b164f15620453f2d3353"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/all-go-production-precheck.exit",
+      "size": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/all-go-production-precheck.log",
+      "size": 92,
+      "sha256": "78baf284a23738e8022f0771172af073a54cd471bb6b3f65be367d1b3f709f66"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/expected-owners.sha256",
+      "size": 741,
+      "sha256": "bff94e32814632f7e42e15a61e20e94931141b8aaf8f4b8f227c5d66fbeb883f"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/frozen-after.sha256",
+      "size": 741,
+      "sha256": "bff94e32814632f7e42e15a61e20e94931141b8aaf8f4b8f227c5d66fbeb883f"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/frozen-before.sha256",
+      "size": 741,
+      "sha256": "bff94e32814632f7e42e15a61e20e94931141b8aaf8f4b8f227c5d66fbeb883f"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/gofmt.command",
+      "size": 182,
+      "sha256": "1eac67a6f0fafdfa5784e7c56a3ab5a736b6f175bf70e03f3fe341b99cdbabad"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/gofmt.exit",
+      "size": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/gofmt.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/original-evidence-preserved.exit",
+      "size": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/original-evidence-preserved.log",
+      "size": 87,
+      "sha256": "cc23604d9604ad9920893dd22192f0ae4af341eb9c50e462f1b436d41f1043e9"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/owner-seal-check.exit",
+      "size": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/owner-seal-check.log",
+      "size": 369,
+      "sha256": "0f411e1702fd0f393ced07c3a76fd25fdc0c33bb71560d3a3bb05505c4f2ab52"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/race.command",
+      "size": 155,
+      "sha256": "c9ec58a73663822e5299365d910ca3353b132a65ef2eb76c95cdffe569dcafff"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/race.elapsed-seconds",
+      "size": 3,
+      "sha256": "040316eca5e77dbb2212c1efe8b81cb23bc67ce0ac8cb5c9d902d98bd45ddfa1"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/race.exit",
+      "size": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/race.finished",
+      "size": 21,
+      "sha256": "31ea237ae67f5484ff7184bb04459b5f15b8ab666c3f98330b14c83e35fb0709"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/race.frozen-files-check.exit",
+      "size": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/race.frozen-files-check.log",
+      "size": 369,
+      "sha256": "0f411e1702fd0f393ced07c3a76fd25fdc0c33bb71560d3a3bb05505c4f2ab52"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/race.log",
+      "size": 513178,
+      "sha256": "994c50f37e3761a09de8102d030e90d203bdf93e050b100c6d9a144c24b26391"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/race.started",
+      "size": 21,
+      "sha256": "38961c10d17a9fb829f07a1cd5d273263858f8118aa981ff403c0026cfe929d6"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/related.command",
+      "size": 149,
+      "sha256": "e06b226a908b5b5337a69811d530bf22e03159996d38eaebfb373e0d95786b19"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/related.elapsed-seconds",
+      "size": 3,
+      "sha256": "2115cdb6bfcfb008eb2bab2bb79347cb064a48e4e7c4115ccbe4469c787bb6c4"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/related.exit",
+      "size": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/related.finished",
+      "size": 21,
+      "sha256": "38961c10d17a9fb829f07a1cd5d273263858f8118aa981ff403c0026cfe929d6"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/related.frozen-files-check.exit",
+      "size": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/related.frozen-files-check.log",
+      "size": 369,
+      "sha256": "0f411e1702fd0f393ced07c3a76fd25fdc0c33bb71560d3a3bb05505c4f2ab52"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/related.log",
+      "size": 513186,
+      "sha256": "7f09907a28b0fcbe3059c82c546b0c02ed70719b3e81e26afc4fef1795707782"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/related.started",
+      "size": 21,
+      "sha256": "fbfa1e88ab43cfde478bc70ea8d62f51c97b86d99ee913a8d91735f11e1de649"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/run-gates.sh",
+      "size": 2807,
+      "sha256": "04263379eccf0ac2baaab2d85eac83c781c48f23497378ff1dc7ee4a56a83aa4"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/script-syntax.exit",
+      "size": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/vet.command",
+      "size": 121,
+      "sha256": "ecf26446b94b7a815106fb6fc0432164881fecbdc8d827e05800b12f6e2fdaa8"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/vet.elapsed-seconds",
+      "size": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/vet.exit",
+      "size": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/vet.finished",
+      "size": 21,
+      "sha256": "7994dd18a5b914e5a476ebf29c69feedb7a684764e36e611e3fe71736c025924"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/vet.frozen-files-check.exit",
+      "size": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/vet.frozen-files-check.log",
+      "size": 369,
+      "sha256": "0f411e1702fd0f393ced07c3a76fd25fdc0c33bb71560d3a3bb05505c4f2ab52"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/vet.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/tmp/fanbox-shared-go-final/vet.started",
+      "size": 21,
+      "sha256": "31ea237ae67f5484ff7184bb04459b5f15b8ab666c3f98330b14c83e35fb0709"
+    }
+  ]
+}
