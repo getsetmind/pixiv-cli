@@ -69,4 +69,14 @@ Go app82行・saved CLI40行・MCP29行とowned stdio通知取消1schedule、act
 
 app fixtureの初回seedがwire illustをpublic Kindへcastしていた入力モデルの誤りを、public illustration/unknown+RawKindへ修正して実Goで再採取する。元の合法open-string custom producerはpermanent Go-only regressionに残し、Rust closed enumのrepresentation gapをpendingへ明示する。native SDK wireのunknown kindはCLI/MCP双方でstaticとして実比較する。runtime worker boundはGo GOMAXPROCSとRust available_parallelismの同一設定へ読み替えない。実accounts/外部media/authenticated network/native registry/browser/associationは使わない。
 
-fullgate/review最終証拠はcontracts.mdへ追記する。user/bookmarkの全visual kinds、ugoira archive/convert、recordとrandom、HTTP2/Accept/public SDK lifecycle・Tokio handler restoration等は次の残る移植・検証対象である。
+fullgate/review最終証拠はcontracts.mdへ追記する。user/bookmarkの全visual kinds、record全workflowとrandom、HTTP2/Accept/public SDK lifecycle・Tokio handler restoration等は次の残る移植・検証対象である。
+
+## ugoira artwork download の対象比較
+
+GIF/APNG/ZIP/rawをstatic/directと同じsaved CLI/MCP共有経路へ接続する。Go-first app70・CLI67・MCP41・Linux native26・rawZIP73行を固定し、archive選択、quality/pages、template fallback、MIME/metadata/frames、原子的な保存・隔離、partial/Context、native old-output/temp cleanupを対象比較する。CLI artifactのugoira page omissionとMCP file-only quality/frames、frame_report/failure classified fieldsの実omissionを保つ。
+
+元tracked core sourceのoffline buildは32 checked vendor patchesと既存root lockを再利用し、vendor1,633 file checksums・元root276 entriesを確認する。新resolved encoder21 dependency version置換とparallel miniz_oxide 0.9.1追加をprovenanceへ残し、旧Go native manifestと同一とはしない。caller future-dropは独立child Contextのowned cancellationでlate publicationを抑止し、parentを再利用する。Linux FIFO/gate waitの観測は成功画像encoding途中の全token cancel scheduleではない。全6platform/native IO/errors/FFI injected token-release失敗、全ZIP grammar/GODEBUG/65,536-entry runtime、public SDK/HTTP2/Accept、Tokio signal restoration、Windows repeated cleanupの既存リスクは未検証のままである。
+
+record経路は既存が受理するartwork/illust/manga/ugoiraを同じExecution callbackへ接続し、今回はugoira成功/隔離の2行と既存invalid-record regressionsを比較する。全multi-record grammar/skip/fail-fast/typed prefix/cancel/lifecycleは次のcoherent scopeで固定する。user/bookmark展開の全visual kind・random recommendationも引き続き残るworkflowで、download全体をverifiedへ変更しない。CLI private events/per-attempt errorとMCP private manager/hooks、rawZIP private failure reportはpublic Rust observationsとの同一性を主張しない。
+
+このugoira checkpointの最終fullscriptは終了0・296秒、meaningful594/raw595passed・ignored11、release58.65秒。Formatter/Clippyの先行failureは保持し、dependency-onlystyle metadataとequivalent ZIP64 let-chainで修正後に全stageをfresh実行する。レビューとGo full4packages/vet/ledgerが成功したbounded artwork scopeであり、残るrecord/user/bookmark/random/native/public SDKの完了へ外挿しない。

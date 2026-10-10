@@ -1651,7 +1651,11 @@
         "crates/pixiv-cli/src/main.rs",
         "crates/pixiv-cli/src/interrupt.rs",
         "crates/pixiv-app/src/download/static_artwork.rs",
-        "crates/pixiv-app/src/download/static_filename.rs"
+        "crates/pixiv-app/src/download/static_filename.rs",
+        "crates/pixiv-app/src/download/ugoira.rs",
+        "crates/pixiv-app/src/download/native_encoder.rs",
+        "crates/pixiv-app/src/download/zip_directory.rs",
+        "crates/pixiv-app/src/download/file_replace.rs"
       ],
       "tests": [
         "internal/media/downloader/migration_direct_sources_test.go",
@@ -1670,18 +1674,29 @@
         "internal/cli/commands/pixiv/download/migration_static_artwork_test.go",
         "internal/cli/migration_static_download_startup_test.go",
         "crates/pixiv-cli/tests/download_static.rs",
-        "crates/pixiv-cli/tests/download_static_startup.rs"
+        "crates/pixiv-cli/tests/download_static_startup.rs",
+        "internal/media/downloader/migration_ugoira_workflow_test.go",
+        "internal/media/downloader/migration_ugoira_zip_structure_test.go",
+        "internal/media/ugoira/migration_native_encoder_test.go",
+        "crates/pixiv-app/tests/download_ugoira.rs",
+        "crates/pixiv-app/tests/ugoira_encoder.rs",
+        "crates/pixiv-app/tests/ugoira_zip_directory.rs",
+        "internal/cli/commands/pixiv/download/migration_ugoira_workflow_test.go",
+        "crates/pixiv-cli/tests/download_ugoira.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "direct URL/opaque refとstatic artwork PID/artwork URLを保存済みExecution・SDK metadata/ref saveへ接続する。全5quality/pages/filename・directory templates/MIME publication/partial commitを対象比較する。user/bookmark展開・record実行・ugoira取得/変換・randomは残るworkflowである。",
+        "direct URL/opaque refとstatic artwork PID/artwork URLを保存済みExecution・SDK metadata/ref saveへ接続する。全5quality/pages/filename・directory templates/MIME publication/partial commitを対象比較する。user/bookmark展開・record実行・randomは残るworkflowである。",
         "Go fixtureはapp26行、CLI63行、root27行。rootの実Linux子プロセス比較は安全な23行に限定し、native hooks/read-error4行を実行しない。",
         "全URL grammar/非UTF8、native IO/OS、全writer/cancel/race/TTY/public SDK lifecycleは未検証。Go productionにpersisted resume/job schemaやdownload progress callback注入はなく、Rustに新契約として追加しない。",
         "CLI text/JSONとpublication前後4組を実Execution/SDK/account poolで比較し、Output(BrokenPipe)をcallbackからroot終了0へ保持する。",
         "実Rust mainのowned signal contextを全dispatchへ明示伝播する。Go root-entry12行のうち10download/OAuth行はowned Unix SIGINTとgenuine SDK/Execution/local saveのRust SPIでobservable fields比較、MCP SIGINT/EOF2行は実Rust binaryを比較する。Go physical HTTP connection closed countersをRust request/body future dropsと同一視しない。",
         "Go Stopのhandler unregisterに対しTokioはUnix process-wide handlerをdrop後も保持する具体差分。Windows CtrlC/CtrlBreak mappingはinstalled Go stdlib go1.27.1のsource-only契約でnative Windows compile/run未実施。全signal/EOF/IO/clock/TTY/並行scheduleは未検証。",
         "static Go fixture app82/CLI40、actual root preflight8行。CLIはgenuine saved SQLite pool/SDK metadata/resource/ref destination/output/file/stateで比較する。native Rust binary8行はaccounts/network無しのpreflightであり、成功したnative binary media取得へ数えない。NDJSON root error policyの実差分をGo-firstで修正する。",
-        "Go ManagerのID昇順・page_countとpage vector不整合による同名overwriteを保持する。runtime worker boundはGo GOMAXPROCSとRust available_parallelismで同一制御ではない。leading-dot suffix/publicationはGo-first追加5行で固定する。任意Go ArtworkKind string custom producerはpermanent Go-only契約を残し、Rust closed enumとのrepresentation差分をpendingに保持する。native filesystem wording/非UTF8/path/platform・全publication IOは未検証。"
+        "Go ManagerのID昇順・page_countとpage vector不整合による同名overwriteを保持する。runtime worker boundはGo GOMAXPROCSとRust available_parallelismで同一制御ではない。leading-dot suffix/publicationはGo-first追加5行で固定する。任意Go ArtworkKind string custom producerはpermanent Go-only契約を残し、Rust closed enumとのrepresentation差分をpendingに保持する。native filesystem wording/非UTF8/path/platform・全publication IOは未検証。",
+        "ugoira GIF/APNG/ZIP/rawをGo-first app70・CLI67・MCP41・native Linux26・rawZIP73行で対象比較する。source path/native coreと32 checked vendor patchesを再利用し、元root lock276 identities・vendor1633 checksumsを保持/確認する。resolved encoder21 dependency version置換とparallel miniz_oxide0.9.1追加は元Go artifactと異なりprovenanceへ明記する。全platform/image/nativecancel/FFI injected lifecycleのverifiedではない。",
+        "CLI/MCP private hook/event/per-attempt manager fieldsを直接同一視しない。public rawZIP success frame_report、failure class/quarantine/cleanupを比較するがprivate failure reportactual/undeclaredはGo-only。user/bookmark全visual kind、record全workflow・random、SDKHTTP2/Accept/ownership等はpendingである。",
+        "ugoira最終fullscriptは終了0・296秒、meaningful594/raw595passed・ignored11、optimized release58.65秒。Formatter/Clippyの先行failureを残し、dependency-onlyformatmetadataとequivalent let-chainをreviewした後に全stageをfresh実行する。全Go production/source identityとtested snapshotを保持し、operation全体のverifiedにはしない。"
       ]
     },
     {
@@ -3270,7 +3285,11 @@
         "crates/pixiv-mcp/src/stdio.rs",
         "crates/pixiv-cli/src/main.rs",
         "crates/pixiv-app/src/download/static_artwork.rs",
-        "crates/pixiv-app/src/download/static_filename.rs"
+        "crates/pixiv-app/src/download/static_filename.rs",
+        "crates/pixiv-app/src/download/ugoira.rs",
+        "crates/pixiv-app/src/download/native_encoder.rs",
+        "crates/pixiv-app/src/download/zip_directory.rs",
+        "crates/pixiv-app/src/download/file_replace.rs"
       ],
       "tests": [
         "internal/mcpserver/pixiv/tools/download/migration_direct_test.go",
@@ -3281,16 +3300,27 @@
         "internal/media/downloader/migration_static_artwork_test.go",
         "crates/pixiv-app/tests/download_static.rs",
         "internal/mcpserver/pixiv/tools/download/migration_static_artwork_test.go",
-        "crates/pixiv-mcp/tests/download_static.rs"
+        "crates/pixiv-mcp/tests/download_static.rs",
+        "internal/media/downloader/migration_ugoira_workflow_test.go",
+        "internal/media/downloader/migration_ugoira_zip_structure_test.go",
+        "internal/media/ugoira/migration_native_encoder_test.go",
+        "crates/pixiv-app/tests/download_ugoira.rs",
+        "crates/pixiv-app/tests/ugoira_encoder.rs",
+        "crates/pixiv-app/tests/ugoira_zip_directory.rs",
+        "internal/mcpserver/pixiv/tools/download/migration_ugoira_workflow_test.go",
+        "crates/pixiv-mcp/tests/download_ugoira.rs"
       ],
       "verified_platforms": [],
       "differences": [
-        "全schemaとdirect local_path25行に加えstatic artwork PID/artwork URL29行をgenuine saved default lease・SDK・stdioへ接続する。path/filename/directory defaultsはreal RuntimeConfigから同じproduction conversionを経由する。user/bookmark展開・ugoira・random recommendationは残るworkflowである。",
+        "全schemaとdirect local_path25行に加えstatic artwork PID/artwork URL29行をgenuine saved default lease・SDK・stdioへ接続する。path/filename/directory defaultsはreal RuntimeConfigから同じproduction conversionを経由する。user/bookmark展開・random recommendationは残るworkflowである。",
         "downloadのnotifications/cancelledはcooperative Context取消で通常JSON-RPC結果とpublished prefixを保持する。既存Transport-only serve APIはresource executorを持たず明示errorを返す。",
         "全disconnect/cancel/並行schedule・URL/JSON/native IO/public SDK lifecycleは未検証。",
         "Go single-default lease3行を追加固定し、Rustはaccount selectionとretryable open failureの2行を実SDK/stateで比較する。deferred close callback errorの第3行はsource-driven契約に留め、native close-error実行へ数えない。",
         "static metadata unknown wire kindはpublic KindUnknownとしてstaticを保存し、UTC dayを跨ぐdate namingも比較する。notifications/cancelledはpage1 published/page2 live atomic tempのowned stdio schedule1件をGo-firstで比較する。全cancel/disconnect/signal/EOF scheduleのverifiedではない。Go-only lease callback/internal countersをRust adapter Dropと同一視しない。",
-        "Go ManagerのID昇順・page_countとpage vector不整合による同名overwriteを保持する。runtime worker boundはGo GOMAXPROCSとRust available_parallelismで同一制御ではない。leading-dot suffix/publicationはGo-first追加5行で固定する。任意Go ArtworkKind string custom producerはpermanent Go-only契約を残し、Rust closed enumとのrepresentation差分をpendingに保持する。native filesystem wording/非UTF8/path/platform・全publication IOは未検証。"
+        "Go ManagerのID昇順・page_countとpage vector不整合による同名overwriteを保持する。runtime worker boundはGo GOMAXPROCSとRust available_parallelismで同一制御ではない。leading-dot suffix/publicationはGo-first追加5行で固定する。任意Go ArtworkKind string custom producerはpermanent Go-only契約を残し、Rust closed enumとのrepresentation差分をpendingに保持する。native filesystem wording/非UTF8/path/platform・全publication IOは未検証。",
+        "ugoira GIF/APNG/ZIP/rawをGo-first app70・CLI67・MCP41・native Linux26・rawZIP73行で対象比較する。source path/native coreと32 checked vendor patchesを再利用し、元root lock276 identities・vendor1633 checksumsを保持/確認する。resolved encoder21 dependency version置換とparallel miniz_oxide0.9.1追加は元Go artifactと異なりprovenanceへ明記する。全platform/image/nativecancel/FFI injected lifecycleのverifiedではない。",
+        "CLI/MCP private hook/event/per-attempt manager fieldsを直接同一視しない。public rawZIP success frame_report、failure class/quarantine/cleanupを比較するがprivate failure reportactual/undeclaredはGo-only。user/bookmark全visual kind、record全workflow・random、SDKHTTP2/Accept/ownership等はpendingである。",
+        "ugoira最終fullscriptは終了0・296秒、meaningful594/raw595passed・ignored11、optimized release58.65秒。Formatter/Clippyの先行failureを残し、dependency-onlyformatmetadataとequivalent let-chainをreviewした後に全stageをfresh実行する。全Go production/source identityとtested snapshotを保持し、operation全体のverifiedにはしない。"
       ]
     },
     {

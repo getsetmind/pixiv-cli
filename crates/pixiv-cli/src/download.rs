@@ -12,7 +12,7 @@ use pixiv_app::{
     lifecycle::Context,
     scheduler::SchedulerError,
 };
-use pixiv_sdk::{Client, transport::Transport};
+use pixiv_sdk::{Client, models::UgoiraFrame, transport::Transport};
 use serde::Serialize;
 use std::{
     io::{self, BufRead, Read, Write},
@@ -51,7 +51,9 @@ pub enum DownloadCommand {
     Run(Box<DownloadOptions>),
     Help(String),
 }
+#[derive(Clone)]
 struct Prepared {
+    sources: Vec<String>,
     request: DownloadRequest,
     machine: bool,
     ndjson: bool,
@@ -363,6 +365,7 @@ impl DownloadCommand {
             return Err(usage("--json and --ndjson cannot be used together"));
         }
         Ok(Prepared {
+            sources: options.sources.clone(),
             request: DownloadRequest {
                 download_path: runtime.download_path,
                 filename_template: runtime.filename_template,
@@ -457,11 +460,18 @@ impl DownloadCommand {
         };
         if options.sources.is_empty() {
             return records(
+                self,
                 context,
-                options,
                 input,
-                &mut *err.lock().unwrap_or_else(|e| e.into_inner()),
-            );
+                prepared,
+                DownloadSinks {
+                    output: out,
+                    error: err,
+                },
+                open,
+                factory,
+            )
+            .await;
         }
         let execution = open()?;
         self.execute_prepared(&execution, context, prepared, out, err, factory)
@@ -484,10 +494,7 @@ impl DownloadCommand {
     where
         F: Fn(Arc<Client<T>>) -> Arc<dyn DownloadSaveClient> + Send + Sync + 'static,
     {
-        let Self::Run(options) = self else {
-            unreachable!()
-        };
-        let sources = options.sources.clone();
+        let sources = prepared.sources.clone();
         let result = Arc::new(Mutex::new(None));
         let captured = result.clone();
         let callback = Arc::new(
@@ -499,6 +506,7 @@ impl DownloadCommand {
                 let captured = captured.clone();
                 let client = factory(client);
                 let modes = Prepared {
+                    sources: sources.clone(),
                     request: request.clone(),
                     machine: prepared.machine,
                     ndjson: prepared.ndjson,
@@ -579,6 +587,19 @@ struct Artifact<'a> {
     page: i64,
     path: String,
     bytes: i64,
+    #[serde(skip_serializing_if = "str::is_empty")]
+    quality: &'a str,
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    frames: Vec<UgoiraFrame>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    frame_report: Option<FrameReport<'a>>,
+}
+#[derive(Serialize)]
+struct FrameReport<'a> {
+    declared: usize,
+    actual: usize,
+    undeclared: Option<&'a [String]>,
+    missing: Option<&'a [String]>,
 }
 fn is_zero(n: &i64) -> bool {
     *n == 0
@@ -634,13 +655,33 @@ fn present<W: Write + ?Sized, E: Write + ?Sized>(
                 records.push(ReportRecord::Artifact(Artifact {
                     artwork_id: item.illust_id,
                     kind: &item.kind,
-                    page: if item.kind == "resource" {
+                    page: if matches!(item.kind.as_str(), "resource" | "ugoira") {
                         0
                     } else {
                         file.page
                     },
                     path: file.path.to_string_lossy().into_owned(),
                     bytes: file.bytes,
+                    quality: if item.kind == "ugoira" {
+                        &item.quality
+                    } else {
+                        ""
+                    },
+                    frames: if item.kind == "ugoira" {
+                        item.frames.clone()
+                    } else {
+                        Vec::new()
+                    },
+                    frame_report: if item.kind == "ugoira" {
+                        item.frame_report.as_ref().map(|report| FrameReport {
+                            declared: report.declared,
+                            actual: report.actual,
+                            undeclared: report.undeclared.as_deref(),
+                            missing: report.missing.as_deref(),
+                        })
+                    } else {
+                        None
+                    },
                 }));
             }
         }
@@ -705,12 +746,28 @@ struct Diagnostic<'a> {
     code: &'a str,
     message: String,
 }
-fn records<R: Read + ?Sized, E: Write + ?Sized>(
+async fn records<
+    T: Transport + 'static,
+    R: Read + ?Sized,
+    W: Write + Send + 'static,
+    E: Write + Send + 'static,
+    X: FnOnce() -> Result<Execution<T>, CommandError>,
+    F: Fn(Arc<Client<T>>) -> Arc<dyn DownloadSaveClient> + Send + Sync + 'static,
+>(
+    command: &DownloadCommand,
     context: &Context,
-    options: &DownloadOptions,
     input: &mut R,
-    err: &mut E,
+    prepared: Prepared,
+    sinks: DownloadSinks<W, E>,
+    open: X,
+    factory: F,
 ) -> Result<(), CommandError> {
+    let DownloadCommand::Run(options) = command else {
+        unreachable!()
+    };
+    let mut execution = None;
+    let mut open = Some(open);
+    let factory = Arc::new(factory);
     let prefix = options.record_prefix.clone().unwrap_or_default();
     let mut reader = io::BufReader::new(io::Cursor::new(prefix).chain(input));
     let mut number = 0;
@@ -742,40 +799,55 @@ fn records<R: Read + ?Sized, E: Write + ?Sized>(
                 )
             }
             Ok((id, _, _)) => {
-                if id.trim().parse::<i64>().ok().filter(|id| *id > 0).is_none() {
-                    ("invalid_id","record id must be a positive integer: record id must be a positive integer".into())
-                } else {
-                    (
-                        "action_failed",
-                        "download artwork execution is not implemented".into(),
-                    )
+                let id = id.trim().parse::<i64>().ok().filter(|id| *id > 0);
+                let Some(id) = id else {
+                    write_record_diagnostic(
+                        &sinks.error,
+                        &line,
+                        number,
+                        "invalid_id",
+                        "record id must be a positive integer: record id must be a positive integer".into(),
+                    )?;
+                    failed = true;
+                    if prepared.fail_fast {
+                        break;
+                    }
+                    continue;
+                };
+                let executor = execution.get_or_insert_with(|| {
+                    open.take().unwrap()().map_err(|error| split_error(error).1)
+                });
+                let outcome = match executor {
+                    Ok(execution) => {
+                        let mut request = prepared.clone();
+                        request.sources = vec![id.to_string()];
+                        request.machine = false;
+                        request.ndjson = false;
+                        let factory = factory.clone();
+                        command
+                            .execute_prepared(
+                                execution,
+                                context,
+                                request,
+                                sinks.output.clone(),
+                                sinks.error.clone(),
+                                move |client| factory(client),
+                            )
+                            .await
+                    }
+                    Err(error) => Err(SchedulerError::Shared(error.clone()).into()),
+                };
+                if let Some(error) = context.error() {
+                    return Err(SchedulerError::from(error).into());
+                }
+                match outcome {
+                    Ok(()) => continue,
+                    Err(CommandError::Output(error)) => return Err(CommandError::Output(error)),
+                    Err(error) => ("action_failed", error.to_string()),
                 }
             }
         };
-        let identity: serde_json::Value = serde_json::from_slice(&line).unwrap_or_default();
-        let id = match &identity["id"] {
-            serde_json::Value::String(value) => value.clone(),
-            serde_json::Value::Number(value) => value.to_string(),
-            _ => String::new(),
-        };
-        let typ = identity["type"].as_str().unwrap_or("").to_owned();
-        let diagnostic = Diagnostic {
-            kind: "record_error",
-            operation: "download",
-            line: number,
-            id,
-            r#type: typ,
-            code,
-            message,
-        };
-        writeln!(
-            err,
-            "{}",
-            crate::go_json_escape(
-                serde_json::to_string(&diagnostic)
-                    .map_err(|_| CommandError::Message("cannot encode record diagnostic"))?
-            )
-        )?;
+        write_record_diagnostic(&sinks.error, &line, number, code, message)?;
         failed = true;
         if options.on_error == "fail-fast" {
             break;
@@ -786,6 +858,39 @@ fn records<R: Read + ?Sized, E: Write + ?Sized>(
     } else {
         Ok(())
     }
+}
+fn write_record_diagnostic<E: Write + ?Sized>(
+    err: &Arc<Mutex<E>>,
+    line: &[u8],
+    number: i64,
+    code: &str,
+    message: String,
+) -> Result<(), CommandError> {
+    let identity: serde_json::Value = serde_json::from_slice(line).unwrap_or_default();
+    let id = match &identity["id"] {
+        serde_json::Value::String(value) => value.clone(),
+        serde_json::Value::Number(value) => value.to_string(),
+        _ => String::new(),
+    };
+    let typ = identity["type"].as_str().unwrap_or("").to_owned();
+    let diagnostic = Diagnostic {
+        kind: "record_error",
+        operation: "download",
+        line: number,
+        id,
+        r#type: typ,
+        code,
+        message,
+    };
+    writeln!(
+        &mut *err.lock().unwrap_or_else(|error| error.into_inner()),
+        "{}",
+        crate::go_json_escape(
+            serde_json::to_string(&diagnostic)
+                .map_err(|_| CommandError::Message("cannot encode record diagnostic"))?
+        )
+    )?;
+    Ok(())
 }
 fn help_text() -> &'static str {
     "Download illustrations\n\nUsage:\n  download [SRC...] [flags]\n\nFlags:\n      --download-path string       download directory\n      --filename-template string   filename template placeholders: {id}, {title}, {author}, {author_id}, {date}, {tags}, {num}\n  -h, --help                       help for download\n  -j, --json                       print a JSON artifact report\n      --ndjson                     print one JSON artifact record per line\n      --no-proxy                   clear the configured proxy for this command\n      --on-error string            record failure strategy: skip or fail-fast (default \"skip\")\n  -o, --output string              download directory (alias for --download-path)\n      --pages string               1-based page selection, e.g. 1,3-5; default all pages\n      --proxy string               proxy URL (http, https, socks5, or socks5h) for this command\n      --quality string             static image quality: original, regular, small, thumb, mini (default \"original\")\n      --ugoira-mode string         ugoira output mode: gif, apng (default \"gif\")\n"

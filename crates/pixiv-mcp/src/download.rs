@@ -7,7 +7,7 @@ use pixiv_app::{
     execution::Execution,
     lifecycle::{Context, Lease},
 };
-use pixiv_sdk::{Client, transport::Transport};
+use pixiv_sdk::{Client, models::UgoiraFrame, transport::Transport};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use std::{future::Future, io::Read, path::Path, pin::Pin, sync::Arc};
@@ -67,6 +67,10 @@ pub struct DownloadFile {
     pub size_bytes: i64,
     #[serde(skip_serializing_if = "is_zero")]
     pub page: i64,
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub quality: String,
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub frames: Vec<UgoiraFrame>,
 }
 fn is_zero(value: &i64) -> bool {
     *value == 0
@@ -322,6 +326,16 @@ fn build_report(report: &DownloadReport) -> std::io::Result<DownloadOutput> {
                 mime_type: mime_type(&file.path),
                 size_bytes: std::fs::metadata(&file.path)?.len() as i64,
                 page: file.page,
+                quality: if item.kind == "ugoira" {
+                    item.quality.clone()
+                } else {
+                    String::new()
+                },
+                frames: if item.kind == "ugoira" {
+                    item.frames.clone()
+                } else {
+                    vec![]
+                },
             };
             output.text.push_str(&format!(
                 "\n- {}\n  URI: {}\n  MIME: {}\n  Size: {} bytes",

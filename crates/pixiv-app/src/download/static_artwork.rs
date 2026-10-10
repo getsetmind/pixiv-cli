@@ -1,6 +1,7 @@
 use super::{
-    DownloadAttempt, DownloadRequest, DownloadSaveClient, DownloadedFile, DownloadedItem, failure,
-    message, static_filename, validate_quality, validate_ugoira_format,
+    AnimationEncoder, DownloadAttempt, DownloadRequest, DownloadSaveClient, DownloadWarning,
+    DownloadedFile, DownloadedItem, failure, message, static_filename, validate_quality,
+    validate_ugoira_format,
 };
 use crate::{auth_bundle::go_quote, lifecycle::Context, scheduler::SchedulerError};
 use futures_util::{StreamExt, stream::FuturesUnordered};
@@ -14,17 +15,22 @@ use std::{
     path::{Path, PathBuf},
 };
 
-struct ArtworkResult {
-    item: Option<DownloadedItem>,
-    error: Option<SchedulerError>,
-    missing_capability: bool,
+#[derive(Default)]
+pub(super) struct ArtworkResult {
+    pub(super) item: Option<DownloadedItem>,
+    pub(super) error: Option<SchedulerError>,
+    pub(super) missing_capability: bool,
+    pub(super) warnings: Vec<DownloadWarning>,
+    pub(super) code: String,
+    pub(super) path: PathBuf,
+    pub(super) missing: Vec<String>,
 }
 impl ArtworkResult {
-    fn error(error: SchedulerError) -> Self {
+    pub(super) fn error(error: SchedulerError) -> Self {
         Self {
             item: None,
             error: Some(error),
-            missing_capability: false,
+            ..Default::default()
         }
     }
 }
@@ -34,6 +40,7 @@ pub(super) async fn download_batch(
     client: &(impl DownloadSaveClient + ?Sized),
     ids: Vec<i64>,
     request: &DownloadRequest,
+    encoder: &dyn AnimationEncoder,
 ) -> DownloadAttempt {
     let mut attempt = DownloadAttempt::default();
     if let Err(error) = validate_quality(&request.quality)
@@ -55,13 +62,17 @@ pub(super) async fn download_batch(
     let mut next = 0;
     let mut results = (0..ids.len()).map(|_| None).collect::<Vec<_>>();
     while next < workers {
-        active.push(download_slot(context, client, next, ids[next], request));
+        active.push(download_slot(
+            context, client, next, ids[next], request, encoder,
+        ));
         next += 1;
     }
     while let Some((index, result)) = active.next().await {
         results[index] = Some(result);
         if next < ids.len() && context.error().is_none() {
-            active.push(download_slot(context, client, next, ids[next], request));
+            active.push(download_slot(
+                context, client, next, ids[next], request, encoder,
+            ));
             next += 1;
         }
     }
@@ -70,6 +81,7 @@ pub(super) async fn download_batch(
         let Some(result) = result else {
             continue;
         };
+        attempt.report.warnings.extend(result.warnings);
         if let Some(item) = result.item {
             attempt.report.items.push(item);
             attempt.report.committed = true;
@@ -86,6 +98,9 @@ pub(super) async fn download_batch(
             } else {
                 let mut rejected = failure(String::new(), "", error);
                 rejected.illust_id = ids[index];
+                rejected.code = result.code;
+                rejected.path = result.path;
+                rejected.missing = result.missing;
                 attempt.report.failures.push(rejected);
             }
         }
@@ -103,6 +118,7 @@ async fn download_slot(
     index: usize,
     id: i64,
     request: &DownloadRequest,
+    encoder: &dyn AnimationEncoder,
 ) -> (usize, ArtworkResult) {
     let Some(metadata) = client.artwork(context.clone(), id) else {
         return (
@@ -111,6 +127,7 @@ async fn download_slot(
                 item: None,
                 error: None,
                 missing_capability: true,
+                ..Default::default()
             },
         );
     };
@@ -118,7 +135,7 @@ async fn download_slot(
         Ok(artwork) => artwork,
         Err(error) => return (index, ArtworkResult::error(error)),
     };
-    let result = download_artwork(context, client, artwork, request).await;
+    let result = download_artwork(context, client, artwork, request, encoder).await;
     (index, result)
 }
 async fn download_artwork(
@@ -126,6 +143,7 @@ async fn download_artwork(
     client: &(impl DownloadSaveClient + ?Sized),
     artwork: Artwork,
     request: &DownloadRequest,
+    encoder: &dyn AnimationEncoder,
 ) -> ArtworkResult {
     let base = match artwork_directory(&artwork, request) {
         Ok(base) => base,
@@ -141,7 +159,7 @@ async fn download_artwork(
         ArtworkKind::Unknown => "unknown",
     };
     if artwork.kind == ArtworkKind::Ugoira {
-        return ArtworkResult::error(message("ugoira download is not yet supported"));
+        return super::ugoira::download(context, client, encoder, artwork, request, &base).await;
     }
     let selected = match select_pages(&artwork, &request.pages) {
         Ok(selected) => selected,
@@ -156,6 +174,7 @@ async fn download_artwork(
         author: artwork.user.name.clone(),
         kind: kind.into(),
         files: vec![],
+        ..Default::default()
     };
     for index in selected {
         let page = &artwork.pages[index];
@@ -219,7 +238,7 @@ async fn download_artwork(
                         Some(out)
                     },
                     error: Some(error),
-                    missing_capability: false,
+                    ..Default::default()
                 };
             }
         }
@@ -227,7 +246,7 @@ async fn download_artwork(
     ArtworkResult {
         item: Some(out),
         error: None,
-        missing_capability: false,
+        ..Default::default()
     }
 }
 fn artwork_directory(

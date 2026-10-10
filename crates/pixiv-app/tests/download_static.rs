@@ -484,7 +484,7 @@ async fn native_metadata_adapter_honors_context_without_network() {
 }
 
 #[tokio::test]
-async fn ugoira_metadata_remains_a_visible_separate_workflow() {
+async fn metadata_only_client_keeps_visible_ugoira_capability_gap() {
     let fixture: Value =
         serde_json::from_str(include_str!("fixtures/download_static.json")).unwrap();
     let mut ugoira = fixture["cases"][0]["artworks"][0].clone();

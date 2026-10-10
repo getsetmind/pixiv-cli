@@ -1,3 +1,8 @@
+mod file_replace;
+mod native_encoder;
+mod ugoira;
+mod zip_directory;
+pub use native_encoder::NativeAnimationEncoder;
 mod static_artwork;
 mod static_filename;
 
@@ -6,7 +11,7 @@ use crate::{
 };
 use pixiv_sdk::{
     Client,
-    models::Artwork,
+    models::{Artwork, UgoiraFrame, UgoiraMetadata},
     oauth::LoginUrl,
     reference::{
         REFERENCE_KIND_ARTWORK, REFERENCE_KIND_USER, REFERENCE_KIND_USER_BOOKMARKS, parse_url,
@@ -46,6 +51,9 @@ pub struct DownloadedItem {
     pub author: String,
     pub kind: String,
     pub files: Vec<DownloadedFile>,
+    pub quality: String,
+    pub frames: Vec<UgoiraFrame>,
+    pub frame_report: Option<UgoiraFrameReport>,
 }
 #[derive(Clone, Debug)]
 pub struct DownloadFailure {
@@ -77,12 +85,38 @@ pub struct DownloadAttempt {
     pub error: Option<SchedulerError>,
 }
 
+#[derive(Clone, Debug, Default)]
+pub struct UgoiraFrameReport {
+    pub declared: usize,
+    pub actual: usize,
+    pub undeclared: Option<Vec<String>>,
+    pub missing: Option<Vec<String>>,
+}
+#[derive(Clone, Debug)]
+pub struct EncoderInput {
+    pub zip_path: PathBuf,
+    pub output_path: PathBuf,
+    pub work_dir: PathBuf,
+    pub frames: Option<Vec<UgoiraFrame>>,
+    pub format: String,
+    pub max_edge: u32,
+}
+pub type EncoderFuture<'a> = Pin<Box<dyn Future<Output = Result<(), SchedulerError>> + Send + 'a>>;
+pub trait AnimationEncoder: Send + Sync {
+    fn encode(&self, context: Context, input: EncoderInput) -> EncoderFuture<'_>;
+}
+pub type UgoiraMetadataFuture<'a> =
+    Pin<Box<dyn Future<Output = Result<UgoiraMetadata, SchedulerError>> + Send + 'a>>;
+
 pub type SaveFuture<'a> =
     Pin<Box<dyn Future<Output = Result<SavedResource, SchedulerError>> + Send + 'a>>;
 pub type ArtworkFuture<'a> =
     Pin<Box<dyn Future<Output = Result<Artwork, SchedulerError>> + Send + 'a>>;
 pub trait DownloadSaveClient: Send + Sync {
     fn artwork(&self, _context: Context, _id: i64) -> Option<ArtworkFuture<'_>> {
+        None
+    }
+    fn ugoira_metadata(&self, _context: Context, _id: i64) -> Option<UgoiraMetadataFuture<'_>> {
         None
     }
     fn supports_direct_urls(&self) -> bool {
@@ -101,6 +135,15 @@ impl NativeDownloadSaveClient {
     }
 }
 impl DownloadSaveClient for NativeDownloadSaveClient {
+    fn ugoira_metadata(&self, context: Context, id: i64) -> Option<UgoiraMetadataFuture<'_>> {
+        Some(Box::pin(async move {
+            tokio::select! {
+                biased;
+                error = context.cancelled() => Err(error.into()),
+                result = self.client.ugoira_metadata(id) => result.map_err(Into::into),
+            }
+        }))
+    }
     fn artwork(&self, context: Context, id: i64) -> Option<ArtworkFuture<'_>> {
         Some(Box::pin(async move {
             tokio::select! {
@@ -153,6 +196,16 @@ pub async fn download_sources(
     sources: &[String],
     request: &DownloadRequest,
 ) -> DownloadAttempt {
+    download_sources_with_encoder(context, client, sources, request, &NativeAnimationEncoder).await
+}
+
+pub async fn download_sources_with_encoder(
+    context: &Context,
+    client: &(impl DownloadSaveClient + ?Sized),
+    sources: &[String],
+    request: &DownloadRequest,
+    encoder: &dyn AnimationEncoder,
+) -> DownloadAttempt {
     let started = Instant::now();
     context.emit(Event {
         module: "Pixiv download".into(),
@@ -160,7 +213,7 @@ pub async fn download_sources(
         operation: format!("download {} sources", sources.len()),
         ..Default::default()
     });
-    let attempt = execute_download_sources(context, client, sources, request).await;
+    let attempt = execute_download_sources(context, client, sources, request, encoder).await;
     context.emit(Event {
         module: "Pixiv download".into(),
         kind: if attempt.error.is_some() {
@@ -188,6 +241,7 @@ async fn execute_download_sources(
     client: &(impl DownloadSaveClient + ?Sized),
     sources: &[String],
     request: &DownloadRequest,
+    encoder: &dyn AnimationEncoder,
 ) -> DownloadAttempt {
     let mut attempt = DownloadAttempt::default();
     if sources.is_empty() {
@@ -245,6 +299,7 @@ async fn execute_download_sources(
             client,
             artwork_ids.into_iter().collect(),
             request,
+            encoder,
         )
         .await;
         attempt.report.items.extend(batch.report.items);
